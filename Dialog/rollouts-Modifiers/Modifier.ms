@@ -7,9 +7,8 @@ struct Modifier_v
 	type,
 	
 	Modifiers	= Modifiers_v(),
-	--type="Edit_Poly",
 	
-	_modifier,
+	modifier,
 	
 	/** Get
 	 */
@@ -21,57 +20,57 @@ struct Modifier_v
 		
 		this._getName()
 		
-		modPanel.addModToSelection _modifier ui:on
+		modPanel.addModToSelection modifier ui:on
 		
-		_modifier --return
+		modifier --return
 	),
-	/** Get current
+	
+	/** Set current modifier
 	 */
-	function getCurrent obj =
+	function setCurrent =
 	(
 		max modify mode
 		
-		
-		
+		modifier = modPanel.getCurrentObject() --return
 	),
-	
-	
 	
 	/** Get objects with instance of given modifier
 	  *
 	  * @property	array	_objects	where to serch for instance of modifier
-	  * @property	modifier	_modifier	for search
+	  * @property	modifier	modifier	for search
 	  *
 	  * @return	array	
 	 */
-	function getObjectsWithInstance _objects _modifier =
+	function getObjectsWithInstance _objects =
 	(
-		for obj in _objects where ( (Modifiers.search obj _modifier).count > 0 ) collect obj
+		objects_with_instance	= #()
+		
+		if( refhierarchy.isRefTargetInstanced modifier ) then 
+			objects_with_instance = for obj in _objects where ( (Modifiers.search obj modifier).count > 0 ) collect obj
+		
+		objects_with_instance --return
 	),
+	
 	/** _set modifier
 	 */
 	function _setModifier =
 	(
 		if( hasProperty Modifiers type ) then
-			_modifier = getProperty Modifiers type --return 
+			modifier = getProperty Modifiers type --return 
 		else
-			_modifier = execute (type+"()") --return
+			modifier = execute (type+"()") --return
 	
 	),
-	/** _get name
-	 */
-	function _getName =
-	(
-		
-		if( name!=undefined ) then
-			_modifier.name = name
-		
-		--print ( "classOf type=" + type as string )
-	),
+	--/** _get name
+	-- */
+	--function _getName =
+	--(
+	--	modifier.name = name
+	--),
 
 	on create do
 	(
-		--messagebox "Modifiers.onCreate()"
+	
 	)
 )
 
