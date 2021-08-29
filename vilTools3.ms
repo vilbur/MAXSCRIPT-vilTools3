@@ -17,11 +17,15 @@ filein( getFilenamePath(getSourceFileName()) + "/../Library/UI/Lib/ContentLoader
 --for file in MacroAutoLoader._inlcudes do
 	--format "file = % \n" file
 
-	current_dir	= getFilenamePath(getSourceFileName())
+current_dir	= getFilenamePath(getSourceFileName())
 format "current_dir = % \n" current_dir
-	Content	= ContentLoader_v path:(current_dir+"/Dialog")
+ContentLoader	= ContentLoader_v path:(current_dir+"/Dialog")
+
+--format "ContentLoader.Dialog = % \n" ContentLoader.Dialog
+ContentLoader.Dialog.dock #right
 
 
+--ContentLoader.Dialog.width 320
 
 
 
