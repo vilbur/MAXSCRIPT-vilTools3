@@ -4,8 +4,9 @@ buttontext:	"Random"
 toolTip:	"Random"
 --icon:	"#(path, index)"
 (
-	every = 2
-	select (for obj in selection where random 1 every == every collect obj)
+	step = 2
+	
+	select (for obj in selection where random 1 step == step collect obj)
 )
 
 macroscript	selection_select_instances
@@ -14,8 +15,8 @@ buttontext:	"Instances"
 toolTip:	"Select instances of object"
 --icon:	"#(path, index)"
 (
-	only_visible	= false
-	global instances		= #()
+	only_visible   = false
+	global instances = #()
 	
 	for obj in selection do
 	(	
@@ -24,9 +25,8 @@ toolTip:	"Select instances of object"
 		join instances obj_instance	
 	)
 	
-	if only_visible == 1 then for o in instances where  o.visibility == false do deleteitem instances (finditem instances o )
-	
+	if only_visible == 1 then
+		for o in instances where  o.visibility == false do deleteitem instances (finditem instances o )
 	
 	select instances	
 )
-

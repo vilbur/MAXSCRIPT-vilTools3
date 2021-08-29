@@ -19,14 +19,46 @@ struct Selection_v
 	(
 		for o in selection where superclassof o == GeometryClass collect o
 	),
+	
+	/** Select only Unique objects.
+	  *	Deselect mutliple instances
+	 */
+	function filterUniqueObjects =
+	(		
+		for obj in selection do 
+		(
+			local obj_instances
+			InstanceMgr.GetInstances obj &obj_instances
+			format "obj_instances = % \n" obj_instances.count
+			
+			if( obj_instances.count > 1 ) then
+			(
+				deleteItem obj_instances (findItem obj_instances obj)
+				deselect obj_instances
+			)
+		)
+	),
+	
+	
+	
 	/** Collapse selection
+	  *
+	  *
+	  * TODO: MOVE THIS METHOD TO EDIT ROLLOUT
 	 */
 	function collapse =
 	(
 		for o in this.geometry() do
 			maxOps.CollapseNodeTo o 1 off
 	),
-	/** Name
+	/** Set name to objects
+	  *
+	  * TODO: set auto name by
+	  *		1) GROUP
+	  *		2) LAYER
+	  *		3) SELECTION SET
+	  *		4) FILE NAME
+	  *
 	 */
 	function name _name =
 	(
@@ -73,11 +105,11 @@ struct Selection_v
 	--	(
 	--		for o in _selection do
 	--		(
-	--			obj_instance
-	--			testInst = (InstanceMgr.GetInstances o &obj_instance)
+	--			obj_instances
+	--			testInst = (InstanceMgr.GetInstances o &obj_instances)
 	--			if testInst > 1 then
 	--			(
-	--				join instances obj_instance
+	--				join instances obj_instances
 	--	
 	--				for inst in instances do
 	--				(

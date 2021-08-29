@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="640e1e37-f762-488e-ae28-11c19c36e314" kpf_version="5" name="MS-vilTools3.komodoproject">
+<livefolder id="23e59e88-d752-41af-a710-f7b73a63884c" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollouts-Modifiers" url="Dialog/rollouts-Modifiers/">
+</livefolder>
+<livefolder id="245984bb-0947-4deb-b30f-7235eae3e535" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollouts-Subobject" url="Dialog/rollouts-Subobject/">
+</livefolder>
+<livefolder id="ca59023c-c4c6-4dd9-9533-442bc9124368" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollouts-Selection" url="Dialog/rollouts-Selection/">
+</livefolder>
+<preference-set idref="640e1e37-f762-488e-ae28-11c19c36e314" id="project" preftype="project">
+  <long id="prefs_version">1</long>
+</preference-set>
+</project>

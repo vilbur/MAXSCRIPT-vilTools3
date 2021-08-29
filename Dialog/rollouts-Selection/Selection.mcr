@@ -1,3 +1,27 @@
+macroscript SelectionTest
+category:"_Selection"
+buttonText:"Test"  
+(
+	--messageBox "Test" beep:false
+	--messagebox "Selection.mcr";
+	--filein ( getFilenamePath(getSourceFileName()) + "/Selection.ms" )
+	--rollout_selection.selection_test_.text = "XXX"
+	
+	--_Selection	= Selection_v
+	--fn Kboard_pick =
+
+	--select _GLOBAL_Selection_v_selection
+	
+	Selection 	= Selection_v()
+	--Selection.name "file"
+	
+	Selection.collapse()
+	
+)
+
+
+
+
 macroscript selectionSave_selectionLoad
 category:"_Selection"
 buttonText:"Selection save"

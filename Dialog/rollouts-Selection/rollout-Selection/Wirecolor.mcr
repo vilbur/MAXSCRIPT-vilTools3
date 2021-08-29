@@ -86,4 +86,3 @@ toolTip:	"Select by wirecolor"
 	
 	max modify mode
 )
-
