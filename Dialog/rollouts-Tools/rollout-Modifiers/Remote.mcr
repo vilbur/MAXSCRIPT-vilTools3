@@ -12,45 +12,18 @@ tooltip:	"Select objects with instance of current modifier"
 	select instaneces_in_objects
 )
 
---macroscript	modifier_save_preset
---category:	"_Modifiers"  
---buttonText:	"Save Preset"
-----tooltip:	"Select objects with instance of current modifier"
---(
---	Modifier 	= Modifier_v()
---	--
---	--Modifier.setCurrent()
---	--
---	--instaneces_in_objects	= Modifier.getObjectsWithInstance objects
---	--
---	--select instaneces_in_objects
---)
---
-
 macroscript	modifier_save_preset
 category:	"_Modifiers"  
-buttonText:	"Preset save"
-tooltip:	"left"
+buttonText:	"Preset"
+tooltip:	"Save  preset of current modifier"
 (
-	--Modifier 	= Modifier_v()
-	--
-	--Modifier.setCurrent()
-	--
-	--Modifier.savePreset()
-	print "shhit"
-
+	(Modifier_v()).savePreset()
 )	
 
 macroscript	modifier_load_preset
 category:	"_Modifiers"  
-buttonText:	"Preset savex"
-tooltip:	"left"
+buttonText:	"Preset"
+tooltip:	"Load preset of current modifier\n–\nName of modifier is preset name"
 (
-	--Modifier 	= Modifier_v()
-	--
-	--Modifier.setCurrent()
-	--
-	--Modifier.savePreset()
-	print "shhit"
-
+	(Modifier_v()).loadPreset()
 )	

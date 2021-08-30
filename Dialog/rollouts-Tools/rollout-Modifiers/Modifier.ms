@@ -37,25 +37,20 @@ struct Modifier_v
 	(
 		max modify mode
 		
-		modifier = modPanel.getCurrentObject() --return
+		modifier = modPanel.getCurrentObject()
 		
 		type = classOf modifier
+		
+		this --return
 	),
 	
 	/** Save preset
 	 */
 	function savePreset =
 	(
-		_props_names	= getPropNames modifier
+		this._setupPresetSaveLoad()
 		
-		--getProperty <obj> <property_name>
-		--setProperty <obj> <property_name> <value>
-		this.setIniPath()
-		
-		format "classOf modifier = % \n" (classOf modifier)
-		
-		
-		for prop in _props_names do
+		for prop in getPropNames modifier do
 		(
 			value	= getProperty modifier prop
 			format "% = % \n" prop value
@@ -64,43 +59,43 @@ struct Modifier_v
 
 		)
 		
+		this --return
 	),
+
 	
 	/** Load preset
 	 */
 	function loadPreset =
 	(
-		
-		
-		_props_names	= getPropNames modifier
-		
-		--getProperty <obj> <property_name>
-		--setProperty <obj> <property_name> <value>
-		this.setIniPath()
-
+		this._setupPresetSaveLoad()
 		
 		if( this._iniFileExists() ) then 
-			for prop in _props_names do
+			for prop in getPropNames modifier do
 			(
-				
 				value	= getINISetting ini modifier.name ( prop as string )
-	
-				format "Modifier_v.loadPreset() % = % \n" prop value
+				--format "Modifier_v.loadPreset() % = % \n" prop value
 				
 				value_formatted = this._formatDatatypeValue value
 				
-				if( value_formatted != "undefined" ) then
+				--if( value_formatted != "undefined" ) then
 				try
 				(
-					
 					setProperty modifier prop ( this._formatDatatypeValue value )
 				)
 				catch
-				(
-					format "\n************ EXCEPTION ************\n%\n***********************************\n" (getCurrentException())
-					format "\n**************** EXCEPTION File: % ****************\n\n%\n\n**************************************************************************************************************************************\n" filein_path (getCurrentException())
-				)
+				()
 			)
+		this --return
+	),
+	
+	/** _setup preset save load
+	 */
+	function _setupPresetSaveLoad =
+	(
+		if( modifier == undefined ) then
+			this.setCurrent()
+
+		this.setIniPath()
 	),
 	
 	/** Format datatype of value
@@ -144,7 +139,6 @@ struct Modifier_v
 			modifier = getProperty Modifiers type --return 
 		else
 			modifier = execute (type+"()") --return
-	
 	),
 	
 	/** Set ini path

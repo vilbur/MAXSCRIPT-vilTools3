@@ -14,15 +14,50 @@ tooltip:	"Add EditPoly"
 )
 
 
+	/* DEFINE MAIN MENU */
+	global Menu_RC = Menu_v name:"RCtestMenu"
+	
+	/* DEFINE MENU */
+	menu_1	= Menu_RC.menu "Menu 1"
+	menu_2	= Menu_RC.menu "Menu 2"
+	
+	
+	/** MENU ITEMS 
+	 */
+	menu_1.item "Item 1" "messagebox \"Item 1\"" id:"test_item1"
+	
+	--Menu.create()
+
+
+
 macroscript	modifier_chamfer
 category:	"_Modifiers"  
 buttonText:	"Chamfer"
-tooltip:	"Add Chamfer"
+tooltip:	"Menu|Menu_RC"
 (
-	clearListener()
-	(Modifier_v type:#Chamfer).add()
+	--(Modifier_v type:#Chamfer).add()
 
+	--(Modifier_v()).loadPreset()
 )
+
+
+--macroscript	modifier_chamfer_add_with_preset
+--category:	"_Modifiers"  
+--buttonText:	"Chamfer"
+--tooltip:	"Add Chamfer with preset"
+--(
+--	
+
+--	popUpMenu Menu rollout:rollout_dialog.rollout_dialog_subrollouts_1.rollout_rolloutmodifiers
+--	
+--	
+--	--(Modifier_v type:#Chamfer).add()
+--
+--	--(Modifier_v()).loadPreset()
+--	--messageBox "Yupiii" beep:false
+--)
+
+
 
 --macroscript	modifier_add_normal
 --category:	"_Modifiers"  
