@@ -64,14 +64,38 @@ function getInstancesInObjectsTest =
 	select instaneces_in_objects
 )
 
+/** 
+ */
+function savePreset =
+(
+	Modifier 	= Modifier_v()
+	
+	Modifier.setCurrent()
+	
+	Modifier.savePreset()
+)
+
+/** 
+ */
+function loadPreset =
+(
+	Modifier 	= Modifier_v()
+	
+	Modifier.setCurrent()
+	
+	Modifier.loadPreset()
+)
 /*---------------------------------------
 	RUN TESTS
 -----------------------------------------*/
 
 --createTestObjects()
---getInstancesInSelectionTest()
-getInstancesInObjectsTest()
 
+
+--savePreset()
+loadPreset()
+
+--getInstancesInObjectsTest()
 
 	--current_modifier	= modPanel.getCurrentObject()
 --format "current_modifier = % \n" current_modifier.segments  

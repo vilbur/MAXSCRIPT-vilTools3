@@ -8,8 +8,9 @@ struct Subobject_v
 	 */
 	function enterToogle sub_obj =
 	(
-		if not ( this.modifierHasSubobjects() or this._editablePolyModifierAdded() ) then
-			return false
+		if not ( this.modifierHasSubobjects() ) then
+			this._editablePolyModifierAdded() 
+			--return false
 		
 		if( subObjectLevel == sub_obj ) then
 			subObjectLevel = 0
@@ -22,6 +23,7 @@ struct Subobject_v
 	 */
 	function _editablePolyModifierAdded =
 	(
+		macros.run "_Modifiers" "modifier_add_editpoly"
 		
 	),
 	

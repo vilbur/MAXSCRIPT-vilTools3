@@ -24,8 +24,9 @@ buttonText:"Test"
 
 macroscript selectionSave_selectionLoad
 category:"_Selection"
-buttonText:"Selection save"
-tooltip: "Save selection|Load Selection"
+buttonText:"Save"
+tooltip: "Save selection"
+--tooltip: "Save selection|Load Selection"
 (
 	messageBox "Yupiii" beep:false
 	--filein ( getFilenamePath(getSourceFileName()) + "/Selection.ms" )
@@ -37,7 +38,9 @@ tooltip: "Save selection|Load Selection"
 
 macroscript SelectionLoad
 category:"_Selection"
-buttonText:"Selection load"  
+buttonText:"Load"
+tooltip: "Load Selection"
+
 (
 	messageBox "Yupiii" beep:false
 	--messagebox "Selection.mcr";
