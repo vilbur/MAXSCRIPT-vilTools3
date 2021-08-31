@@ -45,6 +45,8 @@ struct Modifier_v
 		this --return
 	),
 	
+	
+	
 	/** Save preset
 	 */
 	function savePreset =
@@ -157,6 +159,13 @@ struct Modifier_v
 		
 		(getFiles ini).count != 0 
 	),
+
+	/** Test
+	 */
+	function test preset =
+	(
+		messageBox preset beep:false
+	),
 	
 	--/** _get name
 	-- */
@@ -164,7 +173,34 @@ struct Modifier_v
 	--(
 	--	modifier.name = name
 	--),
+	/** Get preests
+	 */
+	function getPresets _rollout =
+	(
 
+		this._setupPresetSaveLoad()
+
+		presets	= getINISetting ini
+		format "presets = % \n" presets
+
+		/* DEFINE MAIN MENU */
+		global Menu_RC = Menu_v name:"Menu_RC_name"
+		
+		/* DEFINE MENU */
+		--menu_1	= Menu_RC.menu "Menu 1"
+		
+		for preset in presets do
+			Menu_RC.item preset ("loadPresetGlobal \""+preset+"\"") id:preset
+
+
+		/** MENU ITEMS 
+		 */
+		
+		popUpMenu (Menu_RC.create()) rollout:_rollout
+
+
+		
+	),
 	on create do
 	(
 	

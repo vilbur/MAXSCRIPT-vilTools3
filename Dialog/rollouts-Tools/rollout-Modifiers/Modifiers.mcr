@@ -13,28 +13,31 @@ tooltip:	"Add EditPoly"
 
 	redrawViews()
 )
-
-
-	/* DEFINE MAIN MENU */
-	global Menu_RC = Menu_v name:"Menu_RC_name"
-	
-	/* DEFINE MENU */
-	menu_1	= Menu_RC.menu "Menu 1"
-	menu_2	= Menu_RC.menu "Menu 2"
 	
 	
-	/** MENU ITEMS 
-	 */
-	menu_1.item "Item 1" "messagebox \"Item 1\"" id:"test_item1"
+/** Load preset global
+ */
+function loadPresetGlobal _preset =
+(
+
 	
-	--Menu_RC.create()
+	modifier = modPanel.getCurrentObject()
+	suspendEditing which:#modify
+	
+	modifier.name = _preset
+	
+	resumeEditing which:#modify
+		
+		
+	(Modifier_v()).loadPreset()
 
-
+	
+)
 
 macroscript	modifier_chamfer
 category:	"_Modifiers"  
 buttonText:	"Chamfer"
-tooltip:	"Add Chamfer with preset"
+tooltip:	"Add Chamfer preset:default"
 (
 	(Modifier_v type:#Chamfer).add()
 
@@ -45,11 +48,18 @@ tooltip:	"Add Chamfer with preset"
 macroscript	modifier_chamfer_add_with_preset
 category:	"_Modifiers"  
 buttonText:	"Chamfer"
-tooltip:	"Menu|Menu_RC"
+--tooltip:	"Menu|Menu_RC"
+tooltip:	"Menu\nRMB+Ctrl: Presets"
 (
 	
-	popUpMenu Menu_RC_name rollout:rollout_dialog.rollout_dialog_subrollouts_1.rollout_rolloutmodifiers
+	ctrl = keyboard.controlPressed;
+	if ctrl == true then
+		(Modifier_v()).getPresets rollout_rolloutmodifiers
 
+	else
+		print "Nothing" 
+	
+	
 )
 
 
