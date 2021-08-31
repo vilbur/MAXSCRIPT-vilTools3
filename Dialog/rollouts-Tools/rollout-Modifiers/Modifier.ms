@@ -1,4 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/Modifiers/Modifiers.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-Selection/Selection.ms" )
 
 /** Modifier
 https://help.autodesk.com/view/3DSMAX/2017/ENU/?guid=__files_GUID_DB496ACA_1506_4FB1_B8F8_EECC7D9794DD_htm  
