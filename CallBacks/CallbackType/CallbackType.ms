@@ -16,14 +16,23 @@ struct CallbackType_v
 	function add callback_type_name callback =
 	(
 		print("CallbackType_v.add() "+callback_type_name +" "+callback)
+		if( (CallbackNew = this.get callback) == undefined ) then 
+		(
+			CallbackNew 	= Callback_v callback_type_name:callback_type_name callback:callback 
 		
-		--Callback 	= Callback_v callback:callback
-
-		Callbacks.setVal callback (Callback_v callback:callback)
-
+			Callbacks.setVal ( callback as name ) CallbackNew
+		)
+		
+		--format "CallbackNew = % \n" CallbackNew
+		CallbackNew --return
 	),
-	
-
+	 
+	/** Get
+	 */
+	function get callback =
+	(
+		Callbacks.getVal ( callback as name ) --return
+	),
 	
 	/** Check if required properties are defined when an instance of the struct is created.
 	 *	
@@ -42,5 +51,4 @@ struct CallbackType_v
 
 		this._checkConstctructProperties()
 	)
-	
 )

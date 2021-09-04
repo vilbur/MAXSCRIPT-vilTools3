@@ -1,25 +1,57 @@
 clearListener()
 
+filein( getFilenamePath(getSourceFileName()) + "/../../../Library/List/List.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/../Callbacks.ms" )
 
-global CallbacksHolder = Callbacks_v()
 
+
+/** Prepare Test object
+ */
+function prepareTestObject =
+(
+	delete objects
+	box()
+)
+
+
+/** TEST 
+ *	
+ */
+global CallbacksHolder = Callbacks_v()
 
 /** Selection set changed callback
  */
 function selectionSetChangedCallback =
 (
-	messageBox "selectionSetChangedCallback" beep:false
+	messageBox "TEST SUCCESS\nselectionSetChangedCallback" beep:false
+	
+	_Callback = CallbacksHolder.get #SelectionSetChanged "selectionSetChangedCallback"
+	
+	format "_Callback = % \n" _Callback
+	
+	_Callback.kill()
 )
 
-/** Selection set changed callback
+/** Set callbacks test
  */
-function selectionSetChangedCallback_Secondary =
+function setCallbacksTest =
 (
-	messageBox "selectionSetChangedCallback_Secondary" beep:false
+	CallbackNew = CallbacksHolder.add #SelectionSetChanged "selectionSetChangedCallback"
+	format "CallbackNew = % \n" CallbackNew
+	
+	CallbackGet = CallbacksHolder.start #SelectionSetChanged "selectionSetChangedCallback"
+	format "CallbackGet = % \n" CallbackGet
+	
+	CallbacksHolder.start #SelectionSetChanged "selectionSetChangedCallback"
 )
 
-CallbacksHolder.add #SelectionSetChanged "selectionSetChangedCallback"
 
+/** 1) create test box 
+ *	2) START selection callback test
+ *	3) select box
+ *	4) KILL callback
+ */
 
-CallbacksHolder.start #SelectionSetChanged "selectionSetChangedCallback_Secondary"
+prepareTestObject()
+setCallbacksTest()
+select objects
