@@ -7,7 +7,7 @@ filein( getFilenamePath(getSourceFileName()) + "/CallbackFunctions/ModPanelSubOb
 global callback_type_names_v	= #( #SelectionSetChanged, #ModPanelSubObjectLevelChanged )
 
 
-/** Callbacks on selection change
+/** 
  * 
  *	https://help.autodesk.com/view/3DSMAX/2015/ENU/?guid=__files_GUID_C1F6495F_5831_4FC8_A00C_667C5F2EAE36_htm
  * 

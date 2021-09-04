@@ -1,3 +1,13 @@
+/*
+*	Ui Functions of modifier button 
+*	
+*	1) Add modifier
+*	2) Save preset
+*	3) Load Preset
+*	4) Disable if subobject is active
+*	
+*/	
+
 
 macroscript	modifier_add_editpoly
 category:	"_Modifiers"  

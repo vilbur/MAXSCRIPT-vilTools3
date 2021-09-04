@@ -1,7 +1,10 @@
-/** Selection set changed callback
+/** Callbacks on selection change
  */
 function selectionSetChangedCallback =
 (
-
-	messageBox "selectionSetChangedCallback" beep:false
+	print "selectionSetChangedCallback"
+	
+	
+	
+	
 )
