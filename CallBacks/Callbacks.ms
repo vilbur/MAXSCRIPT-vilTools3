@@ -1,15 +1,12 @@
+filein( getFilenamePath(getSourceFileName()) + "/../../Library/UI/Lib/Ini/Ini.ms" )
 
+filein( getFilenamePath(getSourceFileName()) + "/CallbackType/CallbackType.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Callback/Callback.ms" )
 
-global callbacks_viltools	= #( #selectionSetChanged )
+filein( getFilenamePath(getSourceFileName()) + "/CallbackFunctions/selectionSetChanged.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/CallbackFunctions/ModPanelSubObjectLevelChanged.ms" )
 
-
-/** Selection set changed callback
- */
-function selectionSetChangedCallback =
-(
-	--messageBox "Yupiii" beep:false
-)
-
+global callback_type_names_v	= #( #SelectionSetChanged, #ModPanelSubObjectLevelChanged )
 
 
 /** Callbacks on selection change
@@ -25,14 +22,30 @@ struct Callbacks_v
 	/* dependency */
 	/* reference */
 	/* properties */
+	CallbackTypesList = List_v(),
+	
+	/** Add callback
+	 */
+	function add callback_type_name callback =
+	(
+		--print("Callbacks_v.add()"+callback_type_name +" "+callback)
+		--format "classof callback_type_name = % \n" (classof callback_type_name)
+		if not ( this._typeExists callback_type_name ) then
+			CallbackTypesList.setVal callback_type_name (CallbackType_v())
+		
+		CallbackType = this._getType callback_type_name
+		
+		CallbackType.add callback_type_name callback
+		format "CallbackType = % \n" CallbackType.Callbacks.keys.count
+	),
 	
 	
 	/** Callbacks viltools kill
 	 */
 	function killAll =
 	(
-		for callback_name in callbacks_viltools do
-			try( callbacks.removeScripts callback_name id:(this._getId callback_name) )catch()
+		--for callback_type_name in callback_type_names_v do
+			--try( callbacks.removeScripts callback_type_name id:(this._getId callback_type_name) )catch()
 	),
 	
 	/**  
@@ -40,36 +53,35 @@ struct Callbacks_v
 	 */
 	fn start = 
 	(
-		--try( callbacks.addScript      #selectionSetChanged    "Calllbacks_onSelectionChange()" id: #Calllbacks_onSelectionChange )catch()
 		this.killAll()
 		
-		
-		for callback_name in callbacks_viltools do
-		(
-			--format "callback_name = % \nthis._getCallbackFunction() = % \nthis._getId callback_name = % \n\n" (callback_name as string) (this._getCallbackFunction callback_name) ((this._getId callback_name) as string)
-			try( callbacks.addScript callback_name (this._getCallbackFunction callback_name ) id:(this._getId callback_name) )catch()
-		)
+		--for callback_type_name in callback_type_names_v do
+			--try( callbacks.addScript callback_type_name (this._getCallbackFunction callback_type_name ) id:(this._getId callback_type_name) )catch()
 	),
 	
-	/** Get id
-	  *
-	  * @return	#callback_id
-	 */
-	function _getId callback_name =
-	(
-		( "callbacks_viltools_" + (callback_name as string ) )  as name  --return
-	),
-	
-	/** Get callback function name
-	  *
-	  * @return	string function name eg: "selectionSetChangedCallback"	
-	 */
-	function _getCallbackFunction callback_name =
-	(
-		(callback_name as string + "Callback()") --return
-	),
-	
+
 	private
+	
+	/** Get all callbacks
+	 */
+	function _setAllCallbacks =
+	(
+		
+	),
+	
+	/** Type exists
+	 */
+	function _getType callback_type_name =
+	(
+		CallbackTypesList.getVal callback_type_name --return	
+	),
+		
+	/** Type exists
+	 */
+	function _typeExists callback_type_name =
+	(
+		CallbackTypesList.getVal callback_type_name != undefined --return	
+	),
 	
 	/** Get\set value of property 
 	 * @param	string|name key	Name  of property E.G.: "foo_key" OR #foo_key 
@@ -105,7 +117,6 @@ struct Callbacks_v
 	on create do
 	(
 		this._checkConstctructProperties()
+		this._setAllCallbacks()
 	)
-	
 )
-
