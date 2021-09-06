@@ -23,6 +23,7 @@ struct LastActiveModifier_v
 	 */
 	function setNode obj =
 	(
+		print ("LastActiveModifier_v.setNode " + _node.name)
 		_node = obj
 	),
 	
@@ -86,7 +87,6 @@ struct LastActiveModifier_v
 	 */
 	function _getIndexFromBottom index =
 	(
-		format "_modifier = % \n" _modifier
 		_node.modifiers.count + 1 - ( index )
 	),
 
@@ -96,14 +96,15 @@ struct LastActiveModifier_v
 	(
 		--clearListener()
 		print "LastActiveModifier.activate()"
-		format "modifier = % \n" modifier
+		format "_node = % \n" _node
+		format "_modifier = % \n" _modifier
+		--if( _modifier == undefined ) then
+			--return false
 
-		node_index = 
-
-		format "node_index = % \n" node_index
+		format "node_index = % \n" (this.findNode())
 
 		index_from_bottom = this._getIndexFromBottom(modifiers[this.findNode()])
-
+		format "index_from_bottom = % \n" index_from_bottom
 		modPanel.setCurrentObject _node.modifiers[index_from_bottom] ui:true
 
 	),
@@ -132,19 +133,81 @@ struct LastActiveModifier_v
 
 global LastActiveModifier = LastActiveModifier_v()
 
+
+
+/** addScript #modPanelObjPostChange callback when selection is really changed
+  *
+  * This method avoid re selection of same object
+  *
+  *
+ */
+function selectionChangedModifierActivate =
+(
+	--clearListener()
+	print "Callback: SelectionSetChanged()"
+	try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
+	--print GLOBAL_SELECTION_LAST as string
+	if( selection.count == 1 ) then
+	(
+		obj = selection[1]
+		format "LastActiveModifier = % \n" LastActiveModifier
+		--try(callbacks.removeScripts #selectionSetChanged id:#selectionChangedModifierActivate)catch()
+
+		if( LastActiveModifier.nodeExists selection[1] ) then
+		(
+			print "Node exists in LastActiveModifier"
+			
+			if ( LastActiveModifier.selectionChanged obj ) then -- avoid reselect of same node
+			(
+				print "SELECTION CHANGED"
+				LastActiveModifier.setNode obj
+				
+				try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
+				callbacks.addScript #modPanelObjPostChange "selectLastActiveModifier()" id:#selectLastActiveModifier
+				
+			)else
+				print "RE-SELECT"
+				
+
+		)
+		else
+		(
+			print "Node Does not exists in LastActiveModifier"
+
+			LastActiveModifier.addNode obj
+
+			callbacks.addScript #modPanelObjPostChange "watchModifyChange()" id:#watchModifyChange
+		)
+
+	)
+		--GLOBAL_MODIFIER_LAST = for o in selection collect o
+	else
+	(
+
+		print "DESELECT"
+		
+		--try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
+		LastActiveModifier._node = undefined 
+	)
+
+)
+
 /** Select last modifier
  */
-function selectLastModifier =
+function selectLastActiveModifier =
 (
-	print "Callback: selectLastModifier()"
+	print "Callback: selectLastActiveModifier()"
 	max modify mode
 
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then
 	(
-		print ("Stack is ready " + _modifier as string)
+		--print ("Stack is ready " + _modifier as string)
+		print "Callback: selectLastActiveModifier VALID" 
 
-		callbacks.removeScripts #modPanelObjPostChange id:#selectLastModifier
-		
+		format "LastActiveModifier = % \n" LastActiveModifier
+		--callbacks.removeScripts #modPanelObjPostChange id:#selectLastActiveModifier
+		--try(callbacks.removeScripts #selectionSetChanged id:#selectionChangedModifierActivate)catch()
+
 		LastActiveModifier.setNode selection[1]
 
 		LastActiveModifier.activate()
@@ -165,67 +228,24 @@ function watchModifyChange =
 
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then
 	(
-		print ("Modifier changed to " + _modifier as string)
+		print ("Active modifier " + _modifier as string)
 
 		if( LastActiveModifier.modifierExists selection[1] ) then 
 			 LastActiveModifier.saveModifier _modifier -- "Modifier exists in LastActiveModifier"
 		
 		else
 			LastActiveModifier.saveModifier _modifier -- "Modifier don`t exists in LastActiveModifier"
-	)
-
-)
-
-/** addScript #modPanelObjPostChange callback when selection is really changed
-  *
-  * This method avoid re selection of same object
-  *
-  *
- */
-function selectionChangedModifierActivate =
-(
-	--clearListener()
-	print "Callback: SelectionSetChanged()"
-	try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
-	--print GLOBAL_SELECTION_LAST as string
-	if( selection.count > 0 ) then
-	(
-		obj = selection[1]
-		--format "LastActiveModifier = % \n" LastActiveModifier
-
-		if( LastActiveModifier.nodeExists selection[1] ) then
-		(
-			print "Node exists in LastActiveModifier"
 			
-			if ( LastActiveModifier.selectionChanged obj ) then -- avoid reselect of same node
-			(
-				print "Another node has been selected"
-				LastActiveModifier.setNode obj
-				
-				callbacks.addScript #modPanelObjPostChange "selectLastModifier()" id:#selectLastModifier
-			)
-
-		)
-		else
-		(
-			print "Node Does not exists in LastActiveModifier"
-
-			LastActiveModifier.addNode obj
-
-			callbacks.addScript #modPanelObjPostChange "watchModifyChange()" id:#watchModifyChange
-		)
-
-	)
-		--GLOBAL_MODIFIER_LAST = for o in selection collect o
-	else
-	(
-
-		print "Deselected objects"
-		try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
-
+		--format "LastActiveModifier = % \n" LastActiveModifier
 	)
 
 )
+
+try(callbacks.removeScripts #selectionSetChanged id:#selectionChangedModifierActivate)catch()
+try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
+try(callbacks.removeScripts #modPanelObjPostChange id:#selectLastActiveModifier)catch()
+
+
 
 callbacks.addScript #selectionSetChanged "selectionChangedModifierActivate()" id:#selectionChangedModifierActivate
 --callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange
