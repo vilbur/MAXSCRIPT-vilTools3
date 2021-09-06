@@ -1,13 +1,24 @@
+global GLOBAL_SELECTION_MODIFIERS = #( #(), #() )
 
 
-/** Selection set changed callback
+
+/** modPanelObjPostChange 
+ *	
  */
-function modPanelSubObjectLevelChangedCallback =
+function modPanelObjPostChangeCallback =
 (
-	local subobjects = callbacks.notificationParam()
-	format "subobjects = % \n" subobjects
-
-	--messageBox "modPanelSubObjectLevelChangedCallback" beep:false
+	print "modPanelObjPostChangeCallback()"
+	--print ( modPanel.getCurrentObject() )
+	if ( ( cutrent_obj = modPanel.getCurrentObject() ) != undefined ) then
+	(
+		
+		LastActiveModifier.add selection[1] cutrent_obj
+		--print "modPanelObjPostChangeCallback()"
+		format "LastActiveModifier = % \n" LastActiveModifier
+	)
+	
+	--	print ("Modifier "+ cutrent_obj as string +" Selected")		
+	--
+	--else
+	--	print "Modifier Unselected"		
 )
-
-

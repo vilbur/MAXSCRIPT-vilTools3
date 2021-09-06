@@ -1,11 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Callback/Callback.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/CallbackType/CallbackType.ms" )
 
-/** FileIn Callback functions 
- *	
- */
-for file in ( sort ( getFiles ( getFilenamePath(getSourceFileName()) + "/CallbackFunctions/*.ms"))  ) do
-	filein file
 
 
 global callback_type_names_v	= #( #SelectionSetChanged, #ModPanelSubObjectLevelChanged )
@@ -97,11 +92,15 @@ struct Callbacks_v
 	)
 )
 
+
 /** Startup callbacks 
  *	
  */
 global CallbacksHolder = Callbacks_v()
 
 
-CallbacksHolder.start #SelectionSetChanged "setLastSelectedNodes"
-
+/** FileIn Callback functions 
+ *	
+ */
+for file in ( sort ( getFiles ( getFilenamePath(getSourceFileName()) + "/CallbackFunctions/*.ms"))  ) do
+	filein file
