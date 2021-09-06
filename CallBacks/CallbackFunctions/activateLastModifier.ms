@@ -52,10 +52,16 @@ struct LastActiveModifier_v
 	
 	/** Add
 	 */
-	function saveModifier modifier =
+	function saveModifier current_modifier =
 	(
 		print "LastActiveModifier_v.saveModifier()"
-		_modifier = modifier
+		format "superClassOf current_modifier = % \n" (superClassOf current_modifier)
+		if( superClassOf current_modifier != modifier ) then
+			return false
+
+		
+		
+		_modifier = current_modifier
 
 		modifiers[this.findNode()] = this._getIndexFromBottom( modPanel.getModifierIndex _node _modifier )
 	),
@@ -87,6 +93,11 @@ struct LastActiveModifier_v
 	 */
 	function _getIndexFromBottom index =
 	(
+		
+		if( index == undefined ) then
+			return false
+		
+		
 		_node.modifiers.count + 1 - ( index )
 	),
 
@@ -98,8 +109,10 @@ struct LastActiveModifier_v
 		print "LastActiveModifier.activate()"
 		format "_node = % \n" _node
 		format "_modifier = % \n" _modifier
-		--if( _modifier == undefined ) then
-			--return false
+		format "LastActiveModifier = % \n" LastActiveModifier
+
+		if( _modifier == undefined ) then
+			return false
 
 		format "node_index = % \n" (this.findNode())
 
@@ -209,6 +222,8 @@ function selectLastActiveModifier =
 		--try(callbacks.removeScripts #selectionSetChanged id:#selectionChangedModifierActivate)catch()
 
 		LastActiveModifier.setNode selection[1]
+		
+		try(callbacks.removeScripts #modPanelObjPostChange id:#selectLastActiveModifier)catch()
 
 		LastActiveModifier.activate()
 
