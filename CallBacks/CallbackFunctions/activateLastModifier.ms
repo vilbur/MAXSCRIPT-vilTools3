@@ -24,7 +24,12 @@ struct LastActiveModifier_v
 	nodes     = #(),
 	modifiers = #(),
 	
-	
+	/** Set node
+	 */
+	function setNode obj =
+	(
+		_node = obj
+	),
 	/** Find object in this.nodes #()
 	  *
 	  * @return	int	index of object in arrray
@@ -60,7 +65,7 @@ struct LastActiveModifier_v
 		node_index = this.findNode()
 		
 				
-		--format "node_index = % \n" node_index
+		format "node_index = % \n" node_index
 		---- format "this._getIndexFromBottom() = % \n" (this._getIndexFromBottom())
 		--format "this.findNode() = % \n" (this.findNode())
 		----modifiers[this.findNode()] = this._getIndexFromBottom()
@@ -237,13 +242,13 @@ function watchModifyChange =
 		
 		if( LastActiveModifier.modifierExists selection[1] ) then 
 		(
-			print "modifier exists"
+			print "Modifier exists"
 			LastActiveModifier.saveModifier _modifier
 
 		)
 		else
 		(
-			print "Modifier Don`t exists"
+			print "Modifier don`t exists"
 			LastActiveModifier.saveModifier _modifier
 		)
 		format "LastActiveModifier.modifiers = % \n" LastActiveModifier.modifiers
@@ -263,7 +268,7 @@ function watchModifyChange =
  */
 function selectionChangedModifierActivate =
 (
-	clearListener()
+	--clearListener()
 	print "Callback: SelectionSetChanged()"
 	try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
 	--print GLOBAL_SELECTION_LAST as string
@@ -275,7 +280,9 @@ function selectionChangedModifierActivate =
 		if( LastActiveModifier.nodeExists selection[1] ) then
 		(
 			print "Node Exists"
+			format "selection[1] = % \n" selection[1]
 			--LastActiveModifier.addNode selection[1]
+			LastActiveModifier.setNode selection[1]
 			print "addScript #modPanelObjPostChange selectLastModifier()"
 			callbacks.addScript #modPanelObjPostChange "selectLastModifier()" id:#selectLastModifier
 
@@ -284,6 +291,7 @@ function selectionChangedModifierActivate =
 		(
 			LastActiveModifier.addNode selection[1]
 			print "addScript #modPanelObjPostChange watchModifyChange()"
+
 			callbacks.addScript #modPanelObjPostChange "watchModifyChange()" id:#watchModifyChange
 			
 		)
