@@ -18,7 +18,7 @@ struct LastActiveModifier_v
 	/* dependency */
 	/* reference */
 	/* properties */
-	_obj,
+	_node,
 	_modifier,
 	
 	nodes     = #(),
@@ -41,7 +41,7 @@ struct LastActiveModifier_v
 		
 		appendIfUnique nodes obj
 		
-		_obj = obj
+		_node = obj
 		
 		format "nodes = % \n" nodes
 
@@ -52,33 +52,36 @@ struct LastActiveModifier_v
 	(
 		print "LastActiveModifier_v.saveModifier()"
 		_modifier = modifier
-		
-		--appendIfUnique nodes _obj
-		--		clearListener()
-		----this.find obj --ret this._getIndexFromBottom()urn
-		-- --this._getIndexFromBottom()
+		--
+		----appendIfUnique nodes _node
+		----		clearListener()
+		------this.find obj --ret this._getIndexFromBottom()urn
+		---- --this._getIndexFromBottom()
 		node_index = this.findNode()
-		format "node_index = % \n" node_index
-		-- format "this._getIndexFromBottom() = % \n" (this._getIndexFromBottom())
-		format "this.findNode() = % \n" (this.findNode())
-		--modifiers[this.findNode()] = this._getIndexFromBottom()
-		format "nodes = % \n" nodes
+		
+				
+		--format "node_index = % \n" node_index
+		---- format "this._getIndexFromBottom() = % \n" (this._getIndexFromBottom())
+		--format "this.findNode() = % \n" (this.findNode())
+		----modifiers[this.findNode()] = this._getIndexFromBottom()
+		--format "nodes = % \n" nodes
+		--
+		--if( this._modifierExists node_index ) then 
+		--(
+		--	print "modifier exists"
+		--	modifiers[node_index]
 
-		if( this._modifierExists node_index ) then 
-		(
-			print "modifier exists"
-			modifiers[node_index]
 
-		)
-		else
-		(
-			print "modifier Dont exists"
-			modifiers[node_index] = modifier
-		)
+		--)
+		--else
+		--(
+		--	print "modifier Dont exists"
+			modifiers[node_index] = this._getIndexFromBottom( modPanel.getModifierIndex _node _modifier )
+		--)
 		
 		
 		--format "this.index() = % \n" (this.index())
-		--modPanel.setCurrentObject _obj.modifiers[this.index()] ui:true
+		--modPanel.setCurrentObject _node.modifiers[this.index()] ui:true
 
 	),
 
@@ -89,63 +92,65 @@ struct LastActiveModifier_v
 	 */
 	function findNode =
 	(
-		findItem nodes _obj --return
+		findItem nodes _node --return
 	),
 	
 	/** Mode exists
 	 */
-	function _modifierExists node_index =
+	function modifierExists node_index =
 	(
 		--print "modeExists()"
-		modifiers[node_index] != undefined --return
+		--node_index = this.findNode()
+
+		
+		
+		modifiers[this.findNode()] != undefined --return
 	),
 	
 	/** Get index of modifier from modify stack
 	 */
 	function index =
 	(
-		modPanel.getModifierIndex _obj _modifier
+		modPanel.getModifierIndex _node _modifier
 	),	
 	
 	/** Get index from bottom
 	 */
-	function _getIndexFromBottom =
+	function _getIndexFromBottom index =
 	(
 		format "_modifier = % \n" _modifier
-		index_current = _obj.modifiers.count + 1 - ( modPanel.getModifierIndex _obj _modifier )
-
-		
-		
+		_node.modifiers.count + 1 - ( index )
 	),
 	
 	/** Activate
 	 */
-	function activate modifier =
+	function activate =
 	(
 		--clearListener()
 		print "LastActiveModifier.activate()"
 		format "modifier = % \n" modifier
 		
-		--for mod in obj.modifiers where do
+		node_index = this.findNode()
 		
-		--selection_changed = this.setObj obj
-		--format "selection_changed = % \n" selection_changed
+		format "node_index = % \n" node_index
+		
+		stack_index = this._getIndexFromBottom(modifiers[node_index])
+		-- format "this._getIndexFromBottom() = % \n" (this._getIndexFromBottom())
+		--format "this.findNode() = % \n" (this.findNode())
+		----modifiers[this.findNode()] = this._getIndexFromBottom()
+		--format "nodes = % \n" nodes
 		--
-		--if( selection_changed ) then 
+		--if( this._modifierExists node_index ) then 
 		--(
-		--	--this._setCurrentModifier()
-		--	--this._addModifier()
-		--	try
-		--	(
-		--		callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange
-		--	)
-		--	catch()
-		--print "addScript LastActiveModifier.activate()"
+		--	print "modifier exists"
+		--	modifiers[node_index]
 		--
-		--	callbacks.addScript #modPanelObjPostChange "watchModifyChange()" id:#watchModifyChange
-		--
-		--	
 		--)
+		modPanel.setCurrentObject _node.modifiers[stack_index] ui:true
+
+			--callbacks.addScript #selectionSetChanged "activateLastModifier()" id:#activateLastModifier
+
+		
 		--format "LastActiveModifier = % \n" LastActiveModifier
 		--
 	
@@ -155,9 +160,9 @@ struct LastActiveModifier_v
 	 */
 	function selectionChanged obj =
 	(
-		if( _obj	!= obj ) then
+		if( _node	!= obj ) then
 		(
-			_obj	= obj
+			_node	= obj
 			true --return
 		)
 		else
@@ -188,6 +193,28 @@ struct LastActiveModifier_v
 global LastActiveModifier = LastActiveModifier_v()
 
 
+/** Select last modifier
+ */
+function selectLastModifier =
+(
+	print "Callback: selectLastModifier()"
+	max modify mode
+	--format "_modifier = % \n" _modifier
+		
+	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then
+	(
+		print ("Stack is ready " + _modifier as string)
+		
+		callbacks.removeScripts #modPanelObjPostChange id:#selectLastModifier
+		
+		LastActiveModifier.activate()
+		
+		callbacks.addScript #modPanelObjPostChange "watchModifyChange()" id:#watchModifyChange
+
+
+	)
+)
+
 
 /** Wait for valid #modPanelObjPostChange callback
   * #modPanelObjPostChange is fired multiple times with undefined modifier
@@ -196,7 +223,7 @@ global LastActiveModifier = LastActiveModifier_v()
  */
 function watchModifyChange =
 (
-	print "watchModifyChange()"
+	print "Callback: watchModifyChange()"
 	max modify mode
 		
 --_modifier = modPanel.getCurrentObject()
@@ -204,9 +231,23 @@ function watchModifyChange =
 		
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then
 	(
-		print ("Modifier changed " + _modifier as string)
+		print ("Modifier changed to " + _modifier as string)
 		
-		LastActiveModifier.saveModifier _modifier
+		--LastActiveModifier.saveModifier _modifier
+		
+		if( LastActiveModifier.modifierExists selection[1] ) then 
+		(
+			print "modifier exists"
+			LastActiveModifier.saveModifier _modifier
+
+		)
+		else
+		(
+			print "Modifier Don`t exists"
+			LastActiveModifier.saveModifier _modifier
+		)
+		format "LastActiveModifier.modifiers = % \n" LastActiveModifier.modifiers
+		
 	)
 
 	--format "LastActiveModifier = % \n" LastActiveModifier
@@ -223,17 +264,20 @@ function watchModifyChange =
 function selectionChangedModifierActivate =
 (
 	clearListener()
-	print "SelectionSetChanged()"
+	print "Callback: SelectionSetChanged()"
+	try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
 	--print GLOBAL_SELECTION_LAST as string
 	if( selection.count > 0 ) then
 	(
 		--format "LastActiveModifier = % \n" LastActiveModifier
 		
-		try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
 
 		if( LastActiveModifier.nodeExists selection[1] ) then
 		(
 			print "Node Exists"
+			--LastActiveModifier.addNode selection[1]
+			print "addScript #modPanelObjPostChange selectLastModifier()"
+			callbacks.addScript #modPanelObjPostChange "selectLastModifier()" id:#selectLastModifier
 
 		)
 		else
