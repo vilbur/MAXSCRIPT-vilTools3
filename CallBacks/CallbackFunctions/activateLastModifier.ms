@@ -144,6 +144,8 @@ function selectLastModifier =
 		print ("Stack is ready " + _modifier as string)
 
 		callbacks.removeScripts #modPanelObjPostChange id:#selectLastModifier
+		
+		LastActiveModifier.setNode selection[1]
 
 		LastActiveModifier.activate()
 
@@ -166,16 +168,10 @@ function watchModifyChange =
 		print ("Modifier changed to " + _modifier as string)
 
 		if( LastActiveModifier.modifierExists selection[1] ) then 
-		(
-			print "Modifier exists"
-			LastActiveModifier.saveModifier _modifier
-		)
+			 LastActiveModifier.saveModifier _modifier -- "Modifier exists in LastActiveModifier"
+		
 		else
-		(
-			print "Modifier don`t exists"
-			LastActiveModifier.saveModifier _modifier
-		)
-		format "LastActiveModifier.modifiers = % \n" LastActiveModifier.modifiers
+			LastActiveModifier.saveModifier _modifier -- "Modifier don`t exists in LastActiveModifier"
 	)
 
 )
@@ -194,22 +190,27 @@ function selectionChangedModifierActivate =
 	--print GLOBAL_SELECTION_LAST as string
 	if( selection.count > 0 ) then
 	(
+		obj = selection[1]
 		--format "LastActiveModifier = % \n" LastActiveModifier
 
 		if( LastActiveModifier.nodeExists selection[1] ) then
 		(
-			print "Node Exists"
-			format "selection[1] = % \n" selection[1]
-			--LastActiveModifier.addNode selection[1]
-			LastActiveModifier.setNode selection[1]
-			--print "addScript #modPanelObjPostChange selectLastModifier()"
-			callbacks.addScript #modPanelObjPostChange "selectLastModifier()" id:#selectLastModifier
+			print "Node exists in LastActiveModifier"
+			
+			if ( LastActiveModifier.selectionChanged obj ) then -- avoid reselect of same node
+			(
+				print "Another node has been selected"
+				LastActiveModifier.setNode obj
+				
+				callbacks.addScript #modPanelObjPostChange "selectLastModifier()" id:#selectLastModifier
+			)
 
 		)
 		else
 		(
-			LastActiveModifier.addNode selection[1]
-			print "addScript #modPanelObjPostChange watchModifyChange()"
+			print "Node Does not exists in LastActiveModifier"
+
+			LastActiveModifier.addNode obj
 
 			callbacks.addScript #modPanelObjPostChange "watchModifyChange()" id:#watchModifyChange
 		)
