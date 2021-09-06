@@ -176,11 +176,11 @@ function selectionChangedModifierActivate =
 				LastActiveModifier.setNode obj
 				
 				try(callbacks.removeScripts #modPanelObjPostChange id:#watchModifyChange)catch()
-				callbacks.addScript #modPanelObjPostChange "selectLastActiveModifier()" id:#selectLastActiveModifier
 				
 			)else
 				print "RE-SELECT"
 				
+			callbacks.addScript #modPanelObjPostChange "selectLastActiveModifier()" id:#selectLastActiveModifier
 
 		)
 		else
