@@ -14,20 +14,20 @@ function disableInstancedModifiersOnEdit =
 
 	
 	
-	_object =  if( selection.count > 0 ) then 
+	_obj =  if( selection.count > 0 ) then 
 		selection[1]
 	else
 		GLOBAL_SELECTION_LAST[1]
 	
+	
 	modifier_state = selection.count == 0
 	
-	
-	instanced = Modifiers.getInstancedModifiers _object
+	instanced = Modifiers.getInstancedModifiers _obj
 	
 	format "instanced = % \n" instanced
 	
-	for modifier in _object.modifiers where findItem instanced modifier > 0 do
-		modifier.enabled = modifier_state
+	for _modifier in _obj.modifiers where findItem instanced _modifier > 0 do
+		_modifier.enabled = modifier_state
 	
 
 

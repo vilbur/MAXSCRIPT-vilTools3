@@ -29,6 +29,14 @@ struct Modifiers_v
 	(
 		
 	),
+	
+	/** Get instanced modifiers
+	 */
+	function getInstancedModifiers obj =
+	(
+		for modifier in (this._getModifiers obj) where refhierarchy.isRefTargetInstanced modifier collect modifier
+	),
+
 	/** Search for first edit poly modifier from top
 	 */
 	function search obj _modifier =

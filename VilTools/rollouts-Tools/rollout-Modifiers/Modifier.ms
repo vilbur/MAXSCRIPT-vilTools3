@@ -1,8 +1,9 @@
-filein( getFilenamePath(getSourceFileName()) + "/Modifiers/Modifiers.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Modifiers/Modifiers.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/../rollout-Selection/Selection.ms" )
 
 /** Modifier
-https://help.autodesk.com/view/3DSMAX/2017/ENU/?guid=__files_GUID_DB496ACA_1506_4FB1_B8F8_EECC7D9794DD_htm  
+  *
+  * https://help.autodesk.com/view/3DSMAX/2017/ENU/?guid=__files_GUID_DB496ACA_1506_4FB1_B8F8_EECC7D9794DD_htm  
  */
 struct Modifier_v
 (
@@ -98,7 +99,7 @@ struct Modifier_v
 		if( modifier == undefined ) then
 			this.setCurrent()
 
-		this.setIniPath()
+		this._setIniPath()
 	),
 	
 	/** Format datatype of value
@@ -146,7 +147,7 @@ struct Modifier_v
 	
 	/** Set ini path
 	 */
-	function setIniPath =
+	function _setIniPath =
 	(
 		ini = (getFilenamePath(getSourceFileName())) + "Modifiers\\ModifierTypes\\"+type as string +".ini"
 		--format "ini = % \n" ini
@@ -206,6 +207,3 @@ struct Modifier_v
 	
 	)
 )
-
-
-
