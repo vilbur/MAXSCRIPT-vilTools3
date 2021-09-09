@@ -20,7 +20,7 @@ tooltip:	"Save  preset of current modifier"
 	(Modifier_v()).savePreset()
 )	
 
-macroscript	modifier_load_preset
+macroscript	modifier_load_preset   
 category:	"_Modifiers"  
 buttonText:	"Preset"
 tooltip:	"Load preset of current modifier\n–\nName of modifier is preset name"

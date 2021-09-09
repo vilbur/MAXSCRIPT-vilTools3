@@ -9,7 +9,7 @@ tooltip:	"Enter to subobject or find modifier with subobjects or add edit poly"
 )
 macroscript	enter_subobject_circle_test
 category:	"_Subobject-Test" 
-buttonText:	"Enter circle"
+buttonText:	"Enter circle Test"
 tooltip:	"Circle subobjects  1, 2, 4"
 (
 	Subobject	= Subobject_v()

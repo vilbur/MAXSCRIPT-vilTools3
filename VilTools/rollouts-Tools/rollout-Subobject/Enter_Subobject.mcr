@@ -46,7 +46,7 @@ tooltip:	"Enter to subobject 5"
 	(Subobject_v()).enterToogle 5
 )
 
-macroscript	enter_subobject_circle
+macroscript	enter_subobject_circle_x
 category:	"_Subobject" 
 buttonText:	"Enter circle"
 tooltip:	"Circle subobjects  1, 2, 4"
