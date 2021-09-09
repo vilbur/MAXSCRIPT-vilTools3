@@ -59,7 +59,7 @@ macroscript	modifier_chamfer_add_with_preset
 category:	"_Modifiers"  
 buttonText:	"Chamfer"
 --tooltip:	"Menu|Menu_RC"
-tooltip:	"Menu\nRMB+Ctrl: Presets"
+tooltip:	"Menu\nRMB+Ctrl:	Presets"
 (
 	
 	ctrl = keyboard.controlPressed;

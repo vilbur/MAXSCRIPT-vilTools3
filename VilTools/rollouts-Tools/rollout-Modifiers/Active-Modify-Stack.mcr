@@ -2,13 +2,20 @@
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/DynamicModifyPanel/DynamicModifyPanel.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/DynamicModifyPanel/waitSelectionChange.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/DynamicModifyPanel/onSelectionChangedWaitForStack.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/waitModifierChange.ms" )
+
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/ActivateFirstEditPoly.ms" )
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
+
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableInstancedModifiersOnEdit.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/ActivateFirstEditPoly.ms" )
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveModifierChange.ms" )
+
 
 /*
 *	
@@ -49,6 +56,21 @@ icon:	"type:checkbox|columns:8"
 		waitSelectionChangedCallback()
 	)
 )
+
+/**  
+ *	
+ */
+macroscript	modifiers_disable_on_edit
+category:	"_Modifiers"
+buttontext:	"Disable modifiers"
+toolTip:	"Disable modifiers on edit"
+icon:	"type:checkbox|columns:8"
+(
+	
+		format "ROLLOUT_modifiers.CHECKBOX_disable_modifiers.state = % \n" ROLLOUT_modifiers.CHECKBOX_disable_modifiers.state
+
+)
+
 
 --/*
 --*	

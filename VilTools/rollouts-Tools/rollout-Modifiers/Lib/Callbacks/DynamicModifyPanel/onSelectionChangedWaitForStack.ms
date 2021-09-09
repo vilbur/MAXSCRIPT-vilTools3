@@ -66,7 +66,7 @@ function onSelectionChangedWaitForStack =
 (
 	--print "Callback: onSelectionChangedWaitForStack()"
 				
-	if( selection.count > 0 ) then
+	if( selection.count == 1 ) then
 	(
 		print "Callback: onSelectionChangedWaitForStack()"
 		
@@ -79,9 +79,9 @@ function onSelectionChangedWaitForStack =
 			print "Object reselected"
 		--selection_changed =  DynamicModifyPanel.selectionChanged obj
 	)
-	else
+	else if( selection.count == 0 ) then
 	(
-		print "DESELECT - reset all callbacks"
+		print "DESELECTED ALL"
 		
 		--waitSelectionChangedKill()
 		waitModifierChangeKill()
@@ -93,31 +93,6 @@ function onSelectionChangedWaitForStack =
 	)
 )
 
-
-
-/** Keep last temp
- */
-function activateLastModifier =
-(
-	print "Activate Last Modifier"
-	obj        = selection[1];
-	node_exist =  DynamicModifyPanel.nodeExists obj
-	--format "node_exist = % \n" node_exist
-	DynamicModifyPanel.setNode obj
-
-	if( node_exist ) then -- Node exists in DynamicModifyPanel
-	(
-		waitModifiyStackReadyKill()
-		
-		DynamicModifyPanel.activate() -- Wait if user elect modifier in stack or will select another object
-
-		waitModifierChangeCallback() -- wait for another change of modifier
-	)
-	else
-		waitModifierChangeCallback() --  "Node is selected first time"
-	
-
-)
 
 
 /** Wait then modify stack is loaded
