@@ -1,18 +1,20 @@
 global GLOBAL_SELECTION_LAST
+global GLOBAL_SELECTION_LAST_BUFFER
 
-/** Get last selected nodes
+/** Set last selected objects to variable
  */
 function setSelectionLast =
 (
-	--print "setLastSelectedNodes()"
-	--print GLOBAL_SELECTION_LAST as string
+	print "setSelectionLast"
 	if( selection.count > 0 ) then
 	(
-		GLOBAL_SELECTION_LAST = for o in selection collect o
+		GLOBAL_SELECTION_LAST = GLOBAL_SELECTION_LAST_BUFFER
+
+		GLOBAL_SELECTION_LAST_BUFFER = for o in selection collect o
 	)
 	else	
 	format "GLOBAL_SELECTION_MODIFIERS = % \n" GLOBAL_SELECTION_MODIFIERS
 )
 
 
-try( callbacks.addScript callback_type_name callback id:callback )catch()
+callbacks.addScript #selectionSetChanged "setSelectionLast()" id:#setSelectionLast
