@@ -25,7 +25,7 @@ function activateFirstEditPoly =
 	max modify mode
 
 	print "Callback: activateFirstEditPoly()"
-format "modPanel.getCurrentObject() = % \n" (modPanel.getCurrentObject())
+
 	if( selection.count > 1 and ( modPanel.getCurrentObject() ) != undefined ) then
 	(
 		for _modifier in selection[1].modifiers do 

@@ -53,8 +53,6 @@ struct DynamicModifyPanel_v
 		
 		if ( (index_current = modPanel.getModifierIndex _node _modifier) != undefined and this._isTopModifierSelected index_current == false ) then
 		(
-			
-			
 			if( (index_from_bottom = this._getIndexFromBottom index_current) != false ) then
 				modifiers[this.indexNode()] = index_from_bottom
 			
