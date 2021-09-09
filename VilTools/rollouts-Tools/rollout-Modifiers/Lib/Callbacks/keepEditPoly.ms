@@ -8,6 +8,7 @@ function keepEditPolyCallback =
 	callbacks.addScript #modPanelObjPostChange "keepEditPoly()" id:#keepEditPoly
 )
 
+
 /** Wait for modifier change callback
  */
 function keepEditPolyKill =
@@ -17,9 +18,18 @@ function keepEditPolyKill =
 )
 
 
-/** Keep edit poly
+/** Activate first Edit Poly modifier in stack from top
  */
-function keepEditPoly =
+function activateFirstEditPoly =
 (
-	print "keepEditPoly()"
+	max modify mode
+
+	print "Callback: activateFirstEditPoly()"
+format "modPanel.getCurrentObject() = % \n" (modPanel.getCurrentObject())
+	if( selection.count > 1 and ( modPanel.getCurrentObject() ) != undefined ) then
+	(
+		for _modifier in selection[1].modifiers do 
+			format "_modifier = % \n" _modifier
+		
+	)
 )

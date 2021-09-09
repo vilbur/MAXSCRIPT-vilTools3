@@ -1,12 +1,12 @@
 /** Last active modifier
  *
- * 1) Save node and index of modifier to LastActiveModifier
+ * 1) Save node and index of modifier to DynamicModifyPanel
  *
  * TODO:
  * 	1) Reset after file open
  *
  */
-struct LastActiveModifier_v
+struct DynamicModifyPanel_v
 (
 	--__construct = #(  ),
 
@@ -20,11 +20,19 @@ struct LastActiveModifier_v
 	nodes     = #(),
 	modifiers = #(),
 	
+	
+	/** Selection changed
+	 */
+	function selectionChanged obj =
+	(
+		_node != obj
+	),
+	
 	/** Set node
 	 */
 	function setNode obj =
 	(
-		print ("LastActiveModifier_v.setNode " +  obj.name)
+		print ("DynamicModifyPanel_v.setNode " +  obj.name)
 		appendIfUnique nodes obj
 
 		_node = obj
@@ -37,9 +45,9 @@ struct LastActiveModifier_v
 	 */
 	function saveModifier current_modifier =
 	(
-		--print "LastActiveModifier_v.saveModifier()"
+		--print "DynamicModifyPanel_v.saveModifier()"
 		if( superClassOf current_modifier != modifier ) then
-			return print "LastActiveModifier_v modifier not saved"
+			return print "DynamicModifyPanel_v modifier not saved"
 		
 		_modifier     = current_modifier
 		
@@ -50,7 +58,7 @@ struct LastActiveModifier_v
 			if( (index_from_bottom = this._getIndexFromBottom index_current) != false ) then
 				modifiers[this.indexNode()] = index_from_bottom
 			
-			print "LastActiveModifier_v Modifier saved"
+			print "DynamicModifyPanel_v Modifier saved"
 		)
 		else
 			print "Top Modifier Selected"
@@ -61,7 +69,7 @@ struct LastActiveModifier_v
 	 */
 	function activate =
 	(
-		print "LastActiveModifier.activate()"
+		print "DynamicModifyPanel.activate()"
 		
 		if( _modifier == undefined or (this.modifierIndexExists()) == false ) then
 			return false
@@ -138,4 +146,4 @@ struct LastActiveModifier_v
 
 
 
-global LastActiveModifier = LastActiveModifier_v()
+global DynamicModifyPanel = DynamicModifyPanel_v()

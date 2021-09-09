@@ -1,19 +1,5 @@
-/** Wait for modifier change callback
- */
-function waitForModifierChangeCallback =
-(
-	print "Start: onModifierChanged()"
-	callbacks.addScript #modPanelObjPostChange "onModifierChanged()" id:#onModifierChanged
-)
 
 
-/** Wait for modifier change callback
- */
-function waitForModifierChangeKill =
-(
-	print "Kill: waitForModifierChangeKill()"
-	try(callbacks.removeScripts #modPanelObjPostChange id:#onModifierChanged)catch()
-)
 
 
 /** Wait for valid #modPanelObjPostChange callback
@@ -28,5 +14,5 @@ function onModifierChanged =
 	max modify mode
 
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then
-		LastActiveModifier.saveModifier _modifier
+		DynamicModifyPanel.saveModifier _modifier
 )
