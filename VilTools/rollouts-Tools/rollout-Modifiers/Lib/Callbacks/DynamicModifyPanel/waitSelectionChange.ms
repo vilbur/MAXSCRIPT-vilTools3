@@ -119,15 +119,6 @@ function activateLastModifier =
 
 )
 
-/** Keep last temp
- */
-function activateEditPoly =
-(
-	print "Activate Edit Poly"
-
-
-
-)
 
 /** Wait then modify stack is loaded
  */
@@ -144,8 +135,8 @@ function onModifyStackReady =
 		if( ROLLOUT_modifiers.CHECKBOX_keep_last.state ) then
 			activateLastModifier()
 		
-		else if( ROLLOUT_modifiers.CHECKBOX_keep_edit_poly.state ) then 
-			activateEditPoly()
+		else if( ROLLOUT_modifiers.CHECKBOX_first_edit_poly.state ) then 
+			activateFirstEditPoly()
 
 	)
 )

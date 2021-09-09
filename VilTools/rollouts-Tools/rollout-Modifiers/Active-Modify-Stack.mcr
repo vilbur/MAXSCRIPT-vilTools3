@@ -8,14 +8,14 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/waitModifierChang
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableInstancedModifiersOnEdit.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/keepEditPoly.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/ActivateFirstEditPoly.ms" )
 
 /*
 *	
 */	
-macroscript	modifiers_keep_edit_poly
+macroscript	modifiers_activate_edit_poly
 category:	"_Modifiers"  
-buttonText:	"Keep Edit Poly"
+buttonText:	"First Edit Poly"
 tooltip:	"Keep Active the most top Edit Poly modifier"
 icon:	"type:checkbox|columns:8"
 (
@@ -44,7 +44,7 @@ icon:	"type:checkbox|columns:8"
 	(
 		waitSelectionChangedKill()
 
-		ROLLOUT_modifiers.CHECKBOX_keep_edit_poly.state = false
+		ROLLOUT_modifiers.CHECKBOX_first_edit_poly.state = false
 		
 		waitSelectionChangedCallback()
 	)
