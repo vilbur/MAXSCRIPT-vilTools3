@@ -31,7 +31,7 @@ buttonText:	"Modeling"
 tooltip:	"Shade material for modeling"
 icon:	"type:checkbutton"
 (
-	global MODELING_MATERIAL_STORE = #( )
+	global MODELING_MATERIAL_STORE = #( ) -- TODO: rename this to some meaningful name
 	
 	
 	if( EventFired.value == true ) then
