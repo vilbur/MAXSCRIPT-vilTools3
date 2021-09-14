@@ -3,6 +3,14 @@ filein( getFilenamePath(getSourceFileName()) + "/Material.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callback/setModelingMaterial.ms" )
 
 
+/** KILL CALLBACKS ON START 
+ *	
+ */
+
+setModelingMaterialKill()
+
+
+
 /**  Create multimaterial where each material ID has different color
  */
 macroscript	material_assign_idmat
@@ -23,9 +31,7 @@ buttonText:	"Modeling"
 tooltip:	"Shade material for modeling"
 icon:	"type:checkbutton"
 (
-	
-	--global MODELING_MATERIAL_SOTRE = #( #(), #())
-	global MATERIAL_STORE = #( )
+	global MODELING_MATERIAL_STORE = #( )
 	
 	
 	if( EventFired.value == true ) then
@@ -33,28 +39,7 @@ icon:	"type:checkbutton"
 		setSelectionLastKill()
 		setModelingMaterialCallback()
 		setSelectionLastCallback()
-
-		
-		--setModelingMaterialKill()
-		
-		--mat = StandardMaterial glossiness:0 specularLevel:0
-		--
-		--mat.diffuse = color 169 191 203
-		--	
-		--mat.name	= "Modeling"
-		--
-		--selection.material = mat
-		
-		
-	
-		
-		
 	)
 	else	
 		setModelingMaterialKill()
-	
-	format "EventFired = % \n" EventFired
-	
-
-	
 )
