@@ -24,19 +24,37 @@ tooltip:	"Shade material for modeling"
 icon:	"type:checkbutton"
 (
 	
-	--setModelingMaterialCallback()
-	setModelingMaterialKill()
-	
-	--mat = StandardMaterial glossiness:0 specularLevel:0
-	--
-	--mat.diffuse = color 169 191 203
-	--	
-	--mat.name	= "Modeling"
-	--
-	--selection.material = mat
+	--global MODELING_MATERIAL_SOTRE = #( #(), #())
+	global MATERIAL_STORE = #( )
 	
 	
+	if( EventFired.value == true ) then
+	(
+		setSelectionLastKill()
+		setModelingMaterialCallback()
+		setSelectionLastCallback()
+
+		
+		--setModelingMaterialKill()
+		
+		--mat = StandardMaterial glossiness:0 specularLevel:0
+		--
+		--mat.diffuse = color 169 191 203
+		--	
+		--mat.name	= "Modeling"
+		--
+		--selection.material = mat
+		
+		
 	
+		
+		
+	)
+	else	
+		setModelingMaterialKill()
 	
+	format "EventFired = % \n" EventFired
+	
+
 	
 )
