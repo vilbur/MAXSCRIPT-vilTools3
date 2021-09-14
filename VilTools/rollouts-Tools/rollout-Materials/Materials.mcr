@@ -31,15 +31,24 @@ buttonText:	"Modeling"
 tooltip:	"Shade material for modeling"
 icon:	"type:checkbutton"
 (
-	global MODELING_MATERIAL_STORE = #( ) -- TODO: rename this to some meaningful name
-	
+	global MODELING_MATERIAL_STORE = #( )
 	
 	if( EventFired.value == true ) then
 	(
 		setSelectionLastKill()
+		
 		setModelingMaterialCallback()
+		
 		setSelectionLastCallback()
 	)
-	else	
+	else
+	(
+		_selection = selection
+		
+		deselect selection
+		
 		setModelingMaterialKill()
+		
+		select _selection
+	)
 )
