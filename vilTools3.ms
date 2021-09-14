@@ -1,7 +1,12 @@
 clearListener()
 
 
+filein( getFilenamePath(getSourceFileName()) + "/Lib/DynamicModifyPanel/DynamicModifyPanel.ms" )
+
 filein( getFilenamePath(getSourceFileName()) + "/../Library/UI/Lib/ContentLoader/ContentLoader.ms" )
+
+filein( getFilenamePath(getSourceFileName()) + "/CallBacks/setSelectionLast.ms" )
+
 --filein( getFilenamePath(getSourceFileName()) + "/../Library/UI/Lib/Dialog/Dialog.ms" )
 --filein( getFilenamePath(getSourceFileName()) + "/includes.ms" )
 
@@ -19,13 +24,31 @@ filein( getFilenamePath(getSourceFileName()) + "/../Library/UI/Lib/ContentLoader
 
 current_dir	= getFilenamePath(getSourceFileName())
 format "current_dir = % \n" current_dir
-ContentLoader	= ContentLoader_v path:(current_dir+"/Dialog")
 
---format "ContentLoader.Dialog = % \n" ContentLoader.Dialog
+ContentLoader	= ContentLoader_v path:(current_dir+"/VilTools")
+
+
+
+
+--Dialog = ContentLoader.create()
+Dialog = ContentLoader.create height:512
+--Dialog = ContentLoader.create height:320
+--width:720
+--ContentLoader.create bgcolor:blue
 ContentLoader.Dialog.dock #right
+
+--Dialog.RolloutMain.Layout.fitSubrollouts dialog_height:472
+--format "ContentLoader.Dialog = % \n" ContentLoader.Dialog
+--ContentLoader.Dialog.undock()
+
+--Dialog.RolloutMain.property height:1024
+--format "Dialog.RolloutMain = % \n" Dialog.RolloutMain
+
 
 
 --ContentLoader.Dialog.width 320
+
+--(Callbacks_v()).start()
 
 
 
@@ -35,9 +58,6 @@ ContentLoader.Dialog.dock #right
 
 /*------ CREATE FLOATER DIALOG ------*/
 --Dialog.create()
-
-
-
 
 
 --Floater.Ini.dir  (getFilenamePath(getSourceFileName()))

@@ -1,8 +1,6 @@
 
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/DynamicModifyPanel/DynamicModifyPanel.ms" )
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/DynamicModifyPanel/onSelectionChangedWaitForStack.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionChangedWaitForStack.ms" )
 
 
 
@@ -13,8 +11,9 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModif
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableInstancedModifiersOnEdit.ms" )
 
-
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveModifierChange.ms" )
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersOnEdit.ms" )
 
 
 /*

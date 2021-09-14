@@ -74,6 +74,8 @@ function onSelectionChangedWaitForStack =
 		(
 			print "Selection changed"
 			waitModifiyStackReadyCallback()
+			
+			enableModifiersAfterEdit()
 
 		) else
 			print "Object reselected"
@@ -83,13 +85,15 @@ function onSelectionChangedWaitForStack =
 	(
 		print "DESELECTED ALL"
 		
-		--waitSelectionChangedKill()
 		waitModifierChangeKill()
 		waitModifiyStackReadyKill()
 
 		DynamicModifyPanel._node = undefined
 		
-		--waitSelectionChangedCallback()
+		enableModifiersAfterEdit()
+		
+		
+		
 	)
 )
 

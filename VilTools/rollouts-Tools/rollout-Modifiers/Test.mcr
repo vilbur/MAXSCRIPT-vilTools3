@@ -17,7 +17,8 @@ icon:	"columns:8"
 	
 	
 	modPanel.addModToSelection (Chamfer ()) ui:on
-	
+	$.modifiers[#Chamfer].amount = 3
+
 	modPanel.addModToSelection (Edit_Poly ()) ui:on
 	
 	modPanel.setCurrentObject _box.modifiers[#Edit_Poly]

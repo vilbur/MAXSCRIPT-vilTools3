@@ -77,7 +77,6 @@ struct DynamicModifyPanel_v
 		modPanel.setCurrentObject _node.modifiers[index_from_bottom] ui:true
 	),
 
-	
 	/** Find object in this.nodes #()
 	  *
 	  * @return	int	index of object in arrray
@@ -86,7 +85,6 @@ struct DynamicModifyPanel_v
 	(
 		(findItem nodes obj > 0) --return
 	),
-	
 	
 	/** Find object in this.nodes #()
 	  *
@@ -111,7 +109,6 @@ struct DynamicModifyPanel_v
 		_node.modifiers.count + 1 - ( index )
 	),
 
-	
 	/** Is top modifiers selected
 	 */
 	function _isTopModifierSelected index =
@@ -119,19 +116,17 @@ struct DynamicModifyPanel_v
 		index == 1 --return
 	),
 
-
 	/** Set obj
 	 */
 	function wasSelectionChanged obj =
 	(
-		if( _node	!= obj ) then
+		if( _node != obj ) then
 		(
 			_node	= obj
 			true --return
 		)
 		else
 			false --return
-
 	),
 
 	/**  

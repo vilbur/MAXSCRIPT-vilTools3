@@ -1,11 +1,13 @@
 
+/**  
+ */
 macroscript	material_material_by_object
 category:	"_Material"  
 buttonText:	"Mat By Object"
 tooltip:	"Set different material ID for each object"
 (
 	--EditPoly = Epoly_v()
-	_selection = (Selection_v()).get()
+	_selection = for o in geometry collect o
 	print ( "_selection=" + _selection.count as string )
 	
 	for i=1 to _selection.count do
@@ -17,6 +19,9 @@ tooltip:	"Set different material ID for each object"
 	select _selection
 	completeRedraw() 
 )
+
+/**  
+ */
 macroscript	material_select_faces_by_material_id
 category:	"_Material"
 buttontext:	"Sel Faces by Mat"
@@ -38,6 +43,8 @@ toolTip:	"Select faces by material id"
 )
 
 
+/**  
+ */
 macroscript	material_random_material
 category:	"_Material"  
 buttonText:	"Random"
@@ -59,6 +66,8 @@ tooltip:	"Set random material id for selection"
 	completeRedraw() 
 )
 
+/**  
+ */
 macroscript	material_select_objs_by_material
 category:	"_Material"  
 buttonText:	"Select By Mat"
@@ -71,7 +80,7 @@ tooltip:	"Select Objects By Material"
 		
 		-- Select ALL objects with this material
 		if MatEditor.isOpen() or (reqMatEditOpen == false) then (
-			if materialIndex > 0 and materialIndex < 25 then (	-- start index check
+			if materialIndex > 0 and materialIndex < 25 then (-- start index check
 				objarr = for o in objects where o.material == meditMaterials[materialIndex] collect o
 				-- Check if the obj is part of a group
 				for obj in objarr where isGroupMember obj AND (NOT isOpenGroupMember obj) do

@@ -1,4 +1,7 @@
 /** Material
+  *
+  * OLD CODE
+  *
  */
 struct Material_v
 (
@@ -84,12 +87,12 @@ struct Material_v
 		else
 			false
 	),
-	/** Create multimaterial where every diffuse color has different color
+	/** Create multimaterial where each material ID has different color
 	  * @return multimaterial
 	 */
 	function getIdMaterial =
 	(
-		mat_name = "IDmat"
+		mat_name = "Multi ID"
 		
 		mat_existing = this.getMat mat_name 
 		--print ( "mat_existing = " + mat_existing as string )
@@ -98,9 +101,11 @@ struct Material_v
 		
 		colors	= 6
 		
-		RGB	= this.getColorsPallete colors minmax:#(180,	200)
-		RGB_dark	= this.getColorsPallete colors minmax:#(160,	180)
-		RGB_darker	= this.getColorsPallete colors minmax:#(140,	160)
+		RGB_darker	= this.getColorsPallete colors minmax:#(130,	170)
+		RGB_dark	= this.getColorsPallete colors minmax:#(90,	130)
+		RGB	= this.getColorsPallete colors minmax:#(50,	90)
+		
+		format "RGB = % \nRGB_darker = % \nRGB_dark = % \n\n" RGB RGB_darker RGB_dark
 		
 		join RGB (join RGB_dark RGB_darker)
 	
