@@ -2,105 +2,98 @@
 /** Group creator
  */
 struct GroupCreator_v
-(
-	__construct = #(  ),
-	
-	/* required */
-	/* dependency */
-	/* reference */
+(	
 	/* properties */
+	obj,
 	_selection,
 	_group,
 	
-	/** _get selection
-	 */
-	function _getSelection =
-	(
-	
-	
-		--lastSelLayer = firstSel.layer		
-		--lastSelLayer.addnode _group
-		
-		
-		--setGroupOpen _group false
+	member_pos = #(),
+	member_rot = #(),
+				
 
-		
-		--select _group
-	
+	/** Set selection
+	 */
+	function _setSelection =
+	(
+		_selection = for o in selection where isGroupHead o == false collect o
+	),
+	/** Set obj
+	 */
+	function _setObj =
+	(
+		obj  = _selection[1]	
 	),
 	
 	/** Create group
 	 */
-	function createGroup _objects =
+	function _createGroup  =
 	(
-			_group = group _objects name:(_objects[1].name + "_Group") select:true
+		_group = group _selection name:( toUpper _selection[1].name ) select:true
+	),
 
+	/** Open group
+	 */
+	function _openGroup =
+	(
+		setGroupOpen _group true
 	),
 	
+	/** Close group
+	 */
+	function _closeGroup =
+	(
+		setGroupOpen _group false
+	),
 	
-	function setPivotByFirstObject  = 
-	(	
-		print "Group_PivotByObject_v"
+	/** _save objects positions
+	 */
+	function _saveObjectsPositions =
+	(
+		for index=1 to _group.children.count where isGroupMember _group.children[index] do
+			this._saveObjectPosition index
+	),
+	
+	/** _load objects positions
+	 */
+	function _loadObjectsPositions =
+	(
+		for i=1 to 2 do
+			for index = 1 to  _group.children.count do
+				this._loadObjectPosition index
+	),
+	
+	/** Set group pivot by object
+	 */
+	function _alignPositionAndRotation =
+	(
+		_group.pos      = obj.pos
+		_group.rotation = obj.rotation
+	),
+	
+	/** _align pivot
+	 */
+	function _alignPivot =
+	(
+		_group.pivot    = obj.pivot	
+	),
+	
+	/** Save objects positions
+	 */
+	function _saveObjectPosition index =
+	(
+		member_pos[index] = _group.children[index].pos
+		member_rot[index] = _group.children[index].rotation
+	),
 
-		
-		memberPos = #()
-		memberRot = #()
-		GroupMembers = #()
-		
-		TheGroup  = (for g in selection where isgrouphead g collect g)
-		TheGroup = TheGroup[1]
-		
-		obj  = (for o in selection where isgrouphead o == false  collect o)
-		obj = obj[1]	
-		
-		if TheGroup != undefined and obj != undefined then
-		(
-			if isOpenGroupHead  TheGroup then TheGroupOpened = true
-			else (setGroupOpen TheGroup true ; TheGroupOpened = false) 
-			
-			objPivot = obj.pivot
-			objPos = obj.pos
-			objRot = obj.rotation
-			
-				
-			for m=1 to TheGroup.children.count where isGroupMember TheGroup.children[m] do
-			(
-				GroupMembers[m] = TheGroup.children[m]
-				memberPos[m] = TheGroup.children[m].pos
-				memberRot[m] = TheGroup.children[m].rotation
-			)
-
-			TheGroup.pos =  objPos
-			TheGroup.rotation = objRot
-			
-			for m=1 to GroupMembers.count do
-			(
-				GroupMembers[m].pos = memberPos[m]
-				GroupMembers[m].rotation = memberRot[m]
-				
--- 			m+=1
-			)
-			
-				
-			for m=1 to GroupMembers.count do
-			(
-				GroupMembers[m].pos = memberPos[m]
-				GroupMembers[m].rotation = memberRot[m]
-				
-				
-				
--- 			m+=1
-			)
-			
-			
-			TheGroup.pivot =  objPivot			
-
-			
-		)	
-		
-	),	
-
-
+	/** Load objects positions
+	 */
+	function _loadObjectPosition index =
+	(
+		_selection[index].pos      = member_pos[index]
+		_selection[index].rotation = member_rot[index]
+	),
+	
 	/**  
 	 */
 	on create do
@@ -108,10 +101,22 @@ struct GroupCreator_v
 		if selection.count < 2 do
 			return false
 		
-		this.createGroup (_selection = for o in selection collect o)
+		this._setSelection()
+		
+		this._setObj()
+		
+		this._createGroup()
 
-		this.setPivotByFirstObject()
-	)
+		this._openGroup()
+
+		this._saveObjectsPositions()
+
+		this._alignPositionAndRotation()
+
+		this._loadObjectsPositions()
 	
+		this._alignPivot()
+		
+		this._closeGroup()
+	)
 )
-

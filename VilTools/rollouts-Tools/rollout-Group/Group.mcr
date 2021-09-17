@@ -1,8 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupAttacher/GroupAttacher.ms" )
 
-
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
-
 
 
 /**  
@@ -14,7 +12,10 @@ buttontext:	"Create"
 toolTip:	"Create Group"
 --icon:	"#(path, index)"
 (
-	GroupCreator_v()
+	undo "Group selected" on
+	(
+		GroupCreator_v()
+	)
 )
 /**  Ungroup selected groups
   *  Even if selected object is in opened group
@@ -33,7 +34,6 @@ toolTip:	"Ungroup selection"
 		actionMan.executeAction 0 "40141"  -- Groups: Ungroup
 	)
 )
-
 
 
 /**  
