@@ -32,26 +32,20 @@ struct GroupCreator_v
 		_group = group _selection name:( toUpper _selection[1].name ) select:true
 	),
 
-	/** Open group
-	 */
-	function _openGroup =
-	(
-		setGroupOpen _group true
-	),
-	
-	/** Close group
-	 */
-	function _closeGroup =
-	(
-		setGroupOpen _group false
-	),
-	
 	/** _save objects positions
 	 */
 	function _saveObjectsPositions =
 	(
 		for index=1 to _group.children.count where isGroupMember _group.children[index] do
 			this._saveObjectPosition index
+	),
+	
+	/** Save objects positions
+	 */
+	function _saveObjectPosition index =
+	(
+		member_pos[index] = _group.children[index].pos
+		member_rot[index] = _group.children[index].rotation
 	),
 	
 	/** _load objects positions
@@ -61,6 +55,14 @@ struct GroupCreator_v
 		for i=1 to 2 do
 			for index = 1 to  _group.children.count do
 				this._loadObjectPosition index
+	),
+
+	/** Load objects positions
+	 */
+	function _loadObjectPosition index =
+	(
+		_selection[index].pos      = member_pos[index]
+		_selection[index].rotation = member_rot[index]
 	),
 	
 	/** Set group pivot by object
@@ -75,24 +77,9 @@ struct GroupCreator_v
 	 */
 	function _alignPivot =
 	(
-		_group.pivot    = obj.pivot	
-	),
-	
-	/** Save objects positions
-	 */
-	function _saveObjectPosition index =
-	(
-		member_pos[index] = _group.children[index].pos
-		member_rot[index] = _group.children[index].rotation
+		_group.pivot = obj.pivot	
 	),
 
-	/** Load objects positions
-	 */
-	function _loadObjectPosition index =
-	(
-		_selection[index].pos      = member_pos[index]
-		_selection[index].rotation = member_rot[index]
-	),
 	
 	/**  
 	 */
@@ -107,8 +94,6 @@ struct GroupCreator_v
 		
 		this._createGroup()
 
-		this._openGroup()
-
 		this._saveObjectsPositions()
 
 		this._alignPositionAndRotation()
@@ -117,6 +102,5 @@ struct GroupCreator_v
 	
 		this._alignPivot()
 		
-		this._closeGroup()
 	)
 )

@@ -12,10 +12,10 @@ buttontext:	"Create"
 toolTip:	"Create Group"
 --icon:	"#(path, index)"
 (
-	undo "Group selected" on
-	(
+	--undo "Create Group" on
+	--(
 		GroupCreator_v()
-	)
+	--)
 )
 /**  Ungroup selected groups
   *  Even if selected object is in opened group
