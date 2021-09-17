@@ -1,5 +1,10 @@
-
 /** Group creator
+  *
+  * Features:
+  *		• Align pivot of group by first object in selection
+  *		• Name of group is uppercase name of first object 
+  *		• Add new roup to same layer as first object
+  *
  */
 struct GroupCreator_v
 (	
@@ -10,7 +15,6 @@ struct GroupCreator_v
 	
 	member_pos = #(),
 	member_rot = #(),
-				
 
 	/** Set selection
 	 */
@@ -18,18 +22,23 @@ struct GroupCreator_v
 	(
 		_selection = for o in selection where isGroupHead o == false collect o
 	),
-	/** Set obj
-	 */
-	function _setObj =
-	(
-		obj  = _selection[1]	
-	),
 	
+	/** Set obj
+	  
+	 */
+	function _setObj = 
+	(
+		obj = _selection[1]
+	),
+
 	/** Create group
 	 */
 	function _createGroup  =
 	(
 		_group = group _selection name:( toUpper _selection[1].name ) select:true
+		format "classOf _group = % \n" (classOf _group)
+		format "superclassOf _group = % \n" (superclassOf _group)
+
 	),
 
 	/** _save objects positions
@@ -80,7 +89,13 @@ struct GroupCreator_v
 		_group.pivot = obj.pivot	
 	),
 
-	
+	/** Add group to layer where object is
+	 */
+	function _addGroupToLayer =
+	(
+		last_sel_layer = obj.layer		
+		last_sel_layer.addnode _group
+	),
 	/**  
 	 */
 	on create do
@@ -92,7 +107,10 @@ struct GroupCreator_v
 		
 		this._setObj()
 		
-		this._createGroup()
+		 this._createGroup()
+		
+		if( classOf _group != Dummy ) then 
+			return false
 
 		this._saveObjectsPositions()
 
@@ -102,5 +120,6 @@ struct GroupCreator_v
 	
 		this._alignPivot()
 		
+		this._addGroupToLayer()
 	)
 )

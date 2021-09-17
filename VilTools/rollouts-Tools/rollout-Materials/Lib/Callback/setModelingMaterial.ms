@@ -60,5 +60,12 @@ function setModelingMaterial =
 	MODELING_MATERIAL_STORE =  selection_materials
 	
 	--format "MODELING_MATERIAL_STORE = % \n" MODELING_MATERIAL_STORE
-	selection.material = (StandardMaterial glossiness:0 specularLevel:0 diffuse:(color 190 190 200) )
+	--selection.material = (StandardMaterial glossiness:0 specularLevel:0 diffuse:(color 190 190 200) )
+	
+	
+	mat = PhysicalMaterial ()
+	mat.roughness = 0.7
+
+	
+	selection.material =  mat
 )

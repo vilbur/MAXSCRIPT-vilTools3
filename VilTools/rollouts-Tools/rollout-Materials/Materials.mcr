@@ -7,7 +7,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callback/setModelingMateria
  *	
  */
 
-setModelingMaterialKill()
+setModelingMaterialKill() -- kill for case of restart of UI
 
 
 

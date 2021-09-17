@@ -29,6 +29,8 @@ toolTip:	"Ungroup selection"
 (
 	undo "Ungroup selected" on
 	(
+		
+		
 		actionMan.executeAction 0 "40143" -- Close group
 		
 		actionMan.executeAction 0 "40141"  -- Groups: Ungroup
@@ -36,8 +38,10 @@ toolTip:	"Ungroup selection"
 )
 
 
-/**  
+
+/**  Open\Close Group
  *	
+ *	Function is overkilled with modes, mode is not used, but let it as is for future
  */
 macroscript	group_open_close_toggle
 category:	"_Group"
@@ -57,7 +61,7 @@ toolTip:	"Open\Close selected groups"
 		selected_groups = #()	
 		group_members   = #()
 
-		for o in selection where ( isGroupHead  o == true ) do appendIfUnique selected_groups o
+		for o in selection where ( isGroupHead  o == true ) do 
 		
 		for o in selection where  isGroupMember o == true and not isGroupHead o  do appendIfUnique selected_groups o.parent
 
@@ -75,9 +79,9 @@ toolTip:	"Open\Close selected groups"
 			else if  mode == #toggle do
 			(
 				if isOpenGroupHead g then
-					(setGroupOpen g false)
+					( setGroupOpen g false)
 				else
-					(setGroupOpen g true)
+					( setGroupOpen g true)
 			)
 		)	
 			
@@ -85,6 +89,17 @@ toolTip:	"Open\Close selected groups"
 	)	
 )
 
+
+/**  
+ *	
+ */
+macroscript	group_close_selected
+category:	"_Group"
+buttontext:	"Open\Close"
+toolTip:	"Close groups"
+(
+	actionMan.executeAction 0 "40143"  -- Groups: Group Close
+)
 
 /**  
  *	
@@ -99,7 +114,6 @@ toolTip:	"Atach selected objects to all instances of group"
 	
 	GroupAttacher.attachSelectionToGroups()
 )
-
 
 
 
