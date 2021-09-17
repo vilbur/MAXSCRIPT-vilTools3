@@ -20,24 +20,48 @@ function showRibbonPopUpDialog dialog =
 /** Open material ID dialog on mouse position 
  *	
  */
-macroscript	dialogs_open_face_id_dialogs
+macroscript	epoly_open_mat_id_dialog
 category:	"_Epoly"  
-buttontext:	"Mat IDs"
+buttontext:	"Material IDs"
 toolTip:	"Open material ID dialog"
 --icon:	"#(path, index)"
 (
-	showRibbonPopUpDialog "MaterialIDDialog"
+	on isEnabled return Filters.Is_EPolySpecifyLevel #{4..5}
+	on isVisible return Filters.Is_EPolySpecifyLevel #{4..5}
+	
+	on execute do (
+		try (
+			max modify mode
+			local _Mod = Filters.GetModOrObj()
+			
+			if (Filters.Is_EPoly()) then
+				showRibbonPopUpDialog "MaterialIDDialog"
+		)
+		catch ()
+	)
 )
 
 
 /** Open Smooth group dialog on mouse position 
  *	
  */
-macroscript	dialogs_open_smoothgroups_dialogs
+macroscript	epoly_open_smoothgroups_dialog
 category:	"_Epoly"  
-buttontext:	"Smooth"
+buttontext:	"Smooth Grops"
 toolTip:	"Open Smooth group dialog"
 --icon:	"#(path, index)"
 (
-	showRibbonPopUpDialog "SmoothingGroupsDialog"
+	on isEnabled return Filters.Is_EPolySpecifyLevel #{4..5}
+	on isVisible return Filters.Is_EPolySpecifyLevel #{4..5}
+	
+	on execute do (
+		try (
+			max modify mode
+			local _Mod = Filters.GetModOrObj()
+			
+			if (Filters.Is_EPoly()) then
+				showRibbonPopUpDialog "SmoothingGroupsDialog"
+		)
+		catch ()
+	)	
 )
