@@ -74,7 +74,7 @@ toolTip:	"Rotate tool or change axis in perspective"
  *	 Axises in perspective  #x|#y|#z
  *	 Axises in orthographic #x|#y|#z
  */
-macroscript	tools_rotate_tool_or_axis_double
+macroscript	tools_rotate_tool_or_all_axises
 category:	"_Tools"
 buttontext:	"Rotate"
 toolTip:	"Rotate tool or change axis"
