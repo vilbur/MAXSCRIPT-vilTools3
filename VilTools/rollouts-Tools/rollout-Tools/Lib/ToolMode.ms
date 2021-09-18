@@ -1,26 +1,52 @@
 /** Tool mode
+ *
+ *	FEATURES:
+ *
+ *	 Tools: Move|Scale
+  *		ALLOWS #x|#y|#xy axises in ortho view 
+ *
+ *	 Tools: Rotate
+ *		ALLOWS #z axis in ortho view
+ *		ALLOWS #x|#y|#z axis in perspective views
+ *
  */
 struct ToolMode_v
 (
+	tool_mode,
+	viewport_type,
+	
 	tool_modes	= #( #SELECT, #MOVE, #ROTATE, #NUSCALE, #USCALE, #SQUASH ),
 
 	axises =  #( #x, #y, #z, #xy, #zx, #yz  ),
 	
 	/** Set tool or change axis
 	 */
-	function setToolOrChangeAxis tool_mode =
+	function setToolOrChangeAxis =
 	(
 		this._setAxisesByTypeOfView()
 		
-		if not ( this._setTool tool_mode ) then 
+		if not ( this._setTool() ) then 
 			this.circle()
+			
+		format "axises = % \n" axises
+	),
+	
+	/** Set rotate tool or change axis
+	 */
+	function setRotateToolOrChangeAxisInOrtho =
+	(
+		
+		
+		if not ( this._setTool() ) then 
+			this.circle()
+		
 	),
 	
 	/** Set tool or change selection type
 	 */
-	function setToolOrChangeSelectionType tool_mode selection_types =
+	function setToolOrChangeSelectionType selection_types =
 	(
-		if not ( this._setTool tool_mode ) then 
+		if not ( this._setTool() ) then 
 			this.circleSelectionTypes selection_types
 		
 	),
@@ -78,11 +104,45 @@ struct ToolMode_v
 	(
 		viewport_type = viewport.getType();		
 
-		
-		if ( viewport_type != #view_persp_user and viewport_type != #view_iso_user ) then 
-			axises =  #( #x, #y, #xy )
+		format "tool_mode = % \n" tool_mode
+		if( tool_mode != #Rotate ) then
+			this._setAxisesNonRotate()
 
+		else 
+			this._setAxisesRotate()
+
+		
+		
 		this._disableWorldSystemInOrthoView viewport_type
+	),
+	
+	/** _is ortho view
+	 */
+	function _isOrthoView =
+	(
+		viewport_type != #view_persp_user and viewport_type != #view_iso_user
+	),
+	
+	/**  For Move|Rotate|Scale Tools Allow only #x|#y|#xy axises in ortho view 
+	 */
+	function _setAxisesNonRotate =
+	(
+		if ( this._isOrthoView() ) then 
+			axises =  #( #x, #y, #xy )
+	),
+	
+	/** For Rotate tool
+	  *		Allow only #z axis in ortho view
+	  *		Allow only ##x|#y|#z axis in perspective views
+	 */
+	function _setAxisesRotate =
+	(
+		--axises =  if( this._isOrthoView()) then #( #z ) else #( #x, #y, #z )
+		
+		 if( this._isOrthoView()) then
+			axises = #( #z )
+		
+		
 	),
 	
 	/** Allow only x,y axis in ortho view
@@ -106,7 +166,7 @@ struct ToolMode_v
 	
 	/** Set tool
 	 */
-	function _setTool tool_mode =
+	function _setTool =
 	(
 		if( this.activeMode() != tool_mode ) then
 		(
