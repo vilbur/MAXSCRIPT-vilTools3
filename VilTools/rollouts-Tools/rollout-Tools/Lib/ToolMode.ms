@@ -25,21 +25,15 @@ struct ToolMode_v
 	(
 		this._setAxisesByTypeOfView()
 		
-		if not ( this._setTool() ) then 
-			this.circle()
+		this._setToolOrCircleAxis()
 			
-		format "axises = % \n" axises
 	),
 	
-	/** Set rotate tool or change axis
+	/** Allow #x|#y|#z for rotate tool in ortho
 	 */
 	function setRotateToolOrChangeAxisInOrtho =
 	(
-		
-		
-		if not ( this._setTool() ) then 
-			this.circle()
-		
+		this._setToolOrCircleAxis()
 	),
 	
 	/** Set tool or change selection type
@@ -54,7 +48,7 @@ struct ToolMode_v
 	/** Circle axis modes axises in array
 	  * @param	#( #x, #y, #z, #xy, #zx, #yz )	axises	 
 	 */
-	function circle  =
+	function circleAxis  =
 	(		
 		next_axis	= this.findNextIndex axises (findItem axises (this.activeAxis()))
 
@@ -98,20 +92,26 @@ struct ToolMode_v
 
 	private
 	
+	/** _set tool or circleAxis axis
+	 */
+	function _setToolOrCircleAxis =
+	(
+		if not ( this._setTool() ) then 
+			this.circleAxis()
+	),
+	
 	/** _set axises by type of view
 	 */
 	function _setAxisesByTypeOfView =
 	(
 		viewport_type = viewport.getType();		
 
-		format "tool_mode = % \n" tool_mode
+		--format "tool_mode = % \n" tool_mode
 		if( tool_mode != #Rotate ) then
 			this._setAxisesNonRotate()
 
 		else 
 			this._setAxisesRotate()
-
-		
 		
 		this._disableWorldSystemInOrthoView viewport_type
 	),
@@ -141,8 +141,6 @@ struct ToolMode_v
 		
 		 if( this._isOrthoView()) then
 			axises = #( #z )
-		
-		
 	),
 	
 	/** Allow only x,y axis in ortho view
@@ -176,8 +174,11 @@ struct ToolMode_v
 			false --return	
 
 	),
-	function test =
+	
+	/**  
+	 */
+	on create do
 	(
-		messagebox "ToolMode.test()"
+
 	)
 )
