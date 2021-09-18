@@ -18,7 +18,7 @@ tooltip:	"Add EditPoly"
 
 	_Edit_Poly = (Modifier_v type:#Edit_Poly ).add()
 
-	if( sub_obj != 0 ) then 
+	if( sub_obj != undefined and sub_obj != 0 ) then 
 		subObjectLevel = sub_obj
 
 	redrawViews()

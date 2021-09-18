@@ -1,13 +1,8 @@
-
-
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionChangedWaitForStack.ms" )
-
-
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/ActivateFirstEditPoly.ms" )
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
-
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableInstancedModifiersOnEdit.ms" )
 
@@ -15,6 +10,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveModifierChang
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersOnEdit.ms" )
 
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionMaxModifyMode.ms" )
 
 /*
 *	
@@ -66,10 +62,25 @@ toolTip:	"Disable modifiers on edit"
 icon:	"type:checkbox|columns:8"
 (
 	
-		format "ROLLOUT_modifiers.CHECKBOX_disable_modifiers.state = % \n" ROLLOUT_modifiers.CHECKBOX_disable_modifiers.state
-
+	format "ROLLOUT_modifiers.CHECKBOX_disable_modifiers.state = % \n" ROLLOUT_modifiers.CHECKBOX_disable_modifiers.state
 )
 
+/**  
+ *	
+ */
+macroscript	modifiers_active_modify_mode
+category:	"_Modifiers"
+buttontext:	"Modify mode"
+toolTip:	"Open modify panel on object selection"
+icon:	"type:checkbox|columns:8"
+(
+	if( EventFired.value ) then
+		onSelectionMaxModifyModeCallback()
+		
+	else
+		onSelectionMaxModifyModeKill()
+
+)
 
 --/*
 --*	
