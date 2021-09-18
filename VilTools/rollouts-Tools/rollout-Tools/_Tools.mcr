@@ -6,19 +6,24 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ToolMode.ms" )
 macroscript	tools_move_tool_or_axis
 category:	"_Tools"
 buttontext:	"Move\Axis"
-toolTip:	"Move tool or change axis x|y|z"
+toolTip:	"Move tool or change axis"
 --icon:	"#(path, index)"
 (
-	(ToolMode_v()).setToolOrChangeAxis #Move #( #x, #y, #z )
+	
+	
+	(ToolMode_v()).setToolOrChangeAxis #Move
+	
+	
+	
 )
 
 macroscript	tools_move_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Move\Axis"
-toolTip:	"Move tool or change axis xy|zx|yz"
+toolTip:	"Move tool or change axis"
 --icon:	"#(path, index)"
 (
-	(ToolMode_v()).setToolOrChangeAxis #Move #( #xy, #zx, #yz )
+	(ToolMode_v()).setToolOrChangeAxis #Move
 )
 
 /*---------------------------------------
@@ -27,19 +32,19 @@ toolTip:	"Move tool or change axis xy|zx|yz"
 macroscript	tools_rotate_tool_or_axis
 category:	"_Tools"
 buttontext:	"Rotate\Axis"
-toolTip:	"Rotate tool or change axis x|y|z"
+toolTip:	"Rotate tool or change axis"
 --icon:	"#(path, index)"
 (
-	(ToolMode_v()).setToolOrChangeAxis #Rotate #( #x, #y, #z )
+	(ToolMode_v()).setToolOrChangeAxis #Rotate
 )
 
 macroscript	tools_rotate_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Rotate\Axis"
-toolTip:	"Rotate tool or change axis xy|zx|yz"
+toolTip:	"Rotate tool or change axis"
 --icon:	"#(path, index)"
 (
-	(ToolMode_v()).setToolOrChangeAxis #Rotate #( #xy, #zx, #yz )
+	(ToolMode_v()).setToolOrChangeAxis #Rotate
 )
 
 /*---------------------------------------
@@ -48,19 +53,19 @@ toolTip:	"Rotate tool or change axis xy|zx|yz"
 macroscript	tools_scale_tool_or_axis
 category:	"_Tools"
 buttontext:	"Scale\Axis"
-toolTip:	"Scale tool or change axis x|y|z"
+toolTip:	"Scale tool or change axis"
 --icon:	"#(path, index)"
 (
-	(ToolMode_v()).setToolOrChangeAxis #Nuscale #( #x, #y, #z )
+	(ToolMode_v()).setToolOrChangeAxis #Nuscale
 )
 
 macroscript	tools_scale_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Scale\Axis"
-toolTip:	"Scale tool or change axis xy|zx|yz"
+toolTip:	"Scale tool or change axis"
 --icon:	"#(path, index)"
 (
-	(ToolMode_v()).setToolOrChangeAxis #Nuscale #( #xy, #zx, #yz )
+	(ToolMode_v()).setToolOrChangeAxis #Nuscale
 )
 
 /*---------------------------------------

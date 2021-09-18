@@ -4,14 +4,18 @@ struct ToolMode_v
 (
 	tool_modes	= #( #SELECT, #MOVE, #ROTATE, #NUSCALE, #USCALE, #SQUASH ),
 
+	axises =  #( #x, #y, #z, #xy, #zx, #yz  ),
+	
 	/** Set tool or change axis
 	 */
-	function setToolOrChangeAxis tool_mode axises =
+	function setToolOrChangeAxis tool_mode =
 	(
-		if not ( this._setTool tool_mode ) then 
-			this.circle axises
+		this._setAxisesByTypeOfView()
 		
+		if not ( this._setTool tool_mode ) then 
+			this.circle()
 	),
+	
 	/** Set tool or change selection type
 	 */
 	function setToolOrChangeSelectionType tool_mode selection_types =
@@ -20,15 +24,17 @@ struct ToolMode_v
 			this.circleSelectionTypes selection_types
 		
 	),
+	
 	/** Circle axis modes axises in array
 	  * @param	#( #x, #y, #z, #xy, #zx, #yz )	axises	 
 	 */
-	function circle axises  =
+	function circle  =
 	(		
 		next_axis	= this.findNextIndex axises (findItem axises (this.activeAxis()))
 
 		toolMode.axisConstraints = axises[next_axis]
 	),
+	
 	/** Selection types
 	  * @param	array	selection_types	Customized #( #Rectangle, #Circle, #Fence, #Lasso, #Paint )
 	 */
@@ -49,12 +55,14 @@ struct ToolMode_v
 			default:	actionMan.executeAction 0 "59232" -- Selection: Rectangular Selection Region
 		)
 	),
+	
 	/** Active mode
 	 */
 	function activeMode =
 	(
 		toolMode.commandmode	 --return
 	),
+	
 	/** Active axis
 	 */
 	function activeAxis =
@@ -62,9 +70,31 @@ struct ToolMode_v
 		toolMode.axisConstraints	 --return
 	),	
 
-	/*------------------------------------------------------------------------------
-		PRIVATE
-	--------------------------------------------------------------------------------*/
+	private
+	
+	/** _set axises by type of view
+	 */
+	function _setAxisesByTypeOfView =
+	(
+		viewport_type = viewport.getType();		
+
+		
+		if ( viewport_type != #view_persp_user and viewport_type != #view_iso_user ) then 
+			axises =  #( #x, #y, #xy )
+
+		this._disableWorldSystemInOrthoView viewport_type
+	),
+	
+	/** Allow only x,y axis in ortho view
+	 */
+	function _disableWorldSystemInOrthoView viewport_type =
+	(
+		cord_sys = getRefCoordSys() 		
+
+		if ( cord_sys == #world and viewport_type != #view_persp_user and viewport_type != #view_iso_user ) then 
+			toolMode.coordsys #view
+	),
+	
 	/** Find next index
 	 */
 	function findNextIndex array current_index =
