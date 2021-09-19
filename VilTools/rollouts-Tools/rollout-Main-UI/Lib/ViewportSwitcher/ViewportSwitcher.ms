@@ -111,6 +111,8 @@ struct ViewportSwitcher_v
 	(
 		print "ViewportSwitcher_v._changeViewportTypeOfCurrentView()"		
 		viewport.setType switch
+		
+		actionMan.executeAction 0 "310"  -- Tools: Zoom Extents Selected
 	),
 	
 	/** _show all views

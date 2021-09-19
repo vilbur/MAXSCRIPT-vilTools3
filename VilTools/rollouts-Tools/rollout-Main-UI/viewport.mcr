@@ -9,7 +9,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportSwitcher/ViewportSw
 macroscript	main_switch_viewport_perspective
 category:	"_Main"
 buttontext:	"Persp\Iso"
-toolTip:	"Perspective ViewPort"
+toolTip:	"Perspective view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_persp_user
@@ -21,7 +21,7 @@ toolTip:	"Perspective ViewPort"
 macroscript	main_switch_viewport_iso
 category:	"_Main"
 buttontext:	"Persp\Iso"
-toolTip:	"Isometric ViewPort"
+toolTip:	"Isometric view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_iso_user
@@ -38,7 +38,7 @@ toolTip:	"Isometric ViewPort"
 macroscript	main_switch_viewport_top
 category:	"_Main"
 buttontext:	"Top\Bottom"
-toolTip:	"Top ViewPort"
+toolTip:	"Top view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_top
@@ -50,7 +50,7 @@ toolTip:	"Top ViewPort"
 macroscript	main_switch_viewport_bottom
 category:	"_Main"
 buttontext:	"Top\Bottom"
-toolTip:	"Bottom ViewPort"
+toolTip:	"Bottom view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_bottom
@@ -67,11 +67,10 @@ toolTip:	"Bottom ViewPort"
 macroscript	main_switch_viewport_front
 category:	"_Main"
 buttontext:	"Front\Back"
-toolTip:	"Front ViewPort"
+toolTip:	"Front view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_front
-	
 )
 /**  
  *	
@@ -79,11 +78,10 @@ toolTip:	"Front ViewPort"
 macroscript	main_switch_viewport_back
 category:	"_Main"
 buttontext:	"Front\Back"
-toolTip:	"Back ViewPort"
+toolTip:	"Back view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_back
-	
+	ViewportSwitcher_v switch:#view_back	
 )
 
 /*------------------------------------------------------------------------------
@@ -96,11 +94,10 @@ toolTip:	"Back ViewPort"
 macroscript	main_switch_viewport_left
 category:	"_Main"
 buttontext:	"Left\Right"
-toolTip:	"Left ViewPort"
+toolTip:	"Left view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_left
-	
 )
 
 /**  
@@ -109,7 +106,7 @@ toolTip:	"Left ViewPort"
 macroscript	main_switch_viewport_right
 category:	"_Main"
 buttontext:	"Left\Right"
-toolTip:	"Right ViewPort"
+toolTip:	"Right view"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_right
