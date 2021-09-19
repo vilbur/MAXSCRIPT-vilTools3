@@ -9,12 +9,16 @@ buttontext:	"Perspective"
 toolTip:	"Perspective ViewPort"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_persp_user
 	
+	if( viewport.numViews  == 1 ) then 
+		actionMan.executeAction 0 "50026"  -- Tools: Maximize Viewport Toggle
+	else
+		ViewportSwitcher_v switch:#view_persp_user
+
 )
 
 
- /**  
+/**  
  *	
  */
 macroscript	main_switch_viewport_left
