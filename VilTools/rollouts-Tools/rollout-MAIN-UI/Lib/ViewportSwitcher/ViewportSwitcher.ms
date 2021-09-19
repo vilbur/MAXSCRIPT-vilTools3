@@ -48,7 +48,7 @@ struct ViewportSwitcher_v
 	
 	/** Switch
 	 */
-	function _switchViewport =
+	function _switchViewport = 
 	(
 		print "ViewportSwitcher_v._switchViewport()"		
 		--view_types = for i = 1 to viewport.numViews collect viewport.getType index:i
@@ -83,25 +83,75 @@ struct ViewportSwitcher_v
 	(
 		print "ViewportSwitcher_v._findSimilarView()"		
 		local similar_type = undefined
+		rotated_top_view = false
 		
 		for all_view_type in all_view_types where (found_index = findItem all_view_type switch) > 0 do
 			similar_type = (deleteItem all_view_type found_index)[1]
 		
 		similar_index = for i = 1 to viewport.numViews where ( viewport.getType index:i ) == similar_type collect i
 	
+		if( switch == #view_top and similar_index.count == 0 ) then 
+			rotated_top_view = this._searchRotatedTopView()
+		
+		if( rotated_top_view != false ) then
+			similar_index = rotated_top_view
+	
 		if( similar_index.count > 0 ) then
-			this._activateSimilarViewportAndChangeView similar_index[1]		
+			this._activateSimilarViewport similar_index[1]		
+		
+		if( rotated_top_view == false ) then
+			this._setViewType()
 		
 		similar_index.count > 0 --return
 	),
 
+	/** _search rotated top view
+	 */
+	function _searchRotatedTopView =
+	(
+		print "ViewportSwitcher_v._searchRotatedTopView()"
+		
+		active_view = viewport.activeViewport
+
+		rotated_top_view_found = #()
+				
+		for i = 1 to viewport.numViews where ( viewport.getType index:i ) == #view_iso_user do
+		(
+			viewport.activeViewportEx i
+
+			
+			
+			if( this._isThisRotatedTopView( viewport.getTM()) ) then
+				append rotated_top_view_found i	
+		)
+		
+		 viewport.activeViewportEx active_view
+		
+		format "rotated_top_view_found = % \n" rotated_top_view_found
+		rotated_top_view_found --return
+	),
+	
+	/** _is this rotated top view
+	 */
+	function _isThisRotatedTopView view_tm =
+	(
+		( view_tm as quat ) == ((eulerAngles 0 0 -90) as quat) --return
+	),
+	
 	/** Activate similar viewport and change view
 	 */
-	function _activateSimilarViewportAndChangeView index =
+	function _activateSimilarViewport index =
 	(
-		--print "_activateSimilarViewportAndChangeView()"
+		print ("ViewportSwitcher_v._activateSimilarViewport " + index as string )
 		viewport.activeViewportEx index
 		
+		--viewport.setType switch
+	),
+	
+	/** Activate similar viewport and change view
+	 */
+	function _setViewType =
+	(
 		viewport.setType switch
 	),
 	
@@ -141,8 +191,22 @@ struct ViewportSwitcher_v
 	 */
 	function _viewIsActiveAlready =
 	(
-		viewport.getType() == switch
+		print "ViewportSwitcher_v._viewIsActiveAlready()"		
+		view_is_active = viewport.getType() == switch
+		format "view_is_active = % \n" view_is_active
+		
+		if( switch == #view_top and view_is_active == false and this._isThisRotatedTopView( viewport.getTM()) ) then 
+			view_is_active = true
+			
+		format "switch = % \n" switch
+		format "view_is_active = % \n" view_is_active
+		
+		format "view_is_active = % \n" view_is_active
+		view_is_active --return
 	),
+	
+
+	
 	
 	/**  
 	 */
