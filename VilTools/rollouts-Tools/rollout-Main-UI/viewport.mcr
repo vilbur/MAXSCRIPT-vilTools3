@@ -1,32 +1,122 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/viewportSwitcher.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportSwitcher/ViewportSwitcher.ms" )
 
+/*------------------------------------------------------------------------------
+	PERSPECTIVE \ ISO
+--------------------------------------------------------------------------------*/
  /**  
  *	
  */
 macroscript	main_switch_viewport_perspective
 category:	"_Main"
-buttontext:	"Perspective"
+buttontext:	"Persp\Iso"
 toolTip:	"Perspective ViewPort"
 --icon:	"type:checkbox|columns:6"
 (
-	
-	if( viewport.numViews  == 1 ) then 
-		actionMan.executeAction 0 "50026"  -- Tools: Maximize Viewport Toggle
-	else
-		ViewportSwitcher_v switch:#view_persp_user
-
+	ViewportSwitcher_v switch:#view_persp_user
 )
 
+ /**  
+ *	
+ */
+macroscript	main_switch_viewport_iso
+category:	"_Main"
+buttontext:	"Persp\Iso"
+toolTip:	"Isometric ViewPort"
+--icon:	"type:checkbox|columns:6"
+(
+	ViewportSwitcher_v switch:#view_iso_user
+)
+
+
+/*------------------------------------------------------------------------------
+	TOP \ BOTTOM
+--------------------------------------------------------------------------------*/
+
+/**  
+ *	
+ */
+macroscript	main_switch_viewport_top
+category:	"_Main"
+buttontext:	"Top\Bottom"
+toolTip:	"Top ViewPort"
+--icon:	"type:checkbox|columns:6"
+(
+	ViewportSwitcher_v switch:#view_top
+)
+
+/**  
+ *	
+ */
+macroscript	main_switch_viewport_bottom
+category:	"_Main"
+buttontext:	"Top\Bottom"
+toolTip:	"Bottom ViewPort"
+--icon:	"type:checkbox|columns:6"
+(
+	ViewportSwitcher_v switch:#view_bottom
+)
+
+
+/*------------------------------------------------------------------------------
+	FRONT \ BACK
+--------------------------------------------------------------------------------*/
+
+/**  
+ *	
+ */
+macroscript	main_switch_viewport_front
+category:	"_Main"
+buttontext:	"Front\Back"
+toolTip:	"Front ViewPort"
+--icon:	"type:checkbox|columns:6"
+(
+	ViewportSwitcher_v switch:#view_front
+	
+)
+/**  
+ *	
+ */
+macroscript	main_switch_viewport_back
+category:	"_Main"
+buttontext:	"Front\Back"
+toolTip:	"Back ViewPort"
+--icon:	"type:checkbox|columns:6"
+(
+	ViewportSwitcher_v switch:#view_back
+	
+)
+
+/*------------------------------------------------------------------------------
+	LEFT \ RIGHT
+--------------------------------------------------------------------------------*/
 
 /**  
  *	
  */
 macroscript	main_switch_viewport_left
 category:	"_Main"
-buttontext:	"Left"
+buttontext:	"Left\Right"
 toolTip:	"Left ViewPort"
 --icon:	"type:checkbox|columns:6"
 (
 	ViewportSwitcher_v switch:#view_left
 	
 )
+
+/**  
+ *	
+ */
+macroscript	main_switch_viewport_right
+category:	"_Main"
+buttontext:	"Left\Right"
+toolTip:	"Right ViewPort"
+--icon:	"type:checkbox|columns:6"
+(
+	ViewportSwitcher_v switch:#view_right
+	
+)
+
+
+
+
+
