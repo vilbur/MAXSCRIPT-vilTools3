@@ -1,6 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Layer.ms" )
-
-
+/*
+*/ 
 macroscript	layers_rename_current_layer
 category:	"_Layer"
 buttontext:	"Rename"
@@ -21,8 +21,9 @@ toolTip:	"Rename current layer"
 	
 )
 
-
-macroScript layers_delete_empty_layers
+/*
+*/ 
+macroscript layers_delete_empty_layers
 category:	"_Layer" 
 buttontext:	"Delete"
 toolTip:	"Delete empty layers"
@@ -47,11 +48,4 @@ toolTip:	"Delete empty layers"
 	catch()
 )
 
-macroscript	layer_turn_on_all_layers
-category:	"_Layer"
-buttontext:	"Turn on all layers"
-toolTip:	"Turn on all layers"
---icon:	"#(path, index)"
-(
-	(Layer_v()).turnOnAllLayers()
-)
+

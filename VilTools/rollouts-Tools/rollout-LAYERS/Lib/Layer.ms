@@ -1,3 +1,6 @@
+
+
+
 /** Layer
  */
 struct Layer_v
@@ -33,18 +36,9 @@ struct Layer_v
 			layer.on = state
 		
 	),
-	/** Hide all layers
-	 */
-	function hideAllLayers excludes:#() =
-	(
-		--print ( "this._sanitizeLayerNames excludes = " + (this._sanitizeLayerNames excludes) as string )
-		excludes = this._getLayers excludes
-		--print ( "excludes = " + excludes as string )
-		for layer in this.allLayers() do
-			if( findItem excludes layer == 0 ) then
-				layer.on = false
-				--layer.on = false
-	),
+	
+
+	
 	/** Activate layer
 	 */
 	function activate layer_name =
@@ -59,12 +53,14 @@ struct Layer_v
 		layer.on	= true
 		--layer.visibility	= 1.0
 	),
+	
 	/** Set current layer
 	 */
 	function setCurrentLayer =
 	(
 		current = LayerManager.current
 	),
+	
 	--/** Set count
 	-- */
 	--function count =
@@ -72,14 +68,45 @@ struct Layer_v
 	--	for i = 1 to (LayerManager.count - 1) collect i
 	--
 	--),
+	
 	/** Turn on all layers
+	  * Except active layer
 	 */
-	function turnOnAllLayers =
+	function setAllLayersVisible state exclude:#() =
 	(
-		for layer in this.allLayers() do
-			layer.on = true
-
+		for layer in this.allLayers() where ( findItem exclude layer == 0 ) do
+			--if not ( layer.current ) then
+			layer.on = state
 	),
+	
+	/** 
+	 */
+	function getActiveLayer =
+	(
+		(for layer in this.allLayers() where layer.current collect layer)[1]
+	),
+	
+	/** Set active layer by first selected obejct
+	 */
+	function activeLayerByFirstSelectedObject =
+	(
+		print "Layer_v.activeLayerByFirstSelectedObject()"
+	),
+	
+	
+	--/** Hide all layers
+	-- */
+	--function hideAllLayers exclude:#() =
+	--(
+	--	--print ( "this._sanitizeLayerNames exclude = " + (this._sanitizeLayerNames exclude) as string )
+	--	excludes = this._getLayers excludes
+	--	--print ( "excludes = " + excludes as string )
+	--	for layer in this.allLayers() do
+	--		if( findItem excludes layer == 0 ) then
+	--			layer.on = false
+	--			--layer.on = false
+	--),
+	
 	/** All layers
 	 */
 	function allLayers =
@@ -99,6 +126,7 @@ struct Layer_v
 		
 		for layer in this.allLayers() where findItem names layer.name > 0 collect layer
 	),
+	
 	/** Get layer by index or name
 	  * classOf name is converted to lowercase string E.G.: #LayerName become "LayerName"
 	  *
@@ -117,6 +145,7 @@ struct Layer_v
 		--print ( "layer = " + layer as string )
 		--layer --return 
 	),
+
 	/** Sanitize layer names
 	 */
 	function _sanitizeLayerNames names =
@@ -127,20 +156,23 @@ struct Layer_v
 		 for _name in names collect ( _name as string ) --return
 		 
 	),
+	
 	/** Is any lyaer visible
 	 */
 	function _getVisibleLayers layers =
 	(
 		for layer in layers where layer.ishidden == false collect layer 
 	),
+
 	/** Is visible
 	 */
 	function _isVisible index =
 	(
 		
 	),
-	function test =
+
+	on create do
 	(
-		messagebox "Layer.test()"
+		
 	)
 )
