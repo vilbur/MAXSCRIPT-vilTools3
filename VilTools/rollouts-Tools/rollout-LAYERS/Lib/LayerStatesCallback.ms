@@ -22,12 +22,10 @@ function layerStatesKill =
 function loadLayerStates =
 (
 	print "LayerStatesCallback.msloadLayerStates()"
-	format "ROLLOUT_layers.LISTBOX_states.items	= % \n" ROLLOUT_layers.LISTBOX_states.items
-	--try
-	--(
-		
-	ROLLOUT_layers.LISTBOX_states.items = (LayerStates_v()).getSceneStates()
-	--)
-	--catch()
+	try
+	(
+		ROLLOUT_layers.Multilistbox_states.items = (LayerStates_v()).getSceneStates()
+	)
+	catch()
 	
 )

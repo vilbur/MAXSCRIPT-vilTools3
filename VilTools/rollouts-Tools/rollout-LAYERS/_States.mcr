@@ -2,16 +2,17 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/LayerStates.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/LayerStatesCallback.ms" )
 
 
---/*
---*/ 
---macroscript	layers_state_load
---category:	"_Layer"
---buttontext:	"Load"
---toolTip:	"Load layers state"
---(
---	ROLLOUT_layers.LISTBOX_states.items = (LayerStates_v()).getSceneStates()
---)
 
+
+/*
+*/ 
+macroscript	layers_state_load
+category:	"_Layer"
+buttontext:	"Load"
+toolTip:	"Load layers state"
+(
+	ROLLOUT_layers.Multilistbox_states.items = (LayerStates_v()).getSceneStates()
+)
 
 /*
 */ 
@@ -50,10 +51,18 @@ category:	"_Layer"
 buttontext:	"Update"
 toolTip:	"Update layers state"
 (
-	selected_state = ROLLOUT_layers.LISTBOX_states.selected
-	
-	if queryBox ("Update Layer style "+selected_state+" ?") beep:false then
-		sceneStateMgr.Capture selected_state #{6}
+	items_all      = ROLLOUT_layers.Multilistbox_states.items  
+	selected_items = ROLLOUT_layers.Multilistbox_states.selection 
+
+	if( selected_items.count > 0 ) then
+	(
+		selected_state = items_all[(selected_items as array )[1]]
+		
+		if queryBox ("Update Layer style "+selected_state+" ?") beep:false then
+			sceneStateMgr.Capture selected_state #{6}
+		
+	) else
+		messageBox "Please select item"
 )
 
 
@@ -63,25 +72,31 @@ macroscript	layers_state_listbox
 category:	"_Layer"
 buttontext:	"States"
 --toolTip:	""
-icon:	"type:Listbox|columns:14"
+icon:	"type:Multilistbox|columns:14"
 (
-	--format "EventFired	= % \n" EventFired
+	format "EventFired	= % \n" EventFired
 	/*
 		CREATE LISTOBX CONTROL
 	*/ 
 )
+
 /*
 */ 
 macroscript	layers_state_listbox_load_selected
 category:	"_Layer"
 buttontext:	"States"
 toolTip:	"Load selected state"
-icon:	"type:Listbox"
+icon:	"type:Multilistbox"
 (
-	selected_state = ROLLOUT_layers.LISTBOX_states.selected
-	
+	format "EventFired	= % \n" EventFired
+
+	items_all      = ROLLOUT_layers.Multilistbox_states.items  
+	selected_items = ROLLOUT_layers.Multilistbox_states.selection 
+	selected_state = items_all[(selected_items as array )[1]]
+
 	sceneStateMgr.Restore selected_state #{6}
 )
+
 
 
 layerStatesCallback()
