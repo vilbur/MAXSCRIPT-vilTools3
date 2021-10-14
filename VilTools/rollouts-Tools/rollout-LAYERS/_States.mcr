@@ -51,12 +51,12 @@ category:	"_Layer"
 buttontext:	"Update"
 toolTip:	"Update layers state"
 (
-	items_all      = ROLLOUT_layers.Multilistbox_states.items  
-	selected_items = ROLLOUT_layers.Multilistbox_states.selection 
+	_Multilistbox  = ROLLOUT_layers.Multilistbox_states
+	selected_items = _Multilistbox.selection 
 
 	if( selected_items.count > 0 ) then
 	(
-		selected_state = items_all[(selected_items as array )[1]]
+		selected_state = _Multilistbox.items[(selected_items as array )[1]]
 		
 		if queryBox ("Update Layer style "+selected_state+" ?") beep:false then
 			sceneStateMgr.Capture selected_state #{6}
@@ -89,10 +89,11 @@ toolTip:	"Load selected state"
 icon:	"type:Multilistbox"
 (
 	format "EventFired	= % \n" EventFired
+	
+	_Multilistbox  = ROLLOUT_layers.Multilistbox_states
 
-	items_all      = ROLLOUT_layers.Multilistbox_states.items  
-	selected_items = ROLLOUT_layers.Multilistbox_states.selection 
-	selected_state = items_all[(selected_items as array )[1]]
+	selected_items = _Multilistbox.selection 
+	selected_state = _Multilistbox.items[(selected_items as array )[1]]
 
 	sceneStateMgr.Restore selected_state #{6}
 )
