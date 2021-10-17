@@ -74,28 +74,63 @@ buttontext:	"States"
 --toolTip:	""
 icon:	"type:Multilistbox|columns:14"
 (
-	format "EventFired	= % \n" EventFired
 	/*
 		CREATE LISTOBX CONTROL
-	*/ 
+		
+		format "EventFired	= % \n" EventFired
+		
+		on item selected callback
+		
+	*/
+	
 )
 
-/*
+/* on double click
 */ 
 macroscript	layers_state_listbox_load_selected
 category:	"_Layer"
 buttontext:	"States"
-toolTip:	"Load selected state"
+toolTip:	"Load selected states"
 icon:	"type:Multilistbox"
 (
 	format "EventFired	= % \n" EventFired
-	
+		
 	_Multilistbox  = ROLLOUT_layers.Multilistbox_states
 
-	selected_items = _Multilistbox.selection 
-	selected_state = _Multilistbox.items[(selected_items as array )[1]]
+	enabled_layers = for i = 1 to LayerManager.count collect false
+		
+	/** Load state
+	 */
+	function loadState index =
+	(
+		sceneStateMgr.Restore (sceneStateMgr.GetSceneState index) #{6}
+	)	
+	
+	/** Is layer on
+	 */
+	function isLayerOn index =
+	(
+		(LayerManager.getLayer index).on
+	)
+	
+	
 
-	sceneStateMgr.Restore selected_state #{6}
+	for selected_index in ( _Multilistbox.selection as Array ) do
+	(
+		loadState selected_index
+		
+		for i = 1 to LayerManager.count do
+			if( isLayerOn(i-1) ) then
+				enabled_layers[i] = true
+	)
+		
+
+	format "enabled_layers	= % \n" enabled_layers
+	
+	for i = 0 to LayerManager.count-1 do
+		(LayerManager.getLayer i).on = enabled_layers[i+1]
+	
+	
 )
 
 
