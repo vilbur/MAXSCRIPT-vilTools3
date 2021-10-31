@@ -6,26 +6,25 @@ struct NodeList_v
 	
 	nodes = #(),
 	
+
+	
 	/** Load nodes
 	 */
 	function loadNodes =
 	(
+		print "NodeList_v.loadNodes()"
+
 		nodes = this._getNodesInScene()
-		
 		
 		_Rollout = ROLLOUTS.get "ROLLOUT_unreal"
 		
-		--format "_Rollout	= % \n" _Rollout
-		--format "ROLLOUT_unreal	= % \n" ROLLOUT_unreal			 
-		--format "_Rollout==ROLLOUT_unreal	= % \n" (_Rollout==ROLLOUT_unreal)
-		--format "_Rollout.controls	= % \n" _Rollout.controls
-			
+		format "ROLLOUTS	= % \n" ROLLOUTS
+		format "_Rollout	= % \n" _Rollout
+		--format "nodes	= % \n" (this._getNodeNames())
 		
-		--format "nodes	= % \n" nodes 
 		_Rollout.MULTILISTBOX_nodes.items = this._getNodeNames()
-		--_Rollout.MULTILISTBOX_nodes.items = #("goood")
-		
-		--format "classOf ROLLOUT_unreal	= % \n" (classOf ROLLOUT_unreal)
+		--_Rollout.MULTILISTBOX_nodes.items = #("Good")
+
 	),
 	
 	/** Get nodes in scene
@@ -33,7 +32,6 @@ struct NodeList_v
 	function _getNodesInScene =
 	(
 		for _shape in shapes where classOf _shape == text and getUserProp _shape user_prop != undefined collect _shape		
-		--for _shape in shapes collect _shape		
 	),
 	
 	/** _get node names

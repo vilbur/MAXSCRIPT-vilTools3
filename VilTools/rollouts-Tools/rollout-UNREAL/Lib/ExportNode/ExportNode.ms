@@ -3,7 +3,7 @@
 struct ExportNode_v
 (
 	_node,
-	_scene_name	= if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace (getFilenameFile maxFileName) "" ) else undefined,
+	_scene_name	= if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace (getFilenameFile maxFileName) "" ) else "UnrealExport",
 	--_name	= "Export Node",
 	_name	= _scene_name,
 	
@@ -42,13 +42,84 @@ struct ExportNode_v
 		getNodeByName _name
 	),
 	
-	/** Test
+	/** Ask name dialog
 	 */
-	function test =
+	function _askNameDialog =
 	(
-		print "ExportNode_v.test()"
-	),
+		try(destroyDialog node_name_rollout) catch()
+				
+		rollout node_name_rollout "Set export node name"
+		(
+			dotNetControl TextBox "TextBox"
 		
+			on node_name_rollout open do
+			(
+				TextBox.Text = _scene_name
+				TextBox.BackColor = ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
+			)
+			
+			on TextBox KeyUp s e do
+			(
+				if e.KeyCode == e.KeyCode.Enter then
+				(
+					_ExportNodeThis._createNodeObject TextBox.Text 
+					
+					--destroyDialog node_name_rollout
+				)
+				else if e.KeyCode == e.KeyCode.Escape then
+					destroyDialog node_name_rollout
+			)
+		)
+		
+		CreateDialog node_name_rollout width:256 height:40
+			
+		setFocus node_name_rollout.TextBox
+	),
+
+	/** Create
+	 */
+	function _createNodeObject _name =
+	(
+		this._name = _name
+
+		if( this._getNodeObject() == undefined ) then
+		(
+			_node = text name:_name text:_name isSelected:off size:10
+
+			this._setUserProp user_prop	true
+
+			this._addToDefaultLayer()
+
+			select _node
+
+			try(destroyDialog node_name_rollout) catch()
+
+			_ExportNodeThis = undefined
+			
+			(NodeList_v()).loadNodes()
+		)
+		else
+			return this._exception()
+	),
+	
+	/** Set user prop
+	 */
+	function _setUserProp key value =
+	(
+		setUserProp _node key	value
+	),
+	
+	/** _exception
+	 */
+	function _exception =
+	(
+		node_name_rollout.Title = "! EXPORT NODE EXISTS ALREADY !"
+		
+		setFocus node_name_rollout.TextBox
+	),
+	
+	on create do ()
+	
 	--/** Assign
 	-- */
 	--function assign =
@@ -153,80 +224,5 @@ struct ExportNode_v
 	
 		
 	
-	/** Ask name dialog
-	 */
-	function _askNameDialog =
-	(
-		try(destroyDialog node_name_rollout) catch()
-		
-		rollout node_name_rollout "Set export node name"
-		(
-			dotNetControl TextBox "TextBox"
-		
-			on node_name_rollout open do
-			(
-				TextBox.Text = _scene_name
-				TextBox.BackColor = ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
-			)
-			
-			on TextBox KeyUp s e do
-			(
-				if e.KeyCode == e.KeyCode.Enter then
-				(
-					_ExportNodeThis._createNodeObject TextBox.Text 
-					
-					--destroyDialog node_name_rollout
-				)
-				else if e.KeyCode == e.KeyCode.Escape then
-					destroyDialog node_name_rollout
-			)
-		)
-		
-		CreateDialog node_name_rollout width:256 height:40
-			
-		setFocus node_name_rollout.TextBox
-	),
 
-	/** Create
-	 */
-	function _createNodeObject _name =
-	(
-		this._name = _name
-		
-
-		if( this._getNodeObject() == undefined ) then
-		(
-			_node = text name:_name text:_name isSelected:off size:10
-
-			this._setUserProp user_prop	true
-
-			this._addToDefaultLayer()
-
-			select _node
-
-			destroyDialog node_name_rollout
-			
-			_ExportNodeThis = undefined
-		)
-		else
-			return this._exception()
-	),
-	
-	/** Set user prop
-	 */
-	function _setUserProp key value =
-	(
-		setUserProp _node key	value
-	),
-	
-	/** _exception
-	 */
-	function _exception =
-	(
-		node_name_rollout.Title = "! EXPORT NODE EXISTS ALREADY !"
-		
-		setFocus node_name_rollout.TextBox
-	),
-	
-	on create do ()
 )

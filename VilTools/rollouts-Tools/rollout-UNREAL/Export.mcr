@@ -1,6 +1,6 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/Exporter.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )
 
 /**  
  *	
@@ -30,10 +30,6 @@ toolTip:	"Create Export Node\nNode name is Unreal`s project name\nNode text is a
 	ExportNode 	= ExportNode_v()
 	
 	ExportNode.create()
-	
-	--(NodeList_v()).loadNodes()
-
-	--format "ROLLOUT_unreal	= % \n" ROLLOUT_unreal
 )
 
 
