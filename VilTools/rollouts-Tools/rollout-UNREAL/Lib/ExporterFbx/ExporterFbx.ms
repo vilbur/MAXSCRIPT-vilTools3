@@ -2,13 +2,21 @@ global export_nodes_in_scene = #()
 
 /** Exporter
  */
-struct Exporter_v
+struct ExporterFbx_v
 (
 	--export_nodes_in_scene = #(),	-- all export nodes in scene
 	export_node,	-- used node for export
 	objects_export,
 	
 	export_path,
+	
+	/** Select node children
+	 */
+	function selectNodeChildren =
+	(
+		print "ExporterFbx_v.selectNodeChildren()"
+	),
+	
 	
 	function exportNode _export_node deleteObjects:true rotate:false =
 	(

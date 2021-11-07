@@ -1,3 +1,7 @@
+global node_name_rollout
+
+
+
 /** export node
  */
 struct ExportNode_v
@@ -19,9 +23,9 @@ struct ExportNode_v
 	 */
 	function create =
 	(
-		global _ExportNodeThis = this
+		global ThisExportNode = this
 
-		this._askNameDialog()
+		this._askNodeNameDialog()
 	),
 	
 	/** _add to default layer
@@ -44,27 +48,27 @@ struct ExportNode_v
 	
 	/** Ask name dialog
 	 */
-	function _askNameDialog =
+	function _askNodeNameDialog =
 	(
 		try(destroyDialog node_name_rollout) catch()
-				
+		
+			
 		rollout node_name_rollout "Set export node name"
 		(
 			dotNetControl TextBox "TextBox"
 		
 			on node_name_rollout open do
 			(
-				TextBox.Text = _scene_name
-				TextBox.BackColor = ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
+				TextBox.Text	= _scene_name
+				TextBox.BackColor	= ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
 			)
-			
+			 
 			on TextBox KeyUp s e do
 			(
 				if e.KeyCode == e.KeyCode.Enter then
 				(
-					_ExportNodeThis._createNodeObject TextBox.Text 
-					
-					--destroyDialog node_name_rollout
+					if( ThisExportNode._createNodeObject TextBox.Text ) then 
+						destroyDialog node_name_rollout
 				)
 				else if e.KeyCode == e.KeyCode.Escape then
 					destroyDialog node_name_rollout
@@ -81,25 +85,27 @@ struct ExportNode_v
 	function _createNodeObject _name =
 	(
 		this._name = _name
-
+		
 		if( this._getNodeObject() == undefined ) then
 		(
 			_node = text name:_name text:_name isSelected:off size:10
-
+		
 			this._setUserProp user_prop	true
-
+		
 			this._addToDefaultLayer()
-
+		
 			select _node
-
+		
 			try(destroyDialog node_name_rollout) catch()
-
-			_ExportNodeThis = undefined
+		
+			ThisExportNode = undefined
 			
 			(NodeList_v()).loadNodes()
+			
+			true --return
 		)
 		else
-			return this._exception()
+			this._exception() --return
 	),
 	
 	/** Set user prop
@@ -116,6 +122,8 @@ struct ExportNode_v
 		node_name_rollout.Title = "! EXPORT NODE EXISTS ALREADY !"
 		
 		setFocus node_name_rollout.TextBox
+		
+		false --return
 	),
 	
 	on create do ()

@@ -1,12 +1,15 @@
+
 /** 
  */
 struct NodeList_v
 (
 	user_prop = "unreal-engine-export-node",
 	
-	nodes = #(),
-	
+	--nodes_in_scene = #(),
 
+	_rollout = ROLLOUTS_GLOBAL.get "ROLLOUT_unreal",
+
+	nodelistBOX = _rollout.MULTILISTBOX_nodes,
 	
 	/** Load nodes
 	 */
@@ -14,17 +17,18 @@ struct NodeList_v
 	(
 		print "NodeList_v.loadNodes()"
 
-		nodes = this._getNodesInScene()
+		nodelistBOX.items = this._getNodeNames (this._getNodesInScene())
+	),
+	
+	/** Get selected items
+	 */
+	function getSelectedItems =
+	(
+		selected_index = nodelistBOX.selection as Array
 		
-		_Rollout = ROLLOUTS.get "ROLLOUT_unreal"
+		node_names	= nodelistBOX.items
 		
-		format "ROLLOUTS	= % \n" ROLLOUTS
-		format "_Rollout	= % \n" _Rollout
-		--format "nodes	= % \n" (this._getNodeNames())
-		
-		_Rollout.MULTILISTBOX_nodes.items = this._getNodeNames()
-		--_Rollout.MULTILISTBOX_nodes.items = #("Good")
-
+		for index in selected_index collect node_names[index] -- return
 	),
 	
 	/** Get nodes in scene
@@ -36,10 +40,19 @@ struct NodeList_v
 	
 	/** _get node names
 	 */
-	function _getNodeNames =
+	function _getNodeNames nodes =
 	(
-		for _node in nodes collect _node.name 
+		for _node in nodes collect _node.name --return
 	),
+	
+	/** Test
+	 */
+	function test =
+	(
+		print "NodeList_v.test()"
+	),
+	
+	
 	
 	on create do ()
 )
