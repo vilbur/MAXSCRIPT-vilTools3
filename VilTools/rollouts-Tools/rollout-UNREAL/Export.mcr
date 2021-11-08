@@ -7,14 +7,11 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterFbx/ExporterFbx.ms"
  */
 macroscript	_unreal_export_path
 category:	"_Unreal"
-buttontext:	"Projects"
+buttontext:	"Export Path"
 toolTip:	"Create Export Node"
 icon:	"type:BrowsePath|width:256"
 (
 
-	--ExportNode 	= ExportNode_v()
-
-	
 )
 
 /**  
@@ -38,7 +35,7 @@ buttontext:	"Export"
 toolTip:	"Export Fbx file"
 --icon:	"#(path, index)"
 (
-	Exporter = ExporterFbx_v()
+	Exporter = ExporterFbx_v export_dir:(ROLLOUTS_GLOBAL.get "ROLLOUT_unreal").BrowsePath_Export_Path.text
 	
 	Exporter.loadPreset()
 	

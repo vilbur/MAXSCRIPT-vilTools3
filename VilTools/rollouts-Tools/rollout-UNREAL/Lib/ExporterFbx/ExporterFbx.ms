@@ -1,12 +1,10 @@
-global export_nodes_in_scene = #()
-
-/** Exporter
+/** Fbx Exporter to Unreal engine
  */
 struct ExporterFbx_v
 (
 	export_node,	-- used node for export
 	
-	export_path = @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\VilTools\rollouts-Tools\rollout-UNREAL\Test\ExportedAssets\MaterialTest.fbx",
+	export_dir,
 	
 	preset_file = getFilenamePath(getSourceFileName()) + "\Presets\Unreal-default.fbxexportpreset",
 
@@ -23,43 +21,41 @@ struct ExporterFbx_v
 	function epxort nodes =
 	(
 		print "ExporterFbx_v.epxort()"
-	
-		for _node in nodes do 
-			this.selectObjetcsAndExport (_node.children)
-	
+		
+		if ( doesFileExist export_dir ) then 
+			for _node in nodes do 
+				this.selectObjectsAndExport (_node)
+		else
+			messageBox "Directory does not exist." title:"EXPORT FAILED !" beep:true
 	),
 
 	/** Select node children
 	 */
-	function selectObjetcsAndExport nodes =
+	function selectObjectsAndExport _node =
 	(
 		--print "ExporterFbx_v.selectObjectsForExport()"
-		select nodes
 		
-		if( nodes.count > 0 ) then
-			exportFile export_path #noPrompt selectedOnly:true using:FBXEXP
+		select _node.children
+		
+		if( _node.children.count > 0 ) then
+			exportFile (export_dir+"\\"+_node.name+".fbx") #noPrompt selectedOnly:true using:FBXEXP
 	),
 	
-	/*------------------------------------------------------------------------------
-		PRIVATE
-	--------------------------------------------------------------------------------*/
+	private
 	
-	--/** Set export path
-	--  * Combine Export dir path defined in user properties of node and node name
-	-- */
-	--function _setExportPath =
-	--(
-	--	export_dir = getUserProp export_node "export-dir"
-	--	
-	--	export_path = export_dir + "\\" + export_node.name + ".fbx"
-	--),
-	--/** Export node names
-	-- */
-	--function exportNodeNames =
-	--(
-	--	
-	--	for _node in export_nodes_in_scene collect _node.name
-	--),
+	/** _check export directory
+	 */
+	function _createExportDirectory =
+	(
+		print "ExporterFbx_v._createExportDirectory()"
+		
+		if not( doesFileExist export_dir ) then 
+			if queryBox (export_dir+"\n\n Would you like to create directory ?") title:"PATH DOES NOT EXIST !"  beep:true then
+				makeDir export_dir
+	),
 	
-	on create do ()
+	on create do
+	(
+		this._createExportDirectory()	
+	)
 )
