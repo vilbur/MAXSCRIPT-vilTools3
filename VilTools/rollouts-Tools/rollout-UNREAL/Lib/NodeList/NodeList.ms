@@ -31,6 +31,14 @@ struct NodeList_v
 		for index in selected_index collect node_names[index] -- return
 	),
 	
+	/** _get selected nodes
+	 */
+	function getSelectedNodes =
+	(
+		--print "NodeList_v._getSelectedNodes()"
+		for _node in (this._getNodesInScene()) where findItem (this.getSelectedItems()) _node.name > 0 collect _node --return
+	),
+	
 	/** Get nodes in scene
 	 */
 	function _getNodesInScene =

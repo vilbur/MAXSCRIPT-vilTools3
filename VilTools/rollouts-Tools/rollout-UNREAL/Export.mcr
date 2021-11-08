@@ -18,7 +18,6 @@ icon:	"type:BrowsePath|width:256"
 )
 
 /**  
- *	
  */
 macroscript	_unreal_export_node_create
 category:	"_Unreal"
@@ -32,7 +31,6 @@ toolTip:	"Create Export Node\nNode name is Unreal`s project name\nNode text is a
 )
 
 /**  
- *	https://docs.unrealengine.com/4.27/en-US/WorkingWithContent/Importing/Datasmith/SoftwareInteropGuides/3dsMax/MAXScriptInterface/
  */
 macroscript	_unreal_export
 category:	"_Unreal"
@@ -42,60 +40,18 @@ toolTip:	"Export Fbx file"
 (
 	Exporter = ExporterFbx_v()
 	
-	Exporter.selectNodeChildren()
+	Exporter.loadPreset()
 	
-	--export_node	= getNodeByName "export-node"
-	--
-	--select export_node
-	--
-	--selectmore $.children
-	--
-	--deselect export_node
-	--
-	--actionMan.executeAction 0 "40143"  -- Groups: Group Close
-	--
-	----DatasmithExport.IncludeTarget	= #VisibleObjects               -- or #SelectedObjects
-	--DatasmithExport.IncludeTarget	= #SelectedObjects               -- or #SelectedObjects
-	----DatasmithExport.AnimatedTransforms	= #ActiveTimeSegment       -- or #CurrentFrame
-	--DatasmithExport.AnimatedTransforms	= #CurrentFrame       -- or #CurrentFrame
-	----DatasmithExport.Export	"c:\Users\vilbur\Documents\Unreal Projects\Car_Studio\Content\Maserati\Maserati.udatasmith" true    -- set your own path and filename
-	--DatasmithExport.Export	(GetDir #export + "\Maserati\Maserati.udatasmith" ) true 
+	Exporter.epxort ((NodeList_v()).getSelectedNodes())
 )
 
 /**  
- *	
  */
 macroscript	_unreal_export_nodes_list
 category:	"_Unreal"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
 icon:	"type:multilistbox|columns:14"
-(	
-	NodeList 	= NodeList_v()
-
-	selected_items = NodeList.getSelectedItems()
-	nodes_in_scene = NodeList._getNodesInScene()
-
-	select (for _node in nodes_in_scene where findItem selected_items _node.name > 0 collect _node) 
-
+(
+	select ((NodeList_v()).getSelectedNodes())
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
