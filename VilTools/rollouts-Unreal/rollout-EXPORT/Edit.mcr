@@ -1,0 +1,73 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )	 -- "./Lib/NodeList/NodeList.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	 -- "./Lib/ExportNode/ExportNode.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterFbx/ExporterFbx.ms" ) -- "/Lib/ExporterFbx/ExporterFbx.ms"
+
+
+/**  
+ *	
+ */
+--macroscript	_unreal_asset_path
+--category:	"_Unreal"
+--buttontext:	"Asset Path"
+--toolTip:	"Path to assset in unreal engine"
+--icon:	"type:BrowsePath"
+--(
+--
+--)
+--/**  
+-- *	
+-- */
+--macroscript	_unreal_load_materials
+--category:	"_Unreal"
+--buttontext:	"Load Mats"
+--toolTip:	"Load materials"
+--icon:	""
+--(
+--	export_dir = (ROLLOUTS_GLOBAL.get "ROLLOUT_unreal").BrowsePath_Asset_Path.text
+--	
+--	print export_dir
+--	
+--	files = getFiles (export_dir+"\*.uasset")
+--	
+--	format "files	= % \n" files
+--	
+--	(ROLLOUTS_GLOBAL.get "ROLLOUT_unreal").DROPDOWNLIST_Materials.items = for file in files collect getFilenameFile(filenameFromPath file)
+--	
+--	
+--)
+--
+--
+--/**  
+-- *	
+-- */
+--macroscript	_unreal_materials
+--category:	"_Unreal"
+--buttontext:	"Materials"
+--toolTip:	"Assign material from asset folder"
+--icon:	"type:Dropdownlist|width:256"
+--(
+--	dropdown = (ROLLOUTS_GLOBAL.get "ROLLOUT_unreal").DROPDOWNLIST_Materials
+--	
+--	materials = dropdown.items
+--	selected  = dropdown.selection
+--
+--	format "materials	= % \n" materials
+--	format "selected	= % \n" selected
+--	
+--	
+--)
+--
+--
+--/**  
+-- *	
+-- */
+--macroscript	_unreal_materials_assign
+--category:	"_Unreal"
+--buttontext:	"Set"
+--toolTip:	"Set material to selection"
+--icon:	""
+--(
+--
+--	
+--	
+--)

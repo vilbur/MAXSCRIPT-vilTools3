@@ -1,4 +1,3 @@
-
 /** Save current settings of FBX Export Dialog
  *	
  *	EXCEPT "PopSettings"	and "PushSettings"	
@@ -7,6 +6,10 @@
  * https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2022/ENU/3DSMax-Data-Exchange/files/GUID-249100FE-67BE-43B8-AF12-D20703CDF8D1-htm.html
  *	
  */
+
+ini	= getFilenamePath(getSourceFileName()) + "\FbxExportSettings\FbxExportSettings.ini",
+
+
 fbx_props	=
 #(  "Animation",
 	"ASCII",
@@ -52,4 +55,4 @@ fbx_props	=
 
 
 for prop in fbx_props do
-	setINISetting (getFilenamePath(getSourceFileName()) + "Exporter.ini") "export-options" prop ((FbxExporterGetParam prop) as string)
+	setINISetting ini "export-options" prop ((FBXExporterGetParam prop) as string )

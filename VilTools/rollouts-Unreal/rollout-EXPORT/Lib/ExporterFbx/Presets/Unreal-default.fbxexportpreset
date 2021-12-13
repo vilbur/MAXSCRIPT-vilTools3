@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Export UIH="0" UID="0" UIG="1" UIX="1" UIP="0" lbENU="Export">
   <PlugInGrp UIH="1" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Plugin Information">
-    <PlugInUIWidth UIH="1" UID="0" UIG="0" lbENU="Plugin UI Width" dt="Integer" v="700"/>
+    <PlugInUIWidth UIH="1" UID="0" UIG="0" lbENU="Plugin UI Width" dt="Integer" v="950"/>
     <PlugInUIHeight UIH="1" UID="0" UIG="0" lbENU="Plugin UI Height" dt="Integer" v="600"/>
     <PlugInUIXpos UIH="1" UID="0" UIG="0" lbENU="Plugin UI X Position" dt="Integer" v="930"/>
     <PlugInUIYpos UIH="1" UID="0" UIG="0" lbENU="Plugin UI Y Position" dt="Integer" v="405"/>
     <UILIndex UIH="1" UID="0" UIG="0" lbENU="UI language" dt="Enum" enumSelected="ENU" v="0" enumItem_0="ENU" enumItem_1="DEU" enumItem_2="FRA" enumItem_3="JPN" enumItem_4="KOR" enumItem_5="CHS" enumItem_6="PTB"/>
     <PluginProductFamily UIH="0" UID="0" UIG="0" lbENU="Plugin product family" dt="KString" v="3DS Max  ( API cut number: Heimdall with PDBs H923_RL_x64 02-23-2021 16:18 409fea16f1896377d6100c575cff4d48c72941da )"/>
-    <PresetSelected UIH="1" UID="0" UIG="0" lbENU="Preset Selected" dt="KString" v="C:\Program Files\Autodesk\3ds Max 2022\plugcfg\FBX\Presets\export\Autodesk Media &amp; Entertainment.fbxexportpreset"/>
+    <PresetSelected UIH="1" UID="0" UIG="0" lbENU="Preset Selected" dt="KString" v="C:\Users\vilbur\Documents\3dsmax\FBX\3dsMax2022_X64\Presets\export\Unreal-default.fbxexportpreset"/>
   </PlugInGrp>
   <PresetsGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="1" lbENU="Presets">
     <Presets UIH="0" UID="0" UIG="0" lbENU="Current Preset" dt="Presets"/>
@@ -29,7 +29,7 @@
       <PreserveEdgeOrientation UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Preserve edge orientation" dt="Bool" v="1"/>
       <MRCustomAttributes UIH="1" UID="0" UIG="0" UIBG="0" lbENU="MR Custom Attributes" dt="Bool" v="0"/>
     </Geometry>
-    <Animation UIH="0" UID="0" UIG="0" UIBG="1" UIX="0" lbENU="Animation" dt="Bool" v="1">
+    <Animation UIH="0" UID="0" UIG="0" UIBG="1" UIX="0" lbENU="Animation" dt="Bool" v="0">
       <ExtraGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Extra Options">
         <UseSceneName UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Use scene name" dt="Bool" v="0"/>
         <RemoveSingleKey UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Remove single key" dt="Bool" v="0"/>
@@ -69,10 +69,10 @@
       </ConstraintsGrp>
     </Animation>
     <CameraGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Cameras">
-      <Camera UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Cameras" dt="Bool" v="1"/>
+      <Camera UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Cameras" dt="Bool" v="0"/>
     </CameraGrp>
     <LightGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Lights">
-      <Light UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Lights" dt="Bool" v="1"/>
+      <Light UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Lights" dt="Bool" v="0"/>
     </LightGrp>
     <Audio UIH="0" UID="0" UIG="0" UIBG="1" UIX="0" lbENU="Audio" dt="Bool" v="1"/>
     <EmbedTextureGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Embed Media">
@@ -81,14 +81,14 @@
     <BindPose UIH="1" UID="0" UIG="0" UIBG="0" lbENU="Bind Pose" dt="Bool" v="1"/>
     <PivotToNulls UIH="1" UID="0" UIG="0" UIBG="0" lbENU="Pivot To Null" dt="Bool" v="0"/>
     <ShellMaterialsGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Shell Materials">
-      <ShellMaterialsProp UIH="0" UID="0" UIG="0" lbENU="Export" dt="Enum" enumSelected="Baked Materials" v="0" enumItem_0="Baked Materials" enumItem_1="Original Materials"/>
+      <ShellMaterialsProp UIH="0" UID="0" UIG="0" lbENU="Export" dt="Enum" enumSelected="Original Materials" v="1" enumItem_0="Baked Materials" enumItem_1="Original Materials"/>
     </ShellMaterialsGrp>
   </IncludeGrp>
   <AdvOptGrp UIH="0" UID="0" UIG="1" UIX="1" UIP="0" lbENU="Advanced Options">
-    <UnitsGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Units">
+    <UnitsGrp UIH="0" UID="0" UIG="1" UIX="1" UIP="0" lbENU="Units">
       <TotalUnitsScale UIH="0" UID="0" UIG="0" lbENU="Total Units Scale" dt="TextLine"/>
-      <DynamicScaleConversion UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Automatic" dt="Bool" v="1"/>
-      <UnitsSelector UIH="0" UID="1" UIG="0" lbENU="Scene units converted to" dt="Enum" enumSelected="Inches" v="5" enumItem_0="Millimeters" enumItem_1="Centimeters" enumItem_2="Decimeters" enumItem_3="Meters" enumItem_4="Kilometers" enumItem_5="Inches" enumItem_6="Feet" enumItem_7="Yards" enumItem_8="Miles"/>
+      <DynamicScaleConversion UIH="0" UID="0" UIG="0" UIBG="0" lbENU="Automatic" dt="Bool" v="0"/>
+      <UnitsSelector UIH="0" UID="0" UIG="0" lbENU="Scene units converted to" dt="Enum" enumSelected="Centimeters" v="1" enumItem_0="Millimeters" enumItem_1="Centimeters" enumItem_2="Decimeters" enumItem_3="Meters" enumItem_4="Kilometers" enumItem_5="Inches" enumItem_6="Feet" enumItem_7="Yards" enumItem_8="Miles"/>
     </UnitsGrp>
     <AxisConvGrp UIH="0" UID="0" UIG="1" UIX="0" UIP="0" lbENU="Axis Conversion">
       <UpAxis UIH="0" UID="0" UIG="0" lbENU="Up Axis" dt="Enum" enumSelected="Y-up" v="0" enumItem_0="Y-up" enumItem_1="Z-up"/>

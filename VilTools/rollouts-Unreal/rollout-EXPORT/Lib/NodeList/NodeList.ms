@@ -7,9 +7,9 @@ struct NodeList_v
 	
 	--nodes_in_scene = #(),
 
-	_rollout = ROLLOUTS_GLOBAL.get "ROLLOUT_unreal",
+	--_rollout = ROLLOUTS_GLOBAL.get "ROLLOUT_unreal",
 
-	nodelistBOX = _rollout.MULTILISTBOX_nodes,
+	--nodelistBOX = _rollout.MULTILISTBOX_nodes,
 	
 	/** Load nodes
 	 */

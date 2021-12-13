@@ -33,7 +33,7 @@ struct ExporterFbx_v
 	 */
 	function selectObjectsAndExport _node =
 	(
-		--print "ExporterFbx_v.selectObjectsForExport()"
+		print "ExporterFbx_v.selectObjectsForExport()"
 		
 		select _node.children
 		
