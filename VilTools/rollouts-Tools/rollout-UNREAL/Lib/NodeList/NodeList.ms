@@ -9,7 +9,7 @@ struct NodeList_v
 
 	--_rollout = ROLLOUTS_GLOBAL.get "ROLLOUT_unreal",
 
-	--nodelistBOX = _rollout.MULTILISTBOX_nodes,
+	nodelistBOX = VilTools.Tools.ROLLOUT_UNREAL.MULTILISTBOX_Nodes,
 	
 	/** Load nodes
 	 */
@@ -53,14 +53,9 @@ struct NodeList_v
 		for _node in nodes collect _node.name --return
 	),
 	
-	/** Test
-	 */
-	function test =
-	(
-		print "NodeList_v.test()"
-	),
-	
-	
-	
-	on create do ()
+	on create do (
+		print "NodeList_v.onCreate()"
+
+		
+	)
 )
