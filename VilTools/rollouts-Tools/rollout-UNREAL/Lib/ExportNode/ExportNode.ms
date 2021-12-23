@@ -1,4 +1,4 @@
-global node_name_rollout
+global NODE_NAME_ROLLOUT
 
 
 
@@ -50,14 +50,14 @@ struct ExportNode_v
 	 */
 	function _askNodeNameDialog =
 	(
-		try(destroyDialog node_name_rollout) catch()
+		try(destroyDialog NODE_NAME_ROLLOUT) catch()
 		
 			
-		rollout node_name_rollout "Set export node name"
+		rollout NODE_NAME_ROLLOUT "Set export node name"
 		(
 			dotNetControl TextBox "TextBox"
 		
-			on node_name_rollout open do
+			on NODE_NAME_ROLLOUT open do
 			(
 				TextBox.Text	= _scene_name
 				TextBox.BackColor	= ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
@@ -68,16 +68,16 @@ struct ExportNode_v
 				if e.KeyCode == e.KeyCode.Enter then
 				(
 					if( ThisExportNode._createNodeObject TextBox.Text ) then 
-						destroyDialog node_name_rollout
+						destroyDialog NODE_NAME_ROLLOUT
 				)
 				else if e.KeyCode == e.KeyCode.Escape then
-					destroyDialog node_name_rollout
+					destroyDialog NODE_NAME_ROLLOUT
 			)
 		)
 		
-		CreateDialog node_name_rollout width:256 height:40
+		CreateDialog NODE_NAME_ROLLOUT width:256 height:40
 			
-		setFocus node_name_rollout.TextBox
+		setFocus NODE_NAME_ROLLOUT.TextBox
 	),
 
 	/** Create
@@ -96,7 +96,7 @@ struct ExportNode_v
 		
 			select _node
 		
-			try(destroyDialog node_name_rollout) catch()
+			try(destroyDialog NODE_NAME_ROLLOUT) catch()
 		
 			ThisExportNode = undefined
 			
@@ -119,9 +119,9 @@ struct ExportNode_v
 	 */
 	function _exception =
 	(
-		node_name_rollout.Title = "! EXPORT NODE EXISTS ALREADY !"
+		NODE_NAME_ROLLOUT.Title = "! EXPORT NODE EXISTS ALREADY !"
 		
-		setFocus node_name_rollout.TextBox
+		setFocus NODE_NAME_ROLLOUT.TextBox
 		
 		false --return
 	),

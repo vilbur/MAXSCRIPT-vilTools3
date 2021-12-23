@@ -53,9 +53,8 @@ struct NodeList_v
 		for _node in nodes collect _node.name --return
 	),
 	
-	on create do (
-		print "NodeList_v.onCreate()"
-
-		
+	on create do
+	(
+		--print "NodeList_v.onCreate()"
 	)
 )

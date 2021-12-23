@@ -1,6 +1,34 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )	 -- "./Lib/NodeList/NodeList.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	 -- "./Lib/ExportNode/ExportNode.ms"
---filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterFbx/ExporterFbx.ms" ) -- "/Lib/ExporterFbx/ExporterFbx.ms"
+/*------------------------------------------------------------------------------
+
+	ASSETS PATH
+
+------------------------------------------------------------------------------*/
+/**  
+ */
+macroscript	_unreal_asset_path_label
+category:	"_Unreal"
+buttontext:	"Materials path"
+toolTip:	"Create Export Node"
+icon:	"type:label|across:1|offset:[-146,0]"
+--icon:	"type:label|across:1"
+(
+
+)
+
+/**  
+ */
+macroscript	_unreal_asset_path
+category:	"_Unreal"
+buttontext:	"[Materials Dir]"
+--toolTip:	"Create Export Node"
+icon:	"type:BrowsePath|across:1"
+--icon:	"type:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
+(
+	for _node in (NodeList_v()).getSelectedNodes() do
+		setUserProp _node "materials-dir" EventFired.val
+
+	macros.run "_Unreal" "_unreal_load_materials"
+)
 
 /**  
  *	
@@ -12,9 +40,9 @@ toolTip:	"Load materials"
 icon:	""
 (
 	--format "EventFired	= % \n" EventFired
-	_rollout = EventFired.Roll
+	_rollout = VilTools.Tools.ROLLOUT_UNREAL
 
-	asset_dir = execute ("@"+ "\""+_rollout.BROWSEPATH_Assets_Dir.text +"\"")
+	asset_dir = execute ("@"+ "\""+_rollout.BROWSEPATH_Materials_Dir.text +"\"")
 
 	files = getFiles (asset_dir+"\*.uasset")
 
