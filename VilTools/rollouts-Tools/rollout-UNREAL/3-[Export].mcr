@@ -55,39 +55,45 @@ toolTip:	"Export Fbx file"
 icon:	"Groupbox:Nodes|height:64"
 (
 	--export_dir = execute ("@"+ "\""+EventFired.Roll.BROWSEPATH_Export_Dir.text +"\"")
+
 	selected_nodes =  ((NodeList_v()).getSelectedNodes())
 	
 	if( selected_nodes.count == 0 ) then
 		return false
-		
-	holdMaxFile() 
-
-		
-	--export_paths = for _node in selected_nodes where ( export_dir = getUserProp _node "export-dir") != undefined collect export_dir
 	
-	try
+	
+	with redraw off
 	(
-		for _node in selected_nodes where ( export_dir = getUserProp _node "export-dir") != undefined do 
+		holdMaxFile()
+		
+		try
 		(
-			Exporter = ExporterFbx_v export_dir:export_dir
-			
-			Exporter.loadPreset()
-			
-			Exporter.epxort (_node)	
+			for export_node in selected_nodes where ( export_dir = getUserProp export_node "export-dir") != undefined do 
+			(
+				
+
+				ExportChecker = ExportChecker_v export_node:export_node
+				
+				--ExportChecker.checkScene()
+				ExportChecker.attachObjectsInGroups()
+				
+				--(ExporterDatasmith_v()).export (export_node) (export_dir)
+				
+			)
+		)
+		catch(
+			messageBox "Export Failed" title:"Title"  beep:false
 		)
 		
-		
+		fetchMaxFile quiet:true
 	)
-	catch(
-		messageBox "Export Failed" title:"Title"  beep:false
-		
-	)
+	redrawViews()
 	
-	fetchMaxFile quiet:true
-
-	--format "export_paths	= % \n" export_paths
-	--format "export_dir	= % \n" export_dir
+	
+	
 )
+
+
 
 /**  EXPORT #righclick 
  */
@@ -144,6 +150,18 @@ icon:	"type:multilistbox|across:2"
 
 
 
+
+
+/**  NODE LIST
+ */
+macroscript	_unreal_export_nodes_list_righclick
+category:	"_Unreal"
+buttontext:	"Nodes"
+toolTip:	"Nodes to export"
+--icon:	"type:multilistbox|across:2"
+(
+	messageBox "Yupiii" title:"Title"  beep:false  
+)
 
 
 

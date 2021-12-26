@@ -1,4 +1,15 @@
 /** Fbx Exporter to Unreal engine
+  
+  
+  HOW TO EXECUTE
+  
+	Exporter = ExporterFbx_v export_dir:export_dir
+	
+	Exporter.loadPreset()
+	
+	Exporter.epxort (_node)
+
+
  */
 struct ExporterFbx_v
 (
@@ -22,7 +33,7 @@ struct ExporterFbx_v
 		FBXExporterSetParam "LoadExportPresetFile" preset_file
 	),
 	
-	/** Epxort
+	/** Export
 	 */
 	function epxort _node =
 	(
@@ -45,9 +56,9 @@ struct ExporterFbx_v
 		
 		select _node.children
 		
-		ResetXForm selection
+		--modPanel.addModToSelection (XForm ()) ui:on
 
-		ConvertTo selection Editable_Poly
+		--ConvertTo selection Editable_Poly
 		
 		exportFile (export_dir+"\\"+_node.name+".fbx") #noPrompt selectedOnly:true using:FBXEXP
 	),

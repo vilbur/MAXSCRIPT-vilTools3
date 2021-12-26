@@ -1,6 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	 -- "./Lib/ExportNode/ExportNode.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterFbx/ExporterFbx.ms" ) -- "./Lib/ExporterFbx/ExporterFbx.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterDatasmith/ExporterDatasmith.ms" )
 
 /*------------------------------------------------------------------------------
   
