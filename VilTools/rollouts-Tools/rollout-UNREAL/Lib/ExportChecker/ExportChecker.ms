@@ -17,29 +17,25 @@ struct ExportChecker_v
 	/* properties */
 	groups_to_attach = #(),
 	
-	/** _test groups
+	/** Find if exported objects contains any attachable groups
 	 */
 	function analyzeGroups =
 	(
 		--format "\n"; print "ExportChecker_v._testGroups()"
-		this._validateNodes()
-		--format "export_nodes	= % \n" export_nodes
-		
 		for export_node in export_nodes where export_node != undefined  do
 			join groups_to_attach  (this._getGroupsForAttach(export_node))
-		
-		--format "groups_to_attach	= % \n" groups_to_attach
-		groups_to_attach --return
 	),
-
-	private
 	
 	/** _validate nodes
 	 */
-	function _validateNodes =
+	function validateNodes =
 	(
 		export_nodes = for export_node in export_nodes where export_node != undefined and ( export_dir = getUserProp export_node "export-dir") != undefined collect export_node
 	),
+	
+	
+	private
+
 	
 	/** Get groups where members will be attached together 
 	  * Only groups which contain ONLY meshes will be merged

@@ -51,48 +51,25 @@ icon:	"Groupbox:Nodes"
 macroscript	_unreal_export
 category:	"_Unreal"
 buttontext:	"Export"
-toolTip:	"Export Fbx file"
+toolTip:	"Export selected nodes to files"
 icon:	"Groupbox:Nodes|height:64"
 (
 	--export_dir = execute ("@"+ "\""+EventFired.Roll.BROWSEPATH_Export_Dir.text +"\"")
-
+	clearListener()
+	
 	selected_nodes =  ((NodeList_v()).getSelectedNodes())
+	
+	format "selected_nodes	= % \n" selected_nodes
 	
 	if( selected_nodes.count == 0 ) then
 		return false
 	
 	
 	with redraw off
-	(
-		holdMaxFile()
-		
-		try
-		(
-			for export_node in selected_nodes where ( export_dir = getUserProp export_node "export-dir") != undefined do 
-			(
-				
+		ExporterDatasmith_v export_nodes:selected_nodes
 
-				ExportChecker = ExportChecker_v export_node:export_node
-				
-				--ExportChecker.checkScene()
-				ExportChecker.attachObjectsInGroups()
-				
-				--(ExporterDatasmith_v()).export (export_node) (export_dir)
-				
-			)
-		)
-		catch(
-			messageBox "Export Failed" title:"Title"  beep:false
-		)
-		
-		fetchMaxFile quiet:true
-	)
-	redrawViews()
-	
-	
-	
+	redrawViews()	
 )
-
 
 
 /**  EXPORT #righclick 

@@ -5,7 +5,10 @@ filein( getFilenamePath(getSourceFileName()) + "/../ExportChecker/ExportChecker.
  */
 struct ExporterDatasmith_v
 (
-	--__construct = #( #property_name ),
+	__construct = #( #export_nodes ),
+	
+	/* construct */
+	export_nodes = #(),
 	
 	/* construct */
 	/* dependency */
@@ -14,24 +17,64 @@ struct ExporterDatasmith_v
 	/* properties */
 	
 	
+	private
+	
+
+	/** Export
+	  *
+	  *
+	 */
+	function _export =
+	(
+		ExportChecker = ExportChecker_v export_nodes: export_nodes
+		
+		ExportChecker.validateNodes()
+
+		ExportChecker.analyzeGroups()
+			
+		format "ExportChecker.export_nodes	= % \n" ExportChecker.export_nodes
+		if( ExportChecker.groups_to_attach.count > 0 ) then
+		(
+			holdMaxFile()
+			
+			GroupAttacher_v groups:ExportChecker.groups_to_attach
+		)
+		
+		
+		try
+		(
+			
+			/* EXPORT */ 
+			for export_node in ExportChecker.export_nodes do 
+				this._exportNode (export_node) (getUserProp export_node "export-dir")
+				
+				
+		)
+		catch(
+			messageBox "Export Failed" title:"Export Failed"  beep:true
+
+			getCurrentException() 
+		)
+		
+		
+		if( ExportChecker.groups_to_attach.count > 0 ) then
+			fetchMaxFile quiet:true
+		
+	),
+
 	/** Export
 	 */
-	function export export_node export_dir =
+	function _exportNode export_node export_dir =
 	(
-		
+		print("ExporterDatasmith_v._exportNode() " + export_node.name )
+
 		select (this._getAllChildren(export_node))
-		
-		--deselect export_node
 		
 		DatasmithExport.IncludeTarget	= #SelectedObjects               
 		DatasmithExport.AnimatedTransforms	= #CurrentFrame
-
+		
 		DatasmithExport.Export (export_dir+"\\"+export_node.name+".udatasmith") true    -- set your own path and filename
 	),
-	
-	
-
-	private
 	
 	
 	/**  Get all nested children
@@ -50,8 +93,9 @@ struct ExporterDatasmith_v
 	 */
 	on create do
 	(
-		--print("ExporterDatasmith_v.onCreate()")
-		--ConstructPropeties test:this
-	)
-	
+		print("ExporterDatasmith_v.onCreate()")
+		ConstructPropeties test:this
+		
+		this._export()
+	)	
 )
