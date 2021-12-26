@@ -11,4 +11,18 @@ if maxFileName != "ExportCheckerTest.max" then
 
 ExportChecker = ExportChecker_v export_nodes: #($ExportNode)
 
-ExportChecker.analyzeExport()
+groups_to_attach = ExportChecker.analyzeGroups()
+
+
+if( groups_to_attach.count > 0 ) then
+(
+	GroupAttacher_v groups:groups_to_attach
+
+)
+
+/*
+  if groups to attach exist then
+		attachGroupMembers
+  
+  
+ */
