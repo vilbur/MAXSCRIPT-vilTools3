@@ -72,7 +72,7 @@ macroscript	material_select_objs_by_material
 category:	"_Material"  
 buttonText:	"Select By Mat"
 tooltip:	"Select Objects By Material"
-
+icon:	"border:false"
 (
 	-- <array>SelectObjectByMaterial - returns array of objects a material is assigned to
 	fn SelectObjectByMaterial reqMatEditOpen materialIndex = (

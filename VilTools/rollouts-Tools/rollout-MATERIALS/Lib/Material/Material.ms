@@ -87,35 +87,35 @@ struct Material_v
 		else
 			false
 	),
+	
 	/** Create multimaterial where each material ID has different color
 	  * @return multimaterial
 	 */
 	function getIdMaterial =
 	(
+		print "Material.getIdMaterial()"
 		mat_name = "Multi ID"
+		colors	 = 6
 		
 		mat_existing = this.getMat mat_name 
-		--print ( "mat_existing = " + mat_existing as string )
+		format "mat_existing	= % \n" mat_existing
 		if( mat_existing != false ) then
 			return mat_existing
-		
-		colors	= 6
 		
 		RGB_darker	= this.getColorsPallete colors minmax:#(130,	170)
 		RGB_dark	= this.getColorsPallete colors minmax:#(90,	130)
 		RGB	= this.getColorsPallete colors minmax:#(50,	90)
 		
-		format "RGB = % \nRGB_darker = % \nRGB_dark = % \n\n" RGB RGB_darker RGB_dark
-		
 		join RGB (join RGB_dark RGB_darker)
-	
-		multi_mat	= multiMaterial numsubs:RGB.count name:mat_name -- (getFilenamePath  loadedMat)
+		
+		multi_mat	= Multimaterial numsubs:RGB.count name:mat_name -- (getFilenamePath  loadedMat)
 		
 		for c=1 to RGB.count do
-			multi_mat[c].diffuse = color RGB[c][1] RGB[c][2] RGB[c][3]
-
+			multi_mat[c].base_color = color RGB[c][1] RGB[c][2] RGB[c][3]
+		
 		multi_mat --return
 	),
+	
 	/** Get array of rgb values
 	  * @param	integer	colors	Number of generated colors
 	  * @param	array	minmax	Min and Max color value, high values produce lighter colors
@@ -173,9 +173,10 @@ struct Material_v
 
 		rgb_value as float --return
 	),
-	function test =
+	
+	on create do
 	(
-		messagebox "Material.test()"
+		--print "Material.onCreate()"
 	)
 )
 
