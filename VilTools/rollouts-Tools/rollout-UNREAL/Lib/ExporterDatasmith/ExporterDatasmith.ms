@@ -1,8 +1,11 @@
-filein( getFilenamePath(getSourceFileName()) + "/../ExportChecker/ExportChecker.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/ExportChecker/ExportChecker.ms" )
 
 
 /** Exporter datasmith
- */
+  *
+  *
+  *
+  */
 struct ExporterDatasmith_v
 (
 	__construct = #( #export_nodes ),
@@ -56,10 +59,8 @@ struct ExporterDatasmith_v
 			getCurrentException() 
 		)
 		
-		
 		if( ExportChecker.groups_to_attach.count > 0 ) then
 			fetchMaxFile quiet:true
-		
 	),
 
 	/** Export

@@ -1,8 +1,15 @@
 filein( getFilenamePath(getSourceFileName()) + "/GroupAttacher/GroupAttacher.ms" )
 
-/** Export checker
-  
-  
+/** Analyze objects for export
+  * 
+  * Group will be attached if:
+  * 	1) Contains only GeometryClass objects will be merged
+  * 
+  * 
+  * Group will NOT be attached if:
+  * 	1) If group name is UPPERCASE
+  * 
+  * 
  */
 struct ExportChecker_v
 (
@@ -49,7 +56,7 @@ struct ExportChecker_v
 		
 		groups = this._getGroups (node_children)
 		
-		for _group in groups where this._membersAreGeometry(_group) collect _group
+		for _group in groups where this._membersAreGeometry(_group) and this._groupNameIsUppercase(_group) == false  collect _group
 	),
 	
 	/** _get group objects
@@ -71,6 +78,22 @@ struct ExportChecker_v
 		--format "result	= % \n" (non_geometry_objects.count == 0)
 		non_geometry_objects.count == 0 --return
 	),
+	
+	/** _group name has lower case characters
+	 */
+	function _groupNameIsUppercase _group =
+	(
+		--format "\n"; print "ExportChecker_v._groupNameIsUppercase()"
+		
+		rx = dotNetClass "System.Text.RegularExpressions.RegEx"
+		
+		matches =  rx.matches _group.name "[a-z]" 
+		
+		lowercase_characters = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
+		
+		lowercase_characters.count == 0
+	),
+	
 	
 	/** _get group members
 	 */
