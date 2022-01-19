@@ -59,8 +59,10 @@ struct ExporterDatasmith_v
 			getCurrentException() 
 		)
 		
-		if( ExportChecker.groups_to_attach.count > 0 ) then
-			fetchMaxFile quiet:true
+		--if( ExportChecker.groups_to_attach.count > 0 ) then
+			--fetchMaxFile quiet:true
+			
+		print "EXPORT SUCCESSFUL"
 	),
 
 	/** Export
@@ -70,6 +72,8 @@ struct ExporterDatasmith_v
 		print("ExporterDatasmith_v._exportNode() " + export_node.name )
 
 		select (this._getAllChildren(export_node))
+		
+		selection.isHidden = false
 		
 		DatasmithExport.IncludeTarget	= #SelectedObjects               
 		DatasmithExport.AnimatedTransforms	= #CurrentFrame

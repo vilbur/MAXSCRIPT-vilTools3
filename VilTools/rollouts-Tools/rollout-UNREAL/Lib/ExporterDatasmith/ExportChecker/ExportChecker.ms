@@ -83,15 +83,18 @@ struct ExportChecker_v
 	 */
 	function _groupNameIsUppercase _group =
 	(
-		--format "\n"; print "ExportChecker_v._groupNameIsUppercase()"
+		print "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+		format "\n"; print "ExportChecker_v._groupNameIsUppercase()"
+		format "_group.name	= % \n" _group.name
 		
 		rx = dotNetClass "System.Text.RegularExpressions.RegEx"
 		
-		matches =  rx.matches _group.name "[a-z]" 
+		matches =  rx.matches _group.name ".*[a-z].*" 
 		
 		lowercase_characters = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
-		
-		lowercase_characters.count == 0
+		format "lowercase_characters.count	= % \n" lowercase_characters.count
+		format "RESULT	= % \n" (lowercase_characters.count > 0)
+		lowercase_characters.count > 0
 	),
 	
 	

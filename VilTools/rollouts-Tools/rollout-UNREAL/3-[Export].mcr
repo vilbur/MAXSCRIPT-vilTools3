@@ -16,6 +16,24 @@ icon:	"type:Groupbox|id:test_groupbox_x|across:2"
 (
 )
 
+
+/**  LINK TO NODE
+ */
+macroscript	_unreal_export_node_link_selection
+category:	"_Unreal"
+buttontext:	"Link"
+toolTip:	"Link selected objects to selected nod"
+icon:	"Groupbox:Nodes"
+--icon:	"type:checkbutton"
+(
+	_nodes =  ((NodeList_v()).getSelectedNodes())
+
+	if( _nodes.count > 0 ) then
+		for obj in selection do obj.parent = _nodes[1]
+	
+)
+
+
 /**  LOAD
  */
 macroscript	_unreal_export_node_load
@@ -33,7 +51,7 @@ icon:	"Groupbox:Nodes"
 	--ExportNode.create()
 )
 
-/**  CREATE NODE
+/**  CREATE NODE0
  */
 macroscript	_unreal_export_node_create
 category:	"_Unreal"
@@ -127,19 +145,25 @@ icon:	"type:multilistbox|across:2"
 
 
 
+/*------------------------------------------------------------------------------
+	
+	BUG IN UI FRAMEWORK
+	
+	second macroscript of multilistbox does not create secondary events
+	
+--------------------------------------------------------------------------------*/
 
-
-/**  NODE LIST
- */
-macroscript	_unreal_export_nodes_list_righclick
-category:	"_Unreal"
-buttontext:	"Nodes"
-toolTip:	"Nodes to export"
+--/**  NODE LIST
+-- */
+--macroscript	_unreal_export_nodes_list_righclick
+--category:	"_Unreal"
+--buttontext:	"Nodes"
+--toolTip:	"Nodes to export"
 --icon:	"type:multilistbox|across:2"
-(
-	messageBox "Yupiii" title:"Title"  beep:false  
-)
-
+--(
+--	messageBox "Yupiii" title:"Title"  beep:false  
+--)
+--
 
 
 
