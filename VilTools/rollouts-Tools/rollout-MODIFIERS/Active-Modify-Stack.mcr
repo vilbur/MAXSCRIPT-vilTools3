@@ -10,7 +10,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveModifierChang
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersOnEdit.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionMaxModifyMode.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionMaxModifyMode.ms" )
 
 /*
 *	
@@ -22,7 +22,7 @@ tooltip:	"Keep Active the most top Edit Poly modifier"
 icon:	"type:checkbox|columns:8"
 (
 	--format "EventFired = % \n" EventFired
-	if( EventFired.value ) then
+	if( EventFired.val ) then
 	(
 		waitSelectionChangedKill()
 	
@@ -42,7 +42,7 @@ tooltip:	"Keep Active last active modifier"
 icon:	"type:checkbox|columns:8"
 (
 	format "EventFired = % \n" EventFired
-	if( EventFired.value ) then
+	if( EventFired.val ) then
 	(
 		waitSelectionChangedKill()
 
@@ -74,7 +74,7 @@ buttontext:	"Modify mode"
 toolTip:	"Open modify panel on object selection"
 icon:	"type:checkbox|columns:8"
 (
-	if( EventFired.value ) then
+	if( EventFired.val ) then
 		onSelectionMaxModifyModeCallback()
 		
 	else
@@ -91,7 +91,7 @@ icon:	"type:checkbox|columns:8"
 --tooltip:	"Disable instanced modifiers,if object is in subobject"
 --icon:	"type:checkbox|columns:8"
 --(
---	if( EventFired.value ) then 
+--	if( EventFired.val ) then 
 --		CallbacksHolder.start #SelectionSetChanged "disableInstancedModifiersOnEdit"
 --	else
 --		CallbacksHolder.kill  #SelectionSetChanged "disableInstancedModifiersOnEdit"

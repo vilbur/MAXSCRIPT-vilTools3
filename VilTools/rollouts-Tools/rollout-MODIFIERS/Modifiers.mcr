@@ -14,14 +14,14 @@ category:	"_Modifiers"
 buttonText:	"EditPoly"
 tooltip:	"Add EditPoly"
 (
-	sub_obj	= subObjectLevel
-
-	_Edit_Poly = (Modifier_v type:#Edit_Poly ).add()
-
-	if( sub_obj != undefined and sub_obj != 0 ) then 
-		subObjectLevel = sub_obj
-
-	redrawViews()
+	--sub_obj	= subObjectLevel
+	--
+	--_Edit_Poly = (Modifier_v type:#Edit_Poly ).add()
+	--
+	--if( sub_obj != undefined and sub_obj != 0 ) then 
+	--	subObjectLevel = sub_obj
+	--
+	--redrawViews()
 )
 	
 	
@@ -31,15 +31,15 @@ function loadPresetGlobal _preset =
 (
 
 	
-	modifier = modPanel.getCurrentObject()
-	suspendEditing which:#modify
-	
-	modifier.name = _preset
-	
-	resumeEditing which:#modify
-		
-		
-	(Modifier_v()).loadPreset()
+	--modifier = modPanel.getCurrentObject()
+	--suspendEditing which:#modify
+	--
+	--modifier.name = _preset
+	--
+	--resumeEditing which:#modify
+	--	
+	--	
+	--(Modifier_v()).loadPreset()
 
 	
 )
@@ -49,9 +49,9 @@ category:	"_Modifiers"
 buttonText:	"Chamfer"
 tooltip:	"Add Chamfer preset:default"
 (
-	(Modifier_v type:#Chamfer).add()
-
-	(Modifier_v()).loadPreset()
+	--(Modifier_v type:#Chamfer).add()
+	--
+	--(Modifier_v()).loadPreset()
 )
 
 
@@ -62,12 +62,12 @@ buttonText:	"Chamfer"
 tooltip:	"Menu\nRMB+Ctrl:	Presets"
 (
 	
-	ctrl = keyboard.controlPressed;
-	if ctrl == true then
-		(Modifier_v()).getPresets rollout_rolloutmodifiers
-
-	else
-		print "Nothing" 
+	--ctrl = keyboard.controlPressed;
+	--if ctrl == true then
+	--	(Modifier_v()).getPresets rollout_rolloutmodifiers
+	--
+	--else
+	--	print "Nothing" 
 	
 	
 )

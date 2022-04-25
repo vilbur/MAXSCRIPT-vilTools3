@@ -15,7 +15,6 @@ icon:	"columns:8"
 	
 	select _box
 	
-	
 	modPanel.addModToSelection (Chamfer ()) ui:on
 	$.modifiers[#Chamfer].amount = 3
 
@@ -31,8 +30,6 @@ icon:	"columns:8"
 	
 	modPanel.addModToSelection (meshsmooth ()) ui:on -- ADD INSTANCED MODIFIERS
 	modPanel.addModToSelection (meshsmooth ()) ui:on
-
-
 		
 	--modpanel.setPinStack true
 	
@@ -40,5 +37,4 @@ icon:	"columns:8"
 	
 	redrawViews()
 	actionMan.executeAction 0 "310" -- zoom on selection
-
 )

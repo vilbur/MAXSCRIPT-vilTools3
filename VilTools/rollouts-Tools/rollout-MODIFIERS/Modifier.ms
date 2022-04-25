@@ -1,5 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Modifiers/Modifiers.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/../rollout-Selection/Selection.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/../rollout-Selection/Selection.ms" )
 
 /** Modifier
   *

@@ -1,11 +1,11 @@
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/EditPolyModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/ChamferModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/NoiseModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/NormalModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/RelaxModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/ShellModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/VolumeSelectModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/XFormModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/EditPolyModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/ChamferModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/NoiseModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/NormalModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/RelaxModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/ShellModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/VolumeSelectModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/XFormModifier.ms" )
 
 
 
@@ -14,14 +14,14 @@ filein( getFilenamePath(getSourceFileName()) + "/ModifierTypes/XFormModifier.ms"
 struct Modifiers_v
 (
 	
-	Edit_Poly	= (EditPoly_Modifier_v()).get(),
-	XForm	= (XForm_Modifier_v()).get(),
-	Chamfer	= (Chamfer_Modifier_v()).get(),
-	Shell	= (Shell_Modifier_v()).get(),
-	Relax	= (Relax_Modifier_v()).get(),
-	Noise	= (Noise_Modifier_v()).get(),
-	VolumeSelect	= (VolumeSelect_Modifier_v()).get(),
-	Normal	= (Normal_Modifier_v()).get(),
+	--Edit_Poly	= (EditPoly_Modifier_v()).get(),
+	--XForm	= (XForm_Modifier_v()).get(),
+	--Chamfer	= (Chamfer_Modifier_v()).get(),
+	--Shell	= (Shell_Modifier_v()).get(),
+	--Relax	= (Relax_Modifier_v()).get(),
+	--Noise	= (Noise_Modifier_v()).get(),
+	--VolumeSelect	= (VolumeSelect_Modifier_v()).get(),
+	--Normal	= (Normal_Modifier_v()).get(),
 	
 	/** Delete
 	 */
