@@ -5,7 +5,7 @@ macroscript	modifiers_create_test_objects
 category:	"_Modifiers"  
 buttonText:	"Create Test Objects"
 --tooltip:	"Disable modifiers above current pinned modifier if suobject != 0"
-icon:	"columns:8"
+--icon:	"columns:8"
 (
 	delete objects
 	
@@ -37,4 +37,34 @@ icon:	"columns:8"
 	
 	redrawViews()
 	actionMan.executeAction 0 "310" -- zoom on selection
+)
+
+
+
+/** Testmcrfn
+ */
+function modPanelChangedTest =
+(
+	--format "\n"; print ".testmcrfn()"
+	_modifier = modPanel.getCurrentObject()
+	
+	print ("modPanelChangedTest: " + _modifier.name)
+)
+	
+/*
+*	
+*/	
+macroscript	modifiers_create_test_objects
+category:	"_Modifiers"  
+buttonText:	"On Mod Panel Changed Callback"
+--tooltip:	"Disable modifiers above current pinned modifier if suobject != 0"
+icon:	"type:#checkbox"
+(
+	clearListener()
+
+	if( EventFired.val ) then
+		onModPanelChanged ("modPanelChangedTest")
+		
+	else
+		onModPanelChangedKill ("modPanelChangedTest")
 )
