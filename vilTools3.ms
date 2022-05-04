@@ -1,111 +1,80 @@
 clearListener()
 
+/** Import structures used in macroscripts
+  *
+  * These file must be imported before Max evaluates macrosctips
+  *
+  * 3Ds Max is importing files in order
+  * 	1) Std scripts 
+  * 	2) Macroscripts
+  * 	3) Startup scripts
+  *
+  * TODO: move this function to better location
+  *
+ */
+function importStdScripts =
+(
+	filein_files = #(
+		"$userscripts/vilTools3/Rollouts/rollouts-Tools/rollout-TOOLS/Lib/ToolMode.ms"
+	)
+	
+	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
+	deleteFile stdscript_file_path
+	stdscript_file = createFile stdscript_file_path
+	
+	for file in filein_files do 
+		format "%" ("filein( \""+file+"\" )\n") to:stdscript_file
+	
+	close stdscript_file
 
+)
+importStdScripts()
+
+/*------------------------------------------------------------------------------
+	IMPORT FILES
+--------------------------------------------------------------------------------*/
 filein( getFilenamePath(getSourceFileName()) + "/Lib/DynamicModifyPanel/DynamicModifyPanel.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/../Library/UI/Lib/ContentLoader/ContentLoader.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/../Library/MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/CallBacks/setSelectionLast.ms" )
+try
+(
+	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-OBJECTS-SELECTION/Lib/Instance/Instance.ms" )
+	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-OBJECTS-SELECTION/Lib/Selection/Selection.ms" )
+	
+)
+catch()
 
---filein( getFilenamePath(getSourceFileName()) + "/../Library/UI/Lib/Dialog/Dialog.ms" )
---filein( getFilenamePath(getSourceFileName()) + "/includes.ms" )
+
+/* CALLBACK */ 
+filein( getFilenamePath(getSourceFileName()) + "/CallBacks/selectionSetChanged/setSelectionLast.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWorldUnits.ms" )
 
 
---MacroAutoLoader = MacroAutoLoader_v()
-
---MacroAutoLoader.importScripts()
- 
---format "MacroAutoLoader = % \n" MacroAutoLoader._all_files
-
---for file in MacroAutoLoader._all_files do
---for file in MacroAutoLoader._import_files do
---for file in MacroAutoLoader._inlcudes do
-	--format "file = % \n" file
+/*------------------------------------------------------------------------------
+	START VilTools
+--------------------------------------------------------------------------------*/
 
 current_dir	= getFilenamePath(getSourceFileName())
-format "current_dir = % \n" current_dir
 
-ContentLoader	= ContentLoader_v path:(current_dir+"/VilTools")
+ContentLoader	= ContentLoader_v path:(current_dir+"/Rollouts") ini:(getFilenamePath(getSourceFileName()) + getFilenameFile(getSourceFileName()) + ".ini")
 
+Dialog = ContentLoader.create width:420
 
-
-
---Dialog = ContentLoader.create()
-Dialog = ContentLoader.create height:512
---Dialog = ContentLoader.create height:320
---width:720
---ContentLoader.create bgcolor:blue
-ContentLoader.Dialog.dock #right
-
---Dialog.RolloutMain.Layout.fitSubrollouts dialog_height:472
---format "ContentLoader.Dialog = % \n" ContentLoader.Dialog
---ContentLoader.Dialog.undock()
-
---Dialog.RolloutMain.property height:1024
---format "Dialog.RolloutMain = % \n" Dialog.RolloutMain
+Dialog.dock #right
 
 
 
---ContentLoader.Dialog.width 320
 
---(Callbacks_v()).start()
+/* import when UI exists */
+try
+(
+	checkWorldUnitsCallback()
 
+	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-UNREAL/Lib/NodeList/NodeList.ms" )
+	
+	(NodeList_v()).loadNodes()
+	
+)
+catch()
 
-
-/** DEFINE FLOATER  */
---Dialog	= Dialog_v title:"vilTools3"
-
-
-/*------ CREATE FLOATER DIALOG ------*/
---Dialog.create()
-
-
---Floater.Ini.dir  (getFilenamePath(getSourceFileName()))
---
---/*---------------------------------------
---	CONTENT
--------------------------------------------*/
---
---/* FINAL CONTENT */
---Content	= (Content_v dir:(getFilenamePath(getSourceFileName())+"/*") match:"rollout_(.*)(?<!_test)$").load()
---
---/* TEST CONTETNT */
-----Content	= (Content_v dir:(getFilenamePath(getSourceFileName())+"/*") match:"rollout_(.*_test)$").load()
---
---/* ALL */
-----Content	= (Content_v dir:(getFilenamePath(getSourceFileName())+"/*") match:"rollout_(.*)$").load()
---
---
---/* Set content to ui */
---Content.setControlsToUI Floater
---
---/*---------------------------------------
---	CREATE DIALOG
--------------------------------------------*/
---
-----loadContent()
-----Floater.create()
---Floater.create height:1280
---Floater.dock "right"
---
---
---
---/*---------------------------------------
---	CALLBACKS
--------------------------------------------*/
-----(EpolyCallbacks_v()).add()
---
---
---/*---------------------------------------
---	STARTUP
--------------------------------------------*/
-----ShellLaunch ( getFilenamePath(getSourceFileName()) + "/_Epoly/lib/EpolySelection/selectLoopOrRingOnMouseWheel.ahk" ) ""
-----macros.run "_MainUI" "mainui_mini_transform_type_in"
---
-----clearListener()
-----format "Cleared in vilTools3.ms\n"
-----AddSelectExportNodeCallback()
---
---
---
---
