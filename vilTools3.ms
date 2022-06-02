@@ -28,7 +28,7 @@ function importStdScripts =
 	close stdscript_file
 
 )
-importStdScripts()
+--importStdScripts()
 
 /*------------------------------------------------------------------------------
 	IMPORT FILES
@@ -55,15 +55,26 @@ filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWor
 	START VilTools
 --------------------------------------------------------------------------------*/
 
+
+/** LOAD CONTENT */
 current_dir	= getFilenamePath(getSourceFileName())
 
-ContentLoader	= ContentLoader_v path:(current_dir+"/Rollouts") ini:(getFilenamePath(getSourceFileName()) + getFilenameFile(getSourceFileName()) + ".ini")
+content = "/Rollouts"
+ --content = "/Rollouts-Test"
 
+ ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
+
+
+/* CHANGE PROPERTIES */ 
+ContentLoader.Dialog.RolloutMain.title = "VilTools"
+
+(ContentLoader.Dialog.get #UnrealEngine).height = 320
+
+
+/* CREATE DIALOG */ 
 Dialog = ContentLoader.create width:420
 
-Dialog.dock #right
-
-
+Dialog.register()
 
 
 /* import when UI exists */

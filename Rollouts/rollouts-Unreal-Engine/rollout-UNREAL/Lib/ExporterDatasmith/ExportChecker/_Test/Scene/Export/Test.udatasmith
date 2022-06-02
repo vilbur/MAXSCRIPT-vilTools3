@@ -1,0 +1,158 @@
+<DatasmithUnrealScene>
+	<Version>0.24</Version>
+	<SDKVersion>4.27.1</SDKVersion>
+	<Host>Autodesk 3dsmax 24.0.923Arnold</Host>
+	<Application Vendor="Autodesk" ProductName="3dsmax" ProductVersion="24.0.923"/>
+	<ResourcePath></ResourcePath>
+	<User ID="72bce6cd44abc06179b433b333011f22" OS="Windows 8"/>
+	<StaticMesh name="28" label="Parent-of-group">
+		<file path="Test_Assets/28.udsmesh"/>
+		<Size a="11584.541992" x="128.100006" y="32.549999" z="10.0"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="4b27ec8a4504a4af5b1ef1473feb35dd"/>
+	</StaticMesh>
+	<StaticMesh name="44" label="group_member">
+		<file path="Test_Assets/44.udsmesh"/>
+		<Size a="402.7005" x="36.159889" y="36.159889" z="10.430737"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="c10e64643e53b38a03685ef98d10ae96"/>
+		<Material id="1" name="Blue"/>
+	</StaticMesh>
+	<StaticMesh name="52" label="GroupNested">
+		<file path="Test_Assets/52.udsmesh"/>
+		<Size a="1131.429077" x="55.317543" y="14.758209" z="14.758209"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="4b566c0fd099f7589f613bc88bfc580a"/>
+	</StaticMesh>
+	<StaticMesh name="51" label="Teapot">
+		<file path="Test_Assets/51.udsmesh"/>
+		<Size a="6644.69043" x="89.470062" y="55.6306" z="43.809097"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="10640140b4c80af9eb259e925cd0baf0"/>
+		<Material id="1" name="Blue"/>
+	</StaticMesh>
+	<StaticMesh name="29" label="Child-of-teapot">
+		<file path="Test_Assets/29.udsmesh"/>
+		<Size a="13146.117188" x="96.449989" y="33.150002" z="10.0"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="9c07d9f680eb840b7cb9f853bf8a4af9"/>
+	</StaticMesh>
+	<StaticMesh name="36" label="Grandchild">
+		<file path="Test_Assets/36.udsmesh"/>
+		<Size a="18135.671875" x="210.799988" y="33.150002" z="10.0"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="dbd57b6f178c3028df533428d4092c4f"/>
+	</StaticMesh>
+	<ActorMesh name="28" label="Parent-of-group" layer="Export group">
+		<mesh name="28"/>
+		<Transform tx="-165.085007" ty="0.0" tz="0.0" sx="1.0" sy="1.0" sz="1.0" qx="-0.707107" qy="0.0" qz="0.0" qw="0.707107" qhex="F40435BF0000000000000080F204353F"/>
+		<tag value="Max.superclassof: GeometryClass" />
+		<tag value="Max.classof: Editable_mesh" />
+		<tag value="Max.handle: 28" />
+		<tag value="Max.isGroupHead: false" />
+		<tag value="Max.isGroupMember: false" />
+		<tag value="Max.parent.handle: 19" />
+		<children visible="true">
+			<ActorMesh name="51" label="Teapot" layer="Export group">
+				<mesh name="51"/>
+				<Transform tx="0.000015" ty="-0.0" tz="21.904549" sx="1.0" sy="1.0" sz="1.0" qx="0.0" qy="0.0" qz="0.0" qw="1.0" qhex="0000000000000000000000000000803F"/>
+				<tag value="Max.superclassof: GeometryClass" />
+				<tag value="Max.classof: Editable_Poly" />
+				<tag value="Max.handle: 51" />
+				<tag value="Max.isGroupHead: false" />
+				<tag value="Max.isGroupMember: false" />
+				<tag value="Max.parent.handle: 28" />
+				<children visible="true">
+					<ActorMesh name="29" label="Child-of-teapot" layer="Export group">
+						<mesh name="29"/>
+						<Transform tx="141.542542" ty="-0.0" tz="0.0" sx="1.0" sy="1.0" sz="1.0" qx="-0.707107" qy="0.0" qz="0.0" qw="0.707107" qhex="F40435BF0000000000000080F204353F"/>
+						<tag value="Max.superclassof: GeometryClass" />
+						<tag value="Max.classof: Editable_mesh" />
+						<tag value="Max.handle: 29" />
+						<tag value="Max.isGroupHead: false" />
+						<tag value="Max.isGroupMember: false" />
+						<tag value="Max.parent.handle: 51" />
+						<children visible="true">
+							<ActorMesh name="36" label="Grandchild" layer="Export group">
+								<mesh name="36"/>
+								<Transform tx="408.852783" ty="-0.0" tz="0.0" sx="1.0" sy="1.0" sz="1.0" qx="-0.707107" qy="0.0" qz="0.0" qw="0.707107" qhex="F40435BF0000000000000080F204353F"/>
+								<tag value="Max.superclassof: GeometryClass" />
+								<tag value="Max.classof: Editable_mesh" />
+								<tag value="Max.handle: 36" />
+								<tag value="Max.isGroupHead: false" />
+								<tag value="Max.isGroupMember: false" />
+								<tag value="Max.parent.handle: 29" />
+							</ActorMesh>
+						</children>
+					</ActorMesh>
+				</children>
+			</ActorMesh>
+			<Actor name="46" label="GroupWithGroup" layer="Export group">
+				<Transform tx="0.000015" ty="-136.098969" tz="21.904549" sx="1.0" sy="1.0" sz="1.0" qx="0.0" qy="0.0" qz="0.0" qw="1.0" qhex="0000008000000000000000800000803F"/>
+				<tag value="Max.superclassof: helper" />
+				<tag value="Max.classof: Dummy" />
+				<tag value="Max.handle: 46" />
+				<tag value="Max.isGroupHead: true" />
+				<tag value="Max.isGroupMember: false" />
+				<tag value="Max.parent.handle: 28" />
+				<children visible="true">
+					<ActorMesh name="44" label="group_member" layer="Export group">
+						<mesh name="44"/>
+						<Transform tx="0.0" ty="-136.098969" tz="0.0" sx="1.0" sy="1.0" sz="1.0" qx="0.0" qy="0.0" qz="0.0" qw="1.0" qhex="0000008000000000000000800000803F"/>
+						<tag value="Max.superclassof: GeometryClass" />
+						<tag value="Max.classof: Editable_Poly" />
+						<tag value="Max.handle: 44" />
+						<tag value="Max.isGroupHead: false" />
+						<tag value="Max.isGroupMember: true" />
+						<tag value="Max.parent.handle: 46" />
+					</ActorMesh>
+					<ActorMesh name="52" label="GroupNested" layer="Export group">
+						<mesh name="52"/>
+						<Transform tx="-3.565914" ty="-136.098969" tz="0.0" sx="1.0" sy="1.0" sz="1.0" qx="0.0" qy="0.0" qz="0.0" qw="1.0" qhex="0000000000000000000000000000803F"/>
+						<tag value="Max.superclassof: GeometryClass" />
+						<tag value="Max.classof: Editable_Poly" />
+						<tag value="Max.handle: 52" />
+						<tag value="Max.isGroupHead: false" />
+						<tag value="Max.isGroupMember: true" />
+						<tag value="Max.parent.handle: 46" />
+					</ActorMesh>
+				</children>
+			</Actor>
+		</children>
+	</ActorMesh>
+	<UEPbrMaterial name="Blue">
+		<Expressions>
+			<Color Name="Diffuse_Color" constant="(R=0.129412,G=0.282353,B=0.627451,A=1.000000)"/>
+			<Scalar Name="Glossiness" constant="0.1"/>
+			<OneMinus Name="">
+				<Input Name="0" expression="1" OutputIndex="0"/>
+			</OneMinus>
+			<Color Name="Specular" constant="(R=0.900000,G=0.900000,B=0.900000,A=1.000000)"/>
+			<Scalar Name="Specular_Level" constant="0.0"/>
+			<Multiply Name="">
+				<Input Name="0" expression="4" OutputIndex="0"/>
+				<Input Name="1" expression="1" OutputIndex="0"/>
+			</Multiply>
+			<Multiply Name="">
+				<Input Name="0" expression="3" OutputIndex="0"/>
+				<Input Name="1" expression="5" OutputIndex="0"/>
+			</Multiply>
+			<FunctionCall Function="/Engine/Functions/Engine_MaterialFunctions01/Shading/ConvertFromDiffSpec.ConvertFromDiffSpec">
+				<Input Name="0" expression="0" OutputIndex="0"/>
+				<Input Name="1" expression="6" OutputIndex="0"/>
+			</FunctionCall>
+		</Expressions>
+		<Input Name="BaseColor" expression="7" OutputIndex="0"/>
+		<Input Name="Metallic" expression="7" OutputIndex="1"/>
+		<Input Name="Roughness" expression="2" OutputIndex="0"/>
+		<Input Name="Specular" expression="7" OutputIndex="2"/>
+		<OpacityMaskClipValue value="0.3333"/>
+	</UEPbrMaterial>
+	<Export Duration="0"/>
+</DatasmithUnrealScene>

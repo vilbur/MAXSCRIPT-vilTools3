@@ -1,0 +1,26 @@
+<DatasmithUnrealScene>
+	<Version>0.24</Version>
+	<SDKVersion>4.27.1</SDKVersion>
+	<Host>Autodesk 3dsmax 24.0.923Arnold</Host>
+	<Application Vendor="Autodesk" ProductName="3dsmax" ProductVersion="24.0.923"/>
+	<ResourcePath></ResourcePath>
+	<User ID="72bce6cd44abc06179b433b333011f22" OS="Windows 8"/>
+	<StaticMesh name="28" label="Parent-of-group">
+		<file path="ExportNode_Assets/28.udsmesh"/>
+		<Size a="11584.541992" x="128.100006" y="32.549999" z="10.0"/>
+		<LightmapCoordinateIndex value="-1"/>
+		<LightmapUV value="-1"/>
+		<Hash value="4b27ec8a4504a4af5b1ef1473feb35dd"/>
+	</StaticMesh>
+	<ActorMesh name="28" label="Parent-of-group" layer="Export group">
+		<mesh name="28"/>
+		<Transform tx="-165.085007" ty="0.0" tz="0.0" sx="1.0" sy="1.0" sz="1.0" qx="-0.707107" qy="0.0" qz="0.0" qw="0.707107" qhex="F40435BF0000000000000080F204353F"/>
+		<tag value="Max.superclassof: GeometryClass" />
+		<tag value="Max.classof: Editable_mesh" />
+		<tag value="Max.handle: 28" />
+		<tag value="Max.isGroupHead: false" />
+		<tag value="Max.isGroupMember: false" />
+		<tag value="Max.parent.handle: 19" />
+	</ActorMesh>
+	<Export Duration="0"/>
+</DatasmithUnrealScene>

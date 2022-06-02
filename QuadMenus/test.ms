@@ -8,22 +8,22 @@ MacroScript _quadmenu_test
 (
 
 	-- Active in any SO level:
-	On IsEnabled Return Filters.Is_EPolySpecifyLevel #{2..5}
-	On IsVisible Return Filters.Is_EPolySpecifyLevel #{2..5}
-	On IsChecked Do (
+	on IsEnabled Return Filters.Is_EPolySpecifyLevel #{2..5}
+	on IsVisible Return Filters.Is_EPolySpecifyLevel #{2..5}
+	on IsChecked Do (
 		try (
 	
 		)
 		catch ( false )
 	)
 
-	On Execute Do (
+	on Execute Do (
 		Try (
 			messageBox "Yupiii" beep:false
 		)
 		Catch()
 	)
-	On AltExecute type do (
+	on AltExecute type do (
 		Try (
 			messageBox "YEEEEEEEEEEEEEs" beep:false
 		

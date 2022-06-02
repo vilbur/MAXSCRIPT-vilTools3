@@ -1,0 +1,6 @@
+*.bak
+.komodotools
+test.ms
+vilTools3.ini
+VilTools/rollouts-Tools/rollout-UNREAL/Test/Export/
+VilTools/rollouts-Tools/rollout-UNREAL/Test/UnrealProject/
