@@ -69,9 +69,9 @@ function waitSelectionChangedKill =
 function onSelectionChangedWaitForStack =
 (
 	format "\n"
-	--print "Callback: onSelectionChangedWaitForStack()"
+	print "Callback: onSelectionChangedWaitForStack()"
 				
-	if( selection.count == 1 ) then
+	if( selection.count > 0 ) then
 	(
 		print "Callback: onSelectionChangedWaitForStack()"
 		
@@ -84,7 +84,8 @@ function onSelectionChangedWaitForStack =
 		) else
 			print "Object reselected"
 	)
-	else if( selection.count == 0 ) then
+	--else if( selection.count == 0 ) then
+	else
 	(
 		print "DESELECTED ALL"
 		
