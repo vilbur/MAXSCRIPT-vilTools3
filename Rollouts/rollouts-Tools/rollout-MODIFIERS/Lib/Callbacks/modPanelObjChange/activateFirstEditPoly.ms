@@ -28,7 +28,7 @@ function activateFirstEditPoly =
 		--format "\n"; print "singleObject()"
 		for _modifier in selection[1].modifiers do
 			if( classOf _modifier == Edit_Poly ) then 
-				return modPanel.setCurrentObject _modifier
+				return modPanel.setCurrentObject _modifier node:selection[1]
 	)
 	
 	if (classOf ( modPanel.getCurrentObject() )) == Edit_Poly then
