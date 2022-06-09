@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../../InstancedModifierFinder/InstancedModifierFinder.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/../../ModifyStack/ModifyStack.ms" )
 
 /** Activate first top Edit Poly modifier in stack 
  */
@@ -12,12 +12,12 @@ function activateFirstEditPoly =
 	function multipleObjects =
 	(
 		--format "\n"; print "multipleObjects()"
-		modifiers_in_stack = (InstancedModierFinder_v()).getInstancedModifiers ( selection )
+		edit_poly_indexes = (ModifyStack_v nodes: selection ).getIndexesOfInstances ( Edit_Poly )
 
-		edit_poly_indexes = for i = 1 to modifiers_in_stack.count where classOf modifiers_in_stack[i] == Edit_Poly collect i 
+		first_edit_poly_index = edit_poly_indexes[1]
 		
 		if edit_poly_indexes.count > 0 then 
-			for i = 1 to (edit_poly_indexes[1] - 1 ) do
+			for i = 1 to (first_edit_poly_index - 1 ) do
 				max prev mod
 	)
 	

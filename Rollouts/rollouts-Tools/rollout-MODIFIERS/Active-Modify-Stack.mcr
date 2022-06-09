@@ -42,7 +42,7 @@ icon:	"type:checkbox"
 macroscript	modifiers_auto_end_result
 category:	"_Modifiers"
 buttontext:	"Auto end result"
-toolTip:	"Turn off \"Show end result\" on subobject edit"
+--toolTip:	"Turn off \"Show end result\" on subobject edit"
 icon:	"type:checkbox"
 (
 	if( EventFired.val ) then
