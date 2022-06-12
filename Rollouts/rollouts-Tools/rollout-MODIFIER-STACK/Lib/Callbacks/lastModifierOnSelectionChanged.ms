@@ -34,47 +34,7 @@ function saveLastModifier =
 )
 
 /* KILL ON STARTUP */ 
-saveLastModifierOnSelectionChangedKill()
-
-
-
-/*------------------------------------------------------------------------------
-	LOAD MODIFIER
---------------------------------------------------------------------------------*/
-
-/** 
- */
-function loadLastModifierStart =
-(
-	print "Start: loadLastModifierStart()"
-	callbacks.addScript #selectionSetChanged "loadLastModifier()" id:#loadLastModifier
-)
-
-/** 
- */
-function loadLastModifierKill =
-(
-	print "Kill: loadLastModifierKill()"
-	try(callbacks.removeScripts #selectionSetChanged id:#loadLastModifier)catch()
-)
-
-/** Load last modifier
- */
-function loadLastModifier =
-(
-	format "\n"; print ".loadLastModifier()"
-	
-	if selection.count == 1 then
-	(
-		format "LAST_MODIFIER_SAVER.nodes	= % \n" LAST_MODIFIER_SAVER.nodes
-		format "LAST_MODIFIER_SAVER.modifiers	= % \n" LAST_MODIFIER_SAVER.modifiers
-		
-		
-	)
-	
-	
-)
-
+saveLastModifierKill()
 
 
 

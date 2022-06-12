@@ -46,7 +46,7 @@ struct LastModifierSaver_v
 			this._saveNewModifier(_node)(index_of_modifier)
 		
 		else
-			this._repalceModifier(index_of_node)(index_of_modifier)
+			this._replaceModifier(index_of_node)(index_of_modifier)
 
 		format "nodes	= % \n" nodes
 		format "modifiers	= % \n" modifiers
@@ -64,9 +64,9 @@ struct LastModifierSaver_v
 	
 	/** Repalce modifier
 	 */
-	function _repalceModifier index_of_node index_of_modifier =
+	function _replaceModifier index_of_node index_of_modifier =
 	(
-		format "\n"; print "LastModifierSaver_v._repalceModifier()"
+		format "\n"; print "LastModifierSaver_v._replaceModifier()"
 		
 		modifiers[index_of_node] = index_of_modifier
 	),

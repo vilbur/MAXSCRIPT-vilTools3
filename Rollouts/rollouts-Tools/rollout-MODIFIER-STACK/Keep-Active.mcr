@@ -39,7 +39,7 @@ icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselec
 	
 	onSelectionChangedModPanelKill ("onNewModPanelKill")
 	onSelectionChangedModPanelKill ("activateFirstUnwrap")
-	--onSelectionChangedModPanelKill ("activateLastModifier")
+	onSelectionChangedModPanelKill ("activateLastModifier")
 	saveLastModifierKill()
 	
 	if( EventFired.val == 1 ) then
@@ -60,7 +60,7 @@ icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselec
 	(
 		saveLastModifierStart()
 		
-		--onSelectionChangedModPanel ("activateLastModifier")
+		onSelectionChangedModPanel ("activateLastModifier")
 		
 	)
 )

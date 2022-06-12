@@ -5,26 +5,22 @@
   
   2) Load last active modifier on newly selected modifier
   
-  
  */
 function activateLastModifier =
 (
-	print "Activate Last Modifier"
-	--obj        = selection[1];
-	--node_exist =  LastModifierSaver.nodeExists obj
-	----format "node_exist = % \n" node_exist
-	--LastModifierSaver.setNode obj
-	--
-	--if( node_exist ) then -- Node exists in LastModifierSaver
-	--(
-	--	waitModifiyStackReadyKill()
-	--	
-	--	LastModifierSaver.activate() -- Wait if user elect modifier in stack or will select another object
-	--
-	--	waitModifierChangeCallback() -- wait for another change of modifier
-	--)
-	--else
-	--	waitModifierChangeCallback() --  "Node is selected first time"
-	
+	if selection.count == 1 then
+	(
+		obj = selection[1]
+		
+		if (index_of_node = findItem LAST_MODIFIER_SAVER.nodes obj ) > 0 then
+		(
+			saveLastModifierKill()
+			
+			_modifier = obj.modifiers[LAST_MODIFIER_SAVER.modifiers[index_of_node]]
 
+			modPanel.setCurrentObject _modifier node:obj
+			
+			saveLastModifierStart()
+		)
+	)
 )

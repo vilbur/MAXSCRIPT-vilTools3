@@ -91,7 +91,7 @@ function testNewSelection =
 		if( DYNAMIC_MODIFY_PANEL.selectionChanged (obj = selection[1]) ) then -- if new selection has been created
 		(
 			print "Selection changed"
-			format "obj	= % \n" obj
+			--format "obj	= % \n" obj
 			waitOnModifiyStackIsReady()
 			
 		) else
