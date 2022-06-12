@@ -6,8 +6,8 @@
  */
 function waitModifierChangeCallback =
 (
-	print "Start: onModifierChanged()"
-	callbacks.addScript #modPanelObjPostChange "onModifierChanged()" id:#onModifierChanged
+	print "Start: waitModifierChangeCallback()"
+	callbacks.addScript #modPanelObjPostChange "saveModifierChange()" id:#saveModifierChange
 )
 
 /** Wait for modifier change callback
@@ -15,7 +15,7 @@ function waitModifierChangeCallback =
 function waitModifierChangeKill =
 (
 	print "Kill: waitModifierChangeKill()"
-	try(callbacks.removeScripts #modPanelObjPostChange id:#onModifierChanged)catch()
+	try(callbacks.removeScripts #modPanelObjPostChange id:#saveModifierChange)catch()
 )
 
 
@@ -26,9 +26,9 @@ function waitModifierChangeKill =
   *
   *
  */
-function onModifierChanged =
+function saveModifierChange =
 (
-	print "Callback: onModifierChanged()"
+	print "Callback: saveModifierChange()"
 	
 	max modify mode
 
