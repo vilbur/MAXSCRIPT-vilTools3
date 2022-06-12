@@ -44,8 +44,7 @@ function onSelectionChangedModPanelKill callbackFn =
 	if (index = findItem ON_MOD_PANEL_CHANGED_CALLBACKS callbackFn) > 0 then
 		deleteItem ON_MOD_PANEL_CHANGED_CALLBACKS index
 	
-	waitOnSelectionChangedKill()
-
+	--waitOnSelectionChangedKill()
 )
 
 

@@ -77,7 +77,7 @@
 --	(
 --		format "\n"; print "Callback: onSelectionChangedWaitForStack()"
 --		
---		if( DynamicModifyPanel.selectionChanged (obj = selection[1]) ) then -- if new selection has been created
+--		if( LastModifierSaver.selectionChanged (obj = selection[1]) ) then -- if new selection has been created
 --		(
 --			print "Selection changed"
 --			format "obj	= % \n" obj
@@ -87,7 +87,7 @@
 --
 --		) else
 --			print "Object reselected"
---		--selection_changed =  DynamicModifyPanel.selectionChanged obj
+--		--selection_changed =  LastModifierSaver.selectionChanged obj
 --	)
 --	else if( selection.count == 0 ) then
 --	(
@@ -96,7 +96,7 @@
 --		waitModifierChangeKill()
 --		waitModifiyStackReadyKill()
 --
---		--DynamicModifyPanel._node = undefined
+--		--LastModifierSaver._node = undefined
 --		
 --		--enableModifiersAfterEdit()
 --

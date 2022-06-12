@@ -11,15 +11,15 @@ function activateLastModifier =
 (
 	print "Activate Last Modifier"
 	--obj        = selection[1];
-	--node_exist =  DynamicModifyPanel.nodeExists obj
+	--node_exist =  LastModifierSaver.nodeExists obj
 	----format "node_exist = % \n" node_exist
-	--DynamicModifyPanel.setNode obj
+	--LastModifierSaver.setNode obj
 	--
-	--if( node_exist ) then -- Node exists in DynamicModifyPanel
+	--if( node_exist ) then -- Node exists in LastModifierSaver
 	--(
 	--	waitModifiyStackReadyKill()
 	--	
-	--	DynamicModifyPanel.activate() -- Wait if user elect modifier in stack or will select another object
+	--	LastModifierSaver.activate() -- Wait if user elect modifier in stack or will select another object
 	--
 	--	waitModifierChangeCallback() -- wait for another change of modifier
 	--)
