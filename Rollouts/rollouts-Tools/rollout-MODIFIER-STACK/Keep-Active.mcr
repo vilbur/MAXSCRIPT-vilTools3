@@ -33,15 +33,11 @@ tooltip:	"select first modifier when object is selected"
 icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselect:true|align:#left"
 --icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|default:3|align:#left"
 (
-	format "EventFired	= % \n" EventFired
-	format "EventFired.val	= % \n" EventFired.val
-	
-	
 	onSelectionChangedModPanelKill ("onNewModPanelKill")
 	onSelectionChangedModPanelKill ("activateFirstUnwrap")
 	onSelectionChangedModPanelKill ("activateLastModifier")
 	saveLastModifierKill()
-	
+	--format "EventFired.val	= % \n" EventFired.val
 	if( EventFired.val == 1 ) then
 	(
 		activateFirstEditPoly()
@@ -61,7 +57,6 @@ icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselec
 		saveLastModifierStart()
 		
 		onSelectionChangedModPanel ("activateLastModifier")
-		
 	)
 )
 

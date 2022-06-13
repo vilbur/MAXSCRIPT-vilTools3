@@ -19,11 +19,11 @@ struct InstancedModifierFinder
 	 */
 	function getInstancedModifiers =
 	(
-		format "\n"; print "InstancedModierFinder_v.getInstancedModifiers()"
+		--format "\n"; print "InstancedModierFinder_v.getInstancedModifiers()"
 		--this.nodes = nodes
 		
 		instances_all = this._getAllInstancedModifiers()
-		format "instances_all	= % \n" instances_all
+		--format "instances_all	= % \n" instances_all
 		this._getOnlySharedInstances(instances_all)
 	),
 	
@@ -35,7 +35,7 @@ struct InstancedModifierFinder
 	 */
 	function getIndexesOfInstances classof_modifier =
 	(
-		format "\n"; print "ModifyStack_v.getInstanceIndexes()"
+		--format "\n"; print "ModifyStack_v.getInstanceIndexes()"
 		
 		instances_in_stack = this.getInstancedModifiers()
 		--format "instances_in_stack	= % \n" instances_in_stack
@@ -81,7 +81,7 @@ struct InstancedModifierFinder
 	 */
 	on create do
 	(
-		print("ModifyStack_v.onCreate()")
+		--print("ModifyStack_v.onCreate()")
 	)
 	
 )
