@@ -140,7 +140,7 @@ function onModifyStackReady =
 
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then -- current object is undefined than Modify panel is fully loaded
 	(
-		--print "Callback: onModifyStackReady READY"
+		print "Callback: onModifyStackReady READY"
 		
 		waitOnModifiyStackIsReadyKill()
 		

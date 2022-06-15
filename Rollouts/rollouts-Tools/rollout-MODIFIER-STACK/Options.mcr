@@ -1,14 +1,8 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/autoEndResult.ms" )
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableInstancedModifiersOnEdit.ms" )
-
---filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveModifierChange.ms" )
-
---filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersOnEdit.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersOnEdit.ms" )
 
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionMaxModifyMode.ms" )
-
-
 
 
 
@@ -27,51 +21,25 @@ icon:	"type:checkbox"
 	else
 	
 		try(callbacks.removeScripts #ModPanelSubObjectLevelChanged id:#autoEndResult)catch()
-
 )
 
 /**  
  */
 macroscript	modifiers_disable_on_edit
 category:	"_Modifiers"
-buttontext:	"Disable modifiers"
-toolTip:	"Disable modifiers on edit"
-icon:	"type:checkbox"
+buttontext:	"Disable above on edit"
+toolTip:	"Disable modifiers above active modifier when subobject is entered"
+icon:	"type:checkbox|enabled:false"
 (
-	format "modifier_stack.disable_modifiers.state = % \n" modifier_stack.disable_modifiers.state
+	--format "modifier_stack.disable_modifiers.state = % \n" modifier_stack.disable_modifiers.state
 	
-	messageBox "mAKE THIS WORKING" title:"Title"  beep:false
-)
---
---/**  
--- *	
--- */
---macroscript	modifiers_active_modify_mode
---category:	"_Modifiers"
---buttontext:	"Auto modify panel"
---toolTip:	"Open modify panel on object selection"
---icon:	"type:checkbox"
---(
---	--if( EventFired.val ) then
---	--	onSelectionMaxModifyModeCallback()
---	--	
---	--else
---	--	onSelectionMaxModifyModeKill()
---
---)
+	--messageBox "mAKE THIS WORKING" title:"Title"  beep:false
 
---/*
---*	
---*/	
---macroscript	modifiers_disable_instanced_on_edit
---category:	"_Modifiers"  
---buttonText:	"Disable instances"
---tooltip:	"Disable instanced modifiers,if object is in subobject"
---icon:	"type:checkbox"
---(
---	if( EventFired.val ) then 
---		CallbacksHolder.start #SelectionSetChanged "disableInstancedModifiersOnEdit"
---	else
---		CallbacksHolder.kill  #SelectionSetChanged "disableInstancedModifiersOnEdit"
---)
---
+	if( EventFired.val ) then
+		callbacks.addScript #ModPanelSubObjectLevelChanged "disableModifiersOnEdit()" id:#disableModifiersOnEdit
+	
+	else
+	
+		try(callbacks.removeScripts #ModPanelSubObjectLevelChanged id:#disableModifiersOnEdit)catch()
+	
+)
