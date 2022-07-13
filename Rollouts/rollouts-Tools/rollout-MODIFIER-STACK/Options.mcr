@@ -11,7 +11,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersO
 macroscript	modifiers_auto_end_result
 category:	"_Modifiers"
 buttontext:	"End result"
-toolTip:	"Auto end result if subobject is changed to 0"
+toolTip:	"Show end result if subobject == 0"
 --toolTip:	"Turn off \"Show end result\" on subobject edit"
 icon:	"type:checkbox"
 (

@@ -16,9 +16,13 @@ function activateLastModifier =
 		(
 			saveLastModifierKill()
 			
-			_modifier = obj.modifiers[LAST_MODIFIER_SAVER.modifiers[index_of_node]]
-
-			modPanel.setCurrentObject _modifier node:obj
+			index_of_modifier = LAST_MODIFIER_SAVER.modifiers[index_of_node]
+			
+			if index_of_modifier > 0 then 
+				modPanel.setCurrentObject obj.modifiers[index_of_modifier] node:obj
+				
+			else
+				modPanel.setCurrentObject $.baseObject
 			
 			saveLastModifierStart()
 		)

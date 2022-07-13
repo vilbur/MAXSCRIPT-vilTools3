@@ -3,41 +3,6 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupAttacher/GroupAttacher
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
 
 
-/**  
- *	
- */
-macroscript	group_create
-category:	"_Group"
-buttontext:	"Create"
-toolTip:	"Create Group"
---icon:	"#(path, index)"
-(
-	--undo "Create Group" on
-	--(
-		GroupCreator_v()
-	--)
-)
-/**  Ungroup selected groups
-  *  Even if selected object is in opened group
- *	
- */
-macroscript	group_ungroup
-category:	"_Group"
-buttontext:	"Create"
-toolTip:	"Ungroup selection"
---icon:	"#(path, index)"
-(
-	undo "Ungroup selected" on
-	(
-		
-		
-		actionMan.executeAction 0 "40143" -- Close group
-		
-		actionMan.executeAction 0 "40141"  -- Groups: Ungroup
-	)
-)
-
-
 
 /**  Open\Close Group
  *	
@@ -47,6 +12,7 @@ macroscript	group_open_close_toggle
 category:	"_Group"
 buttontext:	"Open\Close"
 toolTip:	"Open\Close selected groups"
+icon:	"Menu:_Group|title:Open Group"
 (
 	/*
 		mode = #open
@@ -97,9 +63,46 @@ macroscript	group_close_selected
 category:	"_Group"
 buttontext:	"Open\Close"
 toolTip:	"Close groups"
+icon:	"Menu:_Group|title:Close Group"
 (
 	actionMan.executeAction 0 "40143"  -- Groups: Group Close
 )
+
+/**  
+ *	
+ */
+macroscript	group_create
+category:	"_Group"
+buttontext:	"Create"
+toolTip:	"Create Group"
+icon:	"Menu:_Group"
+(
+	
+	--undo "Create Group" on
+	--(
+		GroupCreator_v()
+	--)
+)
+
+/**  Ungroup selected groups
+  *  Even if selected object is in opened group
+ *	
+ */
+macroscript	group_ungroup
+category:	"_Group"
+buttontext:	"Create"
+toolTip:	"Ungroup selection"
+icon:	"Menu:_Group|title:Ungroup"
+(
+	undo "Ungroup selected" on
+	(
+		actionMan.executeAction 0 "40143" -- Close group
+		
+		actionMan.executeAction 0 "40141"  -- Groups: Ungroup
+	)
+)
+
+
 
 /**  
  *	
@@ -124,14 +127,24 @@ toolTip:	"Attach selected objects to all instances of group"
  */
 macroscript	group_hide
 category:	"_Group"
-buttontext:	"Hide"
-toolTip:	"Hide visible group helpers"
+buttontext:	"Hide\Unhide"
+toolTip:	"Hide group helpers"
 --icon:	"#(path, index)"
 (
 	for obj in objects where isGroupHead(obj) and obj.layer.on do hide obj
 )
 
-
+/**  
+ *	
+ */
+macroscript	group_unhide
+category:	"_Group"
+buttontext:	"Hide\Unhide"
+toolTip:	"Unhide group helpers"
+--icon:	"#(path, index)"
+(
+	for obj in objects where isGroupHead(obj) and obj.layer.on do unhide obj
+)
 
 
 

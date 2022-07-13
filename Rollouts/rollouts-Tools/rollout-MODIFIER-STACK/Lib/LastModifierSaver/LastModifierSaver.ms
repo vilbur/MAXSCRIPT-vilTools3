@@ -20,7 +20,6 @@ struct LastModifierSaver_v
 	function saveModifier =
 	(
 		--format "\n\n"; print "LastModifierSaver_v.saveModifier()"
-
 		for obj in selection do
 			this._saveModifierForEachNode(obj)
 	),
@@ -33,10 +32,10 @@ struct LastModifierSaver_v
 	 */
 	function _saveModifierForEachNode _node =
 	(
-		--format "\n";
-		--print "LastModifierSaver_v._saveModifierForEachNode()"
-		index_of_modifier = modPanel.getModifierIndex _node ( modPanel.getCurrentObject() )
+		--format "\n"; print "LastModifierSaver_v._saveModifierForEachNode()"
 		
+		index_of_modifier = if superClassOf ( modPanel.getCurrentObject() ) == modifier then modPanel.getModifierIndex _node ( modPanel.getCurrentObject() ) else 0
+				
 		if (index_of_node = findItem nodes _node) == 0 then;
 			this._saveNewModifier(_node)(index_of_modifier)
 		
@@ -45,6 +44,10 @@ struct LastModifierSaver_v
 	),
 	
 	/** Save new modifier
+	  *
+	  * @param	int	index_of_modifier	index of modifier or 0 if $.baseObject is selected
+	  *
+	  *
 	 */
 	function _saveNewModifier _node index_of_modifier =
 	(
@@ -69,7 +72,6 @@ struct LastModifierSaver_v
 	)
 
 )
-
 
 
 global LAST_MODIFIER_SAVER = LastModifierSaver_v()

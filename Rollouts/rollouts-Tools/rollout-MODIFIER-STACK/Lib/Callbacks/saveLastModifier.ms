@@ -28,14 +28,9 @@ function saveLastModifierKill =
 function saveLastModifier =
 (
 	--print "Callback: saveLastModifier()"
-	
-	if superClassOf ( modPanel.getCurrentObject() ) == modifier then
+	if  modPanel.getCurrentObject() != undefined then
 		LAST_MODIFIER_SAVER.saveModifier()
 )
 
 /* KILL ON STARTUP */ 
 saveLastModifierKill()
-
-
-
-

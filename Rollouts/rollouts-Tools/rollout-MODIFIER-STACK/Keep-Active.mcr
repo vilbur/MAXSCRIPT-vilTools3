@@ -5,7 +5,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstUnwr
 
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/LastModifierSaver/LastModifierSaver.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/lastModifierOnSelectionChanged.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveLastModifier.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/openUnwrapEditor.ms" )
 
@@ -17,12 +17,10 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Events/onSelectionChangedMo
 */	
 macroscript	modifiers_activate_modifier
 category:	"_Modifiers"  
---buttonText:	"[Keep active modifier]"
 buttonText:	"Keep active modifier"
 tooltip:	"select first modifier when object is selected"
---icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|align:#left"
 icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselect:true|align:#left"
---icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|default:3|align:#left"
+--icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')"
 (
 	onSelectionChangedModPanelKill ("onNewModPanelKill")
 	onSelectionChangedModPanelKill ("activateFirstUnwrap")

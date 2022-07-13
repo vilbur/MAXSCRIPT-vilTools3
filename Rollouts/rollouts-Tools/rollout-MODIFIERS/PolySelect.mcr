@@ -25,7 +25,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/PolySelect/PolySelect.ms" )
 
 macroscript	modifier_auto_polyselect_update_by_mat
 category:	"_Modifiers"  
-buttonText:	"Update by material "
+buttonText:	"Update by mat ID"
 tooltip:	"Update by material Id Poly Select modifiers on selected object"
 --icon:	"type:checkbox"
 (

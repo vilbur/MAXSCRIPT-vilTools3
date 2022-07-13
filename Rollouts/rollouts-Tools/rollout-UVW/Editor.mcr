@@ -67,8 +67,8 @@ toolTip:	"Add unwrap"
 (
 	clearListener() -- DEV
 	filein( getFilenamePath(getSourceFileName()) + "/Lib/UnwrapModifier.ms" ) -- DEV
-	UnwrapModifier 	= UnwrapModifier_v()
 	
+	UnwrapModifier 	= UnwrapModifier_v()
 )
 
 /*------------------------------------------------------------------------------

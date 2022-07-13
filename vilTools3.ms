@@ -1,6 +1,6 @@
 clearListener()
 
-/** Import structures used in macroscripts
+/** Import structures used in macroscripts on Max start
   *
   * These file must be imported before Max evaluates macrosctips
   *
@@ -28,12 +28,11 @@ function importStdScripts =
 	close stdscript_file
 
 )
---importStdScripts()
+ importStdScripts()
 
 /*------------------------------------------------------------------------------
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
-filein( getFilenamePath(getSourceFileName()) + "/Lib/DynamicModifyPanel/DynamicModifyPanel.ms" )
 
 filein( getFilenamePath(getSourceFileName()) + "/../Library/MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )
 
@@ -59,22 +58,27 @@ filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWor
 /** LOAD CONTENT */
 current_dir	= getFilenamePath(getSourceFileName())
 
-content = "/Rollouts"
- --content = "/Rollouts-Test"
+ content = "/Rollouts"
+ -- content = "/Rollouts-Test"
+ 
+-- ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
+ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
 
- ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
-
-
-/* CHANGE PROPERTIES */ 
+/* CHANGE PROPERTIES oF ROLLOUTS */ 
 ContentLoader.Dialog.RolloutMain.title = "VilTools"
 
-(ContentLoader.Dialog.get #UnrealEngine).height = 320
+if( ( unreal_engine_rollout = ContentLoader.Dialog.get #UnrealEngine) != undefined ) then 
+	unreal_engine_rollout.height = 320
 
 
 /* CREATE DIALOG */ 
 Dialog = ContentLoader.create width:420
 
 Dialog.register()
+
+
+filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
+
 
 
 /* import when UI exists */
