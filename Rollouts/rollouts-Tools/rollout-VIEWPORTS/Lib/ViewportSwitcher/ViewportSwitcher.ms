@@ -1,15 +1,16 @@
 /**
-  * Keep your viewport layout setup.
+  * Keep your setup of viewports layout.
   * Switch viewports of current layout.
-  * Deafault Max only change viewport type, and it breaks layout
+  * Default Max only change viewport type, and it breaks layout
   *
+  * HELP: https://help.autodesk.com/view/MAXDEV/2021/ENU/?guid=GUID-8AA71F9E-F4F0-4437-A44E-9683619E89DE
   *
   * Sequence of switching view:
   *
-  * 	1) MAXIMIZE\MINIMIZE viewport if desired view is ACTIVE ALREADY
-  * 	2) SWITCH to viewport if view exist in layout
-  * 	3) FIND SIMILAR view and change it, if desired view does`t exists E.G.: If you want #left view and only #right exists in layout, then switch to right and change it to #left
-  *	4) CHANGE CURRENT view in default way if similar view does`t exist
+  * 	1) MAXIMIZE\MINIMIZE	viewport if desired view is ACTIVE ALREADY
+  * 	2) SWITCH VIEW	if view exist in layout
+  * 	3) FIND SIMILAR	view and change it, if desired view does`t exists E.G.: If you want #left view and only #right exists in layout, then switch to right and change it to #left
+  *	4) CHANGE CURRENT	view in default way if similar view does`t exist
   *
   *
   * @property	#name	switch #view_persp_user|#view_iso_user|#view_right|#view_left|#view_top|#view_bottom|#view_front|#view_back	
@@ -31,8 +32,10 @@ struct ViewportSwitcher_v
 	
 	/** Switch or show all views
 	 */
-	function switchOrShowAllViews =
+	function toggle switch =
 	(
+		this.switch = switch
+		
 		if( this._viewIsActiveAlready() ) then
 		(
 			if( this._isViewportMaximized()) then
@@ -50,7 +53,7 @@ struct ViewportSwitcher_v
 	 */
 	function _switchViewport = 
 	(
-		print "ViewportSwitcher_v._switchViewport()"		
+		--print "ViewportSwitcher_v._switchViewport()"		
 		--view_types = for i = 1 to viewport.numViews collect viewport.getType index:i
 		this._showAllViews()
 		
@@ -65,7 +68,7 @@ struct ViewportSwitcher_v
 	 */
 	function _activateViewport type =
 	(
-		print ("ViewportSwitcher_v._activateViewport "+ type as string )
+		--print ("ViewportSwitcher_v._activateViewport "+ type as string )
 		local viewport_switched = undefined
 
 		for i = 1 to viewport.numViews do
@@ -81,7 +84,7 @@ struct ViewportSwitcher_v
 	 */
 	function _findSimilarView =
 	(
-		print "ViewportSwitcher_v._findSimilarView()"		
+		--print "ViewportSwitcher_v._findSimilarView()"		
 		local similar_type = undefined
 		rotated_top_view = false
 		
@@ -109,8 +112,7 @@ struct ViewportSwitcher_v
 	 */
 	function _searchRotatedTopView =
 	(
-		print "ViewportSwitcher_v._searchRotatedTopView()"
-		
+		--print "ViewportSwitcher_v._searchRotatedTopView()"
 		active_view = viewport.activeViewport
 
 		rotated_top_view_found = #()
@@ -118,8 +120,6 @@ struct ViewportSwitcher_v
 		for i = 1 to viewport.numViews where ( viewport.getType index:i ) == #view_iso_user do
 		(
 			viewport.activeViewportEx i
-
-			
 			
 			if( this._isThisRotatedTopView( viewport.getTM()) ) then
 				append rotated_top_view_found i	
@@ -127,7 +127,7 @@ struct ViewportSwitcher_v
 		
 		 viewport.activeViewportEx active_view
 		
-		format "rotated_top_view_found = % \n" rotated_top_view_found
+		--format "rotated_top_view_found = % \n" rotated_top_view_found
 		rotated_top_view_found --return
 	),
 	
@@ -135,6 +135,7 @@ struct ViewportSwitcher_v
 	 */
 	function _isThisRotatedTopView view_tm =
 	(
+		--print "ViewportSwitcher_v._isThisRotatedTopView()"
 		( view_tm as quat ) == ((eulerAngles 0 0 -90) as quat) --return
 	),
 	
@@ -142,10 +143,8 @@ struct ViewportSwitcher_v
 	 */
 	function _activateSimilarViewport index =
 	(
-		print ("ViewportSwitcher_v._activateSimilarViewport " + index as string )
+		--print ("ViewportSwitcher_v._activateSimilarViewport " + index as string )
 		viewport.activeViewportEx index
-		
-		--viewport.setType switch
 	),
 	
 	/** Activate similar viewport and change view
@@ -159,7 +158,7 @@ struct ViewportSwitcher_v
 	 */
 	function _changeViewportTypeOfCurrentView =
 	(
-		print "ViewportSwitcher_v._changeViewportTypeOfCurrentView()"		
+		--print "ViewportSwitcher_v._changeViewportTypeOfCurrentView()"		
 		viewport.setType switch
 		
 		actionMan.executeAction 0 "310"  -- Tools: Zoom Extents Selected
@@ -191,29 +190,22 @@ struct ViewportSwitcher_v
 	 */
 	function _viewIsActiveAlready =
 	(
-		print "ViewportSwitcher_v._viewIsActiveAlready()"		
+		--print "ViewportSwitcher_v._viewIsActiveAlready()"		
 		view_is_active = viewport.getType() == switch
-		format "view_is_active = % \n" view_is_active
+		--format "view_is_active = % \n" view_is_active
 		
 		if( switch == #view_top and view_is_active == false and this._isThisRotatedTopView( viewport.getTM()) ) then 
 			view_is_active = true
-			
-		format "switch = % \n" switch
-		format "view_is_active = % \n" view_is_active
-		
-		format "view_is_active = % \n" view_is_active
+		--format "switch = % \n" switch
+		--format "view_is_active = % \n" view_is_active
+		--format "view_is_active = % \n" view_is_active
 		view_is_active --return
 	),
-	
-
-	
 	
 	/**  
 	 */
 	on create do
 	(		
-		this.switchOrShowAllViews()
-	)
-	
+		
+	)	
 )
-

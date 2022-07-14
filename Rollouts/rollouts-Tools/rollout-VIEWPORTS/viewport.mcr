@@ -12,7 +12,7 @@ buttontext:	"Persp\Iso"
 toolTip:	"Perspective view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_persp_user
+	(ViewportSwitcher_v()).toggle(#view_persp_user)
 )
 
  /**  
@@ -24,7 +24,7 @@ buttontext:	"Persp\Iso"
 toolTip:	"Isometric view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_iso_user
+	(ViewportSwitcher_v()).toggle(#view_iso_user)
 )
 
 
@@ -41,7 +41,7 @@ buttontext:	"Top\Bottom"
 toolTip:	"Top view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_top
+	(ViewportSwitcher_v()).toggle(#view_top)
 )
 
 /**  
@@ -53,7 +53,7 @@ buttontext:	"Top\Bottom"
 toolTip:	"Bottom view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_bottom
+	(ViewportSwitcher_v()).toggle(#view_bottom)
 )
 
 
@@ -70,7 +70,7 @@ buttontext:	"Front\Back"
 toolTip:	"Front view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_front
+	(ViewportSwitcher_v()).toggle(#view_front)
 )
 /**  
  *	
@@ -81,7 +81,7 @@ buttontext:	"Front\Back"
 toolTip:	"Back view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_back	
+	(ViewportSwitcher_v()).toggle(#view_back)
 )
 
 /*------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ buttontext:	"Left\Right"
 toolTip:	"Left view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_left
+	(ViewportSwitcher_v()).toggle(#view_left)
 )
 
 /**  
@@ -109,7 +109,7 @@ buttontext:	"Left\Right"
 toolTip:	"Right view"
 --icon:	"type:checkbox|columns:6"
 (
-	ViewportSwitcher_v switch:#view_right
+	(ViewportSwitcher_v()).toggle(#view_right)
 	
 )
 

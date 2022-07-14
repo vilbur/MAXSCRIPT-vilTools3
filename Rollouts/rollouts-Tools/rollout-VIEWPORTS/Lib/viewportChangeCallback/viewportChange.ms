@@ -21,9 +21,11 @@ function viewportChangeKill =
  */
 function rotateTopView =
 (
-	--print "rotateTopView()"
+	print "rotateTopView()"
+	current_view = viewport.getType()
 	
-	if( ( viewport.getType() ) == #view_top  ) then
+	
+	if current_view == #view_top or current_view == #view_bottom then
 	(
 		viewport.rotate (quat 0 0 -1 1)	
 		completeredraw()
