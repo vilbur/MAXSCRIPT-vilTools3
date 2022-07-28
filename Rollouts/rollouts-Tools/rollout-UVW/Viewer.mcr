@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/UvwViewer.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/UvwViewer.ms" )
 
 /**  LINK TO NODE
  */
@@ -14,7 +14,8 @@ toolTip:	"UVW viewer"
 	--clearListener() -- DEV
 	--filein( getFilenamePath(getSourceFileName()) + "/Lib/UvwViewer.ms" ) -- DEV
 	
-	UvwViewer 	= UvwViewer_v()
+	--UvwViewer 	= UvwViewer_v()
 	
-	UvwViewer.drawUVW()
+	--UvwViewer.drawUVW()
 )
+
