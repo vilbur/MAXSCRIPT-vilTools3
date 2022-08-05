@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Material/Material.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/MaterialId/MaterialId.ms" )
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callback/setModelingMaterial.ms" )
 
@@ -18,7 +18,7 @@ category:	"_Material"
 buttonText:	"Multi ID"
 tooltip:	"Create multimaterial where each material ID has different color"  
 (
-	_Material = Material_v()
+	_Material = MaterialId_v()
 	
 	selection.material = _Material.getIdMaterial()
 )

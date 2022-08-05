@@ -1,7 +1,7 @@
 
 /**  
  */
-macroscript	material_material_by_object
+macroscript	material_by_object
 category:	"_Material"  
 buttonText:	"Mat By Object"
 tooltip:	"Set different material ID for each object"
