@@ -9,10 +9,16 @@ struct UvLayoutBaker_v
 	/* reference */
 	/* inhered */
 	/* properties */
+	Unwrap,
+	
 	renderuv_width ,
+	
 	unwrap_is_temporary,
 	
-	ini_path = (getFilenamePath(getSourceFileName())) + "unwrap_render_settings.ini",
+	current_file_path = getFilenamePath(getSourceFileName()),
+	
+	ini_path = current_file_path + "/unwrap_render_settings.ini",
+	droplet  = current_file_path + "\\Droplet\\DropletTest.exe",
 	
 	props = #(
 		#renderuv_force2sided,
@@ -36,13 +42,19 @@ struct UvLayoutBaker_v
 	function bake uv_channel resolution =
 	(
 		format "\n"; print "UvLayoutBaker_v.bake()"
-
+		
+		baked_texture_path = (( pathConfig.GetDir #temp) + "\\UV_TEMPLATE.TGA" )
+		
 		this._setUnwrapMod()
-		
-		renderuv_width.renderuv_width  = resolution
-		renderuv_width.renderuv_height = resolution
-		
+	
+		--format "Unwrap	= % \n" Unwrap
+		Unwrap.renderuv_width  = resolution
+		Unwrap.renderuv_height = resolution
+	
+		Unwrap.renderUV (baked_texture_path)
+		format "baked_texture_path	= % \n" baked_texture_path
 
+		DOSCommand ("start \"\" \"" +	droplet + "\" \"" +	baked_texture_path +	"\"" )
 	),
 
 	/** Save settings

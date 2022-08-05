@@ -1,5 +1,6 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/UvLayoutBaker.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/UvLayoutBaker/UvLayoutBaker.ms" )
 
+UV_RENDER_RESOLUTION =
 
 /**  
  */
@@ -35,6 +36,7 @@ icon:	"across:3|width:32|offset:[ 48, -4 ]"
 	
 	(UvLayoutBaker_v()).saveSettings()
 )
+
 /**  
  */
 macroscript	unwrap_render_uv_reset_defaults
@@ -45,7 +47,8 @@ toolTip:	"Reset settings"
 (
 	--messageBox "Placeholder"
 	
-	(UvLayoutBaker_v()).resetSettings()
+	if queryBox "Would You like to reset settings ? " title:"Reset setting" then
+		(UvLayoutBaker_v()).resetSettings()
 )
 
 /**  
@@ -59,7 +62,9 @@ icon:	"width:96"
 (
 	UvLayoutBaker 	= UvLayoutBaker_v()
 	
-	UvLayoutBaker.bake(uvw.uv_bake_channel.state as integer ) (uvw.unwrap_render_uv_resolution.state as integer )
+	uv_render_radiobuttons_values = #(256,512,1024, 2048, 4096)
+
+	UvLayoutBaker.bake(uvw.uv_bake_channel.state as integer ) (uv_render_radiobuttons_values[uvw.uv_render_resolution.state] )
 )
 
 /**  
