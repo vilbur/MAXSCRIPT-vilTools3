@@ -14,7 +14,7 @@ struct Material_v
 	function getMaterialsOfObjects _objects =
 	(
 		--format "\n"; print "Material_v.getMatFromSelection()"
-		for o in _objects where superclassof o == GeometryClass collect o.material
+		for o in _objects where superClassOf o == GeometryClass collect o.material
 	),
 	
 	/** Get diffuse textures
@@ -39,14 +39,24 @@ struct Material_v
 			)
 		
 		)	
-
-		--_bitmaps --return
-		textures = #()
 		
 		for _bitmap in _bitmaps where _bitmap != undefined do appendIfUnique textures _bitmap.filename
 		
 		textures --return
-		
+	),
+	
+	/** Show textures in view port
+	 */
+	function showTexturesInViewPort materials state =
+	(
+		--format "\n"; print "Material_v.showTexturesInViewPort()"
+		for mat in materials do
+			case classOf mat of
+			(
+				Standardmaterial:	try ( showTextureMap mat mat.diffuseMap state ) catch()
+				Multimaterial:	this.showTexturesInViewPort(mat.materialList)(state)
+				PhysicalMaterial:	try ( showTextureMap mat mat.base_color_map state ) catch()
+			)
 	),
 
 	/** Get material from scene by name
