@@ -17,14 +17,14 @@ struct Material_v
 		for o in _objects where superClassOf o == GeometryClass collect o.material
 	),
 	
-	/** Get diffuse textures
+	/** Get diffuse bitmaps from materials
 	  *
 	  * @param	array	materials
 	 */
-	function getDiffuseTextures materials =
+	function getBitmaps materials =
 	(
 		--format "\n"; print "Material_v.getDiffuseTextures()"
-		textures = #()
+		--textures = #()
 
 		for mat in materials do
 		(
@@ -33,16 +33,13 @@ struct Material_v
 				--Standardmaterial:	format "mat.diffuseMap	= % \n" mat.diffuseMap 
 				Standardmaterial:	appendIfUnique _bitmaps mat.diffuseMap 
 				--Multimaterial:	this.getDiffuseTextures(mat.materialList)
-				Multimaterial:	this.getDiffuseTextures(mat.materialList)
+				Multimaterial:	this.getBitmaps(mat.materialList)
 				--PhysicalMaterial:	format "mat.base_color_map	= % \n" mat.base_color_map
 				PhysicalMaterial:	appendIfUnique _bitmaps mat.base_color_map
 			)
-		
 		)	
-		
-		for _bitmap in _bitmaps where _bitmap != undefined do appendIfUnique textures _bitmap.filename
-		
-		textures --return
+
+		_bitmaps --return
 	),
 	
 	/** Show textures in view port

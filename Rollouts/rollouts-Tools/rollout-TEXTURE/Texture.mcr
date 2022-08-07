@@ -28,7 +28,7 @@ toolTip:	"Show diffuse map in viewport"
 macroscript	_texture_diffuse_map_hide_viewport
 category:	"_Texture"
 buttontext:	"Show\Hide"
-toolTip:	"Hide diffuse map in viewport"
+toolTip:	"Hide diffuse map in viewport\n\nWORKS ON ALL MATERIALS IF NOTHING IS SELECTED"
 --icon:	"Across:1"
 (
 	showOrHideDiffuseTexturesOnselectionOrAllMaterials(false)
@@ -38,29 +38,58 @@ toolTip:	"Hide diffuse map in viewport"
  */
 macroscript	_texture_open_psd_in_photoshop
 category:	"_Texture"
-buttontext:	"Open PSD"
-toolTip:	"Open PSd of current texture in Photoshop"
+buttontext:	"Open in PS"
+toolTip:	"Open current texture in Photoshop\n*.psd file will be opened if exist"
 --icon:	"Across:1"
 (
 	on execute do
 	(
 		clearListener()
+		
 		_Material 	= Material_v()
 	
 		materials = _Material.getMaterialsOfObjects( selection as Array )
 
-		textures = _Material.getDiffuseTextures(materials)
-		format "textures	= % \n" textures
+		_bitmaps = _Material.getBitmaps(materials)
+		---format "_bitmaps	= % \n" _bitmaps
 		
-		for texture in textures do
+		for _bitmap in _bitmaps where _bitmap != undefined and _bitmap.filename != undefined do
 		(
+			---format "_bitmap	= % \n" _bitmap
+			if not  matchPattern _bitmap.filename pattern:@"*.psd" then  -- IF PATH IS NOT PSD FILE
+			(
+				dir	= getFilenamePath(_bitmap.filename) 
+				filename	= getFilenameFile(_bitmap.filename)
+				---format "filename	= % \n" filename 
+				psd_path = dir + filename + ".psd" -- if psd version of filename exists E.G.: foo-FileName.tga >>> foo-FileName.psd
+				
+				if not doesFileExist psd_path then -- remove suffix  E.G.: foo-FileName-DIFF.tga >>> foo-FileName.psd
+				(
+					psd_path	= dir
+					filename_split	= (filterString (filename) (texture.Separator.text))
+					
+					for i = 1 to filename_split.count - 1 do
+						psd_path += filename_split[i] + texture.Separator.text
+					
+					psd_path = (substring psd_path 1 (psd_path.count - 1)) + ".psd"
+				)
+			) 
 			
-			psd_path = replace texture (texture.count-2) 3 "psd"
+			file_path = if psd_path != undefined and doesFileExist (psd_path) then psd_path else _bitmap.filename
 			
-			if (getFiles psd_path).count != 0 then
-				DOSCommand ("start \"\" \"" +	ROLLOUT_options.Photoshop_exe.text + "\" \"" +	psd_path +	"\"" )
+			---format "file_path	= % \n" file_path
+			DOSCommand ("start \"\" \"" +	ROLLOUT_options.Photoshop_exe.text + "\" /open \"" +	file_path +	"\"" )
 		)
 	)
 )
 
-
+/**  
+ */
+macroscript	_texture_suffix_separator
+category:	"_Texture"
+buttontext:	"Separator"
+toolTip:	"Separator of texture type\n\nE.G:\n	'foomap-DIFF.tga'\nor\n	'foomap_DIFF.tga'"
+icon:	"type:edittext|across:4|offset:[8,0]"
+(
+	
+)
