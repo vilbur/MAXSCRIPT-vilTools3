@@ -42,6 +42,8 @@ buttontext:	"Open in PS"
 toolTip:	"Open current texture in Photoshop\n*.psd file will be opened if exist"
 --icon:	"Across:1"
 (
+	/* TODO: MOVE THIS TO CLASS */ 
+	
 	on execute do
 	(
 		clearListener()
@@ -81,6 +83,38 @@ toolTip:	"Open current texture in Photoshop\n*.psd file will be opened if exist"
 			DOSCommand ("start \"\" \"" +	ROLLOUT_options.Photoshop_exe.text + "\" /open \"" +	file_path +	"\"" )
 		)
 	)
+)
+
+/**  
+ */
+macroscript	_texture_import_file_from_cliboard
+category:	"_Texture"
+buttontext:	"From Cliboard"
+toolTip:	"Import texture path from cliboard as diffuse map"
+--icon:	"Across:1"
+(
+	
+	file_formats = #(".jpg",".tga",".bmp",".psd",".png")
+	--Sel = for o in selection   where superclassof o == GeometryClass collect o
+
+	
+	if selection.count > 0 then 
+		if( clipboard_text = getclipboardText() ) != undefined and doesFileExist (clipboard_text) and findItem file_formats ( toLower(getFilenameType(clipboard_text))) then 
+		(
+			filename	= getFilenameFile(clipboard_text)
+			--format "filename	= % \n" filename
+			if( mat = selection[1].material ) == undefined then
+			(
+				mat = Standardmaterial name:filename diffuse:(color 128 128 128)
+				
+				for o in selection do o.material = mat
+			)
+			
+			mat.diffuseMap	= Bitmaptexture filename:filename		
+			mat.diffuseMap.filename	= clipboard_text
+			
+		)
+	
 )
 
 /**  
