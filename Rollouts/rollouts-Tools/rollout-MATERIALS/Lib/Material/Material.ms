@@ -1,3 +1,8 @@
+filein( getFilenamePath(getSourceFileName()) + "/StandartMat/StandartMat.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/PhysicalMat/PhysicalMat.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/MultiMat/MultiMat.ms" )
+
+
 /** Material
   *
   * 
