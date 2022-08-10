@@ -11,8 +11,38 @@ filein( getFilenamePath(getSourceFileName()) + "/MultiMat/MultiMat.ms" )
 struct Material_v
 (
 	
+	/* construct */
+	/* dependency */
+	StandartMat	= StandartMat_v(),
+	PhysicalMat	= PhysicalMat_v(),
+	MultiMat	= MultiMat_v(),
+
+	
+	/* reference */
+	/* inhered */
+	/* properties */
 	_bitmaps = #(),
 
+	
+	/** Set texture file
+	  *
+	  * @param	material	mat
+	  * @param	string	file_path	path to texture
+	  * @param	string	map_name	name of slot E.G.: #diffuseMap|#specularMap|#bumpMap|...
+	 */
+	function setTextureFile mat file_path map_name =
+	(
+		format "\n"; print "Material_v.setTextureFile()"
+			case classOf mat of
+			(
+				Standardmaterial:	StandartMat.setTextureFile	mat file_path map_name 
+				PhysicalMaterial:	PhysicalMat.setTextureFile	mat file_path map_name 
+				Multimaterial:	MultiMat.setTextureFile	mat file_path map_name 
+			)
+		
+	),
+	
+	
 	
 	/** Get mat from selection
 	 */
@@ -35,12 +65,9 @@ struct Material_v
 		(
 			case classOf mat of
 			(
-				--Standardmaterial:	format "mat.diffuseMap	= % \n" mat.diffuseMap 
 				Standardmaterial:	appendIfUnique _bitmaps mat.diffuseMap 
-				--Multimaterial:	this.getDiffuseTextures(mat.materialList)
-				Multimaterial:	this.getBitmaps(mat.materialList)
-				--PhysicalMaterial:	format "mat.base_color_map	= % \n" mat.base_color_map
 				PhysicalMaterial:	appendIfUnique _bitmaps mat.base_color_map
+				Multimaterial:	this.getBitmaps(mat.materialList)
 			)
 		)	
 
@@ -49,15 +76,15 @@ struct Material_v
 	
 	/** Show textures in view port
 	 */
-	function showTexturesInViewPort materials state =
+	function showTexturesInViewPort materials map_name state =
 	(
 		--format "\n"; print "Material_v.showTexturesInViewPort()"
 		for mat in materials do
 			case classOf mat of
 			(
-				Standardmaterial:	try ( showTextureMap mat mat.diffuseMap state ) catch()
-				Multimaterial:	this.showTexturesInViewPort(mat.materialList)(state)
-				PhysicalMaterial:	try ( showTextureMap mat mat.base_color_map state ) catch()
+				Standardmaterial:	StandartMat.showTextureInViewPort (mat) (map_name) (state)
+				PhysicalMaterial:	PhysicalMat.showTextureInViewPort (mat) (map_name) (state)
+				Multimaterial:	this.showTexturesInViewPort(mat.materialList)(map_name)(state)
 			)
 	),
 
