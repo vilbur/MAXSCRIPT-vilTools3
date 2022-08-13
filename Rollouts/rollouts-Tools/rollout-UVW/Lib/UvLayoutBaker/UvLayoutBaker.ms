@@ -36,25 +36,48 @@ struct UvLayoutBaker_v
 		#renderuv_showframebuffer
 	),
 	
-	
 	/** Bake
+	  * 
+	  * @param	integer	uv_channel
+	  * @param	point2	resolution	of baked layout
+	  * @param	name	output	#framebuffer|photoshop 
 	 */
-	function bake uv_channel resolution =
+	function bake uv_channel resolution _output =
 	(
 		format "\n"; print "UvLayoutBaker_v.bake()"
+		format "resolution	= % \n" resolution
 		
-		baked_texture_path = (( pathConfig.GetDir #temp) + "\\UV_TEMPLATE.TGA" )
+		bake_dir = ( pathConfig.GetDir #temp) + "\\UvTemplates"
+		
+		makeDir bake_dir
+		
+		baked_texture_path = bake_dir + "\\UV_TEMPLATE.TGA" 
+		--baked_texture_path = (( pathConfig.GetDir #temp) + "\\UV_TEMPLATE.TGA" )
+		--
+		deleteFile baked_texture_path
 		
 		this._setUnwrapMod()
-	
-		--format "Unwrap	= % \n" Unwrap
-		Unwrap.renderuv_width  = resolution
-		Unwrap.renderuv_height = resolution
-	
-		Unwrap.renderUV (baked_texture_path)
-		format "baked_texture_path	= % \n" baked_texture_path
+		
+		format "Unwrap	= % \n" Unwrap
+		Unwrap.renderuv_width  = resolution.x
+		Unwrap.renderuv_height = resolution.y
+		
+		--Unwrap.renderuv_showframebuffer = _output == #framebuffer
+		subObjectLevel = 3
 
-		DOSCommand ("start \"\" \"" +	droplet + "\" \"" +	baked_texture_path +	"\"" )
+		Unwrap.renderUV (baked_texture_path)
+		
+		subObjectLevel = 0
+
+		--format "baked_texture_path	= % \n" baked_texture_path
+		
+		if _output == #photoshop then
+		(
+			while not doesFileExist baked_texture_path do
+				sleep 1
+			
+			DOSCommand ("start \"\" \"" +	droplet + "\" \"" +	baked_texture_path +	"\"" )
+		)
 	),
 
 	/** Save settings
@@ -85,10 +108,11 @@ struct UvLayoutBaker_v
 	 */
 	function _setUnwrapMod =
 	(
-		--format "\n"; print "UvLayoutBaker_v._setUnwrapMod()"
+		format "\n"; print "UvLayoutBaker_v._setUnwrapMod()"
 				
 		Unwrap	= modPanel.getCurrentObject()
-		
+		format "Unwrap	= % \n" Unwrap
+
 		if classOf Unwrap != Unwrap_UVW then
 		(
 			Unwrap = Unwrap_UVW()
@@ -97,6 +121,7 @@ struct UvLayoutBaker_v
 			
 			unwrap_is_temporary = true
 		)
+	
 	),
 	
 	

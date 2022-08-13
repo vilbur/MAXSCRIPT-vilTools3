@@ -1,6 +1,45 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/UvLayoutBaker/UvLayoutBaker.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-MATERIALS/Lib/Material/Material.ms" )
 
-UV_RENDER_RESOLUTION =
+/** Render Uv layout
+ */
+function renderUvLayout_v _output =
+(
+	--format "\n"; print ".renderLayout()"
+	UvLayoutBaker	= UvLayoutBaker_v()
+	_Material 	= Material_v()
+	
+	_bitmaps = _Material.getBitmaps(_Material.getMaterialsOfObjects( selection as Array ))
+	--format "_bitmaps	= % \n" _bitmaps
+	resolution = if uvw.uv_render_resolution.state == 0 and _bitmaps.count > 0 then -- get resolution of current texture
+	(
+		--format "_bitmaps[1]	= % \n" _bitmaps[1]
+	
+		_bitmap = openBitMap _bitmaps[1].filename
+		
+		[_bitmap.width, _bitmap.height];
+	)
+	else
+	(
+		if uvw.uv_render_resolution.state > 0 then
+		(
+			size = #(256,512,1024, 2048, 4096)[uvw.uv_render_resolution.state]
+			
+			[size, size] --return
+		)
+		else
+		(
+			messageBox "Resolution of UV layout is undefined\n\nPlease set resolution" title:"RESOLUTION ERROR"  beep:true
+			
+			undefined --return
+		)
+		
+	)
+		
+	if resolution != undefined then 
+		UvLayoutBaker.bake( uvw.uv_bake_channel.state as integer )(resolution)(_output)
+	
+)
 
 /**  
  */
@@ -8,7 +47,7 @@ macroscript	unwrap_render_uv_channel
 category:	"_UVW"
 buttontext:	"[uv bake channel]"
 toolTip:	"UV Channel to render"
-icon:	"type:radiobuttons|items:#('1','2')|across:3|offset:[ -8, 0 ]"
+icon:	"type:radiobuttons|items:#('Ch 1','Ch2')|across:3|offset:[ -8, 0 ]"
 (
 	
 )
@@ -19,7 +58,7 @@ macroscript	unwrap_render_uv_resolution
 category:	"_UVW"
 buttontext:	"[uv render resolution]"
 toolTip:	"UV layout resolution\nIf unselected then diffuse texture resolution is used"
-icon:	"type:radiobuttons|items:#('256','512','1024', '2048', '4096')|unselect:true|offset:[ 24, 0 ]"
+icon:	"type:radiobuttons|items:#('256','512','1024', '2048', '4096')|unselect:true|offset:[ 32, 0 ]"
 (
 	
 )
@@ -51,20 +90,32 @@ toolTip:	"Reset settings"
 		(UvLayoutBaker_v()).resetSettings()
 )
 
+/*------------------------------------------------------------------------------
+	RENDER UV LAYOUT
+--------------------------------------------------------------------------------*/
 /**  
  *	
  */
-macroscript	unwrap_render_uv
+macroscript	unwrap_render_uv_photoshop
 category:	"_UVW"
 buttontext:	"UV Layout"
-toolTip:	"Render UV Layout"
-icon:	"width:96"
+toolTip:	"To Photoshop"
+icon:	"width:96|Tooltip:Render UV Layout"
 (
-	UvLayoutBaker 	= UvLayoutBaker_v()
 	
-	uv_render_radiobuttons_values = #(256,512,1024, 2048, 4096)
+	renderUvLayout_v(#photoshop)
+)
 
-	UvLayoutBaker.bake(uvw.uv_bake_channel.state as integer ) (uv_render_radiobuttons_values[uvw.uv_render_resolution.state] )
+/**  
+ *	
+ */
+macroscript	unwrap_render_uv_framebuffer
+category:	"_UVW"
+buttontext:	"UV Layout"
+toolTip:	"To Frame buffer"
+--icon:	"width:96"
+(
+	renderUvLayout_v(#framebuffer)
 )
 
 /**  

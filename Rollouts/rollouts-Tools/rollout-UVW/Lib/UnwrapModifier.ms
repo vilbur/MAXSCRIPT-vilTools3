@@ -1,4 +1,4 @@
-/** Unwrap modifier
+/** Unwrap_UVW modifier
  */
 struct UnwrapModifier_v
 (
