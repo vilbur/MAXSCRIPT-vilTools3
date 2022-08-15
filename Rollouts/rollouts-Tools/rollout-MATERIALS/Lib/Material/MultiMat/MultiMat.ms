@@ -20,7 +20,7 @@ struct MultiMat_v
 	(
 		--format "\n"; print "MultiMat_v.setTextureFile()"
 
-		messageBox "METHOD: MultiMat_v.setTextureFile()\n\nIS NOT SUPPORTED YET" title:"MultiMat_v"
+		messageBox "METHOD: MultiMat_v.setTextureFile()\n\nIS NOT SUPPORTED" title:"MultiMat_v"
 		
 		
 		--setProperty mat map_name (Bitmaptexture filename:file_path)

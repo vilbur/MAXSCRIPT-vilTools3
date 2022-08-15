@@ -70,8 +70,8 @@ struct Material_v
 				Multimaterial:	this.getBitmaps(mat.materialList)
 			)
 		)	
-
-		_bitmaps --return
+		
+		for _bitmap in _bitmaps where _bitmap != undefined collect _bitmap --return
 	),
 	
 	/** Show textures in view port

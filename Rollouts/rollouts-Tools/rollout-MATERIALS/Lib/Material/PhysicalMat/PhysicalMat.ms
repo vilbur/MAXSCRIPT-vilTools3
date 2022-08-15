@@ -14,7 +14,6 @@ struct PhysicalMat_v
 	
 	
 	
-	
 	/** Set texture file
 	 */
 	function setTextureFile mat file_path map_name =
@@ -22,6 +21,8 @@ struct PhysicalMat_v
 		format "\n"; print "PhysicalMat_v.setTextureFile()"
 
 		setProperty mat (this._convertMapType(map_name)) (Bitmaptexture filename:file_path)
+		
+		this.showTextureInViewPort(mat)(map_name)(true)
 	),
 	
 

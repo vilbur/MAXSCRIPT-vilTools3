@@ -21,7 +21,7 @@ struct StandartMat_v
 
 		setProperty mat map_name (Bitmaptexture filename:file_path)
 		
-		this.showTextureInViewPort(mat)(true)
+		this.showTextureInViewPort(mat)(map_name)(true)
 	),
 
 	/** Show textures in view port

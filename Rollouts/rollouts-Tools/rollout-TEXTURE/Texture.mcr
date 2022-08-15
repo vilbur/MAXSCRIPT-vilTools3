@@ -9,7 +9,7 @@ function showOrHideDiffuseTexturesOnselectionOrAllMaterials state =
 
 	materials = if selection.count > 0 then _Material.getMaterialsOfObjects( selection as Array ) else sceneMaterials
 
-	_Material.showTexturesInViewPort(materials)(state)
+	_Material.showTexturesInViewPort(materials)(#diffuseMap)(state)
 )
 
 /**  
@@ -90,15 +90,19 @@ toolTip:	"Open current texture in Photoshop\n*.psd file will be opened if exist"
 macroscript	_texture_import_file_from_cliboard
 category:	"_Texture"
 buttontext:	"From Cliboard"
-toolTip:	"Import texture path from cliboard as diffuse map"
+toolTip:	"Import texture path from clipboard as diffuse map"
 --icon:	"Across:1"
 (
+	print "_texture_import_file_from_cliboard"
+	_Material 	= Material_v()
 	
 	file_formats = #(".jpg",".tga",".bmp",".psd",".png")
 	--Sel = for o in selection   where superclassof o == GeometryClass collect o
-
 	
-	if selection.count > 0 then 
+	--file_path = @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-MATERIALS\_Test\material-test-texture-A.tga"
+	
+	
+	if selection.count > 0 then
 		if( clipboard_text = getclipboardText() ) != undefined and doesFileExist (clipboard_text) and findItem file_formats ( toLower(getFilenameType(clipboard_text))) then 
 		(
 			filename	= getFilenameFile(clipboard_text)
@@ -109,12 +113,9 @@ toolTip:	"Import texture path from cliboard as diffuse map"
 				
 				for o in selection do o.material = mat
 			)
-			
-			mat.diffuseMap	= Bitmaptexture filename:filename		
-			mat.diffuseMap.filename	= clipboard_text
-			
+		
+			_Material.setTextureFile mat clipboard_text #diffuseMap
 		)
-	
 )
 
 /**  

@@ -1,5 +1,9 @@
 clearListener()
 
+ content = "/Rollouts"
+ -- content = "/Rollouts-Test"
+ 
+
 /** Import structures used in macroscripts on Max start
   *
   * These file must be imported before Max evaluates macrosctips
@@ -9,13 +13,14 @@ clearListener()
   * 	2) Macroscripts
   * 	3) Startup scripts
   *
-  * TODO: move this function to better location
+  * TODO: CREATE STRUCT FOR THIS METHOD
   *
  */
 function importStdScripts =
 (
 	filein_files = #(
-		"$userscripts/vilTools3/Rollouts/rollouts-Tools/rollout-TOOLS/Lib/ToolMode.ms"
+		"$userscripts/vilTools3/Rollouts/rollouts-Tools/rollout-TOOLS/Lib/ToolMode.ms",
+		"$userscripts/vilTools3/Rollouts/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
 	)
 	
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
@@ -28,7 +33,9 @@ function importStdScripts =
 	close stdscript_file
 
 )
- importStdScripts()
+
+--if  content != "/Rollouts-Test" then -- DEV
+	--importStdScripts()
 
 /*------------------------------------------------------------------------------
 	IMPORT FILES
@@ -58,17 +65,14 @@ filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWor
 /** LOAD CONTENT */
 current_dir	= getFilenamePath(getSourceFileName())
 
- content = "/Rollouts"
- -- content = "/Rollouts-Test"
- 
--- ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
+----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
 ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
 
 /* CHANGE PROPERTIES oF ROLLOUTS */ 
 ContentLoader.Dialog.RolloutMain.title = "VilTools"
 
-if( ( unreal_engine_rollout = ContentLoader.Dialog.get #UnrealEngine) != undefined ) then 
-	unreal_engine_rollout.height = 320
+--if( ( unreal_engine_rollout = ContentLoader.Dialog.get #UnrealEngine) != undefined ) then
+	--unreal_engine_rollout.height = 164
 
 
 /* CREATE DIALOG */ 
