@@ -12,6 +12,13 @@ struct StandartMat_v
 	/* inhered */
 	/* properties */
 	
+	/** Get map slots
+	 */
+	function getMapSlots prop_list =
+	(
+		for prop in prop_list where matchPattern prop pattern:@"*alias for maps*" collect
+			(trimLeft (filterString prop " ")[1] ".") as name
+	),
 	
 	/** Set texture file
 	 */
@@ -33,6 +40,7 @@ struct StandartMat_v
 		--format "map_slot	= % \n" map_slot
 		try ( showTextureMap mat map_slot state ) catch()
 	),
+	
 	
 	private
 	

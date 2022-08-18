@@ -12,7 +12,15 @@ struct PhysicalMat_v
 	/* inhered */
 	/* properties */
 	
-	
+	/** Get map slots
+	 */
+	function getMapSlots prop_list =
+	(
+		--format "\n"; print "StandartMat_v.getMapSlots()"
+		
+		for prop in prop_list where matchPattern prop pattern:@"*texturemap" collect
+			(trimLeft (filterString prop " ")[1] " .") as name
+	),
 	
 	/** Set texture file
 	 */

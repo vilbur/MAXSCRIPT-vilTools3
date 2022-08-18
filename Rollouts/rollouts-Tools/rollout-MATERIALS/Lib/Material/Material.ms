@@ -23,33 +23,32 @@ struct Material_v
 	/* properties */
 	_bitmaps = #(),
 
-	
-	/** Set texture file
-	  *
-	  * @param	material	mat
-	  * @param	string	file_path	path to texture
-	  * @param	string	map_name	name of slot E.G.: #diffuseMap|#specularMap|#bumpMap|...
-	 */
-	function setTextureFile mat file_path map_name =
-	(
-		format "\n"; print "Material_v.setTextureFile()"
-			case classOf mat of
-			(
-				Standardmaterial:	StandartMat.setTextureFile	mat file_path map_name 
-				PhysicalMaterial:	PhysicalMat.setTextureFile	mat file_path map_name 
-				Multimaterial:	MultiMat.setTextureFile	mat file_path map_name 
-			)
-		
-	),
-	
-	
-	
 	/** Get mat from selection
 	 */
 	function getMaterialsOfObjects _objects =
 	(
 		--format "\n"; print "Material_v.getMatFromSelection()"
 		for o in _objects where superClassOf o == GeometryClass collect o.material
+	),
+	
+	/** Get map slots
+	 */
+	function getMapSlots mat =
+	(
+		--format "\n"; print "Material_v.getMapSlots()"
+		
+		props = stringStream ""
+		
+		showProperties mat to:props
+		
+		prop_list = filterString ( props as string ) "\n"
+		
+		case classOf mat of
+		(
+			Standardmaterial:	StandartMat.getMapSlots	(prop_list)
+			PhysicalMaterial:	PhysicalMat.getMapSlots	(prop_list)
+			--Multimaterial:	this.getMapSlots	(mat)
+		)
 	),
 	
 	/** Get diffuse bitmaps from materials
@@ -74,6 +73,24 @@ struct Material_v
 		for _bitmap in _bitmaps where _bitmap != undefined collect _bitmap --return
 	),
 	
+	/** Set texture file
+	  *
+	  * @param	material	mat
+	  * @param	string	file_path	path to texture
+	  * @param	string	map_name	name of slot E.G.: #diffuseMap|#specularMap|#bumpMap|...
+	 */
+	function setTextureFile mat file_path map_name =
+	(
+		format "\n"; print "Material_v.setTextureFile()"
+		case classOf mat of
+		(
+			Standardmaterial:	StandartMat.setTextureFile	mat file_path map_name 
+			PhysicalMaterial:	PhysicalMat.setTextureFile	mat file_path map_name 
+			Multimaterial:	MultiMat.setTextureFile	mat file_path map_name 
+		)
+		
+	),
+		
 	/** Show textures in view port
 	 */
 	function showTexturesInViewPort materials map_name state =
