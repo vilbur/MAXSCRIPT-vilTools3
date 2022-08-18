@@ -10,7 +10,7 @@ macroscript	_scene_open_recent
 category:	"_Scene"
 buttontext:	"Open Recent"
 toolTip:	"Open recent scene on Max start"
-icon:	"type:checkButton|menu:_Scene"
+icon:	"control:checkButton|menu:_Scene"
 (
 	
 	

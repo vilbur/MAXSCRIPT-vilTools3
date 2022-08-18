@@ -67,8 +67,8 @@ tooltip:"Planarize Faces"
 	--	_mod	= modPanel.getCurrentObject()
 	--	--print ( "polyop.getNumFaces _obj = " + polyop.getNumFaces _obj as string )
 	--	--obj_copy	= #()
-	--	--maxOps.cloneNodes _obj cloneType:#copy newNodes:&obj_copy offset:[50, 0, 0]
-	--	--maxOps.cloneNodes _obj cloneType:#copy newNodes:&obj_copy 1
+	--	--maxOps.cloneNodes _obj clonecontrol:#copy newNodes:&obj_copy offset:[50, 0, 0]
+	--	--maxOps.cloneNodes _obj clonecontrol:#copy newNodes:&obj_copy 1
 	--	--obj_copy = obj_copy[1]
 	--	--
 	--	--maxOps.CollapseNode obj_copy off

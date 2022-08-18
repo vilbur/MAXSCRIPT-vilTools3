@@ -9,7 +9,7 @@ toolTip:	"UVW viewer"
 --icon:	"Across:1"
 
 --icon:	"Groupbox:Nodes"
---icon:	"type:checkbutton"
+--icon:	"control:checkbutton"
 (
 	--clearListener() -- DEV
 	--filein( getFilenamePath(getSourceFileName()) + "/Lib/UvwViewer.ms" ) -- DEV

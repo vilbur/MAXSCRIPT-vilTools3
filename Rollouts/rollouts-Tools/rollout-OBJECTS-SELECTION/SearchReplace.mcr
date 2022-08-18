@@ -9,7 +9,7 @@ macroscript selection_edit_search_in_name
 category:	"Selection"
 buttonText:	"[search in name]"
 tooltip:	"Search in selection names"
-icon:	"type:editText|across:3"
+icon:	"control:editText|across:3"
 --icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 (
 	
@@ -22,7 +22,7 @@ macroscript selection_edit_replace_in_names
 category:	"Selection"
 buttonText:	"[replace in name]"
 tooltip:	"Replace in selection names"
-icon:	"type:editText|across:3"
+icon:	"control:editText|across:3"
 (
 	
 )

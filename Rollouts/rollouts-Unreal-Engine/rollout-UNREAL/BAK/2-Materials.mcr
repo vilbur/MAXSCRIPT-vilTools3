@@ -9,8 +9,8 @@ macroscript	_unreal_asset_path_label
 category:	"_Unreal"
 buttontext:	"Materials path"
 toolTip:	"Create Export Node"
-icon:	"type:label|across:1|offset:[-146,0]"
---icon:	"type:label|across:1"
+icon:	"control:label|across:1|offset:[-146,0]"
+--icon:	"control:label|across:1"
 (
 
 )
@@ -21,8 +21,8 @@ macroscript	_unreal_asset_path
 category:	"_Unreal"
 buttontext:	"[Materials Dir]"
 --toolTip:	"Create Export Node"
-icon:	"type:BrowsePath|across:1"
---icon:	"type:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
+icon:	"control:BrowsePath|across:1"
+--icon:	"control:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
 (
 	for _node in (NodeList_v()).getSelectedNodes() do
 		setUserProp _node "materials-dir" EventFired.val
@@ -58,7 +58,7 @@ macroscript	_unreal_materials
 category:	"_Unreal"
 buttontext:	"Assign Materials"
 toolTip:	"Assign material from asset folder"
-icon:	"type:Dropdownlist|width:256"
+icon:	"control:Dropdownlist|width:256"
 (
 	if( selection.count == 0 ) then
 		return false

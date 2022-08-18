@@ -10,9 +10,9 @@ macroscript	_unreal_export_group
 category:	"_Unreal"
 --buttontext:	"SetupGroup"
 --toolTip:	"Create Export Node"
---icon:	"type:Groupbox|across:2"
+--icon:	"control:Groupbox|across:2"
 buttontext:	"Nodes"
-icon:	"type:Groupbox|id:test_groupbox_x|across:2"
+icon:	"control:Groupbox|id:test_groupbox_x|across:2"
 (
 )
 
@@ -24,7 +24,7 @@ category:	"_Unreal"
 buttontext:	"Link"
 toolTip:	"Link selected objects to selected nod"
 icon:	"Groupbox:Nodes"
---icon:	"type:checkbutton"
+--icon:	"control:checkbutton"
 (
 	_nodes =  ((NodeList_v()).getSelectedNodes())
 
@@ -41,7 +41,7 @@ category:	"_Unreal"
 buttontext:	"Load"
 toolTip:	"Load nodes to list"
 icon:	"Groupbox:Nodes"
---icon:	"type:checkbutton"
+--icon:	"control:checkbutton"
 (
 	--select ((NodeList_v()).getSelectedNodes())
 
@@ -117,7 +117,7 @@ macroscript	_unreal_export_nodes_list
 category:	"_Unreal"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"type:multilistbox|across:2"
+icon:	"control:multilistbox|across:2"
 (
 	selected_nodes =  ((NodeList_v()).getSelectedNodes())
 	
@@ -159,7 +159,7 @@ icon:	"type:multilistbox|across:2"
 --category:	"_Unreal"
 --buttontext:	"Nodes"
 --toolTip:	"Nodes to export"
---icon:	"type:multilistbox|across:2"
+--icon:	"control:multilistbox|across:2"
 --(
 --	messageBox "Yupiii" title:"Title"  beep:false  
 --)

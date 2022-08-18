@@ -71,9 +71,9 @@ category:	"_UVW"
 buttontext:	"Auto Open"
 --toolTip:	"Auto open Unwrap editor if:\n1) Object is selected\n2)Unwrap modifier is selected"
 toolTip:	"Auto open Unwrap editor if Unwrap modifier is selected"
---icon:	"type:Radiobuttons|unselect:true|across:2|items:#('Object selected','Unwrap selected')|offset:[-64,0]"
---icon:	"type:checkbox|offset:[48, 8]"
-icon:	"type:checkbox|offset:[ 56, 24 ]"
+--icon:	"control:Radiobuttons|unselect:true|across:2|items:#('Object selected','Unwrap selected')|offset:[-64,0]"
+--icon:	"control:checkbox|offset:[48, 8]"
+icon:	"control:checkbox|offset:[ 56, 24 ]"
 (
 	--format "EventFired.val	= % \n" EventFired.val
 	if EventFired.val == 1 then
@@ -91,8 +91,8 @@ macroscript	unwrap_editor_option_grid
 category:	"_UVW"
 buttontext:	"Grid"
 toolTip:	"Show grid in editor"
-icon:	"type:checkbox|offset:[ 60, 24 ]|enabled:false"
---icon:	"type:checkbox|across:4|enabled:false"
+icon:	"control:checkbox|offset:[ 60, 24 ]|enabled:false"
+--icon:	"control:checkbox|across:4|enabled:false"
 (
 
 )
@@ -104,8 +104,8 @@ macroscript	unwrap_editor_option_texture
 category:	"_UVW"
 buttontext:	"Texture"
 toolTip:	"Show diffuse in editor"
-icon:	"type:checkbox|offset:[ 32, 24 ]|enabled:false"
---icon:	"type:checkbox|across:4"
+icon:	"control:checkbox|offset:[ 32, 24 ]|enabled:false"
+--icon:	"control:checkbox|across:4"
 (
 
 )

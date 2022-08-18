@@ -22,7 +22,7 @@ buttonText:	"Create Test Objects"
 	
 	modPanel.setCurrentObject _box.modifiers[#Edit_Poly]
 	
-	maxOps.cloneNodes $ cloneType:#copy newNodes:&nnl
+	maxOps.cloneNodes $ clonecontrol:#copy newNodes:&nnl
 	select nnl
 	move $ [0, 50, 0]
 	
@@ -58,7 +58,7 @@ function modPanelChangedTest =
 --category:	"_Modifiers"  
 --buttonText:	"On Mod Panel Changed Callback"
 ----tooltip:	"Disable modifiers above current pinned modifier if suobject != 0"
---icon:	"type:#checkbox"
+--icon:	"control:#checkbox"
 --(
 --	clearListener()
 --

@@ -8,7 +8,7 @@ macroscript	viewport_rotate_top_view
 category:	"_Viewports"
 buttontext:	"Rotate Top"
 tooltip:	"Keep top view rotated by 90°"
-icon:	"type:checkbox"
+icon:	"control:checkbox"
 (
 	if( EventFired.val ) then
 		viewportChangeCallback()
@@ -23,7 +23,7 @@ icon:	"type:checkbox"
 --category:	"_Viewports"
 --buttontext:	"Test"
 ----tooltip:	"Keep top view rotated by 90°"
-----icon:	"type:checkbox"
+----icon:	"control:checkbox"
 --(
 --	viewport_matrix = viewport.getTM()
 --	

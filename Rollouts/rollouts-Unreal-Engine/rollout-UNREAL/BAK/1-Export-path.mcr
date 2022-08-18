@@ -16,8 +16,8 @@ macroscript	_unreal_export_dir
 category:	"_Unreal"
 buttontext:	"[Export Dir]"
 --toolTip:	"Create Export Node"
-icon:	"type:BrowsePath|across:1"
---icon:	"type:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
+icon:	"control:BrowsePath|across:1"
+--icon:	"control:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
 (
 	--messageBox "Yupiii" title:"Title"  beep:false
 	
@@ -35,8 +35,8 @@ icon:	"type:BrowsePath|across:1"
 --category:	"_Unreal"
 --buttontext:	"Projects name"
 ----toolTip:	"Create Export Node"
---icon:	"type:BrowsePath|across:1"
-----icon:	"type:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
+--icon:	"control:BrowsePath|across:1"
+----icon:	"control:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
 --(
 --	
 --)

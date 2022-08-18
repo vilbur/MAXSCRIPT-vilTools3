@@ -16,7 +16,7 @@ tooltip:	"Add EditPoly"
 (
 	--sub_obj	= subObjectLevel
 	--
-	--_Edit_Poly = (Modifier_v type:#Edit_Poly ).add()
+	--_Edit_Poly = (Modifier_v control:#Edit_Poly ).add()
 	--
 	--if( sub_obj != undefined and sub_obj != 0 ) then 
 	--	subObjectLevel = sub_obj
@@ -49,7 +49,7 @@ category:	"_Modifiers"
 buttonText:	"Chamfer"
 tooltip:	"Add Chamfer preset:default"
 (
-	--(Modifier_v type:#Chamfer).add()
+	--(Modifier_v control:#Chamfer).add()
 	--
 	--(Modifier_v()).loadPreset()
 )
@@ -79,7 +79,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --buttonText:	"Normal"
 --tooltip:	"Add Normal"
 --(
---	_Normal = (Modifier_v type:#Normal ).add()
+--	_Normal = (Modifier_v control:#Normal ).add()
 --
 --	redrawViews()
 --)
@@ -88,7 +88,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --buttonText:	"Shell"
 --tooltip:	"Add Shell"
 --(
---	_Shell = (Modifier_v type:#Shell ).add()
+--	_Shell = (Modifier_v control:#Shell ).add()
 --
 --	_Shell.overrideMatID = on
 --	_Shell.matID = 255
@@ -117,7 +117,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Reset Relax"
 --(
 --	--clearListener()
---	(Modifier_v type:#Relax).add()
+--	(Modifier_v control:#Relax).add()
 --
 --)
 
@@ -126,7 +126,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --buttonText:	"Noise"
 --tooltip:	"Add Noise"
 --(
---	_Noise	= (Modifier_v type:#Noise).add()
+--	_Noise	= (Modifier_v control:#Noise).add()
 --	_Noise.strength	= [15, 15, 15]
 --	_Noise.scale	= 20
 --	_Noise.fractal	= false
@@ -138,7 +138,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Noise MORE"
 --(
 --	--clearListener()
---	_Noise	= (Modifier_v type:#Noise).add()
+--	_Noise	= (Modifier_v control:#Noise).add()
 --	_Noise.strength	= [90, 90, 90]
 --	_Noise.scale	= 100
 --)
@@ -148,7 +148,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Smooth"
 --(
 --	--clearListener()
---	(Modifier_v type:#Smooth).add()
+--	(Modifier_v control:#Smooth).add()
 --
 --)
 --
@@ -158,7 +158,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Volume Select"
 --(
 --	--clearListener()
---	(Modifier_v type:#VolumeSelect).add()
+--	(Modifier_v control:#VolumeSelect).add()
 --
 --)
 --
@@ -177,8 +177,8 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --	if( modifier_name!="" ) then
 --		modifier_name += "-"
 --
---	_Mesh_Select	= (Modifier_v type:#Mesh_Select	name:(modifier_name+"Select"	)).add()
---	_Face_Extrude	= (Modifier_v type:#Face_Extrude	name:(modifier_name+"Extrude"	)).add()
+--	_Mesh_Select	= (Modifier_v control:#Mesh_Select	name:(modifier_name+"Select"	)).add()
+--	_Face_Extrude	= (Modifier_v control:#Face_Extrude	name:(modifier_name+"Extrude"	)).add()
 --
 --	_Mesh_Select.ignoreBackfacing = on
 --

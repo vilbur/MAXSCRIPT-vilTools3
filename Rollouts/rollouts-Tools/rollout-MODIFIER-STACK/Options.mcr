@@ -13,7 +13,7 @@ category:	"_Modifiers"
 buttontext:	"End result"
 toolTip:	"Show end result if subobject == 0"
 --toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"type:checkbox"
+icon:	"control:checkbox"
 (
 	if( EventFired.val ) then
 		callbacks.addScript #ModPanelSubObjectLevelChanged "autoEndResult()" id:#autoEndResult
@@ -29,7 +29,7 @@ macroscript	modifiers_disable_on_edit
 category:	"_Modifiers"
 buttontext:	"Disable above on edit"
 toolTip:	"Disable modifiers above active modifier when subobject is entered"
-icon:	"type:checkbox|enabled:false"
+icon:	"control:checkbox|enabled:false"
 (
 	--format "modifier_stack.disable_modifiers.state = % \n" modifier_stack.disable_modifiers.state
 	

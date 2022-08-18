@@ -8,7 +8,7 @@ buttontext:	"Fit"
 toolTip:	"Fit vurrent mapping"
 --icon:	"Across:2"
 --icon:	"Groupbox:Nodes"
---icon:	"type:checkbutton"
+--icon:	"control:checkbutton"
 (
 	--
 	--if nodeGetBoundingBox == undefined then

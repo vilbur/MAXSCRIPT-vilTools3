@@ -1,11 +1,11 @@
---
+filein( getFilenamePath(getSourceFileName()) + "/Lib/UvCopy/UvCopy.ms" )
 --/**  
 -- */
 --macroscript	_uvw_copy_taget_label
 --category:	"_UVW"
 --buttontext:	"Target channel"
 --toolTip:	""
---icon:	"type:label|across:3"
+--icon:	"control:label|across:3"
 --(	
 --)
 
@@ -16,7 +16,7 @@ macroscript	_uvw_copy_source_channel
 category:	"_UVW"
 buttontext:	"Source channel"
 toolTip:	""
-icon:	"type:radiobuttons|items:#('1','2','3','4')|across:3|offset:[ -16, 0 ]"
+icon:	"control:radiobuttons|items:#('1','2','3','4')|across:3|offset:[ -16, 0 ]"
 (
 	--format "EventFired	= % \n" EventFired
 	--
@@ -32,37 +32,52 @@ macroscript	_uvw_copy
 category:	"_UVW"
 buttontext:	"Copy"
 toolTip:	""
-icon:	"across:3|height:24|offset:[ 0, 8 ]"
+icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy UV between channles\n"
 (
 	if selection.count > 0 then
 	(
 		undo "Copy UV`s" on
 		(
-			
-			source_channel = uvw.Source_channel.state
-			target_channel = uvw.Target_channel.state
-		
-			for obj in selection do
-			(
-				if ( polyop.getMapSupport obj target_channel == false ) do polyop.setMapSupport obj target_channel true 
-				
-				--polyop.setNumMapVerts obj target_channel (polyop.getNumMapVerts obj source_channel ) keep:false
-				--polyop.setNumMapFaces obj target_channel (polyop.getNumMapFaces obj source_channel)  keep:false
-				
-				polyop.setNumMapVerts obj target_channel ( polyop.getNumMapVerts obj source_channel) keep:false
-				polyop.setNumMapFaces obj target_channel ( polyop.getNumMapFaces obj source_channel)  keep:false
-				
-				
-				for v = 1 to ( polyop.getNumMapVerts obj target_channel) do 
-					polyop.setMapVert obj target_channel v ( polyop.getMapVert obj source_channel v)
-
-				for f = 1 to ( polyop.getNumMapFaces obj target_channel) do
-					polyop.setMapFace obj target_channel f (polyop.getMapFace obj source_channel f)
-			)
+			copyUV (uvw.Source_channel.state)(uvw.Target_channel.state)
 		)
 	)
 )
 
+/**  
+ */
+macroscript	_uvw_copy
+category:	"_UVW"
+buttontext:	"Copy"
+toolTip:	"Chnage channels of textures on copy"
+icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy UV between channles\n"
+(
+	
+	if selection.count > 0 then
+	(
+		undo "Copy UV`s" on
+		(
+			source_channel = uvw.Source_channel.state
+			target_channel = uvw.Target_channel.state
+			
+			
+			--copyUV (source_channel)(target_channel)
+		
+			/*------ CHANGE TEXTURES CHANNLES ------*/
+			
+			_Material 	= Material_v()
+		
+			materials = _Material.getMaterialsOfObjects( selection as Array )
+			
+			for mat in materials do
+			(
+				slots = _Material.getMapSlots(mat)
+				format "slots	= % \n" slots
+			)
+		
+		)
+		
+	)
+)
 
 /**  
  */
@@ -70,7 +85,7 @@ macroscript	_uvw_copy_taget_channel
 category:	"_UVW"
 buttontext:	"Target channel"
 toolTip:	""
-icon:	"type:radiobuttons|items:#('1','2','3','4')|offset:[ 0, 0 ]"
+icon:	"control:radiobuttons|items:#('1','2','3','4')|offset:[ 0, 0 ]"
 (
 	--format "EventFired	= % \n" EventFired
 	--

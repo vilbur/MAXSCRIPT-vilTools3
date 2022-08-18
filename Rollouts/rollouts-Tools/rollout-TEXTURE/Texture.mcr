@@ -46,8 +46,6 @@ toolTip:	"Open current texture in Photoshop\n*.psd file will be opened if exist"
 	
 	on execute do
 	(
-		clearListener()
-		
 		_Material 	= Material_v()
 	
 		materials = _Material.getMaterialsOfObjects( selection as Array )
@@ -120,11 +118,23 @@ toolTip:	"Import texture path from clipboard as diffuse map"
 
 /**  
  */
+macroscript	_texture_set_map_channels
+category:	"_Texture"
+buttontext:	"Channel of textures"
+--toolTip:	"Separator of texture type\n\nE.G:\n	'foomap-DIFF.tga'\nor\n	'foomap_DIFF.tga'"
+icon:	"control:spinner|across:4"
+(
+	
+)
+
+
+/**  
+ */
 macroscript	_texture_suffix_separator
 category:	"_Texture"
 buttontext:	"Separator"
 toolTip:	"Separator of texture type\n\nE.G:\n	'foomap-DIFF.tga'\nor\n	'foomap_DIFF.tga'"
-icon:	"type:edittext|across:4|offset:[8,0]"
+icon:	"control:edittext|across:4|offset:[8,0]"
 (
 	
 )

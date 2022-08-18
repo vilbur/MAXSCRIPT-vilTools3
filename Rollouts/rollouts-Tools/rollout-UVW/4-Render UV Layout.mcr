@@ -47,7 +47,7 @@ macroscript	unwrap_render_uv_channel
 category:	"_UVW"
 buttontext:	"[uv bake channel]"
 toolTip:	"UV Channel to render"
-icon:	"type:radiobuttons|items:#('Ch 1','Ch2')|across:3|offset:[ -8, 0 ]"
+icon:	"control:radiobuttons|items:#('Ch 1','Ch2')|across:3|offset:[ -8, 0 ]"
 (
 	
 )
@@ -58,7 +58,7 @@ macroscript	unwrap_render_uv_resolution
 category:	"_UVW"
 buttontext:	"[uv render resolution]"
 toolTip:	"UV layout resolution\nIf unselected then diffuse texture resolution is used"
-icon:	"type:radiobuttons|items:#('256','512','1024', '2048', '4096')|unselect:true|offset:[ 32, 0 ]"
+icon:	"control:radiobuttons|items:#('256','512','1024', '2048', '4096')|unselect:true|offset:[ 32, 0 ]"
 (
 	
 )
@@ -76,6 +76,10 @@ icon:	"across:3|width:32|offset:[ 48, -4 ]"
 	(UvLayoutBaker_v()).saveSettings()
 )
 
+/*------------------------------------------------------------------------------
+	BUTTONS
+--------------------------------------------------------------------------------*/
+
 /**  
  */
 macroscript	unwrap_render_uv_reset_defaults
@@ -90,9 +94,8 @@ toolTip:	"Reset settings"
 		(UvLayoutBaker_v()).resetSettings()
 )
 
-/*------------------------------------------------------------------------------
-	RENDER UV LAYOUT
---------------------------------------------------------------------------------*/
+
+
 /**  
  *	
  */

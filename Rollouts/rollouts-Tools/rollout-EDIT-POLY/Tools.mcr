@@ -57,7 +57,7 @@ toolTip:	"Make Ridge in edge ring selection"
 		_mod.Commit () 
 		 
 		_faces  = Epoly.getSel #face 
-		_edges  = Epoly.getAusingB _mod _faces[1] aType:#Edge bType:#Face 
+		_edges  = Epoly.getAusingB _mod _faces[1] acontrol:#Edge bcontrol:#Face 
 		 
 		subobjectLevel = 2 
 		 

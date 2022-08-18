@@ -4,7 +4,7 @@
 macroscript	_options_paths_photoshop_label
 category:	"_Otions"
 buttontext:	"Photoshop path"
-icon:	"control:label"
+icon:	"type:label"
 (
 )
 
@@ -16,7 +16,7 @@ macroscript	_options_paths_photoshop
 category:	"_Otions"
 buttontext:	"[Photoshop exe]"
 toolTip:	"Browse path to Photoshop.exe"
-icon:	"control:browsePath|mode:#getOpenFileName|across:1"
+icon:	"type:browsePath|mode:#getOpenFileName|across:1"
 (
 	format "EventFired	= % \n" EventFired
 	

@@ -11,7 +11,7 @@ macroscript selection_edit_name_prefix_by_parent
 category:	"Selection"
 buttonText:	"by parent"
 tooltip:	""
---icon:	"type:checkbox|Groupbox:Prefix|across:1"
+--icon:	"control:checkbox|Groupbox:Prefix|across:1"
 icon:	"across:2"
 (
 	
@@ -24,7 +24,7 @@ macroscript selection_edit_name_prefix_by_layer
 category:	"Selection"
 buttonText:	"by layer"
 tooltip:	""
---icon:	"type:checkbox|Groupbox:Prefix|across:1"
+--icon:	"control:checkbox|Groupbox:Prefix|across:1"
 icon:	"across:1"
 (
 	
@@ -40,7 +40,7 @@ icon:	"across:1"
 --category:	"Selection"
 --buttonText:	"[base name]"
 --tooltip:	"original name is used, if name is empty"
---icon:	"type:editText|Groupbox:Base Name|across:1"
+--icon:	"control:editText|Groupbox:Base Name|across:1"
 ----icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 --(
 --	
@@ -54,7 +54,7 @@ icon:	"across:1"
 --category:	"Selection"
 --buttonText:	"A-Z"
 --tooltip:	""
---icon:	"type:checkbox|Groupbox:Suffix|across:1"
+--icon:	"control:checkbox|Groupbox:Suffix|across:1"
 --(
 --	
 --)

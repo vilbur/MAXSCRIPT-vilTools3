@@ -19,8 +19,8 @@ macroscript	modifiers_activate_modifier
 category:	"_Modifiers"  
 buttonText:	"Keep active modifier"
 tooltip:	"select first modifier when object is selected"
-icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselect:true|align:#left"
---icon:	"type:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')"
+icon:	"control:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselect:true|align:#left"
+--icon:	"control:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')"
 (
 	onSelectionChangedModPanelKill ("onNewModPanelKill")
 	onSelectionChangedModPanelKill ("activateFirstUnwrap")

@@ -25,7 +25,7 @@ toolTip:	"Test"
 		obj = execute (o+" pos:[0, "+(pos_y+=100) as string +", 0] wirecolor:" + (color 8 (random 32 128) (random 32 128)) as string )
 		select obj
 		
-		maxOps.cloneNodes $ cloneType:#copy newNodes:&nnl
+		maxOps.cloneNodes $ clonecontrol:#copy newNodes:&nnl
 		select nnl
 		$.wirecolor = (color (random 128 200) (random 128 200) (random 128 200))
 		
@@ -34,7 +34,7 @@ toolTip:	"Test"
 			
 		for i = 1 to 5 do
 		(
-			maxOps.cloneNodes $ cloneType:#instance newNodes:&nnl
+			maxOps.cloneNodes $ clonecontrol:#instance newNodes:&nnl
 			move $ [50, 0,0]
 		)
 		

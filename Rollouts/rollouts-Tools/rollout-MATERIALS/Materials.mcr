@@ -29,7 +29,7 @@ macroscript	material_assign_modeling
 category:	"_Material"  
 buttonText:	"Modeling"
 tooltip:	"Shade material for modeling"
-icon:	"type:checkbutton"
+icon:	"control:checkbutton"
 (
 	global MODELING_MATERIAL_STORE = #( )
 	
