@@ -1,4 +1,5 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/UvCopy/UvCopy.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/UvCopier/UvCopier.ms" )
+
 --/**  
 -- */
 --macroscript	_uvw_copy_taget_label
@@ -38,7 +39,7 @@ icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy 
 	(
 		undo "Copy UV`s" on
 		(
-			copyUV (uvw.Source_channel.state)(uvw.Target_channel.state)
+			UvCopier_v ( selection ) (uvw.Source_channel.state)(uvw.Target_channel.state)
 		)
 	)
 )
@@ -48,7 +49,7 @@ icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy 
 macroscript	_uvw_copy
 category:	"_UVW"
 buttontext:	"Copy"
-toolTip:	"Chnage channels of textures on copy"
+toolTip:	"Change channels of textures on copy"
 icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy UV between channles\n"
 (
 	
@@ -56,22 +57,24 @@ icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy 
 	(
 		undo "Copy UV`s" on
 		(
+			_objects = for o in selection where superClassOf o == GeometryClass collect o
+			
 			source_channel = uvw.Source_channel.state
 			target_channel = uvw.Target_channel.state
 			
-			
-			--copyUV (source_channel)(target_channel)
+			copy_success = UvCopier_v ( selection ) (_objects)(source_channel)(target_channel)
 		
-			/*------ CHANGE TEXTURES CHANNLES ------*/
+			/*------ CHANGE TEXTURES CHANNELS ------*/
 			
-			_Material 	= Material_v()
-		
-			materials = _Material.getMaterialsOfObjects( selection as Array )
-			
-			for mat in materials do
+			if copy_success then 
 			(
-				slots = _Material.getMapSlots(mat)
-				format "slots	= % \n" slots
+				_Material 	= Material_v()
+						
+				materials = _Material.getMaterialsOfObjects( _objects )
+				
+				for mat in materials where (slots = _Material.getMapSlots(mat)).count > 0 do 
+					for slot_name in slots where ( map_slot = getProperty mat slot_name ) != undefined do 
+						map_slot.coords.mapChannel = target_channel
 			)
 		
 		)
