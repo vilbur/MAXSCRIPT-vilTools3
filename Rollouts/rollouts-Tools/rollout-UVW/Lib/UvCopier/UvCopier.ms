@@ -4,7 +4,7 @@ struct UvCopier_v
 (
 	--__construct = #( #property_name ),
 	/* construct */
-	obj,
+	_objects,
 	
 	source_channel,
 	
@@ -16,7 +16,6 @@ struct UvCopier_v
 	/* properties */
 	
 	
-
 	private
 	
 	/** Copy channethis.
@@ -28,7 +27,42 @@ struct UvCopier_v
 		--format "source_channel	= % \n" source_channel
 		--format "target_channel	= % \n" target_channel
 		
-		if( source_modifier = this._searchForSourceChannel() ) != undefined then 
+		for obj in _objects as Array do
+			if classOf obj.baseObject == Editable_Poly then
+				this._copyEditablePoly (obj)
+			else
+				this._copyNonEditablePoly (obj)
+		
+	),
+	
+	/** Copy editable poly
+	 */
+	function _copyEditablePoly obj =
+	(
+		--format "\n"; print "UvCopier_v._copyEditablePoly()"
+		if ( polyop.getMapSupport obj target_channel == false ) do polyop.setMapSupport obj target_channel true 
+		
+		--polyop.setNumMapVerts obj target_channel (polyop.getNumMapVerts obj source_channel ) keep:false
+		--polyop.setNumMapFaces obj target_channel (polyop.getNumMapFaces obj source_channel)  keep:false
+		
+		polyop.setNumMapVerts obj target_channel ( polyop.getNumMapVerts obj source_channel) keep:false
+		polyop.setNumMapFaces obj target_channel ( polyop.getNumMapFaces obj source_channel)  keep:false
+		
+		for v = 1 to ( polyop.getNumMapVerts obj target_channel) do 
+			polyop.setMapVert obj target_channel v ( polyop.getMapVert obj source_channel v)
+ 
+		for f = 1 to ( polyop.getNumMapFaces obj target_channel) do
+			polyop.setMapFace obj target_channel f (polyop.getMapFace obj source_channel f)
+		
+			--format "UV channel copy success\n\nUVs of object % copied from UV % to UV %" obj.name source_channel target_channel
+	),
+	
+	/** Copy non editable poly
+	 */
+	function _copyNonEditablePoly obj =
+	(
+		format "\n"; print "UvCopier_v.copyNonEditablePoly()"
+		if( source_modifier = this._searchForSourceChannel(obj) ) != undefined then 
 		(
 			format "source_modifier	= % \n" source_modifier
 			_Unwrap_UVW_copy = copy source_modifier
@@ -41,18 +75,21 @@ struct UvCopier_v
 			messageBox ("Object "+obj.name+" has not Unwrap modifier with channel " + source_channel as string ) title:"Copy Unwrap_UVW Error"  beep:false
 		
 		
-		
 	),
+		
 	
 	/** Search for Unwrap_UVW with source channel
 	 */
-	function _searchForSourceChannel =
+	function _searchForSourceChannel obj =
 	(
-		--format "\n"; print "UvCopier_v._searchForSourceChannel()"
+		format "\n"; print "UvCopier_v._searchForSourceChannel()"
+		format "source_channel	= % \n" source_channel
+		local source_modifier
+		
 		for _modifier in obj.modifiers where classOf _modifier == Unwrap_UVW do
 			if this._getcurrentChannel(_modifier) == source_channel and source_modifier == undefined then
-				source_modifier == _modifier
-				
+				source_modifier = _modifier
+
 		source_modifier --return
 	),
 	
