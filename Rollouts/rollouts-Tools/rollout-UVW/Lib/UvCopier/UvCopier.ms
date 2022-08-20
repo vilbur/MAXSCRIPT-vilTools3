@@ -1,3 +1,14 @@
+function confirmUnerapReset =
+(
+	hwnd	= DialogMonitorOPS.GetWindowHandle()
+	title	=  (UIAccessor.GetWindowText hwnd)
+
+	if title == "Unwrap UVW" then
+		UIAccessor.SendMessageID hwnd #IDYES
+
+	true --return
+)
+
 /** Uv copier
  */
 struct UvCopier_v
@@ -30,11 +41,10 @@ struct UvCopier_v
 			else
 				this._copyNonEditablePoly (obj)
 
-		if objects_failed.count == 0 then
-			this._returnSuccess()
-		else
-			this._returnError()
-			
+		--if objects_failed.count == 0 then
+		--	this._returnSuccess()
+		--else
+		--	this._returnError()
 
 	),
 
@@ -44,7 +54,6 @@ struct UvCopier_v
 	(
 		--format "\n"; print "UvCopier_v._copyEditablePoly()"
 		if ( polyop.getMapSupport obj target_channel == false ) do polyop.setMapSupport obj target_channel true
-
 
 		polyop.setNumMapVerts obj target_channel ( polyop.getNumMapVerts obj source_channel) keep:false
 		polyop.setNumMapFaces obj target_channel ( polyop.getNumMapFaces obj source_channel) keep:false
@@ -62,19 +71,38 @@ struct UvCopier_v
 	function _copyNonEditablePoly obj =
 	(
 		--format "\n"; print "UvCopier_v.copyNonEditablePoly()"
-		if( source_modifier = this._searchForSourceChannel(obj) ) != undefined then 
+		if( source_modifier = this._searchForSourceChannel(obj) ) == undefined then 
 		(
 			--format "source_modifier	= % \n" source_modifier
-			_Unwrap_UVW_copy = copy source_modifier
 
-			_Unwrap_UVW_copy.name = "Unwrap UV " + target_channel as string 
-			
-			addModifier obj _Unwrap_UVW_copy
+			_Unwrap_UVW_source = Unwrap_UVW()
 
-			_Unwrap_UVW_copy.unwrap.setMapChannel (target_channel)
+			addModifier obj _Unwrap_UVW_source
+
+			_Unwrap_UVW_source.unwrap.setMapChannel (source_channel)
+
+			DialogMonitorOPS.enabled = true
+			DialogMonitorOPS.RegisterNotification confirmUnerapReset id:#confirmUnerapReset
+
+			_Unwrap_UVW_source.unwrap.reset()
+
+			DialogMonitorOPS.unRegisterNotification id:#confirmUnerapReset 
+			DialogMonitorOPS.enabled = false
+
+			source_modifier = this._searchForSourceChannel(obj)
+
 		)
-		else
-			append objects_failed obj
+
+		_Unwrap_UVW = copy source_modifier
+
+		_Unwrap_UVW.name = "Unwrap UV " + target_channel as string
+
+		addModifier obj _Unwrap_UVW
+
+		_Unwrap_UVW.unwrap.setMapChannel (target_channel)
+
+		if _Unwrap_UVW_source != undefined then 
+			deleteModifier obj _Unwrap_UVW_source
 
 	),
 
@@ -106,10 +134,10 @@ struct UvCopier_v
 	function _returnSuccess =
 	(
 		format "SUCCESS UVs copy from UV % to UV %\n" source_channel target_channel
-		
+
 		true --return
 	),
-	
+
 	/** Show error
 	 */
 	function _returnError =
@@ -119,12 +147,10 @@ struct UvCopier_v
 		select objects_failed
 
 		messageBox ("Selected objects failed on copy UVs.\n\nThey has not Unwrap modifier with channel " + source_channel as string +" applied probably." ) title:"Copy Unwrap_UVW Error"  beep:true
-		
+
 		false --return
 	),
 
-	
-	
 	/**  
 	 */
 	on create do
