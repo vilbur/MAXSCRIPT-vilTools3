@@ -62,23 +62,17 @@ icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy 
 			source_channel = uvw.Source_channel.state
 			target_channel = uvw.Target_channel.state
 			
-			copy_success = UvCopier_v ( selection ) (_objects)(source_channel)(target_channel)
+			UvCopier_v ( selection ) (_objects)(source_channel)(target_channel)
 		
 			/*------ CHANGE TEXTURES CHANNELS ------*/
+			_Material 	= Material_v()
+					
+			materials = _Material.getMaterialsOfObjects( _objects )
 			
-			if copy_success then 
-			(
-				_Material 	= Material_v()
-						
-				materials = _Material.getMaterialsOfObjects( _objects )
-				
-				for mat in materials where (slots = _Material.getMapSlots(mat)).count > 0 do 
-					for slot_name in slots where ( map_slot = getProperty mat slot_name ) != undefined do 
-						map_slot.coords.mapChannel = target_channel
-			)
-		
+			for mat in materials where (slots = _Material.getMapSlots(mat)).count > 0 do 
+				for slot_name in slots where ( map_slot = getProperty mat slot_name ) != undefined do 
+					map_slot.coords.mapChannel = target_channel
 		)
-		
 	)
 )
 

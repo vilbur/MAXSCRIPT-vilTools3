@@ -1,13 +1,4 @@
-function confirmUnerapReset =
-(
-	hwnd	= DialogMonitorOPS.GetWindowHandle()
-	title	=  (UIAccessor.GetWindowText hwnd)
-
-	if title == "Unwrap UVW" then
-		UIAccessor.SendMessageID hwnd #IDYES
-
-	true --return
-)
+filein( getFilenamePath(getSourceFileName()) + "/confirmUnwrapResetCallback/confirmUnwrapResetCallback.ms" )
 
 /** Uv copier
  */
@@ -45,7 +36,6 @@ struct UvCopier_v
 		--	this._returnSuccess()
 		--else
 		--	this._returnError()
-
 	),
 
 	/** Copy editable poly
@@ -63,7 +53,6 @@ struct UvCopier_v
 
 		for f = 1 to ( polyop.getNumMapFaces obj target_channel) do
 			polyop.setMapFace obj target_channel f (polyop.getMapFace obj source_channel f)
-
 	),
 
 	/** Copy non editable poly
@@ -71,39 +60,19 @@ struct UvCopier_v
 	function _copyNonEditablePoly obj =
 	(
 		--format "\n"; print "UvCopier_v.copyNonEditablePoly()"
-		if( source_modifier = this._searchForSourceChannel(obj) ) == undefined then 
-		(
-			--format "source_modifier	= % \n" source_modifier
-
-			_Unwrap_UVW_source = Unwrap_UVW()
-
-			addModifier obj _Unwrap_UVW_source
-
-			_Unwrap_UVW_source.unwrap.setMapChannel (source_channel)
-
-			DialogMonitorOPS.enabled = true
-			DialogMonitorOPS.RegisterNotification confirmUnerapReset id:#confirmUnerapReset
-
-			_Unwrap_UVW_source.unwrap.reset()
-
-			DialogMonitorOPS.unRegisterNotification id:#confirmUnerapReset 
-			DialogMonitorOPS.enabled = false
-
-			source_modifier = this._searchForSourceChannel(obj)
-
-		)
+		if( source_modifier = this._searchForSourceChannel(obj) ) == undefined then
+			source_modifier = this._addSourceUnwrapModifier(obj)
 
 		_Unwrap_UVW = copy source_modifier
 
 		_Unwrap_UVW.name = "Unwrap UV " + target_channel as string
 
-		addModifier obj _Unwrap_UVW
+		addModifier obj _Unwrap_UVW -- from this modifier are UVs copied out
 
 		_Unwrap_UVW.unwrap.setMapChannel (target_channel)
 
 		if _Unwrap_UVW_source != undefined then 
 			deleteModifier obj _Unwrap_UVW_source
-
 	),
 
 	/** Search for Unwrap_UVW with source channel
@@ -121,6 +90,36 @@ struct UvCopier_v
 		source_modifier --return
 	),
 
+	/** Add source Unwrap modifier
+	*/
+   function _addSourceUnwrapModifier obj =
+   (
+		/** Reset unwrap via pressing button
+		 */
+		function resetUnwrap _Unwrap_UVW =
+		(
+			max modify mode
+			
+			DialogMonitorOPS.enabled = true
+			DialogMonitorOPS.RegisterNotification confirmUnwrapResetCallback id:#confirmUnwrapResetCallback
+
+			_Unwrap_UVW.unwrap.reset()
+
+			DialogMonitorOPS.unRegisterNotification id:#confirmUnwrapResetCallback 
+			DialogMonitorOPS.enabled = false
+		)
+
+	   _Unwrap_UVW_source = Unwrap_UVW()
+
+	   addModifier obj _Unwrap_UVW_source
+
+	   _Unwrap_UVW_source.unwrap.setMapChannel (source_channel)
+
+	   resetUnwrap(_Unwrap_UVW_source)
+
+	   this._searchForSourceChannel(obj)
+   ),
+
 	/** Getcurrent channel
 	 */
 	function _getcurrentChannel _Unwrap_UVW =
@@ -129,36 +128,33 @@ struct UvCopier_v
 		if ( _channel = _Unwrap_UVW.unwrap.getMapChannel() ) == 0 then 1 else _channel
 	),
 
-	/** Return success
-	 */
-	function _returnSuccess =
-	(
-		format "SUCCESS UVs copy from UV % to UV %\n" source_channel target_channel
-
-		true --return
-	),
-
-	/** Show error
-	 */
-	function _returnError =
-	(
-		clearSelection()
-
-		select objects_failed
-
-		messageBox ("Selected objects failed on copy UVs.\n\nThey has not Unwrap modifier with channel " + source_channel as string +" applied probably." ) title:"Copy Unwrap_UVW Error"  beep:true
-
-		false --return
-	),
+	--/** Return success
+	-- */
+	--function _returnSuccess =
+	--(
+	--	format "SUCCESS UVs copy from UV % to UV %\n" source_channel target_channel
+	--
+	--	true --return
+	--),
+	--
+	--/** Show error
+	-- */
+	--function _returnError =
+	--(
+	--	clearSelection()
+	--
+	--	select objects_failed
+	--
+	--	messageBox ("Selected objects failed on copy UVs.\n\nThey has not Unwrap modifier with channel " + source_channel as string +" applied probably." ) title:"Copy Unwrap_UVW Error"  beep:true
+	--
+	--	false --return
+	--),
 
 	/**  
 	 */
 	on create do
 	(
 		--print("UvCopier_v.onCreate()")
-		--ConstructPropeties test:this
 		this._copyChannel()
-
 	)
-
 )
