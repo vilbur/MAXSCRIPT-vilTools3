@@ -17,7 +17,7 @@ struct UvCopier_v
 	/* inhered */
 	/* properties */
 
-	objects_failed = #(),
+	--objects_failed = #(),
 
 	private
 

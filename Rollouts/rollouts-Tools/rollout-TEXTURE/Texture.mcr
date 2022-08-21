@@ -116,13 +116,14 @@ toolTip:	"Import texture path from clipboard as diffuse map"
 		)
 )
 
+
 /**  
  */
 macroscript	_texture_set_map_channels
 category:	"_Texture"
 buttontext:	"Channels"
-toolTip:	"Set UV channels of textures used in material of seleted obejects"
-icon:	"control:spinner|range:[1,99,1]|type:#integer|across:1|align:#left"
+toolTip:	"Change UV channels of textures used in material of seleted obejects"
+icon:	"control:spinner|range:[1,99,1]|type:#integer|across:5|align:#left"
 (
 	
 	on execute do
@@ -136,7 +137,6 @@ icon:	"control:spinner|range:[1,99,1]|type:#integer|across:1|align:#left"
 			for slot_name in slots where ( map_slot = getProperty mat slot_name ) != undefined do 
 				map_slot.coords.mapChannel = EventFired.val
 		
-
 	)
 )
 
@@ -147,7 +147,7 @@ macroscript	_texture_suffix_separator
 category:	"_Texture"
 buttontext:	"Separator"
 toolTip:	"Separator of texture type\n\nE.G:\n	'foomap-DIFF.tga'\nor\n	'foomap_DIFF.tga'"
-icon:	"control:edittext|across:4|offset:[8,0]"
+icon:	"control:edittext|across:5|offset:[16,0]"
 (
 	
 )

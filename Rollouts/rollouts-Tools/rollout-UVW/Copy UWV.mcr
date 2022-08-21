@@ -62,7 +62,7 @@ icon:	"across:3|height:24|offset:[ 0, 8 ]|Tooltip:Render UV Layout|Tooltip:Copy 
 			source_channel = uvw.Source_channel.state
 			target_channel = uvw.Target_channel.state
 			
-			UvCopier_v ( selection ) (_objects)(source_channel)(target_channel)
+			UvCopier_v ( selection )(source_channel)(target_channel)
 		
 			/*------ CHANGE TEXTURES CHANNELS ------*/
 			_Material 	= Material_v()

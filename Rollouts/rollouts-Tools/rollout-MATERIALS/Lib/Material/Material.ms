@@ -28,7 +28,7 @@ struct Material_v
 	function getMaterialsOfObjects _objects =
 	(
 		--format "\n"; print "Material_v.getMatFromSelection()"
-		for o in _objects where superClassOf o == GeometryClass collect o.material
+		for o in _objects as Array where superClassOf o == GeometryClass collect o.material
 	),
 	
 	/** Get map slots
