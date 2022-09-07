@@ -63,3 +63,28 @@ tooltip:	"Remove material from selection"
 	
 	selection.material = undefined
 )
+
+
+/**  Set material of 1st selected object to all objects in selection
+ */
+macroscript	material_by_1st_object
+category:	"_Material"  
+buttonText:	"By 1st object"
+tooltip:	"Set material of 1st selected object to all objects in selection"  
+(
+	_selection = for o in selection where superClassOf o == GeometryClass collect o
+	
+	if _selection.count <= 1 then
+		return false
+	
+	source_object = _selection[1]
+	
+	target_objects = deleteItem _selection 1
+	
+	for obj in target_objects do
+		obj.material = source_object.material
+)
+
+
+
+
