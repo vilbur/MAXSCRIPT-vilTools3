@@ -1,4 +1,4 @@
-clearListener()
+--clearListener()
 
  content = "/Rollouts"
  -- content = "/Rollouts-Test"
@@ -18,24 +18,27 @@ clearListener()
  */
 function importStdScripts =
 (
+	rollouts_path = "$userscripts/vilTools3/Rollouts/rollouts-Tools"
+	
 	filein_files = #(
-		"$userscripts/vilTools3/Rollouts/rollouts-Tools/rollout-TOOLS/Lib/ToolMode.ms",
-		"$userscripts/vilTools3/Rollouts/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
+		rollouts_path + "/rollout-TOOLS/Lib/ToolMode.ms",
+		rollouts_path + "/rollout-SUBOBJECT/Subobject/Subobject.ms",
+		rollouts_path + "/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
 	)
 	
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
 	deleteFile stdscript_file_path
 	stdscript_file = createFile stdscript_file_path
 	
-	for file in filein_files do 
-		format "%" ("filein( \""+file+"\" )\n") to:stdscript_file
+	for file_path in filein_files do 
+		format "if doesFileExist \"%\" then %" file_path ("filein( \""+file_path+"\" )\n") to:stdscript_file
 	
 	close stdscript_file
 
 )
 
---if  content != "/Rollouts-Test" then -- DEV
-	--importStdScripts()
+if  content != "/Rollouts-Test" then -- DEV
+	importStdScripts()
 
 /*------------------------------------------------------------------------------
 	IMPORT FILES
@@ -65,18 +68,23 @@ filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWor
 /** LOAD CONTENT */
 current_dir	= getFilenamePath(getSourceFileName())
 
-----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
-ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
+--ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
+ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName()) 
 
-/* CHANGE PROPERTIES oF ROLLOUTS */ 
+--print "!!!!!!!!!!!!!!!!"
+/* CHANGE PROPERTIES oF ROLLOUTS */
+-- ContentLoader.Dialog.width  = 420
+-- ContentLoader.Dialog.height = 1024
+
 ContentLoader.Dialog.RolloutMain.title = "VilTools"
 
---if( ( unreal_engine_rollout = ContentLoader.Dialog.get #UnrealEngine) != undefined ) then
-	--unreal_engine_rollout.height = 164
+--print "!!!!!!!!!!!!!!!!"
+
 
 
 /* CREATE DIALOG */ 
-Dialog = ContentLoader.create width:420
+Dialog = ContentLoader.create()
+
 
 Dialog.register()
 
