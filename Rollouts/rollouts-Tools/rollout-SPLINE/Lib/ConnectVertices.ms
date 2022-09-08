@@ -1,4 +1,16 @@
-/** Connect vertices
+/** Create line between 2 selected vertices
+ *	
+ *	WORKS ON:
+ *		1) Single Editable spline
+ *		2) Single Shape	with Edit Spline modifier
+ *		2) Two Shapes	with Edit Spline modifier
+ *
+ * NOTICE:
+ *		Edit spline modifier cannot be remote by maxscript.
+ *		This script is workaroud which make new line between selected knots.
+ *		This line is will not be attached to original spline by script.
+ *		Script on Edit Spline modifier ends with attach tool enabled and new line with green wirecolor 
+ *
  */
 struct ConnectVertices_v
 (
@@ -6,7 +18,6 @@ struct ConnectVertices_v
 	source_shapes,
 	
 	/* properties */
-	--conected_shape,
 	new_connect_spline,
 	select_splines = #(),
 	select_knots   = #(),
@@ -22,7 +33,7 @@ struct ConnectVertices_v
 	 */
 	function connect =
 	(
-		format "\n"; print "ConnectVertices_v.connect()"
+		--format "\n"; print "ConnectVertices_v.connect()"
 		format "source_shapes	= % \n" source_shapes
 	
 		if classOf (_mod = modPanel.getCurrentObject()) == Edit_Spline then 
@@ -44,23 +55,21 @@ struct ConnectVertices_v
 	
 	/** Connect spline
 	 */
-	function _connectSpline conected_shape =
+	function _connectSpline connected_shape =
 	(
-		format "\n"; print "ConnectVertices_v._connectSpline()"
+		--format "\n"; print "ConnectVertices_v._connectSpline()"
 		
-		--conected_shape = source_shapes[1]
-
-		this._setKnotsPositions(conected_shape)
+		this._setKnotsPositions(connected_shape)
 		
-		this._connectKnots(conected_shape)
+		this._connectKnots(connected_shape)
 
 		/* WELD */ 
 		for s = 1 to select_splines.count do
-			setKnotSelection conected_shape select_splines[s] select_knots[s] 
+			setKnotSelection connected_shape select_splines[s] select_knots[s] 
 
-		setKnotSelection conected_shape new_connect_spline new_knots
+		setKnotSelection connected_shape new_connect_spline new_knots
 		
-		weldSpline conected_shape 0.001
+		weldSpline connected_shape 0.001
 		
 		updateShape conected_shape
 	),
@@ -69,31 +78,29 @@ struct ConnectVertices_v
 	 */
 	function _connectEditSplineModifier =
 	(
-		format "\n"; print "ConnectVertices_v.connectEditSplineModifier()"
+		--format "\n"; print "ConnectVertices_v.connectEditSplineModifier()"
 		
 		maxOps.cloneNodes #(source_shapes[1]) cloneType:#copy newNodes:&temp_shapes #nodialog
 	
-		conected_shape = temp_shapes[1]
-	
-		--conected_shape.name = source_shapes[1].name + "-new-connection"
+		temp_shape = temp_shapes[1]
+			
+		convertToSplineShape temp_shape
+		
+		updateShape temp_shape
 		
 		clearSelection()
 		
-		select conected_shape
-	
-		convertToSplineShape conected_shape
-		
-		updateShape conected_shape
+		select temp_shape
 		
 		subObjectLevel = 1
 		
-		connect_line = line name: (connected_shape.name+"-CONNECT-LINE-TO-ATTACH") wirecolor:( color 0 255 0 )
+		connect_line = line name: (temp_shape.name+"-CONNECT-LINE-TO-ATTACH") wirecolor:( color 0 255 0 )
 
-		this._setKnotsPositions(connected_shape)
+		this._setKnotsPositions(temp_shape)
 		
 		this._connectKnots(connect_line)
 		
-		delete connected_shape
+		delete temp_shape
 
 		clearSelection()
 
@@ -107,7 +114,7 @@ struct ConnectVertices_v
 	 */
 	function _connectMultipleSplines =
 	(
-		format "\n"; print "ConnectVertices_v._connectMultipleSplines()"
+		--format "\n"; print "ConnectVertices_v._connectMultipleSplines()"
 		--print "********************************"
 		maxOps.cloneNodes source_shapes cloneType:#copy newNodes:&temp_shapes #nodialog
 	
@@ -155,21 +162,21 @@ struct ConnectVertices_v
 
 	/** Connect knots
 	 */
-	function _connectKnots conected_shape =
+	function _connectKnots connected_shape =
 	(
-		format "\n"; print "ConnectVertices_v._connectKnots()"
+		--format "\n"; print "ConnectVertices_v._connectKnots()"
 
 		--select_splines = #()
 	
 		if knot_count == 2 then
 		(
 			
-			new_connect_spline = addNewSpline conected_shape
+			new_connect_spline = addNewSpline connected_shape
 			
-			append new_knots	(addKnot conected_shape new_connect_spline #corner #line knot_positons[1])
-			append new_knots	(addKnot conected_shape new_connect_spline #corner #line knot_positons[2])
+			append new_knots	(addKnot connected_shape new_connect_spline #corner #line knot_positons[1])
+			append new_knots	(addKnot connected_shape new_connect_spline #corner #line knot_positons[2])
 			
-			updateShape conected_shape
+			updateShape connected_shape
 		)
 	),
 	
@@ -177,66 +184,5 @@ struct ConnectVertices_v
 	 */
 	on create do
 	(
-		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
-		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop ) 
 	)
-	
 )
-
-clearListener()
-
-(ConnectVertices_v(for o in selection where superClassOf o == shape collect o)).connect()
-
-
---/** Create line between 2 selected vertices on spline 
--- *	New knots are weld
--- */
---function ConnectVertices_v = 
---(
---	obj = selection[1]
---	
---    if selection.count == 1 and isKindOf obj Shape then
---    (
---		knot_count = 0
---		knot_positons = #()
---
---		select_splines = #()
---		select_knots   = #()
---		new_knots      = #()
---
---        for spline = 1 to ( numSplines obj )
---            where (local selected_knots = getKnotSelection obj spline).count > 0 do
---            (
---				append select_splines spline
---				append select_knots   selected_knots
---				
---				
---                join knot_positons (for knot in selected_knots collect getKnotPoint obj spline knot)
---
---                if (knot_count += selected_knots.count) > 2 do exit
---            )
---	
---        if knot_count == 2 then
---		(
---			index = addNewSpline obj
---			
---			append new_knots	(addKnot obj index #corner #line knot_positons[1])
---			append new_knots	(addKnot obj index #corner #line knot_positons[2])
---            
---			updateShape obj
---
---			for spline = 1 to select_splines.count do
---				setKnotSelection obj select_splines[spline] select_knots[spline] 
---
---			setKnotSelection obj index new_knots
---			
---			weldSpline obj 1
---			
---			updateShape obj
---		)
---        else
---		    messageBox "Exactly 2 vertices have to be selected."
---		
---
---    )
---)
