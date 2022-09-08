@@ -3,14 +3,16 @@
 struct ConnectVertices_v
 (
 	/* construct */
-	source_splines,
+	source_shapes,
 	
 	/* properties */
-	spline_obj,
-	connect_spline,
+	--conected_shape,
+	new_connect_spline,
 	select_splines = #(),
 	select_knots   = #(),
 	new_knots      = #(),
+	knot_count	= 0,
+	knot_positons	= #(),
 
 	/* dependency */
 	/* reference */
@@ -21,26 +23,20 @@ struct ConnectVertices_v
 	function connect =
 	(
 		format "\n"; print "ConnectVertices_v.connect()"
-		format "source_splines	= % \n" source_splines
-		--if source_splines.count == 1 then
-		--(
-		--	if classOf ( modPanel.getCurrentObject() ) == SplineShape then 
-		--		this._connectSpline()
-		--		
-		--	else if classOf ( modPanel.getCurrentObject() ) == Edit_Spline then 
-		--		this._connectEditSplineModifier()
-		--)
-		--else if source_splines.count == 2 then 
-		--	this._connectMultipleSplines()
-		--_mod = modPanel.getCurrentObject())
-		spline_obj = source_splines[1]
-		
-		if classOf (_mod = modPanel.getCurrentObject()) == SplineShape then 
-			this._connectSpline()
+		format "source_shapes	= % \n" source_shapes
+	
+		if classOf (_mod = modPanel.getCurrentObject()) == Edit_Spline then 
+		(
+			if source_shapes.count == 1 then
+				this._connectEditSplineModifier()
 			
-		else if classOf _mod == Edit_Spline then 
-			this._connectEditSplineModifier()
-		
+			else if source_shapes.count == 2 then
+				this._connectMultipleSplines()
+			
+		)
+		else if classOf _mod == SplineShape then
+			this._connectSpline(source_shapes[1])
+			
 	),
 	
 	
@@ -48,50 +44,25 @@ struct ConnectVertices_v
 	
 	/** Connect spline
 	 */
-	function _connectSpline =
+	function _connectSpline conected_shape =
 	(
-		format "\n"; print "ConnectVertices_v._connectSpline()"		
-	
-		this._connectKnots()
-		--knot_count = 0
-		--knot_positons = #()
-		--
-		--select_splines = #()
-		--select_knots   = #()
-		--new_knots      = #()
-		--
-		--for s = 1 to ( numSplines spline_obj )
-		--	where (local selected_knots = getKnotSelection spline_obj s).count > 0 do
-		--	(
-		--		append select_splines s
-		--		append select_knots   selected_knots
-		--		
-		--		
-		--		join knot_positons (for knot in selected_knots collect getKnotPoint spline_obj s knot)
-		--
-		--		if (knot_count += selected_knots.count) > 2 do exit
-		--	)
-		--
-		--if knot_count == 2 then
-		--(
-		--	connect_spline = addNewSpline spline_obj
-		--	
-		--	append new_knots	(addKnot spline_obj connect_spline #corner #line knot_positons[1])
-		--	append new_knots	(addKnot spline_obj connect_spline #corner #line knot_positons[2])
-		--	
-		--	updateShape spline_obj
-	
-			for s = 1 to select_splines.count do
-				setKnotSelection spline_obj select_splines[s] select_knots[s] 
+		format "\n"; print "ConnectVertices_v._connectSpline()"
+		
+		--conected_shape = source_shapes[1]
 
-			setKnotSelection spline_obj connect_spline new_knots
-			
-			weldSpline spline_obj 0.001
-			
-			updateShape spline_obj
+		this._setKnotsPositions(conected_shape)
 		
+		this._connectKnots(conected_shape)
+
+		/* WELD */ 
+		for s = 1 to select_splines.count do
+			setKnotSelection conected_shape select_splines[s] select_knots[s] 
+
+		setKnotSelection conected_shape new_connect_spline new_knots
 		
+		weldSpline conected_shape 0.001
 		
+		updateShape conected_shape
 	),
 	
 	/** Connect edit line modifier
@@ -99,45 +70,106 @@ struct ConnectVertices_v
 	function _connectEditSplineModifier =
 	(
 		format "\n"; print "ConnectVertices_v.connectEditSplineModifier()"
+		
+		maxOps.cloneNodes #(source_shapes[1]) cloneType:#copy newNodes:&temp_shapes #nodialog
+	
+		conected_shape = temp_shapes[1]
+	
+		--conected_shape.name = source_shapes[1].name + "-new-connection"
+		
+		clearSelection()
+		
+		select conected_shape
+	
+		convertToSplineShape conected_shape
+		
+		updateShape conected_shape
+		
+		subObjectLevel = 1
+		
+		connect_line = line name: (connected_shape.name+"-CONNECT-LINE-TO-ATTACH") wirecolor:( color 0 255 0 )
+
+		this._setKnotsPositions(connected_shape)
+		
+		this._connectKnots(connect_line)
+		
+		delete connected_shape
+
+		clearSelection()
+
+		select source_shapes
+	
+		splineOps.startAttach ( modPanel.getCurrentObject()  )
+		
 	),
 	
-	/** Connect multiple source_splines
+	/** Connect multiple source_shapes
 	 */
 	function _connectMultipleSplines =
 	(
 		format "\n"; print "ConnectVertices_v._connectMultipleSplines()"
+		--print "********************************"
+		maxOps.cloneNodes source_shapes cloneType:#copy newNodes:&temp_shapes #nodialog
+	
+		convertToSplineShape temp_shapes[1]
+		convertToSplineShape temp_shapes[2]
+		
+		addAndWeld temp_shapes[1] temp_shapes[2] 0
+		
+		temp_shape = temp_shapes[1]
+		
+		connect_line = line name: (source_shapes[1].name+"-CONNECT-"+source_shapes[2].name) wirecolor:( color 0 255 0 )
+		
+		this._setKnotsPositions(temp_shape)
+		
+		this._connectKnots(connect_line)
+
+		delete temp_shape
+		
+		splineOps.startAttach ( modPanel.getCurrentObject()  )
 	),
 	
-	/** Connect knots
+
+	/** Get positions of selected knots to conect
+	  *
+	  * @param	node SplineShape	object where knots position will be get
+	  * 
+	  --* @return	array of knot positions	
 	 */
-	function _connectKnots =
+	function _setKnotsPositions get_knots_shape =
 	(
-		format "\n"; print "ConnectVertices_v._connectKnots()"
-		knot_count = 0
-		knot_positons = #()
-
-		--select_splines = #()
-
-		for s = 1 to ( numSplines spline_obj )
-			where (local selected_knots = getKnotSelection spline_obj s).count > 0 do
+		--format "\n"; print "ConnectVertices_v._getKnotsPosition()"
+		for s = 1 to ( numSplines get_knots_shape )
+			where (local selected_knots = getKnotSelection get_knots_shape s).count > 0 do
 			(
 				append select_splines s
-				append select_knots   selected_knots
+				append select_knots selected_knots
 				
 				
-				join knot_positons (for knot in selected_knots collect getKnotPoint spline_obj s knot)
+				join knot_positons (for knot in selected_knots collect getKnotPoint get_knots_shape s knot)
 
 				if (knot_count += selected_knots.count) > 2 do exit
 			)
+		
+	),
+
+	/** Connect knots
+	 */
+	function _connectKnots conected_shape =
+	(
+		format "\n"; print "ConnectVertices_v._connectKnots()"
+
+		--select_splines = #()
 	
 		if knot_count == 2 then
 		(
-			connect_spline = addNewSpline spline_obj
 			
-			append new_knots	(addKnot spline_obj connect_spline #corner #line knot_positons[1])
-			append new_knots	(addKnot spline_obj connect_spline #corner #line knot_positons[2])
+			new_connect_spline = addNewSpline conected_shape
 			
-			updateShape spline_obj
+			append new_knots	(addKnot conected_shape new_connect_spline #corner #line knot_positons[1])
+			append new_knots	(addKnot conected_shape new_connect_spline #corner #line knot_positons[2])
+			
+			updateShape conected_shape
 		)
 	),
 	
