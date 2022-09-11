@@ -26,9 +26,8 @@ function editDefaultQuad1 =
 	QuadMenu1.removeItem("Curve Editor...")
 	QuadMenu1.removeItem("Dope Sheet...")
 	QuadMenu1.removeItem("Wire Parameters...")
-	--QuadMenu1.removeSeparator(9)
 	
-	QuadMenu1.moveItem("Convert To:") 1
+	--QuadMenu1.moveItem("Convert To:") 1
 
 )
 
@@ -46,6 +45,7 @@ function editDefaultQuad2 =
 function editDefaultQuad3 =
 (
 	QuadMenu3.removeItem("Sub-objects")
+	QuadMenu3.removeSeparator(1)
 
 )
 
@@ -55,8 +55,6 @@ function editDefaultQuad4 =
 (
 	--format "\n"; print ".editDefaultQuad4()"
 	
-
-
 )
 
 /*------------------------------------------------------------------------------
@@ -68,17 +66,28 @@ function editDefaultQuad4 =
 function editMenuContextSplineTools2 =
 (
 	--format "\n"; print ".contextSplineTools2()"
-	SplineToolsMenu = Menu_v("Context Spline Tools 2")
-	--format "Spline_ools	Menu= % \n" SplineToolsMenu
+	SplineToolsMenu2 = Menu_v("Context Spline Tools 2")
 	
-	SplineToolsMenu.removeItem("Connect")
+	SplineToolsMenu2.removeItem("Connect")
+	SplineToolsMenu2.removeItem("Weld Vertices")
 	
-	SplineToolsMenu.moveItem("Weld Vertices") 1
-	SplineToolsMenu.moveItem("Break Vertices") 2
-	SplineToolsMenu.moveItem("Fuse Vertices") 3
-	SplineToolsMenu.addSeparator index:4
+	
+	SplineToolsMenu2.moveItem("Break Vertices") 2
+	SplineToolsMenu2.moveItem("Fuse Vertices") 3
+	SplineToolsMenu2.addSeparator index:4
+)
 
+/** Edit menu context spline tools 1
+ */
+function editMenuContextSplineTools1 =
+(
+	--format "\n"; print ".editMenuContextSplineTools1()"
+	SplineToolsMenu1 = Menu_v("Context Spline Tools 1")
 	
+	/* Edit Edit/Editable Spline Menu */ 
+	EditSplineSubMenu = SplineToolsMenu1.getSubMenu("Edit/Editable Spline Menu")
+	
+	EditSplineSubMenu.moveItem("Reset Tangents") 5
 )
 
 /*------------------------------------------------------------------------------
@@ -91,7 +100,6 @@ function addDefaultQuad1 =
 (
 	--format "\n"; print ".addDefaultQuad1()"
 	QuadMenu1.addMenu("_Tools")
-
 )
 
 /** RIGHT TOP quad menu - ADD default items
@@ -119,13 +127,13 @@ function addDefaultQuad4 =
 )
 
 
+/*------------------------------------------------------------------------------
+	EDIT MENUS
+--------------------------------------------------------------------------------*/
 editDefaultQuad1()
 editDefaultQuad2()
 editDefaultQuad3()
 editDefaultQuad4()
-
-
-editMenuContextSplineTools2()
 
 addDefaultQuad1()
 addDefaultQuad2()
@@ -133,7 +141,10 @@ addDefaultQuad3()
 addDefaultQuad4()
 
 
+editMenuContextSplineTools1()
+editMenuContextSplineTools2()
 
+/* Set options */ 
 DeafaultQuad.setRightClick()
 	
 DeafaultQuad.showAllQuads()
