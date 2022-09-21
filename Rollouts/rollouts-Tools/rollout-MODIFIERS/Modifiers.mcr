@@ -7,9 +7,9 @@ function addModifierOrLoadPreset modifier_class =
 	(
 		Menu = RcMenu_v name:"ModifierPresetMenu"
 		
-		if (presets = (Modifier_v(modifier_class)).getPresets()).count > 0 then
+		if (presets = (ModifierPreset_v(modifier_class)).getPresets()).count > 0 then
 			for preset in presets do
-				Menu.item (preset) ("addModifierMenuCallback ("+ modifier_class as string +") preset:\""+preset+"\"")
+				Menu.item (preset) ("(ModifierPreset_v("+ modifier_class as string +")).loadPreset(\""+preset+"\")")
 			
 		popUpMenu (Menu.create())
 		
@@ -29,9 +29,10 @@ function managePresetMenu modifier_class =
 		Menu = RcMenu_v name:"ManagePresetsMenu"
 		--Menu.item ("Save preset")	("savePreset   " + modifier_class as string )
 		--Menu.item ("Delete Preset")	("deletePreset " + modifier_class as string )
-		_Modifier = "(Modifier_v("+ modifier_class as string +"))"
+		--_Modifier = "(ModifierPreset_v("+ modifier_class as string +"))"
+		_Modifier = "(ModifierPreset_v("+ modifier_class as string +"))"
 		
-		Menu.item ("Save preset")	(_Modifier+".savePreset()") 
+		Menu.item ("Save preset")	(_Modifier+".savePresetDialog()") 
 		Menu.item ("Delete preset")	(_Modifier+".deletePreset()") 
 		Menu.item ("Open ini file")	(_Modifier+".openIni()") 
 			
@@ -79,21 +80,21 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 *	4) Disable if subobject is active
 *	
 */
-macroscript	modifier_add_editpoly
-category:	"_Modifiers"  
-buttonText:	"EditPoly"
-tooltip:	"Add EditPoly"
---icon:	"across:6"
-(
-	--sub_obj	= subObjectLevel
-	--
-	--_Edit_Poly = (Modifier_v control:#Edit_Poly ).add()
-	--
-	--if( sub_obj != undefined and sub_obj != 0 ) then 
-	--	subObjectLevel = sub_obj
-	--
-	--redrawViews()
-)
+--macroscript	modifier_add_editpoly
+--category:	"_Modifiers"  
+--buttonText:	"EditPoly"
+--tooltip:	"Add EditPoly"
+----icon:	"across:6"
+--(
+--	--sub_obj	= subObjectLevel
+--	--
+--	--_Edit_Poly = (ModifierPreset_v control:#Edit_Poly ).add()
+--	--
+--	--if( sub_obj != undefined and sub_obj != 0 ) then 
+--	--	subObjectLevel = sub_obj
+--	--
+--	--redrawViews()
+--)
 
 /*------------------------------------------------------------------------------
 	NOISE
@@ -105,9 +106,7 @@ category:	"_Modifiers"
 buttonText:	"Noise"
 tooltip:	"Add Noise Modifier"
 (
-	(Modifier_v #NoiseModifier).add()
-
-	(Modifier_v(#NoiseModifier)).loadPreset(#NoiseModifier)
+	addModifierOrLoadPreset( NoiseModifier )
 )
 /**  
   */ 
@@ -116,7 +115,7 @@ category:	"_Modifiers"
 buttonText:	"Noise"
 tooltip:	"Menu\nRMB+Ctrl:	Presets"
 (
-	loadModifierPresetMenu(#NoiseModifier)
+	managePresetMenu( NoiseModifier )
 )
 
 --macroscript	modifier_add_normal
@@ -124,7 +123,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --buttonText:	"Normal"
 --tooltip:	"Add Normal"
 --(
---	_Normal = (Modifier_v control:#Normal ).add()
+--	_Normal = (ModifierPreset_v control:#Normal ).add()
 --
 --	redrawViews()
 --)
@@ -133,7 +132,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --buttonText:	"Shell"
 --tooltip:	"Add Shell"
 --(
---	_Shell = (Modifier_v control:#Shell ).add()
+--	_Shell = (ModifierPreset_v control:#Shell ).add()
 --
 --	_Shell.overrideMatID = on
 --	_Shell.matID = 255
@@ -162,7 +161,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Reset Relax"
 --(
 --	--clearListener()
---	(Modifier_v control:#Relax).add()
+--	(ModifierPreset_v control:#Relax).add()
 --
 --)
 
@@ -173,7 +172,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Smooth"
 --(
 --	--clearListener()
---	(Modifier_v control:#Smooth).add()
+--	(ModifierPreset_v control:#Smooth).add()
 --
 --)
 --
@@ -183,7 +182,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --tooltip:	"Add Volume Select"
 --(
 --	--clearListener()
---	(Modifier_v control:#VolumeSelect).add()
+--	(ModifierPreset_v control:#VolumeSelect).add()
 --
 --)
 --
@@ -202,8 +201,8 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --	if( modifier_name!="" ) then
 --		modifier_name += "-"
 --
---	_Mesh_Select	= (Modifier_v control:#Mesh_Select	name:(modifier_name+"Select"	)).add()
---	_Face_Extrude	= (Modifier_v control:#Face_Extrude	name:(modifier_name+"Extrude"	)).add()
+--	_Mesh_Select	= (ModifierPreset_v control:#Mesh_Select	name:(modifier_name+"Select"	)).add()
+--	_Face_Extrude	= (ModifierPreset_v control:#Face_Extrude	name:(modifier_name+"Extrude"	)).add()
 --
 --	_Mesh_Select.ignoreBackfacing = on
 --

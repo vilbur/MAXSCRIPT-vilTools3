@@ -1,38 +1,16 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Modifiers/Modifiers.ms" )
---filein( getFilenamePath(getSourceFileName()) + "/../rollout-Selection/Selection.ms" )
-
 /** Modifier
   * 
   * @property	_modifier|name	_modifier	_modifier or class of _modifier E.g.: #chamfer
   * 
   * https://help.autodesk.com/view/3DSMAX/2017/ENU/?guid=__files_GUID_DB496ACA_1506_4FB1_B8F8_EECC7D9794DD_htm  
  */
-struct Modifier_v
+struct ModifierPreset_v
 (
-	--type,
 	_modifier,
-	--name,
 
-	Modifiers	= Modifiers_v(),
 
 	ini,
 
-	--/** Get
-	-- */
-	--function add =
-	--(
-	--	type = type as string
-	--
-	--	this._selectUniqueObjects()
-	--
-	--	--this._setModifier()
-	--
-	--	--this._setName()
-	--
-	--	modPanel.addModToSelection _modifier ui:on
-	--
-	--	_modifier --return
-	--),
 
 	/** Set current _modifier
 	 */
@@ -41,8 +19,6 @@ struct Modifier_v
 		max modify mode
 
 		_modifier = modPanel.getCurrentObject()
-
-		--type = classOf _modifier		
 	),
 
 	/** Save preset
@@ -51,22 +27,19 @@ struct Modifier_v
 	 */
 	function savePreset props: =
 	(
-		format "\n"; print "Modifier_v.savePreset()"
-		format "_modifier	= % \n" _modifier
+		--format "\n"; print "ModifierPreset_v.savePreset()"
+		--format "_modifier	= % \n" _modifier
 		this._setIniPath()
 
-		this.deletePreset(_modifier.name)
+		this.deletePreset()
 	
 		if props == unsupplied then
 			props = getPropNames _modifier
 		
-		format "props	= % \n" props
-			
-		--for prop in getPropNames _modifier where findItem props prop > 0 do
 		for prop in getPropNames _modifier do
 		(
 			value	= getProperty _modifier prop
-			format "% = % \n" prop value
+			--format "% = % \n" prop value
 
 			setINISetting ini _modifier.name ( prop as string ) ( value as string )
 		)
@@ -76,12 +49,8 @@ struct Modifier_v
 	 */
 	function loadPreset preset_name =
 	(
-		format "\n"; print "Modifier_v.loadPreset()"
-		format "preset_name	= % \n" preset_name
-		--format "this._iniFileExists()	= % \n" (this._iniFileExists())
-		this._setIniPath()
-		format "_modifier	= % \n" _modifier 
-		
+		--format "\n"; print "ModifierPreset_v.loadPreset()"
+
 		current_modifier	= modPanel.getCurrentObject()
 
 		if not ( this._iniFileExists() ) or classOf _modifier != classOf current_modifier then
@@ -89,14 +58,14 @@ struct Modifier_v
 		
 		for prop in getPropNames _modifier do
 		(
-			format "prop	= % \n" prop
+			--format "prop	= % \n" prop
 			--prop = substituteString prop "cbx_" "" -- remove "cbx_" prefix
 			
 			value	= getINISetting ini preset_name ( prop as string )
 			
-			format "value	= % \n" value
+			--format "value	= % \n" value
 			
-			--format "Modifier_v.loadPreset() % = % \n" prop value
+			--format "ModifierPreset_v.loadPreset() % = % \n" prop value
 			if value != "" then
 			(
 				value_formatted = this._formatDatatypeValue value
@@ -115,12 +84,47 @@ struct Modifier_v
 
 	/** Delete preset
 	 */
-	function deletePreset preset_name =
+	function deletePreset =
 	(
-		format "\n"; print "Modifier_v.deletePreset()"
+		--format "\n"; print "ModifierPreset_v.deletePreset()";
 		--this._setIniPath()
 
-		delINISetting ini preset_name
+		delINISetting ini _modifier.name
+	),
+	
+	/** Save preset dialog
+	 */
+	function savePresetDialog =
+	(
+		--format "\n"; print "ModifierPreset_v._savePresetDialog()"
+		--_modifier = modPanel.getCurrentObject()
+			
+		if superClassOf _modifier == modifier then
+		(
+			/* DIALOG */
+			dialog_id = "dialog_" + (classOf _modifier) as string + "_preset"
+	
+			Dialog 	    = Dialog_v title:("Save "+ (classOf _modifier) as string  +" preset") id:dialog_id ini:(getSourceFileName() + "/../save-modifier-property.ini")
+			--Dialog 	    = Dialog_v title:("Save "+ (classOf _modifier) as string  +" preset") id:dialog_id
+			
+			_Controls	= Dialog.Controls()
+			_Controls_props	= Dialog.Controls group:"Properties saved in preset"
+			_Controls_save	= Dialog.Controls()
+			
+			CheckAllCheckbox = _Controls.control #checkbox "Check\Uncheck all" across:1
+			
+			CheckAllCheckbox.Events.add #changed ("for control in "+dialog_id+".controls do try( control.state = val )catch()")
+			
+			for prop in getPropNames _modifier do
+				_Controls_props.control #checkbox ( prop as string ) id:(("cbx_"+prop as string )as name ) across:1
+			
+			SaveButton =  _Controls_save.control #button "Save Preset" width:128 height:64 across:1
+			
+			SaveButton.Events.add #pressed ("(ModifierPreset_v("+ (classOf _modifier) as string  +")).savePreset props:(for ctrl in "+dialog_id+".controls collect try(if ctrl.state then ctrl.name as name )catch()); DestroyDialog "+dialog_id+"")
+			
+			/* DIALOG CREATE */ 
+			Dialog.create width:256 pos:#mouse
+		)
 	),
 
 	/** Format datatype of value
@@ -169,7 +173,7 @@ struct Modifier_v
 	 */
 	function openIni =
 	(
-		format "\n"; print "Modifier_v.openIni()"
+		--format "\n"; print "ModifierPreset_v.openIni()"
 		--this._setIniPath()
 
 		if this._iniFileExists() then
@@ -183,7 +187,7 @@ struct Modifier_v
 	 */
 	function _setIniPath =
 	(
-		format "\n"; print "Modifier_v._setIniPath()"
+		--format "\n"; print "ModifierPreset_v._setIniPath()"
 		--format "_modifier	= % \n" _modifier
 		--format "classOf _modifier	= % \n" (classOf _modifier)
 
@@ -227,14 +231,13 @@ struct Modifier_v
 
 	on create do
 	(
-		format "\n"; print "Modifier_v.create()"
+		--format "\n"; print "ModifierPreset_v.create()"
 		--format "classOf _modifier A = % \n" (classOf _modifier)
-		format "_modifier	= % \n" _modifier
-		
+		--format "_modifier	= % \n" _modifier
+
 
 		if _modifier != undefined and superClassOf _modifier != modifier then
 			_modifier = modPanel.getCurrentObject()
-			--_modifier = execute (_modifier as string + "()")
 
 		
 		this._setIniPath()

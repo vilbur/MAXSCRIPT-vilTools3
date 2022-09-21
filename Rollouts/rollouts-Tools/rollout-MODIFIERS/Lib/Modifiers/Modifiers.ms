@@ -23,12 +23,6 @@ struct Modifiers_v
 	--VolumeSelect	= (VolumeSelect_Modifier_v()).get(),
 	--Normal	= (Normal_Modifier_v()).get(),
 	
-	/** Delete
-	 */
-	function delete =
-	(
-		
-	),
 	
 	/** Get instanced modifiers
 	 */
@@ -41,52 +35,14 @@ struct Modifiers_v
 	 */
 	function search obj _modifier =
 	(
+		--format "\n"; print "Modifiers_v.search()"
+		_modifiers = for obj_modifier in obj.modifiers where obj_modifier==_modifier collect obj_modifier
 		
-		for obj_modifier in (this._getModifiers obj) where obj_modifier==_modifier collect obj_modifier
-
-		
-		
-		--if( _modifiers.count > 0 ) then
-			--_modifiers[1] --return
-		--print ( "_modifiers=" + _modifiers as string )
-	),
-	/** Get edit poly modifiers
-	 */
-	function _getModifiers obj =
-	(
-		max modify mode
-		
-		obj.modifiers --return
-			--allInstanced = (for o in objects where (refhierarchy.isRefTargetInstanced _modifier ) collect o)
-
-			--allInstanced --return 
-		
-		
-		
-		--modifiers_current	= obj.modifiers
-		--format "\nobj.modifiers = % \n" obj.modifiers
-		--
-		--_modifiers	= #()
-		--print ( "modifiers_current=" + modifiers_current as string )
-		--
-		----for m=1 to modifiers_current.count where  classOf modifiers_current[m] == _modifier do
-		----	append _modifiers modifiers_current[m]
-		--
-		----for modifier_current in modifiers_current where  classOf modifier_current == _modifier do 
-		--for modifier_current in modifiers_current do
-		--(
-		--	format "modifier_current = % \n" modifier_current
-		--	
-		--)
-		--	--append _modifiers modifier_current
-		--
-		--
-		--
-		--_modifiers --return
+		if( _modifiers.count > 0 ) then
+			_modifiers[1] --return
 	),
 	
 	on create do
 	(
-		--messagebox "Modifiers.onCreate()"
 	)
 )
