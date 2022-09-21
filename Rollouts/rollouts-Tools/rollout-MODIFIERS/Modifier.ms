@@ -2,106 +2,127 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Modifiers/Modifiers.ms" )
 --filein( getFilenamePath(getSourceFileName()) + "/../rollout-Selection/Selection.ms" )
 
 /** Modifier
-  *
+  * 
+  * @property	_modifier|name	_modifier	_modifier or class of _modifier E.g.: #chamfer
+  * 
   * https://help.autodesk.com/view/3DSMAX/2017/ENU/?guid=__files_GUID_DB496ACA_1506_4FB1_B8F8_EECC7D9794DD_htm  
  */
 struct Modifier_v
 (
-	name,
-	type,
-	
-	Modifiers	= Modifiers_v(),
-	
-	modifier,
-	
-	ini,
-	
-	/** Get
-	 */
-	function add =
-	(
-		type = type as string
+	--type,
+	_modifier,
+	--name,
 
-		(Selection_v()).filterUniqueObjects()
-		
-		this._setModifier()
-		
-		--this._setName()
-		
-		modPanel.addModToSelection modifier ui:on
-		
-		modifier --return
-	),
-	
-	/** Set current modifier
+	Modifiers	= Modifiers_v(),
+
+	ini,
+
+	--/** Get
+	-- */
+	--function add =
+	--(
+	--	type = type as string
+	--
+	--	this._selectUniqueObjects()
+	--
+	--	--this._setModifier()
+	--
+	--	--this._setName()
+	--
+	--	modPanel.addModToSelection _modifier ui:on
+	--
+	--	_modifier --return
+	--),
+
+	/** Set current _modifier
 	 */
-	function setCurrent =
+	function getCurrent =
 	(
 		max modify mode
-		
-		modifier = modPanel.getCurrentObject()
-		
-		type = classOf modifier
-		
-		this --return
+
+		_modifier = modPanel.getCurrentObject()
+
+		--type = classOf _modifier		
 	),
-	
-	
-	
+
 	/** Save preset
+	  * 
+	  * @param	array	props	mask of property names will be saved
 	 */
-	function savePreset =
+	function savePreset props: =
 	(
-		this._setupPresetSaveLoad()
-		
-		for prop in getPropNames modifier do
-		(
-			value	= getProperty modifier prop
-			format "% = % \n" prop value
-			
-			setINISetting ini modifier.name ( prop as string ) ( value as string )
+		format "\n"; print "Modifier_v.savePreset()"
+		format "_modifier	= % \n" _modifier
+		this._setIniPath()
 
-		)
+		this.deletePreset(_modifier.name)
+	
+		if props == unsupplied then
+			props = getPropNames _modifier
 		
-		this --return
+		format "props	= % \n" props
+			
+		--for prop in getPropNames _modifier where findItem props prop > 0 do
+		for prop in getPropNames _modifier do
+		(
+			value	= getProperty _modifier prop
+			format "% = % \n" prop value
+
+			setINISetting ini _modifier.name ( prop as string ) ( value as string )
+		)
 	),
 
-	
 	/** Load preset
 	 */
-	function loadPreset =
+	function loadPreset preset_name =
 	(
-		this._setupPresetSaveLoad()
+		format "\n"; print "Modifier_v.loadPreset()"
+		format "preset_name	= % \n" preset_name
+		--format "this._iniFileExists()	= % \n" (this._iniFileExists())
+		this._setIniPath()
+		format "_modifier	= % \n" _modifier 
 		
-		if( this._iniFileExists() ) then 
-			for prop in getPropNames modifier do
+		current_modifier	= modPanel.getCurrentObject()
+
+		if not ( this._iniFileExists() ) or classOf _modifier != classOf current_modifier then
+			return false
+		
+		for prop in getPropNames _modifier do
+		(
+			format "prop	= % \n" prop
+			--prop = substituteString prop "cbx_" "" -- remove "cbx_" prefix
+			
+			value	= getINISetting ini preset_name ( prop as string )
+			
+			format "value	= % \n" value
+			
+			--format "Modifier_v.loadPreset() % = % \n" prop value
+			if value != "" then
 			(
-				value	= getINISetting ini modifier.name ( prop as string )
-				--format "Modifier_v.loadPreset() % = % \n" prop value
-				
 				value_formatted = this._formatDatatypeValue value
-				
+		
 				--if( value_formatted != "undefined" ) then
 				try
 				(
-					setProperty modifier prop ( this._formatDatatypeValue value )
-				)
-				catch
-				()
-			)
-		this --return
-	),
-	
-	/** _setup preset save load
-	 */
-	function _setupPresetSaveLoad =
-	(
-		if( modifier == undefined ) then
-			this.setCurrent()
+					setProperty current_modifier prop ( this._formatDatatypeValue value )
+				)catch()
 
-		this._setIniPath()
+			)
+		)
+		current_modifier.name = preset_name
+		
 	),
-	
+
+	/** Delete preset
+	 */
+	function deletePreset preset_name =
+	(
+		format "\n"; print "Modifier_v.deletePreset()"
+		--this._setIniPath()
+
+		delINISetting ini preset_name
+	),
+
 	/** Format datatype of value
 	  * 
 	  * return mixin true|false|number|string
@@ -110,46 +131,63 @@ struct Modifier_v
 	(
 		if( matchPattern value pattern:"true" or matchPattern value pattern:"false"  ) then 
 			if( matchPattern value pattern:"true" ) then true else false  --return true|false
-		
+
 		else if( value as number != undefined ) then
 			 value as number --return number
-		
+
 		else
 			value --return string
 	),
-	
-	/** Get objects with instance of given modifier
+
+	/** Get objects with instance of given _modifier
 	  *
-	  * @property	array	_objects	where to serch for instance of modifier
-	  * @property	modifier	modifier	for search
+	  * @property	array	_objects	where to serch for instance of _modifier
+	  * @property	_modifier	_modifier	for search
 	  *
 	  * @return	array	
 	 */
 	function getObjectsWithInstance _objects =
 	(
 		objects_with_instance	= #()
-		
-		if( refhierarchy.isRefTargetInstanced modifier ) then 
-			objects_with_instance = for obj in _objects where ( (Modifiers.search obj modifier).count > 0 ) collect obj
-		
+
+		if( refhierarchy.isRefTargetInstanced _modifier ) then 
+			objects_with_instance = for obj in _objects where ( (Modifiers.search obj _modifier).count > 0 ) collect obj
+
 		objects_with_instance --return
 	),
-	
-	/** _set modifier
+
+	/** Get preests
 	 */
-	function _setModifier =
+	function getPresets =
 	(
-		if( hasProperty Modifiers type ) then
-			modifier = getProperty Modifiers type --return 
-		else
-			modifier = execute (type+"()") --return
+		--this._setIniPath()
+		--format "ini	= % \n" ini
+		getINISetting ini --return
+	),
+
+	/** Open ini
+	 */
+	function openIni =
+	(
+		format "\n"; print "Modifier_v.openIni()"
+		--this._setIniPath()
+
+		if this._iniFileExists() then
+			DOSCommand ("start \"\" \""+ini+"\"")
 	),
 	
+	private
+
+
 	/** Set ini path
 	 */
 	function _setIniPath =
 	(
-		ini = (getFilenamePath(getSourceFileName())) + "Modifiers\\ModifierTypes\\"+type as string +".ini"
+		format "\n"; print "Modifier_v._setIniPath()"
+		--format "_modifier	= % \n" _modifier
+		--format "classOf _modifier	= % \n" (classOf _modifier)
+
+		ini = (getFilenamePath(getSourceFileName())) + "\\Lib\\Modifiers\\ModifierTypes\\"+( classOf _modifier ) as string +".ini"
 		--format "ini = % \n" ini
 	),
 	
@@ -157,53 +195,50 @@ struct Modifier_v
 	 */
 	function _iniFileExists =
 	(
-		
 		(getFiles ini).count != 0 
 	),
 
-	/** Test
+	/** Select only Unique objects.
+	  *	Deselect mutliple instances
+	  *
+	  * @return	array selection	
 	 */
-	function test preset =
-	(
-		messageBox preset beep:false
+	function _selectUniqueObjects =
+	(		
+		for obj in selection do 
+		(
+			local obj_instances
+			InstanceMgr.GetInstances obj &obj_instances
+
+			if( obj_instances.count > 1 ) then
+			(
+				deleteItem obj_instances (findItem obj_instances obj)
+				deselect obj_instances
+			)
+		)
 	),
-	
+
 	--/** _get name
 	-- */
 	--function _setName =
 	--(
-	--	modifier.name = name
+	--	_modifier.name = name
 	--),
-	/** Get preests
-	 */
-	function getPresets _rollout =
-	(
 
-		this._setupPresetSaveLoad()
-
-		presets	= getINISetting ini
-		format "presets = % \n" presets
-
-		/* DEFINE MAIN MENU */
-		global Menu_RC = Menu_v name:"Menu_RC_name"
-		
-		/* DEFINE MENU */
-		--menu_1	= Menu_RC.menu "Menu 1"
-		
-		for preset in presets do
-			Menu_RC.item preset ("loadPresetGlobal \""+preset+"\"") id:preset
-
-
-		/** MENU ITEMS 
-		 */
-		
-		popUpMenu (Menu_RC.create()) rollout:_rollout
-
-
-		
-	),
 	on create do
 	(
-	
+		format "\n"; print "Modifier_v.create()"
+		--format "classOf _modifier A = % \n" (classOf _modifier)
+		format "_modifier	= % \n" _modifier
+		
+
+		if _modifier != undefined and superClassOf _modifier != modifier then
+			_modifier = modPanel.getCurrentObject()
+			--_modifier = execute (_modifier as string + "()")
+
+		
+		this._setIniPath()
+
+		--format "_modifier	= % \n" _modifier
 	)
 )

@@ -1,3 +1,75 @@
+/** Add modifier or load preset
+ */
+function addModifierOrLoadPreset modifier_class =
+(
+	--format "\n"; print ".addModifierOrLoadPreset()"
+	if not ( keyboard.controlPressed or (classOf ( modPanel.getCurrentObject())) != modifier_class )then 
+	(
+		Menu = RcMenu_v name:"ModifierPresetMenu"
+		
+		if (presets = (Modifier_v(modifier_class)).getPresets()).count > 0 then
+			for preset in presets do
+				Menu.item (preset) ("addModifierMenuCallback ("+ modifier_class as string +") preset:\""+preset+"\"")
+			
+		popUpMenu (Menu.create())
+		
+	)else
+		modPanel.addModToSelection (modifier_class()) ui:on
+		
+)
+
+/** Manage preset menu
+ */
+function managePresetMenu modifier_class =
+(
+	--format "\n"; print ".managePresetMenu()"
+	
+	if classOf( current_modifier = ( modPanel.getCurrentObject() ) ) == modifier_class then 
+	(
+		Menu = RcMenu_v name:"ManagePresetsMenu"
+		--Menu.item ("Save preset")	("savePreset   " + modifier_class as string )
+		--Menu.item ("Delete Preset")	("deletePreset " + modifier_class as string )
+		_Modifier = "(Modifier_v("+ modifier_class as string +"))"
+		
+		Menu.item ("Save preset")	(_Modifier+".savePreset()") 
+		Menu.item ("Delete preset")	(_Modifier+".deletePreset()") 
+		Menu.item ("Open ini file")	(_Modifier+".openIni()") 
+			
+		popUpMenu (Menu.create())
+	)
+)
+
+/*------------------------------------------------------------------------------
+	CHAMFER
+--------------------------------------------------------------------------------*/
+/** Add modifier if modifier of same type is not selected in stack
+  * CTRL KEY FORCE ADDING MODIFIER although is active in stack
+  *
+  * Show load presets menu,if same type of modifier is active in stack
+  */
+macroscript	modifier_chamfer
+category:	"_Modifiers"  
+buttonText:	"Chamfer"
+tooltip:	"Add Chamfer Modifier"
+(
+	addModifierOrLoadPreset(Chamfer)
+)
+
+/**
+  *
+  */
+macroscript	modifier_chamfer_add_with_preset
+category:	"_Modifiers"  
+buttonText:	"Chamfer"
+--tooltip:	"Menu|Menu_RC"
+tooltip:	"Menu\nRMB+Ctrl:	Presets"
+(
+	managePresetMenu(Chamfer)
+)
+
+/*------------------------------------------------------------------------------
+	EDIT POLY
+--------------------------------------------------------------------------------*/
 /*
 *	Ui Functions of modifier button 
 *	
@@ -6,13 +78,12 @@
 *	3) Load Preset
 *	4) Disable if subobject is active
 *	
-*/	
-
-
+*/
 macroscript	modifier_add_editpoly
 category:	"_Modifiers"  
 buttonText:	"EditPoly"
 tooltip:	"Add EditPoly"
+--icon:	"across:6"
 (
 	--sub_obj	= subObjectLevel
 	--
@@ -23,56 +94,30 @@ tooltip:	"Add EditPoly"
 	--
 	--redrawViews()
 )
-	
-	
-/** Load preset global
- */
-function loadPresetGlobal _preset =
-(
 
-	
-	--modifier = modPanel.getCurrentObject()
-	--suspendEditing which:#modify
-	--
-	--modifier.name = _preset
-	--
-	--resumeEditing which:#modify
-	--	
-	--	
-	--(Modifier_v()).loadPreset()
-
-	
-)
-
-macroscript	modifier_chamfer
+/*------------------------------------------------------------------------------
+	NOISE
+--------------------------------------------------------------------------------*/
+/**  
+  */
+macroscript	modifier_noise
 category:	"_Modifiers"  
-buttonText:	"Chamfer"
-tooltip:	"Add Chamfer preset:default"
+buttonText:	"Noise"
+tooltip:	"Add Noise Modifier"
 (
-	--(Modifier_v control:#Chamfer).add()
-	--
-	--(Modifier_v()).loadPreset()
+	(Modifier_v #NoiseModifier).add()
+
+	(Modifier_v(#NoiseModifier)).loadPreset(#NoiseModifier)
 )
-
-
-macroscript	modifier_chamfer_add_with_preset
+/**  
+  */ 
+macroscript	modifier_noise_more
 category:	"_Modifiers"  
-buttonText:	"Chamfer"
---tooltip:	"Menu|Menu_RC"
+buttonText:	"Noise"
 tooltip:	"Menu\nRMB+Ctrl:	Presets"
 (
-	
-	--ctrl = keyboard.controlPressed;
-	--if ctrl == true then
-	--	(Modifier_v()).getPresets rollout_rolloutmodifiers
-	--
-	--else
-	--	print "Nothing" 
-	
-	
+	loadModifierPresetMenu(#NoiseModifier)
 )
-
-
 
 --macroscript	modifier_add_normal
 --category:	"_Modifiers"  
@@ -121,27 +166,7 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 --
 --)
 
---macroscript	modifier_noise
---category:	"_Modifiers"  
---buttonText:	"Noise"
---tooltip:	"Add Noise"
---(
---	_Noise	= (Modifier_v control:#Noise).add()
---	_Noise.strength	= [15, 15, 15]
---	_Noise.scale	= 20
---	_Noise.fractal	= false
---
---)
---macroscript	modifier_noise_more
---category:	"_Modifiers"  
---buttonText:	"Noise"
---tooltip:	"Add Noise MORE"
---(
---	--clearListener()
---	_Noise	= (Modifier_v control:#Noise).add()
---	_Noise.strength	= [90, 90, 90]
---	_Noise.scale	= 100
---)
+
 --macroscript	modifier_smooth
 --category:	"_Modifiers"  
 --buttonText:	"Smooth"
