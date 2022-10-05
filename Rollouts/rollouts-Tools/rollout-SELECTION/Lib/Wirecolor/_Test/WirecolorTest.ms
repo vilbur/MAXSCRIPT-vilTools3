@@ -45,12 +45,21 @@ function createTestObjects hue:0 brightness:255 saturation:255 =
 createTestObjects()
 
 /*------------------------------------------------------------------------------
-	RUN TEST
+	RUN BASIC TEST
 --------------------------------------------------------------------------------*/
 
-(Wirecolor_v()).randomize hue:10
 
---(Wirecolor_v()).randomize brightness:128
+(Wirecolor_v()).randomize() -- same random color for all objects
+
+--(Wirecolor_v(#random)).randomize() -- random color for each object
+
+--(Wirecolor_v(#instance)).randomize() -- random color for each object, but instances has same color
+
+
+/*------------------------------------------------------------------------------
+	RUN TEST WITH COLOR SETUP
+--------------------------------------------------------------------------------*/
+
 --(Wirecolor_v()).randomize brightness:#(64, 255)
 
 --(Wirecolor_v()).randomize saturation:128
@@ -61,9 +70,4 @@ createTestObjects()
 
 
 --(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164 
---(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)
-
---(Wirecolor_v()).randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
-
-
-			
+--(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)	

@@ -4,34 +4,45 @@ filein( getFilenamePath(getSourceFileName()) + "/../../../../../Lib/Color/Color.
   * 
   * Instances has same wirecolor
   * 
-  * Selction is used if property _objects is not defined
+  * Selection is used if property nodes is not defined
+  * 
+  * @property	array	nodes	objects where wirecolor will be changed, current selection is used if undefined
+  * @property	undefined|#random|#instance mode
+  *	undefined:	set same wirecolor for all objects
+  *	#random:	set different wirecolor to each object
+  *	#instance:	random color for unique objects, but same for instances of obejcts
  */
 struct Wirecolor_v
 (
 	/* construct */
 
 	/* properties */
-	_objects,
-	
-	/* dependency */
-	_Color 	= Color_v(),
+	mode,
+	nodes,
 
+	/* dependency */
 	/* reference */
 	/* inhered */
 
+	nodes_prepared = #(),
+
 	/** Randomize
 	  * 
-	  * @param	array|colelction	_objects	for colorize
+	  * @param	array|colelction	nodes	for colorize
 	 */
-	function randomize col: hue:0 brightness:255 saturation:255 =
+	function randomize color_name: hue:128 brightness:#(64, 255) saturation:#(64, 255) =
 	(
-		--_Color.randomize col:col hue:hue brightness:brightness saturation:saturation
-		
-		for objs in this._sortNodesByInstances (_objects) do
-			objs.wirecolor = _Color.randomize col:col hue:hue brightness:brightness saturation:saturation
+		--format "\n"; print "Wirecolor_v._sortNodesByInstances()"
+		case mode of
+		(
+			undefined:	append nodes_prepared nodes
+			#instance:	this._sortNodesByInstances()
+			#random:	nodes_prepared = nodes
+		)
 
+		for arr in nodes_prepared do
+			arr.wirecolor = (Color_v()).randomize color_name:color_name	hue:hue brightness:brightness saturation:saturation
 	),
-
 
 	private
 
@@ -39,24 +50,23 @@ struct Wirecolor_v
 	  * 
 	  * @return	2D matrix of collections	
 	 */
-	function _sortNodesByInstances _objects =
+	function _sortNodesByInstances =
 	(
 		--format "\n"; print "Wirecolor_v._sortNodesByInstances()"
-		instances	= #()
 		tested	= #()
-		
-		for obj in _objects where findItem tested obj == 0 do 
+
+		for obj in nodes where findItem tested obj == 0 do 
 		(
 			local obj_instances
 
 			InstanceMgr.GetInstances obj &obj_instances
-			
-			append instances obj_instances
-			
+
+			append nodes_prepared obj_instances
+
 			tested = tested + obj_instances
 		)
-		
-		instances --return
+
+		nodes_prepared --return
 	),
 
 	/**  
@@ -64,8 +74,8 @@ struct Wirecolor_v
 	on create do
 	(
 		--format "\n"; print "Wirecolor.onCreate()"
-		if _objects == undefined then
-			_objects = selection
+		if nodes == undefined then
+			nodes = selection
 	)
 
 )
