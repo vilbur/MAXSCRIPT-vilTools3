@@ -1,67 +1,49 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )
+
 macroscript	wirecolor_random
 category:	"_Selection"
 buttontext:	"Random color"
 toolTip:	"Random wirecolor to selected object"
 --icon:	"#(path, index)"
 (
- 	--mode	= "perObj"
- 	mode	= "perSel"
+	--(Wirecolor_v()).randomize brightness:128
+	--(Wirecolor_v()).randomize brightness:#(64, 255)
 
-	if selection.count > 0 then
-	(
-		objArray = selection as array
-		AllobjArray =  selection as array
+	--(Wirecolor_v()).randomize saturation:128
+	--(Wirecolor_v()).randomize saturation:#(64, 255)
 
--- 		allInstance = Instance_Test_v objArray
-		instancesPerObj = #()
-		instances  = #()
+	--(Wirecolor_v()).randomize brightness:128	saturation:128
+	--(Wirecolor_v()).randomize brightness:#(64, 255)	saturation:#(64, 255)
 
-		for o in objArray do
-			(	
--- 					local addmod = #()
--- 				o=$
-				obj_instance = #()
-				testInst = (InstanceMgr.GetInstances o &obj_instance)
+	--(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164 
+	--(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)
 
-				if testInst > 1 then 
-				(
-					instancesPerObjTmp = #()
-					join instances obj_instance	
--- 				 inst = instances[1]
-					for inst in instances do
-					(
-						if (finditem objArray inst != 0 ) then 
-						(
-							appendifunique instancesPerObjTmp inst
-							deleteitem objArray (finditem objArray inst)
-						)
--- 							if (finditem objArray inst != 0 ) then deleteitem objArray (finditem objArray inst)
-					)
-					append instancesPerObj instancesPerObjTmp
+	(Wirecolor_v()).randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
 
-				)
-				else append instancesPerObj #(o)
-			)
-		/*		
-			(mode = "perSel")
-			for a=1 to instancesPerObj.count do print (instancesPerObj[a] as string)
-		*/
-		case of
-		(
-			(mode == "perObj") : (for obj in AllobjArray do obj.wirecolor = color (random 100 255) (random 100 255) (random 100 255))
-			(mode == "perSel") :(
-
-									wirecolor = color (random 100 255) (random 100 255) (random 100 255)
-									for oSel in instancesPerObj do
-									(
-										for o in oSel do o.wirecolor = wirecolor
-									)
-								)
-		)
-	)
--- 	select sel
 )
 
+/*
+*/ 
+macroscript	wirecolor_random_menu
+category:	"_Selection"
+buttontext:	"Random color"
+toolTip:	"Color menu"
+--icon:	"#(path, index)"
+(
+	_Color 	= Color_v()
+
+	color_names = for i = 1 to (Color_v()).hues.count collect _Color.hues[i][1] as string
+
+	Menu = RcMenu_v name:"ModifierPresetMenu"
+
+	for color_name in color_names do
+		Menu.item (color_name) ( "(Wirecolor_v()).randomize col:#"+color_name + " hue:5 brightness:#(128, 255)	saturation:#(128, 255)" )
+
+	popUpMenu (Menu.create())
+)
+
+/*
+*/ 
 macroscript	wirecolor_select_by
 category:	"_Selection"
 buttontext:	"Select by wirecolor"
@@ -70,19 +52,19 @@ toolTip:	"Select by wirecolor"
 (
 	selColor=#()		
 	for o in selection do appendifunique selColor o.wirecolor
-	
+
 	theObject = modPanel.GetCurrentObject()
 	Max create mode
 
 	i=1
 	for c in selColor do
 	(
-		
+
 		for o in objects where o.wirecolor == selColor[i] and  o.isNodeHidden == false and 	o.layer.on == true do selectmore o
-		
+
 		i=i+1
-		
+
 	)
-	
+
 	max modify mode
 )
