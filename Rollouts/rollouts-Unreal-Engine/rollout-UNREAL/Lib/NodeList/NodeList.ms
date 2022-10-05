@@ -1,15 +1,17 @@
-
 /** 
  */
 struct NodeList_v
 (
+	/* construct */ 
+	nodelist_control,
+	
+	/* properties  */ 
 	user_prop = "unreal-engine-export-node",
 	
 	--nodes_in_scene = #(),
 
 	--_rollout = ROLLOUTS_GLOBAL.get "ROLLOUT_unreal",
 
-	nodelistBOX = VilTools.Tools.ROLLOUT_UNREAL.MULTILISTBOX_Nodes,
 	
 	/** Load nodes
 	 */
@@ -17,16 +19,16 @@ struct NodeList_v
 	(
 		print "NodeList_v.loadNodes()"
 
-		nodelistBOX.items = this._getNodeNames (this._getNodesInScene())
+		nodelist_control.items = this._getNodeNames (this._getNodesInScene())
 	),
 	
 	/** Get selected items
 	 */
 	function getSelectedItems =
 	(
-		selected_index = nodelistBOX.selection as Array
+		selected_index = nodelist_control.selection as Array
 		
-		node_names	= nodelistBOX.items
+		node_names	= nodelist_control.items
 		
 		for index in selected_index collect node_names[index] -- return
 	),

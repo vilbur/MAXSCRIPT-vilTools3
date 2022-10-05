@@ -3,6 +3,9 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ToolMode.ms" )
 /*---------------------------------------
 	SELECT
 ---------------------------------------*/
+/**  
+  *	
+  */
 macroscript	tools_select_tool_or_axis
 category:	"_Tools"
 buttontext:	"Select"
@@ -12,6 +15,9 @@ icon:	"menu:_Tools"
 	(ToolMode_v tool_mode:#Select).setToolOrChangeSelectionType #( #Rectangle, #Circle )
 )
 
+/**  
+  *	
+  */
 macroscript	tools_select_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Select"

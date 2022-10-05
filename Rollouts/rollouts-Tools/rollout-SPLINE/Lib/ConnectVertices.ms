@@ -34,7 +34,7 @@ struct ConnectVertices_v
 	function connect =
 	(
 		--format "\n"; print "ConnectVertices_v.connect()"
-		format "source_shapes	= % \n" source_shapes
+		--format "source_shapes	= % \n" source_shapes
 	
 		if classOf (_mod = modPanel.getCurrentObject()) == Edit_Spline then 
 		(
@@ -100,14 +100,7 @@ struct ConnectVertices_v
 		
 		this._connectKnots(connect_line)
 		
-		delete temp_shape
-
-		clearSelection()
-
-		select source_shapes
-	
-		splineOps.startAttach ( modPanel.getCurrentObject()  )
-		
+		this._deleteTempShapesAndStartAttach(temp_shape)
 	),
 	
 	/** Connect multiple source_shapes
@@ -131,11 +124,8 @@ struct ConnectVertices_v
 		
 		this._connectKnots(connect_line)
 
-		delete temp_shape
-		
-		splineOps.startAttach ( modPanel.getCurrentObject()  )
+		this._deleteTempShapesAndStartAttach(temp_shape)
 	),
-	
 
 	/** Get positions of selected knots to conect
 	  *
@@ -157,7 +147,6 @@ struct ConnectVertices_v
 
 				if (knot_count += selected_knots.count) > 2 do exit
 			)
-		
 	),
 
 	/** Connect knots
@@ -165,12 +154,8 @@ struct ConnectVertices_v
 	function _connectKnots connected_shape =
 	(
 		--format "\n"; print "ConnectVertices_v._connectKnots()"
-
-		--select_splines = #()
-	
 		if knot_count == 2 then
 		(
-			
 			new_connect_spline = addNewSpline connected_shape
 			
 			append new_knots	(addKnot connected_shape new_connect_spline #corner #line knot_positons[1])
@@ -180,9 +165,31 @@ struct ConnectVertices_v
 		)
 	),
 	
+	/** Delete temp shapes and start attach
+	 */
+	function _deleteTempShapesAndStartAttach temp_shape =
+	(
+		--format "\n"; print "ConnectVertices_v.deleteTempShapesAndStartAttach()"
+		delete temp_shape
+
+		clearSelection()
+
+		select source_shapes
+		
+		subObjectLevel = 1
+
+		splineOps.startAttach ( modPanel.getCurrentObject()  )
+	),
+	
 	/**  
 	 */
 	on create do
 	(
 	)
 )
+
+/* TEST
+   
+	(ConnectVertices_v(for o in selection where superClassOf o == shape collect o)).connect()
+
+*/ 

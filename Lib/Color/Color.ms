@@ -33,13 +33,13 @@ struct Color_v
 	(
 		_color = blue -- origin color, no matter which, but not black or white
 				
-		_color_hue = this._getHue(col)
+		_color_hue = if col == unsupplied then random 0 255 else this._getHue(col)
 		
 		if hue != unsupplied then 
 			_color.hue	=  random (_color_hue - hue) (_color_hue + hue)
 		
-		_color.value	= if classOf brightness == Array then random brightness[1] brightness[2] else brightness
-		_color.saturation	= if classOf saturation == Array then random saturation[1] saturation[2] else saturation
+		_color.value	= if classOf brightness == Array then ( random brightness[1] brightness[2]) as integer else brightness
+		_color.saturation	= if classOf saturation == Array then ( random saturation[1] saturation[2]) as integer else saturation
 		
 		
 		_color --return

@@ -93,7 +93,7 @@ struct ExporterDatasmith_v
 	 */
 	on create do
 	(
-		print("ExporterDatasmith_v.onCreate()")
+		--print("ExporterDatasmith_v.onCreate()")
 		ConstructPropeties test:this
 		
 		this._export()

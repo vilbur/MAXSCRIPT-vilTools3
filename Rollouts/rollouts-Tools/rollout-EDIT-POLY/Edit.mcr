@@ -1,14 +1,28 @@
+
+
+/** Remove vertex, edge with vertices and polygons
+ */
 macroscript	epoly_remove
 category:	"_Epoly-Edit"  
 buttonText:	"Remove"
 tooltip:	"Remove subobject"
 (
-	undo "Remove subobject" on
-	(
-		(Epoly_v()).remove()
-	)
+	on isVisible return Filters.Is_EPolySpecifyLevel #{2..3,5}
+	on isEnabled return Filters.Is_EPolySpecifyLevel #{2..3,5}
+
+	on execute do
+		undo "Remove subobject" on
+		(
+			sub_obj	= subObjectLevel
+
+			Epoly_v(#remove)
+
+			subObjectLevel = sub_obj
+		)
 )
 
+/**
+ */
 macroscript	epoly_target_weld
 category:	"_Epoly-Edit"  
 buttonText:	"Target Weld"
@@ -40,6 +54,8 @@ toolTip:	"Collapse"
 )
 
 
+/**
+ */
 macroscript epoly_planarize_faces
 category:"_Epoly-Edit"  
 buttonText:"Planarize"
@@ -121,6 +137,8 @@ tooltip:"Planarize Faces"
 	redrawViews()
 )
 
+/**
+ */
 macroscript	edit_planarize_object
 category:	"_Epoly-Edit"
 buttontext:	"Planarize object"
@@ -141,6 +159,8 @@ toolTip:	"Planarize object"
 	)
 )
 
+/**
+ */
 macroscript	edit_chamfer
 category:	"_Epoly-Edit"
 buttontext:	"Chamfer"

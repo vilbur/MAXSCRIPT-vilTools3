@@ -20,14 +20,14 @@ struct Subobject_v
 		--format "\n"; print "Subobject_v.enterOrQuitSubobject()"
 		if selection.count == 0 then
 			return false
-
+		
 		max modify mode
-
-		if modPanel.getCurrentObject() != undefined then
+		
+		if numSubObjectLevels != 0 then
 			this._enterOrQuitSubobject(sub_obj)
-
+		
 		else
-			this._tryAddSubobjectModier(sub_obj)
+			this._addEditModier(sub_obj)
 	),
 	
 
@@ -36,21 +36,18 @@ struct Subobject_v
 	
 	/** Try add subobject modier
 	 */
-	function _tryAddSubobjectModier sub_obj =
+	function _addEditModier sub_obj =
 	(
-		--format "\n"; print "Subobject_v._tryAddSubobjectModier()"
+		--format "\n"; print "Subobject_v.addEditModier()"
 		this._filterGeometryAndShapesFromSelection()
 
-		if selection.count > 0 then 
-		(
-			if this._areAllObejctsShapes() then 
-				modPanel.addModToSelection (Edit_Spline ()) ui:on
-			else
-				modPanel.addModToSelection (Edit_Poly ()) ui:on
+		if this._areAllObejctsShapes() then 
+			modPanel.addModToSelection (Edit_Spline ()) ui:on
+		else
+			modPanel.addModToSelection (Edit_Poly ()) ui:on
 
-			if numSubObjectLevels != 0 then
-				this._enterOrQuitSubobject(sub_obj)
-		)
+		if numSubObjectLevels != 0 then
+			this._enterOrQuitSubobject(sub_obj)
 	),
 
 	/** Filter geometry and shapes from selection

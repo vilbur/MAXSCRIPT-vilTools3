@@ -13,7 +13,7 @@ filein( getFilenamePath(getSourceFileName()) + "/GroupAttacher/GroupAttacher.ms"
  */
 struct ExportChecker_v
 (
-	__construct = #( #export_nodes ),
+	--__construct = #( #export_nodes ),
 	
 	/* construct */
 	export_nodes = #(),
@@ -23,6 +23,9 @@ struct ExportChecker_v
 	/* inhered */
 	/* properties */
 	groups_to_attach = #(),
+	
+	DEBUG = true,
+	--DEBUG = false,
 	
 	/** Find if exported objects contains any attachable groups
 	 */
@@ -51,12 +54,14 @@ struct ExportChecker_v
 	 */
 	function _getGroupsForAttach export_node =
 	(
-		format "\n"; print "ExportChecker_v._getGroupsForAttach()"		
+		--format "\n"; print "ExportChecker_v._getGroupsForAttach()"		
 		node_children = this._getAllChildren (export_node)
+		--if DEBUG then for child in node_children do format "child	= % \n" child.name
 		
 		groups = this._getGroups (node_children)
+		--if DEBUG then for _group in groups do format "_group	= % \n" _group.name
 		
-		for _group in groups where this._membersAreGeometry(_group) and this._groupNameIsUppercase(_group) == false  collect _group
+		for _group in groups where this._membersAreGeometry(_group) and this._groupNameIsUppercase(_group) collect _group
 	),
 	
 	/** _get group objects
@@ -72,10 +77,10 @@ struct ExportChecker_v
 	 */
 	function _membersAreGeometry _group =
 	(
-		--format "\n"; print ("ExportChecker_v._membersAreGeometry() " + _group.name)
-		--non_geometry_objects	= #()
+		--format "\n"; print ("ExportChecker_v._membersAreGeometry() _group: " + _group.name)
+
 		non_geometry_objects = for child in this._getGroupMembers(_group) where superClassOf child != GeometryClass collect child
-		--format "result	= % \n" (non_geometry_objects.count == 0)
+		if DEBUG then format "non_geometry_objects	= % \n" non_geometry_objects
 		non_geometry_objects.count == 0 --return
 	),
 	
@@ -83,11 +88,11 @@ struct ExportChecker_v
 	 */
 	function _groupNameIsUppercase _group =
 	(
-		format "\n"; print "ExportChecker_v._groupNameIsUppercase()"
+		--format "\n"; print "ExportChecker_v._groupNameIsUppercase()"
 		
-		rx = dotNetClass "System.Text.RegularExpressions.RegEx"
+		RegEx = dotNetClass "System.Text.RegularExpressions.RegEx"
 		
-		matches =  rx.matches _group.name ".*[a-z].*" 
+		matches =  RegEx.matches _group.name "[^a-z]" 
 		
 		lowercase_characters = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
 
@@ -119,7 +124,7 @@ struct ExportChecker_v
 	on create do
 	(
 		--print("ExportChecker_v.onCreate()")
-		ConstructPropeties test:this
+		--ConstructPropeties test:this
 	)
 	
 )

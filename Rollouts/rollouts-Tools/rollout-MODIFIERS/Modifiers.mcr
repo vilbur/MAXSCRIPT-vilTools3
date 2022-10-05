@@ -1,73 +1,3 @@
-/** Add modifier or load preset
- */
-function addModifierOrLoadPreset modifier_class =
-(
-	--format "\n"; print ".addModifierOrLoadPreset()"
-	if not ( keyboard.controlPressed or (classOf ( modPanel.getCurrentObject())) != modifier_class )then 
-	(
-		Menu = RcMenu_v name:"ModifierPresetMenu"
-		
-		if (presets = (ModifierPreset_v(modifier_class)).getPresets()).count > 0 then
-			for preset in presets do
-				Menu.item (preset) ("(ModifierPreset_v("+ modifier_class as string +")).loadPreset(\""+preset+"\")")
-			
-		popUpMenu (Menu.create())
-		
-	)else
-		modPanel.addModToSelection (modifier_class()) ui:on
-		
-)
-
-/** Manage preset menu
- */
-function managePresetMenu modifier_class =
-(
-	--format "\n"; print ".managePresetMenu()"
-	
-	if classOf( current_modifier = ( modPanel.getCurrentObject() ) ) == modifier_class then 
-	(
-		Menu = RcMenu_v name:"ManagePresetsMenu"
-		--Menu.item ("Save preset")	("savePreset   " + modifier_class as string )
-		--Menu.item ("Delete Preset")	("deletePreset " + modifier_class as string )
-		--_Modifier = "(ModifierPreset_v("+ modifier_class as string +"))"
-		_Modifier = "(ModifierPreset_v("+ modifier_class as string +"))"
-		
-		Menu.item ("Save preset")	(_Modifier+".savePresetDialog()") 
-		Menu.item ("Delete preset")	(_Modifier+".deletePreset()") 
-		Menu.item ("Open ini file")	(_Modifier+".openIni()") 
-			
-		popUpMenu (Menu.create())
-	)
-)
-
-/*------------------------------------------------------------------------------
-	CHAMFER
---------------------------------------------------------------------------------*/
-/** Add modifier if modifier of same type is not selected in stack
-  * CTRL KEY FORCE ADDING MODIFIER although is active in stack
-  *
-  * Show load presets menu,if same type of modifier is active in stack
-  */
-macroscript	modifier_chamfer
-category:	"_Modifiers"  
-buttonText:	"Chamfer"
-tooltip:	"Add Chamfer Modifier"
-(
-	addModifierOrLoadPreset(Chamfer)
-)
-
-/**
-  *
-  */
-macroscript	modifier_chamfer_add_with_preset
-category:	"_Modifiers"  
-buttonText:	"Chamfer"
---tooltip:	"Menu|Menu_RC"
-tooltip:	"Menu\nRMB+Ctrl:	Presets"
-(
-	managePresetMenu(Chamfer)
-)
-
 /*------------------------------------------------------------------------------
 	EDIT POLY
 --------------------------------------------------------------------------------*/
@@ -80,21 +10,51 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 *	4) Disable if subobject is active
 *	
 */
---macroscript	modifier_add_editpoly
---category:	"_Modifiers"  
---buttonText:	"EditPoly"
---tooltip:	"Add EditPoly"
-----icon:	"across:6"
---(
---	--sub_obj	= subObjectLevel
---	--
---	--_Edit_Poly = (ModifierPreset_v control:#Edit_Poly ).add()
---	--
---	--if( sub_obj != undefined and sub_obj != 0 ) then 
---	--	subObjectLevel = sub_obj
---	--
---	--redrawViews()
---)
+macroscript	modifier_add_editpoly
+category:	"_Modifiers"  
+buttonText:	"EditPoly"
+tooltip:	"Add EditPoly"
+(
+	--sub_obj	= subObjectLevel
+	--
+	--_Edit_Poly = (ModifierPreset_v control:#Edit_Poly ).add()
+	--
+	--if( sub_obj != undefined and sub_obj != 0 ) then 
+	--	subObjectLevel = sub_obj
+	--
+	--redrawViews()
+	addModifierOrLoadPreset(Edit_Poly)
+)
+
+
+/*------------------------------------------------------------------------------
+	CHAMFER
+--------------------------------------------------------------------------------*/
+/** Add modifier if modifier of same type is not selected in stack
+  * CTRL KEY FORCE ADDING MODIFIER although is active in stack
+  *
+  * Show load presets menu,if same type of modifier is active in stack
+  */
+macroscript	modifier_chamfer
+category:	"_Modifiers"  
+buttonText:	"Chamfer"
+tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
+icon:	"Menu:_Modifiers"
+(
+	addModifierOrLoadPreset(Chamfer)
+)
+
+/**
+  *
+  */
+macroscript	modifier_chamfer_add_with_preset
+category:	"_Modifiers"  
+buttonText:	"Chamfer"
+tooltip:	"Manage pesets"
+(
+	managePresetMenu(Chamfer)
+)
+
 
 /*------------------------------------------------------------------------------
 	NOISE
@@ -104,19 +64,79 @@ tooltip:	"Menu\nRMB+Ctrl:	Presets"
 macroscript	modifier_noise
 category:	"_Modifiers"  
 buttonText:	"Noise"
-tooltip:	"Add Noise Modifier"
+tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
 	addModifierOrLoadPreset( NoiseModifier )
 )
 /**  
   */ 
-macroscript	modifier_noise_more
+macroscript	modifier_noise_preset
 category:	"_Modifiers"  
 buttonText:	"Noise"
-tooltip:	"Menu\nRMB+Ctrl:	Presets"
+tooltip:	"Manage pesets"
 (
 	managePresetMenu( NoiseModifier )
 )
+
+/*------------------------------------------------------------------------------
+	FFD BOX
+--------------------------------------------------------------------------------*/
+/**  
+  */
+macroscript	modifier_ffdbox
+category:	"_Modifiers"  
+buttonText:	"FFDBox"
+tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
+(
+	addModifierOrLoadPreset( FFDBox )
+)
+
+/**  
+  */ 
+macroscript	modifier_ffdbox_preset
+category:	"_Modifiers"  
+buttonText:	"FFDBox"
+tooltip:	"Manage pesets"
+(
+	managePresetMenu( FFDBox )
+)
+
+/*------------------------------------------------------------------------------
+	FACE EXTRUDE
+--------------------------------------------------------------------------------*/
+/**  
+  */
+macroscript	modifier_face_extrude
+category:	"_Modifiers"  
+buttonText:	"Face Extrude"
+tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
+(
+	addModifierOrLoadPreset( Face_Extrude )
+)
+
+/**  
+  */ 
+macroscript	modifier_face_extrude_preset
+category:	"_Modifiers"  
+buttonText:	"Face Extrude"
+tooltip:	"Manage pesets"
+(
+	managePresetMenu( Face_Extrude )
+)
+/*------------------------------------------------------------------------------
+	SELECT MODIFIER INSTANCES
+--------------------------------------------------------------------------------*/
+/**  
+  */
+macroscript	modifier_get_instances_in_objects
+category:	"_Modifiers"  
+buttonText:	"Select Instances"
+tooltip:	"Select objects with instance of current modifier"
+icon:	"Menu:_Modifiers"
+(
+	select ((Modifier_v()).getObjectsWithInstance objects)
+)
+
 
 --macroscript	modifier_add_normal
 --category:	"_Modifiers"  

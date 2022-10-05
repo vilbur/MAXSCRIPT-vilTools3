@@ -29,8 +29,8 @@ toolTip:	"Reinstance selection.\n1Master object is 1st in selection"
   */
 macroscript	selection_make_references
 category:	"_Selection"
-buttontext:	"Reference"
-toolTip:	"Reference selection.\n1Master object is 1st in selection"
+buttontext:	"Re-reference"
+toolTip:	"Make references of selection.\n1Master object is 1st in selection"
 --icon:	"#(path, index)"
 (
 	
@@ -41,9 +41,13 @@ toolTip:	"Reference selection.\n1Master object is 1st in selection"
 			master_object	= selection[1]
 			
 			for_instance = deleteItem ( selection as Array ) 1
-
-			for obj in for_instance do 
+			
+			for obj in for_instance do
+			(
+				maxOps.CollapseNodeTo obj 1 off
+								
 				referenceReplace obj master_object
+			)
 		)
     )
 	else
@@ -53,17 +57,25 @@ toolTip:	"Reference selection.\n1Master object is 1st in selection"
 /**  
   *	
   */
+macroscript	selection_select_instances_and_references
+category:	"_Selection"
+buttontext:	"Select instances"
+toolTip:	"Select instances and references"
+--icon:	"#(path, index)"
+(
+	select ((Selection_v()).getInstances( selection[1] ))
+)
+
+/**  
+  *	
+  */
 macroscript	selection_select_instances
 category:	"_Selection"
 buttontext:	"Select instances"
-toolTip:	"Select instances of object"
+toolTip:	"Select instances"
 --icon:	"#(path, index)"
 (
-	instances = (Selection_v()).getInstances( selection )
-	
-	clearSelection()
-
-	select instances
+	select ((Selection_v()).getInstances( selection[1] ) type:#INSTANCE)
 )
 
 /**  
@@ -72,14 +84,10 @@ toolTip:	"Select instances of object"
 macroscript	selection_select_references
 category:	"_Selection"
 buttontext:	"Select References"
-toolTip:	"Select References of object"
+toolTip:	"Select References"
 --icon:	"#(path, index)"
 (
-	instances = (Selection_v()).getReferences( selection[1] )
-	
-	clearSelection()
-
-	select instances
+	select ((Selection_v()).getInstances( selection[1] ) type:#REFERENCE)
 )
 
 

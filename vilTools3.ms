@@ -1,4 +1,4 @@
---clearListener()
+clearListener()
 
  content = "/Rollouts"
  -- content = "/Rollouts-Test"
@@ -44,15 +44,18 @@ if  content != "/Rollouts-Test" then -- DEV
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
-filein( getFilenamePath(getSourceFileName()) + "/../Library/MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )
 
-try
-(
-	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-OBJECTS-SELECTION/Lib/Instance/Instance.ms" )
-	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-OBJECTS-SELECTION/Lib/Selection/Selection.ms" )
-	
-)
-catch()
+filein( getFilenamePath(getSourceFileName()) + "/../Library/MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms")
+
+filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/../Library/MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-OBJECTS-SELECTION/Lib/Instance/Instance.ms")
+filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms")
+
+filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" )
+
+
 
 
 /* CALLBACK */ 
@@ -84,6 +87,7 @@ ContentLoader.Dialog.RolloutMain.title = "VilTools"
 
 /* CREATE DIALOG */ 
 Dialog = ContentLoader.create()
+
 
 
 Dialog.register()

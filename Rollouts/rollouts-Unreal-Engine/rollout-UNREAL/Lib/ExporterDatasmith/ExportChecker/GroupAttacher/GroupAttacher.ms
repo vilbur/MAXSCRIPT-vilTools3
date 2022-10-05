@@ -5,7 +5,7 @@
  */
 struct GroupAttacher_v
 (
-	__construct = #( #groups ),
+	--__construct = #( #groups ),
 	
 	/* construct */
 	groups = #(),
@@ -21,14 +21,22 @@ struct GroupAttacher_v
 	 */
 	function _attachGroup _group =
 	(
-		format "\n"; print ("GroupAttacher_v._attachObjects() " + _group.name)
+		format "\n"; print ("GroupAttacher_v._attachGroup() group:" + _group.name)
+		format "_group	= % \n" _group
 		group_members    = this._getGroupMembers(_group)
+		format "group_members	= % \n" group_members
 		members_children = this._getChildrenOfGroupMembers(_group)
+		format "members_children	= % \n" members_children
 		group_replacer   = this._replaceGroupWithObject (_group)
-		
+		format "group_replacer	= % \n" group_replacer
 		this._attachObjects (group_replacer) (group_members)
 			
 		this._relinkMembersChildren (group_replacer) (members_children)
+		
+		--if not isDeleted  _group then 
+		if isValidNode _group then 
+			delete _group
+
 	),
 	
 	/** _get group members
@@ -131,7 +139,7 @@ struct GroupAttacher_v
 	on create do
 	(
 		print("GroupAttacher_v.onCreate()")
-		ConstructPropeties test:this
+		--ConstructPropeties test:this
 		
 		for _group in groups do
 			this._attachGroup(_group)

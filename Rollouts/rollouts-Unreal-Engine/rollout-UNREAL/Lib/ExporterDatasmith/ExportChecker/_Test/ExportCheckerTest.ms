@@ -1,6 +1,5 @@
 clearListener()
 
-filein( getFilenamePath(getSourceFileName()) + "/../../../../../../../Library/MAXSCRIPT-UI-framework/Lib/ConstructPropeties/ConstructPropeties.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/../ExportChecker.ms" )
 
 
@@ -10,8 +9,18 @@ if maxFileName != "ExportCheckerTest.max" then
 
 ExportChecker = ExportChecker_v export_nodes: #($ExportNode)
 
-groups_to_attach = ExportChecker.analyzeGroups()
+ExportChecker.analyzeGroups()
 
 
-if( groups_to_attach.count > 0 ) then
-	GroupAttacher_v groups:groups_to_attach
+
+format "\n"; print "MERGE THESE GROUPS:"
+for _group in ExportChecker.groups_to_attach do format "group	= % \n" _group.name
+
+undo "GroupAttacher_v" on
+(
+	/* ATTACH GROUPS */ 
+	--if( ExportChecker.groups_to_attach.count > 0 ) then
+	GroupAttacher_v groups:ExportChecker.groups_to_attach
+
+	
+)

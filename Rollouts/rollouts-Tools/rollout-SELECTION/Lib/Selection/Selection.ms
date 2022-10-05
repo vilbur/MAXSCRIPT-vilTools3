@@ -4,52 +4,37 @@
  */
 struct Selection_v
 (
-	/** Get instances of objects
-	  *
-	  * @param	array|collection	_objects	for finding their instances
+	
+	/** Get instances
+	  * 
+	  * @param	node	obj	for finding instances
 	  * @param	boolean	visible	if true only visible objects are returned
+	  * 
+	  * @param	#ALL|#INSTANCE|#REFERENCE type mode for selecting instances or references 
+	  * 	#All:	Default, get instances & references of obj
+	  * 	#INSTANCE:	Get only instances  of obj without references 
+	  * 	#REFERENCE:	Get only references of obj without instances 
 	 */
-	function getInstances _objects visible:false =
+	function getInstances obj type:#ALL visible:false  =
 	(
-		--format "\n"; print "Selection_v.selectInstances()"
-		
+		--format "\n"; print "Selection_v.getInstances()"
 		instances = #()
 		
-		for obj in _objects do
-		(	
-			local obj_instance
-			
-			InstanceMgr.GetInstances obj &obj_instance
-			
-			join instances obj_instance	
+		InstanceMgr.GetInstances obj &instances
+		
+		result = case type of
+		(
+			#INSTANCE:	this._getReferences obj instances true --return
+			#REFERENCE:	this._getReferences obj instances false --return
+			default:	instances --return
 		)
 		
 		if visible == 1 then
-			for o in instances where  o.visibility == false do deleteItem instances (findItem instances o )
-		
-		instances --return
-	),
+			for o in result where  o.visibility == false do deleteItem result (findItem result o )  --return
 	
-	/** Get references
-	 */
-	function getReferences node1 =
-	(
-		--format "\n"; print "Selection_v.selectInstances()"
-		references = #()
+		result --return
+	),
 
-		instances = #()
-			
-		InstanceMgr.GetInstances node1 &instances
-	
-		instances = deleteItem instances (findItem instances node1)
-	
-		--for node2 in instances where not (areNodesInstances node1 node2) and (findItem instances node2) != 0) do
-		for node2 in instances where not (areNodesInstances node1 node2)  do
-			appendIfUnique references node2
-		
-		references --return
-	),
-	
 	/** Select only Unique objects.
 	  *	Deselect mutliple instances
 	  *
@@ -74,26 +59,6 @@ struct Selection_v
 		selection as Array --return
 	),
 	
-	/** Get selection of geometry 
-	 *	@return	collection	
-	 */
-	function geometry =
-	(
-		for o in selection where superclassof o == GeometryClass collect o
-	),
-
-	/**  
-	  *	
-	  */
-	function areNodesReferences node1 node2 = 
-	(
-		local instances
-		
-		InstanceMgr.GetInstances node1 &instances
-		
-		(node1 != node2) and not (areNodesInstances node1 node2) and (finditem instances node2) != 0
-	),
-
 	/** Collapse selection
 	  *
 	  *
@@ -131,13 +96,30 @@ struct Selection_v
 				o.name = uniqueName _name
 	),
 	
-	/**  
-	 *	
+	
+	/** Get selection of geometry 
+	 *	@return	collection	
 	 */
-	function get =
+	function geometry =
 	(
-		--print (this.geometry())
-		this.geometry() --return
+		for o in selection where superclassof o == GeometryClass collect o
+	),
+
+	
+	private
+	
+	
+	/** Get references
+	 */
+	function _getReferences obj instances test =
+	(
+		--format "\n"; print "Selection_v._getReferences()"
+		references = #()
+
+		for _instance in instances where  (areNodesInstances obj _instance) == test  do
+			appendIfUnique references _instance
+				
+		references --return
 	),
 	
 	/**  

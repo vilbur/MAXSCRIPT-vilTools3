@@ -1,3 +1,6 @@
+filein( getFilenamePath(getSourceFileName()) + "/addModifierOrLoadPreset.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/managePresetMenu.ms" )
+
 /** Modifier
   * 
   * @property	_modifier|name	_modifier	_modifier or class of _modifier E.g.: #chamfer
@@ -191,7 +194,7 @@ struct ModifierPreset_v
 		--format "_modifier	= % \n" _modifier
 		--format "classOf _modifier	= % \n" (classOf _modifier)
 
-		ini = (getFilenamePath(getSourceFileName())) + "\\Lib\\Modifiers\\ModifierTypes\\"+( classOf _modifier ) as string +".ini"
+		ini = (getFilenamePath(getSourceFileName())) + "\\ini_files\\"+( classOf _modifier ) as string +".ini"
 		--format "ini = % \n" ini
 	),
 	

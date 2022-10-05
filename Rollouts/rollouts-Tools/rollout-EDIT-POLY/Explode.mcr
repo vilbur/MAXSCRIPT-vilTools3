@@ -49,7 +49,7 @@ toolTip:	"Explode by SmoothGroups"
 
 macroscript	epoly_explode_by_hard_edge
 category:	"_Epoly-Explode"
-buttontext:	"HARD edges"
+buttontext:	"By Hard edges"
 toolTip:	"Explode by  HARD edges"
 (
 	undo "explodeByHardEdges" on

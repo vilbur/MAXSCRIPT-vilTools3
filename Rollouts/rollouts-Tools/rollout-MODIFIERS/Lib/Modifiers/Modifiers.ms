@@ -31,7 +31,7 @@ struct Modifiers_v
 		for modifier in (this._getModifiers obj) where refhierarchy.isRefTargetInstanced modifier collect modifier
 	),
 
-	/** Search for first edit poly modifier from top
+	/** Search for modifier
 	 */
 	function search obj _modifier =
 	(

@@ -15,6 +15,10 @@ struct GroupCreator_v
 	
 	member_pos = #(),
 	member_rot = #(),
+	
+	
+	params      = #(),
+	params_keys = #(#group_name, #Color_picker,  #Colorize_members, #Rename_members),
 
 	/** Set selection
 	 */
@@ -86,20 +90,23 @@ struct GroupCreator_v
 	 */
 	function _alignPivot =
 	(
-		_group.pivot = obj.pivot	
+		_group.pivot = obj.pivot
 	),
 
 	/** Add group to layer where object is
-	 */
+	*/
 	function _addGroupToLayer =
 	(
-		last_sel_layer = obj.layer		
+		last_sel_layer = obj.layer
 		last_sel_layer.addnode _group
 	),
+
 	/**  
 	 */
 	on create do
 	(
+		print "GroupCreator_v.onCreate()"
+
 		if selection.count < 2 do
 			return false
 		
@@ -112,14 +119,14 @@ struct GroupCreator_v
 		if( classOf _group != Dummy ) then 
 			return false
 
-		this._saveObjectsPositions()
-
-		this._alignPositionAndRotation()
-
-		this._loadObjectsPositions()
-	
-		this._alignPivot()
-		
-		this._addGroupToLayer()
+		--this._saveObjectsPositions()
+		--
+		--this._alignPositionAndRotation()
+		--
+		--this._loadObjectsPositions()
+		--
+		--this._alignPivot()
+		--
+		--this._addGroupToLayer()
 	)
 )
