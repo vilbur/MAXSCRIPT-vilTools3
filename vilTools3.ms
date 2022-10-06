@@ -2,7 +2,6 @@ clearListener()
 
  content = "/Rollouts"
  -- content = "/Rollouts-Test"
- 
 
 /** Import structures used in macroscripts on Max start
   *
@@ -19,20 +18,20 @@ clearListener()
 function importStdScripts =
 (
 	rollouts_path = "$userscripts/vilTools3/Rollouts/rollouts-Tools"
-	
+
 	filein_files = #(
 		rollouts_path + "/rollout-TOOLS/Lib/ToolMode.ms",
 		rollouts_path + "/rollout-SUBOBJECT/Subobject/Subobject.ms",
 		rollouts_path + "/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
 	)
-	
+
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
 	deleteFile stdscript_file_path
 	stdscript_file = createFile stdscript_file_path
-	
+
 	for file_path in filein_files do 
 		format "if doesFileExist \"%\" then %" file_path ("filein( \""+file_path+"\" )\n") to:stdscript_file
-	
+
 	close stdscript_file
 
 )
@@ -44,7 +43,6 @@ if  content != "/Rollouts-Test" then -- DEV
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
-
 filein( getFilenamePath(getSourceFileName()) + "/../Library/MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms")
 
 filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms" )
@@ -55,47 +53,29 @@ filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout
 filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" )
 
-
-
-
 /* CALLBACK */ 
 filein( getFilenamePath(getSourceFileName()) + "/CallBacks/selectionSetChanged/setSelectionLast.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWorldUnits.ms" )
-
 
 /*------------------------------------------------------------------------------
 	START VilTools
 --------------------------------------------------------------------------------*/
 
-
 /** LOAD CONTENT */
 current_dir	= getFilenamePath(getSourceFileName())
 
 --ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
-ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName()) 
+ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
 
---print "!!!!!!!!!!!!!!!!"
 /* CHANGE PROPERTIES oF ROLLOUTS */
--- ContentLoader.Dialog.width  = 420
--- ContentLoader.Dialog.height = 1024
-
-ContentLoader.Dialog.RolloutMain.title = "VilTools"
-
---print "!!!!!!!!!!!!!!!!"
-
-
+ContentLoader.Dialog.title = "VilTools"
 
 /* CREATE DIALOG */ 
-Dialog = ContentLoader.create()
-
-
+Dialog = ContentLoader.create width:420 height:1024
 
 Dialog.register()
 
-
 filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
-
-
 
 /* import when UI exists */
 try
@@ -103,9 +83,9 @@ try
 	checkWorldUnitsCallback()
 
 	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-UNREAL/Lib/NodeList/NodeList.ms" )
-	
+
 	(NodeList_v()).loadNodes()
-	
+
 )
 catch()
 
