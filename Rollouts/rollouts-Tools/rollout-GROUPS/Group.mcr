@@ -6,7 +6,6 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.m
 	CREATE GROUP
 --------------------------------------------------------------------------------*/
 
-
 /** Create group callback
  */
 function createGroupCallback params =
@@ -29,7 +28,7 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 (
 	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr" ) -- DEV
 	filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
-	
+
 	/*
 		TODO WITH ROLLOUT:
 			1) Edit text group name
@@ -41,17 +40,9 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 	if selection.count >= 2 then
 		undo "Create Group" on
 		(
-			
-			
-			
 			/* DIALOG */ 
 			Dialog 	    = Dialog_v ("Group options") ini:(getSourceFileName())
-			
-			
-			/* EVENT METHODS */ 
-			callback_submit	= "GroupCreator_v params:#( group_options.group_name.text, group_options.Color_picker.color,  group_options.wirecolor_members.checked, group_options.Rename_members.checked )"
-			callback_close	= " try( destroyDialog "+ Dialog.RolloutMain.id as string  +" )catch()"
-			callback_color	= "group_options.Color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
+
 
 			/* CONTROLS */ 
 			_Controls   = Dialog.Controls()
@@ -59,36 +50,43 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			_GroupName	= _Controls.control #EditText "[Group name]" across:2 width:164 ini:false value:(( dotNetObject "System.Text.RegularExpressions.Regex" @"[0-9]" ).Replace selection[1].name "")
 			--_GroupName	= _Controls.control #EditText "[Group name]" across:2 width:164
 
-			_ColorPicker	= _Controls.control #ColorPicker "[Color picker]"	across:2 offset:[48,0] params:#(#color, ( color 0 0 128 )) tooltip:"Color of Group\nHotkey: Spacebar"
+			_ColorPicker	= _Controls.control #ColorPicker "[Color picker]"	across:2 offset:[48,0] params:#(#color, ( color 0 0 128 )) tooltip:"Color of Group\nHotkey: Ctrl"
 
 			_ColorMembrers	= _Controls.control #checkbox "Wirecolor members"	across:1 tooltip:"Set members colors same as group"
 			_RenameMembers	= _Controls.control #checkbox "Rename members"	across:1 tooltip:"Rename members by name of group"
 			
 			Button_OK	= _Controls.control #button "Ok"	across:2 tooltip:"Enter"
 			Button_Cancel	= _Controls.control #button "Cancel"	across:2 tooltip:"Esc"
-			
 
+			/* EVENT METHODS */ 
+			callback_submit	= "GroupCreator_v params:#( group_options.group_name.text, group_options.Color_picker.color,  group_options.wirecolor_members.checked, group_options.Rename_members.checked )"
+			callback_close	= " try( destroyDialog "+ Dialog.id as string  +" )catch()"
+			callback_color	= "group_options.Color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
+
+			
 			/* EVENTS */ 
 			Button_OK.Events.add	#pressed (callback_submit)
 			Button_Cancel.Events.add 	#pressed (callback_close)
-			
+
 			
 			/* HOTKEYS */ 
 			Dialog.HotKey #(#esc)	callback_close
 			Dialog.HotKey #(#enter)	(callback_submit + callback_close)
 			Dialog.HotKey #(#return)	(callback_submit + callback_close)
-			Dialog.HotKey #(#space)	callback_color
+			Dialog.HotKey #(#ctrl)	callback_color
 
 			/* DIALOG CREATE */
 			Dialog.create width:256
-
-			setFocus group_options.group_name
 			
+			Dialog.focus #group_name
+			
+			Dialog.sendKey("^a")
+				
 		)
 	else
 		messageBox "Select at least 2 objects." title:"NOTHING SELECTED"
+		
 )
-
 
 /**  
  *	
@@ -105,6 +103,25 @@ icon:	"Menu:_Group"
 		GroupCreator_v()
 	)
 )
+--
+--/**  
+-- *	
+-- */
+--macroscript	group_test
+--category:	"_Group"
+--buttontext:	"Test Dialog"
+----toolTip:	"Quick Group"
+----icon:	"Menu:_Group"
+--(
+--	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr" ) -- DEV
+--
+--	Dialog 	    = Dialog_v ("Test dialog XXX") 
+--	Dialog.create width:256 height:256
+--	
+--	format "Dialog.id	= % \n" Dialog.id
+--	format "test_dialog_xxx	= % \n" test_dialog_xxx 
+--	format "TEST	= % \n" (execute( Dialog.id as string ))
+--)
 
 /*------------------------------------------------------------------------------
 	UNGROUP
@@ -128,20 +145,9 @@ icon:	"Menu:_Group|title:Ungroup"
 	)
 )
 
-
-
-
-
-
-
 /*------------------------------------------------------------------------------
 	ATTACH
 --------------------------------------------------------------------------------*/
-
-
-
-
-
 
 /**  
  *	
@@ -185,11 +191,9 @@ toolTip:	"Unhide group helpers"
 	for obj in objects where isGroupHead(obj) and obj.layer.on do unhide obj
 )
 
-
 /*------------------------------------------------------------------------------
 	OPEN\CLOSE GROUP
 --------------------------------------------------------------------------------*/
-
 
 --/**  
 -- *	
@@ -202,7 +206,6 @@ toolTip:	"Unhide group helpers"
 --(
 --	actionMan.executeAction 0 "40143"  -- Groups: Group Close
 --)
-
 
 --/**  Open\Close Group
 -- *	
