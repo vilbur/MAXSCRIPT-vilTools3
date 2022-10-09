@@ -9,48 +9,81 @@
 struct GroupCreator_v
 (	
 	/* properties */
-	obj,
 	_selection,
 	_group,
+	first_object,
 	
 	member_pos = #(),
 	member_rot = #(),
 	
 	
 	params      = #(),
-	params_keys = #(#group_name, #Rename_members),
+	params_keys = #(#group_name, #rename_members, #add_to_layer, #align_transform, #relink_hierarchy ),
 
 	/** Set selection
 	 */
 	function _setSelection =
 	(
-		_selection = for o in selection where isGroupHead o == false collect o
+		--_selection = for o in selection where isGroupHead o == false collect o
+		_selection = for o in selection collect o
 	),
 	
-	/** Set obj
+	/** Set first_object
 	  
 	 */
-	function _setObj = 
+	function _setFirstObj = 
 	(
-		obj = _selection[1]
+		first_object = _selection[1]
 	),
 
 	/** Create group
 	 */
 	function _createGroup  =
 	(
+		format "\n"; print "GroupCreator_v._createGroup()"
+
+		format "params = % \n" params
+	
 		undo "Create Group" on
 		(
 			group_name = if params[1] != undefined then params[1] else toUpper _selection[1].name
 
 			_group = group _selection name:( group_name ) select:true --wirecolor:params[2]
 			
-			/* Rename members */ 
 			if params[2] then
-				for i = 1 to _selection.count do _selection[i].name = group_name + "-" + ( if i < 10 then "0"  ) + i as string
+				this._renameMembers()
+				
+			if params[3] then
+				this._addGroupToLayer()
+			
+			if params[4] then
+				this._alignTransformation()
+				
 		)
 	),
-
+	
+	/** Rename group members
+	 */
+	function _renameMembers =
+	(
+		format "\n"; print "GroupCreator_v._renameMembers()"
+		for i = 1 to _selection.count do _selection[i].name = _group.name + "-" + ( if i < 10 then "0"  ) + i as string
+	),
+	
+	/** Align transformation
+	 */
+	function _alignTransformation =
+	(
+		--format "\n"; print "GroupCreator_v._alignTransformation()"
+		this._saveObjectsPositions()
+		
+		this._alignPositionAndRotation()
+		
+		this._loadObjectsPositions()
+		
+		this._alignPivot()
+	),
+	
 	/** _save objects positions
 	 */
 	function _saveObjectsPositions =
@@ -88,22 +121,22 @@ struct GroupCreator_v
 	 */
 	function _alignPositionAndRotation =
 	(
-		_group.pos      = obj.pos
-		_group.rotation = obj.rotation
+		_group.pos      = first_object.pos
+		_group.rotation = first_object.rotation
 	),
 	
 	/** _align pivot
 	 */
 	function _alignPivot =
 	(
-		_group.pivot = obj.pivot
+		_group.pivot = first_object.pivot
 	),
 
 	/** Add group to layer where object is
 	*/
 	function _addGroupToLayer =
 	(
-		last_sel_layer = obj.layer
+		last_sel_layer = first_object.layer
 		last_sel_layer.addnode _group
 	),
 
@@ -118,21 +151,11 @@ struct GroupCreator_v
 		
 		this._setSelection()
 		
-		this._setObj()
+		this._setFirstObj()
 		
-		 this._createGroup()
+		this._createGroup()
 		
-		if( classOf _group != Dummy ) then 
-			return false
-
-		--this._saveObjectsPositions()
-		--
-		--this._alignPositionAndRotation()
-		--
-		--this._loadObjectsPositions()
-		--
-		--this._alignPivot()
-		--
-		--this._addGroupToLayer()
+		--if( classOf _group != Dummy ) then 
+			--return false
 	)
 )

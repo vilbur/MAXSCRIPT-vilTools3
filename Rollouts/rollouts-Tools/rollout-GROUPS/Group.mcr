@@ -85,11 +85,17 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 
 			_RenameMembers	= _Controls.control #checkbox "Rename members"	across:1 tooltip:"Rename members by name of group"
 			
+			_AddToLayer	= _Controls.control #checkbox "Add to layer"	across:1 tooltip:"Add group to 1st object layer"
+			
+			_AlignTransform	= _Controls.control #checkbox "Align transform"	across:1 tooltip:"Align group transformation by 1st object"
+			
+			_RelinkHierarchy	= _Controls.control #checkbox "Relink hierarchy"	across:1 tooltip:"Relink group hierarchy by 1st object"
+			
 			Button_OK	= _Controls.control #button "Ok"	across:2 tooltip:"Enter"
 			Button_Cancel	= _Controls.control #button "Cancel"	across:2 tooltip:"Esc"
 
 			/* EVENT METHODS */ 
-			callback_submit	= "GroupCreator_v params:#( group_options.group_name.text, group_options.Rename_members.checked );"
+			callback_submit	= "GroupCreator_v params:#( group_options.group_name.text, group_options.Rename_members.checked, group_options.add_to_layer.checked, group_options.align_transform.checked, group_options.relink_hierarchy.checked );"
 			callback_close	= " try( destroyDialog "+ Dialog.id as string  +" )catch()"
 			callback_get_color	= "group_options.Color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
 			callback_set_color	= "selection.wirecolor = val"
