@@ -18,7 +18,7 @@ struct GroupCreator_v
 	
 	
 	params      = #(),
-	params_keys = #(#group_name, #Color_picker,  #Colorize_members, #Rename_members),
+	params_keys = #(#group_name, #Rename_members),
 
 	/** Set selection
 	 */
@@ -39,10 +39,16 @@ struct GroupCreator_v
 	 */
 	function _createGroup  =
 	(
-		_group = group _selection name:( toUpper _selection[1].name ) select:true
-		format "classOf _group = % \n" (classOf _group)
-		format "superclassOf _group = % \n" (superclassOf _group)
+		undo "Create Group" on
+		(
+			group_name = if params[1] != undefined then params[1] else toUpper _selection[1].name
 
+			_group = group _selection name:( group_name ) select:true --wirecolor:params[2]
+			
+			/* Rename members */ 
+			if params[2] then
+				for i = 1 to _selection.count do _selection[i].name = group_name + "-" + ( if i < 10 then "0"  ) + i as string
+		)
 	),
 
 	/** _save objects positions
