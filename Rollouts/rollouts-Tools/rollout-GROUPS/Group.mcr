@@ -68,7 +68,7 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			4) Checkbox: Rename members by group
 	*/
 	
-	if selection.count >= 2 then
+	--if selection.count > 0 then
 		(
 			/* DIALOG */ 
 			Dialog 	    = Dialog_v ("Group options") ini:(getSourceFileName())
@@ -125,9 +125,10 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			
 			Dialog.sendKey("^a")
 			
+			execute (callback_submit + callback_close)
 		)
-	else
-		messageBox "Select at least 2 objects." title:"NOTHING SELECTED"
+	--else
+		--messageBox "Select at least 2 objects." title:"NOTHING SELECTED"
 		
 )
 

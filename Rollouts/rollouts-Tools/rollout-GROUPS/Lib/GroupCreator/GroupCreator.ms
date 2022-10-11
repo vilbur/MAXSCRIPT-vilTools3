@@ -10,53 +10,39 @@
 struct GroupCreator_v
 (	
 	/* properties */
-	_members,
 	_group,
 	first_object,
-	
 	first_object_parent,
 	
-	members_children = #(), -- children of grouped objects
+	first_object_rotation,
+	_members,
 	members_position = #(),
 	members_rotation = #(),
+	members_children = #(), -- children of grouped objects
 	
 	
 	params      = #(),
 	params_keys = #(#group_name, #rename_members, #add_to_layer, #align_transform, #relink_hierarchy ),
 
-	/** Set selection
-	 */
-	function _setSelection =
-	(
-		--_members = for o in selection where isGroupHead o == false collect o
-		_members = for o in selection collect o
-		
-		clearSelection()
-	),
-	
-	/** Set first_object
-	  
-	 */
-	function _setFirstObj = 
-	(
-		first_object = _members[1]
-	),
-
 	/** Create group
 	 */
 	function _createGroup  =
 	(
+		clearListener()
 		format "\n"; print "GroupCreator_v._createGroup()"
-		format "params = % \n" params
-	
+		--format "params = % \n" params
 		undo "Create Group" on
 		(
-			this._saveObjectsHierarchy()
-	
-			group _members name:( if params[1] != undefined then params[1] else toUpper _members[1].name ) select:true --wirecolor:params[2]
+			this._setMembers()
 			
-			_group = selection[1]
-
+			this._setFirstObj()			
+			--format "first_object	= % \n" first_object
+			--format "_members	= % \n" _members
+			
+			this._saveObjectsHierarchy()
+			
+			this._setFirstObjectToGroup()
+			
 			if params[2] then
 				this._renameMembers()
 				
@@ -65,6 +51,10 @@ struct GroupCreator_v
 			
 			if params[4] then
 				this._alignTransformation()
+			
+			
+			if _members.count > 1 then
+				attachNodesToGroup (deleteItem ( deepcopy _members ) 1) _group
 				
 			if params[5] then
 				this._relinkHierarchy()
@@ -74,8 +64,35 @@ struct GroupCreator_v
 	
 	private
 	
-
 	
+	/** Set first_object
+	  
+	 */
+	function _setFirstObj = 
+	(
+		first_object = _members[1]
+	),
+	
+	/** Set selection
+	 */
+	function _setMembers =
+	(
+		_members = for o in selection collect o
+		
+		clearSelection()
+	),
+
+
+	/** Create group
+	 */
+	function _setFirstObjectToGroup =
+	(
+		--format "\n"; print "GroupCreator_v.createGroup()"
+		group first_object name:( if params[1] != undefined then params[1] else toUpper _members[1].name ) select:true --wirecolor:params[2]
+		
+		_group = selection[1]
+	),
+
 	/** Save objects members_children and parent of first object
 	 */
 	function _saveObjectsHierarchy =
@@ -102,59 +119,16 @@ struct GroupCreator_v
 	 */
 	function _alignTransformation =
 	(
-		--format "\n"; print "GroupCreator_v._alignTransformation()"
-		this._saveObjectsPositionAndRotation()
+		setGroupOpen _group true
 		
-		this._alignPositionAndRotation()
-		
-		this._loadObjectsPositions()
-		
-		this._alignPivot()
-	),
-	
-	/** 
-	 */
-	function _saveObjectsPositionAndRotation =
-	(
-		--format "\n"; print "GroupCreator_v._saveObjectsPositionAndRotation()"
-		for index=1 to _group.children.count where isGroupMember _group.children[index] do
-		(
-			members_position[index] = _group.children[index].pos
-			members_rotation[index] = _group.children[index].rotation
-		)
-	),
-	
-	/** _load objects positions
-	 */
-	function _loadObjectsPositions =
-	(
-		for i=1 to 2 do
-			for index = 1 to  _group.children.count do
-				this._loadObjectPosition index
-	),
-
-	/** Load objects positions
-	 */
-	function _loadObjectPosition index =
-	(
-		--format "\n"; print "GroupCreator_v._loadObjectPosition()"
-		_members[index].pos      = members_position[index]
-		_members[index].rotation = members_rotation[index]
-	),
-	
-	/** Set group pivot by object
-	 */
-	function _alignPositionAndRotation =
-	(
-		_group.pos      = first_object.pos
-		_group.rotation = first_object.rotation
-	),
-	
-	/** _align pivot
-	 */
-	function _alignPivot =
-	(
 		_group.pivot = first_object.pivot
+
+		first_object_rotation = first_object.rotation
+		
+		Rotate _group (  first_object_rotation)
+		Rotate first_object ( Inverse first_object_rotation)
+
+		setGroupOpen _group false
 	),
 
 	/** Add group to layer where object is
@@ -165,7 +139,6 @@ struct GroupCreator_v
 		last_sel_layer.addnode _group
 	),
 
-
 	/** Relink hierarchy
 	 */
 	function _relinkHierarchy =
@@ -174,7 +147,7 @@ struct GroupCreator_v
 		if first_object_parent != undefined then 
 			_group.parent = first_object_parent
 		
-		for child in members_children do
+		for child in members_children where isGroupMember child == false do
 			child.parent = _group		
 	),
 
@@ -182,18 +155,10 @@ struct GroupCreator_v
 	 */
 	on create do
 	(
-		print "GroupCreator_v.onCreate()"
-
-		if selection.count < 2 do
-			return false
-		
-		this._setSelection()
-		
-		this._setFirstObj()
-		
-		this._createGroup()
-		
+		--print "GroupCreator_v.onCreate()"
 		--if( classOf _group != Dummy ) then 
 			--return false
+		this._createGroup()
+
 	)
 )
