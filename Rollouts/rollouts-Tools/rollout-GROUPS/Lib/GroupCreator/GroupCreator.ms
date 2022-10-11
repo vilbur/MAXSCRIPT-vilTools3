@@ -15,10 +15,10 @@ struct GroupCreator_v
 	first_object_parent,
 	
 	first_object_rotation,
-	_members,
-	members_position = #(),
-	members_rotation = #(),
-	members_children = #(), -- children of grouped objects
+	members	= #(),
+	members_position	= #(),
+	members_rotation	= #(),
+	members_children	= #(), -- children of grouped objects
 	
 	
 	params      = #(),
@@ -35,9 +35,11 @@ struct GroupCreator_v
 		(
 			this._setMembers()
 			
+			clearSelection()
+
 			this._setFirstObj()			
-			--format "first_object	= % \n" first_object
-			--format "_members	= % \n" _members
+			format "first_object	= % \n" first_object
+			format "members	= % \n" members
 			
 			this._saveObjectsHierarchy()
 			
@@ -52,9 +54,7 @@ struct GroupCreator_v
 			if params[4] then
 				this._alignTransformation()
 			
-			
-			if _members.count > 1 then
-				attachNodesToGroup (deleteItem ( deepcopy _members ) 1) _group
+			this._setOtherNodesToGroup()
 				
 			if params[5] then
 				this._relinkHierarchy()
@@ -65,34 +65,49 @@ struct GroupCreator_v
 	private
 	
 	
-	/** Set first_object
-	  
-	 */
-	function _setFirstObj = 
-	(
-		first_object = _members[1]
-	),
-	
 	/** Set selection
 	 */
 	function _setMembers =
 	(
-		_members = for o in selection collect o
+		--format "\n"; print "GroupCreator_v._setMembers()"
+		for o in selection collect
+		(
+			if isGroupHead o or not isGroupMember o then
+				appendIfUnique members o
+				
+			else if isOpenGroupMember o then 
+				appendIfUnique members o.parent
+		)
 		
-		clearSelection()
+		--for _member in members do format "_member	= % \n" _member.name
 	),
-
+	
+	/** Set first_object
+	 */
+	function _setFirstObj = 
+	(
+		first_object = members[1]
+	),
 
 	/** Create group
 	 */
 	function _setFirstObjectToGroup =
 	(
 		--format "\n"; print "GroupCreator_v.createGroup()"
-		group first_object name:( if params[1] != undefined then params[1] else toUpper _members[1].name ) select:true --wirecolor:params[2]
+		group first_object name:( if params[1] != undefined then params[1] else toUpper members[1].name ) select:true --wirecolor:params[2]
 		
 		_group = selection[1]
 	),
 
+	/** 
+	 */
+	function _setOtherNodesToGroup =
+	(
+		--format "\n"; print "GroupCreator_v._setOtherNodesToGroup()"
+		if members.count > 1 then
+			attachNodesToGroup (deleteItem ( deepCopy members ) 1) _group		
+	),
+	
 	/** Save objects members_children and parent of first object
 	 */
 	function _saveObjectsHierarchy =
@@ -100,7 +115,7 @@ struct GroupCreator_v
 		--format "\n"; print "GroupCreator_v._saveObjectsHierarchy()"
 		first_object_parent = first_object.parent
 		
-		for obj in _members where obj.children.count > 0 do members_children += obj.children 
+		for obj in members where obj.children.count > 0 do members_children += obj.children 
 	),
 	
 	/** Rename group members
@@ -108,26 +123,29 @@ struct GroupCreator_v
 	function _renameMembers =
 	(
 		--format "\n"; print "GroupCreator_v._renameMembers()"
-		for i = 1 to _members.count do _members[i].name = _group.name + "-" + ( if i < 10 and _members.count < 100 then "0" else "00" ) + i as string
+		for i = 1 to members.count do members[i].name = _group.name + "-" + ( if i < 10 and members.count < 100 then "0" else "00" ) + i as string
 	),
 	
-	/** Align group transformation
+	/** Align group transformation by 1st object
 	  *
-	  * Group is not node, but only linked objects together.
-	  *
+	  * Set pivot and rotation of group by 1st object,
+	  * then rotate members in invers rotation
 	  * 
 	 */
 	function _alignTransformation =
 	(
+		--format "\n"; print "GroupCreator_v._alignTransformation()"
+		--format "first_object	= % \n" first_object
+		--format "_group	= % \n" _group
 		setGroupOpen _group true
 		
 		_group.pivot = first_object.pivot
-
+		
 		first_object_rotation = first_object.rotation
 		
 		Rotate _group (  first_object_rotation)
 		Rotate first_object ( Inverse first_object_rotation)
-
+		
 		setGroupOpen _group false
 	),
 
