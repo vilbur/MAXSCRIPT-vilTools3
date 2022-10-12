@@ -13,7 +13,7 @@ function createGroupCallback params =
 	format "\n"; print ".createGroupCallback()"
 	format "params	= % \n" params
 
-	params_keys = #(#group_name, #Color_picker,  #Colorize_members, #Rename_members)
+	params_keys = #(#group_name, #members_color_picker,  #Colorize_members, #Rename_members)
 
 )
 
@@ -52,12 +52,12 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			(
 				group_options.current_color = if group_options.current_color <  group_options.colors.count then group_options.current_color + 1 else 1
 				
-				group_options.Color_picker.color = group_options.colors[group_options.current_color]
+				group_options.members_color_picker.color = group_options.colors[group_options.current_color]
 			)
 			else
-				group_options.Color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)
+				group_options.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)
 			
-			selection.wirecolor = group_options.Color_picker.color
+			selection.wirecolor = group_options.members_color_picker.color
 		)
 
 	/*
@@ -71,36 +71,42 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 	--if selection.count > 0 then
 		(
 			/* DIALOG */ 
-			Dialog 	    = Dialog_v ("Group options") ini:(getSourceFileName())
+			Dialog 	    = Dialog_v ("GROUP OPTIONS") ini:(getSourceFileName())
 
-			Dialog.addLocal "colors" (makeUniqueArray (for obj in selection where obj.wirecolor != undefined collect obj.wirecolor))
+			Dialog.addLocal "colors" (makeUniqueArray (for obj in selection where not isGroupHead obj collect obj.wirecolor))
 			Dialog.addLocal "current_color" 1
 			
 			/* CONTROLS */ 
 			_Controls   = Dialog.Controls()
-
-			_GroupName	= _Controls.control #EditText "[Group name]" across:2 width:164 ini:false value:( toUpper (( dotNetObject "System.Text.RegularExpressions.Regex" @"[0-9-_]+$" ).Replace selection[1].name "" ))
-
-			_ColorPicker	= _Controls.control #ColorPicker "[Color picker]"	across:2 offset:[48,0] params:#(#color, selection[1].wirecolor ) ini:false tooltip:"Color of Group\nHotkey: Ctrl"
-
-			_RenameMembers	= _Controls.control #checkbox "Rename members"	across:1 tooltip:"Rename members by name of group"
 			
+			_MembersName_label	= _Controls.control #label "Members name" across:2 width:148 offset:[0, 8]
+
+			_GroupName_label	= _Controls.control #label "Group name" across:2 width:148 offset:[0, 8]
+
+			_MembersName	= _Controls.control #EditText "[Members name text]" across:2 width:148 ini:false value:( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[0-9-_]+$" ).Replace selection[1].name "" ) tooltip:"Members Name"
+
+			_GroupName	= _Controls.control #EditText "[Group name text]" across:2 width:148  tooltip:"Group Name" --value:( toUpper (( dotNetObject "System.Text.RegularExpressions.Regex" @"[0-9-_]+$" ).Replace selection[1].name "" ))
+
+			_ColorPicker	= _Controls.control #ColorPicker "[Members color picker]"	across:2 params:#(#color, selection[1].wirecolor ) ini:false tooltip:"Color of Group\nHotkey: Ctrl"
+			
+			_ColorPicker_label	= _Controls.control #label "Members color" across:2 align:#left offset:[-96, 4]
+
 			_AddToLayer	= _Controls.control #checkbox "Add to layer"	across:1 tooltip:"Add group to 1st object layer"
 			
 			_AlignTransform	= _Controls.control #checkbox "Align transform"	across:1 tooltip:"Align group pivot and transformation by 1st object"
 			
 			_RelinkHierarchy	= _Controls.control #checkbox "Relink hierarchy"	across:1 tooltip:"Relink group hierarchy by 1st object"
 			
-			Button_OK	= _Controls.control #button "Ok"	across:2 tooltip:"Enter"
-			Button_Cancel	= _Controls.control #button "Cancel"	across:2 tooltip:"Esc"
+			Button_OK	= _Controls.control #button "Ok"	across:2 height:48 tooltip:"Enter"
+			Button_Cancel	= _Controls.control #button "Cancel"	across:2 height:48 tooltip:"Esc"
 
 			/* EVENT METHODS */
-			creator_params = #( "group_options.group_name.text", "group_options.Rename_members.checked", "group_options.add_to_layer.checked", "group_options.align_transform.checked", "group_options.relink_hierarchy.checked")
+			creator_params = #( "group_options.members_name_text.text", "group_options.group_name_text.text", "group_options.add_to_layer.checked", "group_options.align_transform.checked", "group_options.relink_hierarchy.checked")
 			
 			--callback_submit	= "GroupCreator_v params:#( group_options.group_name.text, group_options.Rename_members.checked, group_options.add_to_layer.checked, group_options.align_transform.checked, group_options.relink_hierarchy.checked );"
 			callback_submit	= "GroupCreator_v params:"+ ( substituteString ( creator_params as string ) "\"" "") +";"
 			callback_close	= " try( destroyDialog "+ Dialog.id as string  +" )catch()"
-			callback_get_color	= "group_options.Color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
+			callback_get_color	= "group_options.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
 			callback_set_color	= "selection.wirecolor = val"
 
 			
@@ -119,13 +125,15 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			Dialog.HotKey #(#control)	"undo \"Set color to group members\" on circleColorsOfColorPicker()"
 
 			/* DIALOG CREATE */
-			Dialog.create width:256
+			Dialog.create width:320 height:196
 			
-			_GroupName.focus()
+			--Dialog.register()
+			
+			_MembersName.focus()
 			
 			Dialog.sendKey("^a")
-			
-			execute (callback_submit + callback_close)
+			format "Dialog.id	= % \n" Dialog.id
+			--execute (callback_submit + callback_close)
 		)
 	--else
 		--messageBox "Select at least 2 objects." title:"NOTHING SELECTED"

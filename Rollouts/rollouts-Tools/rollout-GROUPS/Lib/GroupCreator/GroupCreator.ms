@@ -22,13 +22,12 @@ struct GroupCreator_v
 	
 	
 	params      = #(),
-	params_keys = #(#group_name, #rename_members, #add_to_layer, #align_transform, #relink_hierarchy ),
+	params_keys = #(#members_name, #group_name, #add_to_layer, #align_transform, #relink_hierarchy ),
 
 	/** Create group
 	 */
 	function _createGroup  =
 	(
-		clearListener()
 		format "\n"; print "GroupCreator_v._createGroup()"
 		--format "params = % \n" params
 		undo "Create Group" on
@@ -38,14 +37,17 @@ struct GroupCreator_v
 			clearSelection()
 
 			this._setFirstObj()			
-			format "first_object	= % \n" first_object
-			format "members	= % \n" members
+			--format "first_object	= % \n" first_object
+			--format "members	= % \n" members
 			
 			this._saveObjectsHierarchy()
 			
+			--format "params[1]	= % \n" params[1]
+			--format "params[2]	= % \n" params[2]
+
 			this._setFirstObjectToGroup()
 			
-			if params[2] then
+			if params[1] != "" then
 				this._renameMembers()
 				
 			if params[3] then
@@ -79,7 +81,7 @@ struct GroupCreator_v
 				appendIfUnique members o.parent
 		)
 		
-		--for _member in members do format "_member	= % \n" _member.name
+		for _member in members do format "_member	= % \n" _member.name
 	),
 	
 	/** Set first_object
@@ -90,13 +92,21 @@ struct GroupCreator_v
 	),
 
 	/** Create group
+	  *
+	  * Group name rules:
+	  *	1) Use group name if defined
+	  *	2) Use "{MEMBER NAME}-GROUP" if member name is defined is  defined and group name is not
+	  *	3) Use default max group name
 	 */
 	function _setFirstObjectToGroup =
 	(
-		--format "\n"; print "GroupCreator_v.createGroup()"
-		group first_object name:( if params[1] != undefined then params[1] else toUpper members[1].name ) select:true --wirecolor:params[2]
+		format "\n"; print "GroupCreator_v.createGroup()"
+		format "first_object	= % \n" first_object
+		--group first_object name:( if params[2] != "" then params[2] else toUpper members[2].name ) select:true --wirecolor:params[2]
+		group first_object name:( if params[2] != "" then params[2] else if params[1]  != "" then toUpper params[1] + "-GROUP" else unsupplied ) select:true --wirecolor:params[2]
 		
 		_group = selection[1]
+		format "_group	= % \n" _group
 	),
 
 	/** 
@@ -123,7 +133,7 @@ struct GroupCreator_v
 	function _renameMembers =
 	(
 		--format "\n"; print "GroupCreator_v._renameMembers()"
-		for i = 1 to members.count do members[i].name = _group.name + "-" + ( if i < 10 and members.count < 100 then "0" else "00" ) + i as string
+		for i = 1 to members.count do members[i].name = params[1] + "-" + ( if i < 10 and members.count < 100 then "0" else "00" ) + i as string
 	),
 	
 	/** Align group transformation by 1st object
