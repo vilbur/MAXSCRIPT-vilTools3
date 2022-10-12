@@ -6,26 +6,6 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.m
 	CREATE GROUP
 --------------------------------------------------------------------------------*/
 
-/** Create group callback
- */
-function createGroupCallback params =
-(
-	format "\n"; print ".createGroupCallback()"
-	format "params	= % \n" params
-
-	params_keys = #(#group_name, #members_color_picker,  #Colorize_members, #Rename_members)
-
-)
-
-/** Callback_test
- */
-function callback_test =
-(
-	format "\n"; print ".callback_test()"
-)
-
-
-
 global group_options
 
 /**  
@@ -34,7 +14,7 @@ global group_options
 macroscript	group_create_with_setup
 category:	"_Group"
 buttontext:	"Create"
-toolTip:	"Group Setup Dialog"
+--toolTip:	"Group Setup Dialog"
 icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 (
 	clearListener()
@@ -68,7 +48,7 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			4) Checkbox: Rename members by group
 	*/
 	
-	--if selection.count > 0 then
+	if selection.count > 0 then
 		(
 			/* DIALOG */ 
 			Dialog 	    = Dialog_v ("GROUP OPTIONS") ini:(getSourceFileName())
@@ -85,7 +65,7 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 
 			_MembersName	= _Controls.control #EditText "[Members name text]" across:2 width:148 ini:false value:( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[0-9-_]+$" ).Replace selection[1].name "" ) tooltip:"Members Name"
 
-			_GroupName	= _Controls.control #EditText "[Group name text]" across:2 width:148  tooltip:"Group Name" --value:( toUpper (( dotNetObject "System.Text.RegularExpressions.Regex" @"[0-9-_]+$" ).Replace selection[1].name "" ))
+			_GroupName	= _Controls.control #EditText "[Group name text]" across:2 width:148  tooltip:"Group Name" tooltip:"'{MEMBER NAME}-GROUP' is used if empty"
 
 			_ColorPicker	= _Controls.control #ColorPicker "[Members color picker]"	across:2 params:#(#color, selection[1].wirecolor ) ini:false tooltip:"Color of Group\nHotkey: Ctrl"
 			
@@ -97,8 +77,8 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			
 			_RelinkHierarchy	= _Controls.control #checkbox "Relink hierarchy"	across:1 tooltip:"Relink group hierarchy by 1st object"
 			
-			Button_OK	= _Controls.control #button "Ok"	across:2 height:48 tooltip:"Enter"
-			Button_Cancel	= _Controls.control #button "Cancel"	across:2 height:48 tooltip:"Esc"
+			Button_OK	= _Controls.control #button "Ok"	across:2 height:48 tooltip:"Hotkey:Enter\n\nDialog is not closed when Enter preesed"
+			Button_Cancel	= _Controls.control #button "Cancel"	across:2 height:48
 
 			/* EVENT METHODS */
 			creator_params = #( "group_options.members_name_text.text", "group_options.group_name_text.text", "group_options.add_to_layer.checked", "group_options.align_transform.checked", "group_options.relink_hierarchy.checked")
@@ -113,19 +93,19 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			/* EVENTS */ 
 			_ColorPicker.Events.add	#changed ("selection.wirecolor = val")
 			
-			Button_OK.Events.add	#pressed (callback_submit + callback_close)
+			Button_OK.Events.add	#pressed (callback_submit + callback_close) 
 			Button_Cancel.Events.add 	#pressed (callback_close)
 
 			
 			/* HOTKEYS */ 
-			--Dialog.HotKey #(#escape)	callback_close
+			Dialog.HotKey #(#escape)	callback_close
 
-			Dialog.HotKey #(#Enter)	(callback_submit + callback_close)
+			Dialog.HotKey #(#Enter)	(callback_submit)
 
 			Dialog.HotKey #(#control)	"undo \"Set color to group members\" on circleColorsOfColorPicker()"
 
 			/* DIALOG CREATE */
-			Dialog.create width:320 height:196
+			Dialog.create width:320 height:240
 			
 			--Dialog.register()
 			
@@ -135,94 +115,159 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			format "Dialog.id	= % \n" Dialog.id
 			--execute (callback_submit + callback_close)
 		)
-	--else
-		--messageBox "Select at least 2 objects." title:"NOTHING SELECTED"
+	else
+		messageBox "Select at least 2 objects." title:"NOTHING SELECTED"
 		
 )
 
-/**  
- *	
- */
-macroscript	group_create
-category:	"_Group"
-buttontext:	"Create"
-toolTip:	"Quick Group"
-icon:	"Menu:_Group"
-(
 
-	undo "Create Group" on
+/*------------------------------------------------------------------------------
+	UNGROUP
+--------------------------------------------------------------------------------*/
+
+/**  Ungroup selected groups
+ *	
+  *  Even if selected object is in opened group
+ */
+macroscript	group_ungroup
+category:	"_Group"
+buttontext:	"Ungroup"
+toolTip:	"Ungroup selection"
+icon:	"Menu:_Group|title:Ungroup"
+(
+	undo "Ungroup selected" on
 	(
-		GroupCreator_v()
+		actionMan.executeAction 0 "40143" -- Close group
+
+		actionMan.executeAction 0 "40141"  -- Groups: Ungroup
 	)
 )
 
 /*------------------------------------------------------------------------------
-	OPEN\CLOSE GROUP
+	OPEN GROUP
 --------------------------------------------------------------------------------*/
 
 
-/**  Open\Close Toggle Group
+/**  Open 1st Groups in hierarchy
  *	
  *	Function is overkilled with modes, mode is not used, but let it as is for future
  */
-macroscript	group_open_close_toggle
+macroscript	group_open
 category:	"_Group"
-buttontext:	"Open\Close"
-toolTip:	"Open\Close selected groups"
-icon:	"Menu:_Group|title:Open Group"
+buttontext:	"Open"
+toolTip:	"Open selected groups"
+icon:	"id:group_open"
+--icon:	"Menu:_Group|title:Open Group"
 (
-	/*
-		mode = #open
-		mode = #toggle
-		mode = #close
-	*/
-
-	mode = #toggle
-
-	undo "Group Open" on
-	(
-		selected_groups = #()	
-		group_members   = #()
-
-		for o in selection where ( isGroupHead  o == true ) do
-
-		for o in selection where  isGroupMember o == true and not isGroupHead o  do appendIfUnique selected_groups o.parent
-
-		for g in selected_groups do (for ch in g.children do append group_members ch)
-
-		for g in selected_groups where isGroupHead g do
-		(
-
-			if mode == #open then
-				setGroupOpen g true
-
-			else if  mode == #close then
-				setGroupOpen g false
-
-			else if  mode == #toggle do
-			(
-				if isOpenGroupHead g then
-					( setGroupOpen g false)
-				else
-					( setGroupOpen g true)
-			)
-		)
-
-		select group_members
-	)	
+	actionMan.executeAction 0 "40142"  -- Groups: Group Open
 )
-/**  Close Group
+
+/**  Open all Groups in hierarchy
  *	
  */
-macroscript	group_close_selected
+macroscript	group_open_hierarchy
 category:	"_Group"
-buttontext:	"Open\Close"
-toolTip:	"Close groups"
-icon:	"Menu:_Group|title:Close Group"
+buttontext:	"Open"
+toolTip:	"Open all groups in hierarchy"
+--icon:	"Menu:_Group|title:Close Group"
+--icon:	"id:group_open_hierarchy"
+(
+	undo "Groups Open" on
+	(
+		_selection	= for o in selection collect o
+		--format "_selection	= % \n" _selection
+		for o in selection where isGroupHead o do setGroupOpen o true
+		
+		select _selection
+	)	
+	
+)
+
+
+/*------------------------------------------------------------------------------
+	CLOSE GROUP
+--------------------------------------------------------------------------------*/
+
+
+/**  Open 1st Groups in hierarchy
+ *	
+ *	Function is overkilled with modes, mode is not used, but let it as is for future
+ */
+macroscript	group_close
+category:	"_Group"
+buttontext:	"Close"
+toolTip:	"Close selected groups"
+icon:	"id:group_close"
+--icon:	"Menu:_Group|title:Close Group"
 (
 	actionMan.executeAction 0 "40143"  -- Groups: Group Close
 )
 
+/**  Close all Groups in hierarchy
+ *	
+ */
+macroscript	group_close_hierarchy
+category:	"_Group"
+buttontext:	"Close"
+toolTip:	"Close all groups in hierarchy"
+--icon:	"Menu:_Group|title:Close Group"
+--icon:	"id:group_open_hierarchy"
+(
+	undo "Groups Close" on
+	(
+		_selection	= for o in selection collect o
+		--format "_selection	= % \n" _selection
+		for o in selection where isGroupHead o do setGroupOpen o false
+		
+		select _selection
+	)	
+	
+)
+
+--/**  Close Group
+-- *	
+-- */
+--macroscript	group_close_selected
+--category:	"_Group"
+--buttontext:	"Close"
+--toolTip:	"Close all groups in hierarchy"
+--icon:	"Menu:_Group|title:Close Group"
+--(
+--	--actionMan.executeAction 0 "40143"  -- Groups: Group Close
+--
+--	undo "Group Open" on
+--	(
+--		selected_groups = #()	
+--		group_members   = #()
+--
+--		for o in selection where ( isGroupHead  o == true ) do
+--
+--		for o in selection where  isGroupMember o == true and not isGroupHead o  do appendIfUnique selected_groups o.parent
+--
+--		for g in selected_groups do (for ch in g.children do append group_members ch)
+--
+--		for g in selected_groups where isGroupHead g do
+--		(
+--
+--			if mode == #open then
+--				setGroupOpen g true
+--
+--			else if  mode == #close then
+--				setGroupOpen g false
+--
+--			else if  mode == #toggle do
+--			(
+--				if isOpenGroupHead g then
+--					( setGroupOpen g false)
+--				else
+--					( setGroupOpen g true)
+--			)
+--		)
+--
+--		select group_members
+--	)	
+--	
+--)
 
 
 --/**  
@@ -250,28 +295,6 @@ icon:	"Menu:_Group|title:Close Group"
 --	
 --	--format "hotkey_pressed	= % \n" hotkey_pressed																		 
 --)
-
-/*------------------------------------------------------------------------------
-	UNGROUP
---------------------------------------------------------------------------------*/
-
-/**  Ungroup selected groups
-  *  Even if selected object is in opened group
- *	
- */
-macroscript	group_ungroup
-category:	"_Group"
-buttontext:	"Ungroup"
-toolTip:	"Ungroup selection"
-icon:	"Menu:_Group|title:Ungroup"
-(
-	undo "Ungroup selected" on
-	(
-		actionMan.executeAction 0 "40143" -- Close group
-
-		actionMan.executeAction 0 "40141"  -- Groups: Ungroup
-	)
-)
 
 /*------------------------------------------------------------------------------
 	ATTACH
