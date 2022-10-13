@@ -113,10 +113,10 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			
 			Dialog.sendKey("^a")
 			format "Dialog.id	= % \n" Dialog.id
-			--execute (callback_submit + callback_close)
+			execute (callback_submit + callback_close) -- DEV
 		)
 	else
-		messageBox "Select at least 2 objects." title:"NOTHING SELECTED"
+		messageBox "Nothing selected" title:"NOTHING SELECTED"
 		
 )
 

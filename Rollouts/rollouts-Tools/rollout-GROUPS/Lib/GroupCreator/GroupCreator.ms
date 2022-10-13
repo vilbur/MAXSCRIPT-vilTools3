@@ -29,6 +29,7 @@ struct GroupCreator_v
 	function _createGroup  =
 	(
 		format "\n"; print "GroupCreator_v._createGroup()"
+		GLOBAL_SELECTION_LAST_ENABLED = false
 		--format "params = % \n" params
 		undo "Create Group" on
 		(
@@ -37,10 +38,10 @@ struct GroupCreator_v
 			clearSelection()
 
 			this._setFirstObj()			
-			--format "first_object	= % \n" first_object
-			--format "members	= % \n" members
+			format "first_object	= % \n" first_object
+			format "members	= % \n" members
 			
-			this._saveObjectsHierarchy()
+			--this._saveObjectsHierarchy()
 			
 			--format "params[1]	= % \n" params[1]
 			--format "params[2]	= % \n" params[2]
@@ -57,10 +58,11 @@ struct GroupCreator_v
 				this._alignTransformation()
 			
 			this._setOtherNodesToGroup()
-				
-			if params[5] then
-				this._relinkHierarchy()
+			--	
+			--if params[5] then
+			--	this._relinkHierarchy()
 		)
+		GLOBAL_SELECTION_LAST_ENABLED = true
 	),
 	
 	
@@ -72,16 +74,17 @@ struct GroupCreator_v
 	function _setMembers =
 	(
 		--format "\n"; print "GroupCreator_v._setMembers()"
-		for o in selection collect
-		(
-			if isGroupHead o or not isGroupMember o then
-				appendIfUnique members o
-				
-			else if isOpenGroupMember o then 
-				appendIfUnique members o.parent
-		)
+		--for o in selection collect
+		--(
+		--	if isGroupHead o or not isGroupMember o then
+		--		appendIfUnique members o
+		--		
+		--	else if isOpenGroupMember o then 
+		--		appendIfUnique members o.parent
+		--)
+		members = for o in selection collect o
 		
-		for _member in members do format "_member	= % \n" _member.name
+		--for _member in members do format "_member	= % \n" _member.name
 	),
 	
 	/** Set first_object
@@ -89,6 +92,7 @@ struct GroupCreator_v
 	function _setFirstObj = 
 	(
 		first_object = members[1]
+		--format "first_object	= % \n" first_object
 	),
 
 	/** Create group
@@ -101,30 +105,39 @@ struct GroupCreator_v
 	function _setFirstObjectToGroup =
 	(
 		format "\n"; print "GroupCreator_v.createGroup()"
-		format "first_object	= % \n" first_object
+
 		--group first_object name:( if params[2] != "" then params[2] else toUpper members[2].name ) select:true --wirecolor:params[2]
 		group first_object name:( if params[2] != "" then params[2] else if params[1]  != "" then toUpper params[1] + "-GROUP" else unsupplied ) select:true --wirecolor:params[2]
 		
 		_group = selection[1]
-		format "_group	= % \n" _group
+		--format "_group	= % \n" _group
 	),
 
 	/** 
 	 */
 	function _setOtherNodesToGroup =
 	(
-		--format "\n"; print "GroupCreator_v._setOtherNodesToGroup()"
+		format "\n"; print "GroupCreator_v._setOtherNodesToGroup()"
+		--format "_group	= % \n" _group
+		
+		nodes_to_attach = for o in ((deleteItem ( deepCopy members ) 1)) collect o
+		for node_to_attach in nodes_to_attach do format "node_to_attach	= % \n" node_to_attach.name
+
+		--format "nodes_to_attach.count	= % \n" nodes_to_attach.count
+		
 		if members.count > 1 then
-			attachNodesToGroup (deleteItem ( deepCopy members ) 1) _group		
+				attachNodesToGroup nodes_to_attach _group		
+
+			
 	),
 	
 	/** Save objects members_children and parent of first object
 	 */
 	function _saveObjectsHierarchy =
 	(
-		--format "\n"; print "GroupCreator_v._saveObjectsHierarchy()"
+		format "\n"; print "GroupCreator_v._saveObjectsHierarchy()"
 		first_object_parent = first_object.parent
-		
+		format "first_object_parent	= % \n" first_object_parent
 		for obj in members where obj.children.count > 0 do members_children += obj.children 
 	),
 	
