@@ -1,3 +1,71 @@
+/*------------------------------------------------------------------------------
+	SELECT INTANCES
+--------------------------------------------------------------------------------*/
+
+/**  
+  *	
+  */
+macroscript	selection_select_instances_and_references
+category:	"_Selection"
+buttontext:	"Select instances"
+toolTip:	"Select instances and references"
+--icon:	"#(path, index)"
+(
+	for obj in selection do 
+		selectmore ((Selection_v()).getInstances( obj ))
+)
+
+/**  
+  *	
+  */
+macroscript	selection_select_instances
+category:	"_Selection"
+buttontext:	"Select instances"
+toolTip:	"Select instances"
+--icon:	"#(path, index)"
+(
+	for obj in selection do 
+		sselectmore ((Selection_v()).getInstances( obj ) type:#INSTANCE)
+)
+/*------------------------------------------------------------------------------
+	SELECT REFERENCE
+--------------------------------------------------------------------------------*/
+
+/**  
+  *	
+  */
+macroscript	selection_select_references
+category:	"_Selection"
+buttontext:	"Select References"
+toolTip:	"Select References"
+--icon:	"#(path, index)"
+(
+	for obj in selection do 
+		selectmore ((Selection_v()).getInstances( obj ) type:#REFERENCE)
+)
+
+/*------------------------------------------------------------------------------
+	FILTER UNIQUE OBJECTS
+--------------------------------------------------------------------------------*/
+
+/**  
+  *	
+  */
+macroscript	selection_filter_unique_objects
+category:	"_Selection"
+buttontext:	"Unique objects"
+toolTip:	"Select only Unique objects.\nDeselect multiple instances"
+--icon:	"#(path, index)"
+(
+	(Selection_v()).filterUniqueObjects()
+)
+
+
+/*------------------------------------------------------------------------------
+	REINSTANCER
+--------------------------------------------------------------------------------*/
+
+
 /**  
   *	
   */
@@ -53,56 +121,6 @@ toolTip:	"Make references of selection.\n1Master object is 1st in selection"
 	else
 		messageBox "Select at least 2 objects for referencing" title:"Reinstancer" 
 )
-
-/**  
-  *	
-  */
-macroscript	selection_select_instances_and_references
-category:	"_Selection"
-buttontext:	"Select instances"
-toolTip:	"Select instances and references"
---icon:	"#(path, index)"
-(
-	select ((Selection_v()).getInstances( selection[1] ))
-)
-
-/**  
-  *	
-  */
-macroscript	selection_select_instances
-category:	"_Selection"
-buttontext:	"Select instances"
-toolTip:	"Select instances"
---icon:	"#(path, index)"
-(
-	select ((Selection_v()).getInstances( selection[1] ) type:#INSTANCE)
-)
-
-/**  
-  *	
-  */
-macroscript	selection_select_references
-category:	"_Selection"
-buttontext:	"Select References"
-toolTip:	"Select References"
---icon:	"#(path, index)"
-(
-	select ((Selection_v()).getInstances( selection[1] ) type:#REFERENCE)
-)
-
-
-/**  
-  *	
-  */
-macroscript	selection_filter_unique_objects
-category:	"_Selection"
-buttontext:	"Unique objects"
-toolTip:	"Select only Unique objects.\nDeselect multiple instances"
---icon:	"#(path, index)"
-(
-	(Selection_v()).filterUniqueObjects()
-)
-
 
 
 
