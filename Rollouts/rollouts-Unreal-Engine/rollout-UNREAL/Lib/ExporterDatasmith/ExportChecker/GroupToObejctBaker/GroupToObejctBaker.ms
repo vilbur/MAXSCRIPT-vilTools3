@@ -1,9 +1,9 @@
 /**
-  * 1) Merge meshes in group
+  * 1) Merge objects in group to single mesh
   * 2) Replace group with mesh
   * 
  */
-struct GroupAttacher_v
+struct GroupToObejctBaker_v
 (
 	--__construct = #( #groups ),
 	
@@ -21,7 +21,7 @@ struct GroupAttacher_v
 	 */
 	function _attachGroup _group =
 	(
-		format "\n"; print ("GroupAttacher_v._attachGroup() group:" + _group.name)
+		format "\n"; print ("GroupToObejctBaker_v._attachGroup() group:" + _group.name)
 		format "_group	= % \n" _group
 		group_members    = this._getGroupMembers(_group)
 		format "group_members	= % \n" group_members
@@ -63,7 +63,7 @@ struct GroupAttacher_v
 	 */
 	function _replaceGroupWithObject _group =
 	(
-		--format "\n"; print "GroupAttacher_v._replaceGroupWithObject()"
+		--format "\n"; print "GroupToObejctBaker_v._replaceGroupWithObject()"
 		group_replacer = this._createEmptyObject (_group)
 
 		if isValidNode _group  then
@@ -76,7 +76,7 @@ struct GroupAttacher_v
 	 */
 	function _createEmptyObject _group =
 	(
-		--format "\n"; print "GroupAttacher_v._createEmptyObject()"
+		--format "\n"; print "GroupToObejctBaker_v._createEmptyObject()"
 		group_replacer = convertTo (Editable_mesh name:_group.name) Editable_Poly --convert to Editable_Poly
 		
 		group_replacer.pivot	= _group.pivot
@@ -138,7 +138,7 @@ struct GroupAttacher_v
 	 */
 	on create do
 	(
-		print("GroupAttacher_v.onCreate()")
+		print("GroupToObejctBaker_v.onCreate()")
 		--ConstructPropeties test:this
 		
 		for _group in groups do

@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/GroupAttacher/GroupAttacher.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/GroupToObejctBaker/GroupToObejctBaker.ms" )
 
 /** Analyze objects for export
   * 
@@ -26,6 +26,71 @@ struct ExportChecker_v
 	
 	DEBUG = true,
 	--DEBUG = false,
+	
+	/** Test Export objects
+	 */
+	function test =
+	(
+		--format "\n"; print "ExporterDatasmith_v.test()"
+		GLOBAL_SELECTION_LAST_ENABLED = false
+		
+		this.validateNodes()
+
+		this.analyzeGroups()
+		
+		objects_to_check = #()
+		ingnore_attach_objects = #()
+		
+		format "groups_to_attach	= % \n" groups_to_attach
+		
+		for _group in groups_to_attach do join ingnore_attach_objects (this._getAllChildren(_group))
+
+		--for _node in ingnore_attach_objects do
+			--format "_node	= % \n" _node.name		
+		
+		for _node in export_nodes do 
+			for obj in this._getAllChildren(_node) where findItem ingnore_attach_objects obj == 0 do
+			(
+				default_object_names = "Group\d+|Object\d+|Box\d+|Sphere\d+|Cylinder\d+|Line\d+|Circle\d+|Text\d+"
+				--format "obj.name	= % \n" obj.name
+				match_default_name = (( dotNetClass "System.Text.RegularExpressions.RegEx" ).match obj.name default_object_names ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase ).success
+				
+				if match_default_name then
+					append objects_to_check obj
+			)
+				
+		select objects_to_check
+		
+		--for obj in objects_to_check do
+			--format "obj	= % \n" obj.name
+		
+		format "% OBJECTS WITH DEFAULT NAMES SELECTED\n" objects_to_check.count
+		--holdMaxFile()
+		----format "ExportChecker.export_nodes	= % \n" ExportChecker.export_nodes
+		--if( ExportChecker.groups_to_attach.count > 0 ) then
+		--	GroupAttacher_v groups:ExportChecker.groups_to_attach
+		--
+		--node_name = ExportChecker.export_nodes[1].name
+		--
+		--try
+		--(
+		--	/* EXPORT */ 
+		--	for export_node in ExportChecker.export_nodes do 
+		--		this._exportNode (export_node) (getUserProp export_node "export-dir")
+		--)
+		--catch(
+		--	messageBox "Export Failed" title:"Export Failed"  beep:true
+		--
+		--	getCurrentException() 
+		--)
+		--
+		----if( ExportChecker.groups_to_attach.count > 0 ) then
+		--	fetchMaxFile quiet:true
+		--	
+		--print ("EXPORT OF " +node_name+ " SUCCESSFUL " + (getLocalTime())[5] as string + ":"+ (getLocalTime())[6] as string )
+		--
+		GLOBAL_SELECTION_LAST_ENABLED = true
+	),
 	
 	/** Find if exported objects contains any attachable groups
 	 */
@@ -56,56 +121,35 @@ struct ExportChecker_v
 	(
 		--format "\n"; print "ExportChecker_v._getGroupsForAttach()"		
 		node_children = this._getAllChildren (export_node)
-		--if DEBUG then for child in node_children do format "child	= % \n" child.name
-		
-		groups = this._getGroups (node_children)
-		--if DEBUG then for _group in groups do format "_group	= % \n" _group.name
-		
-		for _group in groups where this._membersAreGeometry(_group) and this._groupNameIsUppercase(_group) collect _group
-	),
 	
-	/** _get group objects
-	 */
-	function _getGroups _objects =
-	(
-		for obj in _objects where isGroupHead(obj) collect obj
+		for _group in this._getGroups(node_children) where not this._containGroup(_group) and not this._isUpperCaseName(_group.name) collect _group
 	),
-	
+
 	/** Test if group contain only geometry
 	  *
 	  * @return	type	
 	 */
-	function _membersAreGeometry _group =
+	function _containGroup _group =
 	(
-		--format "\n"; print ("ExportChecker_v._membersAreGeometry() _group: " + _group.name)
-
-		non_geometry_objects = for child in this._getGroupMembers(_group) where superClassOf child != GeometryClass collect child
-		if DEBUG then format "non_geometry_objects	= % \n" non_geometry_objects
-		non_geometry_objects.count == 0 --return
+		--format "\n"; print ("ExportChecker_v._containGroup() _group: " + _group.name)
+		(for child in _group.children where isGroupHead child collect child).count > 0 --return
 	),
 	
 	/** _group name has lower case characters
 	 */
-	function _groupNameIsUppercase _group =
+	function _isUpperCaseName group_name =
 	(
-		--format "\n"; print "ExportChecker_v._groupNameIsUppercase()"
-		
-		RegEx = dotNetClass "System.Text.RegularExpressions.RegEx"
-		
-		matches =  RegEx.matches _group.name "[^a-z]" 
-		
-		lowercase_characters = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
-
-		lowercase_characters.count > 0
+		--format "\n"; print "ExportChecker_v._isUpperCaseName()"
+		(( dotNetClass "System.Text.RegularExpressions.RegEx" ).match group_name "[a-z]").success == false
 	),
 	
 	
-	/** _get group members
-	 */
-	function _getGroupMembers _group =
-	(
-		for child in _group.children where isGroupMember (child) collect child
-	),
+	--/** _get group members
+	-- */
+	--function _getGroupMembers _group =
+	--(
+	--	for child in _group.children where isGroupMember (child) collect child
+	--),
 
 	/**  Get all nested children
 	  */
@@ -114,9 +158,17 @@ struct ExportChecker_v
 		for child in obj.children do
 		(
 			append arr child
+			
 			this._getAllChildren child arr:arr
 		)
 		arr
+	),
+	
+	/** _get group objects
+	 */
+	function _getGroups _objects =
+	(
+		for obj in _objects where isGroupHead obj collect obj
 	),
 	
 	/**  

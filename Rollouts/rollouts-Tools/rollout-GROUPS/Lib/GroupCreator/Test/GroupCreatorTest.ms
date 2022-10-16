@@ -26,28 +26,49 @@ function createTestObjects object_type z_pos:0 =
 
 
 delete objects
+delete shapes
 
 /* Create new layer for objects */ 
 LayerManager.newLayerFromName "Groups"
 layer_groups = LayerManager.getLayerFromName "Groups"
 layer_groups.current = true
 
+parent_obj	= text name:"PARENT" text:"PARENT" size:20  pos:[-50,0,0] 
+child_obj	= text name:"CHILD"  text:"CHILD"  size:20  pos:[100,0,0] 
 
 teapots	= createTestObjects(Teapot)
+
 spheres	= (createTestObjects(Sphere)   z_pos:20)
+
 cylinders	= (createTestObjects(Cylinder) z_pos:30)
 
 
-/* Activate default layer to test if groups are created in it`s layers */ 
+/* CREATE HIERARCHY */ 
+--for _teapot in teapots do _teapot.parent = parent_obj
+--child_obj.parent = teapots[1]
+
+
+/* ACTIVATE DEFAULT LAYER to test if groups are created in layer same layer as obejcts */ 
 (LayerManager.getLayer 0).current = true
 
-selectmore teapots
-GroupCreator_v params:#("Teapot", "GROUP", false, false, false )
+/*------------------------------------------------------------------------------
+	CREATE GROUPS
+--------------------------------------------------------------------------------*/
+select teapots
+
+GroupCreator_v "GROUP" "Teapot"
 
 selectmore spheres
-
-GroupCreator_v params:#("Sphere", "GROUP", false, false, false )
-
 selectmore cylinders
 
-GroupCreator_v params:#("Cylinder", "GROUP", false, false, false )
+main_group = (GroupCreator_v "PARENT-GROUP").getGroup()
+
+
+setGroupOpen main_group true
+
+select spheres
+
+nested_group = (GroupCreator_v "NESTED-GROUP").getGroup()
+
+
+

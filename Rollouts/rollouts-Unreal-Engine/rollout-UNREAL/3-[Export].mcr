@@ -26,6 +26,7 @@ category:	"_Unreal"
 buttontext:	"Create"
 toolTip:	"Create Export Node\n\nNode name is asset name\n\nUser props of node caontain export dir and materials dir"
 --icon:	"Groupbox:Nodes"
+icon:	"across:5"
 (
 	ExportNode 	= ExportNode_v()
 
@@ -67,6 +68,11 @@ toolTip:	"Load nodes to list"
 )
 
 
+/*------------------------------------------------------------------------------
+	EXPORT TEST
+--------------------------------------------------------------------------------*/
+
+
 /**  EXPORT
  */
 macroscript	_unreal_export
@@ -82,16 +88,12 @@ toolTip:	"Export selected nodes to files"
 	
 	format "selected_nodes	= % \n" selected_nodes
 	
-	if( selected_nodes.count == 0 ) then
-	(
+	if( selected_nodes.count > 0 ) then
+		with redraw off
+			(ExporterDatasmith_v export_nodes:selected_nodes).export()
+	else
 		messageBox "Export node is not selected" title:"Export node error"
-		
-		return false
-	)
 	
-	
-	with redraw off
-		ExporterDatasmith_v export_nodes:selected_nodes
 
 	redrawViews()	
 )
@@ -109,6 +111,34 @@ toolTip:	"Open export folder"
 	
 	DosCommand ("explorer \""+export_dir+"\"")
 
+)
+
+/*------------------------------------------------------------------------------
+	PRE-EXPORT TEST
+--------------------------------------------------------------------------------*/
+
+/**  
+ */
+macroscript	_unreal_export_test
+category:	"_Unreal"
+buttontext:	"Test"
+toolTip:	"Export selected nodes to files"
+--icon:	"Groupbox:Nodes|height:64"
+(
+	--export_dir = execute ("@"+ "\""+EventFired.Roll.BROWSEPATH_Export_Dir.text +"\"")
+	clearListener()
+	
+	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\Lib\ExporterDatasmith\ExportChecker\ExportChecker.ms" ) -- DEV
+	
+	selected_nodes =  ((NodeList_v(unreal.nodes)).getSelectedNodes())
+		
+	format "selected_nodes	= % \n" selected_nodes
+	
+	if( selected_nodes.count > 0 ) then
+		(ExportChecker_v export_nodes:selected_nodes).test()
+	else
+		messageBox "Export node is not selected" title:"Export node error"
+	
 )
 
 

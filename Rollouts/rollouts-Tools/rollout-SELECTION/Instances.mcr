@@ -54,7 +54,7 @@ toolTip:	"Select References"
 macroscript	selection_filter_unique_objects
 category:	"_Selection"
 buttontext:	"Unique objects"
-toolTip:	"Select only Unique objects.\nDeselect multiple instances"
+toolTip:	"Filter only unique objects from selection"
 --icon:	"#(path, index)"
 (
 	(Selection_v()).filterUniqueObjects()

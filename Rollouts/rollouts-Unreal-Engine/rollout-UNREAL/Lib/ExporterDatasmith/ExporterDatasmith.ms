@@ -19,16 +19,14 @@ struct ExporterDatasmith_v
 	/* inhered */
 	/* properties */
 	
-	
-	private
-	
-
 	/** Export
 	  *
 	  *
 	 */
-	function _export =
+	function export =
 	(
+		GLOBAL_SELECTION_LAST_ENABLED = false
+		
 		ExportChecker = ExportChecker_v export_nodes: export_nodes
 		
 		ExportChecker.validateNodes()
@@ -38,7 +36,7 @@ struct ExporterDatasmith_v
 		holdMaxFile()
 		--format "ExportChecker.export_nodes	= % \n" ExportChecker.export_nodes
 		if( ExportChecker.groups_to_attach.count > 0 ) then
-			GroupAttacher_v groups:ExportChecker.groups_to_attach
+			GroupToObejctBaker_v groups:ExportChecker.groups_to_attach
 
 		node_name = ExportChecker.export_nodes[1].name
 
@@ -58,8 +56,13 @@ struct ExporterDatasmith_v
 			fetchMaxFile quiet:true
 			
 		print ("EXPORT OF " +node_name+ " SUCCESSFUL " + (getLocalTime())[5] as string + ":"+ (getLocalTime())[6] as string )
+		
+		GLOBAL_SELECTION_LAST_ENABLED = true
 	),
 
+	private
+	
+	
 	/** Export
 	 */
 	function _exportNode export_node export_dir =
@@ -95,7 +98,5 @@ struct ExporterDatasmith_v
 	(
 		--print("ExporterDatasmith_v.onCreate()")
 		ConstructPropeties test:this
-		
-		this._export()
 	)	
 )

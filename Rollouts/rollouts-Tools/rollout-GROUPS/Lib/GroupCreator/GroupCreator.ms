@@ -8,7 +8,14 @@
   *
  */
 struct GroupCreator_v
-(	
+(
+	/* PARAMS */
+	group_name	= "",
+	member_name	= "",
+	add_to_layer	= true,
+	align_transform	= true,
+	--relink_hierarchy	= true,
+ 
 	/* properties */
 	_group,
 	first_object,
@@ -21,9 +28,20 @@ struct GroupCreator_v
 	members_children	= #(), -- children of grouped objects
 	
 	
-	params      = #(),
-	params_keys = #(#members_name, #group_name, #add_to_layer, #align_transform, #relink_hierarchy ),
 
+	
+	params      = #(),
+	params_keys = #(#member_name, #group_name, #add_to_layer, #align_transform, #relink_hierarchy ),
+
+	
+	/** Get group
+	 */
+	function getGroup =
+	(
+		--format "\n"; print "GroupCreator_v.getGroup()"
+		_group --return
+	),
+	
 	/** Create group
 	 */
 	function _createGroup  =
@@ -39,28 +57,28 @@ struct GroupCreator_v
 
 			this._setFirstObj()			
 			format "first_object	= % \n" first_object
-			format "members	= % \n" members
+			--format "members	= % \n" members
 			
 			--this._saveObjectsHierarchy()
 			
-			--format "params[1]	= % \n" params[1]
+			--format "`	= % \n" params[1]
 			--format "params[2]	= % \n" params[2]
 
 			this._setFirstObjectToGroup()
 			
-			if params[1] != "" then
+			if member_name != "" then
 				this._renameMembers()
 				
-			if params[3] then
+			if add_to_layer then
 				this._addGroupToLayer()
 			
-			if params[4] then
+			if align_transform then
 				this._alignTransformation()
 			
 			this._setOtherNodesToGroup()
-			--	
-			--if params[5] then
-			--	this._relinkHierarchy()
+				
+			--if relink_hierarchy then
+				--this._relinkHierarchy()
 		)
 		GLOBAL_SELECTION_LAST_ENABLED = true
 	),
@@ -84,7 +102,7 @@ struct GroupCreator_v
 		--)
 		members = for o in selection collect o
 		
-		--for _member in members do format "_member	= % \n" _member.name
+		for _member in members do format "_member	= % \n" _member.name
 	),
 	
 	/** Set first_object
@@ -99,15 +117,17 @@ struct GroupCreator_v
 	  *
 	  * Group name rules:
 	  *	1) Use group name if defined
-	  *	2) Use "{MEMBER NAME}-GROUP" if member name is defined is  defined and group name is not
+	  *	2) Use member name is defined is defined and group name is not
 	  *	3) Use default max group name
+
+
+	  --*	2) Use "{MEMBER NAME}-GROUP" if member name is defined is defined and group name is not DEPRECATED
 	 */
 	function _setFirstObjectToGroup =
 	(
 		format "\n"; print "GroupCreator_v.createGroup()"
 
-		--group first_object name:( if params[2] != "" then params[2] else toUpper members[2].name ) select:true --wirecolor:params[2]
-		group first_object name:( if params[2] != "" then params[2] else if params[1]  != "" then toUpper params[1] + "-GROUP" else unsupplied ) select:true --wirecolor:params[2]
+		group first_object name:( if group_name != "" then group_name else if member_name  != "" then member_name else unsupplied ) select:true --wirecolor:params[2]
 		
 		_group = selection[1]
 		--format "_group	= % \n" _group
@@ -125,28 +145,44 @@ struct GroupCreator_v
 
 		--format "nodes_to_attach.count	= % \n" nodes_to_attach.count
 		
-		if members.count > 1 then
-				attachNodesToGroup nodes_to_attach _group		
+		attached_groups = #()
+		
+		for _member in nodes_to_attach where isGroupMember _member do appendIfUnique attached_groups _member.parent
+		format "attached_groups	= % \n" attached_groups
+		
+		--for attached_group in attached_groups do
+		--	setGroupOpen attached_group true
+		--
+		--
 
+		if attached_groups.count > 0 and findItem members attached_groups[1] == 0 then
+		(
+			setGroupOpen attached_groups[1] true
+			detachNodesFromGroup nodes_to_attach
+
+		)
+		
 			
+		attachNodesToGroup nodes_to_attach _group		
+		
 	),
 	
-	/** Save objects members_children and parent of first object
-	 */
-	function _saveObjectsHierarchy =
-	(
-		format "\n"; print "GroupCreator_v._saveObjectsHierarchy()"
-		first_object_parent = first_object.parent
-		format "first_object_parent	= % \n" first_object_parent
-		for obj in members where obj.children.count > 0 do members_children += obj.children 
-	),
+	--/** Save objects members_children and parent of first object
+	-- */
+	--function _saveObjectsHierarchy =
+	--(
+	--	format "\n"; print "GroupCreator_v._saveObjectsHierarchy()"
+	--	first_object_parent = first_object.parent
+	--	format "first_object_parent	= % \n" first_object_parent
+	--	for obj in members where obj.children.count > 0 do members_children += obj.children 
+	--),
 	
 	/** Rename group members
 	 */
 	function _renameMembers =
 	(
 		--format "\n"; print "GroupCreator_v._renameMembers()"
-		for i = 1 to members.count do members[i].name = params[1] + "-" + ( if i < 10 and members.count < 100 then "0" else "00" ) + i as string
+		for i = 1 to members.count do members[i].name = member_name + "-" + ( if i < 10 and members.count < 100 then "0" else "00" ) + i as string
 	),
 	
 	/** Align group transformation by 1st object
@@ -180,17 +216,17 @@ struct GroupCreator_v
 		last_sel_layer.addnode _group
 	),
 
-	/** Relink hierarchy
-	 */
-	function _relinkHierarchy =
-	(
-		--format "\n"; print "GroupCreator_v._relinkHierarchy()"
-		if first_object_parent != undefined then 
-			_group.parent = first_object_parent
-		
-		for child in members_children where isGroupMember child == false do
-			child.parent = _group		
-	),
+	--/** Relink hierarchy
+	-- */
+	--function _relinkHierarchy =
+	--(
+	--	--format "\n"; print "GroupCreator_v._relinkHierarchy()"
+	--	if first_object_parent != undefined then 
+	--		_group.parent = first_object_parent
+	--	
+	--	for child in members_children where isGroupMember child == false do
+	--		child.parent = _group		
+	--),
 
 	/**  
 	 */

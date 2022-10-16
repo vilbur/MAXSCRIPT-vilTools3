@@ -9,7 +9,7 @@ buttonText:	"Convert Case"
 tooltip:	"Convert case sense of selected object names"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
-	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Rename.mcr" ) -- DEV
+	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
 	for obj in selection do 
 	(
@@ -41,16 +41,6 @@ tooltip:	"Convert case sense of selected object names"
 	)
 	
 )
-
---function regexGetMatches string pattern ignorecase:true =
---(
---	rx         = dotNetClass "System.Text.RegularExpressions.RegEx"
---	rx_options	= dotNetClass "System.Text.RegularExpressions.RegexOptions"
---	
---	matches = if (ignorecase) then rx.matches string pattern rx_options.IgnoreCase else rx.matches string pattern 
---	
---	(for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
---),
 
 /*------------------------------------------------------------------------------
 	GROUPBOX PREFIX
