@@ -21,7 +21,7 @@ macroscript	_unreal_asset_path
 category:	"_Unreal"
 buttontext:	"[Materials Dir]"
 --toolTip:	"Create Export Node"
-icon:	"control:BrowsePath|across:1"
+icon:	"control:BrowsePath|ini:false|across:1"
 --icon:	"control:BrowsePath|across:1|initialDir:c:\\Users\\%USERNAME%\\Documents\\Unreal Projects"
 (
 	for _node in (NodeList_v()).getSelectedNodes() do
@@ -40,13 +40,16 @@ toolTip:	"Load materials"
 icon:	""
 (
 	--format "EventFired	= % \n" EventFired
-	asset_dir = execute ("@"+ "\""+unreal.Materials_path.text +"\"")
-
+	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\2-Materials.mcr")
+	
+	asset_dir = execute ("@"+ "\""+unreal.Materials_dir.text +"\"")
+	format "asset_dir	= % \n" asset_dir
 	files = getFiles (asset_dir+"\*.uasset")
-
-	file_names = for file in files collect getFilenameFile(filenameFromPath file)
-
+	format "files	= % \n" files
+	file_names = for file in files collect toLower (getFilenameFile(filenameFromPath file))
+	format "file_names	= % \n" file_names
 	unreal.Assign_Materials.items = file_names
+	
 )
 
 /**  
@@ -70,4 +73,11 @@ icon:	"control:Dropdownlist|width:256"
 	--format "mat_in_scene	= % \n" mat_in_scene
 
 	$.material = if( mat_in_scene.count > 0 ) then mat_in_scene[1] else standardMaterial name:materials[selected] diffuse:(color ( random 64 128) ( random 64 128) ( random 64 128))
+	
+	
+	
 )
+
+
+
+

@@ -1,18 +1,23 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ObjectRenamer/ObjectRenamer.ms" )
 
-
+/*------------------------------------------------------------------------------
+	EDIT TEXT
+--------------------------------------------------------------------------------*/
 
 /**  SEARCH
   *	
   */
-macroscript selection_edit_search_in_name
+macroscript selection_edit_search_in_names
 category:	"Selection"
 buttonText:	"[search in name]"
-tooltip:	"Search in selection names\nPLACEHOLDER - DOESN'T WORK YET"
+tooltip:	"Search text in names of selection"
 icon:	"control:editText|across:3"
 --icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 (
+	format "EventFired	= % \n" EventFired
+	--search_text = ROLLOUT_selection.search_in_name.text
 	
+	--format "search_text	= % \n" search_text
 )
 
 /**  REPlACE
@@ -21,13 +26,16 @@ icon:	"control:editText|across:3"
 macroscript selection_edit_replace_in_names
 category:	"Selection"
 buttonText:	"[replace in name]"
-tooltip:	"Replace in selection names\nPLACEHOLDER - DOESN'T WORK YET"
+tooltip:	"Replace text in names of selection"
 icon:	"control:editText|across:3"
 (
-	
+	format "EventFired	= % \n" EventFired
+
 )
 
-
+/*------------------------------------------------------------------------------
+	BUTTON Search & Replace
+--------------------------------------------------------------------------------*/
 
 /**  
   *	
@@ -35,9 +43,26 @@ icon:	"control:editText|across:3"
 macroscript selection_search_and_replace
 category:	"Selection"
 buttonText:	"Search & Replace"
-tooltip:	"Search & Replace in names of selection\nPLACEHOLDER - DOESN'T WORK YET"
+tooltip:	"Search & Replace in names of selection"
 icon:	"across:3"
 (
-	messageBox "Placeholder" title:"" 
-				
+	
+	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Search And Replace Object Name.mcr")
+
+	--messageBox "Placeholder" title:"" 
+	format "EventFired	= % \n" EventFired
+	
+	for obj in selection do
+	(
+		search_text  = ROLLOUT_selection.search_in_name.text
+		replace_text = ROLLOUT_selection.replace_in_name.text
+		--format "search_text	= % \n" search_text
+		--format "replace_text	= % \n" replace_text
+		
+		if search_text != "" then 
+			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" search_text ).Replace obj.name replace_text
+			--obj_name = ( dotNetObject "System.Text.RegularExpressions.Regex" "left" ).Replace obj.name "right"
+			--format "obj_name	= % \n" obj_name
+	)
+	
 )

@@ -18,8 +18,9 @@ struct GroupAttacher_v
 		--format "selected_groups	= % \n" selected_groups
 		
 		root_group = selected_groups[1]
-		--format "root_group	= % \n" root_group
-		attaching_nodes = for obj in selection where findItem selected_groups obj == 0 and findItem selected_groups obj.parent == 0 collect obj
+		format "root_group	= % \n" root_group
+		--attaching_nodes = for obj in selection where findItem selected_groups obj == 0 and findItem selected_groups obj.parent == 0 collect obj
+		attaching_nodes = for obj in selection where findItem root_group.children obj == 0 and findItem root_group.children obj.parent == 0 collect obj
 		--format "attaching_nodes	= % \n" attaching_nodes
 	
 		InstanceMgr.GetInstances selected_groups[1] &destination_groups

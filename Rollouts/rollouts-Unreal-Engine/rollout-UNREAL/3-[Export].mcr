@@ -184,24 +184,36 @@ icon:	"control:multilistbox|across:2"
 
 /*------------------------------------------------------------------------------
 	
-	BUG IN UI FRAMEWORK
-	
-	second macroscript of multilistbox does not create secondary events
-	
+
 --------------------------------------------------------------------------------*/
 
---/**  NODE LIST
--- */
---macroscript	_unreal_export_nodes_list_righclick
---category:	"_Unreal"
---buttontext:	"Nodes"
---toolTip:	"Nodes to export"
---icon:	"control:multilistbox|across:2"
---(
---	messageBox "Yupiii" title:"Title"  beep:false  
---)
---
+/**  NODE LIST
+ */
+macroscript	_unreal_export_nodes_list_doubleclick
+category:	"_Unreal"
+buttontext:	"Nodes"
+toolTip:	"Nodes to export"
+icon:	"control:multilistbox|across:2"
+(
+	--messageBox "Doubleclick" title:"Title"  beep:false
+	--format "EventFired	= % \n" EventFired
+	selected_nodes =  ((NodeList_v(unreal.nodes)).getSelectedNodes())
 
+	select ((ExporterDatasmith_v export_nodes:selected_nodes).selectChildNodes())
+
+)
+
+
+/**  NODE LIST
+ */
+macroscript	_unreal_export_nodes_list_righclick
+category:	"_Unreal"
+buttontext:	"Nodes"
+toolTip:	"Nodes to export"
+icon:	"control:multilistbox|across:2"
+(
+	messageBox "Rightclick" title:"Title"  beep:false  
+)
 
 
 

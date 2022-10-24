@@ -17,7 +17,8 @@ tooltip:	"Set different material ID for each object"
 	)
  
 	select _selection
-	completeRedraw() 
+	
+	CompleteRedraw() 
 )
 
 /**  
@@ -25,21 +26,21 @@ tooltip:	"Set different material ID for each object"
 macroscript	material_select_faces_by_material_id
 category:	"_Material"
 buttontext:	"Sel Faces by Mat"
-toolTip:	"Select faces by material id"
+toolTip:	"Select faces by material id - PALCEHOLDER"
 --icon:	"#(path, index)"
 (
-	Epoly 	=  Epoly_v()
-	EditPolyMaterial 	=  EditPolyMaterial_v()
-
-	faces_ids_merged	= #{}
-	face_count	= Epoly.count 4
-	mat_ids	= EditPolyMaterial.getMatId facelist:( Epoly.getSel #Face )
-
-	faces_ids	= EditPolyMaterial.getFacesByMatId ( makeUniqueArray  mat_ids )
-	for faces_id in faces_ids do
-		join faces_ids_merged faces_id
-	
-	Epoly.setSel #Face faces_ids_merged
+	--Epoly 	=  Epoly_v()
+	--EditPolyMaterial 	=  EditPolyMaterial_v()
+	--
+	--faces_ids_merged	= #{}
+	--face_count	= Epoly.count 4
+	--mat_ids	= EditPolyMaterial.getMatId facelist:( Epoly.getSel #Face )
+	--
+	--faces_ids	= EditPolyMaterial.getFacesByMatId ( makeUniqueArray  mat_ids )
+	--for faces_id in faces_ids do
+	--	join faces_ids_merged faces_id
+	--
+	--Epoly.setSel #Face faces_ids_merged
 )
 
 
@@ -48,22 +49,22 @@ toolTip:	"Select faces by material id"
 macroscript	material_random_material
 category:	"_Material"  
 buttonText:	"Random"
-tooltip:	"Set random material id for selection"
+tooltip:	"Set random material id for selection - PALCEHOLDER"
 (
-	--EditPoly = Epoly_v()
-	_selection = (Selection_v()).get()
-	print ( "_selection=" + _selection.count as string )
-	mat_id	= random 1 32
-	
-	for i=1 to _selection.count do
-	(
-		select _selection[i]
-		(Epoly_v()).setMatId mat_id
-	)
- 
-	select _selection
-
-	completeRedraw() 
+	----EditPoly = Epoly_v()
+	--_selection = (Selection_v()).get()
+	--print ( "_selection=" + _selection.count as string )
+	--mat_id	= random 1 32
+	--
+	--for i=1 to _selection.count do
+	--(
+	--	select _selection[i]
+	--	(Epoly_v()).setMatId mat_id
+	--)
+	--
+	--select _selection
+	--
+	--CompleteRedraw() 
 )
 
 /**  
@@ -72,7 +73,7 @@ macroscript	material_select_objs_by_material
 category:	"_Material"  
 buttonText:	"Select By Mat"
 tooltip:	"Select Objects By Material"
-icon:	"border:false"
+--icon:	"border:false"
 (
 	-- <array>SelectObjectByMaterial - returns array of objects a material is assigned to
 	fn SelectObjectByMaterial reqMatEditOpen materialIndex = (
@@ -103,24 +104,27 @@ icon:	"border:false"
 		objarr
 	)
 	
-	on execute do (
+	on execute do
+	(
 		clearSelection()
+	
 		max create mode
+	
 		if (objs = SelectObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
 			select objs	
 	)
 	
-	on altexecute type do (
-		clearSelection()
-		max create mode
-		if (objs = SelectObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
-			select objs	
-			
-		for o in objs where not(o.layer.on) do o.layer.on = true
-		for o in objs where o.layer.isFrozen do o.layer.isFrozen = false
-		for o in objs where o.isHidden do o.isHidden = false
-		for o in objs where o.isFrozen do o.isFrozen = false
-		
-		select objs
-	)
+	--on altexecute type do (
+	--	clearSelection()
+	--	max create mode
+	--	if (objs = SelectObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
+	--		select objs	
+	--		
+	--	for o in objs where not(o.layer.on) do o.layer.on = true
+	--	for o in objs where o.layer.isFrozen do o.layer.isFrozen = false
+	--	for o in objs where o.isHidden do o.isHidden = false
+	--	for o in objs where o.isFrozen do o.isFrozen = false
+	--	
+	--	select objs
+	--)
 )

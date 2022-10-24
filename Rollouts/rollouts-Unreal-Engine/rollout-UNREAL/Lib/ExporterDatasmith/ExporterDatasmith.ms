@@ -60,6 +60,21 @@ struct ExporterDatasmith_v
 		GLOBAL_SELECTION_LAST_ENABLED = true
 	),
 
+	/** Select child nodes
+	 */
+	function selectChildNodes =
+	(
+		format "\n"; print "ExporterDatasmith_v.selectChildNodes()"
+		
+		all_children	= #()
+		
+		for export_node in export_nodes do 
+			all_children += this._getAllChildren(export_node)
+			
+		all_children --return 
+	),
+	
+	
 	private
 	
 	

@@ -150,6 +150,79 @@ icon:	"Menu:_Group|title:Ungroup"
 )
 
 /*------------------------------------------------------------------------------
+	OPEN GROUP
+--------------------------------------------------------------------------------*/
+
+/**  Open all Groups in hierarchy
+ *	
+ */
+macroscript	group_open
+category:	"_Group"
+buttontext:	"Open"
+toolTip:	"Open selected groups"
+--icon:	"Menu:_Group|title:Close Group"
+--icon:	"id:group_open_hierarchy"
+(
+	--undo "Groups Open" on
+	--(
+	--	
+	--)	
+	actionMan.executeAction 0 "40142"  -- Groups: Group Open
+)
+
+/**  Open all Groups in hierarchy
+ *	
+ */
+macroscript	group_open_recursively
+category:	"_Group"
+buttontext:	"Open"
+toolTip:	"Open all groups in hierarchy"
+--icon:	"Menu:_Group|title:Close Group"
+--icon:	"id:group_open_hierarchy"
+(
+	actionMan.executeAction 0 "63561"  -- Groups: Group Open Recursively
+)
+
+
+/*------------------------------------------------------------------------------
+	CLOSE GROUP
+--------------------------------------------------------------------------------*/
+
+/**  Open 1st Groups in hierarchy
+ *	
+ *	Function is overkilled with modes, mode is not used, but let it as is for future
+ */
+macroscript	group_close
+category:	"_Group"
+buttontext:	"Close"
+toolTip:	"Close selected groups"
+icon:	"id:group_close"
+--icon:	"Menu:_Group|title:Close Group"
+(
+	actionMan.executeAction 0 "40143"  -- Groups: Group Close
+)
+
+/**  Close all Groups in hierarchy
+ *	
+ */
+macroscript	group_close_hierarchy
+category:	"_Group"
+buttontext:	"Close"
+toolTip:	"Close all groups in hierarchy"
+--icon:	"Menu:_Group|title:Close Group"
+--icon:	"id:group_open_hierarchy"
+(
+	undo "Groups Close" on
+	(
+		_selection	= for o in selection collect o
+		--format "_selection	= % \n" _selection
+		for o in selection where isGroupHead o do setGroupOpen o false
+
+		select _selection
+	)	
+)
+
+/*------------------------------------------------------------------------------
 	OPEN\CLOSE TOGGLE
 --------------------------------------------------------------------------------*/
 
@@ -200,66 +273,6 @@ icon:	"Menu:_Group|title:Open\Close Group Toggle"
 	--completeRedraw()
 
 )
-
---/**  Open all Groups in hierarchy
--- *	
--- */
---macroscript	group_open_hierarchy
---category:	"_Group"
---buttontext:	"Open"
---toolTip:	"Open all groups in hierarchy"
-----icon:	"Menu:_Group|title:Close Group"
-----icon:	"id:group_open_hierarchy"
---(
---	undo "Groups Open" on
---	(
---		_selection	= for o in selection collect o
---		--format "_selection	= % \n" _selection
---		for o in selection where isGroupHead o do setGroupOpen o true
---		
---		select _selection
---	)	
---	
---)
-
-/*------------------------------------------------------------------------------
-	CLOSE GROUP
---------------------------------------------------------------------------------*/
-
-/**  Open 1st Groups in hierarchy
- *	
- *	Function is overkilled with modes, mode is not used, but let it as is for future
- */
-macroscript	group_close
-category:	"_Group"
-buttontext:	"Close"
-toolTip:	"Close selected groups"
-icon:	"id:group_close"
---icon:	"Menu:_Group|title:Close Group"
-(
-	actionMan.executeAction 0 "40143"  -- Groups: Group Close
-)
-
-/**  Close all Groups in hierarchy
- *	
- */
-macroscript	group_close_hierarchy
-category:	"_Group"
-buttontext:	"Close"
-toolTip:	"Close all groups in hierarchy"
---icon:	"Menu:_Group|title:Close Group"
---icon:	"id:group_open_hierarchy"
-(
-	undo "Groups Close" on
-	(
-		_selection	= for o in selection collect o
-		--format "_selection	= % \n" _selection
-		for o in selection where isGroupHead o do setGroupOpen o false
-
-		select _selection
-	)	
-)
-
 /*------------------------------------------------------------------------------
 	ATTACH
 --------------------------------------------------------------------------------*/

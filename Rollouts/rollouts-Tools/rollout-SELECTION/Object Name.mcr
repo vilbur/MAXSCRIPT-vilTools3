@@ -6,7 +6,7 @@
 macroscript selection_name_convert_case_sence
 category:	"Selection"
 buttonText:	"Convert Case"
-tooltip:	"Convert case sense of selected object names"
+tooltip:	"Convert case of selected object names\n\nCapital Case >>> UPPER CASE >>> lower case"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
 	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
@@ -42,10 +42,62 @@ tooltip:	"Convert case sense of selected object names"
 	
 )
 
+
+/**  SUFFIX TEXT
+  *	
+  */
+macroscript selection_remove_suffix_text
+category:	"Selection"
+buttonText:	"[remove suffix text]"
+tooltip:	"RegEx of suffix to remove"
+icon:	"control:editText|across:2|width:256"
+--icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
+(
+	format "EventFired	= % \n" EventFired
+	--search_text = ROLLOUT_selection.search_in_name.text
+	
+	
+	if EventFired.val == " " then 
+		EventFired.control.text = "[-_]|LEFT|RIGHT|\d+"
+	
+	--format "search_text	= % \n" search_text
+	
+)
+
+/**  
+  *	
+  */
+macroscript selection_remove_numbered_suffix
+category:	"Selection"
+buttonText:	"Remove suffix"
+tooltip:	"Remove suffix from object name"
+icon:	"across:2|align:#right"
+--icon:	"control:checkbox|Groupbox:Prefix|across:1"
+(
+	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
+
+	undo "Remove suffix" on
+	(
+		
+		suffix_text = ROLLOUT_selection.remove_suffix_text.text
+		format "suffix_text	= % \n" suffix_text
+		for obj in selection do 
+		--(
+		--	--obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_]*(Left|LEFT|left|Right|RIGHT|right)\d*" ).Replace obj.name ""
+			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" ("("+suffix_text+")$")  ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase  ).Replace obj.name ""
+		--	
+		--
+		--)
+	)
+	
+	
+)
+
 /*------------------------------------------------------------------------------
 	GROUPBOX PREFIX
 --------------------------------------------------------------------------------*/
 
+--
 --/**  
 --  *	
 --  */
