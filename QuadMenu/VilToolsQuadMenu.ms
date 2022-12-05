@@ -1,5 +1,5 @@
 
-filein( getFilenamePath(getSourceFileName()) + "/../../Library/MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms" ) -- ../../Library/MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms
+filein( getFilenamePath(getSourceFileName()) + "/../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms" ) -- ../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms
 
 DeafaultQuad 	= QuadMenu_v("Default Viewport Quad")
 
@@ -67,7 +67,7 @@ function removeItemsQuad4 =
 	SplineToolsMenu2.removeItem("Connect")
 	SplineToolsMenu2.removeItem("Weld Vertices")
 
-	/* CONTEXT EDIT POLY TOOLS 2 */ 
+	/* CONTEXT EDIT POLY TOOLS 2 */
 	EditPolyMenu2 = Menu_v("Context Edit Poly Tools 2")
 
 	EditPolyMenu2.removeItem("Create")
@@ -109,7 +109,7 @@ function editQuad3 =
 	--format "\n"; print ".editMenuContextSplineTools1()"
 	SplineToolsMenu1 = Menu_v("Context Spline Tools 1")
 
-	/* Edit Edit/Editable Spline Menu */ 
+	/* Edit Edit/Editable Spline Menu */
 	--EditSplineSubMenu = SplineToolsMenu1.getSubMenu("Edit/Editable Spline Menu")
 
 	--EditSplineSubMenu.moveItem("Reset Tangents") 5
@@ -133,7 +133,7 @@ function editQuad4 =
 	EditPolyMenu = Menu_v("Context Edit Poly Tools 2")
 	EditPolyMenu.addItem ("_Epoly-Edit") ("epoly_remove") --index:1
 
-	/* ADD CUSTOM MENUS */ 
+	/* ADD CUSTOM MENUS */
 	QuadMenu4.addSeparator()
 
 	QuadMenu4.addMenu("_Context Spline")	index:1 flat:true
@@ -162,7 +162,7 @@ editQuad2()
 editQuad3()
 editQuad4()
 
-/* Set options */ 
+/* Set options */
 DeafaultQuad.setRightClick()
 
 DeafaultQuad.showAllQuads()
