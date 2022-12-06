@@ -1,7 +1,10 @@
 clearListener()
 
- content = "/Rollouts"
- -- content = "/Rollouts-Test"
+content = "/Rollouts"
+ -- content = "/Rollouts-Test" -- DEV
+
+global VILTOOLS_DIR = trimRight (pathConfig.stripPathToLeaf(getFilenamePath(getSourceFileName()))) "\\"
+
 
 /** Import structures used in macroscripts on Max start
   *
@@ -17,7 +20,7 @@ clearListener()
  */
 function importStdScripts =
 (
-	rollouts_path = "$userscripts/vilTools3/Rollouts/rollouts-Tools"
+	rollouts_path = "$userscripts/"+VILTOOLS_DIR+"/Rollouts/rollouts-Tools"
 
 	filein_files = #(
 		rollouts_path + "/rollout-TOOLS/Lib/ToolMode.ms",
@@ -34,6 +37,7 @@ function importStdScripts =
 
 	close stdscript_file
 
+	filein stdscript_file
 )
 
 if content != "/Rollouts-Test" then -- DEV

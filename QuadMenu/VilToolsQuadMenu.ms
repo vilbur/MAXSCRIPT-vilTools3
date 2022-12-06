@@ -120,7 +120,6 @@ function editQuad3 =
 */
 function editQuad4 =
 (
-
 	/* CONTEXT SPLINE TOOLS 2 */
 	SplineToolsMenu2 = Menu_v("Context Spline Tools 2")
 
@@ -129,9 +128,11 @@ function editQuad4 =
 	SplineToolsMenu2.moveItem("Cycle Vertices") 3
 	SplineToolsMenu2.addSeparator index:4
 
+
 	/* CONTEXT EDIT POLY TOOLS 2 */
 	EditPolyMenu = Menu_v("Context Edit Poly Tools 2")
 	EditPolyMenu.addItem ("_Epoly-Edit") ("epoly_remove") --index:1
+
 
 	/* ADD CUSTOM MENUS */
 	QuadMenu4.addSeparator()
@@ -143,7 +144,10 @@ function editQuad4 =
 	QuadMenu4.addMenu("_Epoly-Edges")	index:3 flat:true
 
 	EpolyEdgesMenu = Menu_v("_Epoly-Edges")
-	EpolyEdgesMenu.addSeparator index:1
+	EpolyEdgesMenu.addItem ("PolyTools") ("SwiftLoop") index:1
+	EpolyEdgesMenu.addSeparator index:2
+
+
 
 )
 
@@ -151,7 +155,7 @@ function editQuad4 =
 	EDIT MENUS
 --------------------------------------------------------------------------------*/
 
---clearListener()
+------clearListener()
 removeItemsQuad1()
 removeItemsQuad2()
 removeItemsQuad3()
