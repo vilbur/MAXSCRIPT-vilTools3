@@ -1,22 +1,26 @@
 
-filein( getFilenamePath(getSourceFileName()) + "/../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms" ) -- ../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms
+MainQuad 	= QuadMenu_v("Default Viewport Quad")
 
-DeafaultQuad 	= QuadMenu_v("Default Viewport Quad")
+QuadMenu1	= MainQuad.Quads[1]
+QuadMenu2	= MainQuad.Quads[2]
+QuadMenu3	= MainQuad.Quads[3]
+QuadMenu4	= MainQuad.Quads[4]
 
-QuadMenu1	= DeafaultQuad.Quads[1]
-QuadMenu2	= DeafaultQuad.Quads[2]
-QuadMenu3	= DeafaultQuad.Quads[3]
-QuadMenu4	= DeafaultQuad.Quads[4]
 
-/*------------------------------------------------------------------------------
-	CLEAN DEFAULT ITEMS
---------------------------------------------------------------------------------*/
+/*==============================================================================
 
-/** BOTTOM RIGHT quad menu - EDIT default items
+
+	REMOVE DEFAULT ITEMS
+
+
+================================================================================*/
+
+/**
+		BOTTOM RIGHT quad menu - EDIT default items
  */
 function removeItemsQuad1 =
 (
-	----format "\n"; print ".removeItemsQuad1()"
+	----format "\n"; print "VilToolsQuadMenu.removeItemsQuad1()"
 	QuadMenu1.removeItem("Move")
 	QuadMenu1.removeItem("Rotate")
 	QuadMenu1.removeItem("Scale")
@@ -32,7 +36,8 @@ function removeItemsQuad1 =
 	QuadMenu1.cleanSeparators()
 )
 
-/** RIGHT TOP quad menu - EDIT default items
+/**
+		RIGHT TOP quad menu - EDIT default items
 */
 function removeItemsQuad2 =
 (
@@ -44,18 +49,26 @@ function removeItemsQuad2 =
 
 )
 
-/** TOP LEFT quad menu - EDIT default items
-
+/**
+		TOP LEFT quad menu - EDIT default items
 */
 function removeItemsQuad3 =
 (
 	QuadMenu3.removeItem("Sub-objects")
-	QuadMenu3.removeSeparator(1)
+	--QuadMenu3.removeSeparator(1)
 
-	QuadMenu1.cleanSeparators()
+	EditPolyToolsMenu1 = Menu_v("Context Edit Poly Tools 1")
+	EditPolyToolsMenu1.removeItem("Convert to Vertex")
+	EditPolyToolsMenu1.removeItem("Convert to Edge")
+	EditPolyToolsMenu1.removeItem("Convert to Face")
+
+
+	QuadMenu3.cleanSeparators()
+
 )
 
-/** BOTTOM LEFT quad menu - EDIT default items
+/**
+		BOTTOM LEFT quad menu - EDIT default items
 */
 function removeItemsQuad4 =
 (
@@ -73,50 +86,70 @@ function removeItemsQuad4 =
 	EditPolyMenu2.removeItem("Create")
 	EditPolyMenu2.removeItem("Remove")
 	EditPolyMenu2.removeItem("Weld")
+	EditPolyMenu2.cleanSeparators()
 
 	QuadMenu1.cleanSeparators()
 )
 
-/*------------------------------------------------------------------------------
-	ADD CUSTOM ITEMS
---------------------------------------------------------------------------------*/
+/*==============================================================================
 
-/** BOTTOM RIGHT quad menu - ADD default items
+
+	ADD CUSTOM ITEMS
+
+
+================================================================================*/
+
+/**
+		BOTTOM RIGHT quad menu - ADD default items
  */
 function editQuad1 =
 (
 	--format "\n"; print ".editQuad1()"
-	QuadMenu1.addMenu("_Modifiers")	index:1
+	--QuadMenu1.addMenu("_Modifiers")	index:1
 
+	--QuadMenu1.addSeparator index:2
+
+	--QuadMenu1.addMenu("_Tools")	flat:true
+
+	QuadMenu1.addItem ("_Modifiers") ("modifier_add_editpoly") index:1
 	QuadMenu1.addSeparator index:2
 
-	QuadMenu1.addMenu("_Tools")	flat:true
 
 )
 
-/** RIGHT TOP quad menu - ADD default items
+/**
+		RIGHT TOP quad menu - ADD default items
 */
 function editQuad2 =
 (
 
 )
 
-/** TOP LEFT quad menu - ADD default items
-
+/**
+		TOP LEFT quad menu - ADD default items
 */
 function editQuad3 =
 (
-	--format "\n"; print ".editMenuContextSplineTools1()"
+	--format "\n"; print "VilToolsQuadMenu.editQuad3()"
+
+	/* CONTEXT SPLINE TOOLS 2 */
 	SplineToolsMenu1 = Menu_v("Context Spline Tools 1")
 
-	/* Edit Edit/Editable Spline Menu */
-	--EditSplineSubMenu = SplineToolsMenu1.getSubMenu("Edit/Editable Spline Menu")
 
-	--EditSplineSubMenu.moveItem("Reset Tangents") 5
-	--EditSplineSubMenu.removeItem("Reset Tangents")
+	/* CONTEXT EDIT POLY TOOLS 1 */
+	EditPolyMenu1 = Menu_v("Context Edit Poly Tools 1")
+
+
+	/* HARD EDGES MENU */
+	HardEdgesMenu = Menu_v("_Epoly-Hard-Edges")
+	HardEdgesMenu.addSeparator index:1
+
+	QuadMenu3.addMenu("_Epoly-Hard-Edges")	 flat:false --index:2
+
 )
 
-/** BOTTOM LEFT quad menu - ADD default items
+/**
+		BOTTOM LEFT quad menu - ADD default items
 */
 function editQuad4 =
 (
@@ -131,7 +164,6 @@ function editQuad4 =
 
 	/* CONTEXT EDIT POLY TOOLS 2 */
 	EditPolyMenu = Menu_v("Context Edit Poly Tools 2")
-	EditPolyMenu.addItem ("_Epoly-Edit") ("epoly_remove") --index:1
 
 
 	/* ADD CUSTOM MENUS */
@@ -141,21 +173,23 @@ function editQuad4 =
 
 	QuadMenu4.addMenu("_Epoly-Vertex")	index:1 flat:true
 
-	QuadMenu4.addMenu("_Epoly-Edges")	index:3 flat:true
+	QuadMenu4.addMenu("_Epoly-Edit")	index:1 flat:true
+
+	QuadMenu4.addMenu("_Epoly-Edges")	index:1 flat:true
+
 
 	EpolyEdgesMenu = Menu_v("_Epoly-Edges")
-	EpolyEdgesMenu.addItem ("PolyTools") ("SwiftLoop") index:1
-	EpolyEdgesMenu.addSeparator index:2
-
-
-
+	--EpolyEdgesMenu.addSeparator index:1
 )
 
-/*------------------------------------------------------------------------------
-	EDIT MENUS
---------------------------------------------------------------------------------*/
 
-------clearListener()
+/*==============================================================================
+
+	RUN EDIT FUNCTIONS
+
+================================================================================*/
+
+----clearListener()
 removeItemsQuad1()
 removeItemsQuad2()
 removeItemsQuad3()
@@ -166,7 +200,7 @@ editQuad2()
 editQuad3()
 editQuad4()
 
-/* Set options */
-DeafaultQuad.setRightClick()
-
-DeafaultQuad.showAllQuads()
+--/* Set options */
+--MainQuad.setRightClick()
+--
+--MainQuad.showAllQuads()
