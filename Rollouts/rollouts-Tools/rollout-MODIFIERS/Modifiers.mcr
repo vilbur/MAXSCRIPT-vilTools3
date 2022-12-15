@@ -2,16 +2,16 @@
 	EDIT POLY
 --------------------------------------------------------------------------------*/
 /*
-*	Ui Functions of modifier button 
-*	
+*	Ui Functions of modifier button
+*
 *	1) Add modifier
 *	2) Save preset
 *	3) Load Preset
 *	4) Disable if subobject is active
-*	
+*
 */
 macroscript	modifier_add_editpoly
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"EditPoly"
 tooltip:	"Add EditPoly"
 (
@@ -19,13 +19,55 @@ tooltip:	"Add EditPoly"
 	--
 	--_Edit_Poly = (ModifierPreset_v control:#Edit_Poly ).add()
 	--
-	--if( sub_obj != undefined and sub_obj != 0 ) then 
+	--if( sub_obj != undefined and sub_obj != 0 ) then
 	--	subObjectLevel = sub_obj
 	--
 	--redrawViews()
 	addModifierOrLoadPreset(Edit_Poly)
 )
 
+/*------------------------------------------------------------------------------
+	SMOOTH
+--------------------------------------------------------------------------------*/
+/**
+  */
+macroscript	modifier_smooth
+category:	"_Modifiers"
+buttonText:	"Smooth"
+tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
+(
+	addModifierOrLoadPreset( Smooth )
+)
+/**
+  */
+macroscript	modifier_smooth_preset
+category:	"_Modifiers"
+buttonText:	"Smooth"
+tooltip:	"Manage pesets"
+(
+	managePresetMenu( Smooth )
+)
+/*------------------------------------------------------------------------------
+	MESHSMOOTH
+--------------------------------------------------------------------------------*/
+/**
+  */
+macroscript	modifier_meshsmooth
+category:	"_Modifiers"
+buttonText:	"Meshsmooth"
+tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
+(
+	addModifierOrLoadPreset( Meshsmooth )
+)
+/**
+  */
+macroscript	modifier_meshsmooth_preset
+category:	"_Modifiers"
+buttonText:	"Meshsmooth"
+tooltip:	"Manage pesets"
+(
+	managePresetMenu( Meshsmooth )
+)
 
 /*------------------------------------------------------------------------------
 	CHAMFER
@@ -36,7 +78,7 @@ tooltip:	"Add EditPoly"
   * Show load presets menu,if same type of modifier is active in stack
   */
 macroscript	modifier_chamfer
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Chamfer"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 icon:	"Menu:_Modifiers"
@@ -48,7 +90,7 @@ icon:	"Menu:_Modifiers"
   *
   */
 macroscript	modifier_chamfer_add_with_preset
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Chamfer"
 tooltip:	"Manage pesets"
 (
@@ -59,19 +101,19 @@ tooltip:	"Manage pesets"
 /*------------------------------------------------------------------------------
 	NOISE
 --------------------------------------------------------------------------------*/
-/**  
+/**
   */
 macroscript	modifier_noise
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Noise"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
 	addModifierOrLoadPreset( NoiseModifier )
 )
-/**  
-  */ 
+/**
+  */
 macroscript	modifier_noise_preset
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Noise"
 tooltip:	"Manage pesets"
 (
@@ -81,20 +123,20 @@ tooltip:	"Manage pesets"
 /*------------------------------------------------------------------------------
 	FFD BOX
 --------------------------------------------------------------------------------*/
-/**  
+/**
   */
 macroscript	modifier_ffdbox
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"FFDBox"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
 	addModifierOrLoadPreset( FFDBox )
 )
 
-/**  
-  */ 
+/**
+  */
 macroscript	modifier_ffdbox_preset
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"FFDBox"
 tooltip:	"Manage pesets"
 (
@@ -104,20 +146,20 @@ tooltip:	"Manage pesets"
 /*------------------------------------------------------------------------------
 	FACE EXTRUDE
 --------------------------------------------------------------------------------*/
-/**  
+/**
   */
 macroscript	modifier_face_extrude
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Face Extrude"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
 	addModifierOrLoadPreset( Face_Extrude )
 )
 
-/**  
-  */ 
+/**
+  */
 macroscript	modifier_face_extrude_preset
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Face Extrude"
 tooltip:	"Manage pesets"
 (
@@ -127,10 +169,10 @@ tooltip:	"Manage pesets"
 /*------------------------------------------------------------------------------
 	SELECT MODIFIER INSTANCES
 --------------------------------------------------------------------------------*/
-/**  
+/**
   */
 macroscript	modifier_get_instances_in_objects
-category:	"_Modifiers"  
+category:	"_Modifiers"
 buttonText:	"Select Instances"
 tooltip:	"Select objects with instance of current modifier"
 icon:	"Menu:_Modifiers"
@@ -140,7 +182,7 @@ icon:	"Menu:_Modifiers"
 
 
 --macroscript	modifier_add_normal
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Normal"
 --tooltip:	"Add Normal"
 --(
@@ -149,7 +191,7 @@ icon:	"Menu:_Modifiers"
 --	redrawViews()
 --)
 --macroscript	modifier_add_shell
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Shell"
 --tooltip:	"Add Shell"
 --(
@@ -166,7 +208,7 @@ icon:	"Menu:_Modifiers"
 --)
 --
 --macroscript	modifier_resetXform
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Xform"
 --tooltip:	"Add Reset Xform"
 --(
@@ -177,7 +219,7 @@ icon:	"Menu:_Modifiers"
 --)
 --
 --macroscript	modifier_Relax
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Relax"
 --tooltip:	"Add Reset Relax"
 --(
@@ -188,7 +230,7 @@ icon:	"Menu:_Modifiers"
 
 
 --macroscript	modifier_smooth
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Smooth"
 --tooltip:	"Add Smooth"
 --(
@@ -198,7 +240,7 @@ icon:	"Menu:_Modifiers"
 --)
 --
 --macroscript	modifier_volume_select
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Volume Select"
 --tooltip:	"Add Volume Select"
 --(
@@ -208,7 +250,7 @@ icon:	"Menu:_Modifiers"
 --)
 --
 --macroscript	modifier_face_extrude
---category:	"_Modifiers"  
+--category:	"_Modifiers"
 --buttonText:	"Face Extrude"
 --tooltip:	"Add Volume Select"
 --(
@@ -228,7 +270,7 @@ icon:	"Menu:_Modifiers"
 --	_Mesh_Select.ignoreBackfacing = on
 --
 --	modPanel.setCurrentObject _Mesh_Select
---	subObjectLevel = 4 
+--	subObjectLevel = 4
 --)
 --
 --macroscript	modifiers_taper
@@ -258,14 +300,14 @@ icon:	"Menu:_Modifiers"
 --		--print ( "_taper.center = " + _taper.center as string )
 --		--print ( "_taper.Gizmo.position = " + _taper.Gizmo.position as string )
 --
---		/**  http://www.scriptspot.com/forums/3ds-max/general-scripting/help-to-gizmo-center-modifier 
---		 *	
+--		/**  http://www.scriptspot.com/forums/3ds-max/general-scripting/help-to-gizmo-center-modifier
+--		 *
 --		 */
 --		if isProperty _taper #gizmo and isProperty _taper #center do
 --		(
 --
 --			node = (refs.dependentnodes _taper)[1]
---			_taper.gizmo.transform = obj.transform * inverse node.transform 
+--			_taper.gizmo.transform = obj.transform * inverse node.transform
 --		)
 --
 --	)
@@ -274,7 +316,7 @@ icon:	"Menu:_Modifiers"
 --
 --)
 --
---/** Add FFD box to selection 
+--/** Add FFD box to selection
 -- *	If baseobject is box, then Add number of points as count of segments of box
 -- */
 --macroscript	modifiers_ffdbox
@@ -295,8 +337,8 @@ icon:	"Menu:_Modifiers"
 --	modPanel.addModToSelection _FFDBox ui:on
 --
 --)
---/** Add segment on active axises to current FFD moddifier 
--- *	
+--/** Add segment on active axises to current FFD moddifier
+-- *
 -- */
 --macroscript	modifiers_ffd_add_segment
 --category:	"_Modifiers"
@@ -311,19 +353,19 @@ icon:	"Menu:_Modifiers"
 --
 --	if not( classOf _FFDBox == FFDBox ) then
 --		return ()
---	
+--
 --	getDimensions _FFDBox
---	
+--
 --	for i = 1 to active_axises.count do
---		segments[ findItem axises (active_axises[i]) ] += 1 
+--		segments[ findItem axises (active_axises[i]) ] += 1
 --
 --	print ( "segments = " + segments as string )
---	
+--
 --	setDimensions _FFDBox ( point3 segments[1] segments[2] segments[3] )
 --)
 --
---/** Remove segment on active axises to current FFD moddifier 
--- *	
+--/** Remove segment on active axises to current FFD moddifier
+-- *
 -- */
 --macroscript	modifiers_ffd_remove_segment
 --category:	"_Modifiers"
@@ -335,21 +377,21 @@ icon:	"Menu:_Modifiers"
 --	_FFDBox	= modPanel.getCurrentObject()
 --	active_axises	= toUpper ( toolMode.axisConstraints as string )
 --	segments	= getDimensions _FFDBox
---	
+--
 --	if not( classOf _FFDBox == FFDBox ) then
 --		return ()
---	
+--
 --	getDimensions _FFDBox
---	
+--
 --	for i = 1 to active_axises.count do
 --	(
 --		index	= findItem axises (active_axises[i])
---		
---		if( segments[ index ] > 2 ) then 
---			segments[ index ]	-= 1 
+--
+--		if( segments[ index ] > 2 ) then
+--			segments[ index ]	-= 1
 --	)
---	
+--
 --	print ( "segments = " + segments as string )
---	
+--
 --	setDimensions _FFDBox ( point3 segments[1] segments[2] segments[3] )
 --)

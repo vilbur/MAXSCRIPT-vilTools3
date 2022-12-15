@@ -3,7 +3,9 @@ clearListener()
 content = "/Rollouts"
  -- content = "/Rollouts-Test" -- DEV
 
-global VILTOOLS_DIR = trimRight (pathConfig.stripPathToLeaf(getFilenamePath(getSourceFileName()))) "\\"
+current_dir = getFilenamePath(getSourceFileName())
+
+global VILTOOLS_DIR = trimRight (pathConfig.stripPathToLeaf(current_dir)) "\\"
 
 
 /** Import structures used in macroscripts on Max start
@@ -23,9 +25,10 @@ function importStdScripts =
 	rollouts_path = "$userscripts/"+VILTOOLS_DIR+"/Rollouts/rollouts-Tools"
 
 	filein_files = #(
-		rollouts_path + "/rollout-TOOLS/Lib/ToolMode.ms",
-		rollouts_path + "/rollout-SUBOBJECT/Subobject/Subobject.ms",
-		rollouts_path + "/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
+		"/rollout-SELECTION/Lib/Selection/Selection.ms",
+		"/rollout-TOOLS/Lib/ToolMode.ms",
+		"/rollout-SUBOBJECT/Subobject/Subobject.ms",
+		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
 	)
 
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
@@ -33,33 +36,44 @@ function importStdScripts =
 	stdscript_file = createFile stdscript_file_path
 
 	for file_path in filein_files do
-		format "if doesFileExist \"%\" then %" file_path ("filein( \""+file_path+"\" )\n") to:stdscript_file
+		format "if doesFileExist \"%\" then %" (rollouts_path + file_path) ("filein( \""+(rollouts_path + file_path)+"\" )\n") to:stdscript_file
 
 	close stdscript_file
 
-	filein stdscript_file
+	filein stdscript_file_path
 )
 
 if content != "/Rollouts-Test" then -- DEV
 	importStdScripts()
 
+
+
 /*------------------------------------------------------------------------------
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms")
 
-filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" )
---filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-OBJECTS-SELECTION/Lib/Instance/Instance.ms")
-filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms")
+filein_files = #(
 
-filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" )
+	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms",
 
-/* CALLBACK */
-filein( getFilenamePath(getSourceFileName()) + "/CallBacks/selectionSetChanged/setSelectionLast.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/CallBacks/filePostOpen/checkWorldUnits.ms" )
+	"/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" ,
+	"/Rollouts/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
+
+	"/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" ,
+	 "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" ,
+
+	/* CALLBACK */
+	"/CallBacks/selectionSetChanged/setSelectionLast.ms" ,
+	"/CallBacks/filePostOpen/checkWorldUnits.ms"
+)
+
+for file_path in filein_files where doesFileExist (current_dir + file_path) do
+	filein(current_dir + file_path)
+
+
+
+
 
 /*------------------------------------------------------------------------------
 	START VilTools
@@ -77,9 +91,16 @@ ContentLoader.Dialog.title = "VilTools"
 /* CREATE DIALOG */
 Dialog = ContentLoader.create width:420 height:1024
 
+--unrealRollout = Dialog.get(#unrealEngine)
+--format "unrealRollout	= % \n" unrealRollout
+--unrealRollout.height = 256
+
 Dialog.register()
 
+
+
 filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
+
 
 /* import when UI exists */
 try

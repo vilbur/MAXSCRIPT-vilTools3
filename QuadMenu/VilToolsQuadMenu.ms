@@ -109,7 +109,7 @@ function editQuad1 =
 
 	--QuadMenu1.addSeparator index:2
 
-	--QuadMenu1.addMenu("_Tools")	flat:true
+	--QuadMenu1.addMenu("_Tools")
 
 	QuadMenu1.addItem ("_Modifiers") ("modifier_add_editpoly") index:1
 	QuadMenu1.addSeparator index:2
@@ -169,17 +169,16 @@ function editQuad4 =
 	/* ADD CUSTOM MENUS */
 	QuadMenu4.addSeparator()
 
-	QuadMenu4.addMenu("_Context Spline")	index:1 flat:true
+	QuadMenu4.addMenu("_Context Spline")	index:1
 
-	QuadMenu4.addMenu("_Epoly-Vertex")	index:1 flat:true
+	QuadMenu4.addMenu("_Epoly-Edit")	index:2
 
-	QuadMenu4.addMenu("_Epoly-Edit")	index:1 flat:true
+	QuadMenu4.addMenu("_Epoly-Vertex")	index:3
 
-	QuadMenu4.addMenu("_Epoly-Edges")	index:1 flat:true
+	QuadMenu4.addMenu("_Epoly-Edges")	index:4
 
-
-	EpolyEdgesMenu = Menu_v("_Epoly-Edges")
-	--EpolyEdgesMenu.addSeparator index:1
+	--EpolyEdgesMenu = Menu_v("_Epoly-Edges")
+	QuadMenu4.addSeparator index:5
 )
 
 
