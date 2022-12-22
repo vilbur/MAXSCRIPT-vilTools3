@@ -16,7 +16,7 @@ category:	"_Modifiers"
 buttonText:	"Symmetry X"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
-	--filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
+	--filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
 
 	for obj in selection do
 		setSymmetryModifier obj axis:#X object_space: keyboard.controlPressed
@@ -29,7 +29,7 @@ category:	"_Modifiers"
 buttonText:	"Symmetry Y"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
-	--filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
+	--filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
 
 	for obj in selection do
 		setSymmetryModifier obj axis:#Y object_space: keyboard.controlPressed
@@ -42,7 +42,7 @@ category:	"_Modifiers"
 buttonText:	"Symmetry Z"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
-	--filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
+	--filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
 
 	for obj in selection do
 		setSymmetryModifier obj axis:#Z object_space: keyboard.controlPressed

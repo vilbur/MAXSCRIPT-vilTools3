@@ -40,7 +40,7 @@ toolTip:	"Load materials"
 icon:	""
 (
 	--format "EventFired	= % \n" EventFired
-	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\2-Materials.mcr")
+	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\2-Materials.mcr")
 	
 	asset_dir = execute ("@"+ "\""+unreal.Materials_dir.text +"\"")
 	format "asset_dir	= % \n" asset_dir

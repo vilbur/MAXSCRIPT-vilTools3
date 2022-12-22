@@ -34,7 +34,7 @@ category:	"_Epoly-Edges"
 buttontext:	"Select by mat ID"
 tooltip:	"Select borders edges of material ID"
 (
-	--filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-Edit-Poly\Edges.mcr")
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-Edit-Poly\Edges.mcr")
 
 	on isEnabled return selection.count > 0
 	on execute do

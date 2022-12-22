@@ -32,6 +32,7 @@ function importStdScripts =
 	)
 
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
+
 	deleteFile stdscript_file_path
 	stdscript_file = createFile stdscript_file_path
 
@@ -39,13 +40,11 @@ function importStdScripts =
 		format "if doesFileExist \"%\" then %" (rollouts_path + file_path) ("filein( \""+(rollouts_path + file_path)+"\" )\n") to:stdscript_file
 
 	close stdscript_file
-
 	filein stdscript_file_path
 )
 
 if content != "/Rollouts-Test" then -- DEV
 	importStdScripts()
-
 
 
 /*------------------------------------------------------------------------------

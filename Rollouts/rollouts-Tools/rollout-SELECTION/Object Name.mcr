@@ -9,7 +9,7 @@ buttonText:	"Convert Case"
 tooltip:	"Convert case of selected object names\n\nCapital Case >>> UPPER CASE >>> lower case"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
-	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
+	filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
 	for obj in selection do 
 	(
@@ -74,7 +74,7 @@ tooltip:	"Remove suffix from object name"
 icon:	"across:2|align:#right"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
-	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
+	filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
 	undo "Remove suffix" on
 	(

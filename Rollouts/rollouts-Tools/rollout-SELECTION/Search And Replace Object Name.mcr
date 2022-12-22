@@ -47,7 +47,7 @@ tooltip:	"Search & Replace in names of selection"
 icon:	"across:3"
 (
 	
-	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Search And Replace Object Name.mcr")
+	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Search And Replace Object Name.mcr")
 
 	--messageBox "Placeholder" title:"" 
 	format "EventFired	= % \n" EventFired

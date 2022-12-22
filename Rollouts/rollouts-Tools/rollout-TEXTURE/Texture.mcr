@@ -97,7 +97,7 @@ toolTip:	"Import texture path from clipboard as diffuse map"
 	file_formats = #(".jpg",".tga",".bmp",".psd",".png")
 	--Sel = for o in selection   where superclassof o == GeometryClass collect o
 	
-	--file_path = @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-MATERIALS\_Test\material-test-texture-A.tga"
+	--file_path = @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MATERIALS\_Test\material-test-texture-A.tga"
 	
 	
 	if selection.count > 0 then

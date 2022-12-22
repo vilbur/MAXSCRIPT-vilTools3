@@ -8,18 +8,18 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.m
 
 global group_options
 
-/**  
- *	
+/**
+ *
  */
 macroscript	group_create_with_setup
 category:	"_Group"
 buttontext:	"Create"
 --toolTip:	"Group Setup Dialog"
-icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
+icon:	"across:5|Menu:_Group|title:Group setup|tooltip:Create Group\n"
 (
-	clearListener()
-	filein( @"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr" ) -- DEV
-	filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
+	--clearListener()
+	--filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr" ) -- DEV
+	--filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
 
 		/** loop wirecolors of group members
 		  *
@@ -49,13 +49,13 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 
 	if selection.count > 0 then
 		(
-			/* DIALOG */ 
+			/* DIALOG */
 			Dialog 	    = Dialog_v ("GROUP OPTIONS") ini:(getSourceFileName())
 
 			Dialog.addLocal "colors" (makeUniqueArray (for obj in selection where not isGroupHead obj collect obj.wirecolor))
 			Dialog.addLocal "current_color" 1
 
-			/* CONTROLS */ 
+			/* CONTROLS */
 			_Controls   = Dialog.Controls()
 
 			_MembersName_label	= _Controls.control #label "Members name" across:2 width:148 offset:[0, 8]
@@ -98,13 +98,13 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			callback_get_color	= "group_options.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
 			callback_set_color	= "selection.wirecolor = val"
 
-			/* EVENTS */ 
+			/* EVENTS */
 			_ColorPicker.Events.add	#changed ("selection.wirecolor = val")
 
-			Button_OK.Events.add	#pressed (callback_submit + callback_close) 
+			Button_OK.Events.add	#pressed (callback_submit + callback_close)
 			Button_Cancel.Events.add 	#pressed (callback_close)
 
-			/* HOTKEYS */ 
+			/* HOTKEYS */
 			Dialog.HotKey #(#escape)	callback_close
 
 			Dialog.HotKey #(#Enter)	(callback_submit)
@@ -132,7 +132,7 @@ icon:	"Menu:_Group|title:Group setup|tooltip:Create Group\n"
 --------------------------------------------------------------------------------*/
 
 /**  Ungroup selected groups
- *	
+ *
   *  Even if selected object is in opened group
  */
 macroscript	group_ungroup
@@ -154,7 +154,7 @@ icon:	"Menu:_Group|title:Ungroup"
 --------------------------------------------------------------------------------*/
 
 /**  Open all Groups in hierarchy
- *	
+ *
  */
 macroscript	group_open
 category:	"_Group"
@@ -165,13 +165,13 @@ toolTip:	"Open selected groups"
 (
 	--undo "Groups Open" on
 	--(
-	--	
-	--)	
+	--
+	--)
 	actionMan.executeAction 0 "40142"  -- Groups: Group Open
 )
 
 /**  Open all Groups in hierarchy
- *	
+ *
  */
 macroscript	group_open_recursively
 category:	"_Group"
@@ -189,7 +189,7 @@ toolTip:	"Open all groups in hierarchy"
 --------------------------------------------------------------------------------*/
 
 /**  Open 1st Groups in hierarchy
- *	
+ *
  *	Function is overkilled with modes, mode is not used, but let it as is for future
  */
 macroscript	group_close
@@ -203,7 +203,7 @@ icon:	"id:group_close"
 )
 
 /**  Close all Groups in hierarchy
- *	
+ *
  */
 macroscript	group_close_hierarchy
 category:	"_Group"
@@ -219,7 +219,7 @@ toolTip:	"Close all groups in hierarchy"
 		for o in selection where isGroupHead o do setGroupOpen o false
 
 		select _selection
-	)	
+	)
 )
 
 /*------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ toolTip:	"Close all groups in hierarchy"
 --------------------------------------------------------------------------------*/
 
 /**  Open 1st Groups in hierarchy
- *	
+ *
  *	Function is overkilled with modes, mode is not used, but let it as is for future
  */
 macroscript	group_open_toggle
@@ -238,7 +238,7 @@ toolTip:	"Open\Close toggle selected groups"
 icon:	"Menu:_Group|title:Open\Close Group Toggle"
 (
 	--clearListener()
-	--filein(@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
+	--filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
 
 	groups = #()
 
@@ -257,7 +257,7 @@ icon:	"Menu:_Group|title:Open\Close Group Toggle"
 		(
 			select _group
 
-			if state then 
+			if state then
 				actionMan.executeAction 0 "40143"  -- Groups: Group Close
 			else
 				actionMan.executeAction 0 "40142"  -- Groups: Group Open
@@ -277,17 +277,17 @@ icon:	"Menu:_Group|title:Open\Close Group Toggle"
 	ATTACH
 --------------------------------------------------------------------------------*/
 
-/**  
- *	
+/**
+ *
  */
 macroscript	group_attach_to_groups
 category:	"_Group"
 buttontext:	"Attach"
 toolTip:	"Attach selected objects to group\n\nWorks with instanced groups also."
---icon:	"#(path, index)"
+icon:	"across:4"
 (
 	clearListener()
-	filein (@"C:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
 
 	with undo "attach_to_groups" on
 	(
@@ -304,8 +304,8 @@ toolTip:	"Attach selected objects to group\n\nWorks with instanced groups also."
 /*------------------------------------------------------------------------------
 	ATTACH
 --------------------------------------------------------------------------------*/
-/**  
- *	
+/**
+ *
  */
 macroscript	group_detach
 category:	"_Group"
@@ -316,8 +316,8 @@ toolTip:	"Detach from group"
 	actionMan.executeAction 0 "40144"  -- Groups: Group Detach
 )
 
-/**  
- *	
+/**
+ *
  */
 macroscript	group_detach_to_parent
 category:	"_Group"
@@ -326,14 +326,14 @@ toolTip:	"Detach to parent group"
 --icon:	"#(path, index)"
 (
 	--clearListener()
-	--filein (@"C:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
 
 	with undo "Detach to parent group" on
 	(
 		selected_nodes = for obj in selection where not isGroupHead obj collect obj
 
 		for _node in selected_nodes do
-			if _node.parent.parent != undefined then 
+			if _node.parent.parent != undefined then
 				_node.parent = _node.parent.parent
 			else
 				_node.parent = undefined
@@ -346,8 +346,8 @@ toolTip:	"Detach to parent group"
 	HIDE GROUP
 --------------------------------------------------------------------------------*/
 
-/**  
- *	
+/**
+ *
  */
 macroscript	group_hide
 category:	"_Group"
@@ -356,15 +356,15 @@ toolTip:	"Hide group helpers"
 --icon:	"#(path, index)"
 (
 	for obj in objects where isGroupHead(obj) and obj.layer.on do hide obj
-	
+
 )
 
 /*------------------------------------------------------------------------------
 	UNHIDE GROUP
 --------------------------------------------------------------------------------*/
 
-/**  
- *	
+/**
+ *
  */
 macroscript	group_unhide_helper
 category:	"_Group"
@@ -372,8 +372,8 @@ buttontext:	"Unhide"
 toolTip:	"Unhide group helpers"
 --icon:	"#(path, index)"
 (
-	clearListener()
-	filein (@"C:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
+	--clearListener()
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
 
 	hidden_groups = for _group in objects where isGroupHead _group and _group.isHidden and _group.layer.on collect _group
 
@@ -386,8 +386,8 @@ toolTip:	"Unhide group helpers"
 	)
 )
 
-/**  
- *	
+/**
+ *
  */
 macroscript	group_unhide_group_and_children
 category:	"_Group"
@@ -395,14 +395,114 @@ buttontext:	"Unhide"
 toolTip:	"Unhide group helpers and children"
 --icon:	"#(path, index)"
 (
-	clearListener()
-	filein (@"C:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
+	--clearListener()
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
 
 	macros.run "_Group" "group_unhide_helper"
-	
+
 	visible_groups = for _group in objects where isGroupHead _group and not _group.isHidden and _group.layer.on collect _group
 
 	for _group in visible_groups do
 		for child in _group.children where child.isHidden do
 			 unhide child
 )
+
+/**
+ *
+ */
+macroscript	group_delete_empty_groups
+category:	"_Group"
+buttontext:	"Empty Groups"
+toolTip:	"Select\Delete Empty Groups"
+--icon:	"#(path, index)"
+(
+	empty_groups_names = ""
+
+	empty_groups = for g in objects where isGroupHead g and g.children.count == 0 collect g
+
+	for g in empty_groups do empty_groups_names += g.name + "\n"
+
+	if queryBox ("Delete these empty groups ?\n\n"+empty_groups_names) title:"DELETE EMPTY GROUPS"  beep:false then
+		delete empty_groups
+	else
+		select empty_groups
+
+)
+
+/**
+ *
+ */
+macroscript	group_rename_members
+category:	"_Group"
+buttontext:	"Rename members"
+toolTip:	"Rename members of group by group name"
+--icon:	"#(path, index)"
+(
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
+
+	groups = for g in selection where isGroupHead g and g.children.count > 0 collect g
+
+
+	if groups.count > 0 then
+	(
+
+		if queryBox "Rename group memeners ?" title:"RENAME MEMENERS" then
+			for _group in groups do
+			(
+				--decimal_count = case of -- GET RIGHT NUMBER OF DECILAMS E.G.: 001
+				--(
+				--	(_group.children.count>100): 3
+				--	(_group.children.count>10):  2
+				--	default: 1
+				--)
+				decimal_count = if (_group.children.count>100) then 3 else 2
+
+				for i = 1 to _group.children.count where not isGroupHead _group.children[i] do
+				(
+					increment_number = i as string
+
+					if increment_number.count < decimal_count then
+						for x = 1 to decimal_count - increment_number.count do
+							increment_number = "0" + increment_number
+
+					_group.children[i].name = toLower _group.name + "-" + increment_number
+				)
+			)
+
+	)
+	else
+		messageBox "Select any group to rename" title:"Title"  beep:false
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

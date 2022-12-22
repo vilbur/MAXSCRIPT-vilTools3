@@ -83,7 +83,7 @@ toolTip:	"Mirror instances in world axis"
 --icon:	"#(path, index)"
 (
 	clearListener()
-	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
+	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
 
 	mirrorSelection(#x)
 )
@@ -98,7 +98,7 @@ toolTip:	"Mirror instances in world axis"
 --icon:	"#(path, index)"
 (
 	clearListener()
-	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
+	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
 
 	mirrorSelection(#y)
 )
@@ -113,7 +113,7 @@ toolTip:	"Mirror instances in world axis"
 --icon:	"#(path, index)"
 (
 	clearListener()
-	filein (@"c:\GoogleDrive\Programs\CG\3DsMax\scripts\vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
+	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
 
 	mirrorSelection(#z)
 )
