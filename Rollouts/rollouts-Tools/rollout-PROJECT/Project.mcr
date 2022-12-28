@@ -38,8 +38,8 @@ buttontext:	"Create Folders"
 --icon:	"control:EditText|id:#test_id"
 --icon:	"control:EditText"
 (
-	filein(@"c:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-PROJECT\Lib\Project.ms")
-	filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-PROJECT\Project.mcr")
+	--filein(@"c:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-PROJECT\Lib\Project.ms")
+	--filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-PROJECT\Project.mcr")
 
 	structure = #(
 		#("Max",
@@ -56,34 +56,7 @@ buttontext:	"Create Folders"
 	)
 
 	Project = Project_v structure:structure project_root:ROLLOUT_PROJECT.project_root_path.text project_name:ROLLOUT_PROJECT.project_name_text.text
-	--Project = Project_v project.project_name_text.text project.project_root_path.text
 
 	Project.createDirectoryStructure()
-
-
-
-	--List = List_v()
-	--
-	--List.setVal "Max" #()
-	--
-	--
-	--
-	--
-	--if project_root != "" and project_name != "" then
-	--(
-	--	root_path = project_root + "\\" + project_name
-	--	format "root_path	= % \n" root_path
-	--
-	--	if not doesDirectoryExist root_path then
-	--	(
-	--		makeDir root_path all:true
-	--
-	--	)
-	--	else
-	--		messageBox ("Project exists already\n\n"+root_path) title:"PATH EXISTS"  beep:false
-	--
-	--)
-	--else
-	--	messageBox "Enter project root folder and project name" title:"MISSING PROJECT NAME OR ROOT"  beep:false
 
 )

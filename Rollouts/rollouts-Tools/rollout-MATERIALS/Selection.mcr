@@ -3,7 +3,7 @@
  */
 macroscript	material_by_1st_object
 category:	"_Material"
-buttonText:	"Get Material"
+buttonText:	"By Material"
 tooltip:	"Select all visible objects with same materials as selection"
 (
 	--filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MATERIALS\Materials.mcr")
@@ -26,7 +26,7 @@ tooltip:	"Select all visible objects with same materials as selection"
  */
 macroscript	material_select_objs_by_material
 category:	"_Material"
-buttonText:	"Select By Mat"
+buttonText:	"By Mat Editor"
 tooltip:	"Select objects by current material in material editor"
 --icon:	"border:false"
 (
@@ -105,4 +105,3 @@ toolTip:	"Select faces by material id - PALCEHOLDER"
 	--
 	--Epoly.setSel #Face faces_ids_merged
 )
-

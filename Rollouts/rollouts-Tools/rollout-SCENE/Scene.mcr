@@ -5,49 +5,66 @@ macroscript	_scene_open_recent
 category:	"_Scene"
 buttontext:	"Open Recent"
 toolTip:	"Open recent scene on Max start"
-icon:	"control:checkButton|menu:_Scene"
+--icon:	"control:checkButton|menu:_Scene"
+icon:	"menu:_Scene"
 (
-
-
-	on isVisible  return maxFileName == ""
+	--on isVisible  return maxFileName == ""
 
 	on execute do
 	(
-		format "EventFired	= % \n" EventFired
-		stdscript_file = (getDir #maxroot)+ "/scripts/Startup/viltools-open-recent.ms"
-		ini_file = (getDir #maxroot)+ "/scripts/Startup/viltools-open-recent.ini"
 
-		deleteFile stdscript_file
+		xml_doc = dotNetObject "System.Xml.XmlDocument"
 
+		recent_documents_file = (getDir #maxData) + "RecentDocuments.xml"
 
-		if EventFired != undefined and EventFired.val then
-		(
-			--set_ini = "setINISetting \""+ini_file+"\" \"last_file\" \"1\" (maxFilePath + maxFileName)"
+		xml_doc.load recent_documents_file
 
-			try( callbacks.addScript #filePostOpen ("setINISetting \""+ini_file+"\" \"last_file\" \"1\" (maxFilePath + maxFileName)") id:#openRecent )catch()
-			----try( callbacks.addScript #filePostOpen "print\"Test\"" id:#openRecent )catch()
-			--
-			stdscript_file = createFile ini_file
-
-			format "%" ("loadMaxFile ( getINISetting \""+ini_file+"\" \"last_file\" \"1\" ) quiet:true") to:stdscript_file
-
-			close stdscript_file
-
-		)
-		else
-			try( callbacks.removeScripts id:#openRecent )catch()
+		file_path = xml_doc.GetElementsByTagName "FilePath"
+		recent_document = (file_path.item 0).InnerXML
 
 
-		--if EventFired == undefined or (EventFired != undefined and EventFired.val == true)  then
-		--(
-		--	if( last_file = getINISetting ini_file "last_file" "1" ) != "" then
-		--		loadMaxFile last_file quiet:true
-		--	else
-		--		actionMan.executeAction 0 "203"  -- File: Last File 1
-		--)
+		if queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
+			loadMaxFile recent_document quiet:true
 
+	/*
+			BELLOW IS CODE FOR OPENING RECENT FILE ON MAX START
+	*/
+	--
+	----	format "EventFired	= % \n" EventFired
+	----	stdscript_file = (getDir #maxroot)+ "/scripts/Startup/viltools-open-recent.ms"
+	----	ini_file = (getDir #maxroot)+ "/scripts/Startup/viltools-open-recent.ini"
+	----
+	----	deleteFile stdscript_file
+	----
+	----
+	----	if EventFired != undefined and EventFired.val then
+	----	(
+	----		--set_ini = "setINISetting \""+ini_file+"\" \"last_file\" \"1\" (maxFilePath + maxFileName)"
+	----
+	----		try( callbacks.addScript #filePostOpen ("setINISetting \""+ini_file+"\" \"last_file\" \"1\" (maxFilePath + maxFileName)") id:#openRecent )catch()
+	----		----try( callbacks.addScript #filePostOpen "print\"Test\"" id:#openRecent )catch()
+	----		--
+	----		stdscript_file = createFile ini_file
+	----
+	----		format "%" ("loadMaxFile ( getINISetting \""+ini_file+"\" \"last_file\" \"1\" ) quiet:true") to:stdscript_file
+	----
+	----		close stdscript_file
+	----
+	----	)
+	----	else
+	----		try( callbacks.removeScripts id:#openRecent )catch()
+	--
+	--
+	--	--if EventFired == undefined or (EventFired != undefined and EventFired.val == true)  then
+	--	--(
+	--	--	if( last_file = getINISetting ini_file "last_file" "1" ) != "" then
+	--	--		loadMaxFile last_file quiet:true
+	--	--	else
+	--	--		actionMan.executeAction 0 "203"  -- File: Last File 1
+	--	--)
+	--
 	)
-		--messageBox "Open Recent"
+	--	--messageBox "Open Recent"
 )
 
 /**
