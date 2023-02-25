@@ -1,7 +1,10 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Lib/EditPolyExplode/EditPolyExplode.ms" )
+
 macroscript	epoly_explode_by_element
 category:	"_Epoly-Explode"  
 buttonText:	"Elements"
 toolTip:	"Explode by Elements"
+icon:	"across:5|width:80"
 (
 	--clearListener()
 	undo "explodeByElement" on
@@ -9,7 +12,7 @@ toolTip:	"Explode by Elements"
 		/* hotfix */
 		macros.run "Modifier Stack" "Convert_to_Poly"
 		
-		final_sel = (Epoly_v()).explodeByElement()
+		final_sel = (EditPolyExplode_v( selection )).explodeByElement()
 	
 		select final_sel
 
@@ -25,68 +28,65 @@ toolTip:	"Explode by Material"
 	undo "explodeByMaterialId" on
 	(
 		--/* hotfix */
-		--macros.run "Modifier Stack" "Convert_to_Poly"
-		--
-		--final_sel = (Epoly_v()).explodeByMaterialId()
-		--select final_sel
+		macros.run "Modifier Stack" "Convert_to_Poly"
+		
+		final_sel = (EditPolyExplode_v( selection )).explodeByMaterialId()
+		
+		select final_sel
 	)
 )
 
 macroscript	epoly_explode_by_sg
 category:	"_Epoly-Explode"  
-buttonText:	"Smooth Groups"
+buttonText:	"Smooth Group"
 toolTip:	"Explode by SmoothGroups"
 (
 	undo "explodeBySG" on
 	(
-		--/* hotfix */
-		--macros.run "Modifier Stack" "Convert_to_Poly"
-		--
-		--final_sel = (Epoly_v()).explodeBySG()
-		--select final_sel
-	)
-)
-
-macroscript	epoly_explode_by_hard_edge
-category:	"_Epoly-Explode"
-buttontext:	"By Hard edges"
-toolTip:	"Explode by  HARD edges"
-(
-	undo "explodeByHardEdges" on
-	(
-		--/* hotfix */
-		--macros.run "Modifier Stack" "Convert_to_Poly"
-		--final_sel = (Epoly_v()).explodeByHardEdges()
-		--select final_sel
+		/* hotfix */
+		macros.run "Modifier Stack" "Convert_to_Poly"
+		
+		final_sel = (EditPolyExplode_v( selection )).explodeBySG()
+		
+		select final_sel
 	)
 )
 
 
 macroscript	epoly_explode_by_selected_edge
 category:	"_Epoly-Explode"
-buttontext:	"By edges"
+buttontext:	"Edges"
 toolTip:	"Explode by selected edges"
 (
 	undo "explode By Edges" on
 	(
-		--macros.run "Editable Polygon Object" "EPoly_Split"
-		--
-		--final_sel = (Epoly_v()).explodeByElement()
-		--
-		--select final_sel
+		macros.run "Editable Polygon Object" "EPoly_Split"
+		
+		final_sel = (EditPolyExplode_v( selection )).explodeByElement()
+		
+		select final_sel
 	)
 )
 
 
+macroscript	epoly_explode_by_hard_edge
+category:	"_Epoly-Explode"
+buttontext:	"Hard Edges"
+toolTip:	"Explode by  HARD edges"
+(
+	undo "explodeByHardEdges" on
+	(
+		/* hotfix */
+		macros.run "Modifier Stack" "Convert_to_Poly"
+		
+		final_sel = (EditPolyExplode_v( selection )).explodeByHardEdges()
+		
+		select final_sel
+	)
+)
 
 
-
-
-
-
-
-
-
+--
 
 
 

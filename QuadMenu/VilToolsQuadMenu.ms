@@ -189,15 +189,15 @@ function editQuad4 =
 ================================================================================*/
 
 ----clearListener()
-removeItemsQuad1()
-removeItemsQuad2()
-removeItemsQuad3()
-removeItemsQuad4()
-
-editQuad1()
-editQuad2()
-editQuad3()
-editQuad4()
+--removeItemsQuad1()
+--removeItemsQuad2()
+--removeItemsQuad3()
+--removeItemsQuad4()
+--
+--editQuad1()
+--editQuad2()
+--editQuad3()
+--editQuad4()
 
 --/* Set options */
 --MainQuad.setRightClick()

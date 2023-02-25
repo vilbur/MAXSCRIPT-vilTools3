@@ -25,7 +25,7 @@ toolTip:	"Select instances"
 --icon:	"#(path, index)"
 (
 	for obj in selection do 
-		sselectmore ((Selection_v()).getInstances( obj ) type:#INSTANCE)
+		selectmore ((Selection_v()).getInstances( obj ) type:#INSTANCE)
 )
 /*------------------------------------------------------------------------------
 	SELECT REFERENCE
@@ -72,7 +72,7 @@ toolTip:	"Filter only unique objects from selection"
 macroscript	selection_reinstancer
 category:	"_Selection"
 buttontext:	"Reinstance"
-toolTip:	"Reinstance selection.\n1Master object is 1st in selection"
+toolTip:	"Reinstance selection by 1st object in selection"
 --icon:	"#(path, index)"
 (
 	
