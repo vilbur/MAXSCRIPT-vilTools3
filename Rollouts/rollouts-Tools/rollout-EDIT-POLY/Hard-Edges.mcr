@@ -4,7 +4,7 @@
  */
 macroscript	edges_select_hard_edges
 category:	"_Epoly-Hard-Edges"
-buttontext:	"Select Hard Edges"
+buttontext:	"Select"
 toolTip:	"Select Hard Edges"
 icon:	"Menu:_Epoly-Hard-Edges"
 (
@@ -36,7 +36,7 @@ icon:	"Menu:_Epoly-Hard-Edges"
  */
 macroscript	edges_show_hard_edges
 category:	"_Epoly-Hard-Edges"
-buttontext:	"Show Hard Edges"
+buttontext:	"Show"
 toolTip:	"Show Hard Edges"
 icon:	"Menu:_Epoly-Hard-Edges"
 (
@@ -61,7 +61,7 @@ icon:	"Menu:_Epoly-Hard-Edges"
  */
 macroscript	edges_make_hard_edges
 category:	"_Epoly-Hard-Edges"
-buttontext:	"Make Hard Edges"
+buttontext:	"Make Hard"
 toolTip:	"Make Hard Edges"
 icon:	"Menu:_Epoly-Hard-Edges"
 (
@@ -88,7 +88,7 @@ icon:	"Menu:_Epoly-Hard-Edges"
  */
 macroscript	edges_make_smooth_edges
 category:	"_Epoly-Hard-Edges"
-buttontext:	"Make Smooth Edges"
+buttontext:	"Make Smooth"
 toolTip:	"Make Smooth Edges"
 icon:	"Menu:_Epoly-Hard-Edges"
 (

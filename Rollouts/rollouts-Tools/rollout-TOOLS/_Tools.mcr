@@ -3,135 +3,176 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ToolMode.ms" )
 /*---------------------------------------
 	SELECT
 ---------------------------------------*/
-/**  
-  *	
-  */
-macroscript	tools_select_tool_or_axis
-category:	"_Tools"
-buttontext:	"Select"
-toolTip:	"Select tool or swith selection region Rectangle|Circle"
-icon:	"menu:_Tools"
-(
-	(ToolMode_v tool_mode:#Select).setToolOrChangeSelectionType #( #Rectangle, #Circle )
-)
 
-/**  
-  *	
+/**
+  *
   */
 macroscript	tools_select_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Select"
-toolTip:	"Select tool or change selection to Rectangle|Circle|Fence|Lasso|Paint"
+toolTip:	"Select tool"
 icon:	"#(path, index)"
 (
-	(ToolMode_v tool_mode:#Select).setToolOrChangeSelectionType #Select #( #Rectangle, #Circle, #Fence, #Lasso, #Paint )
+	(ToolMode_v tool_mode:#Select).setToolOrChangeSelectionType #( #Rectangle, #Circle, #Fence, #Lasso, #Paint )
 )
+
+/**
+  *
+  */
+macroscript	tools_select_tool_or_axis
+category:	"_Tools"
+buttontext:	"Select"
+toolTip:	"Select tool: RECTANGLE | LASSO"
+icon:	"menu:_Tools"
+(
+	(ToolMode_v tool_mode:#Select).setToolOrChangeSelectionType #( #Rectangle, #Lasso )
+)
+
+
 
 /*---------------------------------------
 	MOVE
 ---------------------------------------*/
 /**  Move tool
  *
- *	 Axises in perspective  #x|#y|#z
- *	 Axises in orthographic #x|#y|#xy
+ *	 Axises in perspective  #X|#Y|#Z
+ *	 Axises in orthographic #X|#Y|#XY
  */
 macroscript	tools_move_tool_or_axis
 category:	"_Tools"
 buttontext:	"Move"
-toolTip:	"Move tool or change axis #x|#y|#z"
+toolTip:	"Move tool: X | Y | Z"
 icon:	"menu:_Tools"
 (
 	on isVisible  return selection.count>0
 
-	on execute do( (ToolMode_v tool_mode:#Move axises:#( #x, #y, #z )).setToolOrChangeAxis())
+	on execute do( (ToolMode_v tool_mode:#Move perspective:#( #X, #Y, #Z ) ortho:#( #X, #Y ) ).setToolOrChangeAxis())
 )
 
 /**  Move tool
  *
- *	 Axises in perspective  #xy|#zx|#yz
- *	 Axises in orthographic #x|#y|#xy
+ *	 Axises in perspective  #XY|#ZX|#YZ
+ *	 Axises in orthographic #X|#Y|#XY
  */
 macroscript	tools_move_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Move"
-toolTip:	"Move tool or change axis #xy,|#zx,|#yz"
+toolTip:	"Move tool: XY | ZX | YZ"
 --icon:	"menu:_Tools"
 (
-	(ToolMode_v tool_mode:#Move axises:#( #xy, #zx, #yz  )).setToolOrChangeAxis()
+	(ToolMode_v tool_mode:#Move perspective:#( #XY, #ZX, #YZ  ) ortho:#( #XY )).setToolOrChangeAxis()
 )
+
+
+
 
 /*---------------------------------------
 	ROTATE
 -----------------------------------------*/
 /**  Rotate tool
  *
- *	 Axises in perspective  #x|#y|#z
- *	 Axises in orthographic #z
+ *	 Axises in perspective  #X|#Y|#Z
+ *	 Axises in orthographic #Z
  */
 macroscript	tools_rotate_tool_or_axis
 category:	"_Tools"
 buttontext:	"Rotate"
-toolTip:	"Rotate tool or change axis in perspective"
+toolTip:	"Rotate tool: X | Y | Z"
 icon:	"menu:_Tools"
 (
     on isVisible return selection.count>0
-	
-	on execute do (ToolMode_v tool_mode:#Rotate axises:#( #x, #y, #z )).setToolOrChangeAxis()
+
+	on execute do (ToolMode_v tool_mode:#Rotate axises:#( #X, #Y, #Z )).setToolOrChangeAxis()
+
 )
 
-/**  Rotate tool
- *
- *	 Axises in perspective  #x|#y|#z
- *	 Axises in orthographic #x|#y|#z
- */
-macroscript	tools_rotate_tool_or_all_axises
-category:	"_Tools"
-buttontext:	"Rotate"
-toolTip:	"Rotate tool or change axis"
---icon:	"#(path, index)"
-(
-	(ToolMode_v tool_mode:#Rotate axises:#( #x, #y, #z )).setRotateToolOrChangeAxisInOrtho()
-	
-)
+
+
 
 /*---------------------------------------
 	SCALE
 -----------------------------------------*/
 
 /**  Uniform scale tool
- *	
- *	 Axises in perspective  #x|#y|#z
- *	 Axises in orthographic #x|#y|#xy
+ *
+ *	 Axises in perspective  #X|#Y|#Z
+ *	 Axises in orthographic #X|#Y|#XY
  */
 macroscript	tools_non_uniform_scale_tool_or_axis
 category:	"_Tools"
 buttontext:	"Scale"
-toolTip:	"Non uniform scale tool or change axis #x|#y|#z"
+toolTip:	"Scale tool X | Y | Z | XY"
 icon:	"menu:_Tools"
 (
     on isVisible return selection.count>0
 
-	on execute do (ToolMode_v tool_mode:#Nuscale axises:#( #x, #y, #z )).setToolOrChangeAxis()
+	on execute do (ToolMode_v tool_mode:#Nuscale perspective:#( #X, #Y, #Z ) ortho:#( #X, #Y )  ).setToolOrChangeAxis()
 )
 
-/**  Select and switvh non uniform scale and uniform tool
- *	
+/** UNIFORM scale or NON UNIFORM SCALE circle double axis
+ *
+ *
+ *	 Axises in orthographic #XY|#XYZ
+ *	 Axises in perspective  #XY|#ZX|#YZ|#XYZ
  */
 macroscript	tools_uniform_scale_tool_or_axis
 category:	"_Tools"
 buttontext:	"Scale"
-toolTip:	"Scale tool or change axis"
+toolTip:	"Scale tool:  XY | ZX | YZ | XYZ"
 --icon:	"#(path, index)"
 (
-	
-	--format "TEST = % \n" (toolMode.commandmode != #Uscale or toolMode.axisConstraints == #YZ)
 
-	if( toolMode.commandmode == #Nuscale and toolMode.axisConstraints == #YZ ) then
+	/* PERSPECTIVE OR ISOMETRIC VIEW */
+	if matchPattern ( viewport.getType() as string ) pattern:@"*user" then
 	(
-		toolMode.axisConstraints = #XY 
-		
-		(ToolMode_v tool_mode:#Uscale axises:#( #xy, #zx, #yz  )).setToolOrChangeAxis()
+		if( toolMode.commandmode == #Nuscale and toolMode.axisConstraints == #YZ ) then
+		(
+			toolMode.axisConstraints = #XY
+
+			toolMode.commandmode = #Uscale
+		)
+		else
+			(ToolMode_v tool_mode:#Nuscale axises:#( #XY, #ZX, #YZ )  ).setToolOrChangeAxis() -- NON UNIFORM SCALE
+
 	)
-	else
-		(ToolMode_v tool_mode:#Nuscale axises:#( #xy, #zx, #yz  )).setToolOrChangeAxis()	
+	else 	/* ORTHO VIEW */
+	(
+
+		if  toolMode.commandmode == #Uscale then
+		(
+			toolMode.axisConstraints = #XY
+
+			toolMode.commandmode = #Nuscale
+		)
+		else
+			toolMode.commandmode = #Uscale
+	)
+
+	format "% \n" ( if toolMode.commandmode == #Uscale then "UNIFORM SCALE" else "NON UNIFORM SCALE")
+
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

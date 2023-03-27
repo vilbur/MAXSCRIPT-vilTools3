@@ -1,12 +1,12 @@
 
 
 global GLOBAL_SELECTION_LAST_ENABLED = true
-global GLOBAL_SELECTION_LAST 
+global GLOBAL_SELECTION_LAST
 global GLOBAL_SELECTION_LAST_BUFFER
 
 
 /**
- * 
+ *
  */
 function setSelectionLastCallback =
 (
@@ -15,7 +15,7 @@ function setSelectionLastCallback =
 )
 
 
-/** 
+/**
  */
 function setSelectionLastKill =
 (
@@ -34,13 +34,13 @@ function setSelectionLast =
 	(
 		print "setSelectionLast()"
 		GLOBAL_SELECTION_LAST = GLOBAL_SELECTION_LAST_BUFFER
-	
+
 		if( selection.count > 0 ) then
 			GLOBAL_SELECTION_LAST_BUFFER = for o in selection collect o
-			
+
 		--format "GLOBAL_SELECTION_LAST = % \n" GLOBAL_SELECTION_LAST
 	)
 )
 
 
-setSelectionLastCallback()
+--setSelectionLastCallback()

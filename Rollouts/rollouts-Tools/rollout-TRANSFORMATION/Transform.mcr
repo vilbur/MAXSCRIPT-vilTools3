@@ -1,5 +1,16 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Transform.ms" )
 
+/**
+ *
+ */
+macroscript	_transform_randomizer
+category:	"_Transform"
+buttontext:	"Randomizer"
+toolTip:	"Open Transform Randomizer Rollout"
+--icon:	"#(path, index)"
+(
+	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Random-Transform/random_transform_v1.ms" )
+)
 
 /**
  *
@@ -49,7 +60,7 @@ toolTip:	"Rotate about active axis"
 macroscript	_transform_type_in
 category:	"_Transform"
 buttontext:	"Type in"
-toolTip:	"Mini Transform Type In"
+toolTip:	"Mini Transform Type In\n\nDOUBLECLICK: Change window Postion"
 --icon:	"#(path, index)"
 (
 	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/Mini-Transform-Type-In.ms" )
@@ -60,7 +71,7 @@ toolTip:	"Mini Transform Type In"
 macroscript	_transform_type_in_close
 category:	"_Transform"
 buttontext:	"Type in"
-toolTip:	"Close dialog\nDOUBLECLICK: Show window border"
+toolTip:	"Close dialog"
 --icon:	"#(path, index)"
 (
 	hwndMove = windows.getChildHWND 0 "Move Transform Type-In"

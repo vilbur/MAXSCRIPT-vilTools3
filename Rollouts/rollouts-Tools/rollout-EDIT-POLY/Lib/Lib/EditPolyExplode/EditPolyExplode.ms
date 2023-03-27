@@ -31,6 +31,9 @@ struct EditPolyExplode_v
 	function explodeEachObject explode_method =
 	(
 		--_selection = (Selection_v()).get()
+		max create mode
+		
+
 		for obj in _selection do
 		(
 			instances = this._getInstances (obj)
@@ -65,6 +68,8 @@ struct EditPolyExplode_v
 
 			for instance_copy in instances_copy do
 				instanceReplace instance_copy exploded_object
+
+			instances_copy.wirecolor = exploded_object.wirecolor
 		)
 
 		delete instances
