@@ -23,11 +23,26 @@ buttontext:	"Save Layout"
  /**
  *
  */
+macroscript	viewport_load_layout_1
+category:	"_Viewports"
+buttontext:	"Layout 1"
+--toolTip:	"Perspective view"
+icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 1)"
+(
+	clearListener()
+	--viewport.getLayout()
+	ViewportLayoutManager.resetLayout(#layout_1)
+
+)
+
+ /**
+ *
+ */
 macroscript	viewport_load_layout_4
 category:	"_Viewports"
 buttontext:	"Layout 4"
 --toolTip:	"Perspective view"
-icon:	"images:#('/Icons/Layouts.bmp',undefined,14,14,14,14,14)"
+icon:	"images:#('/Icons/Layouts.bmp',undefined, 14, 14)"
 (
 	clearListener()
 	--viewport.getLayout()

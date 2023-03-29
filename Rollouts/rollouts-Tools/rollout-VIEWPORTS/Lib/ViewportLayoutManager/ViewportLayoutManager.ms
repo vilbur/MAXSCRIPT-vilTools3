@@ -30,21 +30,15 @@ struct ViewportLayoutManager_v
 		format "\n"; print "ViewportLayout_v.resetLayout()"
 		format "layout_name	= % \n" layout_name
 		SceneLayout = this._getSceneLayout( this._getSceneName () )
-
+		format "SceneLayout	= % \n" SceneLayout
 		ViewportLayout = SceneLayout.getLayout(layout_name)
+		format "ViewportLayout	= % \n" ViewportLayout
 
-		ViewportLayout.resetLayout()
+		if ViewportLayout.exists() then
+			ViewportLayout.resetLayout()
 
-		--for i = 1 to viewport.numViews do
-		--(
-		--	ViewportState = ViewportState _v()
-		--
-		--	ViewportState.type = viewport.getType index:i
-		--
-		--)
-			--if( viewport.getType index:i == type ) then
-				--viewport_switched = viewport.activeViewportEx i
-
+		else
+			messageBox "Setup for this layout not exists yet" title:"LAYOUT SETUP NOT EXISTS"
 	),
 
 
