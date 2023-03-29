@@ -24,21 +24,24 @@ struct ViewportLayoutManager_v
 	),
 
 	/** Reset layout
+	  *
+	  * @param name layout_name
 	 */
 	function resetLayout layout_name =
 	(
-		format "\n"; print "ViewportLayout_v.resetLayout()"
-		format "layout_name	= % \n" layout_name
+		 format "\n"; print "ViewportLayout_v.resetLayout()"
+		 format "layout_name	= % \n" layout_name
 		SceneLayout = this._getSceneLayout( this._getSceneName () )
-		format "SceneLayout	= % \n" SceneLayout
+		-- format "SceneLayout	= % \n" SceneLayout
 		ViewportLayout = SceneLayout.getLayout(layout_name)
-		format "ViewportLayout	= % \n" ViewportLayout
+		-- format "ViewportLayout	= % \n" ViewportLayout
 
 		if ViewportLayout.exists() then
 			ViewportLayout.resetLayout()
 
 		else
-			messageBox "Setup for this layout not exists yet" title:"LAYOUT SETUP NOT EXISTS"
+			viewport.setLayout(layout_name)
+			--messageBox "Setup for this layout not exists yet" title:"LAYOUT SETUP NOT EXISTS"
 	),
 
 
@@ -48,7 +51,7 @@ struct ViewportLayoutManager_v
 	 */
 	function _getSceneLayout scene_layout_name =
 	(
-		format "\n"; print "ViewportLayoutManager_v.getSceneLayout()"
+		-- format "\n"; print "ViewportLayoutManager_v.getSceneLayout()"
 		SceneLayoutsByName = for SceneLayout in SceneLayouts where SceneLayout.scene_name == scene_layout_name collect SceneLayout
 		--format "SceneLayoutsByName	= % \n" SceneLayoutsByName
 		if SceneLayoutsByName.count == 0 then
@@ -76,7 +79,7 @@ struct ViewportLayoutManager_v
 	 */
 	function _getSceneName =
 	(
-		format "\n"; print "ViewportLayoutManager_v.getSceneName()"
+		-- format "\n"; print "ViewportLayoutManager_v.getSceneName()"
 		( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_\s]*\d+.max" ).Replace maxFileName "" --return
 	),
 
@@ -88,10 +91,3 @@ struct ViewportLayoutManager_v
 	)
 
 )
-
-
-
-ViewportLayoutManager 	= ViewportLayoutManager_v()
-
-test = ViewportLayoutManager.saveCurrentLayout()
---format "test	= % \n" test

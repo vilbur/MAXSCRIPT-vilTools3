@@ -20,7 +20,7 @@ struct ViewportSceneLayouts_v
 	 */
 	function saveCurrentLayout =
 	(
-		format "\n"; print "ViewportSceneLayouts_v.saveCurrentLayout()"
+		-- format "\n"; print "ViewportSceneLayouts_v.saveCurrentLayout()"
 
 		ViewportLayout 	= this.getLayout( viewport.getLayout() )
 		--format "ViewportLayout	= % \n" ViewportLayout
@@ -75,7 +75,7 @@ struct ViewportSceneLayouts_v
 	 */
 	function saveIni ViewportLayout =
 	(
-		format "\n"; print "ViewportSceneLayouts_v.saveIni()"
+		-- format "\n"; print "ViewportSceneLayouts_v.saveIni()"
 
 		ini_file = this._getIniFile()
 
@@ -91,7 +91,7 @@ struct ViewportSceneLayouts_v
 	 */
 	function _getNewViewportFromIni layout_name =
 	(
-		format "\n"; print "ViewportSceneLayouts_v._getNewViewportFromIni()"
+		-- format "\n"; print "ViewportSceneLayouts_v._getNewViewportFromIni()"
 
 		ini_file = this._getIniFile()
 

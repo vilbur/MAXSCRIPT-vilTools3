@@ -19,8 +19,8 @@ struct ViewportLayout_v
 	 */
 	function getCurrentLayout =
 	(
-		format "\n"; print "ViewportLayout_v.saveCurrentLayout()"
-		format "layout_name	= % \n" layout_name
+		-- format "\n"; print "ViewportLayout_v.saveCurrentLayout()"
+		-- format "layout_name	= % \n" layout_name
 
 		for i = 1 to viewport.numViews do
 		(
@@ -45,8 +45,8 @@ struct ViewportLayout_v
 	 */
 	function resetLayout =
 	(
-		format "\n"; print "ViewportLayout_v.resetLayout()"
-		format "this.layout_name	= % \n" this.layout_name
+		-- format "\n"; print "ViewportLayout_v.resetLayout()"
+		-- format "this.layout_name	= % \n" this.layout_name
 
 		viewport.setLayout (this.layout_name)
 
