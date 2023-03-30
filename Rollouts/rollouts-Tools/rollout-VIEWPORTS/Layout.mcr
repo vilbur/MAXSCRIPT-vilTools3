@@ -1,11 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportLayoutManager/ViewportLayoutManager.ms" ) -- "./Lib/ViewportLayoutManager/ViewportLayoutManager.ms"
 
-/*------------------------------------------------------------------------------
-	GLOBAL
---------------------------------------------------------------------------------*/
-
-if ViewportLayoutManager == undefined then
-	ViewportLayoutManager = ViewportLayoutManager_v()
 
 /**
 *
@@ -13,6 +7,7 @@ if ViewportLayoutManager == undefined then
 macroscript	viewport_layout_save
 category:	"_Viewports"
 buttontext:	"Save Layout"
+--icon:	"width:56|height:48"
 (
 	ViewportLayoutManager.saveCurrentLayout()
 )
@@ -24,9 +19,10 @@ macroscript	viewport_load_layout_1
 category:	"_Viewports"
 buttontext:	"layout_1"
 toolTip:	"Load Viewport Layout"
-icon:	"across:14|images:#('/Icons/Layouts.bmp',undefined,14, 1)"
+--icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 1)|width:32|height:32"
+icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 1)|height:28|across:14"
 (
-	ViewportLayoutManager.resetLayout(#layout_1)
+	ViewportLayoutManager.restoreLayout(#layout_1)
 )
 
 /* #layout_4
@@ -37,7 +33,7 @@ buttontext:	"layout_4"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 14)"
 (
-	ViewportLayoutManager.resetLayout(#layout_4)
+	ViewportLayoutManager.restoreLayout(#layout_4)
 )
 
 /* #layout_2v
@@ -48,7 +44,7 @@ buttontext:	"layout_2v"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 2)"
 (
-	ViewportLayoutManager.resetLayout(#layout_2v)
+	ViewportLayoutManager.restoreLayout(#layout_2v)
 )
 
 /* #layout_2h
@@ -59,7 +55,7 @@ buttontext:	"layout_2h"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 3)"
 (
-	ViewportLayoutManager.resetLayout(#layout_2h)
+	ViewportLayoutManager.restoreLayout(#layout_2h)
 )
 
 /* #layout_2ht
@@ -70,7 +66,7 @@ buttontext:	"layout_2ht"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 4)"
 (
-	ViewportLayoutManager.resetLayout(#layout_2ht)
+	ViewportLayoutManager.restoreLayout(#layout_2ht)
 )
 
 /* #layout_2hb
@@ -81,7 +77,7 @@ buttontext:	"layout_2hb"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 5)"
 (
-	ViewportLayoutManager.resetLayout(#layout_2hb)
+	ViewportLayoutManager.restoreLayout(#layout_2hb)
 )
 
 /* #layout_3vl
@@ -92,7 +88,7 @@ buttontext:	"layout_3vl"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 6)"
 (
-	ViewportLayoutManager.resetLayout(#layout_1)
+	ViewportLayoutManager.restoreLayout(#layout_1)
 )
 
 /* #layout_3vr
@@ -103,7 +99,7 @@ buttontext:	"layout_3vr"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 7)"
 (
-	ViewportLayoutManager.resetLayout(#layout_3vr)
+	ViewportLayoutManager.restoreLayout(#layout_3vr)
 )
 
 /* #layout_3ht
@@ -114,7 +110,7 @@ buttontext:	"layout_3ht"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 8)"
 (
-	ViewportLayoutManager.resetLayout(#layout_3ht)
+	ViewportLayoutManager.restoreLayout(#layout_3ht)
 )
 
 /* #layout_3hb
@@ -125,7 +121,7 @@ buttontext:	"layout_3hb"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 9)"
 (
-	ViewportLayoutManager.resetLayout(#layout_3hb)
+	ViewportLayoutManager.restoreLayout(#layout_3hb)
 )
 
 /* #layout_4vl
@@ -136,7 +132,7 @@ buttontext:	"layout_4vl"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 10)"
 (
-	ViewportLayoutManager.resetLayout(#layout_4vl)
+	ViewportLayoutManager.restoreLayout(#layout_4vl)
 )
 
 /* #layout_4vr
@@ -147,7 +143,7 @@ buttontext:	"layout_4vr"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 11)"
 (
-	ViewportLayoutManager.resetLayout(#layout_4vr)
+	ViewportLayoutManager.restoreLayout(#layout_4vr)
 )
 
 /* #layout_4ht
@@ -158,7 +154,7 @@ buttontext:	"layout_4ht"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 12)"
 (
-	ViewportLayoutManager.resetLayout(#layout_4ht)
+	ViewportLayoutManager.restoreLayout(#layout_4ht)
 )
 
 /* #layout_4hb
@@ -169,7 +165,5 @@ buttontext:	"layout_4hb"
 toolTip:	"Load Viewport Layout"
 icon:	"images:#('/Icons/Layouts.bmp',undefined,14, 13)"
 (
-	ViewportLayoutManager.resetLayout(#layout_4hb)
+	ViewportLayoutManager.restoreLayout(#layout_4hb)
 )
-
-

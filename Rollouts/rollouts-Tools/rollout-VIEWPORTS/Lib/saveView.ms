@@ -22,7 +22,7 @@ rollout saveViewDialog "Store & Restore Views"
 	)
 
 
-	fn checkVT views vt =
+	fn getViewportType views vt =
 	(
 		local idx = (findItem views vt)
 		case of
@@ -34,51 +34,68 @@ rollout saveViewDialog "Store & Restore Views"
 		)
 	)
 
-	fn minmaxSwap p3min p3max =
+	fn minMaxSwap p3min p3max =
 	(
-		if p3min.x > p3max.x do swap p3min.x p3max.x
-		if p3min.y > p3max.y do swap p3min.y p3max.y
-		if p3min.z > p3max.z do swap p3min.z p3max.z
-		#(p3min, p3max)
+		if p3min.x > p3max.x then swap p3min.x p3max.x
+
+		if p3min.y > p3max.y then swap p3min.y p3max.y
+
+		if p3min.z > p3max.z then swap p3min.z p3max.z
+
+		#(p3min, p3max) -- return
 	)
 
 	fn collectViewportData supportedViews:views mark: =
 	(
 		local ViewData = ViewData_v()
-		local bounds = minmaxSwap ((MapScreenToView [0,0] 0) * Inverse(getViewTM())) ((MapScreenToView (GetViewSize()) 0) * Inverse(getViewTM()))
+
+		local bounds = minMaxSwap (( mapScreenToView [0,0] 0) * Inverse(getViewTM())) ((mapScreenToView  (getViewSize ()) 0) * Inverse(getViewTM()))
 
 		ViewData.vpType	= viewport.getType()
-		ViewData.vpGroupType	= checkVT supportedViews ViewData.vpType
+		ViewData.vpGroupType	= getViewportType supportedViews ViewData.vpType
 		ViewData.vpStartCoord	= bounds[1]
 		ViewData.vpEndCoord	= bounds[2]
-		ViewData.vpVS	= GetViewSize()
+		ViewData.vpVS	= getViewSize ()
 		ViewData.vpFOV	= getViewFOV()
 		ViewData.vpFD	= viewport.getFocalDistance()
 		ViewData.vpTM	= viewport.getTM()
-		ViewData.vpNode	= if (node = viewport.getCamera()) != undefined do (setUserProp node "vpdProp" mark ; node)
-		ViewData
+		ViewData.vpNode	= if (node = viewport.getCamera()) != undefined do ( setUserProp node "vpdProp" mark ; node)
+
+		ViewData -- return
 	)
+
+
 
 	fn restoreViewport ViewData =
 	(
 		local deadData = off
+
 		viewport.SetType ViewData.vpType
+
 		case ViewData.vpGroupType of
 		(
 			#user:
 			(
 				viewport.setTM ViewData.vpTM
-				if ViewData.vpType == #view_persp_user then (viewport.SetFOV ViewData.vpFOV ; viewport.SetFocalDistance ViewData.vpFD)
-				else (viewport.ZoomToBounds off ViewData.vpStartCoord ViewData.vpEndCoord ; viewport.zoom (ViewData.vpFOV/(viewport.getFOV())))
+
+				if ViewData.vpType == #view_persp_user then
+					(viewport.SetFOV ViewData.vpFOV ; viewport.SetFocalDistance ViewData.vpFD)
+				else
+					(viewport.ZoomToBounds off ViewData.vpStartCoord ViewData.vpEndCoord ; viewport.zoom (ViewData.vpFOV/(viewport.getFOV())))
 			)
+
 			#ortho:
 			(
 				viewport.ZoomToBounds off ViewData.vpStartCoord ViewData.vpEndCoord
+
 				viewport.zoom (ViewData.vpFOV/(viewport.getFOV()))
 			)
+
 			#camlight: (if isValidNode ViewData.vpNode and viewport.canSetToViewport ViewData.vpNode then viewport.setCamera ViewData.vpNode else deadData = on)
 		)
-		completeredraw()
+
+		CompleteRedraw()
+
 		deadData
 	)
 
@@ -86,7 +103,7 @@ rollout saveViewDialog "Store & Restore Views"
 
 	fn p3Top2 value = (point2 value.x value.y)
 
-	fn checkRN = isProperty rootNode #vpKeys
+	fn checkRootNode = isProperty rootNode #vpKeys
 
 	fn checkDICT dict = (dict.keys.count != 0)
 
@@ -94,7 +111,7 @@ rollout saveViewDialog "Store & Restore Views"
 
 	fn addCA =
 	(
-		if not (checkRN()) do
+		if not (checkRootNode()) do
 		(
 			local vpdCA = attributes viewportDataAtt version:17 attribID:(genClassID returnValue:on)
 			(
@@ -117,11 +134,16 @@ rollout saveViewDialog "Store & Restore Views"
 		)
 	)
 
-	fn deleteCA = if (checkRN()) do
+	fn deleteCA = if (checkRootNode()) do
 	(
 		local caVPD
-		if (c = custAttributes.count rootNode) > 0 do (for i = 1 to c where (vpdCA = custAttributes.getdef rootNode i).name == #viewportDataAtt do (caVPD = vpdCA))
-		if isKindOf caVPD AttributeDef do custAttributes.delete rootNode caVPD
+
+		if (c = custAttributes.count rootNode) > 0 then
+			for i = 1 to c where (vpdCA = custAttributes.getdef rootNode i).name == #viewportDataAtt do
+				(caVPD = vpdCA)
+
+		if isKindOf caVPD AttributeDef then
+			custAttributes.delete rootNode caVPD
 	)
 
 	fn findNode nodes ks: = (for n in nodes where (getUserProp n "vpdProp" == ks) collect n)[1]
@@ -153,7 +175,7 @@ rollout saveViewDialog "Store & Restore Views"
 	)
 
 
-	fn setVPData dict =
+	fn setViewportData dict =
 	(
 		freeVPData()
 
@@ -177,39 +199,39 @@ rollout saveViewDialog "Store & Restore Views"
 	)
 
 
-
-
-
 	button btn_add "Add View" pos:[5,5] width:72 height:21 tooltip:"Store or Update View"
+
 	button btn_delete "Remove" pos:[80,5] width:72 height:21 tooltip:"LMB - Remove Selected View From List\nRMB - Remove All Stored Vievs"
+
 	combobox cbx_views "" pos:[5,30] width:148 height:15 selection:0
-
-
 
 	on btn_add pressed do if (vt = viewport.getType()) == undefined then messageBox "This view is not supported" title:"Warning" beep:off else
 	(
 		if cbx_views.text != "" do
 		(
-			if not (checkRN()) do addCA()
+			if not (checkRootNode()) do addCA()
 
 			value = vpData.keys.count
 
-			if (checkVT views vt) != undefined do PutDictValue vpData cbx_views.text (collectViewportData mark:cbx_views.text)
+			if (getViewportType views vt) != undefined do PutDictValue vpData cbx_views.text (collectViewportData mark:cbx_views.text)
 
 			if value < vpData.keys.count do cbx_views.items = sort (GetDictKeys vpData)
 
-			cbx_views.selection = 0 ; setVPData vpData
+			cbx_views.selection = 0
+
+			setViewportData vpData
 		)
 	)
-
-
 
 	on btn_delete pressed do if (checkDICT vpData and cbx_views.text != "") do
 	(
 		if (ViewData = GetDictValue vpData cbx_views.text).vpGroupType == #camlight do (if isValidNode ViewData.vpNode do setUserProp ViewData.vpNode "vpdProp" "")
 		RemoveDictValue vpData cbx_views.text ; cbx_views.selection = 0
-		if (checkDICT vpData) then (cbx_views.items = sort (GetDictKeys vpData) ; setVPData vpData)
-		else (freeVPData() ; free vpData ; cbx_views.items = #())
+
+		if (checkDICT vpData) then
+			(cbx_views.items = sort (GetDictKeys vpData) ; setViewportData vpData)
+		else
+			(freeVPData() ; free vpData ; cbx_views.items = #())
 	)
 	on btn_delete rightclick do if (checkDICT vpData) do
 	(
@@ -229,12 +251,16 @@ rollout saveViewDialog "Store & Restore Views"
 	)
 	on saveViewDialog open do
 	(
-		if (checkRN()) do
+		if (checkRootNode()) do
 		(
-			setDialogPos saveViewDialog rootNode.vpRollPos ; getVPData vpData ; cbx_views.items = sort (GetDictKeys vpData)
+			SetDialogPos saveViewDialog rootNode.vpRollPos
+
+			getVPData vpData
+
+			cbx_views.items = sort (GetDictKeys vpData)
 		)
 	)
-	on saveViewDialog moved pos do if (checkRN()) do rootNode.vpRollPos = pos
+	on saveViewDialog moved pos do if (checkRootNode()) do rootNode.vpRollPos = pos
 )
 
 CreateDialog saveViewDialog 158 245 style:#(#style_titlebar, #style_sysmenu, #style_toolwindow)
