@@ -17,6 +17,42 @@ icon:	"control:checkbox"
 )
 
 
+/** Set viewport background color
+*
+*/
+macroscript	viewport_background_color
+category:	"_Viewports"
+buttontext:	"Background"
+tooltip:	"Set Viewport Background Color"
+icon:	"control:colorpicker|value:[56,56,56]"
+(
+	background_color = ROLLOUT_viewports.cp_background.color
+
+	fn RGBToUIColor clr = [clr.r/255,clr.g/255,clr.b/255]
+
+	viewport.EnableSolidBackgroundColorMode(true)
+
+	SetUIColor 41 (RGBToUIColor(background_color))
+
+	CompleteRedraw()
+)
+
+/** Reset viewport background color
+*
+*/
+macroscript	viewport_background_color_reset
+category:	"_Viewports"
+buttontext:	"Reset"
+tooltip:	"Reset Viewport Background Color"
+icon:	"width:48"
+(
+	ROLLOUT_viewports.cp_background.color = ( color 56 56 56 )
+
+	macros.run "_Viewports" "viewport_background_color"
+)
+
+
+
 --
 -- /**
 -- *
@@ -36,3 +72,5 @@ icon:	"control:checkbox"
 --	format "is_top = % \n" is_top
 --
 --)
+
+
