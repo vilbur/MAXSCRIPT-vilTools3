@@ -28,7 +28,7 @@ For $index, $layout in $layouts
 	if( $index == 1 )
 		$icon .= $first_button_params
 	else
-		$icon .= """"
+		$icon .= "|offset:[" (A_Index - 1 )  ",0]"""
 
 
 	$macroscript := "`n`n" $macro_name "`n" $category "`n" $buttontext "`n" $tooltip "`n" $icon "`n(`n	" $code "`n)"
