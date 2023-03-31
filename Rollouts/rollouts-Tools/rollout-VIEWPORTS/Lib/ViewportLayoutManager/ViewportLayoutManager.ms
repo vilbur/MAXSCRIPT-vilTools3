@@ -1,7 +1,9 @@
 filein( getFilenamePath(getSourceFileName()) + "/ViewportData/ViewportData.ms" ) -- "./ViewportSceneLayouts/ViewportSceneLayouts.ms"
 
 /** Viewport layout manager
- */
+  *
+  *
+  */
 struct ViewportLayoutManager_v
 (
 	/* construct */
@@ -27,13 +29,11 @@ struct ViewportLayoutManager_v
 	function restoreLayout layout_name =
 	(
 		format "\n"; print "ViewData_v.restoreLayout()"
-		--format "layout_name	= % \n" layout_name
 
 		viewport.setLayout(layout_name)
 
 		ini_file = this._getIniFile( layout_name )
 
-		--format "doesFileExist ini_file	= % \n" (doesFileExist ini_file)
 		if not doesFileExist ini_file then
 			return false
 
@@ -45,15 +45,14 @@ struct ViewportLayoutManager_v
 
 			viewport.SetType (ViewportData.type)
 
-			view_type_split	= filterString ( ViewportData.type as string ) "_"
+			viewport.SetRenderLevel(ViewportData.render_mode)
 
+			view_type_split	= filterString ( ViewportData.type as string ) "_"
 
 			case view_type_split[view_type_split.count] as name of
 			(
 				#user:
 				(
-					print "#PERSPECTIVE"
-
 					viewport.setTM ViewportData.transform
 
 					if ViewportData.type == #view_persp_user then
@@ -72,8 +71,6 @@ struct ViewportLayoutManager_v
 
 				#camera:
 				(
-					print "#CAMERA"
-
 					cams = for cam in cameras where cam.name == ViewportData.camera collect cam
 
 					if cams.count > 0 and isValidNode cams[1] and viewport.canSetToViewport cams[1] then
@@ -82,8 +79,6 @@ struct ViewportLayoutManager_v
 
 				default: -- ORTHO
 				(
-					print "#DEFAULT"
-
 					viewport.ZoomToBounds off ( ViewportData.start_pos) ( ViewportData.end_pos )
 
 					viewport.zoom ((ViewportData.field_of_view) / ( viewport.getFOV()))
@@ -102,8 +97,7 @@ struct ViewportLayoutManager_v
 	 */
 	function _collectViewportData index =
 	(
-		format "\n"; print "ViewData_v.collectData()"
-
+		--format "\n"; print "ViewData_v.collectData()"
 		ViewportData = ViewportData_v()
 
 		viewport.activeViewportEx index
@@ -117,6 +111,7 @@ struct ViewportLayoutManager_v
 		ViewportData.field_of_view	= getViewFOV()
 		ViewportData.focal_distance	= viewport.getFocalDistance()
 		ViewportData.transform	= viewport.getTM()
+		ViewportData.render_mode	= viewport.GetRenderLevel()
 		ViewportData.camera	= if ( _camera = viewport.getCamera()) != undefined then ( _camera.name )
 
 		ViewportData --return
@@ -138,9 +133,8 @@ struct ViewportLayoutManager_v
 	 */
 	function _loadIni ini_file index =
 	(
-		format "\n"; print "ViewportLayoutManager_v._loadIni()"
-
-		/** Convert data type
+		--format "\n"; print "ViewportLayoutManager_v._loadIni()"
+		/** Convert ini value to valid data type
 		 */
 		function convertDataType val data_type =
 		(
