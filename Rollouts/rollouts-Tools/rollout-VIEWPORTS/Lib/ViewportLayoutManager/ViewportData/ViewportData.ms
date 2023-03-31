@@ -7,8 +7,7 @@ struct ViewportData_v
 	end_pos	= [0,0,0],
 	view_size	= [0,0],
 	field_of_view	= 0.0,
-	focal_distance	= 0.0
-	--transform	= ( matrix3 [1,0,0] [0,0,-1] [0,1,0] [0,0,0] )
+	focal_distance	= 0.0,
+	camera	= undefined, --string name of camera
+	transform	= ( matrix3 [1,0,0] [0,0,-1] [0,1,0] [0,0,0] )
 )
-
-matrix3

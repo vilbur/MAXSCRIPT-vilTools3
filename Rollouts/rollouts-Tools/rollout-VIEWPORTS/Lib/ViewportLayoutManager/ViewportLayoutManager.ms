@@ -27,19 +27,18 @@ struct ViewportLayoutManager_v
 	function restoreLayout layout_name =
 	(
 		format "\n"; print "ViewData_v.restoreLayout()"
-		format "layout_name	= % \n" layout_name
+		--format "layout_name	= % \n" layout_name
 
 		viewport.setLayout(layout_name)
 
 		ini_file = this._getIniFile( layout_name )
 
-		format "doesFileExist ini_file	= % \n" (doesFileExist ini_file)
+		--format "doesFileExist ini_file	= % \n" (doesFileExist ini_file)
 		if not doesFileExist ini_file then
 			return false
 
 		for i = 1 to viewport.numViews do
 		(
-
 			ViewportData = this._loadIni (ini_file) (i)
 
 			viewport.activeViewportEx i
@@ -47,12 +46,14 @@ struct ViewportLayoutManager_v
 			viewport.SetType (ViewportData.type)
 
 			view_type_split	= filterString ( ViewportData.type as string ) "_"
-			format "view_type_split	= % \n" view_type_split
 
-			case view_type_split[view_type_split.count] of
+
+			case view_type_split[view_type_split.count] as name of
 			(
 				#user:
 				(
+					print "#PERSPECTIVE"
+
 					viewport.setTM ViewportData.transform
 
 					if ViewportData.type == #view_persp_user then
@@ -69,10 +70,20 @@ struct ViewportLayoutManager_v
 					)
 				)
 
-				--#camera: (if isValidNode ViewportData.vpNode and viewport.canSetToViewport ViewportData.vpNode then viewport.setCamera ViewportData.vpNode else deadData = on)
+				#camera:
+				(
+					print "#CAMERA"
+
+					cams = for cam in cameras where cam.name == ViewportData.camera collect cam
+
+					if cams.count > 0 and isValidNode cams[1] and viewport.canSetToViewport cams[1] then
+						 viewport.setCamera cams[1]
+				)
 
 				default: -- ORTHO
 				(
+					print "#DEFAULT"
+
 					viewport.ZoomToBounds off ( ViewportData.start_pos) ( ViewportData.end_pos )
 
 					viewport.zoom ((ViewportData.field_of_view) / ( viewport.getFOV()))
@@ -105,8 +116,9 @@ struct ViewportLayoutManager_v
 		ViewportData.view_size	= getViewSize ()
 		ViewportData.field_of_view	= getViewFOV()
 		ViewportData.focal_distance	= viewport.getFocalDistance()
-		--ViewportData.transform	= viewport.getTM()
-		format "ViewportData	= % \n" ViewportData
+		ViewportData.transform	= viewport.getTM()
+		ViewportData.camera	= if ( _camera = viewport.getCamera()) != undefined then ( _camera.name )
+
 		ViewportData --return
 	),
 
@@ -128,19 +140,24 @@ struct ViewportLayoutManager_v
 	(
 		format "\n"; print "ViewportLayoutManager_v._loadIni()"
 
+		/** Convert data type
+		 */
+		function convertDataType val data_type =
+		(
+			--format "DATA_TYPE	= % \n" data_type
+			case data_type of
+			(
+				UndefinedClass:	undefined
+				matrix3:	execute val
+				default:	val as data_type
+			)
+		)
+
 		ViewportData = ViewportData_v()
 
 		for prop in (getPropNames (ViewportData)) do
-		(
-			val = getINISetting ini_file (index as string ) (prop as string )
+			setProperty ViewportData prop ( convertDataType(getINISetting ini_file (index as string ) (prop as string ))(classOf (getProperty ViewportData prop)) )
 
-			classOf_value = classOf (getProperty ViewportData prop)
-			--format "\n"
-			--format "val	= % \n" val
-			--format "classOf_value	= % \n" classOf_value
-			setProperty ViewportData prop (val as classOf_value )
-		)
-		format "ViewportData	= % \n" ViewportData
 		ViewportData --return
 	),
 
@@ -183,5 +200,4 @@ struct ViewportLayoutManager_v
 	GLOBAL
 --------------------------------------------------------------------------------*/
 
---if ViewportLayoutManager == undefined then
-	ViewportLayoutManager = ViewportLayoutManager_v()
+ViewportLayoutManager = ViewportLayoutManager_v()
