@@ -1,11 +1,11 @@
 clearListener()
 
 content = "/Rollouts"
- -- content = "/Rollouts-Test" -- DEV
+--content = "/Rollouts-Test" -- DEV
 
 current_dir = getFilenamePath(getSourceFileName())
 
-global VILTOOLS_DIR = trimRight (pathConfig.stripPathToLeaf(current_dir)) "\\"
+global VILTOOLS_DIR = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 
 
 /** Import structures used in macroscripts on Max start

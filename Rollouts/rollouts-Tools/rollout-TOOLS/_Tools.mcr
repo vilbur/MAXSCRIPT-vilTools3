@@ -11,7 +11,7 @@ macroscript	tools_select_tool_or_axis_double
 category:	"_Tools"
 buttontext:	"Select"
 toolTip:	"Select tool"
-icon:	"#(path, index)"
+--icon:	"#(path, index)"
 (
 	(ToolMode_v tool_mode:#Select).setToolOrChangeSelectionType #( #Rectangle, #Circle, #Fence, #Lasso, #Paint )
 )
@@ -151,28 +151,3 @@ toolTip:	"Scale tool:  XY | ZX | YZ | XYZ"
 	format "% \n" ( if toolMode.commandmode == #Uscale then "UNIFORM SCALE" else "NON UNIFORM SCALE")
 
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
