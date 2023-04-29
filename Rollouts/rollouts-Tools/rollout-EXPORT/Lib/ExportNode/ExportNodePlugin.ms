@@ -42,7 +42,7 @@ replaceUI:	true
 
 	parameters main rollout:params
 	(
-		size  type:#integer default:20 	ui:node_size align:#left
+		size  type:#integer default:100 	ui:node_size align:#left
 
 		on size set val do
 			Delegate.size = val

@@ -1,6 +1,4 @@
-/**
-
-
+/** Methods for Lsitbox ROLLOUT_export.ML_nodes
 
  */
 struct NodeList_v
@@ -20,7 +18,7 @@ struct NodeList_v
 	 */
 	function loadNodes =
 	(
-		--print "NodeList_v.loadNodes()"
+		print "NodeList_v.loadNodes()"
 
 		nodelist_control.items = this._getNodeNames (this._getNodesInScene())
 	),
@@ -48,7 +46,7 @@ struct NodeList_v
 	 */
 	function _getNodesInScene =
 	(
-		for _shape in shapes where classOf _shape == text and getUserProp _shape user_prop != undefined collect _shape
+		for obj in shapes where classOf obj == Export_Node collect obj
 	),
 
 	/** _get node names
@@ -60,7 +58,7 @@ struct NodeList_v
 
 	on create do
 	(
-		--print "NodeList_v.onCreate()"
+		print "NodeList_v.onCreate()"
 		--format "nodelist_control	= % \n" nodelist_control
 	)
 )

@@ -1,7 +1,6 @@
 global NODE_NAME_ROLLOUT
 
 
-
 /** export node
  */
 struct ExportNode_v
@@ -9,9 +8,7 @@ struct ExportNode_v
 	_node,
 	_scene_name	= if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace ( getFilenameFile maxFileName ) "" ) else "UnrealExport",
 	_name	= _scene_name,
-
-	user_prop = "unreal-engine-export-node",
-
+	_selection,
 
 	/** Create
 	 */
@@ -20,6 +17,8 @@ struct ExportNode_v
 		--print "ExportNode_v.create()"
 		global ThisExportNode = this
 
+		this._selection = for obj in selection where obj.parent == undefined and classOf obj != Export_Node collect obj
+		format "this._selection	= % \n" this._selection
 		this._createNodeDialog()
 	),
 
@@ -34,12 +33,6 @@ struct ExportNode_v
 		default_layer.on = true
 	),
 
-	--/** Get node object
-	-- */
-	--function _getNodeObject =
-	--(
-	--	--getNodeByName _name
-	--),
 
 	/** Ask name dialog
 	 */
@@ -83,15 +76,18 @@ struct ExportNode_v
 		--format "node_exists	= % \n" node_exists
 		if( this._getNodeByName(_name) == undefined ) then
 		(
-			export_dir = this._getExportDir()
 
-			_node = Export_Node name:_name text:_name export_dir:export_dir isSelected:on
+			this._node = Export_Node name:_name text:_name export_dir:(this._getExportDir()) size:(this._getNodeSize()) isSelected:on
 
 			this._addToDefaultLayer()
+
+			this._linkSelectedObejctsToNode()
 
 			try(destroyDialog NODE_NAME_ROLLOUT) catch()
 
 			ThisExportNode = undefined
+
+			(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
 
 			true --return
 		)
@@ -99,8 +95,19 @@ struct ExportNode_v
 			this._exception() --return
 	),
 
+	/** Link selected obejcts to node
+	  *
+	  * Only objects without parent are linked, hierarchy will be kept
+	 */
+	function _linkSelectedObejctsToNode =
+	(
+		format "\n"; print "ExportNode_v._linkSelectedObejctsToNode()"
 
-	/** _exception
+		for obj in this._selection do
+			obj.parent = this._node
+	),
+
+	/** Throw Eexception
 	 */
 	function _exception =
 	(
@@ -148,9 +155,25 @@ struct ExportNode_v
 	),
 
 
+	/** Get
+	  *
+	  * @return integer
+	  * 		1) biggest node size from other nodes in scene
+	  * 		2) default
+	 */
+	function _getNodeSize =
+	(
+		--format "\n"; print "ExportNode_v._getNodeSize()"
+		other_node_size = 0
+
+		for _node in this._getNodesInScene() where _node.size > other_node_size do
+			other_node_size = _node.size
+
+		if other_node_size != 0 then other_node_size else 100
+	),
+
 	on create do
 	(
 		--print "ExportNode_v.onCreate()"
-
 	)
 )

@@ -20,22 +20,28 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )
 --)
 
 /**  CREATE EXPORT NODE
+
+
+  TODO:
+	Groups are attached into objects if their name IS NOT UPPERCASE
+
  */
 macroscript	_unreal_export_node_create
 category:	"_Unreal"
 buttontext:	"Create"
-toolTip:	"Create Export Node\n\nNode name is asset name\n\nUser props of node caontain export dir and materials dir\n\nGroups are attached into objects if their name IS NOT UPPERCASE"
+toolTip:	"Create Export Node\n\nNode name is exported filename\n\nSlected objects will be linked to new node"
 --icon:	"Groupbox:Nodes"
 icon:	"across:5|width:64"
 (
-	format "eventFired.control	= % \n" eventFired.control
-	format "eventFired	= % \n" eventFired
-	ExportNode 	= ExportNode_v()
+	--format "eventFired.control	= % \n" eventFired.control
+	--format "eventFired	= % \n" eventFired
+	undo "Create Export Node" on
+	(
+		ExportNode 	= ExportNode_v()
 
-	ExportNode.create()
+		ExportNode.create()
 
-	(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
-
+	)
 )
 
 /**  LINK TO NODE
@@ -51,7 +57,6 @@ toolTip:	"Link selected objects to selected nod"
 
 	if( _nodes.count > 0 ) then
 		for obj in selection do obj.parent = _nodes[1]
-
 )
 
 
