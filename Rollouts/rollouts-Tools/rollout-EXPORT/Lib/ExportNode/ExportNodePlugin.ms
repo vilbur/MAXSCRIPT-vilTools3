@@ -1,3 +1,4 @@
+
 plugin shape Export_Node
 
 name:	"Export Node"
@@ -17,6 +18,7 @@ replaceUI:	true
 
 		nodes[1] --return
 	)
+
 
 	/*------------------------------------------------------------------------------
 		PARAMETERS
@@ -76,4 +78,11 @@ replaceUI:	true
 	(
 		_node.name = "Export Node"
 	)
+
+	on load  do
+	(
+		--_node.name = "Export Node"
+		--print "Export node Loaded"
+	)
+
 )

@@ -9,23 +9,30 @@ struct NodeList_v
 	/* properties  */
 	user_prop = "unreal-engine-export-node",
 
-	--nodes_in_scene = #(),
-
-	--_rollout = ROLLOUTS_GLOBAL.get "ROLLOUT_unreal",
-
-
 	/** Load nodes
 	 */
 	function loadNodes =
 	(
-		print "NodeList_v.loadNodes()"
+		--print "NodeList_v.loadNodes()"
+		nodelist_control.items = this._getNodeNames (this.getNodesInScene())
+	),
 
-		nodelist_control.items = this._getNodeNames (this._getNodesInScene())
+	/** Select nodes in list
+	 */
+	function selectNodesInList nodes_to_select =
+	(
+		--format "\n"; print "NodeList_v.selectNodesInList()"
+
+		nodes_to_select = this._getNodeNames(nodes_to_select)
+
+		selected_indexes = for node_name in nodelist_control.items where findItem nodes_to_select node_name > 0 collect findItem nodelist_control.items node_name
+
+		nodelist_control.selection = selected_indexes
 	),
 
 	/** Get selected items
 	 */
-	function getSelectedItems =
+	function getSelectedItemsInList =
 	(
 		selected_index = nodelist_control.selection as Array
 
@@ -34,17 +41,18 @@ struct NodeList_v
 		for index in selected_index collect node_names[index] -- return
 	),
 
-	/** _get selected nodes
+	/** Gget selected nodes in mutlilistbox control
 	 */
-	function getSelectedNodes =
+	function getSelectedNodesInScene =
 	(
-		--print "NodeList_v._getSelectedNodes()"
-		for _node in (this._getNodesInScene()) where findItem (this.getSelectedItems()) _node.name > 0 collect _node --return
+		--print "NodeList_v.getSelectedNodesInScene()"
+		--nodes_selected_in_scene = this._getNodesInScene()
+		for obj in selection where classOf obj == Export_Node collect obj
 	),
 
-	/** Get nodes in scene
+	/** Get all nodes in scene
 	 */
-	function _getNodesInScene =
+	function getNodesInScene =
 	(
 		for obj in shapes where classOf obj == Export_Node collect obj
 	),

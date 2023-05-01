@@ -1,39 +1,36 @@
-/** ExportNodeCallback
+/** Select node in list
  */
-struct ExportNodeCallback_v
+function selectExportNodeInListCallback =
 (
+	--format "\n"; print ".selectExportNodeInListCallback()"
+	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
 
-	/*------------------------------------------------------------------------------
-		PRIVATE
-	------------------------------------------------------------------------------*/
-	
-	/** Remove callback
-	 */
-	function removeCallback =
-	(
-		try( callbacks.removeScripts #selectionSetChanged id:#onUnityExportNodeSelected )catch()
-	),
-	/** Add callback
-	 */
-	function addCallback =
-	(
-		this.removeCallback()
-		
-		try( callbacks.addScript #selectionSetChanged "onUnityExportNodeSelected()" id:#onUnityExportNodeSelected )catch()
-	),
-	
-	--/*---------------------------------------
-	--	NODE USER PROPERTIES
-	-------------------------------------------*/
-	--/** Set export dir
-	-- */
-	--function setExportDir dir =
-	--(
-	--	this._setUserProp "export-dir"	dir
-	--),
-	
-		
-	on create do ()
+	NodeList.loadNodes()
+
+	selectExportNodeInListCallbackRemove()
+
+	if (selected_nodes = NodeList.getSelectedNodesInScene()).count > 0 then
+		NodeList.selectNodesInList(selected_nodes)
+
+	selectExportNodeInListAdd()
+)
 
 
+/** Remove callback
+ */
+function selectExportNodeInListCallbackRemove =
+(
+	--format "\n"; print ".selectExportNodeInListCallbackRemove()"
+
+	try( callbacks.removeScripts #selectionSetChanged id:#selectExportNodeInListCallback )catch()
+)
+
+/** Add callback
+ */
+function selectExportNodeInListAdd =
+(
+	--format "\n"; print ".selectExportNodeInListAdd()"
+	selectExportNodeInListCallbackRemove()
+
+	try( callbacks.addScript #selectionSetChanged "selectExportNodeInListCallback()" id:#selectExportNodeInListCallback )catch()
 )

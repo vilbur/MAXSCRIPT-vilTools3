@@ -1,5 +1,7 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )	-- "./Lib/NodeList/NodeList.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	-- "./Lib/ExportNode/ExportNode.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup.ms" )	-- "./Lib/Exporter/Exporter.ms"
 
 /*------------------------------------------------------------------------------
 
@@ -10,7 +12,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )
 --/**  GROUPBOX
 -- */
 --macroscript	_unreal_export_group
---category:	"_Unreal"
+--category:	"_Export"
 ----buttontext:	"SetupGroup"
 ----toolTip:	"Create Export Node"
 ----icon:	"control:Groupbox|across:2"
@@ -27,7 +29,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )
 
  */
 macroscript	_unreal_export_node_create
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Create"
 toolTip:	"Create Export Node\n\nNode name is exported filename\n\nSlected objects will be linked to new node"
 --icon:	"Groupbox:Nodes"
@@ -47,13 +49,13 @@ icon:	"across:5|width:64"
 /**  LINK TO NODE
  */
 macroscript	_unreal_export_node_link_selection
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Link"
 toolTip:	"Link selected objects to selected nod"
 --icon:	"Groupbox:Nodes"
 --icon:	"control:checkbutton"
 (
-	_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
+	_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 	if( _nodes.count > 0 ) then
 		for obj in selection do obj.parent = _nodes[1]
@@ -63,13 +65,13 @@ toolTip:	"Link selected objects to selected nod"
 /**  LOAD
  */
 macroscript	_unreal_export_node_load
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Load"
 toolTip:	"Load nodes to list"
 --icon:	"Groupbox:Nodes"
 --icon:	"control:checkbutton"
 (
-	--select ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
+	--select ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 	(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
 	--ExportNode 	= ExportNode_v()
@@ -81,14 +83,14 @@ toolTip:	"Load nodes to list"
 /**
  */
 macroscript	_unreal_preexport
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Pre Export"
 toolTip:	"Save Eported nodes as separated max files in export folder"
 --icon:	""
 (
 	clearListener()
 
-	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
+	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 	format "selected_nodes	= % \n" selected_nodes
 
@@ -113,7 +115,7 @@ toolTip:	"Save Eported nodes as separated max files in export folder"
 /**
  */
 macroscript	_unreal_export_test
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Test"
 toolTip:	"Export selected nodes to files"
 --icon:	"Groupbox:Nodes|height:64"
@@ -123,7 +125,7 @@ toolTip:	"Export selected nodes to files"
 
 	filein( @"c:\scripts\vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\Lib\ExporterDatasmith\ExportChecker\ExportChecker.ms" ) -- DEV
 
-	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
+	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 	format "selected_nodes	= % \n" selected_nodes
 
@@ -144,16 +146,29 @@ toolTip:	"Export selected nodes to files"
 /**  NODE LIST
  */
 macroscript	_unreal_export_nodes_list
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"control:multilistbox|across:2"
+icon:	"control:multilistbox|across:2|event:#selectionEnd"
+--icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
-	format "eventFired	= % \n" eventFired
+	--format "eventFired	= % \n" eventFired
 
-	--selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
-	--
+	selected_nodes_in_list =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedItemsInList())
+
+	clearSelection()
+
+	selectExportNodeInListCallbackRemove()
+
+	select (for obj in shapes where classOf obj == Export_Node and findItem selected_nodes_in_list obj.name > 0 collect obj)
+
+	selectExportNodeInListAdd()
+
+
+	/*------------------------------------------------------------------------------
+		DEPRECATED FOR UNREAL
+	--------------------------------------------------------------------------------*/
 	--/** Fillpaths
 	-- */
 	--function fillpaths _control prop_name =
@@ -171,7 +186,7 @@ icon:	"control:multilistbox|across:2"
 	--fillpaths EventFired.Roll.export_Dir	"export-dir"
 	--fillpaths EventFired.Roll.materials_Dir	"materials-dir"
 	--
-	--macros.run "_Unreal" "_unreal_load_materials"
+	--macros.run "_Export" "_unreal_load_materials"
 	--
 	--select selected_nodes
 )
@@ -180,14 +195,14 @@ icon:	"control:multilistbox|across:2"
 /*------ NODELIST DOUBLE CLICK ------*/
 
 macroscript	_unreal_export_nodes_list_doubleclick
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
 icon:	"control:multilistbox|across:2"
 (
 	--messageBox "Doubleclick" title:"Title"  beep:false
 	--format "EventFired	= % \n" EventFired
-	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
+	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 	select ((ExporterDatasmith_v export_nodes:selected_nodes).selectChildNodes())
 
@@ -196,57 +211,10 @@ icon:	"control:multilistbox|across:2"
 
 /*------ NODELIST RIGHT CLICK ------*/
 macroscript	_unreal_export_nodes_list_righclick
-category:	"_Unreal"
+category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
 icon:	"control:multilistbox|across:2"
 (
 	messageBox "Rightclick" title:"Title"  beep:false
-)
-
-
-
-/*==============================================================================
-
-		EXPORT BUTTON
-
-================================================================================*/
-
-macroscript	_unreal_export
-category:	"_Unreal"
-buttontext:	"Export"
-toolTip:	"Export selected nodes to files"
-icon:	"height:64|across:2|offset:[0,16]"
---icon:	"Groupbox:Nodes|height:64"
-(
-	--export_dir = execute ("@"+ "\""+EventFired.Roll.BROWSEPATH_Export_Dir.text +"\"")
-	clearListener()
-
-	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
-
-	format "selected_nodes	= % \n" selected_nodes
-
-	if( selected_nodes.count > 0 ) then
-		with redraw off
-			(ExporterDatasmith_v export_nodes:selected_nodes).export()
-	else
-		messageBox "Export node is not selected" title:"Export node error"
-
-
-	redrawViews()
-)
-
-
-/**  #righclick
- */
-macroscript	_unreal_export_open_dir
-category:	"_Unreal"
-buttontext:	"Export"
-toolTip:	"Open export folder"
---icon:	"Groupbox:Nodes|height:64"
-(
-	export_dir = execute ("@"+ "\""+EventFired.Roll.export_dir.text +"\"")
-
-	DosCommand ("explorer \""+export_dir+"\"")
-
 )
