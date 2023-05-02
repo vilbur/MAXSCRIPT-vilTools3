@@ -11,7 +11,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup
 --
 --/**  GROUPBOX
 -- */
---macroscript	_unreal_export_group
+--macroscript	_export_group
 --category:	"_Export"
 ----buttontext:	"SetupGroup"
 ----toolTip:	"Create Export Node"
@@ -28,7 +28,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup
 	Groups are attached into objects if their name IS NOT UPPERCASE
 
  */
-macroscript	_unreal_export_node_create
+macroscript	_export_node_create
 category:	"_Export"
 buttontext:	"Create"
 toolTip:	"Create Export Node\n\nNode name is exported filename\n\nSlected objects will be linked to new node"
@@ -48,7 +48,7 @@ icon:	"across:5|width:64"
 
 /**  LINK TO NODE
  */
-macroscript	_unreal_export_node_link_selection
+macroscript	_export_node_link_selection
 category:	"_Export"
 buttontext:	"Link"
 toolTip:	"Link selected objects to selected nod"
@@ -64,7 +64,7 @@ toolTip:	"Link selected objects to selected nod"
 
 /**  LOAD
  */
-macroscript	_unreal_export_node_load
+macroscript	_export_node_load
 category:	"_Export"
 buttontext:	"Load"
 toolTip:	"Load nodes to list"
@@ -82,7 +82,7 @@ toolTip:	"Load nodes to list"
 
 /**
  */
-macroscript	_unreal_preexport
+macroscript	_export_preexport
 category:	"_Export"
 buttontext:	"Pre Export"
 toolTip:	"Save Eported nodes as separated max files in export folder"
@@ -114,7 +114,7 @@ toolTip:	"Save Eported nodes as separated max files in export folder"
 
 /**
  */
-macroscript	_unreal_export_test
+macroscript	_export_test
 category:	"_Export"
 buttontext:	"Test"
 toolTip:	"Export selected nodes to files"
@@ -145,25 +145,25 @@ toolTip:	"Export selected nodes to files"
 
 /**  NODE LIST
  */
-macroscript	_unreal_export_nodes_list
+macroscript	_export_nodes_list
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"control:multilistbox|across:2|event:#selectionEnd"
+icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20"
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
 	--format "eventFired	= % \n" eventFired
 
-	selected_nodes_in_list =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedItemsInList())
+	selected_nodes =  (NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList()
 
 	clearSelection()
 
 	selectExportNodeInListCallbackRemove()
 
-	select (for obj in shapes where classOf obj == Export_Node and findItem selected_nodes_in_list obj.name > 0 collect obj)
+	select (selected_nodes)
 
-	selectExportNodeInListAdd()
+	selectExportNodeInListCallbactAdd()
 
 
 	/*------------------------------------------------------------------------------
@@ -186,7 +186,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd"
 	--fillpaths EventFired.Roll.export_Dir	"export-dir"
 	--fillpaths EventFired.Roll.materials_Dir	"materials-dir"
 	--
-	--macros.run "_Export" "_unreal_load_materials"
+	--macros.run "_Export" "_load_materials"
 	--
 	--select selected_nodes
 )
@@ -194,7 +194,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd"
 
 /*------ NODELIST DOUBLE CLICK ------*/
 
-macroscript	_unreal_export_nodes_list_doubleclick
+macroscript	_export_nodes_list_doubleclick
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
@@ -202,15 +202,24 @@ icon:	"control:multilistbox|across:2"
 (
 	--messageBox "Doubleclick" title:"Title"  beep:false
 	--format "EventFired	= % \n" EventFired
-	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
-	select ((ExporterDatasmith_v export_nodes:selected_nodes).selectChildNodes())
+	NodeList 	= NodeList_v(ROLLOUT_export.ML_nodes)
+
+	selected_nodes = NodeList.getSelectedNodesInList()
+
+	selectExportNodeInListCallbackRemove()
+
+	selectmore (NodeList.getAllChildren( selected_nodes  ))
+
+	selectExportNodeInListCallbactAdd()
 
 )
 
 
+
+
 /*------ NODELIST RIGHT CLICK ------*/
-macroscript	_unreal_export_nodes_list_righclick
+macroscript	_export_nodes_list_righclick
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"

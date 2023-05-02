@@ -2,7 +2,7 @@
  */
 function selectExportNodeInListCallback =
 (
-	--format "\n"; print ".selectExportNodeInListCallback()"
+	format "\n"; print ".selectExportNodeInListCallback()"
 	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
 
 	NodeList.loadNodes()
@@ -12,7 +12,10 @@ function selectExportNodeInListCallback =
 	if (selected_nodes = NodeList.getSelectedNodesInScene()).count > 0 then
 		NodeList.selectNodesInList(selected_nodes)
 
-	selectExportNodeInListAdd()
+	selectExportNodeInListCallbactAdd()
+
+	format "\n"; print ".selectExportNodeInListCallback() DONE"
+
 )
 
 
@@ -27,9 +30,9 @@ function selectExportNodeInListCallbackRemove =
 
 /** Add callback
  */
-function selectExportNodeInListAdd =
+function selectExportNodeInListCallbactAdd =
 (
-	--format "\n"; print ".selectExportNodeInListAdd()"
+	--format "\n"; print ".selectExportNodeInListCallbactAdd()"
 	selectExportNodeInListCallbackRemove()
 
 	try( callbacks.addScript #selectionSetChanged "selectExportNodeInListCallback()" id:#selectExportNodeInListCallback )catch()

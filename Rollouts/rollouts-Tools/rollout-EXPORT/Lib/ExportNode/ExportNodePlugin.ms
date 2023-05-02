@@ -37,7 +37,7 @@ replaceUI:	true
 			)
 	)
 
-	parameters _node rollout:export_dir_rollout
+	parameters export_dir_params rollout:export_dir_rollout
 	(
 		export_dir  type:#string default:""	ui:edit_export_path
 	)
@@ -53,12 +53,12 @@ replaceUI:	true
 	/*------------------------------------------------------------------------------
 		ROLLOUTS
 	--------------------------------------------------------------------------------*/
-	rollout export_name_rollout "Export Name" rolledUp:false
+	rollout export_name_rollout "Display Text" rolledUp:false
 	(
 		edittext node_name ""
 	)
 
-	rollout export_dir_rollout "Export Path" rolledUp:false
+	rollout export_dir_rollout "Export Directory" rolledUp:false
 	(
 		edittext edit_export_path ""
 	)
@@ -81,6 +81,9 @@ replaceUI:	true
 
 	on load  do
 	(
+		Delegate.render_useViewportSettings = false
+		Delegate.render_displayRenderMesh  = false
+
 		--_node.name = "Export Node"
 		--print "Export node Loaded"
 	)

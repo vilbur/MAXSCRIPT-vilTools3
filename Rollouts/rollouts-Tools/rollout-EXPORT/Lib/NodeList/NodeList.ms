@@ -14,8 +14,9 @@ struct NodeList_v
 	function loadNodes =
 	(
 		--print "NodeList_v.loadNodes()"
-		nodelist_control.items = this._getNodeNames (this.getNodesInScene())
+		nodelist_control.items = sort(this._getNodeNames (this.getAllNodesInScene()))
 	),
+
 
 	/** Select nodes in list
 	 */
@@ -32,16 +33,23 @@ struct NodeList_v
 
 	/** Get selected items
 	 */
-	function getSelectedItemsInList =
+	function getSelectedNodesInList =
+	(
+		this._getNodesByName(this.getSelectedNodeNamesInList()) -- return
+	),
+
+	/** Get selected items
+	 */
+	function getSelectedNodeNamesInList =
 	(
 		selected_index = nodelist_control.selection as Array
 
-		node_names	= nodelist_control.items
+		--node_names	= nodelist_control.items
 
-		for index in selected_index collect node_names[index] -- return
+		for index in selected_index collect nodelist_control.items[index] -- return
 	),
 
-	/** Gget selected nodes in mutlilistbox control
+	/** Filter nodes from selection
 	 */
 	function getSelectedNodesInScene =
 	(
@@ -52,7 +60,7 @@ struct NodeList_v
 
 	/** Get all nodes in scene
 	 */
-	function getNodesInScene =
+	function getAllNodesInScene =
 	(
 		for obj in shapes where classOf obj == Export_Node collect obj
 	),
@@ -63,6 +71,49 @@ struct NodeList_v
 	(
 		for _node in nodes collect _node.name --return
 	),
+
+
+
+	/** Select child nodes
+	 */
+	function getAllChildren export_nodes =
+	(
+		format "\n"; print "NodeList_v.selectChildNodes()"
+
+		all_children	= #()
+
+		for export_node in export_nodes do
+			all_children += this._getAllChildren(export_node)
+
+		all_children --return
+	),
+
+
+	private
+
+	/** Get nodes by name from scene
+	 */
+	function _getNodesByName node_names =
+	(
+		--format "\n"; print "NodeList_v.getNodesByName()"
+
+		for obj in shapes where classOf obj == Export_Node and findItem node_names obj.name collect obj
+	),
+
+	/**  Get all nested children
+	  */
+	function _getAllChildren obj &arr:#() =
+	(
+		for child in obj.children do
+		(
+			append arr child
+
+			this._getAllChildren child arr:arr
+		)
+		arr
+	),
+
+
 
 	on create do
 	(

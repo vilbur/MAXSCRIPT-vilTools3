@@ -23,9 +23,9 @@ struct ExporterSetup_v
 	function export =
 	(
 		format "\n"; print "PrintExporter_v.export()"
-		format "export_type	= % \n" export_type
+		--format "export_type	= % \n" export_type
 
-		--selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodes())
+		selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 		if( selected_nodes.count > 0 ) then
 			with redraw off
@@ -41,7 +41,9 @@ struct ExporterSetup_v
 
 	),
 
+
 	private
+
 
 	/** Export obj
 	 */
@@ -49,6 +51,9 @@ struct ExporterSetup_v
 	(
 		format "\n"; print "Exporter_v._exportObj()"
 		ObjExporter 	= ObjExporter_v(#obj)
+
+
+
 	),
 
 	/** Export print
@@ -56,10 +61,10 @@ struct ExporterSetup_v
 	function _exportPrint =
 	(
 		format "\n"; print "Exporter_v._exportPrint()"
-
 		ObjExporter 	= ObjExporter_v(#Print)
 
-		--(PrintExporter_v export_nodes:selected_nodes).export()
+		for selected_node in this.selected_nodes where this._direcotryExists (selected_node.export_dir) do
+			ObjExporter.export (this._getAllChildren(selected_node)) (this._getExportFilePath(selected_node))
 	),
 
 	/** Export unreal
@@ -78,6 +83,62 @@ struct ExporterSetup_v
 
 	),
 
+	/** Get export file path
+	 */
+	function _getExportFilePath export_node =
+	(
+		format "\n"; print "ExporterSetup_v._getExportFilePath()"
+		export_node.export_dir + "/" + export_node.name + ".obj" -- return
+	),
+
+	/** Select child nodes
+	 */
+	function _getAllChildren export_nodes =
+	(
+		format "\n"; print "NodeList_v.selectChildNodes()"
+
+		all_children	= #()
+
+		for export_node in export_nodes do
+			all_children += this._getAllChildren(export_node)
+
+		all_children --return
+	),
+
+	/**  Get all nested children
+	  */
+	function _getAllChildren obj &arr:#() =
+	(
+		for child in obj.children do
+		(
+			append arr child
+
+			this._getAllChildren child arr:arr
+		)
+		arr --return
+
+	),
+
+	/** Direcotry exists
+	 */
+	function _direcotryExists export_dir =
+	(
+		format "\n"; print "ExporterSetup_v._direcotryExists()"
+
+		--format "EXPORT_NODE.EXPORT_DIR	= % \n" export_node.export_dir
+		--format "EXPORT_NODE.PROPERTIES	= % \n" ( showProperties export_node)
+
+		if not doesFileExist export_dir then
+		(
+			if queryBox ("Export dir does not exists:\n\n " + export_dir + "\n\nWOULD YOU LIKE TO CREATE IT ?" ) title:"Title"  beep:false then
+				makeDir export_dir all:true --return
+
+			else
+				false --return
+		)
+		else
+			true --return
+	),
 
 
 	/**

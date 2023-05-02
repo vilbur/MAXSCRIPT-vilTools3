@@ -6,8 +6,9 @@ global NODE_NAME_ROLLOUT
 struct ExportNode_v
 (
 	_node,
-	_scene_name	= if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace ( getFilenameFile maxFileName ) "" ) else "UnrealExport",
-	_name	= _scene_name,
+	--_scene_name	= if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace ( getFilenameFile maxFileName ) "" ) else "UnrealExport",
+	--_name	= _scene_name,
+	_name,
 	_selection,
 
 	/** Create
@@ -17,8 +18,8 @@ struct ExportNode_v
 		--print "ExportNode_v.create()"
 		global ThisExportNode = this
 
-		this._selection = for obj in selection where obj.parent == undefined and classOf obj != Export_Node collect obj
-		format "this._selection	= % \n" this._selection
+		this._selection = this._getSelection()
+		--format "this._selection	= % \n" this._selection
 		this._createNodeDialog()
 	),
 
@@ -46,7 +47,7 @@ struct ExportNode_v
 
 			on NODE_NAME_ROLLOUT open do
 			(
-				TextBox.Text	= _scene_name
+				TextBox.Text	= this._getNewNodeName()
 				TextBox.BackColor	= ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
 			)
 
@@ -77,7 +78,7 @@ struct ExportNode_v
 		if( this._getNodeByName(_name) == undefined ) then
 		(
 
-			this._node = Export_Node name:_name text:_name export_dir:(this._getExportDir()) size:(this._getNodeSize()) isSelected:on
+			this._node = Export_Node name:_name text:_name export_dir:(this._getExportDir()) size:(this._getNodeSize()) isSelected:on pos:(this._getNewNodePosition())
 
 			this._addToDefaultLayer()
 
@@ -172,8 +173,125 @@ struct ExportNode_v
 		if other_node_size != 0 then other_node_size else 100
 	),
 
+	/** Get selected objects without Export_Nodes
+	 */
+	function _getSelection =
+	(
+		--format "\n"; print "ExportNode_v._removeNodesFromSelection()"
+		for obj in selection where obj.parent == undefined and classOf obj != Export_Node collect obj --return
+	),
+
+	/** Center node to xy center of selection, and bottom on z axis
+	  *
+	  * @return point3 selection bbox center, or [0,0,0] if nothing selected
+	 */
+	function _getNewNodePosition =
+	(
+		--format "\n"; print "ExportNode_v._getNewNodePosition()"
+
+		selection_bbox = #( [ 0, 0, 0 ], [ 0, 0, 0 ])
+
+		if this._selection.count > 0 then
+		(
+			for obj in this._selection  do
+			(
+				object_bbox = in coordsys world ( nodeLocalBoundingBox obj )
+
+				this._setMinMaxBbox (selection_bbox) (object_bbox) #x
+				this._setMinMaxBbox (selection_bbox) (object_bbox) #y
+				this._setMinMaxBbox (selection_bbox) (object_bbox) #z
+			)
+
+			--format "SELECTION_BBOX	= % \n" selection_bbox
+
+			export_node_pivot = ( selection_bbox[1] + selection_bbox[2] ) / this._selection.count --return
+
+			export_node_pivot.z = selection_bbox[1].z
+
+			export_node_pivot --return
+		)
+		else
+			[0, 0, 0] --return
+	),
+
+	/** Set min max bbox
+	 */
+	function _setMinMaxBbox &selection_bbox object_bbox axis =
+	(
+		--format "\n"; print "ExportNode_v._setMinMaxBbox()"
+
+		object_min	= getProperty object_bbox[1]	axis
+		selection_min	= getProperty selection_bbox[1]	axis
+
+		object_max	= getProperty object_bbox[2]	axis
+		selection_max	= getProperty selection_bbox[2]	axis
+
+		if selection_min == 0 or object_min < selection_min then
+			setProperty selection_bbox[1] axis object_min
+
+
+		if selection_max == 0 or object_max > selection_max then
+			setProperty selection_bbox[2] axis object_max
+
+		--format "selection_bbox	= % \n" selection_bbox
+		selection_bbox --return
+	),
+
+
+	/** Get name of new Export node
+	  *
+	  * @return string
+	  *		1) Name of first selected Group, if only single group is selected
+	  *		2) Object name if any is selected
+	  *		3) Scene name
+	  *		4) "Export_Node" if scene is unsaved
+	 */
+	function _getNewNodeName =
+	(
+		--format "\n"; print "ExportNode_v._getNewNodePosition()"
+		local node_name
+
+		if this._selection.count > 0 then
+			if (groups_in_selection = for obj in this._selection where isGroupHead obj collect obj).count > 0 then
+				node_name = groups_in_selection[1].name
+
+
+		if node_name == undefined then
+			node_name = if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace ( getFilenameFile maxFileName ) "" ) else "Export_Node"
+
+		node_name --return
+	),
+
 	on create do
 	(
 		--print "ExportNode_v.onCreate()"
 	)
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

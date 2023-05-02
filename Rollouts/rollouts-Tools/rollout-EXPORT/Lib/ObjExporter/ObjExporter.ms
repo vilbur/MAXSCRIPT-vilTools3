@@ -16,15 +16,19 @@ struct ObjExporter_v
 	/* reference */
 	/* inhered */
 
-	--/**  Export
-	-- */
-	--function export _objects =
-	--(
-	--	format "\n"; print "ObjExporter_v.export()"
-	--	format "export_dir	= % \n" export_dir
-	--	--exportFile ( export_dir + "/"+ (this._getCounterPrefix (index)) + "-_-" + obj.name + ".obj" ) #noPrompt selectedOnly:true using:Exporter
-	--
-	--),
+	/**  Export
+	 */
+	function export _objects export_path =
+	(
+		format "\n"; print "ObjExporter_v.export()"
+		format "_objects	= % \n" _objects
+		format "export_path	= % \n" export_path
+
+		select _objects
+
+		exportFile ( export_path ) #noPrompt selectedOnly:true using:this.Exporter
+	),
+
 
 	private
 
@@ -62,7 +66,6 @@ struct ObjExporter_v
 			messageBox ("Missing preset file\n\n`"+ini_preset_path+"\n\nFile is used in ObjExporter_v._copyPresetFile()") title:"Missing preset file"  beep:false
 
 	),
-
 
 	/**
 	 */
