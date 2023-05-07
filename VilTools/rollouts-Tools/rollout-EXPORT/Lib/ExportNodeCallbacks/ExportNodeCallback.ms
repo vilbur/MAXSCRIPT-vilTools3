@@ -1,0 +1,65 @@
+/** Select node in list
+ */
+function selectExportNodeInListCallback =
+(
+	format "\n"; print ".selectExportNodeInListCallback()"
+	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
+
+	NodeList.loadNodes()
+
+	selectExportNodeInListCallbackRemove()
+
+	if ( selected_nodes = NodeList.getSelectedNodesInScene()).count > 0 then
+	(
+		NodeList.selectNodesInList(selected_nodes)
+
+		export_dirs = for selected_node in selected_nodes  collect selected_node.export_dir
+
+		--format "export_dirs.count	= % \n" export_dirs.count
+		--format "(makeUniqueArray export_dirs).count	= % \n" ((makeUniqueArray export_dirs).count)
+
+
+		ROLLOUT_export.BP_export_path.text = case (export_dirs_unique = (makeUniqueArray export_dirs)).count of
+		(
+			0: ""
+			1: export_dirs_unique[1]
+			default: "Multiple export paths"
+		)
+
+
+		--if export_dirs.count == 0 or (makeUniqueArray export_dirs).count != 1 then
+		--	ROLLOUT_export.BP_exxport_path.text = ""
+		--else
+		--	ROLLOUT_export.BP_exxport_path.text = export_dirs[1]
+
+	)
+	else
+		ROLLOUT_export.BP_export_path.text = ""
+
+
+
+	selectExportNodeInListCallbactAdd()
+
+	--format "\n"; print ".selectExportNodeInListCallback() DONE"
+
+)
+
+
+/** Remove callback
+ */
+function selectExportNodeInListCallbackRemove =
+(
+	--format "\n"; print ".selectExportNodeInListCallbackRemove()"
+
+	try( callbacks.removeScripts #selectionSetChanged id:#selectExportNodeInListCallback )catch()
+)
+
+/** Add callback
+ */
+function selectExportNodeInListCallbactAdd =
+(
+	--format "\n"; print ".selectExportNodeInListCallbactAdd()"
+	selectExportNodeInListCallbackRemove()
+
+	try( callbacks.addScript #selectionSetChanged "selectExportNodeInListCallback()" id:#selectExportNodeInListCallback )catch()
+)

@@ -4,5 +4,5 @@ test.ms
 .komodotools
 *_backup.max
 vilTools3.ini
-VilTools/rollouts-Tools/rollout-UNREAL/Test/Export/
-VilTools/rollouts-Tools/rollout-UNREAL/Test/UnrealProject/
+Rollouts/rollouts-Tools/rollout-EXPORT/Test/Export/
+Rollouts/rollouts-Tools/rollout-EXPORT/Test/UnrealProject/
