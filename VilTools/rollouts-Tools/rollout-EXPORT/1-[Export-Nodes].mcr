@@ -73,9 +73,10 @@ toolTip:	"Set size and path of selected export nodes\n\n1st selected node is sou
 icon:	"offset:[ -128, 0]"
 (
 	_nodes = ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
-	--format "_nodes.count	= % \n" _nodes.count
-	if( _nodes.count >= 2 ) then	--ExportNode 	= ExportNode_v()
+
+	if( _nodes.count >= 2 and queryBox "Set size and export path to selected nodes by first selected node ?" title:"Unify node settings" ) then	--ExportNode 	= ExportNode_v()
 	(
+
 		master_node = _nodes[1]
 		other_nodes = deleteItem _nodes 1
 		--format "master_node	= % \n" master_node
@@ -169,11 +170,11 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|off
 
 	clearSelection()
 
-	selectExportNodeInListCallbackRemove()
+	--selectExportNodeInListCallbackRemove()
 
 	select (selected_nodes)
 
-	selectExportNodeInListCallbactAdd()
+	--selectExportNodeInListCallbactAdd()
 
 
 	/*------------------------------------------------------------------------------

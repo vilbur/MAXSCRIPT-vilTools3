@@ -32,9 +32,10 @@ struct ExporterSetup_v
 
 		this.selected_nodes =  NodeList.getSelectedNodesInList()
 
-
 		if( this.selected_nodes.count > 0 ) then
 		(
+			this._checkAnimation(selected_nodes)
+
 			if export_type != #Unreal then
 			(
 				Exporter = ObjExporter_v(export_type)
@@ -70,7 +71,7 @@ struct ExporterSetup_v
 	 */
 	function _exportPrint =
 	(
-		format "\n"; print "Exporter_v._exportPrint()"
+		--format "\n"; print "Exporter_v._exportPrint()"
 		--for selected_node in this.selected_nodes where this._direcotryExists (getFilenamePath(this._getExportFilePath(selected_node))) do
 		exported_paths = #()
 
@@ -79,9 +80,10 @@ struct ExporterSetup_v
 		function openIn exported_paths =
 		(
 			--format "\n"; print "ExporterSetup_v.openIn()"
+			--format "exported_paths	= % \n" exported_paths
 			open_paths = ""
-
 			for exported_path in exported_paths where doesFileExist exported_path do open_paths += " \""+exported_path+"\""
+			--format "open_paths	= % \n" open_paths
 
 			if (open_in_program = ROLLOUT_3d_print.RB_open_in_program.state) > 0 then
 				if open_in_program == 1 then -- OPEN IN Chitubox.exe
@@ -95,10 +97,10 @@ struct ExporterSetup_v
 			export_dir	= getFilenamePath(export_path)
 			export_result	= false
 
-			if this._direcotryExists ( export_dir ) then
+			if this._direcotryExists ( this._getExportDir(selected_node.export_dir)) then
 			(
-				export_result = Exporter.export (this._getAllChildren(selected_node)) (export_path)
-
+				export_result = Exporter.export ( selected_node.getAllChildren() ) (export_path)
+				--format "export_result	= % \n" export_result
 				if export_result != false then
 					append exported_paths export_path
 			)
@@ -128,36 +130,40 @@ struct ExporterSetup_v
 		--format "\n"; print "ExporterSetup_v._getExportFilePath()"
 		subdir = if ROLLOUT_export.CBX_sub_directory_by_node_name.checked then "/"+export_node.name + "/" else "/"
 
-		export_path = maxFilePath + export_node.export_dir + subdir + export_node.name + ".obj"
+		export_path =  (this._getExportDir(export_node.export_dir)) + subdir + export_node.name + ".obj"
 
-		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "/" -- return
+		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "\\\\" -- return
 	),
 
-	/** Select child nodes
+	function _getExportDir export_dir =
+	(
+		--format "\n"; print "ExporterSetup_v._getExportDir()"
+
+		export_dir	= trimLeft export_dir "."
+
+		maxFilePath + export_dir
+	),
+
+	/** 1) Check if selected nodes has any animation keys
+	  * 2) Move time slider to last animation key if confirmed by user
+	  *
+	  * WORKS ONLY WITH ROTATION
 	 */
-	function _getAllChildren export_nodes =
+	function _checkAnimation export_nodes =
 	(
-		format "\n"; print "NodeList_v.selectChildNodes()"
+		--format "\n"; print "ExporterSetup_v._checkAnimation()"
+		export_keyframe 	= 0
+		current_keyframe	= (( sliderTime ) as string ) as integer
 
-		all_children	= #()
+		/* GET LAST ANIMATION KEY OPF SELECTED NODES */
+		for export_node in export_nodes where (anim_keys = export_node.getAnimationKeys() ).count > 0 do
+			if anim_keys[anim_keys.count] > export_keyframe then
+				export_keyframe = anim_keys[anim_keys.count]
 
-		for export_node in export_nodes do
-			all_children += this._getAllChildren(export_node)
-
-		all_children --return
-	),
-
-	/**  Get all nested children
-	  */
-	function _getAllChildren obj &arr:#() =
-	(
-		for child in obj.children do
-		(
-			append arr child
-
-			this._getAllChildren child arr:arr
-		)
-		arr --return
+		/* MOVE TIME SLIDER */
+		if current_keyframe != export_keyframe then
+			if queryBox ("Exported nodes has animation of rotation.\n\nWould you like to export key "+export_keyframe as string +" ?" ) title:"Export animation key"  beep:false then
+				sliderTime = export_keyframe
 
 	),
 
@@ -165,7 +171,7 @@ struct ExporterSetup_v
 	 */
 	function _direcotryExists export_dir =
 	(
-		format "\n"; print "ExporterSetup_v._direcotryExists()"
+		--format "\n"; print "ExporterSetup_v._direcotryExists()"
 
 		--format "EXPORT_NODE.EXPORT_DIR	= % \n" export_node.export_dir
 		--format "EXPORT_NODE.PROPERTIES	= % \n" ( showProperties export_node)

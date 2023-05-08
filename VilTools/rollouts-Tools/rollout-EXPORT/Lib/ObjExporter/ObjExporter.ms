@@ -36,6 +36,8 @@ struct ObjExporter_v
 		format "_objects	= % \n" _objects
 		format "export_path	= % \n" export_path
 
+		makeDir (getFilenamePath( export_path)) all:true --return
+
 		select _objects
 
 		exportFile ( export_path ) #noPrompt selectedOnly:true using:this.Exporter -- return

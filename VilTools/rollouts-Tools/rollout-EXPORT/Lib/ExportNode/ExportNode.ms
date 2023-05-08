@@ -204,10 +204,10 @@ struct ExportNode_v
 
 			--format "SELECTION_BBOX	= % \n" selection_bbox
 
-			export_node_pivot = ( selection_bbox[1] + selection_bbox[2] ) / this._selection.count --return
+			export_node_pivot = ( selection_bbox[1] + selection_bbox[2] ) / 2
 
 			export_node_pivot.z = selection_bbox[1].z
-
+			--format "export_node_pivot	= % \n" export_node_pivot
 			export_node_pivot --return
 		)
 		else
@@ -233,7 +233,6 @@ struct ExportNode_v
 		if selection_max == 0 or object_max > selection_max then
 			setProperty selection_bbox[2] axis object_max
 
-		--format "selection_bbox	= % \n" selection_bbox
 		selection_bbox --return
 	),
 
@@ -267,31 +266,3 @@ struct ExportNode_v
 		--print "ExportNode_v.onCreate()"
 	)
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

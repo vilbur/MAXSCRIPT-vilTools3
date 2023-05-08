@@ -8,21 +8,43 @@ version:	1.1
 category:	"Splines"
 replaceUI:	true
 (
+	/*------------------------------------------------------------------------------
+		METHODS
+	--------------------------------------------------------------------------------*/
 
-	/** Get node obejct
+	/** Get animation keys of node
+	  *
+	  * @return array of used frames
 	 */
-	function getNodeObejct =
+	function getAnimationKeys =
 	(
-		--format "\n"; print ".getNodeObejct()"
-		nodes = for o in refs.dependents this where isvalidnode o collect o
+		--format "\n"; print ".getAnimationKeys()"
+		controller	= (this._getNodeObejct()).rotation.controller
+		anim_keys = #()
 
-		nodes[1] --return
+		if (num_keys = numKeys controller ) > 0 then
+			anim_keys = for i = 1 to num_keys collect ((getKeyTime controller i) as string ) as integer
+
+		anim_keys --return
 	)
 
+	/** Get all nested node children
+	 */
+	function getAllChildren =
+	(
+		--format "\n"; print "NodeList_v.selectChildNodes()"
+
+		all_children	= #()
+
+		all_children += this._getAllChildren(this._getNodeObejct())
+		--format "all_children	= % \n" all_children
+		all_children --return
+	)
 
 	/*------------------------------------------------------------------------------
 		PARAMETERS
 	--------------------------------------------------------------------------------*/
+
 	parameters export_name rollout:export_name_rollout
 	(
 		text  type:#string default:"Export Node"	ui:node_name
@@ -32,7 +54,7 @@ replaceUI:	true
 			(
 				Delegate.text = val
 
-				if ( _node =  this.getNodeObejct()) != undefined then
+				if ( _node =  this._getNodeObejct()) != undefined then
 					_node.name = val
 			)
 	)
@@ -53,6 +75,7 @@ replaceUI:	true
 	/*------------------------------------------------------------------------------
 		ROLLOUTS
 	--------------------------------------------------------------------------------*/
+
 	rollout export_name_rollout "Display Text" rolledUp:false
 	(
 		edittext node_name ""
@@ -83,9 +106,36 @@ replaceUI:	true
 	(
 		Delegate.render_useViewportSettings = false
 		Delegate.render_displayRenderMesh  = false
+	)
 
-		--_node.name = "Export Node"
-		--print "Export node Loaded"
+
+	/*------------------------------------------------------------------------------
+
+		PRIVATE
+
+	--------------------------------------------------------------------------------*/
+
+	/** Get node obejct
+	 */
+	function _getNodeObejct =
+	(
+		--format "\n"; print "._getNodeObejct()"
+		nodes = for o in refs.dependents this where isvalidnode o collect o
+
+		nodes[1] --return
+	)
+
+	/**  Get all nested children
+	  */
+	function _getAllChildren obj &arr:#() =
+	(
+		for child in obj.children do
+		(
+			append arr child
+
+			this._getAllChildren child arr:arr
+		)
+		arr --return
 	)
 
 )

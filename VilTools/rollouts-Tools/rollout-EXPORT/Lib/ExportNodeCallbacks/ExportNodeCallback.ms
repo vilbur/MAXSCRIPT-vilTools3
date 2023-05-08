@@ -2,22 +2,23 @@
  */
 function selectExportNodeInListCallback =
 (
-	format "\n"; print ".selectExportNodeInListCallback()"
 	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
 
 	NodeList.loadNodes()
 
 	selectExportNodeInListCallbackRemove()
-
+	--format "selected_nodes	= % \n" selected_nodes
 	if ( selected_nodes = NodeList.getSelectedNodesInScene()).count > 0 then
 	(
+		format "\n"; print ".selectExportNodeInListCallback()"
+
 		NodeList.selectNodesInList(selected_nodes)
 
 		export_dirs = for selected_node in selected_nodes  collect selected_node.export_dir
 
 		--format "export_dirs.count	= % \n" export_dirs.count
 		--format "(makeUniqueArray export_dirs).count	= % \n" ((makeUniqueArray export_dirs).count)
-
+		--format "export_dirs	= % \n" export_dirs
 
 		ROLLOUT_export.BP_export_path.text = case (export_dirs_unique = (makeUniqueArray export_dirs)).count of
 		(

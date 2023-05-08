@@ -117,7 +117,7 @@ struct NodeList_v
 
 	on create do
 	(
-		print "NodeList_v.onCreate()"
+		--print "NodeList_v.onCreate()"
 		--format "nodelist_control	= % \n" nodelist_control
 	)
 )
