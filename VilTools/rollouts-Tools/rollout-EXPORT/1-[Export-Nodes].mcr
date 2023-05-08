@@ -59,9 +59,8 @@ icon:	"offset:[ -128, 0]"
 	--select ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 	(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
-	--ExportNode 	= ExportNode_v()
 
-	--ExportNode.create()
+	selectExportNodeInListCallbactAdd()
 )
 
 /**  Unify

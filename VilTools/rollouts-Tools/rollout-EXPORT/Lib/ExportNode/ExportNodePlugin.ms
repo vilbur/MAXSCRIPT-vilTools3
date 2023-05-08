@@ -14,12 +14,24 @@ replaceUI:	true
 
 	/** Get animation keys of node
 	  *
+	  * @param name controller_type #position|#rotation|#scale
+	  *
 	  * @return array of used frames
 	 */
-	function getAnimationKeys =
+	function getAnimationKeys controller_type =
 	(
-		--format "\n"; print ".getAnimationKeys()"
-		controller	= (this._getNodeObejct()).rotation.controller
+		--format "\n"; print ".getAnimationKeys()
+		Export_node = this._getNodeObejct()
+
+
+		controller	= case controller_type of
+		(
+			#position:	Export_node.position.controller
+			#rotation:	Export_node.rotation.controller
+			#scale:	Export_node.scale.controller
+			default:	return false
+		)
+
 		anim_keys = #()
 
 		if (num_keys = numKeys controller ) > 0 then

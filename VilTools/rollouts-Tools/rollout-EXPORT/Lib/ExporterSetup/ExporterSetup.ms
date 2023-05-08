@@ -1,4 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/../ObjExporter/ObjExporter.ms" )	-- "./../ObjExporter/ObjExporter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume.ms" )	-- "./../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume.ms"
 
 /** Exporter Setup
  */
@@ -27,14 +28,14 @@ struct ExporterSetup_v
 	function export =
 	(
 		format "\n"; print "PrintExporter_v.export()"
-		--this.selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+		selectExportNodeInListCallbackRemove()
+
 		NodeList.nodelist_control = ROLLOUT_export.ML_nodes
 
 		this.selected_nodes =  NodeList.getSelectedNodesInList()
 
 		if( this.selected_nodes.count > 0 ) then
 		(
-			this._checkAnimation(selected_nodes)
 
 			if export_type != #Unreal then
 			(
@@ -53,6 +54,8 @@ struct ExporterSetup_v
 		)
 		else
 			messageBox "Please select node in list" title:"Export node is not selected"
+
+		selectExportNodeInListCallbactAdd()
 	),
 
 
@@ -72,7 +75,6 @@ struct ExporterSetup_v
 	function _exportPrint =
 	(
 		--format "\n"; print "Exporter_v._exportPrint()"
-		--for selected_node in this.selected_nodes where this._direcotryExists (getFilenamePath(this._getExportFilePath(selected_node))) do
 		exported_paths = #()
 
 		/** Open in
@@ -80,30 +82,71 @@ struct ExporterSetup_v
 		function openIn exported_paths =
 		(
 			--format "\n"; print "ExporterSetup_v.openIn()"
-			--format "exported_paths	= % \n" exported_paths
 			open_paths = ""
 			for exported_path in exported_paths where doesFileExist exported_path do open_paths += " \""+exported_path+"\""
-			--format "open_paths	= % \n" open_paths
 
 			if (open_in_program = ROLLOUT_3d_print.RB_open_in_program.state) > 0 then
 				if open_in_program == 1 then -- OPEN IN Chitubox.exe
 					ShellLaunch 	("\""+post_export_open_paths[open_in_program]+"\"") ( open_paths ) -- format of command to open files in chitubox: "Chitubox.exe" "file 1.obj" "file .obj"
-
 		)
 
-		for selected_node in this.selected_nodes do
-		(
-			export_path	= this._getExportFilePath(selected_node)
-			export_dir	= getFilenamePath(export_path)
-			export_result	= false
 
-			if this._direcotryExists ( this._getExportDir(selected_node.export_dir)) then
+		/** Check if selected nodes has animation keys
+		  *
+		  * @param name controller_type #position|#rotation|#scale
+		  *
+		  * @return integer of last key of animation
+		 */
+		function _getLastKeyOfAnimation export_nodes controller_type =
+		(
+			--format "\n"; print "ExporterSetup_v._getLastKeyOfRotateAnimation()"
+			last_keyframe 	= 0
+
+			for export_node in export_nodes where (anim_keys = export_node.getAnimationKeys(controller_type) ).count > 0 do
+				if anim_keys[anim_keys.count] > last_keyframe then  -- get last key if higher
+					last_keyframe = anim_keys[anim_keys.count]
+
+			last_keyframe --return
+		)
+
+		/*------------------------------------------------------------------------------
+			EXPORT PROCESS
+		--------------------------------------------------------------------------------*/
+
+		/* SET EXPORT KEYFRAME */
+		if ( rotation_key = _getLastKeyOfAnimation(this.selected_nodes)(#rotation) ) > 0 then
+			this._setTimeSlider (rotation_key)
+
+		/* CREATE BOXES TO CORNERS OF PRINT PLANE  TO KEEP EXPORTED POSITION */
+		printer_dimension_objects = if ( rotation_key = _getLastKeyOfAnimation(this.selected_nodes)(#position) ) > 0 then
+			(PrinterVolume_v()).volumeDimensionObject(ROLLOUT_export.SPIN_export_size.value) else #()
+
+
+		try(
+			for selected_node in this.selected_nodes do
 			(
-				export_result = Exporter.export ( selected_node.getAllChildren() ) (export_path)
-				--format "export_result	= % \n" export_result
-				if export_result != false then
-					append exported_paths export_path
+				export_path	= this._getExportFilePath(selected_node)
+				export_dir	= getFilenamePath(export_path)
+				export_result	= false
+
+				export_objects = selected_node.getAllChildren() + printer_dimension_objects
+				--format "export_objects	= % \n" export_objects
+				if this._direcotryExists ( this._getExportDir(selected_node.export_dir)) then
+				(
+					/*------ EXPORT ------*/
+					export_result = Exporter.export ( export_objects ) (export_path)
+
+					if export_result != false then
+						append exported_paths export_path
+				)
 			)
+
+			delete printer_dimension_objects
+
+		)
+		catch
+		(
+			delete printer_dimension_objects
 		)
 
 		openIn(exported_paths)
@@ -123,6 +166,23 @@ struct ExporterSetup_v
 		format "\n"; print "Exporter_v._exportObj()"
 	),
 
+	/*------------------------------------------------------------------------------
+
+		HELPERS
+
+	--------------------------------------------------------------------------------*/
+	/**
+	*
+	*/
+	function _getExportDir export_dir =
+	(
+		--format "\n"; print "ExporterSetup_v._getExportDir()"
+
+		export_dir	= trimLeft export_dir "."
+
+		maxFilePath + export_dir
+	),
+
 	/** Get export file path
 	 */
 	function _getExportFilePath export_node =
@@ -135,36 +195,18 @@ struct ExporterSetup_v
 		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "\\\\" -- return
 	),
 
-	function _getExportDir export_dir =
-	(
-		--format "\n"; print "ExporterSetup_v._getExportDir()"
-
-		export_dir	= trimLeft export_dir "."
-
-		maxFilePath + export_dir
-	),
-
-	/** 1) Check if selected nodes has any animation keys
-	  * 2) Move time slider to last animation key if confirmed by user
-	  *
-	  * WORKS ONLY WITH ROTATION
+	/** Set time slider
 	 */
-	function _checkAnimation export_nodes =
+	function _setTimeSlider keyframe =
 	(
-		--format "\n"; print "ExporterSetup_v._checkAnimation()"
-		export_keyframe 	= 0
+		--format "\n"; print "ExporterSetup_v.setTimeSlider()"
+
 		current_keyframe	= (( sliderTime ) as string ) as integer
 
-		/* GET LAST ANIMATION KEY OPF SELECTED NODES */
-		for export_node in export_nodes where (anim_keys = export_node.getAnimationKeys() ).count > 0 do
-			if anim_keys[anim_keys.count] > export_keyframe then
-				export_keyframe = anim_keys[anim_keys.count]
-
 		/* MOVE TIME SLIDER */
-		if current_keyframe != export_keyframe then
-			if queryBox ("Exported nodes has animation of rotation.\n\nWould you like to export key "+export_keyframe as string +" ?" ) title:"Export animation key"  beep:false then
-				sliderTime = export_keyframe
-
+		if current_keyframe != keyframe then
+			if queryBox ("Exported nodes has animation of rotation.\n\nWould you like to export key "+keyframe as string +" ?" ) title:"Export animation key"  beep:false then
+				sliderTime = keyframe
 	),
 
 	/** Direcotry exists

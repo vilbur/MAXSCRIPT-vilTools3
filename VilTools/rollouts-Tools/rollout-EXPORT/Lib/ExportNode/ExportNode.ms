@@ -72,6 +72,7 @@ struct ExportNode_v
 	 */
 	function _createNodeObject _name =
 	(
+		format "\n"; print "ExportNode_v._createNodeObject()"
 		this._name = _name
 
 		--format "node_exists	= % \n" node_exists
@@ -87,8 +88,6 @@ struct ExportNode_v
 			try(destroyDialog NODE_NAME_ROLLOUT) catch()
 
 			ThisExportNode = undefined
-
-			(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
 
 			true --return
 		)
@@ -152,7 +151,7 @@ struct ExportNode_v
 		for _node in this._getNodesInScene() where _node.export_dir != "" do
 			other_node_path = _node.export_dir
 
-		if other_node_path != undefined then other_node_path else maxFilePath + "Export" -- return
+		if other_node_path != undefined then other_node_path else ".\Export" -- return
 	),
 
 
