@@ -1,4 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Transform.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SnapManager/SnapManager.ms" )	-- "./Lib/SnapManager/SnapManager.ms"
+
 
 /**
  *
@@ -35,22 +37,22 @@ toolTip:	"Reset xForm of selected objects"
 */
 macroscript	rotate_toos_rotate
 category:	"_Transform"
-buttontext:	"Rotate 90°"
-toolTip:	"Rotate about active axis"
+buttontext:	"Rotate"
+toolTip:	"Rotate selection active axis of angle snap value"
 --icon:	"#(path, index)"
 (
-	(Transform_v()).rotateSelection(90)
+	(Transform_v()).rotateSelection( (SnapManager_v()).getSnapAngle() )
 )
 
 /*
 */
 macroscript	rotate_toos_rotate_reverse
 category:	"_Transform"
-buttontext:	"Rotate 90°"
-toolTip:	"Rotate about active axis"
+buttontext:	"Rotate"
+--toolTip:	"Rotate about active axis"
 --icon:	"#(path, index)"
 (
-	(Transform_v()).rotateSelection(-90)
+	(Transform_v()).rotateSelection( (SnapManager_v()).getSnapAngle() * -1 )
 )
 
 

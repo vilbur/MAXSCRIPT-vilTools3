@@ -11,6 +11,7 @@ struct ExportNode_v
 	_name,
 	_selection,
 
+	layer_name = "_Export-Nodes",
 	/** Create
 	 */
 	function create =
@@ -25,13 +26,16 @@ struct ExportNode_v
 
 	/** _add to default layer
 	 */
-	function _addToDefaultLayer =
+	function _addToLayer =
 	(
-		default_layer = LayerManager.getLayer 0
+		layer = LayerManager.getLayerFromName layer_name
 
-		default_layer.addnode _node
+		if layer == undefined then
+			layer = LayerManager.newLayerFromName layer_name
 
-		default_layer.on = true
+		layer.addnode _node
+
+		layer.on = true
 	),
 
 
@@ -72,7 +76,7 @@ struct ExportNode_v
 	 */
 	function _createNodeObject _name =
 	(
-		format "\n"; print "ExportNode_v._createNodeObject()"
+		--format "\n"; print "ExportNode_v._createNodeObject()"
 		this._name = _name
 
 		--format "node_exists	= % \n" node_exists
@@ -81,7 +85,7 @@ struct ExportNode_v
 
 			this._node = Export_Node name:_name text:_name export_dir:(this._getExportDir()) size:(this._getNodeSize()) isSelected:on pos:(this._getNewNodePosition())
 
-			this._addToDefaultLayer()
+			this._addToLayer()
 
 			this._linkSelectedObejctsToNode()
 

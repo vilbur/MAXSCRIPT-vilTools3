@@ -173,7 +173,7 @@ macroscript	_export_nodes_list
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|offset:[ 96, -272]"
+icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|offset:[ 96, -224]"
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
@@ -222,27 +222,42 @@ buttontext:	"Nodes"
 toolTip:	"Isolate node children\n\nCtrl+LMB: Select node children."
 icon:	"control:multilistbox|across:2"
 (
-	format "EventFired	= % \n" EventFired
-	selectExportNodeInListCallbackRemove()
+	--format "EventFired	= % \n" EventFired
 
 	LayersManager 	= LayersManager_v()
+	all_children	= #()
+	--default_Layer	= LayerManager.getLayerFromName "0"
+
+	selectExportNodeInListCallbackRemove()
 
 	selected_nodes = for obj in selection where classOf obj == Export_Node collect obj
 
-	all_children = #()
-
+	/* GET ALL CHILDREN OF NODES */
 	for selected_node in selected_nodes do all_children += (selected_node.getAllChildren())
 
+	/* SHOW ONLY LAYERS OF CHILDREN OBJECTS */
 	visible_layers = LayersManager.isolateLayers( all_children + selected_nodes )
+
+	/* DO NOT HIDE DEFAULT LAYER ( FOR EXCLUDING OBJECTS FROM THIS ) */
+	--default_Layer.on = true
+
+	--append visible_layers default_Layer
+	--format "visible_layers.count	= % \n" visible_layers.count
+	LayersManager.unhideLayer("0")
 
 	objects_of_visible_layers = LayersManager.getObjectsInLayers(visible_layers)
 
 	for obj in objects_of_visible_layers do
 		obj.isHidden = (findItem ( all_children + selected_nodes ) obj == 0)
 
+	clearSelection()
+
+	max tool zoomextents all
+
 	select ( selected_nodes )
 
 	selectExportNodeInListCallbactAdd()
+
 )
 
 

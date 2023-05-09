@@ -57,6 +57,22 @@ struct LayersManager_v
 		layers_nodes --return
 	),
 
+	/** Unhide layer
+	 */
+	function unhideLayer layer_name =
+	(
+		--format "\n"; print "LayersManager_v.unhideLayer()"
+		if ( layer = LayerManager.getLayerFromName layer_name ) != undefined then
+		(
+			layer.on = true
+
+			for obj in this.getObjectsInLayers #(layer) do
+				obj.isHidden = false
+
+		)
+
+
+	),
 
 	private
 
