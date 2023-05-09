@@ -14,7 +14,7 @@ struct LayersManager_v
 
 	/** Show only layers of selected objects
 	  *
-	  * @return array #(<MixinInterface:LayerProperties)
+	  * @return array #(<MixinInterface:LayerProperties>)
 	 */
 	function isolateLayers _objects =
 	(
@@ -42,12 +42,17 @@ struct LayersManager_v
 	 */
 	function getObjectsInLayers layers =
 	(
-		format "\n"; print "LayersManager_v.getObjectsInLayers()"
-		format "layers	= % \n" layers
+		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
+		--format "layers	= % \n" layers
 		layers_nodes = #()
 
 		for layer in layers do
-			layer.nodes &layers_nodes
+		(
+
+			layer.nodes &layer_nodes
+
+			layers_nodes += layer_nodes
+		)
 
 		layers_nodes --return
 	),

@@ -177,26 +177,15 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|off
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
-	clearListener()
-	format "eventFired	= % \n" eventFired
+	--clearListener()
+	--format "eventFired	= % \n" eventFired
 	selectExportNodeInListCallbackRemove()
 
 	selected_nodes = ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
-	format "selected_nodes	= % \n" selected_nodes
 
 	select selected_nodes
 
 	selectExportNodeInListCallbactAdd()
-
-	--select ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
-
-	--clearSelection()
-
-	--selectExportNodeInListCallbackRemove()
-
-	--select (selected_nodes)
-
-	--selectExportNodeInListCallbactAdd()
 
 
 	/*------------------------------------------------------------------------------
@@ -234,6 +223,8 @@ toolTip:	"Isolate node children\n\nCtrl+LMB: Select node children."
 icon:	"control:multilistbox|across:2"
 (
 	format "EventFired	= % \n" EventFired
+	selectExportNodeInListCallbackRemove()
+
 	LayersManager 	= LayersManager_v()
 
 	selected_nodes = for obj in selection where classOf obj == Export_Node collect obj
@@ -246,15 +237,12 @@ icon:	"control:multilistbox|across:2"
 
 	objects_of_visible_layers = LayersManager.getObjectsInLayers(visible_layers)
 
-	for obj in objects do
-		obj.isHidden = true
-
-	for obj in ( all_children + selected_nodes ) do
-		obj.isHidden = false
+	for obj in objects_of_visible_layers do
+		obj.isHidden = (findItem ( all_children + selected_nodes ) obj == 0)
 
 	select ( selected_nodes )
-	--	--obj.isHidden = (findItem all_objects obj == 0)
 
+	selectExportNodeInListCallbactAdd()
 )
 
 

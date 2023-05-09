@@ -16,19 +16,6 @@ icon:	"control:radiobuttons|across:2|offset:[ 0, 0 ]|items:#('Chitubox', 'LycheS
 /**
   *
   */
-macroscript	_print_create_print_volume
-category:	"_Export"
-buttontext:	"Print Dummy"
-toolTip:	"Create\Delete dummy of 3D printer volume"
-icon:	"across:2"
-(
-	--format "EventFired	= % \n" EventFired
-	(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
-)
-
-/**
-  *
-  */
 macroscript	_print_create_print_plane
 category:	"_Export"
 buttontext:	"Print Dummy"
@@ -37,6 +24,19 @@ icon:	"across:2"
 (
 	--format "EventFired	= % \n" EventFired
 	(PrinterVolume_v()).createVolume(#Plane)(ROLLOUT_export.SPIN_export_size.value)
+)
+
+/**
+  *
+  */
+macroscript	_print_create_print_volume
+category:	"_Export"
+buttontext:	"Print Dummy"
+toolTip:	"Create\Delete dummy of 3D printer volume"
+icon:	"across:2"
+(
+	--format "EventFired	= % \n" EventFired
+	(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
 )
 
 
