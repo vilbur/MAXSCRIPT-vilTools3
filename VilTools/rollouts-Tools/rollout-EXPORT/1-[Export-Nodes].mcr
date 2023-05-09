@@ -90,18 +90,18 @@ icon:	"offset:[ -128, 0]"
 	)
 )
 
-/**  Unify
- */
-macroscript	_export_isolate_node_objects
-category:	"_Export"
-buttontext:	"Isolate"
-toolTip:	"Show only objects of seleted nodes"
-icon:	"offset:[ -128, 0]"
-(
-	macros.run "_Export" "_export_nodes_list_select_objects_of_node"
-
-	macros.run "_Scene" "layer_isolate_selection"
-)
+--/**  Unify
+-- */
+--macroscript	_export_isolate_node_objects
+--category:	"_Export"
+--buttontext:	"Isolate"
+--toolTip:	"Show only objects of seleted nodes"
+--icon:	"offset:[ -128, 0]"
+--(
+--	macros.run "_Export" "_export_nodes_list_select_objects_of_node"
+--
+--	macros.run "_Scene" "layer_isolate_selection"
+--)
 
 
 --
@@ -177,15 +177,24 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|off
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
-	--format "eventFired	= % \n" eventFired
+	clearListener()
+	format "eventFired	= % \n" eventFired
+	selectExportNodeInListCallbackRemove()
 
-	selected_nodes =  (NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList()
+	selected_nodes = ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+	format "selected_nodes	= % \n" selected_nodes
 
-	clearSelection()
+	select selected_nodes
+
+	selectExportNodeInListCallbactAdd()
+
+	--select ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+
+	--clearSelection()
 
 	--selectExportNodeInListCallbackRemove()
 
-	select (selected_nodes)
+	--select (selected_nodes)
 
 	--selectExportNodeInListCallbactAdd()
 
@@ -221,22 +230,33 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|off
 macroscript	_export_nodes_list_select_objects_of_node
 category:	"_Export"
 buttontext:	"Nodes"
-toolTip:	"Nodes to export"
+toolTip:	"Isolate node children\n\nCtrl+LMB: Select node children."
 icon:	"control:multilistbox|across:2"
 (
-	--messageBox "Doubleclick" title:"Title"  beep:false
-	--format "EventFired	= % \n" EventFired
+	format "EventFired	= % \n" EventFired
+	LayersManager 	= LayersManager_v()
 
-	NodeList 	= NodeList_v(ROLLOUT_export.ML_nodes)
+	selected_nodes = for obj in selection where classOf obj == Export_Node collect obj
 
-	selected_nodes = NodeList.getSelectedNodesInList()
+	all_children = #()
 
-	selectExportNodeInListCallbackRemove()
+	for selected_node in selected_nodes do all_children += (selected_node.getAllChildren())
 
+	visible_layers = LayersManager.isolateLayers( all_children + selected_nodes )
 
+	objects_of_visible_layers = LayersManager.getObjectsInLayers(visible_layers)
 
-	selectmore (NodeList.getAllChildren( selected_nodes  ))
+	for obj in objects do
+		obj.isHidden = true
 
-	selectExportNodeInListCallbactAdd()
+	for obj in ( all_children + selected_nodes ) do
+		obj.isHidden = false
+
+	select ( selected_nodes )
+	--	--obj.isHidden = (findItem all_objects obj == 0)
 
 )
+
+
+
+

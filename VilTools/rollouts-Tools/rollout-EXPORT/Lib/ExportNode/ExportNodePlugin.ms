@@ -45,11 +45,10 @@ replaceUI:	true
 	function getAllChildren =
 	(
 		--format "\n"; print "NodeList_v.selectChildNodes()"
-
 		all_children	= #()
 
 		all_children += this._getAllChildren(this._getNodeObejct())
-		--format "all_children	= % \n" all_children
+
 		all_children --return
 	)
 

@@ -6,11 +6,13 @@ function selectExportNodeInListCallback =
 
 	NodeList.loadNodes()
 
-	selectExportNodeInListCallbackRemove()
 	--format "selected_nodes	= % \n" selected_nodes
 	if ( selected_nodes = NodeList.getSelectedNodesInScene()).count > 0 then
 	(
-		format "\n"; print ".selectExportNodeInListCallback()"
+		--format "\n"; print ".selectExportNodeInListCallback()"
+
+		selectExportNodeInListCallbackRemove()
+
 
 		NodeList.selectNodesInList(selected_nodes)
 
