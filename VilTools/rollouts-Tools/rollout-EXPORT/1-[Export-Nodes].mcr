@@ -90,6 +90,20 @@ icon:	"offset:[ -128, 0]"
 	)
 )
 
+/**  Unify
+ */
+macroscript	_export_isolate_node_objects
+category:	"_Export"
+buttontext:	"Isolate"
+toolTip:	"Show only objects of seleted nodes"
+icon:	"offset:[ -128, 0]"
+(
+	macros.run "_Export" "_export_nodes_list_select_objects_of_node"
+
+	macros.run "_Scene" "layer_isolate_selection"
+)
+
+
 --
 --/**
 -- */
@@ -159,7 +173,7 @@ macroscript	_export_nodes_list
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|offset:[ 96, -224]"
+icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|offset:[ 96, -272]"
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
@@ -204,7 +218,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:256|off
 
 /*------ NODELIST DOUBLE CLICK ------*/
 
-macroscript	_export_nodes_list_doubleclick
+macroscript	_export_nodes_list_select_objects_of_node
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
@@ -218,6 +232,8 @@ icon:	"control:multilistbox|across:2"
 	selected_nodes = NodeList.getSelectedNodesInList()
 
 	selectExportNodeInListCallbackRemove()
+
+
 
 	selectmore (NodeList.getAllChildren( selected_nodes  ))
 

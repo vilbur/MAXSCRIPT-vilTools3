@@ -37,6 +37,8 @@ struct PrinterVolume_v
 					#plane:	Plane	name:dummy_name  xray:true boxmode:true	wireColor:(color 0 255 0) length:print_volume_size[1] width:print_volume_size[2] lengthsegs:1 widthsegs:1
 				)
 
+				freeze dummy_object
+
 				(LayerManager.getLayerFromName( "0")).addNode dummy_object
 			)
 		)
