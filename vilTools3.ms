@@ -1,13 +1,13 @@
 clearListener()
 
-content = "/VilTools"
---content = "/Rollouts-Test" -- DEV
+content_dir = "VilTools"
+--content_dir = "/Rollouts-Test" -- DEV
 
 current_dir = getFilenamePath(getSourceFileName())
 
 global VILTOOLS_DIR = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 
-rollouts_path = "$userscripts/"+VILTOOLS_DIR+"/Rollouts/rollouts-Tools"
+rollouts_path = "$userscripts/"+VILTOOLS_DIR+"/"+content_dir+"/rollouts-Tools"
 
 /** Import structures used in macroscripts on Max start
   *
@@ -50,12 +50,11 @@ if content != "/Rollouts-Test" then -- DEV
 	INSTALL PLUGINS
 --------------------------------------------------------------------------------*/
 
-export_node_plugin_source = rollouts_path + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms"
-export_node_plugin_target = (getDir #maxroot)+ "/stdplugs/stdscripts/ExportNodePlugin.ms"
+export_node_plugin_source = rollouts_path + "\\rollout-EXPORT\\Lib\\ExportNode\\ExportNodePlugin.ms"
+export_node_plugin_target = (getDir #maxroot)+ "\\stdplugs\\stdscripts\\ExportNodePlugin.ms"
 
 if doesFileExist export_node_plugin_source then
 (
-
 	deleteFile export_node_plugin_target
 
 	copyFile (export_node_plugin_source) (export_node_plugin_target)
@@ -74,10 +73,12 @@ filein_files = #(
 	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
 
 	"/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" , -- Check if this is necessary to import, it should be imported with framework
-	"/Rollouts/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
+	"/VilTools/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
 
-	"/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" ,
-	 "/Rollouts/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" ,
+	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
+
+	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" ,
+	 "/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" ,
 
 	/* CALLBACK */
 	"/CallBacks/selectionSetChanged/setSelectionLast.ms" ,
@@ -99,7 +100,7 @@ global VILTOOLS
 current_dir	= getFilenamePath(getSourceFileName())
 
 --ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
-ContentLoader	= ContentLoader_v path:(current_dir+content)  ini:( getSourceFileName())
+ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName())
 
 /* CHANGE PROPERTIES oF ROLLOUTS */
 --ContentLoader.Dialog.title = "VilTools"
@@ -129,7 +130,7 @@ filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
 /* import when UI exists */
 try
 (
-	filein( getFilenamePath(getSourceFileName()) + "/Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
 
 	--(NodeList_v()).loadNodes()
 

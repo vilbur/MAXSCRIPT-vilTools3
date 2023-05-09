@@ -30,3 +30,42 @@ tooltip:	"Remove Undo\n\nClean Texture Memory"
 	messageBox "Memory CLeaned" title:"Memory Clean"
 )
 
+
+
+/*------------------------------------------------------------------------------
+	LAYER MANGER
+--------------------------------------------------------------------------------*/
+
+
+/**
+ */
+function showLayerManagerCallback =
+(
+
+	LayerManager.editLayerByName ""
+)
+
+
+/**
+ */
+macroscript	_options_layer_manager_toggle
+category:	"_Otions"
+buttontext:	"Layer Manager"
+tooltip:	"Show\Hide Layer manager on scene open"
+icon:	"control:checkbutton"
+(
+
+	if EventFired.val then
+	(
+		LayerManager.editLayerByName ""
+
+		try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
+	)
+	else
+	(
+		LayerManager.closeDialog()
+
+		try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
+	)
+
+)
