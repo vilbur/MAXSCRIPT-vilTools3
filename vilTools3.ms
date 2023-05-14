@@ -28,7 +28,8 @@ function importStdScripts =
 		"/rollout-SELECTION/Lib/Selection/Selection.ms",
 		"/rollout-TOOLS/Lib/ToolMode.ms",
 		"/rollout-SUBOBJECT/Subobject/Subobject.ms",
-		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms"
+		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
+		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"	-- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)
 
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"

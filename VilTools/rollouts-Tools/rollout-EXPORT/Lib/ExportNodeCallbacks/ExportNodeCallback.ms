@@ -30,6 +30,9 @@ function selectExportNodeInListCallback =
 		)
 
 
+
+		ROLLOUT_export.ML_node_groups.items = sort (makeUniqueArray(for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect obj.parent.name))
+
 		--if export_dirs.count == 0 or (makeUniqueArray export_dirs).count != 1 then
 		--	ROLLOUT_export.BP_exxport_path.text = ""
 		--else

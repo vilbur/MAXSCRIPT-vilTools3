@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/MaxToZbrushSync.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/MaxToZbrushSync.ms" )	-- "./Lib/MaxToZbrushSync.ms"
 
 /**
   *

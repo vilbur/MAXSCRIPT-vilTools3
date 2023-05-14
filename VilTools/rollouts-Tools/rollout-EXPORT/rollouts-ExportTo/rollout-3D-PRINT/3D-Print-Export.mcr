@@ -23,7 +23,7 @@ toolTip:	"Create\Delete dummy palne of 3D printer plane"
 icon:	"across:2"
 (
 	--format "EventFired	= % \n" EventFired
-	(PrinterVolume_v()).createVolume(#Plane)(ROLLOUT_export.SPIN_export_size.value)
+	(PrinterVolume_v()).createVolume(#Rectangle)(ROLLOUT_export.SPIN_export_size.value)
 )
 
 /**

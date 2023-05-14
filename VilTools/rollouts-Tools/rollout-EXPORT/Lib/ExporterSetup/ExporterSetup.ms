@@ -118,7 +118,7 @@ struct ExporterSetup_v
 			this._setTimeSlider (rotation_key)
 
 		/* CREATE BOXES TO CORNERS OF PRINT PLANE  TO KEEP EXPORTED POSITION */
-		printer_dimension_objects = if ( rotation_key = _getLastKeyOfAnimation(this.selected_nodes)(#position) ) > 0 then
+		printer_dimension_object = if ( rotation_key = _getLastKeyOfAnimation(this.selected_nodes)(#position) ) > 0 then
 			(PrinterVolume_v()).volumeDimensionObject(ROLLOUT_export.SPIN_export_size.value) else #()
 
 
@@ -129,7 +129,7 @@ struct ExporterSetup_v
 				export_dir	= getFilenamePath(export_path)
 				export_result	= false
 
-				export_objects = selected_node.getAllChildren() + printer_dimension_objects
+				export_objects = selected_node.getAllChildren() + printer_dimension_object
 				--format "export_objects	= % \n" export_objects
 				if this._direcotryExists ( this._getExportDir(selected_node.export_dir)) then
 				(
@@ -141,12 +141,12 @@ struct ExporterSetup_v
 				)
 			)
 
-			delete printer_dimension_objects
+			delete printer_dimension_object
 
 		)
 		catch
 		(
-			delete printer_dimension_objects
+			delete printer_dimension_object
 		)
 
 		openIn(exported_paths)
