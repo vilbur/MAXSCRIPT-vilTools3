@@ -109,7 +109,7 @@ toolTip:	"Load nodes to list"
 icon:	"pos:[ 312, 24 ]"
 
 (
-	--select ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+	format "eventFired	= % \n" eventFired
 
 	(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
 

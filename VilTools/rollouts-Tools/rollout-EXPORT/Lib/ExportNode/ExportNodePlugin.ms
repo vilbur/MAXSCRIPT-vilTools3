@@ -20,15 +20,15 @@ replaceUI:	true
 	 */
 	function getAnimationKeys controller_type =
 	(
-		--format "\n"; print ".getAnimationKeys()
-		Export_node = this._getNodeObejct()
+		--format "\n"; print ".getAnimationKeys()"
+		_Export_node = this._getNodeObejct()
 
 
 		controller	= case controller_type of
 		(
-			#position:	Export_node.position.controller
-			#rotation:	Export_node.rotation.controller
-			#scale:	Export_node.scale.controller
+			#position:	_Export_node.position.controller
+			#rotation:	_Export_node.rotation.controller
+			#scale:	_Export_node.scale.controller
 			default:	return false
 		)
 

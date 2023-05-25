@@ -10,7 +10,9 @@ struct PrinterVolume_v
 	dummy_name = "PRINT DUMMY VOLUME",
 
 	printer_size	= [ 120,	192, 250 ],	-- size of Creality-ld006 print plane
-	screw_position	= [ 36,	65 ],	-- position of screws on print plane
+	screw_position	= [ 34,	64 ],	-- position of screws on print plane
+	screw_radius	= 2,
+
 
 	/* dependency */
 	/* reference */
@@ -62,7 +64,7 @@ struct PrinterVolume_v
 
 		volume_size = this._getPrinterSize() / export_size / 2
 
-		dummy_object = Box name:dummy_name length:10 width:10 height:10 pos:[ volume_size[2], volume_size[1], 0] pivot:[0,0,0] isSelected:on
+		dummy_object = Box name:dummy_name length:0 width:0 height:0 pos:[ volume_size[2]+10, volume_size[1]+10, 0] pivot:[0,0,0] isSelected:on
 
 		modPanel.addModToSelection ( symmetry PlanarX:true PlanarY:true PlanarZ:false) ui:on
 
@@ -79,7 +81,7 @@ struct PrinterVolume_v
 		format "dummy_object	= % \n" dummy_object
 		holes_position = this._getHolesPositon() / export_size
 
-		circle_shape = Circle radius:(3 / export_size ) pos:[ holes_position[2], holes_position[1], 0] pivot:[0,0,0] isSelected:on
+		circle_shape = Circle radius:(this.screw_radius / export_size ) pos:[ holes_position[2], holes_position[1], 0] pivot:[0,0,0] isSelected:on
 
 		convertToSplineShape dummy_object
 

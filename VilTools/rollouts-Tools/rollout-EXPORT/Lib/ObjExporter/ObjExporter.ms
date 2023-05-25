@@ -28,19 +28,31 @@ struct ObjExporter_v
 
 	/**  Export
 	  *
+	  * @param array export_objects
+	  * @param string export_filepath
+	  *
 	  * @return boolean
 	 */
-	function export _objects export_path =
+	function export export_objects export_filepath =
 	(
 		format "\n"; print "ObjExporter_v.export()"
-		format "_objects	= % \n" _objects
-		format "export_path	= % \n" export_path
+		format "export_objects	= % \n" export_objects
+		format "export_filepath	= % \n" export_filepath
 
-		makeDir (getFilenamePath( export_path)) all:true --return
+		makeDir (getFilenamePath( export_filepath)) all:true
 
-		select _objects
+		max create mode
 
-		exportFile ( export_path ) #noPrompt selectedOnly:true using:this.Exporter -- return
+		--export_objects = for o in export_objects where not isGroupHead o collect o
+
+		select export_objects
+
+		exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
+		--exportFile ( export_filepath ) selectedOnly:true using:this.Exporter -- return
+		--execute("exportFile ( @\"W:\3D-Print\WIP\Starship\Max\Export\BODY-BOTTOM\BODY-BOTTOM.obj\" ) #noPrompt selectedOnly:true using: exporterPlugin.classes[findItem exporterPlugin.classes ObjExp]")
+
+
+
 	),
 
 	/** Set ini
@@ -71,7 +83,7 @@ struct ObjExporter_v
 	 */
 	function _copyPresetFile =
 	(
-		format "\n"; print "ObjExporter_v._copyPresetFile()"
+		--format "\n"; print "ObjExporter_v._copyPresetFile()"
 
 		ini_file_path	= Exporter.getIniName()
 

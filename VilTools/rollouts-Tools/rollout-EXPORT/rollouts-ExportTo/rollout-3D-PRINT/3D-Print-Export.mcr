@@ -1,3 +1,8 @@
+/**
+  *
+  *	USES: "./../../Lib/ExporterSetup/ExporterSetup.ms"
+  */
+
 /**  #righclick
  */
 macroscript	_export_print_open_in_chitubox
@@ -53,5 +58,5 @@ icon:	"height:64|across:2"
 (
 	clearListener()
 
-	(ExporterSetup_v #Print).export()
+	(ExporterSetup_v(#Print)).export()
 )

@@ -14,6 +14,8 @@ struct NodeList_v
 	function loadNodes =
 	(
 		--print "NodeList_v.loadNodes()"
+		--format "this.getAllNodesInScene()	= % \n" (this.getAllNodesInScene())
+		--format "this._getNodeNames (this.getAllNodesInScene())	= % \n" (this._getNodeNames (this.getAllNodesInScene()))
 		nodelist_control.items = sort(this._getNodeNames (this.getAllNodesInScene()))
 	),
 
@@ -78,7 +80,7 @@ struct NodeList_v
 	 */
 	function getAllChildren export_nodes =
 	(
-		format "\n"; print "NodeList_v.selectChildNodes()"
+		--format "\n"; print "NodeList_v.selectChildNodes()"
 
 		all_children	= #()
 
