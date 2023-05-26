@@ -47,11 +47,17 @@ struct ObjExporter_v
 
 		select export_objects
 
-		exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
-		--exportFile ( export_filepath ) selectedOnly:true using:this.Exporter -- return
-		--execute("exportFile ( @\"W:\3D-Print\WIP\Starship\Max\Export\BODY-BOTTOM\BODY-BOTTOM.obj\" ) #noPrompt selectedOnly:true using: exporterPlugin.classes[findItem exporterPlugin.classes ObjExp]")
+		try(
 
+			--exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
 
+			true --return
+		)catch(
+
+			format "*** % ***\n" (getCurrentException())
+
+			return false
+		)
 
 	),
 
