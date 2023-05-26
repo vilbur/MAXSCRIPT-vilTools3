@@ -1,6 +1,11 @@
 filein( getFilenamePath(getSourceFileName()) + "/../PrinterVolume/PrinterVolume.ms" )	-- "./../PrinterVolume/PrinterVolume.ms"
 
+
 /** Print exporter
+  *
+  * Template files for new projects: -- "./../../Final-Files-Templates/"
+  *
+  * @param 2DMatrix open_in_programs #( #("C:\Path\to\program.exe", "project_file_extension") )
   *
   * How to export objects on exact position and rotation:
   * 		1) Create animation of nodes with desired position and rotation
@@ -14,9 +19,9 @@ struct PrintExporter_v
 
 
 	/* properties */
-	params	= Dictionary #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #OPEN_IN_FINAL_FILE, false ) ,
+	params	= Dictionary #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) ,
 
-	open_in_programs = #("C:/Program Files/CHITUBOX  V1.9.4/CHITUBOX.exe", "C:/Program Files/LycheeSlicer/LycheeSlicer.exe"), -- index same as radiobuttons ROLLOUT_3d_print.RB_open_in_program
+	open_in_programs = #( #("C:/Program Files/CHITUBOX  V1.9.4/Chitubox.exe", "chitubox"), #("C:/Program Files/LycheeSlicer/LycheeSlicer.exe", "lys")),
 
 	exported_paths = #(),
 
@@ -30,7 +35,8 @@ struct PrintExporter_v
 	/* reference */
 	/* inhered */
 
-	/** Export
+	/** Export eachodes
+	  * Manage scene on export
 	 */
 	function export =
 	(
@@ -56,6 +62,19 @@ struct PrintExporter_v
 	),
 
 
+	/** Get export file path
+	 */
+	function getExportFilePath export_node =
+	(
+		--format "\n"; print "ExporterSetup_v.getExportFilePath()"
+		subdir = if this.params[#SUBDIR_BY_NODE] then "/"+export_node.name + "/" else "/"
+
+		export_path =  (this._getExportDir(export_node.export_dir)) + subdir + export_node.name + ".obj"
+
+		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "\\\\" -- return
+	),
+
+
 	private
 
 
@@ -65,7 +84,7 @@ struct PrintExporter_v
 	function _exportNode export_node =
 	(
 		--format "\n"; print "PrintExporter_v._exportNode()"
-		export_path	= this._getExportFilePath(export_node)
+		export_path	= this.getExportFilePath(export_node)
 
 		export_objects = export_node.getAllChildren() + this.export_position_dummy
 
@@ -81,33 +100,27 @@ struct PrintExporter_v
 	 */
 	function _openExportedFiles =
 	(
-		format "\n"; print "PrintExporter_v._openExportedFiles()"
-		format "this.exported_paths	= % \n" this.exported_paths
+		--format "\n"; print "PrintExporter_v._openExportedFiles()"
 		if this.exported_paths.count > 0 then
-			case this.params[#open_in] of
-			(
-				1: this._openInChitubox()
-				2: this._openInLycheeSlicer()
-			)
+			this._openInProgram()
 	),
-
 	/** Open in chitubox
 	  *
 	  * FORMAT OF COMMAND TO OPEN FILES IN CHITUBOX:
 	  * 		ShellLaunch "C:/Chitubox.exe" "\"c:\\File_1.obj\" \"c:\\File_1.obj\""
 	  *
 	 */
-	function _openInChitubox =
+	function _openInProgram =
 	(
 		--format "\n"; print "PrintExporter_v._openInChitubox()"
-		--format "this.params[#OPEN_IN_FINAL_FILE]	= % \n" this.params[#OPEN_IN_FINAL_FILE]
+		--format "this.params[#PROJECT_FILE_OPEN]	= % \n" this.params[#PROJECT_FILE_OPEN]
 		files_paths = ""
 
-		this._setFinalFile()
+		this._addProjectFileToOpenPaths()
 
 		for exported_path in this.exported_paths where doesFileExist exported_path do files_paths += " \""+exported_path+"\""
 		--format "this.open_in_programs	= % \n" this.open_in_programs
-		ShellLaunch 	("\""+ this.open_in_programs[1]+"\"") ( files_paths )
+		ShellLaunch ("\""+ this.open_in_programs[this.params[#OPEN_IN]][1]+"\"") ( files_paths )
 	),
 
 	/** Get path to final file where exported files will be merged
@@ -116,37 +129,26 @@ struct PrintExporter_v
 	  *  Path of merge is export path of first selected node
 	  *
 	  */
-	function _setFinalFile =
+	function _addProjectFileToOpenPaths =
 	(
 
-		if this.params[#OPEN_IN_FINAL_FILE] then
+		if this.params[#PROJECT_FILE_OPEN] then
 		(
 			node_groups = makeUniqueArray( for _node in this.export_nodes where _node.parent != undefined and isGroupHead _node.parent collect _node.parent)
 
 			if node_groups.count > 0 then
 			(
-				final_file = (this._getExportDir(this.export_nodes[1].export_dir)) + "\\" + node_groups[1].name + ".chitubox"
+				extension = this.open_in_programs[this.params[#OPEN_IN]][2]
+
+				final_file = (this._getExportDir(this.export_nodes[1].export_dir)) + "\\" + node_groups[1].name + "." + extension
 
 				if not doesFileExist final_file then
-				(
-					template_file = ( getFilenamePath(getSourceFileName()) + "..\\..\\Final-Files-Templates\\template.chitubox" )
-					--format "template_file	= % \n" template_file
-					copy_result = copyFile  template_file final_file -- COPY EMPTY FILE "./../../Final-Files-Templates/template.chitubox"
-					--format "copy_result	= % \n" copy_result
-				)
-
+					copyFile  ( getFilenamePath(getSourceFileName()) + "..\\..\\Final-Files-Templates\\template." + extension ) final_file -- COPY EMPTY FILE "./../../Final-Files-Templates/template.chitubox"
 
 				this.exported_paths = #( final_file ) + this.exported_paths
 
 			)
 		)
-	),
-
-	/** Open in LycheeSlicer
-	 */
-	function _openInLycheeSlicer =
-	(
-		--format "\n"; print "PrintExporter_v._openInChitubox()"
 	),
 
 	/** Set exporter
@@ -156,7 +158,7 @@ struct PrintExporter_v
 		--format "\n"; print "PrintExporter_v._setExporter()"
 		Exporter = ObjExporter_v(#Print)
 
-		Exporter.setIni("ObjScale")(this.params[#export_scale])
+		Exporter.setIni("ObjScale")(this.params[#EXPORT_SCALE])
 
 	),
 
@@ -182,8 +184,8 @@ struct PrintExporter_v
 	function _fixExportPosition =
 	(
 		--format "\n"; print "PrintExporter_v._fixExportPosition()"
-		this.export_position_dummy = if this.params[#fix_position] or this.anim_keys[#position] > 0 then
-			(PrinterVolume_v()).volumeDimensionObject(this.params[#export_scale])
+		this.export_position_dummy = if this.params[#FIX_POSITION] or this.anim_keys[#position] > 0 then
+			(PrinterVolume_v()).volumeDimensionObject(this.params[#EXPORT_SCALE])
 		else
 			#()
 	),
@@ -207,19 +209,6 @@ struct PrintExporter_v
 		last_keyframe --return
 	),
 
-
-
-	/** Get export file path
-	 */
-	function _getExportFilePath export_node =
-	(
-		--format "\n"; print "ExporterSetup_v._getExportFilePath()"
-		subdir = if this.params[#subdir_by_node] then "/"+export_node.name + "/" else "/"
-
-		export_path =  (this._getExportDir(export_node.export_dir)) + subdir + export_node.name + ".obj"
-
-		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "\\\\" -- return
-	),
 
 	/** Export dir consist of CURRENT SCENE PATH + RELATIVE PATH of Export_Node.export_dir
 	*

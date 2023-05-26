@@ -49,9 +49,9 @@ struct ObjExporter_v
 
 		try(
 
-			--exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
+			exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
 
-			true --return
+			--true --return
 		)catch(
 
 			format "*** % ***\n" (getCurrentException())

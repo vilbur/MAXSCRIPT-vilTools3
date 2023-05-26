@@ -86,7 +86,7 @@ struct ExporterSetup_v
 		PrintExporter.params[#EXPORT_SCALE]	= ROLLOUT_export.SPIN_export_size.value
 		PrintExporter.params[#SUBDIR_BY_NODE]	= ROLLOUT_export.CBX_sub_directory_by_node_name.checked
 		PrintExporter.params[#FIX_POSITION]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.state
-		PrintExporter.params[#OPEN_IN_FINAL_FILE]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_open_in_final_file.state
+		PrintExporter.params[#PROJECT_FILE_OPEN]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_project_file_open.state
 		PrintExporter.params[#OPEN_IN]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_open_in_program.state
 
 		PrintExporter.export()
