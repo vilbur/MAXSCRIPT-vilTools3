@@ -27,6 +27,8 @@ struct PrintExporter_v
 
 	anim_keys	= Dictionary #( #position, 0 ) #( #rotation, 0 ),
 
+	fetch_state	= Dictionary #( #layer_manager_open, true ),
+
 	export_position_dummy,
 
 	/* dependency */
@@ -40,12 +42,12 @@ struct PrintExporter_v
 	 */
 	function export =
 	(
-		format "\n"; print "PrintExporter_v.export()"
-		format "params	= % \n" params
+		--format "\n"; print "PrintExporter_v.export()"
+		--format "params	= % \n" params
 
 		this._setExporter()
 
-		holdMaxFile()
+		this._holdMaxState()
 
 		this._setExportKeyFrame()
 
@@ -56,9 +58,8 @@ struct PrintExporter_v
 
 		this._openExportedFiles()
 
-		fetchMaxFile quiet:true
+		this._fetchMaxState()
 
-		--this._deletePositionDummy()
 	),
 
 
@@ -75,8 +76,49 @@ struct PrintExporter_v
 	),
 
 
+	/** Open in chitubox
+	  *
+	  * @param array paths_to_open
+	  *
+	  * FORMAT OF COMMAND TO OPEN FILES IN CHITUBOX:
+	  * 		ShellLaunch "C:/Chitubox.exe" "\"c:\\File_1.obj\" \"c:\\File_1.obj\""
+	  *
+	 */
+	function openInProgram paths_to_open =
+	(
+		--format "\n"; print "PrintExporter_v.openInProgram()"
+		params_string = ""
+
+		for path_to_open in paths_to_open where doesFileExist path_to_open do params_string += " \""+path_to_open+"\""
+		--format "this.open_in_programs	= % \n" this.open_in_programs
+		ShellLaunch ("\""+ this.open_in_programs[this.params[#OPEN_IN]][1]+"\"") ( params_string )
+	),
+
 	private
 
+	/** Hold max state
+	 */
+	function _holdMaxState =
+	(
+		--format "\n"; print "PrintExporter_v._holdMaxState()"
+		holdMaxFile()
+
+		this.fetch_state[#layer_manager_open] = LayerManager.isDialogOpen()
+
+	),
+
+	/** Fetch max state
+	 */
+	function _fetchMaxState =
+	(
+		--format "\n"; print "PrintExporter_v._fetchMaxState()"
+		fetchMaxFile quiet:true
+
+		if this.fetch_state[#layer_manager_open] then
+			macros.run "Layers" "LayerManager"
+
+		sliderTime = this._getLastAnimKey()
+	),
 
 	/*------------------------------------------------------------------------------
 		EXPORT NODE
@@ -102,26 +144,13 @@ struct PrintExporter_v
 	(
 		--format "\n"; print "PrintExporter_v._openExportedFiles()"
 		if this.exported_paths.count > 0 then
-			this._openInProgram()
-	),
-	/** Open in chitubox
-	  *
-	  * FORMAT OF COMMAND TO OPEN FILES IN CHITUBOX:
-	  * 		ShellLaunch "C:/Chitubox.exe" "\"c:\\File_1.obj\" \"c:\\File_1.obj\""
-	  *
-	 */
-	function _openInProgram =
-	(
-		--format "\n"; print "PrintExporter_v._openInChitubox()"
-		--format "this.params[#PROJECT_FILE_OPEN]	= % \n" this.params[#PROJECT_FILE_OPEN]
-		files_paths = ""
+		(
+			this._addProjectFileToOpenPaths()
 
-		this._addProjectFileToOpenPaths()
-
-		for exported_path in this.exported_paths where doesFileExist exported_path do files_paths += " \""+exported_path+"\""
-		--format "this.open_in_programs	= % \n" this.open_in_programs
-		ShellLaunch ("\""+ this.open_in_programs[this.params[#OPEN_IN]][1]+"\"") ( files_paths )
+			this.openInProgram(this.exported_paths)
+		)
 	),
+
 
 	/** Get path to final file where exported files will be merged
 	  *
@@ -146,7 +175,6 @@ struct PrintExporter_v
 					copyFile  ( getFilenamePath(getSourceFileName()) + "..\\..\\Final-Files-Templates\\template." + extension ) final_file -- COPY EMPTY FILE "./../../Final-Files-Templates/template.chitubox"
 
 				this.exported_paths = #( final_file ) + this.exported_paths
-
 			)
 		)
 	),
@@ -159,7 +187,6 @@ struct PrintExporter_v
 		Exporter = ObjExporter_v(#Print)
 
 		Exporter.setIni("ObjScale")(this.params[#EXPORT_SCALE])
-
 	),
 
 
@@ -173,10 +200,21 @@ struct PrintExporter_v
 		this.anim_keys[#position]	= this._getLastKeyOfAnimation(#position)
 		this.anim_keys[#rotation]	= this._getLastKeyOfAnimation(#rotation)
 
+		this._setTimeSlider(this._getLastAnimKey())
+	),
+
+	/** Get last anim key
+	 */
+	function _getLastAnimKey =
+	(
+		--format "\n"; print "PrintExporter_v._getLastAnimKey()"
+
 		anim_key_values = for data_pair in anim_keys where data_pair.value != 0 collect data_pair.value
 
 		if anim_key_values.count > 0 then
-			this._setTimeSlider(amax anim_key_values)
+			amax anim_key_values --return
+		else
+			0 --return
 	),
 
 	/** create boxes in corners of print plane to keep exported position
@@ -231,15 +269,6 @@ struct PrintExporter_v
 			if queryBox ("Exported nodes has animation of rotation.\n\nWould you like to export key "+keyframe as string +" ?" ) title:"Export animation key"  beep:false then
 				sliderTime = keyframe
 	),
-
-	--/** Delete position dummy
-	-- */
-	--function _deletePositionDummy =
-	--(
-	--	--format "\n"; print "PrintExporter_v._deletePositionDummy()"
-	--		if isValidNode this.export_position_dummy then
-	--			delete this.export_position_dummy
-	--),
 
 	/**
 	 */
