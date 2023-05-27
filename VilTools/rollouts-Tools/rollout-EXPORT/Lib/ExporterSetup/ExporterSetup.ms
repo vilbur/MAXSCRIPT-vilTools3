@@ -1,4 +1,5 @@
-filein( getFilenamePath(getSourceFileName()) + "/../ObjExporter/ObjExporter.ms" )	-- "./../ObjExporter/ObjExporter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../ExporterOBJ/ExporterOBJ.ms" )	-- "./../ExporterOBJ/ExporterOBJ.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../ExporterSTL/ExporterSTL.ms" )	-- "./../ExporterSTL/ExporterSTL.ms"
 
 
 filein( getFilenamePath(getSourceFileName()) + "/../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrintExporter/PrintExporter.ms" )	-- "./../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrintExporter/PrintExporter.ms"
@@ -83,6 +84,7 @@ struct ExporterSetup_v
 		format "\n"; print "Exporter_v._exportPrint()"
 		PrintExporter =	(PrintExporter_v(this.export_nodes))
 
+		PrintExporter.params[#EXPORT_FORMAT]	= #("obj", "stl")[ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_export_format.state]
 		PrintExporter.params[#EXPORT_SCALE]	= ROLLOUT_export.SPIN_export_size.value
 		PrintExporter.params[#SUBDIR_BY_NODE]	= ROLLOUT_export.CBX_sub_directory_by_node_name.checked
 		PrintExporter.params[#FIX_POSITION]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.state

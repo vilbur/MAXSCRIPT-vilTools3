@@ -19,7 +19,7 @@ struct PrintExporter_v
 
 
 	/* properties */
-	params	= Dictionary #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) ,
+	params	= Dictionary #( #EXPORT_FORMAT, "obj" ) #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) ,
 
 	open_in_programs = #( #("C:/Program Files/CHITUBOX  V1.9.4/Chitubox.exe", "chitubox"), #("C:/Program Files/LycheeSlicer/LycheeSlicer.exe", "lys")),
 
@@ -29,7 +29,7 @@ struct PrintExporter_v
 
 	fetch_state	= Dictionary #( #layer_manager_open, true ),
 
-	export_position_dummy,
+	export_position_dummy = #(),
 
 	/* dependency */
 	Exporter,
@@ -42,8 +42,8 @@ struct PrintExporter_v
 	 */
 	function export =
 	(
-		--format "\n"; print "PrintExporter_v.export()"
-		--format "params	= % \n" params
+		format "\n"; print "PrintExporter_v.export()"
+		format "params	= % \n" params
 
 		this._setExporter()
 
@@ -62,7 +62,6 @@ struct PrintExporter_v
 
 	),
 
-
 	/** Get export file path
 	 */
 	function getExportFilePath export_node =
@@ -70,7 +69,7 @@ struct PrintExporter_v
 		--format "\n"; print "ExporterSetup_v.getExportFilePath()"
 		subdir = if this.params[#SUBDIR_BY_NODE] then "/"+export_node.name + "/" else "/"
 
-		export_path =  (this._getExportDir(export_node.export_dir)) + subdir + export_node.name + ".obj"
+		export_path =  (this._getExportDir(export_node.export_dir)) + subdir + export_node.name + "." + this.params[#EXPORT_FORMAT]
 
 		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "\\\\" -- return
 	),
@@ -87,14 +86,52 @@ struct PrintExporter_v
 	function openInProgram paths_to_open =
 	(
 		--format "\n"; print "PrintExporter_v.openInProgram()"
-		params_string = ""
+		files_paths_string = ""
 
-		for path_to_open in paths_to_open where doesFileExist path_to_open do params_string += " \""+path_to_open+"\""
-		--format "this.open_in_programs	= % \n" this.open_in_programs
-		ShellLaunch ("\""+ this.open_in_programs[this.params[#OPEN_IN]][1]+"\"") ( params_string )
+		for path_to_open in paths_to_open where doesFileExist path_to_open do files_paths_string += " \""+path_to_open+"\""
+
+		DOSCommand ( "start \"\" "  + "\""+ this.open_in_programs[this.params[#OPEN_IN]][1]+"\" " + files_paths_string )
 	),
 
 	private
+
+
+	/*------------------------------------------------------------------------------
+
+		EXPORT NODE
+
+	--------------------------------------------------------------------------------*/
+	function _exportNode export_node =
+	(
+		--format "\n"; print "PrintExporter_v._exportNode()"
+		max create mode
+
+		export_path	= this.getExportFilePath(export_node)
+
+		export_objects = export_node.getAllChildren() + this.export_position_dummy
+
+		collapseStack export_objects
+
+		export_result = Exporter.export ( export_objects ) (export_path)
+
+		if export_result != false then
+			append this.exported_paths export_path
+	),
+
+	/** Set exporter
+	 */
+	function _setExporter =
+	(
+		--format "\n"; print "PrintExporter_v._setExporter()"
+		Exporter = case this.params[#EXPORT_FORMAT] of
+		(
+			"obj": ExporterOBJ_v(#Print)
+			"stl":	ExporterSTL_v()
+		)
+
+		Exporter.setExportScale(this.params[#EXPORT_SCALE])
+	),
+
 
 	/** Hold max state
 	 */
@@ -120,29 +157,12 @@ struct PrintExporter_v
 		sliderTime = this._getLastAnimKey()
 	),
 
-	/*------------------------------------------------------------------------------
-		EXPORT NODE
-	--------------------------------------------------------------------------------*/
-	function _exportNode export_node =
-	(
-		--format "\n"; print "PrintExporter_v._exportNode()"
-		export_path	= this.getExportFilePath(export_node)
-
-		export_objects = export_node.getAllChildren() + this.export_position_dummy
-
-		collapseStack export_objects
-
-		export_result = Exporter.export ( export_objects ) (export_path)
-
-		if export_result != false then
-			append this.exported_paths export_path
-	),
-
 	/** Open exported files
 	 */
 	function _openExportedFiles =
 	(
-		--format "\n"; print "PrintExporter_v._openExportedFiles()"
+		format "\n"; print "PrintExporter_v._openExportedFiles()"
+		format "this.exported_paths	= % \n" this.exported_paths
 		if this.exported_paths.count > 0 then
 		(
 			this._addProjectFileToOpenPaths()
@@ -178,17 +198,6 @@ struct PrintExporter_v
 			)
 		)
 	),
-
-	/** Set exporter
-	 */
-	function _setExporter =
-	(
-		--format "\n"; print "PrintExporter_v._setExporter()"
-		Exporter = ObjExporter_v(#Print)
-
-		Exporter.setIni("ObjScale")(this.params[#EXPORT_SCALE])
-	),
-
 
 	/** Move time slider to last key, if export nodes has animated position or rotastion
 	  *
