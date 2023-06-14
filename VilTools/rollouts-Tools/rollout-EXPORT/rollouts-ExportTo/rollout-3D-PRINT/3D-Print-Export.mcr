@@ -61,6 +61,8 @@ icon:	"control:radiobuttons|across:2|items:#('Chitubox', 'LycheSlicer')|columns:
 
 ================================================================================*/
 
+global CBX_FIX_POSITION_TRISTATE = 0
+
 /**
   *
   */
@@ -71,7 +73,14 @@ toolTip:	"For objects to keep position on export\n\n(Create boxes in corners of 
 icon:	"control:checkbox|across:2|offset:[ 16, 8 ]"
 (
 	--format "EventFired	= % \n" EventFired
-	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
+	--format "EventFired.Control.triState	= % \n" EventFired.Control.triState
+	----format "CBX_FIX_POSITION_TRISTATE	= % \n" CBX_FIX_POSITION_TRISTATE
+	----(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
+	--if EventFired.val == false and CBX_FIX_POSITION_TRISTATE != 2 then
+	--	EventFired.Control.triState = CBX_FIX_POSITION_TRISTATE = 2
+	--else
+	--	CBX_FIX_POSITION_TRISTATE = 0
+
 )
 
 
@@ -90,6 +99,18 @@ icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
 )
 
 
+/**
+  *
+  */
+macroscript	_export_open_in_close_instances
+category:	"_Export"
+buttontext:	"Close Instances"
+toolTip:	"Close other instances of open in program"
+icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
+(
+	--format "EventFired	= % \n" EventFired
+	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
+)
 
 
 /*==============================================================================
@@ -114,7 +135,9 @@ icon:	"height:64|across:3"
 (
 	clearListener()
 
+	--format "ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.triState	= % \n" ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.triState
 	(ExporterSetup_v(#Print)).export()
+	--(PrinterVolume_v()).fixPositionionObjects(ROLLOUT_export.SPIN_export_size.value)
 )
 
 /*------------------------------------------------------------------------------

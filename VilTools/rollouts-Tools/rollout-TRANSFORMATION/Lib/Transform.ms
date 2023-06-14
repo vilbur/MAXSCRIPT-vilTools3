@@ -25,6 +25,8 @@ struct Transform_v
 
 			about _selection[1] Rotate (all_children + _selection) ( angleaxis _angle tramsform_p3)
 		)
+
+		redrawViews()      
 	),
 
 	/** Get active axis

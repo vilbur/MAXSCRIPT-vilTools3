@@ -76,23 +76,21 @@ toolTip:	"Reinstance selection.\n\nMaster object is last object in selection"
 (
 	max create mode
 
-	undo "Reinstancer Objects" on
+	if selection.count >= 2 then
 	(
-		if selection.count >= 2 then
+		undo "Reinstance Objects" on
 		(
-			undo on
-			(
-				master_object	= selection[ selection.count ]
+			master_object	= selection[ selection.count ]
 
-				for_instance = deleteItem ( selection as Array ) selection.count
+			for_instance = deleteItem ( selection as Array ) selection.count
 
-				for obj in for_instance do
-					instanceReplace obj master_object
-			)
+			for obj in for_instance do
+				instanceReplace obj master_object
+
 		)
-		else
-			messageBox "Select at least 2 objects for reinstancing" title:"Reinstancer"
 	)
+	else
+		messageBox "Select at least 2 objects for reinstancing" title:"Reinstancer"
 
 )
 
@@ -107,25 +105,28 @@ toolTip:	"Make references of selection.\n\nMaster object is last in selection"
 (
 	max create mode
 
-	undo "Rereference Objects" on
+	if selection.count >= 2 then
 	(
-		if selection.count >= 2 then
+		undo "Rereference Objects" on
 		(
-			undo on
+
+			master_object	= selection[selection.count]
+
+			for_instance = deleteItem ( selection as Array ) selection.count
+
+			for obj in for_instance do
+				maxOps.CollapseNode obj true
+
+
+			for obj in for_instance do
 			(
-				master_object	= selection[selection.count]
+				maxOps.CollapseNodeTo obj 1 off
 
-				for_instance = deleteItem ( selection as Array ) selection.count
-
-				for obj in for_instance do
-				(
-					maxOps.CollapseNodeTo obj 1 off
-
-					referenceReplace obj master_object
-				)
+				referenceReplace obj master_object
 			)
 		)
-		else
-			messageBox "Select at least 2 objects for referencing" title:"Reinstancer"
+
 	)
+	else
+		messageBox "Select at least 2 objects for referencing" title:"Reinstancer"
 )

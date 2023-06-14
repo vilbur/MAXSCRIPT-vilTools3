@@ -26,8 +26,8 @@ struct ExporterOBJ_v
 	function export export_objects export_filepath =
 	(
 		format "\n"; print "ExporterOBJ_v.export()"
-		format "export_objects	= % \n" export_objects
-		format "export_filepath	= % \n" export_filepath
+		--format "export_objects	= % \n" export_objects
+		--format "export_filepath	= % \n" export_filepath
 
 		makeDir (getFilenamePath( export_filepath)) all:true
 
@@ -35,7 +35,8 @@ struct ExporterOBJ_v
 
 		try(
 
-			exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
+			export_result = exportFile ( export_filepath ) #noPrompt selectedOnly:true using:this.Exporter -- return
+			format "export_result	= % \n" export_result
 
 		)catch(
 

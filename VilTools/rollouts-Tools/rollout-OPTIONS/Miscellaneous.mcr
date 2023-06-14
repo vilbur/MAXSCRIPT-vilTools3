@@ -69,3 +69,24 @@ icon:	"control:checkbutton"
 	)
 
 )
+
+/**
+ */
+macroscript	_options_set_grid_spacing
+category:	"_Otions"
+buttontext:	"Set Grid"
+tooltip:	"Set Grid Spacing: 0.1 | 1 | 10"
+--icon:	""
+(
+	spacing = case getGridSpacing() as integer of
+	(
+		1:  10.0
+		10: 0.1
+		default: 1.0
+	)
+
+	SetGridSpacing spacing
+
+	SetGridMajorLines 10
+)
+

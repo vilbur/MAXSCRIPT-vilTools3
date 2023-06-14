@@ -11,7 +11,7 @@ struct ExporterSTL_v
 	/* reference */
 	/* inhered */
 
-	/**  Export
+	/**  Open export *.stl dialog and export
 	  *
 	  * @param array export_objects
 	  * @param string export_filepath
@@ -20,10 +20,10 @@ struct ExporterSTL_v
 	 */
 	function export export_objects export_filepath =
 	(
-		format "\n"; print "PrintExporter_v.export()"
-		global STL_Object_Name = ""
+		--format "\n"; print "PrintExporter_v.export()"
+		global STL_Object_Name = getFilenameFile( export_filepath )
 
-		fn SetSTLExportOptions =
+		function SetSTLExportOptions =
 		(
 			local BM_GETSTATE = 0xF2
 			local BM_CLICK = 0xF5
@@ -35,11 +35,12 @@ struct ExporterSTL_v
 			if ((UIAccessor.GetWindowText WindowHandle) == "Export STL File") then
 			(
 				children = UIAccessor.GetChildWindows WindowHandle
+
 				for i = 1 to children.count do
 				(
 					child = children[i]
 					child_title = (UIAccessor.GetWindowText child)
-					format "child_title	= % \n" child_title
+					--format "child_title	= % \n" child_title
 
 					if (child_title == "Object01") then
 						UIAccessor.SetWindowText child STL_Object_Name
@@ -66,6 +67,8 @@ struct ExporterSTL_v
 
 		select export_objects
 
+		this._scaleObjects(export_objects)
+
 		deleteFile export_filepath
 
 		exportFile export_filepath
@@ -82,6 +85,23 @@ struct ExporterSTL_v
 	(
 		--format "\n"; print "ExporterOBJ_v.setExportScale()"
 		this.export_scale = val
+	),
+
+
+	private
+
+	/** Scale objects
+	 */
+	function _scaleObjects export_objects =
+	(
+		format "\n"; print "ExporterSTL_v.scaleObjects()"
+
+		if this.export_scale != 1 then
+		(
+			export_objects.scale = [ this.export_scale ,this.export_scale ,this.export_scale ]
+
+		)
+
 	),
 
 	/**

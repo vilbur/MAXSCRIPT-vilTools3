@@ -6,7 +6,7 @@ category:	"_Scene"
 buttontext:	"Open Recent"
 toolTip:	"Open recent scene on Max start"
 --icon:	"control:checkButton|menu:_Scene"
-icon:	"menu:_Scene"
+icon:	"across:5|width:72|menu:_Scene"
 (
 	--on isVisible  return maxFileName == ""
 
@@ -68,40 +68,70 @@ icon:	"menu:_Scene"
 )
 
 /*------------------------------------------------------------------------------
-
-	SAVE \ OPEN RECENT FILE
-
+	INCREMENTAL SAVE
 --------------------------------------------------------------------------------*/
 
-
 /**
  *
  */
-macroscript	_scene_temp_open
+macroscript	_scene_incremental_save
 category:	"_Scene"
-buttontext:	"Open\Save Temp"
-toolTip:	"Open Temp File"
---icon:	"#(path, index)"
+buttontext:	"Save++"
+toolTip:	"Incremental save without user prompt"
+icon:	"offset:[-2, 0]"
 (
-	if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+	file_path = maxFilePath
+	file_name = maxFileName
 
-	--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
-		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-			loadMaxFile max_file quiet:true
+	if file_path == "" and (file_path_new = getMAXSaveFileName()) != undefined then
+	(
+		file_path = getFilenamePath(  file_path_new )
+		file_name = filenameFromPath( file_path_new )
+	)
+
+	if file_path != "" then
+	(
+		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches file_name "(.*[^0-9]+)(\d+)*\.max" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+		match	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value ))[1] --return
+
+		basename	= trimRight match[2] "-"
+		suffix_current	= match[3]
+
+		if (suffix_current = match[3]) == "" then
+			suffix_current = "001"
+
+		path_basename  = file_path + "\\" + basename
+		path_increment = path_basename + "-" + suffix_current
+
+		/*------ FIND NEXT AVAILABLE INCREMENTAL FILENAME ------*/
+		while doesFileExist (path_increment + ".max") do
+		(
+			suffix_current = (suffix_current as integer ) + 1
+
+			digit_prefix = case ( suffix_current as string ).count of -- create number string with 3 digits E.G.: "099"
+			(
+				1: "00"
+				2: "0"
+				default: ""
+			)
+
+			path_increment = path_basename + "-" + digit_prefix + suffix_current as string
+		)
+
+		path_basename  += ".max"
+		path_increment += ".max"
+
+		saveMaxFile path_increment
+
+		/* CREATE COPY OF FILE WITHOUT PREFIX */
+		if doesFileExist path_basename then
+			deleteFile path_basename
+
+		copyFile path_increment path_basename
+	)
 )
-/**
- *
- */
-macroscript	_scene_temp_save
-category:	"_Scene"
-buttontext:	"Open\Save Temp"
-toolTip:	"Save Temp File"
---icon:	"#(path, index)"
-(
-	if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
-		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-			saveMaxFile max_file quiet:true
-)
+
 
 
 /*------------------------------------------------------------------------------
@@ -117,7 +147,7 @@ toolTip:	"Save Temp File"
 macroscript	_scene_relaod
 category:	"_Scene"
 buttontext:	"Reload"
-toolTip:	"Relaod cuurent *.max file"
+toolTip:	"Reload cuurent *.max file"
 --icon:	"#(path, index)"
 (
 	if queryBox ("Reload "+maxFileName+" ?") title:"Hold scene"  beep:false then
@@ -153,40 +183,38 @@ toolTip:	"Fetch scene"
 	)
 )
 
+/*------------------------------------------------------------------------------
 
---
---/**
--- *
--- */
---macroscript	_scene_incremental_save
---category:	"_Scene"
---buttontext:	"Incremental Save"
---toolTip:	"Incremental save without user prompt"
-----icon:	"#(path, index)"
---(
---	filein (@"c:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SCENE\Scene.mcr")
---
---	matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches maxFileName "(.*[^0-9]+)(\d+)*\.max" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
---
---	match	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value ))[1] --return
---
---	increment_number = if match[3] != undefined then ( match[3] as integer + 1 ) as string  else "1"
---
---	increment_number_string = case increment_number.count of
---	(
---		1: "00" + increment_number
---		2: "0"  + increment_number
---		default: increment_number
---	)
---
---
---	filename  = match[2] + increment_number_string + ".max"
---	save_path = ( maxFilePath + filename )
---
---	if not (file_exists = doesFileExist save_path) or (file_exists and queryBox ("Overwrite file "+filename+" ?") title:"FILE EXISTS" ) then
---	(
---		saveMaxFile save_path
---
---		print "FILE HAS BEEN SAVED"
---	)
---)
+	SAVE \ OPEN RECENT FILE
+
+--------------------------------------------------------------------------------*/
+
+
+/**
+ *
+ */
+macroscript	_scene_temp_open
+category:	"_Scene"
+buttontext:	"Open\Save Temp"
+toolTip:	"Open Temp File"
+icon:	"offset:[14, 0]|width:96"
+(
+	if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+
+	--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+			loadMaxFile max_file quiet:true
+)
+/**
+ *
+ */
+macroscript	_scene_temp_save
+category:	"_Scene"
+buttontext:	"Open\Save Temp"
+toolTip:	"Save Temp File"
+--icon:	"#(path, index)"
+(
+	if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
+		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+			saveMaxFile max_file quiet:true
+)

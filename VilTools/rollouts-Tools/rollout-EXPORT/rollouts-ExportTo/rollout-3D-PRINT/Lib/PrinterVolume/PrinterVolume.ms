@@ -4,7 +4,6 @@ struct PrinterVolume_v
 (
 	/* construct */
 
-
 	/* properties */
 
 	dummy_name = "PRINT DUMMY VOLUME",
@@ -13,6 +12,9 @@ struct PrinterVolume_v
 	screw_position	= [ 34,	64 ],	-- position of screws on print plane
 	screw_radius	= 2,
 
+	fix_position_object_size = 0,
+	--fix_position_object_size = 1000,
+	fix_position_object_offset = 1000,
 
 	/* dependency */
 	/* reference */
@@ -46,6 +48,8 @@ struct PrinterVolume_v
 				if object_type == #Rectangle then
 					this._addPlateHoles(dummy_object)(export_size)
 
+				dummy_object.render_displayRenderMesh  = false -- disable rendr in viewport
+
 				freeze dummy_object
 
 				(LayerManager.getLayerFromName( "0")).addNode dummy_object
@@ -57,14 +61,14 @@ struct PrinterVolume_v
 
 	/** Volume dimension object
 	 */
-	function volumeDimensionObject export_size =
+	function fixPositionionObjects export_size =
 	(
 		--format "\n"; print "PrinterVolume_v.volumeDimensionObject()"
 		dimension_objects = #()
 
 		volume_size = this._getPrinterSize() / export_size / 2
 
-		dummy_object = Box name:dummy_name length:0 width:0 height:0 pos:[ volume_size[2]+10, volume_size[1]+10, 0] pivot:[0,0,0] isSelected:on
+		dummy_object = Box name:dummy_name length:fix_position_object_size width:fix_position_object_size height:fix_position_object_size pos:[ volume_size[2]+fix_position_object_offset, volume_size[1]+fix_position_object_offset, 0] pivot:[0,0,0] isSelected:on
 
 		modPanel.addModToSelection ( symmetry PlanarX:true PlanarY:true PlanarZ:false) ui:on
 

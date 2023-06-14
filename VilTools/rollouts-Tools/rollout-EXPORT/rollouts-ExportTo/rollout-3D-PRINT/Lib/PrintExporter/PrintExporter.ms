@@ -19,7 +19,7 @@ struct PrintExporter_v
 
 
 	/* properties */
-	params	= Dictionary #( #EXPORT_FORMAT, "obj" ) #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) ,
+	params	= Dictionary #( #EXPORT_FORMAT, "obj" ) #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) #( #CLOSE_INSTANCES, false )  ,
 
 	open_in_programs = #( #("C:/Program Files/CHITUBOX  V1.9.4/Chitubox.exe", "chitubox"), #("C:/Program Files/LycheeSlicer/LycheeSlicer.exe", "lys")),
 
@@ -29,7 +29,9 @@ struct PrintExporter_v
 
 	fetch_state	= Dictionary #( #layer_manager_open, true ),
 
-	export_position_dummy = #(),
+	fix_position_dummy = #(),
+
+	success_message = "",
 
 	/* dependency */
 	Exporter,
@@ -42,8 +44,8 @@ struct PrintExporter_v
 	 */
 	function export =
 	(
-		format "\n"; print "PrintExporter_v.export()"
-		format "params	= % \n" params
+		--format "\n"; print "PrintExporter_v.export()"
+		--format "params	= % \n" params
 
 		this._setExporter()
 
@@ -56,10 +58,13 @@ struct PrintExporter_v
 		for selected_node in this.export_nodes do
 			this._exportNode (selected_node)
 
+		this._setSuccessMessage()
+
 		this._openExportedFiles()
 
 		this._fetchMaxState()
 
+		this._successMessage()
 	),
 
 	/** Get export file path
@@ -86,11 +91,12 @@ struct PrintExporter_v
 	function openInProgram paths_to_open =
 	(
 		--format "\n"; print "PrintExporter_v.openInProgram()"
+		--format "this._getOpenInProgramPath()	= % \n" (this._getOpenInProgramPath())
 		files_paths_string = ""
-
+		--format "files_paths_string	= % \n" files_paths_string
 		for path_to_open in paths_to_open where doesFileExist path_to_open do files_paths_string += " \""+path_to_open+"\""
 
-		DOSCommand ( "start \"\" "  + "\""+ this.open_in_programs[this.params[#OPEN_IN]][1]+"\" " + files_paths_string )
+		DOSCommand ( "start \"\" "  + "\""+ this._getOpenInProgramPath() +"\" " + files_paths_string )
 	),
 
 	private
@@ -103,17 +109,17 @@ struct PrintExporter_v
 	--------------------------------------------------------------------------------*/
 	function _exportNode export_node =
 	(
-		--format "\n"; print "PrintExporter_v._exportNode()"
+		format "\n"; print "PrintExporter_v._exportNode()"
 		max create mode
 
 		export_path	= this.getExportFilePath(export_node)
 
-		export_objects = export_node.getAllChildren() + this.export_position_dummy
-
+		export_objects = export_node.getAllChildren() + this.fix_position_dummy
+		--format "this.fix_position_dummy	= % \n" this.fix_position_dummy
 		collapseStack export_objects
 
 		export_result = Exporter.export ( export_objects ) (export_path)
-
+		format "export_result	= % \n" export_result
 		if export_result != false then
 			append this.exported_paths export_path
 	),
@@ -161,13 +167,17 @@ struct PrintExporter_v
 	 */
 	function _openExportedFiles =
 	(
-		format "\n"; print "PrintExporter_v._openExportedFiles()"
-		format "this.exported_paths	= % \n" this.exported_paths
+		--format "\n"; print "PrintExporter_v._openExportedFiles()"
+		--format "this.exported_paths	= % \n" this.exported_paths
 		if this.exported_paths.count > 0 then
 		(
+			if this.params[#CLOSE_INSTANCES] then
+				this._killInstances()
+
 			this._addProjectFileToOpenPaths()
 
-			this.openInProgram(this.exported_paths)
+			if this.params[#OPEN_IN] > 0 then
+				this.openInProgram(this.exported_paths)
 		)
 	),
 
@@ -198,6 +208,7 @@ struct PrintExporter_v
 			)
 		)
 	),
+
 
 	/** Move time slider to last key, if export nodes has animated position or rotastion
 	  *
@@ -231,12 +242,13 @@ struct PrintExporter_v
 	function _fixExportPosition =
 	(
 		--format "\n"; print "PrintExporter_v._fixExportPosition()"
-		this.export_position_dummy = if this.params[#FIX_POSITION] or this.anim_keys[#position] > 0 then
-			(PrinterVolume_v()).volumeDimensionObject(this.params[#EXPORT_SCALE])
+		--format "this.params[#FIX_POSITION]	= % \n" this.params[#FIX_POSITION]
+		--format "this.anim_keys[#position] > 0	= % \n" (this.anim_keys[#position] > 0)
+		this.fix_position_dummy = if this.params[#FIX_POSITION] or this.anim_keys[#position] > 0 then
+			(PrinterVolume_v()).fixPositionionObjects(this.params[#EXPORT_SCALE])
 		else
 			#()
 	),
-
 
 	/** Check if selected nodes has animation keys
 	  *
@@ -277,6 +289,45 @@ struct PrintExporter_v
 		if current_keyframe != keyframe then
 			if queryBox ("Exported nodes has animation of rotation.\n\nWould you like to export key "+keyframe as string +" ?" ) title:"Export animation key"  beep:false then
 				sliderTime = keyframe
+	),
+
+
+	/** Get open in program path
+	 */
+	function _getOpenInProgramPath =
+	(
+		--format "\n"; print "PrintExporter_v.getEnInProgramPath()"
+		this.open_in_programs[this.params[#OPEN_IN]][1] --return
+	),
+
+	/** Kill instances of open in program
+	 */
+	function _killInstances =
+	(
+		--format "\n"; print "PrintExporter_v._killInstances()"
+
+		DOSCommand ("taskkill /IM "+ filenameFromPath( this._getOpenInProgramPath()))
+	),
+
+	/** set Success message
+	 */
+	function _setSuccessMessage =
+	(
+		--format "\n"; print "PrintExporter_v._successMessage()"
+		for exported_path in exported_paths do success_message += filenameFromPath(exported_path) + "\n"
+	),
+
+	/** Success message
+	 */
+	function _successMessage =
+	(
+		--format "\n"; print "PrintExporter_v._successMessage()"
+		if this.exported_paths.count == 0 then
+			return false
+
+		print ("\n\n------------------------- EXPORT SUCCESFULL -------------------------\n\n" + success_message)
+
+		messageBox success_message title:"EXPORT SUCCESFULL"  beep:false
 	),
 
 	/**
