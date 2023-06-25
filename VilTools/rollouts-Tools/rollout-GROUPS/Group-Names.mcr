@@ -71,6 +71,7 @@ toolTip:	"Rename members of group by group name"
 macroscript	group_uppercase_selected
 category:	"_Group"
 buttontext:	"Uppercase"
+--buttontext:	"Uppercase\Lowercase"
 toolTip:	"Uppercase names of selected groups"
 --icon:	"#(path, index)"
 (
@@ -79,3 +80,17 @@ toolTip:	"Uppercase names of selected groups"
 		_group.name = toUpper _group.name
 
 )
+--/**
+-- *
+-- */
+--macroscript	group_lowercase_selected
+--category:	"_Group"
+--buttontext:	"Uppercase\Lowercase"
+--toolTip:	"Uppercase names of selected groups"
+----icon:	"#(path, index)"
+--(
+--	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
+--	for _group in selection where isGroupHead _group do
+--		_group.name = toLower _group.name
+--
+--)

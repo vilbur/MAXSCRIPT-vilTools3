@@ -51,20 +51,29 @@ struct PrintExporter_v
 
 		this._holdMaxState()
 
-		this._setExportKeyFrame()
+		try(
+			this._setExportKeyFrame()
 
-		this._fixExportPosition()
+			this._fixExportPosition()
 
-		for selected_node in this.export_nodes do
-			this._exportNode (selected_node)
+			for selected_node in this.export_nodes do
+				this._exportNode (selected_node)
 
-		this._setSuccessMessage()
+			this._setSuccessMessage()
 
-		this._openExportedFiles()
+			this._openExportedFiles()
 
-		this._fetchMaxState()
+			this._fetchMaxState()
 
-		this._successMessage()
+			this._successMessage()
+
+		)catch(
+
+			format "*** % ***\n" (getCurrentException())
+
+			this._fetchMaxState()
+		)
+
 	),
 
 	/** Get export file path
@@ -169,7 +178,8 @@ struct PrintExporter_v
 	(
 		--format "\n"; print "PrintExporter_v._openExportedFiles()"
 		--format "this.exported_paths	= % \n" this.exported_paths
-		if this.exported_paths.count > 0 then
+
+		if this.params[#OPEN_IN] > 0 and this.exported_paths.count > 0 then
 		(
 			if this.params[#CLOSE_INSTANCES] then
 				this._killInstances()
@@ -296,7 +306,10 @@ struct PrintExporter_v
 	 */
 	function _getOpenInProgramPath =
 	(
-		--format "\n"; print "PrintExporter_v.getEnInProgramPath()"
+		format "\n"; print "PrintExporter_v.getEnInProgramPath()"
+
+		format "this.params[#OPEN_IN]	= % \n" this.params[#OPEN_IN]
+
 		this.open_in_programs[this.params[#OPEN_IN]][1] --return
 	),
 

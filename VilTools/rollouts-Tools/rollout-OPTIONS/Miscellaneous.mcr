@@ -1,3 +1,86 @@
+/*------------------------------------------------------------------------------
+	LAYER MANGER
+--------------------------------------------------------------------------------*/
+
+
+/**
+ */
+function showLayerManagerCallback =
+(
+	LayerManager.editLayerByName ""
+)
+
+/**
+ */
+macroscript	_options_layer_manager_toggle
+category:	"_Otions"
+buttontext:	"Layer Manager"
+tooltip:	"Show\Hide Layer manager on scene open"
+icon:	"control:checkbutton"
+(
+	if EventFired.val then
+	(
+		LayerManager.editLayerByName ""
+
+		try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
+	)
+	else
+	(
+		LayerManager.closeDialog()
+
+		try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
+	)
+)
+
+/*------------------------------------------------------------------------------
+	SCENE EXPLORER
+--------------------------------------------------------------------------------*/
+
+/**
+ */
+function showSceneExplorerCallback =
+(
+	SceneExplorerManager.CreateExplorerFromDefault "Scene Explorer"
+)
+
+
+/**
+ */
+macroscript	_options_scene_explorer_toggle
+category:	"_Otions"
+buttontext:	"Scene Explorer"
+tooltip:	"Show\Hide Scene Explorer on scene open"
+icon:	"control:checkbutton"
+(
+
+	default_explorer = "Scene Explorer"
+
+	--explorer_exist = SceneExplorerManager.ExplorerExists(default_explorer)
+
+
+	if EventFired.val then
+	(
+		if not SceneExplorerManager.ExplorerExists(default_explorer) then
+			SceneExplorerManager.CreateExplorerFromDefault(default_explorer)
+		else
+			SceneExplorerManager.OpenExplorer(default_explorer)
+
+
+		try( callbacks.addScript #filePostOpenProcess "showSceneExplorerCallback()" id:#showSceneExplorerCallback )catch()
+	)
+	else
+	(
+		SceneExplorerManager.CloseExplorer(default_explorer)
+
+		try( callbacks.removeScripts #filePostOpenProcess id:#showSceneExplorerCallback )catch()
+	)
+
+)
+
+
+/*------------------------------------------------------------------------------
+	QUAD MENU
+--------------------------------------------------------------------------------*/
 
 /**  LINK TO NODE
  */
@@ -14,7 +97,9 @@ tooltip:	"Load default quad menu and menus"
 
 )
 
-
+/*------------------------------------------------------------------------------
+	MEMORY
+--------------------------------------------------------------------------------*/
 /**
  */
 macroscript	_options_free_memory
@@ -32,43 +117,9 @@ tooltip:	"Remove Undo\n\nClean Texture Memory"
 
 
 
-/*------------------------------------------------------------------------------
-	LAYER MANGER
---------------------------------------------------------------------------------*/
 
 
-/**
- */
-function showLayerManagerCallback =
-(
 
-	LayerManager.editLayerByName ""
-)
-
-
-/**
- */
-macroscript	_options_layer_manager_toggle
-category:	"_Otions"
-buttontext:	"Layer Manager"
-tooltip:	"Show\Hide Layer manager on scene open"
-icon:	"control:checkbutton"
-(
-
-	if EventFired.val then
-	(
-		LayerManager.editLayerByName ""
-
-		try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
-	)
-	else
-	(
-		LayerManager.closeDialog()
-
-		try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
-	)
-
-)
 
 /**
  */
@@ -89,4 +140,3 @@ tooltip:	"Set Grid Spacing: 0.1 | 1 | 10"
 
 	SetGridMajorLines 10
 )
-

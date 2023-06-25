@@ -5,13 +5,27 @@ filein( getFilenamePath(getSourceFileName()) + "/../rollout-LAYERS/Lib/LayersMan
 --------------------------------------------------------------------------------*/
 /*
 */
-macroscript	layer_isolate_selection
-category:	"_Scene"
-buttontext:	"Isolate Selection"
-toolTip:	"Show only layers of selected objects\n\nActivate layer of first selected object"
+macroscript	visibility_only_layers_of_selection
+category:	"_Visibility"
+buttontext:	"Selected"
+toolTip:	"Show only layers of selected objects"
 --icon:	"#(path, index)"
 (
-	undo "Isolate Selection" on
+	undo "Show Only Layers Of Selection" on
+	(
+		(LayersManager_v()).isolateLayers( selection )
+	)
+)
+
+/*
+*/
+macroscript	visibility_isolate_selection
+category:	"_Visibility"
+buttontext:	"Isolate"
+toolTip:	"Isolate selected objects and hide other layers"
+--icon:	"#(path, index)"
+(
+	undo "Isolate Layers Of Selection" on
 	(
 		(LayersManager_v()).isolateLayers( selection )
 
@@ -31,26 +45,10 @@ toolTip:	"Show only layers of selected objects\n\nActivate layer of first select
 
 
 
-/*------------------------------------------------------------------------------
-	SHOW ONLY LAYERS OF SELECTION
---------------------------------------------------------------------------------*/
-/*
-*/
-macroscript	layer_isolate_layers
-category:	"_Scene"
-buttontext:	"Isolate Layers"
-toolTip:	"Show only layers of selected objects\n\nActivate layer of first selected object"
---icon:	"#(path, index)"
-(
-	undo "Isolate Layers" on
-		(LayersManager_v()).isolateLayers( selection )
-)
-
-
 --/*
 --*/
---macroscript	layer_hide_selected
---category:	"_Scene"
+--macroscript	visibility_hide_selected
+--category:	"_Visibility"
 --buttontext:	"Hide"
 --toolTip:	"Hide layers of selected objects"
 ----icon:	"#(path, index)"
@@ -65,8 +63,8 @@ toolTip:	"Show only layers of selected objects\n\nActivate layer of first select
 
 /*
 */
-macroscript	layer_unhide
-category:	"_Scene"
+macroscript	visibility_unhide
+category:	"_Visibility"
 buttontext:	"All Layers"
 toolTip:	"Unhide all"
 --icon:	"#(path, index)"
@@ -78,8 +76,8 @@ toolTip:	"Unhide all"
 
 /*
 */
-macroscript	layer_unhide_matching_name
-category:	"_Scene"
+macroscript	visibility_unhide_matching_name
+category:	"_Visibility"
 buttontext:	"All Layers"
 toolTip:	"Show Layers without '_' prefix or default layer"
 --icon:	"#(path, index)"

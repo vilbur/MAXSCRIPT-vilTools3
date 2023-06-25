@@ -289,7 +289,7 @@ icon:	"across:4"
 	clearListener()
 	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
 
-	with undo "attach_to_groups" on
+	with undo "attach to group" on
 	(
 		--with redraw off
 		--(
@@ -310,25 +310,11 @@ icon:	"across:4"
 macroscript	group_detach
 category:	"_Group"
 buttontext:	"Detach"
-toolTip:	"Detach from group"
+toolTip:	"Detach selected objects from groups"
 --icon:	"#(path, index)"
 (
-	actionMan.executeAction 0 "40144"  -- Groups: Group Detach
-)
-
-/**
- *
- */
-macroscript	group_detach_to_parent
-category:	"_Group"
-buttontext:	"Detach"
-toolTip:	"Detach to parent group"
---icon:	"#(path, index)"
-(
-	--clearListener()
-	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
-
-	with undo "Detach to parent group" on
+	--actionMan.executeAction 0 "40144"  -- Groups: Group Detach
+	with undo "Detach from groups" on
 	(
 		selected_nodes = for obj in selection where not isGroupHead obj collect obj
 
@@ -340,7 +326,34 @@ toolTip:	"Detach to parent group"
 
 		redrawViews()
 	)
+
 )
+
+--/**
+-- *
+-- */
+--macroscript	group_detach_to_parent
+--category:	"_Group"
+--buttontext:	"Detach"
+--toolTip:	"Detach to parent group"
+----icon:	"#(path, index)"
+--(
+--	--clearListener()
+--	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
+--
+--	with undo "Detach to parent group" on
+--	(
+--		selected_nodes = for obj in selection where not isGroupHead obj collect obj
+--
+--		for _node in selected_nodes do
+--			if _node.parent.parent != undefined then
+--				_node.parent = _node.parent.parent
+--			else
+--				_node.parent = undefined
+--
+--		redrawViews()
+--	)
+--)
 
 /*------------------------------------------------------------------------------
 	HIDE GROUP
@@ -406,4 +419,3 @@ toolTip:	"Unhide group helpers and children"
 		for child in _group.children where child.isHidden do
 			 unhide child
 )
-

@@ -1,15 +1,15 @@
 filein( getFilenamePath(getSourceFileName()) + "/../../../../../Lib/Color/Color.ms" )
 
 /** Set wirecolor to obejcts
-  * 
+  *
   * Instances has same wirecolor
-  * 
+  *
   * Selection is used if property nodes is not defined
-  * 
+  *
   * @property	array	nodes	objects where wirecolor will be changed, current selection is used if undefined
-  * @property	undefined|#random|#instance mode
+  * @property	undefined|#per_object|#instance mode
   *	undefined:	set same wirecolor for all objects
-  *	#random:	set different wirecolor to each object
+  *	#per_object:	set per_object wirecolor to each object
   *	#instance:	random color for unique objects, but same for instances of obejcts
  */
 struct Wirecolor_v
@@ -27,7 +27,7 @@ struct Wirecolor_v
 	nodes_prepared = #(),
 
 	/** Randomize
-	  * 
+	  *
 	  * @param	array|colelction	nodes	for colorize
 	 */
 	function randomize color_name: hue:128 brightness:#(64, 255) saturation:#(64, 255) =
@@ -37,25 +37,27 @@ struct Wirecolor_v
 		(
 			undefined:	append nodes_prepared nodes
 			#instance:	this._sortNodesByInstances()
-			#random:	nodes_prepared = nodes
+			#per_object:	nodes_prepared = nodes
 		)
 
 		for arr in nodes_prepared do
 			arr.wirecolor = (Color_v()).randomize color_name:color_name	hue:hue brightness:brightness saturation:saturation
+
+		redrawViews()
 	),
 
 	private
 
 	/** Get instances for each node
-	  * 
-	  * @return	2D matrix of collections	
+	  *
+	  * @return	2D matrix of collections
 	 */
 	function _sortNodesByInstances =
 	(
 		--format "\n"; print "Wirecolor_v._sortNodesByInstances()"
 		tested	= #()
 
-		for obj in nodes where findItem tested obj == 0 do 
+		for obj in nodes where findItem tested obj == 0 do
 		(
 			local obj_instances
 
@@ -69,7 +71,7 @@ struct Wirecolor_v
 		nodes_prepared --return
 	),
 
-	/**  
+	/**
 	 */
 	on create do
 	(

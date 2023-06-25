@@ -74,10 +74,10 @@ icon:	"across:5|width:72|menu:_Scene"
 /**
  *
  */
-macroscript	_scene_incremental_save
+macroscript	_scene_incremental_save_with_basename
 category:	"_Scene"
 buttontext:	"Save++"
-toolTip:	"Incremental save without user prompt"
+toolTip:	"Incremental save and copy basename file version"
 icon:	"offset:[-2, 0]"
 (
 	file_path = maxFilePath
@@ -122,13 +122,23 @@ icon:	"offset:[-2, 0]"
 		path_basename  += ".max"
 		path_increment += ".max"
 
-		saveMaxFile path_increment
+		format "path_increment	= % \n" path_increment
+		format "doesFileExist path_increment	= % \n" (doesFileExist path_increment)
 
-		/* CREATE COPY OF FILE WITHOUT PREFIX */
-		if doesFileExist path_basename then
-			deleteFile path_basename
+		if not (file_exists = doesFileExist path_increment) or (file_exists and queryBox ("Overwrite file "+filename+" ?") title:"FILE EXISTS" ) then
+		(
+			saveMaxFile path_increment
 
-		copyFile path_increment path_basename
+			/* CREATE COPY OF FILE WITHOUT PREFIX */
+			if doesFileExist path_basename then
+				deleteFile path_basename
+
+			copyFile path_increment path_basename
+
+			print "File has been saved"
+
+		)
+
 	)
 )
 
@@ -150,8 +160,8 @@ buttontext:	"Reload"
 toolTip:	"Reload cuurent *.max file"
 --icon:	"#(path, index)"
 (
-	if queryBox ("Reload "+maxFileName+" ?") title:"Hold scene"  beep:false then
-		loadMaxFile (maxFilePath + maxFileName ) quiet:true
+	if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
+		loadMaxFile ( maxFilePath + maxFileName ) quiet:true
 
 )
 /**

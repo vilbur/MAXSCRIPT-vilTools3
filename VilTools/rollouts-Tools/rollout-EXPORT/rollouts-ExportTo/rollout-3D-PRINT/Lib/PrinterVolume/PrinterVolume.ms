@@ -8,8 +8,9 @@ struct PrinterVolume_v
 
 	dummy_name = "PRINT DUMMY VOLUME",
 
-	printer_size	= [ 120,	192, 250 ],	-- size of Creality-ld006 print plane
-	screw_position	= [ 34,	64 ],	-- position of screws on print plane
+	/* UNITS of dImension: mm */
+	printer_size	= [ 120,	192, 250 ],	-- size of print plane, real size of creality LD-006 is 124 X	196
+	screw_position	= [ 34,	62 ],	-- position of screws
 	screw_radius	= 2,
 
 	fix_position_object_size = 0,
@@ -52,7 +53,8 @@ struct PrinterVolume_v
 
 				freeze dummy_object
 
-				(LayerManager.getLayerFromName( "0")).addNode dummy_object
+				this._addToDefaultLayer(dummy_object)
+
 			)
 		)
 		else
@@ -140,6 +142,19 @@ struct PrinterVolume_v
 		)
 	),
 
+	/** Add to default layer
+	 */
+	function _addToDefaultLayer dummy_object =
+	(
+		--format "\n"; print "PrinterVolume_v._addToDefaultLayer()"
+
+		layer_default = LayerManager.getLayerFromName( "0")
+
+		layer_default.on = true
+
+		layer_default.addNode dummy_object
+
+	),
 
 	/**
 	 */

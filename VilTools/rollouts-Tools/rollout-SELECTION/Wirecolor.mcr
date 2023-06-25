@@ -59,8 +59,8 @@ toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
 macroscript	wirecolor_random
 category:	"_Selection"
 buttontext:	"Random color"
-toolTip:	"Random wirecolor to selected object"
---icon:	"#(path, index)"
+toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
+icon:	"tooltip:'Random wirecolor to selected object\n'"
 (
 	--(Wirecolor_v()).randomize brightness:128
 	--(Wirecolor_v()).randomize brightness:#(64, 255)
@@ -73,8 +73,18 @@ toolTip:	"Random wirecolor to selected object"
 
 	--(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164
 	--(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)
+	max create mode
 
-	(Wirecolor_v()).randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
+	Wirecolor = Wirecolor_v()
+
+	undo "Random Wirecolor" on
+	(
+
+		if keyboard.controlPressed then
+			Wirecolor.mode = #per_object
+
+		Wirecolor.randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
+	)
 )
 
 /*

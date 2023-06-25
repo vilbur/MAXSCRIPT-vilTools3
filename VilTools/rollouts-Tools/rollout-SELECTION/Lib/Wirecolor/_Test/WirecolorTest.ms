@@ -14,24 +14,24 @@ function createTestObjects hue:0 brightness:255 saturation:255 =
 
 	delete objects
 
-	for i = 1 to primitives.count do 
+	for i = 1 to primitives.count do
 	(
 		primitive = primitives[i]
-		
+
 		obj = execute(primitive as string + "()")
-		
+
 		obj.pos = [ i*50, 0, 0]
-		
+
 		append new_objects obj
 	)
-	
-	
+
+
 	copies = for myobj in new_objects collect (copy myobj )
-	
+
 	copies.pos.y += 100
 
 	new_objects = new_objects + copies
-	
+
 	instances = for myobj in new_objects collect (instance  myobj )
 
 	instances.pos.z += 100
@@ -49,11 +49,11 @@ createTestObjects()
 --------------------------------------------------------------------------------*/
 
 
-(Wirecolor_v()).randomize() -- same random color for all objects
+(Wirecolor_v()).randomize() -- same different color for all objects
 
---(Wirecolor_v(#random)).randomize() -- random color for each object
+--(Wirecolor_v(#per_object)).randomize() -- different color for each object
 
---(Wirecolor_v(#instance)).randomize() -- random color for each object, but instances has same color
+--(Wirecolor_v(#instance)).randomize() -- different color for each object, but instances has same color
 
 
 /*------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ createTestObjects()
 --(Wirecolor_v()).randomize saturation:#(64, 255)
 
 --(Wirecolor_v()).randomize brightness:128	saturation:128
---(Wirecolor_v()).randomize brightness:#(64, 255)	saturation:#(64, 255) 
+--(Wirecolor_v()).randomize brightness:#(64, 255)	saturation:#(64, 255)
 
 
---(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164 
---(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)	
+--(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164
+--(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)
