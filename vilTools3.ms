@@ -81,9 +81,11 @@ filein_files = #(
 	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" ,
 	 "/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" ,
 
-	/* CALLBACK */
+	/* CALLBACKS */
 	"/CallBacks/selectionSetChanged/setSelectionLast.ms" ,
-	"/CallBacks/filePostOpen/checkWorldUnits.ms"
+	"/CallBacks/filePostOpen/checkWorldUnits.ms",	-- "./CallBacks/filePostOpen/checkWorldUnits.ms"
+	"/CallBacks/preModifierAdded/loadModifierDefaultCallback.ms"	-- "./CallBacks/postModifierAdded/loadModifierDefaultCallback.ms"
+
 )
 
 for file_path in filein_files where doesFileExist (current_dir + file_path) do
@@ -124,7 +126,7 @@ filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
 
 
 /*------------------------------------------------------------------------------
-	CALLBACKS
+	START CALLBACKS
 --------------------------------------------------------------------------------*/
 
 
@@ -136,5 +138,8 @@ try
 	--(NodeList_v()).loadNodes()
 
 	selectExportNodeInListCallbactAdd()
+
+	loadModifierDefaultsCallback()
+()
 )
 catch()

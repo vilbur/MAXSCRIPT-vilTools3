@@ -36,7 +36,7 @@ category:	"_Modifiers"
 buttonText:	"Smooth"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
-	addModifierOrLoadPreset( Smooth )
+	addModifierOrLoadPreset( smooth )
 )
 /**
   */
@@ -45,7 +45,7 @@ category:	"_Modifiers"
 buttonText:	"Smooth"
 tooltip:	"Manage pesets"
 (
-	managePresetMenu( Smooth )
+	managePresetMenu( smooth )
 )
 /*------------------------------------------------------------------------------
 	MESHSMOOTH
@@ -57,7 +57,7 @@ category:	"_Modifiers"
 buttonText:	"Meshsmooth"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
 (
-	addModifierOrLoadPreset( Meshsmooth )
+	addModifierOrLoadPreset( meshsmooth )
 )
 /**
   */
@@ -66,7 +66,7 @@ category:	"_Modifiers"
 buttonText:	"Meshsmooth"
 tooltip:	"Manage pesets"
 (
-	managePresetMenu( Meshsmooth )
+	managePresetMenu( meshsmooth )
 )
 
 /*------------------------------------------------------------------------------
