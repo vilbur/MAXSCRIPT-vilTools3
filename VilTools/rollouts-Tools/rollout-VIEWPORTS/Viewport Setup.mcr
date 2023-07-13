@@ -1,5 +1,21 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/viewportChangeCallback/viewportChange.ms" )
 
+/**
+*
+*/
+macroscript	viewport_selection_bracets
+category:	"_Viewports"
+buttontext:	"Sel Brackets"
+tooltip:	"Toogle Selection Brackets "
+--icon:	"control:checkbox"
+(
+	current_state = (NitrousGraphicsManager.GetActiveViewportSetting()).ShowSelectionBracketsEnabled
+
+	 for i = 1 to viewport.numViews do
+		(NitrousGraphicsManager.GetViewportSetting i).ShowSelectionBracketsEnabled = not current_state
+
+)
+
 
 /**
 *
@@ -53,6 +69,35 @@ icon:	"width:48"
 
 
 
+
+/** SET GRID
+ */
+macroscript	viewport_set_grid_spacing
+category:	"_Viewports"
+buttontext:	"Set Grid"
+tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolution of 3D printer`s LCD Creality LD-006"
+icon:	"width:72"
+(
+
+	spacings = #( 0.05, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
+
+	unit_divider = case units.SystemType of
+	(
+		#Centimeters:10
+		#Meters: 1000
+		default: 1
+	)
+
+	next_index = if ( index = findItem spacings (GetGridSpacing()) ) > 0 and index < spacings.count then index + 1 else 1
+
+	SetGridSpacing (spacings[next_index] / unit_divider )
+
+	SetGridMajorLines 10
+
+	format "\nGRID SPACING: %mm" spacings[next_index]
+
+)
+
 --
 -- /**
 -- *
@@ -72,5 +117,3 @@ icon:	"width:48"
 --	format "is_top = % \n" is_top
 --
 --)
-
-
