@@ -6,33 +6,66 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersO
 
 
 /**
+  * 1) Activate modify panel if not active
+  * 2) If modify panel is active, then select next enabled modifier
  */
 macroscript	modifier_stack_smart_circle
 category:	"_Modifier-Stack"
-buttontext:	"Circle Stack"
-toolTip:	"Circle Max modify panel > Edit Poly > Show End Result"
+buttontext:	"Cyrcle Stack"
+toolTip:	"Cyrcle Max modify panel > Edit Poly > Show End Result"
 --toolTip:	"Turn off \"Show end result\" on subobject edit"
 --icon:	"control:checkbox"
 (
 
-	if selection.count > 0 then
+	/**
+	 */
+	function selectNextEnabledModifier =
 	(
-		if( GetCommandPanelTaskMode() == #modify ) then
-		(
-			if ( current_mod = modPanel.getCurrentObject() ) != undefined then
-			(
-				if superClassOf current_mod != modifier then
-					showEndResult = not showEndResult
+		format "\n"; print ".selectNextEnabledModifier()"
 
-
-
-			)
-		)
-		else
-			max modify mode
+		while superClassOf (next_mod = modPanel.getCurrentObject()) == modifier and next_mod.enabled == false do
+				macros.run "Ribbon - Modeling" "PreviousModifier"
 
 	)
 
+	_selection = selection
+
+	if selection.count > 0 then
+	(
+		if( GetCommandPanelTaskMode() != #modify ) then
+		(
+			max modify mode
+
+			selectNextEnabledModifier()
+		)
+
+		else if ( current_mod = modPanel.getCurrentObject() ) != undefined then
+		(
+			if superClassOf current_mod == modifier then
+			(
+				--macros.run "Ribbon - Modeling" "PreviousModifier"
+				index = modPanel.getModifierIndex _selection[1] current_mod
+
+				try(
+					modPanel.setCurrentObject _selection[1].modifiers[index +1]
+
+					selectNextEnabledModifier()
+
+				)catch(
+					--format "*** % ***\n" (getCurrentException())
+					modPanel.setCurrentObject _selection[1].baseObject
+				)
+
+			)
+			else /* If baseobject is selected then select first enabled modifier */
+			(
+				modPanel.setCurrentObject _selection[1].modifiers[1]
+
+				selectNextEnabledModifier()
+			)
+
+		)
+	)
 )
 
 
@@ -73,6 +106,5 @@ icon:	"control:checkbox|enabled:false"
 		try(callbacks.removeScripts #ModPanelSubObjectLevelChanged id:#disableModifiersOnEdit)catch()
 
 )
-
 
 

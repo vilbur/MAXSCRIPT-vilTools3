@@ -1,3 +1,4 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ModifierPreset/addModifierOrLoadPreset.ms" )	-- "./Lib/ModifierPreset/addModifierOrLoadPreset.ms"
 
 /*
 *
@@ -7,14 +8,14 @@ category:	"_Modifiers"
 buttonText:	"Default"
 tooltip:	"Save default preset of current modifier"
 (
-	--filein( @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIERS\Preset.mcr" )
+	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIERS ⭐\1-Preset.mcr" )	-- ""
 
 	if ( current_modifier = modPanel.getCurrentObject() ) != undefined then
 	(
 		--presets = (ModifierPreset_v( meshsmooth )).getPresets()
 		ModifierPreset = ModifierPreset_v(current_modifier)
 
-		ModifierPreset.savePreset props:(getPropNames current_modifier)
+		--ModifierPreset.savePreset props:(getPropNames current_modifier)
 	)
 	else
 		messageBox "Please select any modifier in stack" title:"SAVE PRESET ERROR"  beep:false

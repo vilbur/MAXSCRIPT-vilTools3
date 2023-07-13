@@ -36,13 +36,13 @@ function loadModifierDefaults =
 
 	if (modifier_is_max_default = (with printAllElements on current_values) as string == (with printAllElements on default_values) as string) then
 	(
-		default_preset_name = (classOf _modifier) as string -- name of default preset is name class of modifier E.G.: "MeshSmooth"
+		--default_preset_name = (classOf _modifier) as string -- name of default preset is name class of modifier E.G.: "MeshSmooth"
 		--format "default_preset_name	= % \n" default_preset_name
 
 		ModifierPreset = ModifierPreset_v(_modifier)
 
-		if ModifierPreset.hasPreset( default_preset_name ) then
-			ModifierPreset.loadPreset(default_preset_name)
+		if ModifierPreset.hasPreset( _modifier.name ) then
+			ModifierPreset.loadPreset(_modifier.name)
 	)
 
 )

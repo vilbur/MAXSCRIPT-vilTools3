@@ -74,10 +74,12 @@ struct ModifierPreset_v
 				)
 				catch()
 			)
+
+			format "MODIFIER PRESET	% HAS BEEN LOADED" preset_name
 		)
 
 		--_modifier.name = preset_name
-		
+
 	),
 
 	/** Delete preset
