@@ -1,6 +1,6 @@
 clearListener()
 
-content_dir = "VilTools"
+--content_dir = "VilTools"
 --content_dir = "/Rollouts-Test" -- DEV
 
 current_dir = getFilenamePath(getSourceFileName())
@@ -68,28 +68,42 @@ if doesFileExist export_node_plugin_source then
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
-
+/* MANNUAL IMPORT */
 filein_files = #(
 
 	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
 
 	"/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" , -- Check if this is necessary to import, it should be imported with framework
-	"/VilTools/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
+	"/VilTools/rollouts-Tools/rollout-EDIT-POLY ✅/Lib/Epoly.ms",
 
 	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
 
-	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms" ,
-	 "/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/ModifierPreset/ModifierPreset.ms" ,
+	"/VilTools/rollouts-Tools/rollout-MODIFIERS ⭐/Lib/Modifier/Modifier.ms",
 
-	/* CALLBACKS */
-	"/CallBacks/selectionSetChanged/setSelectionLast.ms" ,
-	"/CallBacks/filePostOpen/checkWorldUnits.ms",	-- "./CallBacks/filePostOpen/checkWorldUnits.ms"
-	"/CallBacks/preModifierAdded/loadModifierDefaultCallback.ms"	-- "./CallBacks/postModifierAdded/loadModifierDefaultCallback.ms"
+	"/VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms" -- "./VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms"
 
 )
 
-for file_path in filein_files where doesFileExist (current_dir + file_path) do
-	filein(current_dir + file_path)
+
+/* CONVERT RELATIVE PATHS TO ABSOLUTE */
+filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
+
+
+
+/* ADD CALLBACK FILES */
+for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:true do
+	for callback_file in getFiles (callback_subdir + "/*Callback.ms") do
+		appendIfUnique filein_files callback_file
+
+
+/* FILE IN FILES */
+for file_path in filein_files do
+--for file_path in filein_files where doesFileExist (file_path) do
+(
+	format "FILE IN FILE:	= % \n" (file_path)
+
+	filein( file_path)
+)
 
 
 
@@ -140,6 +154,8 @@ try
 	selectExportNodeInListCallbactAdd()
 
 	loadModifierDefaultsCallback()
+
+	nodeCreatedSetDefaultPropertiesCallback()
 ()
 )
 catch()
