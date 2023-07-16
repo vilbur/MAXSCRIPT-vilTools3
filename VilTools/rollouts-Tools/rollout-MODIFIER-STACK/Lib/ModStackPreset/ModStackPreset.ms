@@ -15,9 +15,18 @@ filein( getFilenamePath(getSourceFileName()) + "/../../../../../CallBacks/nodeCr
 struct ModStackPreset_v
 (
 	/* CONTRUCT */
-	modObject,
+	modObject, -- modifier or baseobject
 
-	ini,
+	/* Properties */
+	preset_name, -- modifier name or primitive class is used if undefined
+
+
+	/* ini */
+	ini_dir = getDir (#temp) + "\\ini_files\\modifer-stack-presets",
+
+	ini,  --path to ini file, filename is  {classOf modifier|primitiveType}.ini E.G.:  SliceModifier.ini | Sphere.ini
+
+
 
 	/** Set current modObject
 	 */
@@ -36,7 +45,6 @@ struct ModStackPreset_v
 	(
 		format "\n"; print "ModStackPreset_v.savePreset()"
 		--format "props	= % \n" props
-
 		this._setIniPath()
 
 		this.deletePreset()
@@ -45,15 +53,15 @@ struct ModStackPreset_v
 			props = getPropNames modObject
 
 		for prop in getPropNames modObject where findItem props prop > 0 do
-			setINISetting ini (this.getPresetName()) ( prop as string ) ( (getProperty modObject prop) as string )
+			setINISetting ini preset_name ( prop as string ) ( (getProperty modObject prop) as string )
 	),
 
 	/** Load preset
 	 */
 	function loadPreset preset_name =
 	(
-		--format "\n"; print "ModStackPreset_v.loadPreset()"
-		--format "preset_name	= % \n" preset_name
+		format "\n"; print "ModStackPreset_v.loadPreset()"
+		format "preset_name	= % \n" preset_name
 
 		if not ( this._iniFileExists() )  then
 			return false
@@ -90,7 +98,7 @@ struct ModStackPreset_v
 		--format "\n"; print "ModStackPreset_v.deletePreset()";
 		--this._setIniPath()
 
-		delINISetting ini (this.getPresetName())
+		delINISetting ini preset_name
 	),
 
 	/** Save preset dialog
@@ -158,32 +166,30 @@ struct ModStackPreset_v
 	 */
 	function hasPreset preset_name =
 	(
-		--format "\n"; print "ModStackPreset_v.hasPreset()"
+		format "\n"; print "ModStackPreset_v.hasPreset()"
 		( this._iniFileExists() ) and hasINISetting ini preset_name  --return
 	),
 
-	/** Open ini
-	 */
-	function openIni =
-	(
-		--format "\n"; print "ModStackPreset_v.openIni()"
-		--this._setIniPath()
-
-		if this._iniFileExists() then
-			DOSCommand ("start \"\" \""+ini+"\"")
-	),
+	--/** Open ini
+	-- */
+	--function openIni =
+	--(
+	--	format "\n"; print "ModStackPreset_v.openIni()"
+	--	format "ini	= % \n" ini
+	--	--this._setIniPath()
+	--
+	--	if this._iniFileExists() then
+	--		DOSCommand ("start \"\" \""+ini+"\"")
+	--),
 
 	/** Get mod name
 	  *
 	  *  @return string modier name or class of object E.G.: Edit_Poly|Sphere
 	 */
-	function getPresetName =
+	function setPresetName =
 	(
-		--format "\n"; print "ModStackPreset_v.getModName()"
-		--format "modObject == modifier	= % \n" (modObject == modifier)
-		--format "classOf modObject	= % \n" (classOf modObject)
-
-		( if classOf modObject == modifier then modObject.name else classOf modObject ) as string
+		format "\n"; print "ModStackPreset_v.getModName()"
+		preset_name = ( if superClassOf modObject == modifier then modObject.name else classOf modObject ) as string
 	),
 
 
@@ -205,20 +211,16 @@ struct ModStackPreset_v
 			value --return string
 	),
 
+
 	/** Set ini path
 	 */
 	function _setIniPath =
 	(
 		--format "\n"; print "ModStackPreset_v._setIniPath()"
-		--format "modObject	= % \n" modObject
-		--format "classOf modObject	= % \n" (classOf modObject)
-		ini_dir = getDir (#temp) + "\\ini_files\\modifiers"
-		--format "ini_dir	= % \n" ini_dir
 		if not ( doesFileExist ini_dir ) then
 			makeDir ini_dir all:true
 
-		ini = ini_dir + "\\"+ (this.getPresetName()) +".ini"
-
+		ini = ini_dir + "\\"+ (classOf modObject) as string +".ini"
 	),
 
 	/** Does ini file exists
@@ -228,40 +230,16 @@ struct ModStackPreset_v
 		(getFiles ini).count != 0
 	),
 
-	/** Select only Unique objects.
-	  *	Deselect mutliple instances
-	  *
-	  * @return	array selection
-	 */
-	function _selectUniqueObjects =
-	(
-		for obj in selection do
-		(
-			local obj_instances
-			InstanceMgr.GetInstances obj &obj_instances
-
-			if( obj_instances.count > 1 ) then
-			(
-				deleteItem obj_instances (findItem obj_instances obj)
-				deselect obj_instances
-			)
-		)
-	),
-
-	--/** _get name
-	-- */
-	--function _setName =
-	--(
-	--	(this.getPresetName()) = name
-	--),
-
 	on create do
 	(
 		format "\n"; print "ModStackPreset_v.create()"
 		--if modObject != undefined and superClassOf modObject != modifier then
 			--modObject = modPanel.getCurrentObject()
 
+		this.setPresetName()
+
 		this._setIniPath()
+
 		format "ini	= % \n" ini
 	)
 )

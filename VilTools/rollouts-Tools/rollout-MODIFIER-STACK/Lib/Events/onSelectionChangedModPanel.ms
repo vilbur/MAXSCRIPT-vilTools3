@@ -1,12 +1,12 @@
 /*------------------------------------------------------------------------------
-	
-	
+
+
 	Works on real change of selection and wait for modify panel is ready
-	
+
 	#modPanelObjPostChange fires on every change of modify panel but callback of onSelectionChangedModPanel is called only when object selection is changed
-	
-	
-	
+
+
+
 	Sequence of calling functions:
 
 		1) onSelectionChangedModPanel	-- Add callback and start waitOnSelectionChanged()
@@ -38,7 +38,7 @@ function waitOnSelectionChanged =
 function waitOnSelectionChangedKill =
 (
 	print "Kill: waitOnSelectionChangedKill()"
-	try(callbacks.removeScripts #selectionSetChanged   id:#testNewSelection)catch()	
+	try(callbacks.removeScripts #selectionSetChanged   id:#testNewSelection)catch()
 )
 
 
@@ -53,7 +53,7 @@ function waitOnSelectionChangedKill =
 function onSelectionChangedModPanel callbackFn =
 (
 	appendIfUnique ON_MOD_PANEL_CHANGED_CALLBACKS callbackFn
-	
+
 	waitOnSelectionChanged()
 )
 
@@ -64,8 +64,8 @@ function onSelectionChangedModPanelKill callbackFn =
 	--format "\n"; print ".onSelectionChangedModPanel()"
 	if (index = findItem ON_MOD_PANEL_CHANGED_CALLBACKS callbackFn) > 0 then
 		deleteItem ON_MOD_PANEL_CHANGED_CALLBACKS index
-	
-	if ON_MOD_PANEL_CHANGED_CALLBACKS.count == 0 then 
+
+	if ON_MOD_PANEL_CHANGED_CALLBACKS.count == 0 then
 		waitOnSelectionChangedKill()
 )
 
@@ -79,11 +79,11 @@ function waitOnModifiyStackIsReady =
 	callbacks.addScript #modPanelObjPostChange "onModifyStackReady()" id:#onModifyStackReady
 )
 
-/** 
+/**
  */
 function waitOnModifiyStackIsReadyKill =
 (
-	print "Kill: waitOnModifiyStackIsReadyKill()"
+	print "Kill: waitOnModifiyStackIsReady()"
 	try(callbacks.removeScripts #modPanelObjPostChange id:#onModifyStackReady)catch()
 )
 
@@ -102,16 +102,16 @@ function waitOnModifiyStackIsReadyKill =
 function testNewSelection =
 (
 	--format "\n"; print "Callback: testNewSelection()"
-				
+
 	if( selection.count > 0 ) then
 	(
 		--format "GLOBAL_SELECTION_LAST	= % \n" GLOBAL_SELECTION_LAST
 		if( GLOBAL_SELECTION_LAST != selection ) then -- if new selection has been created
 		(
 			--print "Selection changed"
-		
+
 			waitOnModifiyStackIsReady()
-			
+
 		) else
 		(
 			--print "Object reselected"
@@ -120,7 +120,7 @@ function testNewSelection =
 	else -- if( selection.count == 0 ) then
 	(
 		--print "DESELECTED ALL"
-		
+
 		waitOnModifiyStackIsReadyKill()
 	)
 )
@@ -135,20 +135,20 @@ function testNewSelection =
 function onModifyStackReady =
 (
 	--print "Callback: onModifyStackReady WAIT"
-	
+
 	max modify mode
 
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then -- current object is undefined than Modify panel is fully loaded
 	(
 		print "Callback: onModifyStackReady READY"
-		
+
 		waitOnModifiyStackIsReadyKill()
-		
-		for callback in ON_MOD_PANEL_CHANGED_CALLBACKS do 
+
+		for callback in ON_MOD_PANEL_CHANGED_CALLBACKS do
 			execute(callback+"()")
 	)
 )
 
 
-/* KILL ON STARTUP */ 
+/* KILL ON STARTUP */
 waitOnModifiyStackIsReadyKill()

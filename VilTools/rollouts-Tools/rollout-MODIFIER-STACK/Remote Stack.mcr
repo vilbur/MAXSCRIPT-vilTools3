@@ -16,7 +16,7 @@ toolTip:	"Cyrcle Max modify panel > Edit Poly > Show End Result"
 --toolTip:	"Turn off \"Show end result\" on subobject edit"
 --icon:	"control:checkbox"
 (
-
+	--messageBox "Yupiii" title:"Title"  beep:false
 	/**
 	 */
 	function selectNextEnabledModifier =
@@ -106,5 +106,3 @@ icon:	"control:checkbox|enabled:false"
 		try(callbacks.removeScripts #ModPanelSubObjectLevelChanged id:#disableModifiersOnEdit)catch()
 
 )
-
-
