@@ -37,58 +37,75 @@ struct LayersManager_v
 		 for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i --return
 	),
 
-	/** Visible
+	/** Set given layers visible
+	  * Works with nested layers too
+	  *
+	  * @return array of layers
 	 */
-	function visible layers =
+	function setVisible layers =
 	(
-		format "\n"; print "LayersManager_v.visible()"
+		format "\n"; print "LayersManager_v.setVisible()"
 		--format "layers = % \n" layers
 		--format "state  = % \n" state
 		--format "\n"
+		layers_not_in_hieararchy = #()
+		--layers_in_hierarchy = #()
 
 		layers_in_hierarchy = this.getLayersInHierarchy(layers)
 
 		top_layers = this._getTopLayers()
 
-		this.loopHierarchy(top_layers)(layers_in_hierarchy)
 
+		this._getLayersNotInHierarchy(top_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
+
+		for layer in layers_not_in_hieararchy  do
+			layer.on = false
+
+		layers_in_hierarchy --return
 	),
-
-	/** Loop hierarchy
-	 */
-	function loopHierarchy layers layers_in_hierarchy =
-	(
-		--format "\n"; print "LayersManager_v.loopHierarchy()"
-
-		for _layer in layers  do
-			if findItem layers_in_hierarchy _layer > 0 then
-			(
-				child_layers = for i = 1 to _layer.getNumChildren() collect _layer.getChild(i)
-
-				for child_layer in child_layers do
-
-				this.loopHierarchy(child_layers)(layers_in_hierarchy)
-			)
-			else
-				_layer.on = false
-	),
-
 
 	/** Get layers in hierarchy
-	  *
-	  *
-	  *
+	 *
+	 * @return array of parent layers
 	 */
 	function getLayersInHierarchy layers =
 	(
 		--format "\n"; print "LayersManager_v.getLayersInHierarchy()"
-		layers_in_tree = layers
+		layers_in_tree = deepCopy  layers
 
 		for curent_layer in layers do
 			while curent_layer.getParent() != undefined do
 				appendIfUnique layers_in_tree (curent_layer = curent_layer.getParent())
 
 		layers_in_tree --return
+	),
+
+	/** Test if any of given layers is current active, if not ativeate first
+	 */
+	function setCurrent layers =
+	(
+		--format "\n"; print "LayersManager_v.setCurrent()"
+		if (for layer in layers where layer.current == true collect layer).count == 0 then
+			layers[1].current  = true
+	),
+
+
+	/** Get objects in layers
+	 */
+	function getObjectsInLayers layers =
+	(
+		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
+		--format "layers	= % \n" layers
+		layers_nodes = #()
+
+		for layer in layers do
+		(
+			layer.nodes &layer_nodes
+
+			layers_nodes += layer_nodes
+		)
+
+		layers_nodes --return
 	),
 
 
@@ -101,7 +118,52 @@ struct LayersManager_v
 	(
 		--format "\n"; print "LayersManager_v.getTopLayers()"
 
-		for _layer in this.getAllLayers() where _layer.getParent() == undefined collect _layer
+		for layer in this.getAllLayers() where layer.getParent() == undefined collect layer
+	),
+
+	/** Get layers which are not in hierarchy of given layers
+	  * 		retun only top most layers of tree
+	  *
+	  * @param #(<MixinInterface:LayerProperties>)	layers	hierarchy of thes layers will not be iterated
+	  * @param array	layers_in_hierarchy	hierarchy of layers of 1st parameter
+	  * @param array	layers_not_in_hieararchy	returned
+	  *
+	  * @return array
+	  *
+	  *		E.G.: IF _getLayersNotInHierarchy #("SUB NESTED C1")
+	  *
+	  *				RETURN #("TOP LAYER A","TOP LAYER B", "SUB C2")
+	  *
+	  *	EXAMPLE OF LAYERS TREE:
+	  *		TOP LAYER A
+	  *
+	  *		TOP LAYER B
+	  *			SUB B1
+	  *
+	  *		TOP LAYER C
+	  *			SUB C1
+	  *				SUB NESTED C1
+	  *			SUB C2
+	  *				SUB NESTED C2
+	  *
+	 */
+	function _getLayersNotInHierarchy layers layers_in_hierarchy &layers_not_in_hieararchy =
+	(
+		--format "\n"; print "LayersManager_v.loopHierarchy()"
+
+		for layer in layers  do
+			if findItem layers_in_hierarchy layer > 0 then
+			(
+				child_layers = for i = 1 to layer.getNumChildren() collect layer.getChild(i)
+
+				for child_layer in child_layers do
+
+				this._getLayersNotInHierarchy(child_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
+			)
+			else
+				appendIfUnique layers_not_in_hieararchy layer
+				--layer.on = false
+		layers_not_in_hieararchy --return
 	),
 
 
@@ -119,8 +181,8 @@ struct LayersManager_v
 
 			layers_of_objects = makeUniqueArray (for obj in _objects collect obj.layer)
 
-			for _layer in all_layers do
-				_layer.on = (findItem layers_of_objects _layer > 0)
+			for layer in all_layers do
+				layer.on = (findItem layers_of_objects layer > 0)
 
 			active_layer = for layer_of_selected_object in layers_of_objects where layer_of_selected_object.current collect layer_of_selected_object
 
@@ -129,25 +191,6 @@ struct LayersManager_v
 		)
 
 		layers_of_objects --return
-	),
-
-	/** Get objects in layers
-	 */
-	function getObjectsInLayers layers =
-	(
-		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
-		--format "layers	= % \n" layers
-		layers_nodes = #()
-
-		for layer in layers do
-		(
-
-			layer.nodes &layer_nodes
-
-			layers_nodes += layer_nodes
-		)
-
-		layers_nodes --return
 	),
 
 	/** Unhide layer

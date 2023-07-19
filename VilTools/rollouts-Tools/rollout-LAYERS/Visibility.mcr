@@ -24,7 +24,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../rollout-LAYERS/Lib/LayersMan
  *
  */
 macroscript	visibility_all_on
-category:	" Tools"
+category:	"_Layers"
 buttontext:	"All On\ Off"
 toolTip:	"All On\ Off"
 --icon:	"Tooltip:" --"#(path, index)"
@@ -39,7 +39,7 @@ toolTip:	"All On\ Off"
  *
  */
 macroscript	visibility_all_off
-category:	" Tools"
+category:	"_Layers"
 buttontext:	"All On\ Off"
 toolTip:	"All On\ Off"
 --icon:	"Tooltip:" --"#(path, index)"
@@ -63,25 +63,51 @@ toolTip:	"All On\ Off"
  *
  */
 macroscript	visibility_on_by_selection
-category:	" Tools"
+category:	"_Layers"
 buttontext:	"On By Selection"
 toolTip:	"On By Selection"
 --icon:	"Tooltip:" --"#(path, index)"
 (
-	clearListener()
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
 
 	LayersManager = LayersManager_v()
 
 	layers = LayersManager.getLayersByObjects( selection )
 
-	--LayersManager.visible( LayersManager.getAllLayers() )(false)
+	LayersManager.setVisible( layers )
 
-	LayersManager.visible( layers )
+	LayersManager.setCurrent( layers )
 
+)
 
+/**
+ *
+ */
+macroscript	visibility_on_by_selection_and_hide_obejcts_in_parent_layer
+category:	"_Layers"
+buttontext:	"On By Selection"
+toolTip:	"On By Selection and hide obejcts in parent layers"
+--icon:	"Tooltip:" --"#(path, index)"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
 
+	LayersManager = LayersManager_v()
+
+	layers_of_selection = LayersManager.getLayersByObjects( selection )
+
+	layers_in_hierarchy = LayersManager.setVisible( layers_of_selection )
+
+	other_visible_layers =  for layers in layers_in_hierarchy where findItem layers_of_selection layers == 0 collect layers
+
+	/* HIDE OBEJCTS IN OTHER LAYERS THEN SELECTED OBEJCTS */
+	for obj in LayersManager.getObjectsInLayers( other_visible_layers ) where not obj.isHidden  do
+		obj.isHidden = true
+
+	LayersManager.setCurrent( layers_of_selection )
 )
 
 
