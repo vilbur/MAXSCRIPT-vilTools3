@@ -21,6 +21,46 @@ struct LayersManager_v
 		 for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
 	),
 
+	/** Get layers by name
+	 */
+	function getLayers pattern =
+	(
+		--format "\n"; print "LayersManager_v.getSelectedLayers()"
+		 --for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
+		for layer in this.getAllLayers()where matchPattern layer.name pattern:pattern collect layer -- return
+
+	),
+
+	/** Set given layers visible
+	  * Works with nested layers too
+	  *
+	  * @return array of layers
+	 */
+	function setVisibleTree layers =
+	(
+		--format "\n"; print "LayersManager_v.setVisible()"
+		layers_not_in_hieararchy = #()
+
+		layers_in_hierarchy = this.getLayersInHierarchy(layers)
+
+		this._getLayersNotInHierarchy(this._getTopLayers())(layers_in_hierarchy)(layers_not_in_hieararchy)
+
+		this.setVisibility (layers_in_hierarchy)     (true)
+		this.setVisibility (layers_not_in_hieararchy)(false)
+
+		layers_in_hierarchy --return
+	),
+
+	/** Set visibility
+	 */
+	function setVisibility layers state =
+	(
+		format "\n"; print "LayersManager_v.setVisibility()"
+		format "state = % \n" state
+		for layer in layers  do
+			layer.on = state
+	),
+
 	/** Select visibily of obejcts in given layers
 	  *
 	 */
@@ -29,7 +69,7 @@ struct LayersManager_v
 		--format "\n"; print "LayersManager_v.setObjectsVisibility()"
 		objects_in_layers = this.getObjectsInLayers (layers)
 
-		for obj in objects_in_layers  do
+		for obj in objects_in_layers do
 			obj.isHidden = not state
 	),
 
@@ -77,31 +117,6 @@ struct LayersManager_v
 		 for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i --return
 	),
 
-	/** Set given layers visible
-	  * Works with nested layers too
-	  *
-	  * @return array of layers
-	 */
-	function setVisible layers =
-	(
-		format "\n"; print "LayersManager_v.setVisible()"
-		--format "layers = % \n" layers
-		--format "state  = % \n" state
-		--format "\n"
-		layers_not_in_hieararchy = #()
-		--layers_in_hierarchy = #()
-
-		layers_in_hierarchy = this.getLayersInHierarchy(layers)
-
-		top_layers = this._getTopLayers()
-
-		this._getLayersNotInHierarchy(top_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
-
-		for layer in layers_not_in_hieararchy  do
-			layer.on = false
-
-		layers_in_hierarchy --return
-	),
 
 	/** Get layers in hierarchy
 	 *
