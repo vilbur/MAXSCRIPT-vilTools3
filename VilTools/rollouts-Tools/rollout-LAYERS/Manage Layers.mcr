@@ -17,6 +17,8 @@ tooltip:	"Show\Hide Layer manager & Scene Explorer"
 		SceneExplorerManager.OpenExplorer(default_explorer)
 )
 
+
+
 /**
   *
   * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
@@ -39,9 +41,9 @@ tooltip:	"Select all layers starting with same prefix\n\nE.G.: '_Name|prefix-|1-
 
 	LayerMngr = SceneExplorerManager.GetActiveExplorer()
 
-	layers_arr = LayerMngr.SelectedItems()
+	selected_layers = LayerMngr.SelectedItems()
 
-	if layers_arr.count > 0 do
+	if selected_layers.count > 0 do
 	(
 		layer_name = trimLeft layers_arr[1].name
 
@@ -59,6 +61,8 @@ tooltip:	"Select all layers starting with same prefix\n\nE.G.: '_Name|prefix-|1-
 	)
 )
 
+
+
 /**
  */
 macroscript	_layers_manager_clone_layers
@@ -68,7 +72,29 @@ tooltip:	"Copy selected objects to new layers"
 (
 	undo "Clone Layers" on
 	(
+
+		--/** Ask string dialog
+		-- */
+		--function askStringDialog =
+		--(
+		--	--format "\n"; print ".askStringDialog()"
+		--	-- instantiate the object
+		--	_dotNet = dotNetObject "MaxCustomControls.RenameInstanceDialog" "Default text"
+		--	_dotNet = dotNetObject "MaxCustomControls.RenameInstanceDialog" "Default text"
+		--	_dotNet.text ="Title"
+		--
+		--	DialogResult = _dotNet.Showmodal()
+		--
+		--	--test if the ok button was pressed
+		--	dotnet.compareenums TheObj.DialogResult ((dotnetclass "System.Windows.Forms.DialogResult").OK)
+		--	--get the new text string
+		--	entered_string = _dotNet.InstanceName
+		--
+		--	format "entered_string	= % \n" entered_string
+		--)
+
 		/* SUFFIX TO ADD TO NEW LAYERS */
+
 		suffix = "-COPY"
 
 		/* FUNCTION TO GET OR CREATE A LAYER FROM A NAME */
