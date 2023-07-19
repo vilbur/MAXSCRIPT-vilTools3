@@ -72,28 +72,7 @@ toolTip:	"On By Selection"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
 
-	LayersManager = LayersManager_v()
-
-	layers = LayersManager.getLayersByObjects( selection )
-
-	LayersManager.setVisible( layers )
-
-	LayersManager.setCurrent( layers )
-
-)
-
-/**
- *
- */
-macroscript	visibility_on_by_selection_and_hide_obejcts_in_parent_layer
-category:	"_Layers"
-buttontext:	"On By Selection"
-toolTip:	"On By Selection and hide obejcts in parent layers"
---icon:	"Tooltip:" --"#(path, index)"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+	_selection = for o in selection collect o
 
 	LayersManager = LayersManager_v()
 
@@ -101,14 +80,40 @@ toolTip:	"On By Selection and hide obejcts in parent layers"
 
 	layers_in_hierarchy = LayersManager.setVisible( layers_of_selection )
 
-	other_visible_layers =  for layers in layers_in_hierarchy where findItem layers_of_selection layers == 0 collect layers
+	LayersManager.expandLayersByObejcts( _selection )
 
-	/* HIDE OBEJCTS IN OTHER LAYERS THEN SELECTED OBEJCTS */
-	for obj in LayersManager.getObjectsInLayers( other_visible_layers ) where not obj.isHidden  do
-		obj.isHidden = true
+	parent_layers =  for layers in layers_in_hierarchy where findItem layers_of_selection layers == 0 collect layers
+
+	LayersManager.setObjectsVisibility(parent_layers)(false)
 
 	LayersManager.setCurrent( layers_of_selection )
+
 )
+
+
+
+--/**
+-- *
+-- */
+--macroscript	_layers_test
+--category:	"_Layers"
+--buttontext:	"Test"
+----toolTip:	"On By Selection and hide obejcts in parent layers"
+----icon:	"Tooltip:" --"#(path, index)"
+--(
+--	clearListener()
+--	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+--	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+--
+--	LayersManager = LayersManager_v()
+--
+--	layers = LayersManager.getSelectedLayers()
+--
+--	for layer in layers do
+--		format "layer.name = % \n" layer.name
+--)
+
+
 
 
 

@@ -6,7 +6,7 @@ struct LayersManager_v
 
 
 	/* properties */
-
+	ExplorerManager = SceneExplorerManager.GetActiveExplorer(),
 
 	/* dependency */
 	/* reference */
@@ -18,8 +18,48 @@ struct LayersManager_v
 	function getSelectedLayers =
 	(
 		--format "\n"; print "LayersManager_v.getSelectedLayers()"
-		 for obj in (SceneExplorerManager.GetActiveExplorer()).SelectedItems() where superClassOf obj == Base_Layer collect obj --return
+		 for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
 	),
+
+	/** Select visibily of obejcts in given layers
+	  *
+	 */
+	function setObjectsVisibility layers state =
+	(
+		--format "\n"; print "LayersManager_v.setObjectsVisibility()"
+		objects_in_layers = this.getObjectsInLayers (layers)
+
+		for obj in objects_in_layers  do
+			obj.isHidden = not state
+	),
+
+	/** Expand layers by obejcts
+	  *
+	  * Achived by workaround with auto expansion
+	  *
+	 */
+	function expandLayersByObejcts _objects =
+	(
+		--format "\n"; print "LayersManager_v.expandLayersByObejcts()"
+		auto_expand_state = ExplorerManager.AutoExpand
+
+		this.CollapseAll()
+
+		ExplorerManager.AutoExpand = true
+
+		select _objects
+
+		 ExplorerManager.AutoExpand = auto_expand_state
+	),
+
+	/** Collapse all Layers
+	 */
+	function collapseAll =
+	(
+		--format "\n"; print "LayersManager_v.collapseAll()"
+		ExplorerManager.collapseAll()
+	),
+
 
 	/** Get layers by objects
 	 */
@@ -54,7 +94,6 @@ struct LayersManager_v
 		layers_in_hierarchy = this.getLayersInHierarchy(layers)
 
 		top_layers = this._getTopLayers()
-
 
 		this._getLayersNotInHierarchy(top_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
 
