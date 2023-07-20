@@ -11,9 +11,9 @@ function toggleLayersByPrefix state =
 	if selected_layers.count == 0 then
 		selected_layers = LayersManager.getLayersByObjects( selection )
 
-	format "selected_layers = % \n" selected_layers
-		for layer in selected_layers do
-			format "layer.name = % \n" layer.name
+	--format "selected_layers = % \n" selected_layers
+	--	for layer in selected_layers do
+	--		format "layer.name = % \n" layer.name
 
 	if selected_layers.count > 0 do
 	(

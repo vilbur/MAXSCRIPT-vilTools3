@@ -19,47 +19,6 @@ tooltip:	"Show\Hide Layer manager & Scene Explorer"
 
 
 
-/**
-  *
-  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
- */
-macroscript	_layers_manager_select_same_prefix
-category:	"_Layers"
-buttontext:	"Select by prefix"
-tooltip:	"Select all layers starting with same prefix\n\nE.G.: '_Name|prefix-|1-Name' "
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Manage Layers.mcr"
-	function selectLayers str =
-	(
-		clearSelection()
-
-		for i = 1 to LayerManager.count-1 where matchPattern (LayerManager.getLayer i).name pattern:(str +"*") do
-		(
-			(LayerManager.getLayer i).select on
-		)
-	)
-
-	LayerMngr = SceneExplorerManager.GetActiveExplorer()
-
-	selected_layers = LayerMngr.SelectedItems()
-
-	if selected_layers.count > 0 do
-	(
-		layer_name = trimLeft layers_arr[1].name
-
-		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches layer_name "^([^A-Za-z]+).*" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
-
-		if matches.count > 0 then
-			prefix = matches.item[0].groups.item[1].value -- get second item from firs array
-
-		else if (string_split = filterString layer_name "-_ ").count > 0 then
-			prefix = string_split[1]
-		else
-			prefix = layer_name
-
-		selectLayers(prefix)
-	)
-)
 
 
 
@@ -137,4 +96,16 @@ tooltip:	"Copy selected objects to new layers"
 
 		select new_objs
 	)
+)
+
+/**
+ */
+macroscript	_layers_expand_layers_of_selection
+category:	"_Layers"
+buttontext:	"Expand Selection"
+tooltip:	"Expand layers of selection"
+(
+	LayersManager = LayersManager_v()
+
+	LayersManager.expandLayersByObejcts( selection )
 )

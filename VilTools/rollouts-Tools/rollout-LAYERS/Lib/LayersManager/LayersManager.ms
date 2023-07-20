@@ -12,6 +12,21 @@ struct LayersManager_v
 	/* reference */
 	/* inhered */
 
+	/** Get select layers
+	  *  1) By slection in layer manager
+	  *  2) By current obejcts selection if nothing is selected in layer manager
+	 */
+	function getSelectLayersOrBySelection =
+	(
+		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
+		selected_layers = this.getSelectedLayers()
+
+		if selected_layers.count == 0 then
+			selected_layers = this.getLayersByObjects( selection )
+
+		selected_layers --return
+	),
+
 
 	/** Get selected layers
 	 */
@@ -38,12 +53,14 @@ struct LayersManager_v
 	 */
 	function setVisibleTree layers =
 	(
-		--format "\n"; print "LayersManager_v.setVisible()"
+		--format "\n"; print "LayersManager_v.setVisibleTree()"
 		layers_not_in_hieararchy = #()
 
 		layers_in_hierarchy = this.getLayersInHierarchy(layers)
 
-		this._getLayersNotInHierarchy(this._getTopLayers())(layers_in_hierarchy)(layers_not_in_hieararchy)
+		all_top_layers = this.getTopLayers(this.getAllLayers())
+
+		this._getLayersNotInHierarchy(all_top_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
 
 		this.setVisibility (layers_in_hierarchy)     (true)
 		this.setVisibility (layers_not_in_hieararchy)(false)
@@ -56,7 +73,7 @@ struct LayersManager_v
 	function setVisibility layers state =
 	(
 		format "\n"; print "LayersManager_v.setVisibility()"
-		format "state = % \n" state
+		--format "state = % \n" state
 		for layer in layers  do
 			layer.on = state
 	),
@@ -71,6 +88,15 @@ struct LayersManager_v
 
 		for obj in objects_in_layers do
 			obj.isHidden = not state
+	),
+
+	/** Get top layers
+	 */
+	function getTopLayers layers =
+	(
+		--format "\n"; print "LayersManager_v.getAllTopLayers()"
+
+		for layer in this.getLayersInHierarchy(layers) where layer.getParent() == undefined collect layer
 	),
 
 	/** Expand layers by obejcts
@@ -162,18 +188,22 @@ struct LayersManager_v
 		layers_nodes --return
 	),
 
+	/** Get diferrence between 2 arrays
+	  */
+	function difference array_a array_b =
+	(
+		array_diff = #()
+
+		for element in array_a do
+			if finditem array_b element == 0 then
+				append array_diff element
+
+		return array_diff
+	),
 
 	private
 
 
-	/** Get top layers
-	 */
-	function _getTopLayers =
-	(
-		--format "\n"; print "LayersManager_v.getTopLayers()"
-
-		for layer in this.getAllLayers() where layer.getParent() == undefined collect layer
-	),
 
 	/** Get layers which are not in hierarchy of given layers
 	  * 		retun only top most layers of tree
