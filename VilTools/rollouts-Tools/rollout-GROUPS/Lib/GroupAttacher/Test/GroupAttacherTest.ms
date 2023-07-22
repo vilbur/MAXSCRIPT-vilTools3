@@ -26,73 +26,128 @@ function createTestObjects object_type z_pos:0 =
 )
 
 
-/*------------------------------------------------------------------------------
-	TEST METHODS
---------------------------------------------------------------------------------*/
-
-/** Add single object to single group 
+/** Create Nested Groups
+  *
+  * return parent group
  */
-function addSingleObjectToGroup =
+function createNestedGroups =
 (
-	delete objects
-
-	group_source = group (createTestObjects(Teapot)) name:"GROUP-ROOT"
-
-	attaching_node = Sphere pos:[30,30,0] radius:5
-
-	select group_source
-	selectmore attaching_node
-
-	(GroupAttacher_v()).attachSelectionToGroups()
-)
-
-/** Add multiple instanced objects to instances of group 
- */
-function addInstacedObjectsToGroupInstances =
-(
-	delete objects
-
-	group_source = group (createTestObjects(Teapot)) name:"GROUP-ROOT"
-
-	maxOps.cloneNodes group_source cloneType:#instance newNodes:&detination_groups offset:[0,0,30]
-
-	attaching_node = Sphere pos:[30,30,0] radius:5
-	
-	maxOps.cloneNodes attaching_node cloneType:#instance newNodes:&attaching_nodes offset:[30,0,0]
-
-	select group_source
-	selectmore attaching_node
-	selectmore attaching_nodes
-	
-	(GroupAttacher_v()).attachSelectionToGroups()
-)
-
-/** Add single object to group, but all objects are nested in another group
- */
-function addObjectsToNestedGroup =
-(
-	delete objects
 
 	teapots	= createTestObjects(Teapot)
 	cylinders	= createTestObjects(Cylinder)
 
 	move cylinders [0,0,30]
 
-	child_group = group (teapots) name:"GROUP-ROOT"
+	child_group = group (teapots) name:"GROUP-CHILD"
 
 	parent_group = group (append cylinders child_group) name:"GROUP-PARENT"
 
-	setGroupOpen parent_group true
-	
-	select child_group
-	selectmore cylinders
+	parent_group --return
+)
+
+/*------------------------------------------------------------------------------
+	TEST METHODS
+--------------------------------------------------------------------------------*/
+
+/** Add object to closed group
+ */
+function addObjectsToClosedGroup =
+(
+	delete objects
+
+	group_for_attach = createNestedGroups()
+
+	attaching_node = Sphere pos:[30,30,0] radius:5
+
+	select group_for_attach
+	selectmore attaching_node
 
 	(GroupAttacher_v()).attachSelectionToGroups()
 )
 
+
+
+/** Add single object to single group
+ */
+function addSingleObjectToGroup =
+(
+	delete objects
+
+	group_source = group (createTestObjects(Teapot)) name:"GROUP-CHILD"
+
+	attaching_node = Sphere pos:[30,30,0] radius:5
+
+	select group_source
+	selectmore attaching_node
+
+	(GroupAttacher_v()).attachSelectionToGroups()
+)
+
+/** Add multiple instanced objects to instances of group
+ */
+function addInstacedObjectsToGroupInstances =
+(
+	delete objects
+
+	group_source = group (createTestObjects(Teapot)) name:"GROUP-CHILD"
+
+	maxOps.cloneNodes group_source cloneType:#instance newNodes:&detination_groups offset:[0,0,30]
+
+	attaching_node = Sphere pos:[30,30,0] radius:5
+
+	maxOps.cloneNodes attaching_node cloneType:#instance newNodes:&attaching_nodes offset:[30,0,0]
+
+	select group_source
+	selectmore attaching_node
+	selectmore attaching_nodes
+
+	(GroupAttacher_v()).attachSelectionToGroups()
+)
+--
+--/** Add single object to group, but all objects are nested in another group
+-- */
+--function addObjectsToNestedGroup =
+--(
+--	delete objects
+--
+--	teapots	= createTestObjects(Teapot)
+--	cylinders	= createTestObjects(Cylinder)
+--
+--	move cylinders [0,0,30]
+--
+--	child_group = group (teapots) name:"GROUP-ROOT"
+--
+--	parent_group = group (append cylinders child_group) name:"GROUP-PARENT"
+--
+--	setGroupOpen parent_group true
+--
+--	select child_group
+--	selectmore cylinders
+--
+--	(GroupAttacher_v()).attachSelectionToGroups()
+--)
+
+
+
 /*------------------------------------------------------------------------------
 	RUN TESTS
 --------------------------------------------------------------------------------*/
+
+
+
+addObjectsToClosedGroup()
+
 --addSingleObjectToGroup()
+
 --addInstacedObjectsToGroupInstances()
-addObjectsToNestedGroup()
+
+--addObjectsToNestedGroup()
+
+
+
+
+
+
+
+
+

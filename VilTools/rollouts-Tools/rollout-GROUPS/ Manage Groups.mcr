@@ -1,42 +1,87 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupAttacher/GroupAttacher.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupAttacher/GroupAttacher.ms" ) -- "./Lib/GroupAttacher/GroupAttacher.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" ) -- "./Lib/GroupCreator/GroupCreator.ms"
 
 /*------------------------------------------------------------------------------
 	CREATE GROUP
 --------------------------------------------------------------------------------*/
+/**
+ *
+ */
+macroscript	group_quick_create
+category:	"_Group"
+buttontext:	"Create Group"
+--icon:	"across:5|width:72|Menu:true|title:Create group|tooltip:Create Group"
+icon:	"across:5|width:72|Menu:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\ Manage.mcr"
 
-global group_options
+	format "EventFired = % \n" EventFired
+
+	GroupCreator = GroupCreator_v align_pivot:false
+
+	on execute do (
+		try (
+			GroupCreator.createGroup()
+		)
+		catch()
+	)
+
+	on AltExecute type do (
+		try (
+			-- instantiate the object
+			_dotNet = dotNetObject "MaxCustomControls.RenameInstanceDialog" "Default text"
+			_dotNet.text ="Title"
+
+			DialogResult = _dotNet.Showmodal()
+
+			--test if the ok button was pressed
+			dotnet.compareenums TheObj.DialogResult ((dotnetclass "System.Windows.Forms.DialogResult").OK)
+			--get the new text string
+			entered_string = _dotNet.InstanceName
+
+			format "entered_string	= % \n" entered_string
+
+		)
+		catch()
+	)
+
+
+
+)
+
+global GROUP_OPTIONS
 
 /**
  *
  */
 macroscript	group_create_with_setup
 category:	"_Group"
-buttontext:	"Create"
+buttontext:	"Create Setup"
 --toolTip:	"Group Setup Dialog"
-icon:	"across:5|width:72|Menu:_Group|title:Group setup|tooltip:Create Group\n"
+icon:	"across:5|width:72|Menu:true|title:Create group setup|tooltip:Create Group"
 (
 	--clearListener()
 	--filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr" ) -- DEV
 	--filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" )
 
+	format "EventFired = % \n" EventFired
 		/** loop wirecolors of group members
 		  *
 		  * If members has only one color, then random color is selected
 		 */
 		function circleColorsOfColorPicker =
 		(
-			if  group_options.colors.count > 1 then
+			if  GROUP_OPTIONS.colors.count > 1 then
 			(
-				group_options.current_color = if group_options.current_color <  group_options.colors.count then group_options.current_color + 1 else 1
+				GROUP_OPTIONS.current_color = if GROUP_OPTIONS.current_color <  GROUP_OPTIONS.colors.count then GROUP_OPTIONS.current_color + 1 else 1
 
-				group_options.members_color_picker.color = group_options.colors[group_options.current_color]
+				GROUP_OPTIONS.members_color_picker.color = GROUP_OPTIONS.colors[GROUP_OPTIONS.current_color]
 			)
 			else
-				group_options.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)
+				GROUP_OPTIONS.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)
 
-			selection.wirecolor = group_options.members_color_picker.color
+			selection.wirecolor = GROUP_OPTIONS.members_color_picker.color
 		)
 
 	/*
@@ -83,19 +128,19 @@ icon:	"across:5|width:72|Menu:_Group|title:Group setup|tooltip:Create Group\n"
 			params = ""
 
 			creator_params = #(
-				"group_name:	group_options.group_name_text.text",
-				"member_name:	group_options.members_name_text.text",
-				"add_to_layer:	group_options.add_to_layer.checked",
-				--"relink_hierarchy:	group_options.relink_hierarchy.checked"
-				"align_transform:	group_options.align_transform.checked"
+				"group_name:	GROUP_OPTIONS.group_name_text.text",
+				"member_name:	GROUP_OPTIONS.members_name_text.text",
+				"add_to_layer:	GROUP_OPTIONS.add_to_layer.checked",
+				"relink_hierarchy:	GROUP_OPTIONS.relink_hierarchy.checked",
+				"align_pivot:	GROUP_OPTIONS.align_pivot.checked"
 			)
 
 			for param in creator_params do params += param + " "
 
-			--callback_submit	= "GroupCreator_v params:#( group_options.group_name.text, group_options.Rename_members.checked, group_options.add_to_layer.checked, group_options.align_transform.checked, group_options.relink_hierarchy.checked );"
-			callback_submit	= "GroupCreator_v "+ params +";"
+			--callback_submit	= "GroupCreator_v params:#( GROUP_OPTIONS.group_name.text, GROUP_OPTIONS.Rename_members.checked, GROUP_OPTIONS.add_to_layer.checked, GROUP_OPTIONS.align_pivot.checked, GROUP_OPTIONS.relink_hierarchy.checked );"
+			callback_submit	= "(GroupCreator_v "+ params +").createGroup();"
 			callback_close	= " try( destroyDialog "+ Dialog.id as string  +" )catch()"
-			callback_get_color	= "group_options.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
+			callback_get_color	= "GROUP_OPTIONS.members_color_picker.color = (Color_v()).randomize hue:5 brightness:#(128, 255)	saturation:#(128, 255)"
 			callback_set_color	= "selection.wirecolor = val"
 
 			/* EVENTS */
@@ -161,7 +206,7 @@ category:	"_Group"
 buttontext:	"Open"
 toolTip:	"Open selected groups"
 --icon:	"Menu:_Group|title:Close Group"
---icon:	"id:group_open_hierarchy"
+icon:	"id:group_open_hierarchy"
 (
 	--undo "Groups Open" on
 	--(
@@ -178,7 +223,7 @@ category:	"_Group"
 buttontext:	"Open"
 toolTip:	"Open all groups in hierarchy"
 --icon:	"Menu:_Group|title:Close Group"
---icon:	"id:group_open_hierarchy"
+icon:	"id:group_open_hierarchy"
 (
 	actionMan.executeAction 0 "63561"  -- Groups: Group Open Recursively
 )
@@ -195,9 +240,8 @@ toolTip:	"Open all groups in hierarchy"
 macroscript	group_close
 category:	"_Group"
 buttontext:	"Close"
-toolTip:	"Close selected groups"
-icon:	"id:group_close"
---icon:	"Menu:_Group|title:Close Group"
+toolTip:	"Close groups"
+icon:	"id:group_close|Menu:toolTip"
 (
 	actionMan.executeAction 0 "40143"  -- Groups: Group Close
 )
@@ -208,9 +252,8 @@ icon:	"id:group_close"
 macroscript	group_close_hierarchy
 category:	"_Group"
 buttontext:	"Close"
-toolTip:	"Close all groups in hierarchy"
---icon:	"Menu:_Group|title:Close Group"
-icon:	"id:group_close"
+toolTip:	"Close groups in tree"
+icon:	"id:group_close|Menu:toolTip"
 (
 	undo "Groups Close" on
 	(
@@ -235,7 +278,6 @@ category:	"_Group"
 buttontext:	"Open\Close"
 toolTip:	"Open\Close toggle selected groups"
 --icon:	"id:group_open"
-icon:	"Menu:_Group|title:Open\Close Group Toggle"
 (
 	--clearListener()
 	--filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
@@ -284,9 +326,14 @@ macroscript	group_attach_to_groups
 category:	"_Group"
 buttontext:	"Attach"
 toolTip:	"Attach selected objects to group\n\nWorks with instanced groups also."
-icon:	"across:4"
+icon:	"across:4|menu:true"
 (
+
 	clearListener()
+	--format "EventFired = % \n" EventFired
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\ Manage Groups.mcr"
+
 	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
 
 	with undo "attach to group" on
@@ -294,7 +341,7 @@ icon:	"across:4"
 		--with redraw off
 		--(
 			GroupAttacher 	= GroupAttacher_v()
-
+--
 			GroupAttacher.attachSelectionToGroups()
 		--)
 
@@ -311,10 +358,13 @@ macroscript	group_detach
 category:	"_Group"
 buttontext:	"Detach"
 toolTip:	"Detach selected objects from groups"
---icon:	"#(path, index)"
+icon:	"menu:true"
 (
 	--actionMan.executeAction 0 "40144"  -- Groups: Group Detach
+	format "EventFired = % \n" EventFired
+
 	with undo "Detach from groups" on
+
 	(
 		selected_nodes = for obj in selection where not isGroupHead obj collect obj
 
@@ -366,8 +416,9 @@ macroscript	group_hide
 category:	"_Group"
 buttontext:	"Hide"
 toolTip:	"Hide group helpers"
---icon:	"#(path, index)"
+icon:	"menu:true"
 (
+	format "EventFired = % \n" EventFired
 	for obj in objects where isGroupHead(obj) and obj.layer.on do hide obj
 
 )
@@ -383,10 +434,14 @@ macroscript	group_unhide_helper
 category:	"_Group"
 buttontext:	"Unhide"
 toolTip:	"Unhide group helpers"
---icon:	"#(path, index)"
+icon:	"menu:true"
 (
+
 	--clearListener()
+
 	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Group.mcr")
+
+	format "EventFired = % \n" EventFired
 
 	hidden_groups = for _group in objects where isGroupHead _group and _group.isHidden and _group.layer.on collect _group
 
