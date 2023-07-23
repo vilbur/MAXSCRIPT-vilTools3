@@ -12,11 +12,6 @@ QuadMenu4	= AltQuad.Quads[4]
 	QUAD 1 - BOTTOM - RIGHT
 
 ================================================================================*/
-
-
-/**
-		BOTTOM RIGHT quad menu - ADD default items
- */
 function editQuad1 =
 (
 	QuadMenu1.setTitle("")
@@ -33,11 +28,6 @@ function editQuad1 =
 	QUAD 2 - TOP - RIGHT
 
 ================================================================================*/
-
-
-/**
-		RIGHT TOP quad menu - ADD default items
-*/
 function editQuad2 =
 (
 
@@ -48,11 +38,6 @@ function editQuad2 =
 	QUAD 3 - TOP - LEFT
 
 ================================================================================*/
-
-
-/**
-		TOP LEFT quad menu - ADD default items
-*/
 function editQuad3 =
 (
 
@@ -60,13 +45,9 @@ function editQuad3 =
 
 /*==============================================================================
 
-	QUAD 1 - BOTTOM - LEFT
+	QUAD 4 - BOTTOM - LEFT
 
 ================================================================================*/
-
-/**
-		BOTTOM LEFT quad menu - ADD default items
-*/
 function editQuad4 =
 (
 
@@ -87,6 +68,6 @@ function editQuad4 =
 --editQuad4()
 
 /* Set options */
-VilToolsQuad.setRightClick which:#altPressed --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+AltQuad.setRightClick which:#altPressed --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
 
 --AltQuad.showAllQuads()

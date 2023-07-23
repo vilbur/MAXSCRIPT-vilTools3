@@ -1,3 +1,6 @@
+/*
+   DOCUMENTATION: "./readme.md"
+*/
 
 
 ControlQuad 	= QuadMenu_v("_Control Quad")
@@ -13,11 +16,6 @@ QuadMenu4	= ControlQuad.Quads[4]
 	QUAD 1 - BOTTOM - RIGHT
 
 ================================================================================*/
-
-
-/**
-		BOTTOM RIGHT quad menu - ADD default items
- */
 function editQuad1 =
 (
 	QuadMenu1.setTitle("Selection            ")
@@ -36,11 +34,6 @@ function editQuad1 =
 	QUAD 2 - TOP - RIGHT
 
 ================================================================================*/
-
-
-/**
-		RIGHT TOP quad menu - ADD default items
-*/
 function editQuad2 =
 (
 	QuadMenu2.setTitle("Modifiers            ")
@@ -53,11 +46,6 @@ function editQuad2 =
 	QUAD 3 - TOP - LEFT
 
 ================================================================================*/
-
-
-/**
-		TOP LEFT quad menu - ADD default items
-*/
 function editQuad3 =
 (
 	QuadMenu3.setTitle("               Layers")
@@ -68,13 +56,9 @@ function editQuad3 =
 
 /*==============================================================================
 
-	QUAD 1 - BOTTOM - LEFT
+	QUAD 4 - BOTTOM - LEFT
 
 ================================================================================*/
-
-/**
-		BOTTOM LEFT quad menu - ADD default items
-*/
 function editQuad4 =
 (
 	QuadMenu4.setTitle("              Group")
