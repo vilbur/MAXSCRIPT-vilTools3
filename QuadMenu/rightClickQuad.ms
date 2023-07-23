@@ -25,14 +25,14 @@ QuadMenu4	= RcQuad.Quads[4]
 function editQuad1 =
 (
 	--format "\n"; print ".editQuad1()"
-	--QuadMenu1.addMenu("_Modifiers")	index:1
+	QuadMenu1.setTitle("Edit            ")
 
-	--QuadMenu1.addSeparator index:2
+	QuadMenu1.addMenu("_Wirecolor") --flat:false --index:1 -- "./../VilTools/rollouts-Tools/rollout-SELECTION/Wirecolor.mcr"
 
 	--QuadMenu1.addMenu("_Tools")
 
-	QuadMenu1.addItem ("_Modifiers") ("modifier_add_editpoly") index:1
-	QuadMenu1.addSeparator index:2
+	--QuadMenu1.addItem ("_Modifiers") ("modifier_add_editpoly") index:1
+	--QuadMenu1.addSeparator index:2
 
 
 )
@@ -44,6 +44,7 @@ function editQuad1 =
 ================================================================================*/
 function editQuad2 =
 (
+	QuadMenu1.setTitle("Selection            ")
 
 )
 
@@ -55,6 +56,7 @@ function editQuad2 =
 ================================================================================*/
 function editQuad3 =
 (
+	QuadMenu3.setTitle("               Title")
 
 )
 
@@ -65,6 +67,7 @@ function editQuad3 =
 ================================================================================*/
 function editQuad4 =
 (
+	QuadMenu3.setTitle("               Title")
 
 )
 
@@ -75,16 +78,12 @@ function editQuad4 =
 
 ================================================================================*/
 
-----clearListener()
---removeItemsQuad1()
---removeItemsQuad2()
---removeItemsQuad3()
---removeItemsQuad4()
---
---editQuad1()
---editQuad2()
---editQuad3()
---editQuad4()
+
+
+editQuad1()
+editQuad2()
+editQuad3()
+editQuad4()
 
 --/* Set options */
 RcQuad.setRightClick()

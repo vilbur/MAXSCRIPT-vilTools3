@@ -18,11 +18,9 @@ QuadMenu4	= ControlQuad.Quads[4]
 ================================================================================*/
 function editQuad1 =
 (
-	QuadMenu1.setTitle("Selection            ")
+	--QuadMenu1.setTitle("Selection            ")
 
 	--SnapToMenu 	= (QuadMenu_v("Snap")).Quads[1].menu
-
-	QuadMenu1.addMenu("_Selection") --flat:false --index:1
 
 	--QuadMenu1.addSeparator()
 
@@ -78,13 +76,11 @@ function editQuad4 =
 	RUN EDIT FUNCTIONS
 
 ================================================================================*/
+editQuad1()
+editQuad2()
+editQuad3()
+editQuad4()
 
-
-
---editQuad1()
---editQuad2()
---editQuad3()
---editQuad4()
 
 /* Set options */
 ControlQuad.setRightClick which:#controlPressed --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed

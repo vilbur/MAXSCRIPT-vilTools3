@@ -4,13 +4,15 @@
 
 ## Default Quad
 
-1. ### SELECTION
-	- Wirecolor
-	- Rename
 1. ### EDIT
 	- Edit Poly
 	- Edit Spline
 	- Edit oher object types
+
+1. ### SELECTION
+	- Wirecolor
+	- Rename
+	
 1. ### SNAP
 1. ### TRANSFORM
 	- Tools
