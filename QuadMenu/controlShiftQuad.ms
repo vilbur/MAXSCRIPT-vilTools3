@@ -2,30 +2,28 @@
    DOCUMENTATION: "./readme.md"
 */
 
-
-ControlShiftQuad 	= QuadMenu_v("_Control Shift Quad")
-
-QuadMenu1	= ControlShiftQuad.Quads[1]
-QuadMenu2	= ControlShiftQuad.Quads[2]
-QuadMenu3	= ControlShiftQuad.Quads[3]
-QuadMenu4	= ControlShiftQuad.Quads[4]
-
+global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 
 /*==============================================================================
 
 	QUAD 1 - BOTTOM - RIGHT
 
 ================================================================================*/
-function editQuad1 =
+function editQuad1 QuadMenu =
 (
-	QuadMenu1.setTitle("Title            ")
+	QuadMenu.setTitle("Scene            ")
 
-	--DefaultMenu 	= (QuadMenu_v("Title")).Quads[1].menu
+	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
 
-	--QuadMenu1.addSeparator()
+	--QuadMenu.addSeparator()
 
-	--QuadMenu2.addMenu("MenuName") --flat:false --index:1
-	--QuadMenu1.addMenu(DefaultMenu) --flat:false --index:1
+	QuadMenu.addMenu("_Scene") --flat:false --index:1
+
+	--QuadMenu.addSeparator()
+
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu(DefaulQuadtMenu.menu) --flat:false --index:1
+	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
 )
 
 /*==============================================================================
@@ -33,11 +31,11 @@ function editQuad1 =
 	QUAD 2 - TOP - RIGHT
 
 ================================================================================*/
-function editQuad2 =
+function editQuad2 QuadMenu =
 (
-	--QuadMenu2.setTitle("Title            ")
+	--QuadMenu.setTitle("Title            ")
 
-	--QuadMenu2.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
 )
 
 /*==============================================================================
@@ -45,11 +43,11 @@ function editQuad2 =
 	QUAD 3 - TOP - LEFT
 
 ================================================================================*/
-function editQuad3 =
+function editQuad3 QuadMenu =
 (
-	--QuadMenu3.setTitle("               Title")
+	--QuadMenu.setTitle("               Title")
 
-	--QuadMenu3.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
 )
 
 /*==============================================================================
@@ -57,11 +55,11 @@ function editQuad3 =
 	QUAD 4 - BOTTOM - LEFT
 
 ================================================================================*/
-function editQuad4 =
+function editQuad4 QuadMenu =
 (
-	--QuadMenu4.setTitle("               Title")
+	--QuadMenu.setTitle("               Title")
 
-	--QuadMenu4.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
 )
 
 
@@ -70,12 +68,17 @@ function editQuad4 =
 	RUN EDIT FUNCTIONS
 
 ================================================================================*/
-editQuad1()
-editQuad2()
-editQuad3()
-editQuad4()
+
+
+editQuad1(MainQuad.Quads[1])
+editQuad2(MainQuad.Quads[2])
+editQuad3(MainQuad.Quads[3])
+editQuad4(MainQuad.Quads[4])
+
 
 /* Set options */
-ControlShiftQuad.setRightClick which:#shiftAndControlPressed --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+--MainQuad.setRightClick() which:#  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
 
---ControlShiftQuad.showAllQuads()
+--MainQuad.showAllQuads()
+
+MainQuad = undefined

@@ -2,12 +2,7 @@
    DOCUMENTATION: "./readme.md"
 */
 
-RcQuad 	= QuadMenu_v("_Right Click Quad")
-
-QuadMenu1	= RcQuad.Quads[1]
-QuadMenu2	= RcQuad.Quads[2]
-QuadMenu3	= RcQuad.Quads[3]
-QuadMenu4	= RcQuad.Quads[4]
+global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 
 
 /*==============================================================================
@@ -15,15 +10,26 @@ QuadMenu4	= RcQuad.Quads[4]
 	QUAD 1 - BOTTOM - RIGHT
 
 ================================================================================*/
-function editQuad1 =
+function editQuad1 QuadMenu =
 (
-	QuadMenu1.setTitle("Edit            ")
+	EditPolyMenu2	= Menu_v("Context Edit Poly Tools 2")
+	SplineToolsMenu2	= Menu_v("Context Spline Tools 2")
 
-	--SnapToMenu 	= (QuadMenu_v("Snap")).Quads[1].menu
 
-	--QuadMenu1.addSeparator()
+	QuadMenu.setTitle("Edit            ")
 
-	--QuadMenu1.addMenu(SnapToMenu) --flat:false --index:1
+	QuadMenu.addItem ("Modifier Stack") ("Convert_to_Poly") index:1
+
+	QuadMenu.addSeparator()
+
+
+	--QuadMenu.addMenu("_Epoly-Edit") --flat:false --index:1
+
+	QuadMenu.addMenu(EditPolyMenu2) --flat:false --index:1
+
+
+	--QuadMenu.addMenu(SnapToMenu) --flat:false --index:1
+
 )
 
 /*==============================================================================
@@ -31,11 +37,11 @@ function editQuad1 =
 	QUAD 2 - TOP - RIGHT
 
 ================================================================================*/
-function editQuad2 =
+function editQuad2 QuadMenu =
 (
-	QuadMenu2.setTitle("Transform            ")
-	--
-	--QuadMenu2.addMenu("_Modifiers") --flat:false --index:1
+	QuadMenu.setTitle("Transform            ")
+
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
 )
 
 /*==============================================================================
@@ -43,17 +49,20 @@ function editQuad2 =
 	QUAD 3 - TOP - LEFT
 
 ================================================================================*/
-function editQuad3 =
+function editQuad3 QuadMenu =
 (
-	QuadMenu3.setTitle("               Snap")
+	QuadMenu.setTitle("               Snap")
 
-	--QuadMenu3.addMenu("_Layers") --flat:false --index:1
 
-	--SnapToMenu 	= (QuadMenu_v("Snap")).Quads[1].menu
+	SnapMenu 	= (QuadMenu_v("Snap")).Quads[1]
 
-	--QuadMenu1.addSeparator()
+	SnapMenu.moveItem ("Pivot") 4
 
-	--QuadMenu1.addMenu(SnapToMenu) --flat:false --index:1
+	QuadMenu.addMenu(SnapMenu.menu) --flat:false --index:1
+
+
+
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
 )
 
 /*==============================================================================
@@ -61,24 +70,33 @@ function editQuad3 =
 	QUAD 4 - BOTTOM - LEFT
 
 ================================================================================*/
-function editQuad4 =
+function editQuad4 QuadMenu =
 (
-	messageBox "Yupiii" title:"Title"  beep:false
-	QuadMenu4.setTitle("              Selection")
+	QuadMenu.setTitle("               Selection")
 
-	QuadMenu4.addMenu("_Wirecolor") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName") --flat:false --index:1
 
+	QuadMenu.addMenu("_Wirecolor") --flat:false --index:1
 )
 
 
+/*==============================================================================
+
+	RUN EDIT FUNCTIONS
+
+================================================================================*/
 
 
-editQuad1()
-editQuad2()
-editQuad3()
-editQuad4()
 
---/* Set options */
-RcQuad.setRightClick()
---
---RcQuad.showAllQuads()
+editQuad1(MainQuad.Quads[1])
+editQuad2(MainQuad.Quads[2])
+editQuad3(MainQuad.Quads[3])
+editQuad4(MainQuad.Quads[4])
+
+
+/* Set options */
+MainQuad.setRightClick() --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+
+--QuadMenu.showAllQuads()
+
+MainQuad = undefined
