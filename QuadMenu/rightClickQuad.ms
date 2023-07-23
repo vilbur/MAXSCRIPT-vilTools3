@@ -10,31 +10,20 @@ QuadMenu3	= RcQuad.Quads[3]
 QuadMenu4	= RcQuad.Quads[4]
 
 
-
-
 /*==============================================================================
 
 	QUAD 1 - BOTTOM - RIGHT
 
 ================================================================================*/
-
-
-/**
-		BOTTOM RIGHT quad menu - ADD default items
- */
 function editQuad1 =
 (
-	--format "\n"; print ".editQuad1()"
 	QuadMenu1.setTitle("Edit            ")
 
-	QuadMenu1.addMenu("_Wirecolor") --flat:false --index:1 -- "./../VilTools/rollouts-Tools/rollout-SELECTION/Wirecolor.mcr"
+	--SnapToMenu 	= (QuadMenu_v("Snap")).Quads[1].menu
 
-	--QuadMenu1.addMenu("_Tools")
+	--QuadMenu1.addSeparator()
 
-	--QuadMenu1.addItem ("_Modifiers") ("modifier_add_editpoly") index:1
-	--QuadMenu1.addSeparator index:2
-
-
+	--QuadMenu1.addMenu(SnapToMenu) --flat:false --index:1
 )
 
 /*==============================================================================
@@ -44,10 +33,10 @@ function editQuad1 =
 ================================================================================*/
 function editQuad2 =
 (
-	QuadMenu1.setTitle("Selection            ")
-
+	QuadMenu2.setTitle("Transform            ")
+	--
+	--QuadMenu2.addMenu("_Modifiers") --flat:false --index:1
 )
-
 
 /*==============================================================================
 
@@ -56,8 +45,15 @@ function editQuad2 =
 ================================================================================*/
 function editQuad3 =
 (
-	QuadMenu3.setTitle("               Title")
+	QuadMenu3.setTitle("               Snap")
 
+	--QuadMenu3.addMenu("_Layers") --flat:false --index:1
+
+	--SnapToMenu 	= (QuadMenu_v("Snap")).Quads[1].menu
+
+	--QuadMenu1.addSeparator()
+
+	--QuadMenu1.addMenu(SnapToMenu) --flat:false --index:1
 )
 
 /*==============================================================================
@@ -67,16 +63,13 @@ function editQuad3 =
 ================================================================================*/
 function editQuad4 =
 (
-	QuadMenu3.setTitle("               Title")
+	messageBox "Yupiii" title:"Title"  beep:false
+	QuadMenu4.setTitle("              Selection")
+
+	QuadMenu4.addMenu("_Wirecolor") --flat:false --index:1
 
 )
 
-
-/*==============================================================================
-
-	RUN EDIT FUNCTIONS
-
-================================================================================*/
 
 
 

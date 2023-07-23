@@ -16,15 +16,24 @@ QuadMenu4	= ControlQuad.Quads[4]
 	QUAD 1 - BOTTOM - RIGHT
 
 ================================================================================*/
+
+
+/**
+		BOTTOM RIGHT quad menu - ADD default items
+ */
 function editQuad1 =
 (
-	--QuadMenu1.setTitle("Selection            ")
+	--format "\n"; print ".editQuad1()"
+	--QuadMenu1.setTitle("Title            ")
 
-	--SnapToMenu 	= (QuadMenu_v("Snap")).Quads[1].menu
+	--QuadMenu1.addMenu("_Wirecolor") --flat:false --index:1 -- "./../VilTools/rollouts-Tools/rollout-SELECTION/Wirecolor.mcr"
 
-	--QuadMenu1.addSeparator()
+	--QuadMenu1.addMenu("_Tools")
 
-	--QuadMenu1.addMenu(SnapToMenu) --flat:false --index:1
+	--QuadMenu1.addItem ("_Modifiers") ("modifier_add_editpoly") index:1
+	--QuadMenu1.addSeparator index:2
+
+
 )
 
 /*==============================================================================
@@ -34,10 +43,10 @@ function editQuad1 =
 ================================================================================*/
 function editQuad2 =
 (
-	QuadMenu2.setTitle("Modifiers            ")
+	--QuadMenu2.setTitle("Selection            ")
 
-	QuadMenu2.addMenu("_Modifiers") --flat:false --index:1
 )
+
 
 /*==============================================================================
 
@@ -46,9 +55,7 @@ function editQuad2 =
 ================================================================================*/
 function editQuad3 =
 (
-	QuadMenu3.setTitle("               Layers")
-
-	QuadMenu3.addMenu("_Layers") --flat:false --index:1
+	--QuadMenu3.setTitle("               Title")
 
 )
 
@@ -59,16 +66,17 @@ function editQuad3 =
 ================================================================================*/
 function editQuad4 =
 (
-	QuadMenu4.setTitle("              Group")
-
-
-	GroupMenu	= Menu_v("_Group")
-	GroupMenu.addSeparator index:#( 8, 6, 3)
-
-
-	QuadMenu4.addMenu(GroupMenu) --flat:false --index:1
+	--QuadMenu4.setTitle("               Title")
 
 )
+
+
+/*==============================================================================
+
+	RUN EDIT FUNCTIONS
+
+================================================================================*/
+
 
 
 /*==============================================================================

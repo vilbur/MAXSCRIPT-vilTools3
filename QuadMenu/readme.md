@@ -9,14 +9,16 @@
 	- Edit Spline
 	- Edit oher object types
 
-1. ### SELECTION
-	- Wirecolor
-	- Rename
-	
-1. ### SNAP
+
 1. ### TRANSFORM
 	- Tools
 	- Axises
+
+1. ### SNAP
+
+1. ### SELECTION
+	- Wirecolor
+	- Rename
 
 
 ## Control Quad

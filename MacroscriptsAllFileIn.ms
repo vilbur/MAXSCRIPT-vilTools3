@@ -3,6 +3,9 @@
 all_macro_files = getFiles ( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/*.mcr" ) recurse:true  -- "./../../slot_properties.ini"
 
 
+--global DEBUG_PRINT = true
+global DEBUG_PRINT = false
+
 /** Is not on blacklist
  */
 function isNotOnBlacklist macro_path =
@@ -17,7 +20,8 @@ function isNotOnBlacklist macro_path =
 
 	for pattern in blalickst where matchPattern macro_path pattern:pattern do
 	(
-		format "\nBLACKLISTED: %\n\n" macro_path
+		if DEBUG_PRINT then
+			format "\nBLACKLISTED: %\n\n" macro_path
 
 		allow_inport = false
 
@@ -30,7 +34,15 @@ function isNotOnBlacklist macro_path =
 
 for macro_path in all_macro_files where isNotOnBlacklist macro_path do
 (
-	format "filein: % \n" macro_path
+	if DEBUG_PRINT then
+		format "filein: % \n" macro_path
 
-	filein macro_path
+	try(
+		(ScriptFile_Content_v(macro_path)).importMacroscripts()
+	)catch(
+
+		format "!!!!! FILEIN *.mcr file ERROR\n\n%\n\n" (getCurrentException())
+	)
 )
+
+DEBUG_PRINT = undefined
