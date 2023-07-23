@@ -1,10 +1,10 @@
 
-MainQuad 	= QuadMenu_v("Default Viewport Quad")
+RcQuad 	= QuadMenu_v("_Right Click Quad")
 
-QuadMenu1	= MainQuad.Quads[1]
-QuadMenu2	= MainQuad.Quads[2]
-QuadMenu3	= MainQuad.Quads[3]
-QuadMenu4	= MainQuad.Quads[4]
+QuadMenu1	= RcQuad.Quads[1]
+QuadMenu2	= RcQuad.Quads[2]
+QuadMenu3	= RcQuad.Quads[3]
+QuadMenu4	= RcQuad.Quads[4]
 
 
 /*==============================================================================
@@ -132,19 +132,32 @@ function editQuad3 =
 (
 	--format "\n"; print "VilToolsQuadMenu.editQuad3()"
 
+	/* LAYERS */
+	LayersMenu	= Menu_v("_Layers")
+	MangeLayersMenu	= Menu_v("_Manage Layers")
+
+	--LayersMenu.addSeparator index:3
+
+
+	QuadMenu3.addMenu(LayersMenu) index:1
+	QuadMenu3.addSeparator()
+	QuadMenu3.addMenu(MangeLayersMenu) index:1
+
+
+
 	/* CONTEXT SPLINE TOOLS 2 */
-	SplineToolsMenu1 = Menu_v("Context Spline Tools 1")
-
-
-	/* CONTEXT EDIT POLY TOOLS 1 */
-	EditPolyMenu1 = Menu_v("Context Edit Poly Tools 1")
-
-
-	/* HARD EDGES MENU */
-	HardEdgesMenu = Menu_v("_Epoly-Hard-Edges")
-	HardEdgesMenu.addSeparator index:1
-
-	QuadMenu3.addMenu("_Epoly-Hard-Edges")	 flat:false --index:2
+	--SplineToolsMenu1 = Menu_v("Context Spline Tools 1")
+	--
+	--
+	--/* CONTEXT EDIT POLY TOOLS 1 */
+	--EditPolyMenu1 = Menu_v("Context Edit Poly Tools 1")
+	--
+	--
+	--/* HARD EDGES MENU */
+	--HardEdgesMenu = Menu_v("_Epoly-Hard-Edges")
+	--HardEdgesMenu.addSeparator index:1
+	--
+	--QuadMenu3.addMenu("_Epoly-Hard-Edges")	 flat:false --index:2
 
 )
 
@@ -200,6 +213,6 @@ function editQuad4 =
 --editQuad4()
 
 --/* Set options */
---MainQuad.setRightClick()
+RcQuad.setRightClick()
 --
---MainQuad.showAllQuads()
+--RcQuad.showAllQuads()
