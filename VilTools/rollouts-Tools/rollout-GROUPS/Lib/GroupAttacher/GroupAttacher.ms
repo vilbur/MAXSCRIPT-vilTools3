@@ -7,7 +7,7 @@ struct GroupAttacher_v
 (
 	_selection,
 
-	attach_group,
+	target_group,
 	attaching_nodes	= #(),
 	destination_groups	= #(),
 
@@ -17,18 +17,20 @@ struct GroupAttacher_v
 	(
 		 _selection = selection as Array
 
-		if ( attach_group = this._getGroupToAttach() ) == undefined then
+		if selection.count < 2 or (target_group = this._getTargetGroup()) == undefined then
 			return false
 
-		deleteItem _selection (findItem _selection attach_group)
+		--format "target_group = % \n" target_group
+
+		deleteItem _selection (findItem _selection target_group)
 
 		/*
 			IF GROUP IS CLOSED THEN FILTER MEMBERS OF NESTED GROUPS
 		*/
-		if isOpenGroupHead attach_group == false then
+		if isOpenGroupHead target_group == false then
 		(
 			/* FOR CLOSED GROUP */
-			group_members = this._getGroupMembers ( attach_group )
+			group_members = this._getGroupMembers ( target_group )
 
 			nested_groups = for obj in group_members where isGroupHead obj collect obj
 
@@ -47,27 +49,45 @@ struct GroupAttacher_v
 
 		attaching_nodes = this._diferrence(_selection)(no_attach_memebers)
 
-		InstanceMgr.GetInstances attach_group &destination_groups
+		this._getInstancesOfGroup()
 
-		deleteItem destination_groups (findItem destination_groups attach_group)
-		--format "destination_groups	= % \n" destination_groups
+		/** ATTACH TO SELECTED GROUP
+		  */
+		this._attachNodesToGroup (target_group) (attaching_nodes)
 
-		for destination_group in destination_groups do
-			this._instanceToGroups(destination_group)
-
-		this._attachNodesToGroup (attach_group) (attaching_nodes)
+		/** ATTACH TO INSTANCES OF GROUP
+		  */
+		this._attachToInstancesOfGroup()
 	),
 
-	/** Instance to groups
+
+	private
+
+
+	/** Get instances of group
 	 */
-	function _instanceToGroups destination_group =
+	function _getInstancesOfGroup =
+	(
+		--format "\n"; print "GroupAttacher_v.getInstancesOfGroup()"
+		InstanceMgr.GetInstances target_group &destination_groups
+
+		deleteItem destination_groups (findItem destination_groups target_group)
+	),
+
+	/** Create instaces of objects to instances of groups
+	 */
+	function _attachToInstancesOfGroup =
 	(
 		--format "\n"; print "GroupAttacher_v._instanceToGroups()"
-		--format "attach_group	= % \n" attach_group
-		maxOps.cloneNodes attaching_nodes cloneType:#instance newNodes:&new_instances
+		--format "target_group	= % \n" target_group
 
-		for new_instance in new_instances do
-			this._moveNewInstanceToDestinationGroup(destination_group)(new_instance)
+		for destination_group in destination_groups do
+		(
+			maxOps.cloneNodes attaching_nodes cloneType:#instance newNodes:&new_instances
+
+			for new_instance in new_instances do
+				this._moveNewInstanceToDestinationGroup(destination_group)(new_instance)
+		)
 	),
 
 	/** Move instance to group position
@@ -75,7 +95,7 @@ struct GroupAttacher_v
 	function _moveNewInstanceToDestinationGroup destination_group new_instance =
 	(
 		--format "\n"; print "GroupAttacher_v._moveNewInstanceToDestinationGroup()"
-		transform_matrix = new_instance.transform * ( Inverse attach_group.transform)
+		transform_matrix = new_instance.transform * ( Inverse target_group.transform)
 
 		new_instance.transform = transform_matrix*destination_group.transform
 
@@ -96,31 +116,48 @@ struct GroupAttacher_v
 		attachNodesToGroup _nodes _group
 	),
 
-
-	private
-
-	/** Get group to attach
+	/** Get group target group
 	 */
-	function _getGroupToAttach =
+	function _getTargetGroup =
 	(
-		format "\n"; print "GroupAttacher_v.getGroupToAttach()"
+		if this._isFirstObjectOpenedGroup() then -- IF OPEN GROUP IS SELECTED AS FIRST OBJECT
+			_selection[1]
 
-		if (closed_parent_group = this._getClosedFirstGroup()) != undefined then
-			closed_parent_group
+		else if this._isParentOfFirstObjectOpenedGroup() then -- IF FIRST OBJECT IS MEMBER OF OPENED GROUP, just member of group is enough to select
+			_selection[1].parent
 
-		else if (selected_group = this._getGroups()).count > 0 then
-			selected_group[1]
+		else if (closed_parent_groups = this._getClosedGroups()).count > 0 then -- GET CLOSED GROUP
+			closed_parent_groups[1]
 
-		else if (group_by_object = this._getGroupOfFirstObject()) != undefined then
-			group_by_object
+		else if (selected_groups = this._getGroups()).count > 0 then -- GET ANY GROUP OF SELECTION as fallback
+			selected_groups[1]
 	),
 
-	/** Get closed parent group
+	/** Get closed group on top of the hierarchy
 	 */
-	function _getClosedFirstGroup =
+	function _getClosedGroups =
 	(
 		--format "\n"; print "GroupAttacher_v.closedParentGroup()"
-		if this._isGroup(_selection[1]) and this._isGroupClosed(_selection[1])  then _selection[1] --return
+		--if this._isGroup(_selection[1]) and this._isGroupClosed(_selection[1])  then _selection[1] --return
+		for o in ( _selection ) where isGroupHead o and isOpenGroupHead o == false and findItem _selection o.parent == 0 collect o
+
+	),
+	/** Get group of first object in selection
+	 */
+	function _isFirstObjectOpenedGroup =
+	(
+		--format "\n"; print "GroupAttacher_v.closedParentGroup()"
+		this._isGroup(_selection[1]) and not this._isGroupClosed(_selection[1])
+	),
+
+	/** Get group of first object in selection
+	 */
+	function _isParentOfFirstObjectOpenedGroup =
+	(
+		--format "\n"; print "GroupAttacher_v.closedParentGroup()"
+		object_parent = _selection[1].parent
+
+		object_parent != undefined and this._isGroup(object_parent) and not this._isGroupClosed(object_parent)
 	),
 
 	/** Get any group
@@ -131,20 +168,6 @@ struct GroupAttacher_v
 		for o in ( _selection ) where isGroupHead o collect o --return
 	),
 
-	/** Get group of first object in selection
-	 */
-	function _getGroupOfFirstObject =
-	(
-		--format "\n"; print "GroupAttacher_v.closedParentGroup()"
-		if _selection.count > 0 and _selection[1].parent != undefined and isGroupHead _selection[1].parent then _selection[1].parent
-	),
-
-	--/** Get objects to attach
-	-- */
-	--function _getObjectsToAttach =
-	--(
-	--	--format "\n"; print "GroupAttacher_v.getObjectsToAttach()"
-	--),
 
 	/** Get group members of closed group
 	 */
@@ -189,15 +212,6 @@ struct GroupAttacher_v
 	(
 		--format "\n"; print "GroupAttacher_v._isGroup()"
 		isOpenGroupHead obj == false --return
-	),
-
-	/** Get instances of group
-	 */
-	function _getInstancesOfGroup _group =
-	(
-		--format "\n"; print "GroupAttacher_v._getInstancesOfGroup()"
-
-
 	),
 
 	/**

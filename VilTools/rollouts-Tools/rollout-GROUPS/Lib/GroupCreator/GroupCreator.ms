@@ -13,13 +13,13 @@ struct GroupCreator_v
 	group_name	= "",
 	member_name	= "",
 	add_to_layer	= true,
-	align_transform	= true,
-	--relink_hierarchy	= true,
+	align_pivot	= true,
+	relink_hierarchy	= true,
 
 	/* properties */
 	_group,
 	first_object,
-	first_object_parent,
+	--first_object_parent,
 
 	first_object_rotation,
 	members	= #(),
@@ -27,11 +27,8 @@ struct GroupCreator_v
 	members_rotation	= #(),
 	members_children	= #(), -- children of grouped objects
 
-
-
-
 	params      = #(),
-	params_keys = #(#member_name, #group_name, #add_to_layer, #align_transform, #relink_hierarchy ),
+	params_keys = #(#member_name, #group_name, #add_to_layer, #align_pivot, #relink_hierarchy ),
 
 
 	/** Get group
@@ -44,9 +41,9 @@ struct GroupCreator_v
 
 	/** Create group
 	 */
-	function _createGroup  =
+	function createGroup  =
 	(
-		format "\n"; print "GroupCreator_v._createGroup()"
+		format "\n"; print "GroupCreator_v.createGroup()"
 		GLOBAL_SELECTION_LAST_ENABLED = false
 		--format "params = % \n" params
 		undo "Create Group" on
@@ -72,13 +69,13 @@ struct GroupCreator_v
 			if add_to_layer then
 				this._addGroupToLayer()
 
-			if align_transform then
-				this._alignTransformation()
+			if align_pivot then
+				this._alignPivot()
 
 			this._setOtherNodesToGroup()
 
-			--if relink_hierarchy then
-				--this._relinkHierarchy()
+			if relink_hierarchy then
+				this._relinkHierarchy()
 		)
 		GLOBAL_SELECTION_LAST_ENABLED = true
 	),
@@ -168,7 +165,7 @@ struct GroupCreator_v
 		)
 		catch
 		(
-			
+
 			select nodes_to_attach
 		)
 
@@ -198,9 +195,9 @@ struct GroupCreator_v
 	  * then rotate members in invers rotation
 	  *
 	 */
-	function _alignTransformation =
+	function _alignPivot =
 	(
-		--format "\n"; print "GroupCreator_v._alignTransformation()"
+		--format "\n"; print "GroupCreator_v._alignPivot()"
 		--format "first_object	= % \n" first_object
 		--format "_group	= % \n" _group
 		setGroupOpen _group true
@@ -223,17 +220,17 @@ struct GroupCreator_v
 		last_sel_layer.addnode _group
 	),
 
-	--/** Relink hierarchy
-	-- */
-	--function _relinkHierarchy =
-	--(
-	--	--format "\n"; print "GroupCreator_v._relinkHierarchy()"
-	--	if first_object_parent != undefined then
-	--		_group.parent = first_object_parent
-	--
-	--	for child in members_children where isGroupMember child == false do
-	--		child.parent = _group
-	--),
+	/** Relink hierarchy
+	 */
+	function _relinkHierarchy =
+	(
+		--format "\n"; print "GroupCreator_v._relinkHierarchy()"
+		if first_object_parent != undefined then
+			_group.parent = first_object_parent
+
+		for child in members_children where isGroupMember child == false do
+			child.parent = _group
+	),
 
 	/**
 	 */
@@ -242,7 +239,7 @@ struct GroupCreator_v
 		--print "GroupCreator_v.onCreate()"
 		--if( classOf _group != Dummy ) then
 			--return false
-		this._createGroup()
+		--this.createGroup()
 
 	)
 )
