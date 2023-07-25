@@ -2,6 +2,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/autoEndResult.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/disableModifiersOnEdit.ms" )	-- "./Lib/Callbacks/disableModifiersOnEdit.ms"
 
+filein( getFilenamePath(getSourceFileName()) + "/CommandPanel/CommandPanel.ms" ) -- "./CommandPanel/CommandPanel.ms"
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionMaxModifyMode.ms" )
 
 
@@ -117,81 +118,104 @@ buttontext:	"Get selected"
 (
 	clearListener()
 	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
 
-	fn getListBoxItemText hWnd i =
-	(
-		local LB_GETTEXT = 0x189
-		local LB_GETTEXTLEN = 0x18A
-		local marshal = dotNetClass "System.Runtime.InteropServices.Marshal"
+	CommandPanel 	= CommandPanel_v( selection[1] )
 
-		local len = windows.sendMessage hWnd LB_GETTEXTLEN i 0
-		local lParam = marshal.AllocHGlobal (2 * len + 2) asDotNetObject:on
-		windows.sendMessage hWnd LB_GETTEXT i (lParam.ToInt64())
+	CommandPanel.getSelectedModifiers()
 
-		local str = (marshal.PtrToStringAuto lParam asDotNetObject:on).ToString()
-		marshal.FreeHGlobal lParam
-		return str
-	)
-
-
-	LB_GETCOUNT= 0x18B
-	LB_GETSEL = 0x187
-
-	LB_GETTEXT             = 0x0189
- LB_GETTEXTLEN          = 0x018A
- LB_GETITEMDATA         = 0x0199
- LB_ITEMFROMPOINT       = 0x01A9
-
-	--LB_RESETCONTENT = 0x0184
-	--LB_GETTOPINDEX  = 0x018E
-
-	--hwnd = ( windows.getChildHWND #max "Command Panel")[1]
-	hwnd = ( windows.getChildHWND #max "Command Panel")
-
-	if ( hwnd ) != undefined then
-		hwnd = hwnd[1]
-	else
-		hwnd = 9116234P
-
-
-	format "classOf hwnd = % \n" (classOf hwnd)
-	format "hwnd = % \n" hwnd
-
-
-	list_box = for c in windows.getChildrenHWND hwnd   where  c[4] == "ListBox" do exit with c[1]
-		format "list_box = % \n" list_box
-
-	count = windows.SendMessage list_box LB_GETCOUNT 0 0
-
-	----items = for i=0 to count-1 collect (windows.SendMessage  list_box  LB_GETTEXT i 1)
-	test = for i=0 to count-1 collect ( getListBoxItemText list_box i )
-
-	items = for i=0 to count-1 where (windows.SendMessage  list_box  LB_GETSEL i 0) == 1 collect (i+1)
-	-- get modifiers
-
-	modifers = for k in items collect (if k > $.modifiers.count then $.baseobject else $.modifiers[k])
-
-	format "\n"
-	print "ITEMS"
-	for item in items do
-		format "item = % \n" item
-
-	format "\n"
-	print "MODIFIERS"
-	for _mod in modifers do
-		format "_mod = % \n" _mod
-
-
-	format "\n"
-	print "test"
-
-	if test != undefined then
-		for index in test do
-			format "index = % \n" index
+	--fn getListBoxItemText hWnd i =
+	--(
+	--	local LB_GETTEXT = 0x189
+	--	local LB_GETTEXTLEN = 0x18A
+	--	local marshal = dotNetClass "System.Runtime.InteropServices.Marshal"
+	--
+	--	local len = windows.sendMessage hWnd LB_GETTEXTLEN i 0
+	--	local lParam = marshal.AllocHGlobal (2 * len + 2) asDotNetObject:on
+	--	windows.sendMessage hWnd LB_GETTEXT i (lParam.ToInt64())
+	--
+	--	local str = (marshal.PtrToStringAuto lParam asDotNetObject:on).ToString()
+	--	marshal.FreeHGlobal lParam
+	--	return str
+	--)
+	--
+	--function _getCommandPanelHWND =
+	--(
+	--	local g = (dotNetClass "Autodesk.Max.GlobalInterface").Instance
+	--	local r  = g.coreinterface7.CommandPanelRollup
+	--	local dialog_hwnd = -1
+	--
+	--	if r.Hwnd == 0 then
+	--	(
+	--		dialog_hwnd = r.GetPanelDlg 0
+	--
+	--		for i = 1 to 6 do
+	--		(
+	--			dialog_hwnd = uiaccessor.getparentwindow dialog_hwnd
+	--		)
+	--	)
+	--	else
+	--	(
+	--		dialog_hwnd = r.Hwnd
+	--		for i = 1 to 3 do
+	--		(
+	--			dialog_hwnd = uiaccessor.getparentwindow dialog_hwnd
+	--		)
+	--
+	--	)
+	--
+	--
+	--	dialog_hwnd
+	--)
+	--
+	--obj = selection[1]
+	--
+	--LB_GETCOUNT	= 0x18B
+	--LB_GETSEL	= 0x187
+	--
+	--
+	--hwnd = _getCommandPanelHWND()
+	----hwnd = ( windows.getChildHWND #max "Command Panel")
+	----
+	----if ( hwnd ) != undefined then
+	----	hwnd = hwnd[1]
+	----else
+	----	hwnd = 9116234P
+	----
+	----
+	----format "classOf hwnd = % \n" (classOf hwnd)
+	----format "hwnd = % \n" hwnd
+	--
+	--
+	--list_box = for c in windows.getChildrenHWND hwnd   where  c[4] == "ListBox" do exit with c[1]
+	--
+	--	--format "list_box = % \n" list_box
+	--
+	--count = windows.SendMessage list_box LB_GETCOUNT 0 0
+	--
+	--items = for i=0 to count-1 collect ( getListBoxItemText list_box i )
+	--
+	--selected = for i=0 to count-1 where (windows.SendMessage  list_box  LB_GETSEL i 0) == 1 collect (i+1)
+	--
+	--
+	--modifers = for _mod in obj.modifiers collect _mod
+	--
+	--format "\n"
+	--print "SELECTED"
+	--for index in selected do
+	--	format "index = % \n" index
+	--
+	--format "\n"
+	--print "MODIFIERS"
+	--for _mod in modifers do
+	--	format "_mod = % \n" _mod
+	--
+	--
+	--format "\n"
+	--print "items"
+	--
+	--if items != undefined then
+	--	for item in items do
+	--		format "item = % \n" item
 
 )
-
-
-
-
-
