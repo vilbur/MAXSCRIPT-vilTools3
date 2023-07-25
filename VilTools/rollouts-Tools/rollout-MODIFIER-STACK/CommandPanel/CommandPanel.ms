@@ -3,7 +3,6 @@
 struct CommandPanel_v
 (
 	/* construct */
-	obj,
 
 	/* properties */
 	hwnd,	-- Command panel HWND
@@ -14,44 +13,54 @@ struct CommandPanel_v
 	/* inhered */
 	/** Get selected modifiers
 	 */
-	function getSelectedModifiers =
+	function getSelectedModifiers obj =
 	(
-		format "\n"; print "CommandPanel_v.getSelectedModifiers()"
+		--format "\n"; print "CommandPanel_v.getSelectedModifiers()"
 
-		items_count = this.getModifiersItemsCount()
+		items_count = this._getModifiersItemsCount()
 
-		selected = this.getSlectedItems(items_count)
+		--selected = this._getSlectedItems(items_count)
+
+		states = this._getItemsStates(items_count)
 
 		all_items = this._getAllModifierStackItems(items_count)
 
 		modifers = for _mod in obj.modifiers collect _mod
 
-
-		format "\n"
-		print "ALL_ITEMS"
-
-		for item in all_items do
-			format "item = % \n" item
-
-
-		format "\n"
-		print "MODIFIERS"
-		for _mod in modifers do
-			format "_mod = % \n" _mod
-
-		format "\n"
-		print "SELECTED"
-		for index in selected do
-			format "index = % \n" index
+		this._getSelectedModifiers (modifers) (all_items) (states)
 
 	),
 
+	--private
 
-	private
+	/** Get selected modifiers
+	 */
+	function _getSelectedModifiers modifers all_items states =
+	(
+		modifier_indexes = #()
+
+		format "\n"; print "CommandPanel_v._getSelectedModifiers()"
+
+		for modifier_index = 1 to modifers.count do
+		(
+			_mod = modifers[modifier_index]
+
+			item_index = findItem all_items _mod.name
+
+			all_items[item_index] = undefined
+
+			if states[item_index] == 1 then
+				append modifier_indexes modifier_index
+
+		)
+
+		modifier_indexes --return
+	),
+
 
 	/** Get listbox
 	 */
-	function getListboxHWND =
+	function _setListboxHWND =
 	(
 		--format "\n"; print "CommandPanel_v.getListbox()"
 		list_box = for c in windows.getChildrenHWND this.hwnd where  c[4] == "ListBox" do exit with c[1] --return
@@ -59,24 +68,36 @@ struct CommandPanel_v
 
 	/** Get modifier items count
 	 */
-	function getModifiersItemsCount =
+	function _getModifiersItemsCount =
 	(
-		--format "\n"; print "CommandPanel_v.getModifiersItemsCount()"
+		--format "\n"; print "CommandPanel_v._getModifiersItemsCount()"
 		LB_GETCOUNT	= 0x18B
 
-		windows.SendMessage list_box LB_GETCOUNT 0 0 --return
+		windows.sendMessage list_box LB_GETCOUNT 0 0 --return
 	),
 
 	/** Get slected items
 	  *
 	  * @return array of selected items indexes
 	 */
-	function getSlectedItems items_count =
+	function _getSlectedItems items_count =
 	(
-		--format "\n"; print "CommandPanel_v.getSlectedItems()"
+		--format "\n"; print "CommandPanel_v._getSlectedItems()"
 		LB_GETSEL	= 0x187
 
-		for i=0 to items_count-1 where (windows.SendMessage  this.list_box  LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
+		for i=0 to items_count-1 where ( windows.sendMessage  this.list_box  LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
+	),
+
+	/** Get items state
+	  *
+	  * @return array of selected items indexes
+	 */
+	function _getItemsStates items_count =
+	(
+		--format "\n"; print "CommandPanel_v._getSlectedItems()"
+		LB_GETSEL	= 0x187
+
+		for i=0 to items_count-1 collect ( windows.sendMessage  this.list_box  LB_GETSEL i 0)
 	),
 
 	/** Get all modifier stack items
@@ -109,7 +130,7 @@ struct CommandPanel_v
 
 	/** Get command panel
 	 */
-	function _getCommandPanelHWND =
+	function _setCommandPanelHWND =
 	(
 		local g = (dotNetClass "Autodesk.Max.GlobalInterface").Instance
 		local r  = g.coreinterface7.CommandPanelRollup
@@ -121,7 +142,7 @@ struct CommandPanel_v
 
 			for i = 1 to 6 do
 			(
-				dialog_hwnd = uiaccessor.getparentwindow dialog_hwnd
+				dialog_hwnd = UIAccessor.GetParentWindow dialog_hwnd
 			)
 		)
 		else
@@ -129,7 +150,7 @@ struct CommandPanel_v
 			dialog_hwnd = r.Hwnd
 			for i = 1 to 3 do
 			(
-				dialog_hwnd = uiaccessor.getparentwindow dialog_hwnd
+				dialog_hwnd = UIAccessor.GetParentWindow dialog_hwnd
 			)
 
 		)
@@ -176,9 +197,9 @@ struct CommandPanel_v
 	 */
 	on create do
 	(
-		this._getCommandPanelHWND()
+		this._setCommandPanelHWND()
 
-		this.getListboxHWND()
+		this._setListboxHWND()
 
 		--format "\n"; print "CommandPanel.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
