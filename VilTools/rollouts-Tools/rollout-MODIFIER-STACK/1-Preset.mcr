@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ModStackPreset/ModStackPreset.ms" )	-- "./Lib/ModStackPreset/ModStackPreset.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/ModStackPreset/ModStackPreset.ms" )	-- "./Lib/ModStackPreset/ModStackPreset.ms"
 
 /*
 *
@@ -8,7 +8,7 @@ category:	"_Modifiers"
 buttonText:	"Save"
 tooltip:	"Save default preset of current object in Modifier Stack"
 (
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr"
 
 	max modify mode
 
@@ -36,7 +36,7 @@ buttonText:	"Load"
 tooltip:	"Load default preset of current object in Modifier Stack"
 (
 
-	filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
+	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
 
 	if ( currMod = modPanel.getCurrentObject() ) != undefined then
 	(
@@ -61,7 +61,7 @@ buttonText:	"Open Ini"
 tooltip:	"Open ini file"
 (
 
-	filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
+	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
 	max modify mode
 
 	if ( currModObj = modPanel.getCurrentObject() ) != undefined then
@@ -92,7 +92,7 @@ buttonText:	"Open Ini"
 tooltip:	"Openini file folder"
 (
 
-	filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
+	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
 	max modify mode
 
 	if ( currModObj = modPanel.getCurrentObject() ) != undefined then

@@ -7,6 +7,43 @@ struct CommandPanel_v
 	/* properties */
 	hwnd,	-- Command panel HWND
 	list_box,  	-- modifier stack HWND
+	items_count,
+
+	/* lsitbox commands */
+	LB_GETSEL	= 0x187,
+	LB_SETSEL = 0x0185,
+	LB_GETCOUNT	= 0x18B,
+	LB_GETTEXT = 0x189,
+	LB_GETTEXTLEN = 0x18A,
+
+	/** Toggle modifiers
+	 *
+	 *  @param obj
+	 *  @param boolean state desired state of modifiers
+	 *  @param #ALL|#SELECTED
+	 *
+	 */
+	function toggleModifiers obj state which =
+	(
+		format "\n"; print "CommandPanel_v.toggleModifiers()"
+
+		if getCommandPanelTaskMode()!= #modify then
+			max modify mode
+
+		if which == #ALL then
+			this.selectAll true
+
+		items_count = this._getModifiersItemsCount()
+
+		selected_items = this._getSlectedItems()
+
+		for modifier_index in this.getSelectedModifiers(obj) do
+			obj.modifiers[modifier_index].enabled = state
+
+		modPanel.setCurrentObject( modPanel.getCurrentObject() ) -- refresh modifier stack
+
+		this.selectItem (true) (selected_items)
+	),
 
 	/* dependency */
 	/* reference */
@@ -17,9 +54,6 @@ struct CommandPanel_v
 	(
 		--format "\n"; print "CommandPanel_v.getSelectedModifiers()"
 
-		items_count = this._getModifiersItemsCount()
-
-		--selected = this._getSlectedItems(items_count)
 
 		states = this._getItemsStates(items_count)
 
@@ -31,6 +65,50 @@ struct CommandPanel_v
 
 	),
 
+	/** Select item
+	  *
+	  * @param boolean	state desired state of modifiers
+	  * @index integer|#(integer)|#all	which index, starts at 1
+
+	 */
+	function selectItem state which =
+	(
+		--format "\n"; print "CommandPanel_v.select()"
+		--format "index = % \n" index
+
+		if classOf which == Array then
+			for index in which do
+				this._selectItem state (index - 1)
+
+		else
+			this._selectItem state (if which == #ALL then -1 else which )
+
+	),
+
+	/** Select item
+	  *
+	  * @param boolean 	state desired state of modifiers
+	  * @param integer|-1	index of select item, if -1 then all are selected
+
+	 */
+	function _selectItem state index =
+	(
+		--format "\n"; print "CommandPanel_v.select()"
+		--format "index = % \n" index
+
+		windows.sendMessage this.list_box LB_SETSEL state index
+	),
+
+
+	/** Select
+	 */
+	function selectAll state =
+	(
+		--format "\n"; print "CommandPanel_v.select()"
+		windows.sendMessage this.list_box LB_SETSEL state -1
+
+	),
+
 	--private
 
 	/** Get selected modifiers
@@ -39,7 +117,7 @@ struct CommandPanel_v
 	(
 		modifier_indexes = #()
 
-		format "\n"; print "CommandPanel_v._getSelectedModifiers()"
+		--format "\n"; print "CommandPanel_v._getSelectedModifiers()"
 
 		for modifier_index = 1 to modifers.count do
 		(
@@ -71,7 +149,6 @@ struct CommandPanel_v
 	function _getModifiersItemsCount =
 	(
 		--format "\n"; print "CommandPanel_v._getModifiersItemsCount()"
-		LB_GETCOUNT	= 0x18B
 
 		windows.sendMessage list_box LB_GETCOUNT 0 0 --return
 	),
@@ -80,12 +157,11 @@ struct CommandPanel_v
 	  *
 	  * @return array of selected items indexes
 	 */
-	function _getSlectedItems items_count =
+	function _getSlectedItems =
 	(
 		--format "\n"; print "CommandPanel_v._getSlectedItems()"
-		LB_GETSEL	= 0x187
 
-		for i=0 to items_count-1 where ( windows.sendMessage  this.list_box  LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
+		for i=0 to items_count - 1 where ( windows.sendMessage this.list_box LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
 	),
 
 	/** Get items state
@@ -95,8 +171,6 @@ struct CommandPanel_v
 	function _getItemsStates items_count =
 	(
 		--format "\n"; print "CommandPanel_v._getSlectedItems()"
-		LB_GETSEL	= 0x187
-
 		for i=0 to items_count-1 collect ( windows.sendMessage  this.list_box  LB_GETSEL i 0)
 	),
 
@@ -115,8 +189,6 @@ struct CommandPanel_v
 	  */
 	fn getListBoxItemText i =
 	(
-		local LB_GETTEXT = 0x189
-		local LB_GETTEXTLEN = 0x18A
 		local marshal = dotNetClass "System.Runtime.InteropServices.Marshal"
 
 		local len = windows.sendMessage this.list_box LB_GETTEXTLEN i 0
@@ -188,9 +260,6 @@ struct CommandPanel_v
 
 			CommandPanelHWND -- return
 		)
-
-
-
 	),
 
 	/**

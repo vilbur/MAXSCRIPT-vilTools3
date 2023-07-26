@@ -1,55 +1,79 @@
 
 filein( getFilenamePath(getSourceFileName()) + "/CommandPanel/CommandPanel.ms" ) -- "./CommandPanel/CommandPanel.ms"
 
+
+
 /**
  */
-macroscript	modifiers_selected_modifiers_enable
+macroscript	modifiers_modifiers_enable_selected
 category:	"_Modifier Stack"
-buttontext:	"Enable selected"
+buttontext:	"Enable"
 toolTip:	"Enable selected modifiers"
-icon:	"menu:true"
+icon:	"menu:toolTip"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
 
-	obj = selection[1]
+	on execute do
+		(CommandPanel_v()).toggleModifiers( selection[1] )( true )( #SELECTED )
 
-	CommandPanel 	= CommandPanel_v()
 
-	selected_modifiers = CommandPanel.getSelectedModifiers(obj)
-
-	for modifier_index in selected_modifiers do
-		obj.modifiers[modifier_index].enabled = true
-
-	modPanel.setCurrentObject( modPanel.getCurrentObject() ) -- refresh modifier stack
+	on AltExecute type do
+		macros.run "_Modifier Stack" "modifiers_modifiers_enable_all"
 )
-
 
 /**
  */
-macroscript	modifiers_selected_modifiers_disable
+macroscript	modifiers_modifiers_enable_all
 category:	"_Modifier Stack"
-buttontext:	"Disable selected"
-toolTip:	"Disable selected modifiers"
-icon:	"menu:true"
+buttontext:	"Enable"
+toolTip:	"Enable All modifiers"
+--icon:	"menu:toolTip"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
 
-	obj = selection[1]
-
-	CommandPanel 	= CommandPanel_v()
-
-	selected_modifiers = CommandPanel.getSelectedModifiers(obj)
-
-	for modifier_index in selected_modifiers do
-		obj.modifiers[modifier_index].enabled = false
-
-	modPanel.setCurrentObject( modPanel.getCurrentObject() ) -- refresh modifier stack
+	on execute do
+		(CommandPanel_v()).toggleModifiers( selection[1] )( true )( #ALL )
 )
 
+/**
+ */
+macroscript	modifiers_modifiers_disable_selected
+category:	"_Modifier Stack"
+buttontext:	"Disable"
+toolTip:	"Disable selected modifiers"
+icon:	"menu:toolTip"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
+
+
+	on execute do
+		(CommandPanel_v()).toggleModifiers( selection[1] )( false )( #SELECTED )
+
+	on AltExecute type do
+		macros.run "_Modifier Stack" "modifiers_modifiers_disable_all"
+)
+
+/**
+ */
+macroscript	modifiers_modifiers_disable_all
+category:	"_Modifier Stack"
+buttontext:	"Disable"
+toolTip:	"Disable All modifiers"
+--icon:	"menu:toolTip"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
+
+	on execute do
+		(CommandPanel_v()).toggleModifiers( selection[1] )( false )( #ALL )
+)
 
 
 --/**
