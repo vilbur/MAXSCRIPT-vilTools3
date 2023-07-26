@@ -12,7 +12,7 @@ global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 ================================================================================*/
 function editQuad1 QuadMenu =
 (
-	EditPolyMenu2	= Menu_v("Context Edit Poly Tools 2")
+	EditPolyMenu1	= Menu_v("Context Edit Poly Tools 1")
 	SplineToolsMenu2	= Menu_v("Context Spline Tools 2")
 
 
@@ -23,12 +23,12 @@ function editQuad1 QuadMenu =
 	QuadMenu.addSeparator()
 
 
-	--QuadMenu.addMenu("_Epoly-Edit") --flat:false --index:1
+	--QuadMenu.addMenu("_Epoly-Edit")	--flat:false --index:1
 
-	QuadMenu.addMenu(EditPolyMenu2) --flat:false --index:1
+	QuadMenu.addMenu(EditPolyMenu1)	--flat:false --index:1
 
 
-	--QuadMenu.addMenu(SnapToMenu) --flat:false --index:1
+	--QuadMenu.addMenu(SnapToMenu)	--flat:false --index:1
 
 )
 
@@ -39,9 +39,16 @@ function editQuad1 QuadMenu =
 ================================================================================*/
 function editQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("Transform            ")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	QuadMenu.setTitle("EDIT TOOLS            ")
+
+	HideMenu	= Menu_v("Context Hide/Unhide Tools")
+
+
+	QuadMenu.addMenu(HideMenu)	--flat:false --index:1
+
+
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 /*==============================================================================
@@ -51,18 +58,14 @@ function editQuad2 QuadMenu =
 ================================================================================*/
 function editQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("               Snap")
+	QuadMenu.setTitle("Selection            ")
 
 
-	SnapMenu 	= (QuadMenu_v("Snap")).Quads[1]
-
-	SnapMenu.moveItem ("Pivot") 4
-
-	QuadMenu.addMenu(SnapMenu.menu) --flat:false --index:1
+	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
 
 
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 /*==============================================================================
@@ -72,11 +75,15 @@ function editQuad3 QuadMenu =
 ================================================================================*/
 function editQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("               Selection")
+	QuadMenu.setTitle("               Edit")
+	EditPolyMenu2	= Menu_v("Context Edit Poly Tools 2")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 
-	QuadMenu.addMenu("_Wirecolor") --flat:false --index:1
+	QuadMenu.addMenu(EditPolyMenu2)	--flat:false --index:1
+
+	QuadMenu.addItem ("PolyTools") ("SwiftLoop") --index:1
+
 )
 
 

@@ -13,16 +13,19 @@ function editQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("Scene            ")
 
+	_SceneMenu	= Menu_v("_Scene")
 	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
 
-	--QuadMenu.addSeparator()
+	--_SceneMenu.addSeparator()
+	_SceneMenu.addSeparator index:#( 3, 5)
+	--_SceneMenu.addSeparator index:#( 3, 6 )
+	--_SceneMenu.addSeparator index:8
 
-	QuadMenu.addMenu("_Scene") --flat:false --index:1
+	QuadMenu.addMenu(_SceneMenu)	--flat:false --index:1
 
-	--QuadMenu.addSeparator()
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
-	--QuadMenu.addMenu(DefaulQuadtMenu.menu) --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
+	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1
 	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
 )
 
@@ -33,9 +36,9 @@ function editQuad1 QuadMenu =
 ================================================================================*/
 function editQuad2 QuadMenu =
 (
-	--QuadMenu.setTitle("Title            ")
+	QuadMenu.setTitle("Materials            ")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 /*==============================================================================
@@ -45,9 +48,9 @@ function editQuad2 QuadMenu =
 ================================================================================*/
 function editQuad3 QuadMenu =
 (
-	--QuadMenu.setTitle("               Title")
+	QuadMenu.setTitle("               UVW")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 /*==============================================================================
@@ -59,7 +62,7 @@ function editQuad4 QuadMenu =
 (
 	--QuadMenu.setTitle("               Title")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 
@@ -77,7 +80,7 @@ editQuad4(MainQuad.Quads[4])
 
 
 /* Set options */
---MainQuad.setRightClick() which:#  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+MainQuad.setRightClick which:#shiftAndControlPressed  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
 
 --MainQuad.showAllQuads()
 

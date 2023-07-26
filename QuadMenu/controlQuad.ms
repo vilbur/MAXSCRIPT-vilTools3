@@ -11,14 +11,14 @@ global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 ================================================================================*/
 function editQuad1 QuadMenu =
 (
-	--QuadMenu.setTitle("Title            ")
+	QuadMenu.setTitle("Transform            ")
 
-	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
+	--DefaulQuadMenu 	= (QuadMenuv("Title")).Quads[1]
 
 	--QuadMenu.addSeparator()
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
-	--QuadMenu.addMenu(DefaulQuadtMenu.menu) --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:true --index:1
+	--QuadMenu.addMenu(DefaulQuadMenu.menu)	--flat:true --index:1
 	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
 )
 
@@ -29,9 +29,66 @@ function editQuad1 QuadMenu =
 ================================================================================*/
 function editQuad2 QuadMenu =
 (
-	--QuadMenu.setTitle("Title            ")
+	QuadMenu.setTitle("Create            ")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	standard_primitives_plugin = #(
+		#hexasphere,
+		#quadsphere
+	)
+
+	compound_primitives = #(
+		#Loft,
+		#Boolean,
+		#ProBoolean,
+		#Procutter,
+		#Scatter,
+		#ShapeMerge
+	)
+
+	helpers_primitives = #(
+		#point,
+		#tape,
+		#protractor
+	)
+
+	shapes_primitives = #(
+		#lines,
+		#rectangle,
+		#Text,
+		#circle,
+		#Ellipse,
+		#ShapeMerge
+	)
+
+	CompoundsMenu	= (Menu_v("_Compound Primitives")).addItems("Objects Compounds")(compound_primitives)
+	HelpersMenu	= (Menu_v("_Helpers Primitives")).addItems("Objects Helpers")(helpers_primitives)
+	StandardPrimitiveMenu	= (Menu_v("Create - Standard.Primitives")).addItems("Objects Helpers")(standard_primitives_plugin)
+	ShapesMenu	= (Menu_v("_Shapes Primitives")).addItems("Objects Shapes")(shapes_primitives)
+
+	format "CompoundsMenu = % \n" CompoundsMenu
+	format "StandardPrimitiveMenu = % \n" StandardPrimitiveMenu
+	format "HelpersMenu = % \n" HelpersMenu
+
+
+	QuadMenu.addMenu(StandardPrimitiveMenu)	flat:false --index:1
+
+	QuadMenu.addSeparator()
+	QuadMenu.addMenu(ShapesMenu)	flat:false --index:1
+
+	QuadMenu.addSeparator()
+	QuadMenu.addMenu(HelpersMenu)	flat:false --index:1
+
+	QuadMenu.addSeparator()
+	QuadMenu.addMenu(CompoundsMenu)	flat:false --index:1
+
+
+	--QuadMenu.addSeparator()
+	--QuadMenu.addMenu("Create - Shapes")	--flat:true --index:1
+
+	--QuadMenu.addSeparator()
+	--QuadMenu.addMenu("Create - Helpers")	--flat:true --index:1
+
+
 )
 
 /*==============================================================================
@@ -41,9 +98,14 @@ function editQuad2 QuadMenu =
 ================================================================================*/
 function editQuad3 QuadMenu =
 (
-	--QuadMenu.setTitle("               Title")
+	--format "\n"; print "controlQuad.editQuad3()"
+	QuadMenu.setTitle("               Pivot")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+
+
+	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
+
+
 )
 
 /*==============================================================================
@@ -53,9 +115,15 @@ function editQuad3 QuadMenu =
 ================================================================================*/
 function editQuad4 QuadMenu =
 (
-	--QuadMenu.setTitle("               Title")
+	QuadMenu.setTitle(" Snap           ")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	SnapMenu 	= (QuadMenu_v("Snap")).Quads[1]
+
+	SnapMenu.moveItem ("Pivot") 4
+
+	QuadMenu.addMenu(SnapMenu.menu)	--flat:true --index:1
+
+	--QuadMenu.addMenu("MenuName")	--flat:true --index:1
 )
 
 
@@ -66,14 +134,14 @@ function editQuad4 QuadMenu =
 ================================================================================*/
 
 
-editQuad1(MainQuad.Quads[1])
+--editQuad1(MainQuad.Quads[1])
 editQuad2(MainQuad.Quads[2])
-editQuad3(MainQuad.Quads[3])
-editQuad4(MainQuad.Quads[4])
+--editQuad3(MainQuad.Quads[3])
+--editQuad4(MainQuad.Quads[4])
 
 
 /* Set options */
---MainQuad.setRightClick() which:#  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+MainQuad.setRightClick which:#controlPressed  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
 
 --MainQuad.showAllQuads()
 

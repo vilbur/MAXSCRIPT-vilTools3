@@ -11,14 +11,20 @@ global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 ================================================================================*/
 function editQuad1 QuadMenu =
 (
-	--QuadMenu.setTitle("Title            ")
+	QuadMenu.setTitle("Modifiers            ")
+
+	ModifierStackMenu	= Menu_v("_Modifier Stack")
+
+	--LayersVisibilityMenu.addSeparator index:#( 5, 3 )
+
+	QuadMenu.addMenu(ModifierStackMenu)	--flat:false --index:1
 
 	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
 
 	--QuadMenu.addSeparator()
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
-	--QuadMenu.addMenu(DefaulQuadtMenu.menu) --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
+	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1
 	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
 )
 
@@ -29,9 +35,9 @@ function editQuad1 QuadMenu =
 ================================================================================*/
 function editQuad2 QuadMenu =
 (
-	--QuadMenu.setTitle("Title            ")
+	QuadMenu.setTitle("Instances            ")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 /*==============================================================================
@@ -41,9 +47,21 @@ function editQuad2 QuadMenu =
 ================================================================================*/
 function editQuad3 QuadMenu =
 (
-	--QuadMenu.setTitle("               Title")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	QuadMenu.setTitle("               Layers")
+
+	LayersMenu	= Menu_v("_Layers")
+	LayersVisibilityMenu	= Menu_v("_Layers Visibility")
+
+	LayersVisibilityMenu.addSeparator index:#( 5, 3 )
+
+
+	QuadMenu.addMenu(LayersVisibilityMenu)	--flat:false --index:1
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu(LayersMenu)	--flat:false --index:1
+
 )
 
 /*==============================================================================
@@ -53,9 +71,9 @@ function editQuad3 QuadMenu =
 ================================================================================*/
 function editQuad4 QuadMenu =
 (
-	--QuadMenu.setTitle("               Title")
+	QuadMenu.setTitle("               Group")
 
-	--QuadMenu.addMenu("MenuName") --flat:false --index:1
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 
@@ -73,7 +91,7 @@ editQuad4(MainQuad.Quads[4])
 
 
 /* Set options */
---MainQuad.setRightClick() --which:  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+MainQuad.setRightClick which:#shiftPressed  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
 
 --MainQuad.showAllQuads()
 

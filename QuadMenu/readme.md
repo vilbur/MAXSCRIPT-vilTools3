@@ -15,15 +15,15 @@
 	- Edit oher object types
 
 
-1. ### TRANSFORM
-	- Tools
-	- Axises
-
-1. ### SNAP
+1. ### EDIT TOOLS
+	- Hide Unhide Poly
 
 1. ### SELECTION
 	- Wirecolor
 	- Rename
+
+1. ### EDIT
+	- Edit Poly
 
 <br>
 
@@ -33,10 +33,16 @@
 
 ## Control Quad
 
-1. ### TOOLS
+
+1. ### TRANSFORM
+	- Axises
+
+1. ### CREATE OBJECTS
+
 1. ### PIVOT
-1. ### LAYERS
-1. ### VISIBILITY
+
+1. ### SNAP
+
 
 
 <br>
@@ -48,10 +54,9 @@
 ## Shift Quad
 
 1. ### MODIFIERS
-1. ### INSTANCES
+1. ### VISIBILITY
+1. ### LAYERS
 1. ### GROUP
-1. ### MODIFIERS
-
 
 <br>
 
@@ -64,8 +69,6 @@
 
 1. ### VIEWPORTS
 1. ### INSTANCES
-1. ### GROUP
-1. ### CREATE OBJECT
 
 
 <br>
