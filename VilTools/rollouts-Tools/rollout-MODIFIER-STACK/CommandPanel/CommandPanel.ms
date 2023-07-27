@@ -3,11 +3,12 @@
 struct CommandPanel_v
 (
 	/* construct */
-
-	/* properties */
 	hwnd,	-- Command panel HWND
 	list_box,  	-- modifier stack HWND
+
+	/* properties */
 	items_count,
+
 
 	/* lsitbox commands */
 	LB_GETSEL	= 0x187,
@@ -23,22 +24,20 @@ struct CommandPanel_v
 	 *  @param #ALL|#SELECTED
 	 *
 	 */
-	function toggleModifiers obj state which =
+	function toggleModifiers modifiers state which =
 	(
-		format "\n"; print "CommandPanel_v.toggleModifiers()"
-
+		--format "\n"; print "CommandPanel_v.toggleModifiers()"
 		if getCommandPanelTaskMode()!= #modify then
 			max modify mode
 
 		if which == #ALL then
 			this.selectAll true
 
-		items_count = this._getModifiersItemsCount()
 
 		selected_items = this._getSlectedItems()
 
-		for modifier_index in this.getSelectedModifiers(obj) do
-			obj.modifiers[modifier_index].enabled = state
+		for modifier_index in this.getSelectedModifiers(modifiers) do
+			modifiers[modifier_index].enabled = state
 
 		modPanel.setCurrentObject( modPanel.getCurrentObject() ) -- refresh modifier stack
 
@@ -48,22 +47,47 @@ struct CommandPanel_v
 	/* dependency */
 	/* reference */
 	/* inhered */
+
 	/** Get selected modifiers
 	 */
-	function getSelectedModifiers obj =
+	function getSelectedModifiers modifiers =
 	(
 		--format "\n"; print "CommandPanel_v.getSelectedModifiers()"
 
+		selection_states = this._getItemsSelectionStates()
 
-		states = this._getItemsStates(items_count)
+		all_items = this._getAllItems()
 
-		all_items = this._getAllModifierStackItems(items_count)
-
-		modifers = for _mod in obj.modifiers collect _mod
-
-		this._getSelectedModifiers (modifers) (all_items) (states)
-
+		this._getSelectedModifiers (modifiers) (all_items) (selection_states)
 	),
+
+	/** Get indexes of modifiers items in lisbox
+	  *
+	  * @param array modifiers in stack
+	  *
+	  * @return #(integer)  E.G.: #( 1, 2, 5)
+	 */
+	function getModifiersListboxIndex modifiers =
+	(
+		--format "\n"; print "CommandPanel_v.getModifiersListboxIndex()"
+		modifier_indexes = #()
+
+		all_items = this._getAllItems()
+
+		--modifiers = for _mod in obj.modifiers collect _mod
+
+		for modifier_index = 1 to modifiers.count do
+		(
+			item_index = findItem all_items modifiers[modifier_index].name
+
+			all_items[item_index] = undefined
+
+			append modifier_indexes item_index
+		)
+
+		modifier_indexes --return
+	),
+
 
 	/** Select item
 	  *
@@ -82,7 +106,6 @@ struct CommandPanel_v
 
 		else
 			this._selectItem state (if which == #ALL then -1 else which )
-
 	),
 
 	/** Select item
@@ -113,7 +136,7 @@ struct CommandPanel_v
 
 	/** Get selected modifiers
 	 */
-	function _getSelectedModifiers modifers all_items states =
+	function _getSelectedModifiers modifers all_items selection_states =
 	(
 		modifier_indexes = #()
 
@@ -121,15 +144,12 @@ struct CommandPanel_v
 
 		for modifier_index = 1 to modifers.count do
 		(
-			_mod = modifers[modifier_index]
-
-			item_index = findItem all_items _mod.name
+			item_index = findItem all_items modifers[modifier_index].name
 
 			all_items[item_index] = undefined
 
-			if states[item_index] == 1 then
+			if selection_states[item_index] == 1 then
 				append modifier_indexes modifier_index
-
 		)
 
 		modifier_indexes --return
@@ -146,14 +166,14 @@ struct CommandPanel_v
 
 	/** Get modifier items count
 	 */
-	function _getModifiersItemsCount =
+	function _setModifiersItemsCount =
 	(
 		--format "\n"; print "CommandPanel_v._getModifiersItemsCount()"
 
-		windows.sendMessage list_box LB_GETCOUNT 0 0 --return
+		items_count = windows.sendMessage list_box LB_GETCOUNT 0 0 --return
 	),
 
-	/** Get slected items
+/** Get slected items
 	  *
 	  * @return array of selected items indexes
 	 */
@@ -168,7 +188,7 @@ struct CommandPanel_v
 	  *
 	  * @return array of selected items indexes
 	 */
-	function _getItemsStates items_count =
+	function _getItemsSelectionStates =
 	(
 		--format "\n"; print "CommandPanel_v._getSlectedItems()"
 		for i=0 to items_count-1 collect ( windows.sendMessage  this.list_box  LB_GETSEL i 0)
@@ -176,7 +196,7 @@ struct CommandPanel_v
 
 	/** Get all modifier stack items
 	 */
-	function _getAllModifierStackItems items_count =
+	function _getAllItems =
 	(
 		--format "\n"; print "CommandPanel_v.getAllModifierStackItems()"
 
@@ -269,6 +289,8 @@ struct CommandPanel_v
 		this._setCommandPanelHWND()
 
 		this._setListboxHWND()
+
+		this._setModifiersItemsCount()
 
 		--format "\n"; print "CommandPanel.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
