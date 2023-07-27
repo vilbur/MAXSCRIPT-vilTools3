@@ -1,4 +1,4 @@
-
+--filein @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EDIT-POLY ✅\Subobject\Subobject.ms"
 /*
   * IMMPORTANT:	Subobject.ms must be included in folder: "{MaxRooot}/stdplugs/stdscripts/"
   *	Otherwise commands does not work on Max start up before vilTools are executed.
@@ -17,6 +17,7 @@ category:	"_Subobject"
 buttonText:	"Enter 1"
 tooltip:	"Enter to subobject 1"
 (
+	format "EventFired = % \n" EventFired
 	(Subobject_v()).enterOrQuitSubobject 1
 )
 
@@ -25,6 +26,7 @@ category:	"_Subobject"
 buttonText:	"Enter 2"
 tooltip:	"Enter to subobject 2"
 (
+	format "EventFired = % \n" EventFired
 	(Subobject_v()).enterOrQuitSubobject 2
 )
 
@@ -33,6 +35,7 @@ category:	"_Subobject"
 buttonText:	"Enter 3"
 tooltip:	"Enter to subobject 3"
 (
+	format "EventFired = % \n" EventFired
 	(Subobject_v()).enterOrQuitSubobject 3
 )
 
@@ -41,6 +44,7 @@ category:	"_Subobject"
 buttonText:	"Enter 4"
 tooltip:	"Enter to subobject 4"
 (
+	format "EventFired = % \n" EventFired
 	(Subobject_v()).enterOrQuitSubobject 4
 )
 
@@ -49,6 +53,7 @@ category:	"_Subobject"
 buttonText:	"Enter 5"
 tooltip:	"Enter to subobject 5"
 (
+	format "EventFired = % \n" EventFired
 	(Subobject_v()).enterOrQuitSubobject 5
 )
 
@@ -57,6 +62,6 @@ category:	"_Subobject"
 buttonText:	"Enter circle"
 tooltip:	"Circle subobjects  1, 2, 4"
 (
+	format "EventFired = % \n" EventFired
 	(Subobject_v()).circle #( 1, 2, 4)
 )
-

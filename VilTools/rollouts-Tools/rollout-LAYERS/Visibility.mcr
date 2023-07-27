@@ -1,114 +1,23 @@
-filein( getFilenamePath(getSourceFileName()) + "/../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	-- "./../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/toggleLayersByPrefix.ms" ) -- "./Lib/toggleLayersByPrefix.ms"
-
-/*------------------------------------------------------------------------------
-	ISOLATE SELECTION
---------------------------------------------------------------------------------*/
---/*
---*/
---macroscript	visibility_only_layers_of_selection
---category:	"_Visibility"
---buttontext:	"Selected"
---toolTip:	"Show only layers of selected objects"
-----icon:	"#(path, index)"
---(
---	undo "Show Only Layers Of Selection" on
---	(
---		(LayersManager_v()).isolateLayers( selection )
---	)
---)
-
-/*------------------------------------------------------------------------------
-	ON\OFF ALL
---------------------------------------------------------------------------------*/
-/**
- *
- */
-macroscript	visibility_all_on
-category:	"_Layers"
-buttontext:	"ALL ON \ OFF"
-toolTip:	"All layers On \ Off"
---icon:	"Tooltip:" --"#(path, index)"
-(
-	all_layers = for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i
-
-	for _layer in all_layers do
-		_layer.on = true
-
-)
-/**
- *
- */
-macroscript	visibility_all_off
-category:	"_Layers"
-buttontext:	"ALL ON \ OFF"
-toolTip:	"All layers On \ Off"
---icon:	"Tooltip:" --"#(path, index)"
-(
-	all_layers = for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i
-
-	for _layer in all_layers do
-		_layer.on = false
-)
+--filein( getFilenamePath(getSourceFileName()) + "/../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	-- "./../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/toggleLayersByPrefix.ms" ) -- "./Lib/toggleLayersByPrefix.ms"
 
 
 
 
-
-
-
-
-
-
-
-/**
-  *
-  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
- */
-macroscript	_layers_manager_toggle_same_prefix_on
-category:	"_Layers"
-buttontext:	"ON\OFF prefix"
-tooltip:	"Layer by prefix ON"
-icon:	"Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\toggleLayersByPrefix.ms"
-
-	toggleLayersByPrefix(true)
-)
-
-/**
-  *
-  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
- */
-macroscript	_layers_manager_toggle_same_prefix_off
-category:	"_Layers"
-buttontext:	"ON\OFF prefix"
-tooltip:	"Layer by prefix OFF"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\toggleLayersByPrefix.ms"
-
-	toggleLayersByPrefix(false)
-)
 
 
 /*------------------------------------------------------------------------------
-	ON\OFF BY OBJECTS
---------------------------------------------------------------------------------*/
+	HIDE \ UNHIDE LAYER BY SELECTION
+------------------------------------------------------------------------------*/
 
 /**
  *
  */
-macroscript	visibility_on_by_selection
-category:	"_Layers"
-buttontext:	"Off Others"
-toolTip:	"Hide all in same tree"
-icon:	"Tooltip:Turn off other layers then selected layers\objects.\n"
+macroscript	layers_off_unselected
+category:	"_Layers Visibility"
+buttontext:	"Hide unselected"
+toolTip:	"Hide unselected layers"
+icon:	"menu:true|Tooltip:Turn off other layers then selected layers\objects.\n"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
@@ -120,19 +29,41 @@ icon:	"Tooltip:Turn off other layers then selected layers\objects.\n"
 
 	format "selected_layers = % \n" selected_layers
 
-	undo "Layer Off others" on
+	undo "Hide unselected layers" on
 		layers_in_hierarchy = LayersManager.setVisibleTree( selected_layers )
 
 
 	LayersManager.expandLayersByObejcts( selection )
 
 	/* HIDE OBEJCTS IN PARENT LAYERS
-		--parent_layers = LayersManager.difference( layers_in_hierarchy )(selected_layers)
+		parent_layers = LayersManager.difference( layers_in_hierarchy )(selected_layers)
 
-		--LayersManager.setObjectsVisibility(parent_layers)(false)
+		LayersManager.setObjectsVisibility(parent_layers)(false)
 	*/
 
 	LayersManager.setCurrent( selected_layers )
+
+)
+
+/**
+ *
+ */
+macroscript	layers_by_selection_off_selected
+category:	"_Layers Visibility"
+buttontext:	"Hide selected"
+toolTip:	"Hide selected layers"
+icon:	"menu:true|Tooltip:Turn off selected layers\objects.\n"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+
+	LayersManager = LayersManager_v()
+
+	selected_layers = LayersManager.getSelectLayersOrBySelection()
+
+	undo "Hide unselected layers" on
+		layers_in_hierarchy = LayersManager.setVisibility( selected_layers )(false)
 
 )
 
@@ -140,11 +71,11 @@ icon:	"Tooltip:Turn off other layers then selected layers\objects.\n"
 /**
  *
  */
-macroscript	visibility_on_by_selection_only_top_layers
-category:	"_Layers"
-buttontext:	"Off Others"
-toolTip:	"Hide other top layers"
---icon:	"Tooltip:" --"#(path, index)"
+macroscript	layers_off_unselected_top
+category:	"_Layers Visibility"
+buttontext:	"Hide unselected"
+toolTip:	"Hide unselected top layers"
+icon:	"menu:tooltip"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
@@ -159,182 +90,77 @@ toolTip:	"Hide other top layers"
 
 	top_layers_to_hide = LayersManager.difference (top_layers_all) (top_layers_selected)
 
-	undo "Layer Only Selection" on
+	undo "Hide unselected top layers" on
 		LayersManager.setVisibility (top_layers_to_hide) (false)
 
+	LayersManager.expandLayersByObejcts( selection )
+
+	LayersManager.setCurrent( selected_layers )
+)
+
+
+/*------------------------------------------------------------------------------
+	UNHIDE ALL LAYERS
+------------------------------------------------------------------------------*/
+/**
+ *
+ */
+macroscript	layers_all_on
+category:	"_Layers Visibility"
+buttontext:	"Hide\Unhide"
+toolTip:	"Unhide all layers"
+icon:	"menu:tooltip"
+(
+	LayersManager = LayersManager_v()
+
+	undo "Unhide all layers" on
+		LayersManager.setVisibility(LayersManager.getAllLayers())(true)
 )
 
 
 
---/**
--- *
--- */
---macroscript	_layers_test
---category:	"_Layers"
---buttontext:	"Test"
-----toolTip:	"On By Selection and hide obejcts in parent layers"
-----icon:	"Tooltip:" --"#(path, index)"
---(
---	clearListener()
---	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
---	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
---
---	LayersManager = LayersManager_v()
---
---	layers = LayersManager.getSelectedLayers()
---
---	for layer in layers do
---		format "layer.name = % \n" layer.name
---)
-
-
-
-
-
---/**
--- *
--- */
---macroscript	_layers_manager_turn_on
---category:	"_Layers"
---buttontext:	"Turn On"
---tooltip:	"Toggle visibility of selected layers in manager.\n\tActive layer is used if nothing is selected.\n\nIf layer is nested then turn on all its parents"
---(
---	--clearListener()
---	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Manage Layers.mcr"
---	on execute do
---	(
---
---		LayersManager = LayersManager_v()
---
---		selected_layers = getSelectedLayers()
---
---		if selected_layers.count == 0 then
---			selected_layers = #(LayerManager.current)
---
---		layers = selected_layers -- loop until bottom
---
---
---		/* LOOP HIERARCHY FROM BOTTOM TO TOP AND GET LAYERS */
---		for curent_layer in selected_layers do
---			while curent_layer.getParent() != undefined do
---				appendIfUnique layers (curent_layer = curent_layer.getParent())
---
---		for layer in layers do
---			layer.on = true
---	)
---)
-
-
---/*
---*/
---macroscript	visibility_off_selected
---category:	"_Layers"
---buttontext:	"Off Unselected"
---toolTip:	"Turn Off layers of unselcted obejcts"
-----icon:	"#(path, index)"
---(
---	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
---
---	undo "Off Unselected" on
---	(
---
---		(LayersManager_v()).isolateLayers( selection )
---
---		layers_of_selected_objects = makeUniqueArray (for obj in selection collect obj.layer.name)
---
---
---		--/* SHOW OBJECTS IN SELECTION */
---		--for obj in selection where obj.isHidden do obj.isHidden = false
---		--
---		--/* GET VISIBLE OBJECTS */
---		--visible_objects = for obj in objects where obj.isHidden == false collect obj
---		--
---		--/* ISOLATE SELECTION OF OTHER OBEJCTS IN LAYER */
---		--if selection.count != visible_objects.count then
---		--	IsolateSelection.EnterIsolateSelectionMode()
---
---		--macros.run "Scene Explorer" "SECollapseAll"
---
---		--macros.run "Scene Explorer" "SEExpandSelected"
---
---
---	)
---)
-
-
-
-
-
---/*
---*/
---macroscript	visibility_isolate_selection
---category:	"_Layers"
---buttontext:	"Isolate"
---toolTip:	"Isolate selected objects and hide other layers"
-----icon:	"#(path, index)"
---(
---	undo "Isolate Layers Of Selection" on
---	(
---		(LayersManager_v()).isolateLayers( selection )
---
---		layers_of_selected_objects = makeUniqueArray (for obj in selection collect obj.layer.name)
---
---		/* SHOW OBJECTS IN SELECTION */
---		for obj in selection where obj.isHidden do obj.isHidden = false
---
---		/* GET VISIBLE OBJECTS */
---		visible_objects = for obj in objects where obj.isHidden == false collect obj
---
---		/* ISOLATE SELECTION OF OTHER OBEJCTS IN LAYER */
---		if selection.count != visible_objects.count then
---			IsolateSelection.EnterIsolateSelectionMode()
---	)
---)
-
-
-
---/*
---*/
---macroscript	visibility_hide_selected
---category:	"_Visibility"
---buttontext:	"Hide"
---toolTip:	"Hide layers of selected objects"
-----icon:	"#(path, index)"
---(
---	--(Layer_v()).setAllLayersVisible true
---	messageBox "Hide layers of selected objects" title:"Rclick"  beep:false
---)
 
 /*------------------------------------------------------------------------------
-	SHOW ALL LAYER
---------------------------------------------------------------------------------*/
+	HIDE \ UNHIDE LAYER BY PREFIX
+------------------------------------------------------------------------------*/
 
---/*
---*/
---macroscript	visibility_unhide
---category:	"_Visibility"
---buttontext:	"All Layers"
---toolTip:	"Unhide all"
-----icon:	"#(path, index)"
---(
---	--(Layer_v()).setAllLayersVisible true
---	--for i = 0 to LayerManager.count - 1 do (LayerManager.getLayer i).on = true
---	for i = 0 to LayerManager.count - 1 do (LayerManager.getLayer i).on = true
---)
---
---/*
---*/
---macroscript	visibility_unhide_matching_name
---category:	"_Visibility"
---buttontext:	"All Layers"
---toolTip:	"Show Layers without '_' prefix or default layer"
-----icon:	"#(path, index)"
---(
---	pattern = "^_.*|^0$"
---	--pattern = ".*default.*"
---
---	local layer
---
---	for i = 0 to LayerManager.count - 1 where (_layer = LayerManager.getLayer i) != undefined do
---		_layer.on = not (( dotNetClass "System.Text.RegularExpressions.RegEx" ).match _layer.name pattern).success
---)
+
+/**
+  *
+  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
+ */
+macroscript	_layers_manager_toggle_same_prefix_on
+category:	"_Layers Visibility"
+buttontext:	"Hide\Unhide by prefix"
+tooltip:	"Unhide by layer prefix"
+icon:	"menu:tooltip|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\toggleLayersByPrefix.ms"
+
+	toggleLayersByPrefix(true)
+)
+
+/**
+  *
+  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
+ */
+macroscript	_layers_manager_toggle_same_prefix_off
+category:	"_Layers Visibility"
+buttontext:	"Hide\Unhide by prefix"
+tooltip:	"Hide by layer prefix"
+icon:	"menu:tooltip"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\toggleLayersByPrefix.ms"
+
+	toggleLayersByPrefix(false)
+)
+
+
+
+

@@ -1,6 +1,8 @@
 clearListener()
 
---content_dir = "VilTools"
+--RUN_ON_STARTUP = true
+
+content_dir = "VilTools"
 --content_dir = "/Rollouts-Test" -- DEV
 
 current_dir = getFilenamePath(getSourceFileName())
@@ -27,20 +29,25 @@ function importStdScripts =
 	filein_files = #(
 		"/rollout-SELECTION/Lib/Selection/Selection.ms",
 		"/rollout-TOOLS/Lib/ToolMode.ms",
-		"/rollout-SUBOBJECT/Subobject/Subobject.ms",
+		"/rollout-EDIT-POLY/Subobject/Subobject.ms",
 		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
-		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"	-- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
+		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)
 
-	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms"
+	for i = 1 to filein_files.count do
+		filein_files[i] =  rollouts_path + filein_files[i]
+
+	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms" -- "C:\Program Files\Autodesk\3ds Max 2023\stdplugs\stdscripts\viltools-startup.ms"
 
 	deleteFile stdscript_file_path
+
 	stdscript_file = createFile stdscript_file_path
 
 	for file_path in filein_files do
-		format "if doesFileExist \"%\" then %" (rollouts_path + file_path) ("filein( \""+(rollouts_path + file_path)+"\" )\n") to:stdscript_file
+		format "if doesFileExist \"%\" then\n\t%" file_path ("filein( \""+file_path+"\" )\n\n") to:stdscript_file
 
 	close stdscript_file
+
 	filein stdscript_file_path
 )
 
@@ -74,11 +81,11 @@ filein_files = #(
 	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
 
 	"/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" , -- Check if this is necessary to import, it should be imported with framework
-	"/VilTools/rollouts-Tools/rollout-EDIT-POLY ✅/Lib/Epoly.ms",
+	"/VilTools/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
 
 	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
 
-	"/VilTools/rollouts-Tools/rollout-MODIFIERS ⭐/Lib/Modifier/Modifier.ms",
+	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms",
 
 	"/VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms" -- "./VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms"
 
@@ -89,18 +96,16 @@ filein_files = #(
 filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
 
 
-
-/* ADD CALLBACK FILES */
+/* ADD CALLBACK FILES from "./CallBacks/" */
 for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:true do
-	for callback_file in getFiles (callback_subdir + "/*Callback.ms") do
+	for callback_file in getFiles (callback_subdir + "/*.ms") do
 		appendIfUnique filein_files callback_file
 
 
 /* FILE IN FILES */
 for file_path in filein_files do
---for file_path in filein_files where doesFileExist (file_path) do
 (
-	format "FILE IN FILE:	= % \n" (file_path)
+	--format "FILE IN: = % \n" (file_path)
 
 	filein( file_path)
 )
@@ -135,8 +140,7 @@ VILTOOLS.register()
 
 
 
-filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
-
+--filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/modifyQuadMenus.ms" ) -- "./QuadMenu/modifyQuadMenus.ms"
 
 
 /*------------------------------------------------------------------------------
@@ -147,7 +151,7 @@ filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/VilToolsQuadMenu.ms" )
 /* import when UI exists */
 try
 (
-	filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+      filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
 
 	--(NodeList_v()).loadNodes()
 
@@ -156,6 +160,6 @@ try
 	loadModifierDefaultsCallback()
 
 	nodeCreatedSetDefaultPropertiesCallback()
-()
+
 )
 catch()

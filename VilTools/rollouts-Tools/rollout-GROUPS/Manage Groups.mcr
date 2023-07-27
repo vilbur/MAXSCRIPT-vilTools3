@@ -3,6 +3,70 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupAttacher/GroupAttacher
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GroupCreator/GroupCreator.ms" ) -- "./Lib/GroupCreator/GroupCreator.ms"
 
 /*------------------------------------------------------------------------------
+	ATTACH
+--------------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+macroscript	group_attach_to_groups
+category:	"_Group"
+buttontext:	"Attach"
+toolTip:	"Attach selected objects to group\n\nWorks with instanced groups also."
+icon:	"across:4|menu:true"
+(
+
+	clearListener()
+	--format "EventFired = % \n" EventFired
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\ Manage Groups.mcr"
+
+	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
+
+	with undo "attach to group" on
+	(
+		--with redraw off
+		--(
+			GroupAttacher 	= GroupAttacher_v()
+--
+			GroupAttacher.attachSelectionToGroups()
+		--)
+
+		--redrawViews()
+	)
+)
+/*------------------------------------------------------------------------------
+	DETTACH
+--------------------------------------------------------------------------------*/
+/**
+ *
+ */
+macroscript	group_detach
+category:	"_Group"
+buttontext:	"Detach"
+toolTip:	"Detach selected objects from groups"
+icon:	"menu:true"
+(
+	--actionMan.executeAction 0 "40144"  -- Groups: Group Detach
+	format "EventFired = % \n" EventFired
+
+	with undo "Detach from groups" on
+
+	(
+		selected_nodes = for obj in selection where not isGroupHead obj collect obj
+
+		for _node in selected_nodes do
+			if _node.parent.parent != undefined then
+				_node.parent = _node.parent.parent
+			else
+				_node.parent = undefined
+
+		redrawViews()
+	)
+
+)
+
+/*------------------------------------------------------------------------------
 	CREATE GROUP
 --------------------------------------------------------------------------------*/
 /**
@@ -315,69 +379,7 @@ toolTip:	"Open\Close toggle selected groups"
 	--completeRedraw()
 
 )
-/*------------------------------------------------------------------------------
-	ATTACH
---------------------------------------------------------------------------------*/
 
-/**
- *
- */
-macroscript	group_attach_to_groups
-category:	"_Group"
-buttontext:	"Attach"
-toolTip:	"Attach selected objects to group\n\nWorks with instanced groups also."
-icon:	"across:4|menu:true"
-(
-
-	clearListener()
-	--format "EventFired = % \n" EventFired
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms"
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-GROUPS\ Manage Groups.mcr"
-
-	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-GROUPS\Lib\GroupAttacher\GroupAttacher.ms")
-
-	with undo "attach to group" on
-	(
-		--with redraw off
-		--(
-			GroupAttacher 	= GroupAttacher_v()
---
-			GroupAttacher.attachSelectionToGroups()
-		--)
-
-		--redrawViews()
-	)
-)
-/*------------------------------------------------------------------------------
-	ATTACH
---------------------------------------------------------------------------------*/
-/**
- *
- */
-macroscript	group_detach
-category:	"_Group"
-buttontext:	"Detach"
-toolTip:	"Detach selected objects from groups"
-icon:	"menu:true"
-(
-	--actionMan.executeAction 0 "40144"  -- Groups: Group Detach
-	format "EventFired = % \n" EventFired
-
-	with undo "Detach from groups" on
-
-	(
-		selected_nodes = for obj in selection where not isGroupHead obj collect obj
-
-		for _node in selected_nodes do
-			if _node.parent.parent != undefined then
-				_node.parent = _node.parent.parent
-			else
-				_node.parent = undefined
-
-		redrawViews()
-	)
-
-)
 
 --/**
 -- *

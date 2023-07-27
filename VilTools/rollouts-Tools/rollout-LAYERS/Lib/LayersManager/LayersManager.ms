@@ -12,17 +12,29 @@ struct LayersManager_v
 	/* reference */
 	/* inhered */
 
+	/** Open layer manager
+	 */
+	function openLayerManager =
+	(
+		--format "\n"; print "LayersManager_v.openLayerManager()"
+		LayerManager.editLayerByName ""
+	),
+
 	/** Get select layers
 	  *  1) By slection in layer manager
 	  *  2) By current obejcts selection if nothing is selected in layer manager
 	 */
 	function getSelectLayersOrBySelection =
 	(
-		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
+		format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
 		selected_layers = this.getSelectedLayers()
 
 		if selected_layers.count == 0 then
 			selected_layers = this.getLayersByObjects( selection )
+
+		for layer in selected_layers do
+			format "Selected: % \n" layer.name
+
 
 		selected_layers --return
 	),
@@ -301,6 +313,8 @@ struct LayersManager_v
 		--format "\n"; print "LayersManager.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
+
+		this.openLayerManager()
 	)
 
 )

@@ -20,7 +20,7 @@ function editQuad1 QuadMenu =
 
 	QuadMenu.addItem ("Modifier Stack") ("Convert_to_Poly") index:1
 
-	QuadMenu.addSeparator()
+	--QuadMenu.addSeparator()
 
 
 	--QuadMenu.addMenu("_Epoly-Edit")	--flat:false --index:1

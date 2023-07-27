@@ -1,3 +1,8 @@
+/*
+
+	THIS CODE SHOULD BE IN STRUCT PLACED ELSEWHERE
+
+*/
 
 
 all_macro_files = getFiles ( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/*.mcr" ) recurse:true  -- "./../../slot_properties.ini"

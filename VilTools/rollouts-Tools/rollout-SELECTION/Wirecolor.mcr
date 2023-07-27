@@ -4,52 +4,35 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )
 	SELECT BY WIRECOLOR
 --------------------------------------------------------------------------------*/
 
-/*
-*/
-macroscript	wirecolor_select
-category:	"_Selection"
-buttontext:	"Select"
-toolTip:	"Select objects by wirecolor"
---icon:	"#(path, index)"
-(
-	selection_colors = #()
-
-	for o in selection do appendIfUnique selection_colors o.wirecolor
-
-	select (for o in objects where findItem selection_colors o.wirecolor > 0 collect o)
-)
+--/*
+--*/
+--macroscript	wirecolor_select
+--category:	"_Wirecolor"
+--buttontext:	"Select"
+--toolTip:	"Select objects by wirecolor"
+--icon:	"menu:true"
+--(
+--	selection_colors = #()
+--
+--	for o in selection do appendIfUnique selection_colors o.wirecolor
+--
+--	select (for o in objects where findItem selection_colors o.wirecolor > 0 collect o)
+--)
 
 /*
 */
 macroscript	wirecolor_select_only_visible
-category:	"_Selection"
+category:	"_Wirecolor"
 buttontext:	"Select"
-toolTip:	"Select ONLY VISIBLE objects by wirecolor"
---icon:	"#(path, index)"
+toolTip:	"Select by wirecolor"
+icon:	"menu:tooltip"
 (
 	selection_colors = #()
 
 	for o in selection do appendIfUnique selection_colors o.wirecolor
 
-	select (for o in objects where findItem selection_colors o.wirecolor > 0  and  o.isNodeHidden == false and o.layer.on == true  collect o)
+	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
 )
-
-/*------------------------------------------------------------------------------
-	WIRECOLOR BY LAST OBJECT
---------------------------------------------------------------------------------*/
-
-macroscript	wirecolor_by_last
-category:	"_Selection"
-buttontext:	"Color By Last"
-toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
---icon:	"#(path, index)"
-(
-	undo "Wirecolor By Last" on
-	(
-		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
-	)
-)
-
 
 
 /*------------------------------------------------------------------------------
@@ -57,10 +40,10 @@ toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
 --------------------------------------------------------------------------------*/
 
 macroscript	wirecolor_random
-category:	"_Selection"
+category:	"_Wirecolor"
 buttontext:	"Random color"
 toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
-icon:	"tooltip:'Random wirecolor to selected object\n'"
+icon:	"menu:true|tooltip:Random wirecolor to selected object\n"
 (
 	--(Wirecolor_v()).randomize brightness:128
 	--(Wirecolor_v()).randomize brightness:#(64, 255)
@@ -90,10 +73,10 @@ icon:	"tooltip:'Random wirecolor to selected object\n'"
 /*
 */
 macroscript	wirecolor_random_menu
-category:	"_Selection"
+category:	"_Wirecolor"
 buttontext:	"Random color"
 toolTip:	"Color menu"
---icon:	"#(path, index)"
+icon:	"menu:true"
 (
 	_Color 	= Color_v()
 
@@ -105,4 +88,23 @@ toolTip:	"Color menu"
 		Menu.item (color_name) ( "(Wirecolor_v()).randomize col:#"+color_name + " hue:5 brightness:#(128, 255)	saturation:#(128, 255)" )
 
 	popUpMenu (Menu.create())
+)
+
+
+
+
+/*------------------------------------------------------------------------------
+	WIRECOLOR BY LAST OBJECT
+--------------------------------------------------------------------------------*/
+
+macroscript	wirecolor_by_last
+category:	"_Wirecolor"
+buttontext:	"Color By Last"
+toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
+--icon:	"#(path, index)"
+(
+	undo "Wirecolor By Last" on
+	(
+		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
+	)
 )

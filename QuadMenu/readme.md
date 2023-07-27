@@ -33,16 +33,13 @@
 
 ## Control Quad
 
-
-1. ### TRANSFORM
-	- Axises
+1. ### SNAP
 
 1. ### CREATE OBJECTS
 
+1. ### TRANSFORM
+
 1. ### PIVOT
-
-1. ### SNAP
-
 
 
 <br>

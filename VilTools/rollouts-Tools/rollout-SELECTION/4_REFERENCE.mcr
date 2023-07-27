@@ -31,7 +31,7 @@ macroscript	selection_make_references
 category:	"_Selection"
 buttontext:	"Re-reference"
 toolTip:	"Each object will be THE SAME reference."
-icon:	"tooltip:'Make references of selection.\nLast object in selection is master object.\n'"
+icon:	"tooltip:Make references of selection.\nLast object in selection is master object.\n"
 (
 	max create mode
 

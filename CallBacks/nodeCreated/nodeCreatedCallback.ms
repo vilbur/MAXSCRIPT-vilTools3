@@ -25,10 +25,10 @@ function nodeCreatedSetDefaultProperties =
 
 	print "nodeCreatedSetDefaultProperties()"
 
-	modObject = (callbacks.notificationParam())
+	--modObject = (callbacks.notificationParam())
 
-	format "modObject	= % \n" modObject
-		format "classOf modObject	= % \n" (classOf modObject)
+	--format "modObject	= % \n" modObject
+	--format "classOf modObject	= % \n" (classOf modObject)
 
 
 
@@ -47,13 +47,13 @@ function nodeCreatedSetDefaultProperties =
 		--default_preset_name = (classOf modObject) as string -- name of default preset is name class of modifier E.G.: "MeshSmooth"
 		--format "default_preset_name	= % \n" default_preset_name
 
-		ModStackPreset = ModStackPreset_v(modObject)
-
-		preset_name = ModStackPreset.getPresetName()
-		--format "ModifierPreset.getPresetName()	= % \n" (ModifierPreset.getPresetName())
+		--ModStackPreset = ModStackPreset_v(modObject)
 		--
-		if ModStackPreset.hasPreset( preset_name ) then
-			ModStackPreset.loadPreset( preset_name )
+		--preset_name = ModStackPreset.getPresetName()
+		----format "ModifierPreset.getPresetName()	= % \n" (ModifierPreset.getPresetName())
+		----
+		--if ModStackPreset.hasPreset( preset_name ) then
+		--	ModStackPreset.loadPreset( preset_name )
 	--)
 
 )

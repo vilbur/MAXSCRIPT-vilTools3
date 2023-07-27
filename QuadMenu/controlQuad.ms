@@ -11,15 +11,22 @@ global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 ================================================================================*/
 function editQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("Transform            ")
+	QuadMenu.setTitle(" Snap           ")
 
-	--DefaulQuadMenu 	= (QuadMenuv("Title")).Quads[1]
+	SnapQuadMenu 	= QuadMenu_v("Snap")
 
-	--QuadMenu.addSeparator()
+	SnapQuadMenu.Quads[1]
 
-	--QuadMenu.addMenu("MenuName")	--flat:true --index:1
-	--QuadMenu.addMenu(DefaulQuadMenu.menu)	--flat:true --index:1
-	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
+	SnapQuadMenu.Quads[1].moveItem ("Pivot") 4
+
+
+	snap_menus = #(
+		"Snaps",	 SnapQuadMenu.Quads[1],
+		"Snap Options",	 SnapQuadMenu.Quads[3]
+	)
+
+	QuadMenu.addMenus( snap_menus )	--flat:true --index:1
+
 )
 
 /*==============================================================================
@@ -27,14 +34,69 @@ function editQuad1 QuadMenu =
 	QUAD 2 - TOP - RIGHT
 
 ================================================================================*/
+
+/** Craete HoneycombPlane plugin object
+ *
+ */
+macroscript	HoneycombPlane
+category:	"Objects Primitives"
+buttontext:	"Honeycomb"
+toolTip:	"Create Honeycomb Plane"
+--icon:	"Menu:Tooltip"
+--icon:	"Tooltip:" --"#(path, index)"
+(
+	on execute do startObjectCreation HoneycombPlane
+)
+
+
 function editQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("Create            ")
+	--
+	--standard_primitives_plugin = #(
+	--	#hexasphere,
+	--	#quadsphere
+	--)
 
-	standard_primitives_plugin = #(
-		#hexasphere,
-		#quadsphere
+	primitives = #(
+		#(
+			#Plane,
+			#Box,
+			#Cylinder,
+			#Sphere,
+			#Teapot,
+			#HoneycombPlane
+
+		),
+		#(
+			#hexasphere,
+			#quadsphere,
+			#GeoSphere,
+			#ChamferBox,
+			#Tube,
+			#Torus,
+			#Cone,
+			#Pyramid,
+			#TextPlus
+		),
+		#(
+			#C_Ext,
+			#Capsule,
+			#ChamferCyl,
+			#Gengon,
+			#Hedra,
+			#Hose,
+			#L_Ext,
+			#OilTank,
+			#Prism,
+			#Quadpatch,
+			#RingWave,
+			#Spindle,
+			#Torus_Knot,
+			#Tripatch
+		)
 	)
+
 
 	compound_primitives = #(
 		#Loft,
@@ -60,34 +122,17 @@ function editQuad2 QuadMenu =
 		#ShapeMerge
 	)
 
-	CompoundsMenu	= (Menu_v("_Compound Primitives")).addItems("Objects Compounds")(compound_primitives)
-	HelpersMenu	= (Menu_v("_Helpers Primitives")).addItems("Objects Helpers")(helpers_primitives)
-	StandardPrimitiveMenu	= (Menu_v("Create - Standard.Primitives")).addItems("Objects Helpers")(standard_primitives_plugin)
-	ShapesMenu	= (Menu_v("_Shapes Primitives")).addItems("Objects Shapes")(shapes_primitives)
+	menus = #(
 
-	format "CompoundsMenu = % \n" CompoundsMenu
-	format "StandardPrimitiveMenu = % \n" StandardPrimitiveMenu
-	format "HelpersMenu = % \n" HelpersMenu
+		"Standard Primitives",	(Menu_v("_Create Standard Primitives")	flat:true ).addItems("Objects Primitives")(primitives[1]),
+		"Shapes",	 (Menu_v("_Shapes Primitives")	flat:true).addItems("Objects Shapes")(shapes_primitives),
+		"Helpers",	 (Menu_v("_Helpers Primitives")	flat:true).addItems("Objects Helpers")(helpers_primitives),
+		"Other Primitives",	(Menu_v("_Create Other Primitives")	flat:false).addItems("Objects Primitives")(primitives[2]),
+		"Extend Primitives",	(Menu_v("_Create Extended Primitives")	flat:false).addItems("Objects Primitives")(primitives[3]),
+		"Compounds",	 (Menu_v("_Compound Primitives")	flat:false).addItems("Objects Compounds")(compound_primitives)
+	)
 
-
-	QuadMenu.addMenu(StandardPrimitiveMenu)	flat:false --index:1
-
-	QuadMenu.addSeparator()
-	QuadMenu.addMenu(ShapesMenu)	flat:false --index:1
-
-	QuadMenu.addSeparator()
-	QuadMenu.addMenu(HelpersMenu)	flat:false --index:1
-
-	QuadMenu.addSeparator()
-	QuadMenu.addMenu(CompoundsMenu)	flat:false --index:1
-
-
-	--QuadMenu.addSeparator()
-	--QuadMenu.addMenu("Create - Shapes")	--flat:true --index:1
-
-	--QuadMenu.addSeparator()
-	--QuadMenu.addMenu("Create - Helpers")	--flat:true --index:1
-
+	QuadMenu.addMenus(menus) separator:true
 
 )
 
@@ -102,6 +147,7 @@ function editQuad3 QuadMenu =
 	QuadMenu.setTitle("               Pivot")
 
 
+	QuadMenu.addMenu("_Pivot")	--flat:true --index:1
 
 	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
 
@@ -115,15 +161,16 @@ function editQuad3 QuadMenu =
 ================================================================================*/
 function editQuad4 QuadMenu =
 (
-	QuadMenu.setTitle(" Snap           ")
+	QuadMenu.setTitle("Transform            ")
 
-	SnapMenu 	= (QuadMenu_v("Snap")).Quads[1]
+	--DefaulQuadMenu 	= (QuadMenuv("Title")).Quads[1]
 
-	SnapMenu.moveItem ("Pivot") 4
-
-	QuadMenu.addMenu(SnapMenu.menu)	--flat:true --index:1
+	--QuadMenu.addSeparator()
 
 	--QuadMenu.addMenu("MenuName")	--flat:true --index:1
+	--QuadMenu.addMenu(DefaulQuadMenu.menu)	--flat:true --index:1
+	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
+
 )
 
 
@@ -134,10 +181,10 @@ function editQuad4 QuadMenu =
 ================================================================================*/
 
 
---editQuad1(MainQuad.Quads[1])
+editQuad1(MainQuad.Quads[1])
 editQuad2(MainQuad.Quads[2])
---editQuad3(MainQuad.Quads[3])
---editQuad4(MainQuad.Quads[4])
+editQuad3(MainQuad.Quads[3])
+editQuad4(MainQuad.Quads[4])
 
 
 /* Set options */

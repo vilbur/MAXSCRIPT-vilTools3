@@ -1,3 +1,28 @@
+filein( getFilenamePath(getSourceFileName()) + "/RecentFile/RecentFile.ms" ) -- "./RecentFile/RecentFile.ms"
+
+/** OPEN FGILE DIALOG
+ *
+ */
+macroscript	_scene_open_file
+category:	"_Scene"
+buttontext:	"Open File"
+toolTip:	"Open File Dialog"
+--icon:	"control:checkButton|menu:_Scene"
+icon:	"across:5|width:72|menu:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+		if (last_file = (RecentFile_v()).getMostRecentFile()) != undefined then
+		(
+			file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:( getFilenamePath( last_file ) ) historyCategory:"MAXScriptFileOpenSave"
+
+			if file_path != undefined then
+				loadMaxFile file_path quiet:true
+		)
+	)
+)
+
 /**
  *
  */
@@ -6,22 +31,13 @@ category:	"_Scene"
 buttontext:	"Open Recent"
 toolTip:	"Open recent scene on Max start"
 --icon:	"control:checkButton|menu:_Scene"
-icon:	"across:5|width:72|menu:_Scene"
+icon:	"across:5|width:72|menu:true"
 (
 	--on isVisible  return maxFileName == ""
 
 	on execute do
 	(
-
-		xml_doc = dotNetObject "System.Xml.XmlDocument"
-
-		recent_documents_file = (getDir #maxData) + "RecentDocuments.xml"
-
-		xml_doc.load recent_documents_file
-
-		file_path = xml_doc.GetElementsByTagName "FilePath"
-		recent_document = (file_path.item 0).InnerXML
-
+		recent_document = (RecentFile_v()).getMostRecentFile()
 
 		if maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
 			loadMaxFile recent_document quiet:true
@@ -144,6 +160,48 @@ icon:	"offset:[-2, 0]"
 
 
 
+
+
+
+
+
+/*------------------------------------------------------------------------------
+
+	SAVE \ OPEN RECENT FILE
+
+--------------------------------------------------------------------------------*/
+
+
+/**
+ *
+ */
+macroscript	_scene_temp_open
+category:	"_Scene"
+buttontext:	"Open\Save Temp"
+toolTip:	"Open Temp File"
+icon:	"offset:[14, 0]|width:96|menu:tooltip"
+(
+	if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+
+	--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+			loadMaxFile max_file quiet:true
+)
+/**
+ *
+ */
+macroscript	_scene_temp_save
+category:	"_Scene"
+buttontext:	"Open\Save Temp"
+toolTip:	"Save Temp File"
+icon:	"menu:tooltip"
+(
+	if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
+		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+			saveMaxFile max_file quiet:true
+
+)
+
 /*------------------------------------------------------------------------------
 
 	RELOAD \ FETCH \ HLOD
@@ -157,8 +215,8 @@ icon:	"offset:[-2, 0]"
 macroscript	_scene_relaod
 category:	"_Scene"
 buttontext:	"Reload"
-toolTip:	"Reload cuurent *.max file"
---icon:	"#(path, index)"
+toolTip:	"Reload current file"
+icon:	"menu:tooltip"
 (
 	if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
 		loadMaxFile ( maxFilePath + maxFileName ) quiet:true
@@ -191,40 +249,4 @@ toolTip:	"Fetch scene"
 		fetchMaxFile quiet:true
 		print "SCENE FETCHED"
 	)
-)
-
-/*------------------------------------------------------------------------------
-
-	SAVE \ OPEN RECENT FILE
-
---------------------------------------------------------------------------------*/
-
-
-/**
- *
- */
-macroscript	_scene_temp_open
-category:	"_Scene"
-buttontext:	"Open\Save Temp"
-toolTip:	"Open Temp File"
-icon:	"offset:[14, 0]|width:96"
-(
-	if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
-
-	--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
-		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-			loadMaxFile max_file quiet:true
-)
-/**
- *
- */
-macroscript	_scene_temp_save
-category:	"_Scene"
-buttontext:	"Open\Save Temp"
-toolTip:	"Save Temp File"
---icon:	"#(path, index)"
-(
-	if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
-		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-			saveMaxFile max_file quiet:true
 )

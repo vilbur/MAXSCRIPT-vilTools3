@@ -5,7 +5,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ObjectRenamer/ObjectRenamer
 --------------------------------------------------------------------------------*/
 
 /**  SEARCH
-  *	
+  *
   */
 macroscript selection_edit_search_in_names
 category:	"Selection"
@@ -16,12 +16,12 @@ icon:	"control:editText|across:3"
 (
 	format "EventFired	= % \n" EventFired
 	--search_text = ROLLOUT_selection.search_in_name.text
-	
+
 	--format "search_text	= % \n" search_text
 )
 
 /**  REPlACE
-  *	
+  *
   */
 macroscript selection_edit_replace_in_names
 category:	"Selection"
@@ -37,8 +37,8 @@ icon:	"control:editText|across:3"
 	BUTTON Search & Replace
 --------------------------------------------------------------------------------*/
 
-/**  
-  *	
+/**
+  *
   */
 macroscript selection_search_and_replace
 category:	"Selection"
@@ -46,23 +46,23 @@ buttonText:	"Search & Replace"
 tooltip:	"Search & Replace in names of selection"
 icon:	"across:3"
 (
-	
-	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Search And Replace Object Name.mcr")
 
-	--messageBox "Placeholder" title:"" 
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Search And Replace Object Name.mcr"
+
+	--messageBox "Placeholder" title:""
 	format "EventFired	= % \n" EventFired
-	
+
 	for obj in selection do
 	(
-		search_text  = ROLLOUT_selection.search_in_name.text
-		replace_text = ROLLOUT_selection.replace_in_name.text
+		search_text  = ROLLOUT_selection.ET_search_in_name.text
+		replace_text = ROLLOUT_selection.ET_replace_in_name.text
 		--format "search_text	= % \n" search_text
 		--format "replace_text	= % \n" replace_text
-		
-		if search_text != "" then 
+
+		if search_text != "" then
 			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" search_text ).Replace obj.name replace_text
 			--obj_name = ( dotNetObject "System.Text.RegularExpressions.Regex" "left" ).Replace obj.name "right"
 			--format "obj_name	= % \n" obj_name
 	)
-	
+
 )

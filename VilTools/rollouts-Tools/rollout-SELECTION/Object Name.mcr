@@ -41,6 +41,7 @@ tooltip:	"Convert case of selected object names\n\nCapital Case >>> UPPER CASE >
 	)
 
 )
+
 --fn showObjectNames = --start
 --(
 ---- 	o=$
@@ -159,20 +160,14 @@ tooltip:	"Remove suffix from object name"
 icon:	"across:2|align:#right"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
-	filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
+	filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
 	undo "Remove suffix" on
 	(
+		suffix_text = ROLLOUT_selection.ET_remove_suffix_text.text
 
-		suffix_text = ROLLOUT_selection.remove_suffix_text.text
-		format "suffix_text	= % \n" suffix_text
 		for obj in selection do
-		--(
-		--	--obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_]*(Left|LEFT|left|Right|RIGHT|right)\d*" ).Replace obj.name ""
 			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" ("("+suffix_text+")$")  ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase  ).Replace obj.name ""
-		--
-		--
-		--)
 	)
 
 

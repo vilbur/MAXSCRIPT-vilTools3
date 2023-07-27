@@ -3,6 +3,8 @@
 <project id="640e1e37-f762-488e-ae28-11c19c36e314" kpf_version="5" name="MS-vilTools3.komodoproject">
 <livefolder id="16befc50-555b-46f1-8f11-52024c12c2b6" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollout-Subobject" url="Dialog/rollouts-Tools/rollout-Subobject/">
 </livefolder>
+<file id="1f2e24ce-70aa-4748-b407-2c3341f498b9" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="viltools-startup.ms" url="file:///C:/Program%20Files/Autodesk/3ds%20Max%202023/stdplugs/stdscripts/viltools-startup.ms">
+</file>
 <livefolder id="cabd75b0-03b8-4346-a36c-9c7e0ebb2fc9" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollout-Modifiers" url="Dialog/rollouts-Tools/rollout-Modifiers/">
 </livefolder>
 <livefolder id="e7ba407a-669c-4f61-baf6-d8844e31ade2" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollout-Selection" url="Dialog/rollouts-Tools/rollout-Selection/">

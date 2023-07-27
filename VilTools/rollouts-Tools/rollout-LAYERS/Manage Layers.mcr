@@ -1,6 +1,36 @@
 /*------------------------------------------------------------------------------
 	LAYERS MANGER
---------------------------------------------------------------------------------*/
+------------------------------------------------------------------------------*/
+
+/**
+ */
+function showLayerManagerCallback =
+(
+	LayerManager.editLayerByName ""
+)
+
+/**
+ */
+macroscript	layers_manager_autorun
+category:	"_Layers"
+buttontext:	"Layer Manager"
+tooltip:	"Show\Hide Layer manager on scene open"
+icon:	"control:checkbutton"
+(
+	if EventFired.val then
+	(
+		LayerManager.editLayerByName ""
+
+		try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
+	)
+	else
+	(
+		LayerManager.closeDialog()
+
+		try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
+	)
+)
+
 
 /**
  */
@@ -9,6 +39,7 @@ category:	"_Layers"
 buttontext:	"Open Manager"
 tooltip:	"Show\Hide Layer manager & Scene Explorer"
 (
+	--messageBox "Yupiii" title:"Title"  beep:false
 	LayerManager.editLayerByName ""
 
 	if not SceneExplorerManager.ExplorerExists(default_explorer = "Scene Explorer") then
@@ -16,10 +47,6 @@ tooltip:	"Show\Hide Layer manager & Scene Explorer"
 	else
 		SceneExplorerManager.OpenExplorer(default_explorer)
 )
-
-
-
-
 
 
 /**
@@ -104,8 +131,54 @@ macroscript	_layers_expand_layers_of_selection
 category:	"_Layers"
 buttontext:	"Expand Selection"
 tooltip:	"Expand layers of selection"
+icon:	"menu:true"
 (
 	LayersManager = LayersManager_v()
 
 	LayersManager.expandLayersByObejcts( selection )
 )
+
+/*
+*/
+macroscript	layers_select_all_objects_selection
+category:	"_Layers"
+buttontext:	"Select Objects"
+toolTip:	"Select Objects of selected layers\objects."
+icon:	"menu:true"
+(
+	undo "Slect " on
+	(
+		(LayersManager_v()).isolateLayers( selection )
+	)
+)
+/**
+ */
+macroscript	_layers_activate_curent_layer_of_selection
+category:	"_Layers"
+buttontext:	"Acivate Selection"
+tooltip:	"Acivate layers of selection"
+icon:	"menu:tooltip"
+(
+	LayersManager = LayersManager_v()
+
+	selected_layers = LayersManager.getSelectLayersOrBySelection()
+
+	LayersManager.setCurrent( selected_layers )
+
+)
+
+--/**
+-- */
+--macroscript	_layers_select_objects_of_selection
+--category:	"_Layers"
+--buttontext:	"Select objects"
+--icon:	"Tooltip:'Select objects of selected layers\objects.\n'"
+--(
+--	messageBox "Manage Layers" title:"Title"  beep:false
+--	LayersManager = LayersManager_v()
+--
+--	selected_layers = LayersManager.getSelectLayersOrBySelection()
+--
+--	--select (LayersManager.getObjectsInLayers(selected_layers))
+--
+--)

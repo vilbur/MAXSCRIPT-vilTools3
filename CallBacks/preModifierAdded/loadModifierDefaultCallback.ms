@@ -1,48 +1,82 @@
+global LOAD_MODIFIER_DEFAULTS = true
+
+
+/**
+ */
+function loadModifierDefaultsKill =
+(
+	print "Kill: loadModifierDefaults()"
+	try( callbacks.removeScripts #preModifierAdded id:#loadModifierDefaults )catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
+)
+
+
 /**
  * https://help.autodesk.com/view/3DSMAX/2015/ENU/?guid=__files_GUID_C1F6495F_5831_4FC8_A00C_667C5F2EAE36_htm
  */
 function loadModifierDefaultsCallback =
 (
 	print "Start: loadModifierDefaults()"
-	try( callbacks.addScript #preModifierAdded "loadModifierDefaults()" id:#loadModifierDefaults )catch()
+
+	loadModifierDefaultsKill()
+
+	try( callbacks.addScript #preModifierAdded "loadModifierDefaults()" id:#loadModifierDefaults )catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
 )
-
-
-/**
- */
-function loadModifierDefaulstKill =
-(
-	print "Kill: loadModifierDefaults()"
-	try( callbacks.removeScripts #preModifierAdded id:#loadModifierDefaults )catch()
-)
-
 
 /**
  */
 function loadModifierDefaults =
 (
-	clearListener()
-	_modifier = (callbacks.notificationParam())[2]
+	--clearListener()
+	print "loadModifierDefaults()"
 
-	default_modifier = execute( (classOf _modifier) as string + "()" )
+	--format "LOAD_MODIFIER_DEFAULTS	= % \n" LOAD_MODIFIER_DEFAULTS
 
-	current_values =  for prop in getPropNames _modifier collect (getProperty _modifier prop)
+	--if LOAD_MODIFIER_DEFAULTS then
+	--(
+	--	LOAD_MODIFIER_DEFAULTS = false
+	--
+	--	max modify mode
+	--
+	--	/** ADD POLY SELECT MODIFIER IF CONTROL IS PRESSED
+	--	  *
+	--	  */
+	--	if keyboard.controlPressed then
+	--		activatePolySelectModifierCallback()
+	--
+		obj	= (callbacks.notificationParam())[1]
+	--	_modifier	= (callbacks.notificationParam())[2]
 
-	default_values = for prop in getPropNames default_modifier collect (getProperty default_modifier prop)
-
-	--format "current_values	= % \n" current_values
-	--format "default_values	= % \n" default_values
-	--format "modifier_is_max_default: %\n\n" modifier_is_max_default
-
-	if (modifier_is_max_default = (with printAllElements on current_values) as string == (with printAllElements on default_values) as string) then
-	(
-		--default_preset_name = (classOf _modifier) as string -- name of default preset is name class of modifier E.G.: "MeshSmooth"
-		--format "default_preset_name	= % \n" default_preset_name
-
-		ModifierPreset = ModifierPreset_v(_modifier)
-
-		if ModifierPreset.hasPreset( _modifier.name ) then
-			ModifierPreset.loadPreset(_modifier.name)
-	)
+		if obj != undefined then
+			format "obj	= % \n" obj.name
+	--
+	--	format "_modifier	= % \n" _modifier
+	--
+	--	default_modifier = execute( (classOf _modifier) as string + "()" )
+	--
+	--	current_values =  for prop in getPropNames _modifier collect (getProperty _modifier prop)
+	--
+	--	default_values = for prop in getPropNames default_modifier collect (getProperty default_modifier prop)
+	--
+	--	format "current_values	= % \n" current_values
+	--	format "default_values	= % \n" default_values
+	--
+	--	--if (modifier_is_max_default = (with printAllElements on current_values) as string == (with printAllElements on default_values) as string) then
+	--	--(
+	--	--	print "loadModifierDefaults()"
+	--	--
+	--	--	ModStackPreset = ModStackPreset_v(_modifier)
+	--	--
+	--	--	if ModStackPreset.hasPreset( _modifier.name ) then
+	--	--		ModStackPreset.loadPreset( _modifier.name )
+	--	--)
+	--
+	--
+	--	LOAD_MODIFIER_DEFAULTS = true
+	--
+	--
+	--
+	--)
+	--else
+	--	ADDMODIFIER_CALLBACK = true
 
 )
