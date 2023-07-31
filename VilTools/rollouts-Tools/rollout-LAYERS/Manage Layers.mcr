@@ -9,6 +9,7 @@ function showLayerManagerCallback =
 	LayerManager.editLayerByName ""
 )
 
+
 /**
  */
 macroscript	layers_manager_autorun
@@ -151,21 +152,7 @@ icon:	"menu:true"
 		(LayersManager_v()).isolateLayers( selection )
 	)
 )
-/**
- */
-macroscript	_layers_activate_curent_layer_of_selection
-category:	"_Layers"
-buttontext:	"Acivate Selection"
-tooltip:	"Acivate layers of selection"
-icon:	"menu:tooltip"
-(
-	LayersManager = LayersManager_v()
 
-	selected_layers = LayersManager.getSelectLayersOrBySelection()
-
-	LayersManager.setCurrent( selected_layers )
-
-)
 
 --/**
 -- */

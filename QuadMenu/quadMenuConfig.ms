@@ -3,6 +3,8 @@ filein( getFilenamePath(getSourceFileName()) + "/createQuad.ms" ) -- "./createQu
 
 clearListener()
 
+/*------ HELP ------*/
+
 /**
  *
  */
@@ -15,6 +17,12 @@ toolTip:	"Test"
 (
 	messageBox "Test" title:"Test Macroscript"
 )
+/**
+ */
+function PLACEHOLDERmenu QuadMenu =
+(
+	--format "\n"; print "PLACEHOLDERmenu()"
+)
 
 
 /*------------------------------------------------------------------------------
@@ -26,9 +34,9 @@ toolTip:	"Test"
 RightClickQuad = createQuad( "_RightClickQuad" ) #(
 
 	#EDIT1,	 -- "./Quads/EDIT1-menu.ms"
-	#EDIT2,	 -- "./Quads/EDIT2-menu.ms"
-	#HIDEPOLY,	 -- "./Quads/HIDEPOLY-menu.ms"
-	#PALCEHOLDER	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#EDIT3,	 -- "./Quads/EDIT3-menu.ms"
+	#EDIT2	 -- "./Quads/EDIT2-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -38,14 +46,13 @@ RightClickQuad = createQuad( "_RightClickQuad" ) #(
 --------------------------------------------------------------------------------*/
 ControlQuad = createQuad( "_ControlQuad" ) #(
 
-	#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#PRIMITIVES,	 -- "./Quads/PRIMITIVES-menu.ms"
-	#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	#PALCEHOLDER	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
 
 	--#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
 	--#PIVOT,	 -- "./Quads/PIVOT-menu.ms"
-	--#SNAP,	 -- "./Quads/SNAP-menu.ms"
 	--
 	--#(
 	--	#SNAP,	 -- "./Quads/SNAP-menu.ms"
@@ -61,9 +68,9 @@ ControlQuad = createQuad( "_ControlQuad" ) #(
 ShiftQuad = createQuad( "_ShiftQuad" ) #(
 
 	#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
-	#visiblityOBJECTS,	 -- "./Quads/visiblityOBJECTS-menu.ms"
 	#visiblitySUBOBJECT,	 -- "./Quads/visiblitySUBOBJECT-menu.ms"
-	#LAYERS	 -- "./Quads/LAYERS-menu.ms"
+	#LAYERS,	 -- "./Quads/LAYERS-menu.ms"
+	#visiblityOBJECTS	 -- "./Quads/visiblityOBJECTS-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -71,12 +78,12 @@ ShiftQuad = createQuad( "_ShiftQuad" ) #(
 	ALT QUAD
 
 --------------------------------------------------------------------------------*/
-AltQuad = createQuad( "_Animation" ) #(
+AltQuad = createQuad( "Animation" ) #(
 
-	--#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	--#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	--#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	--#PALCEHOLDER	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
+	#COORDSYS,	 -- "./Quads/COORDSYS-menu.ms"
+	#SNAP,	 -- "./Quads/SNAP-menu.ms"
+	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -86,10 +93,10 @@ AltQuad = createQuad( "_Animation" ) #(
 --------------------------------------------------------------------------------*/
 ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 
-	#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
-	#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	#PALCEHOLDER	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#MODIFIERS	 -- "./Quads/MODIFIERS-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -100,9 +107,9 @@ ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 CotrolShiftQuad = createQuad( "_CotrolShiftQuad" ) #(
 
 	#SCENE,	 -- "./Quads/SCENE-menu.ms"
-	#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	#PALCEHOLDER,	 -- "./Quads/PALCEHOLDER-menu.ms"
-	#PALCEHOLDER	 -- "./Quads/PALCEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#MATERIALS	 -- "./Quads/MATERIALS-menu.ms"
 )
 
 

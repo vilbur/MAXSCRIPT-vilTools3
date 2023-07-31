@@ -101,7 +101,7 @@ macroscript	wirecolor_by_last
 category:	"_Wirecolor"
 buttontext:	"Color By Last"
 toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
---icon:	"#(path, index)"
+icon:	"menu:true"
 (
 	undo "Wirecolor By Last" on
 	(

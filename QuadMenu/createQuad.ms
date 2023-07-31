@@ -37,17 +37,17 @@ function createQuad quad_menu_name menu_functions =
 		try(
 			execute ( fn_name + "((QuadMenu_v(\""+quad_menu_name+"\")).getMenu("+quad_index as string +"))" )
 		)catch(
-			--format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-			--format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-			--format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-			--format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+			format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+			format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+			format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+			format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
 		)
 	)
 
 	for quad_index = 1 to 4 where menu_functions[quad_index] != undefined  do
 	(
-		format "quad_index	= % \n" quad_index
-		format "menu_functions[quad_index]	= % \n" menu_functions[quad_index]
+		--format "quad_index	= % \n" quad_index
+		--format "menu_functions[quad_index]	= % \n" menu_functions[quad_index]
 
 		if classOf menu_functions[quad_index] == Array then
 			for menu_function in menu_functions[quad_index] do

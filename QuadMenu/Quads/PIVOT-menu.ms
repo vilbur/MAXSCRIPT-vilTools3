@@ -6,7 +6,7 @@ function PIVOTmenu QuadMenu =
 
 	QuadMenu.addMenu("_Pivot")	--flat:true --index:1
 
-	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1
+	QuadMenu.removeItem ("Category") ("macroscript_nmae") index:1
 
 
 )

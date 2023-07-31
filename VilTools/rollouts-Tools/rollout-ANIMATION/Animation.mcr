@@ -63,34 +63,50 @@ function wireParamsCallback state_1 state_2 =
 
 		--global WIRE_PARAMS_LABELS = undefined
 
-
 		try(
 			--paramWire.connect2way obj_1.baseObject[param_1] obj_2.baseObject[param_2] "Height" "Height"
 
 			/*
 				THIS NEED MORE LABOR THEN HAS BEEN EXPECTED
 
-
-
 			*/
 			paramWire.connect2way obj_1.baseObject[param_1] obj_2.baseObject[param_2] "Height_Segments" "Height_Segments"
-
-
-
-
-
-
-
-
 
 		)catch(
 			format "!!!!! ERROR IN TRY %\n\n" (getCurrentException())
 		)
-
-
-
 	)
+)
 
+
+
+/**  TOGGLE TRACKBAR
+ */
+macroscript	_options_trackbar_show
+category:	"_Animation"
+buttontext:	"Trackbar Toggle"
+--icon:	"control:label"
+(
+	state = trackbar.visible
+
+	trackbar.visible = not state
+
+	timeSlider.setVisible (not state)
+
+	if state == trackbar.visible then
+		messageBox "Toggle does not work because of 3Ds Max Bug.\n\nWORKAROUND:\n\nRight-click on an empty area of the top Toolbar to bring up the drop-down menu, and click on the Time Slider checkbox." title:"SHOW TIMESLIDDE"
+)
+
+/**  TOGGLE TRACKBAR
+ */
+macroscript	_options_toggle_keyframe_0_1
+category:	"_Animation"
+buttontext:	"Keyframe 0\1"
+tooltip:	"Toggle Keyframe 0\1"
+--icon:	"control:label"
+(
+
+	sliderTime = if sliderTime != 1f then 1f else 0f
 )
 
 /**

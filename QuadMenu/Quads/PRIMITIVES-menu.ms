@@ -98,4 +98,9 @@ function PRIMITIVESmenu QuadMenu =
 
 	QuadMenu.addMenus(menus) separator:true
 
+	QuadMenu.addItem ("Edit") ("Properties") group:"Main UI" index:1
+	QuadMenu.addSeparator index:#(2)
+
+
+
 )

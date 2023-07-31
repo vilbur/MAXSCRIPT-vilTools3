@@ -1,19 +1,17 @@
 function SNAPmenu QuadMenu =
 (
-	QuadMenu.setTitle(" Snap")
-	--
-	--SnapQuadMenu 	= QuadMenu_v("Snap")
-	--
-	--SnapQuadMenu.Quads[1]
-	--
-	--SnapQuadMenu.Quads[1].moveItem ("Pivot") 4
-	--
-	--
-	--snap_menus = #(
-	--	"Snaps",	 SnapQuadMenu.Quads[1],
-	--	"Snap Options",	 SnapQuadMenu.Quads[3]
-	--)
-	--
-	--QuadMenu.addMenus( snap_menus )	--flat:true --index:1
+	--QuadMenu.setTitle(" Snap")
+
+	SnapQuadMenu 	= QuadMenu_v("Snap") -- Get Quad Menu "Snap"
+
+	SnapMenu	= SnapQuadMenu.getMenu(#BOTTOM_RIGHT)
+	SnapOptionsMenu	= SnapQuadMenu.getMenu(#TOP_LEFT)
+
+	SnapMenu.moveItem ("Pivot") 4
+
+
+	QuadMenu.addMenu( SnapMenu )	 index:1 --flat:true
+	QuadMenu.addSeparator  index:2
+	QuadMenu.addMenu( SnapOptionsMenu )	 index:3 --flat:true
 
 )

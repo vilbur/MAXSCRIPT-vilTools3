@@ -1,14 +1,50 @@
---filein( getFilenamePath(getSourceFileName()) + "/../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	-- "./../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	-- "./../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/toggleLayersByPrefix.ms" ) -- "./Lib/toggleLayersByPrefix.ms"
 
 
 
+/**
+ */
+macroscript	_layers_activate_curent_layer_of_selection
+category:	"_Layers Visibility"
+buttontext:	"Set current"
+tooltip:	"Set current layer by selection"
+icon:	"menu:true"
+(
+	LayersManager = LayersManager_v()
 
+	selected_layers = LayersManager.getSelectLayersOrBySelection()
+
+	LayersManager.setCurrent( selected_layers )
+
+)
 
 
 /*------------------------------------------------------------------------------
 	HIDE \ UNHIDE LAYER BY SELECTION
 ------------------------------------------------------------------------------*/
+
+
+/**
+ *
+ */
+macroscript	layers_by_selection_off_selected
+category:	"_Layers Visibility"
+buttontext:	"Hide selected"
+toolTip:	"Hide selected layers"
+icon:	"menu:true|Tooltip:Turn off selected layers\objects.\n"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
+
+	LayersManager = LayersManager_v()
+
+	selected_layers = LayersManager.getSelectLayersOrBySelection()
+
+	undo "Hide unselected layers" on
+		layers_in_hierarchy = LayersManager.setVisibility( selected_layers )(false)
+)
 
 /**
  *
@@ -32,7 +68,6 @@ icon:	"menu:true|Tooltip:Turn off other layers then selected layers\objects.\n"
 	undo "Hide unselected layers" on
 		layers_in_hierarchy = LayersManager.setVisibleTree( selected_layers )
 
-
 	LayersManager.expandLayersByObejcts( selection )
 
 	/* HIDE OBEJCTS IN PARENT LAYERS
@@ -40,35 +75,33 @@ icon:	"menu:true|Tooltip:Turn off other layers then selected layers\objects.\n"
 
 		LayersManager.setObjectsVisibility(parent_layers)(false)
 	*/
+	LayersManager.setVisibility( selected_layers )(true)
 
 	LayersManager.setCurrent( selected_layers )
-
 )
 
+
+/*------------------------------------------------------------------------------
+	UNHIDE ALL LAYERS
+------------------------------------------------------------------------------*/
 /**
  *
  */
-macroscript	layers_by_selection_off_selected
+macroscript	layers_all_on
 category:	"_Layers Visibility"
-buttontext:	"Hide selected"
-toolTip:	"Hide selected layers"
-icon:	"menu:true|Tooltip:Turn off selected layers\objects.\n"
+buttontext:	"Hide\Unhide"
+toolTip:	"Unhide all layers"
+icon:	"menu:tooltip"
 (
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
-
 	LayersManager = LayersManager_v()
 
-	selected_layers = LayersManager.getSelectLayersOrBySelection()
-
-	undo "Hide unselected layers" on
-		layers_in_hierarchy = LayersManager.setVisibility( selected_layers )(false)
-
+	undo "Unhide all layers" on
+		LayersManager.setVisibility(L	 ayersManager.getAllLayers())(true)
 )
 
 
-/**
+
+/** UNHIDE TOP LAYERS
  *
  */
 macroscript	layers_off_unselected_top
@@ -96,25 +129,6 @@ icon:	"menu:tooltip"
 	LayersManager.expandLayersByObejcts( selection )
 
 	LayersManager.setCurrent( selected_layers )
-)
-
-
-/*------------------------------------------------------------------------------
-	UNHIDE ALL LAYERS
-------------------------------------------------------------------------------*/
-/**
- *
- */
-macroscript	layers_all_on
-category:	"_Layers Visibility"
-buttontext:	"Hide\Unhide"
-toolTip:	"Unhide all layers"
-icon:	"menu:tooltip"
-(
-	LayersManager = LayersManager_v()
-
-	undo "Unhide all layers" on
-		LayersManager.setVisibility(LayersManager.getAllLayers())(true)
 )
 
 
@@ -160,7 +174,3 @@ icon:	"menu:tooltip"
 
 	toggleLayersByPrefix(false)
 )
-
-
-
-

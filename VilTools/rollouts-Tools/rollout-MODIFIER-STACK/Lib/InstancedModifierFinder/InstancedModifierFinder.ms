@@ -19,8 +19,7 @@ struct InstancedModifierFinder
 	 */
 	function getInstancedModifiers =
 	(
-		format "\n"; print "InstancedModierFinder_v.getInstancedModifiers()"
-
+		--format "\n"; print "InstancedModierFinder_v.getInstancedModifiers()"
 		instances_all = this._getAllInstancedModifiers()
 		--format "instances_all	= % \n" instances_all
 		this._getOnlySharedInstances(instances_all)

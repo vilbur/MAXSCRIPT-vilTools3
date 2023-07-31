@@ -17,6 +17,7 @@ macroscript	material_assign_idmat
 category:	"_Material"
 buttonText:	"Multi ID"
 tooltip:	"Create multimaterial where each material ID has different color"
+icon:	"menu:true"
 (
 	_Material = MaterialId_v()
 
@@ -82,6 +83,7 @@ macroscript	material_remove
 category:	"_Material"
 buttonText:	"Remove"
 tooltip:	"Remove material from selection"
+icon:	"menu:true"
 (
 
 	selection.material = undefined

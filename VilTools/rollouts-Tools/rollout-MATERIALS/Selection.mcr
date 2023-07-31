@@ -3,8 +3,9 @@
  */
 macroscript	material_by_1st_object
 category:	"_Material"
-buttonText:	"By Material"
+buttonText:	"Mat by 1st object"
 tooltip:	"Select all visible objects with same materials as selection"
+icon:	"menu:true"
 (
 	--filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MATERIALS\Materials.mcr")
 
@@ -26,9 +27,9 @@ tooltip:	"Select all visible objects with same materials as selection"
  */
 macroscript	material_select_objs_by_material
 category:	"_Material"
-buttonText:	"By Mat Editor"
+buttonText:	"Select By Mat"
 tooltip:	"Select objects by current material in material editor"
---icon:	"border:false"
+icon:	"menu:true"
 (
 	-- <array>SelectObjectByMaterial - returns array of objects a material is assigned to
 	fn SelectObjectByMaterial reqMatEditOpen materialIndex = (

@@ -5,7 +5,7 @@ macroscript	edges_flow_connect
 category:	"_Epoly-Edges"
 buttontext:	"Flow Connect"
 toolTip:	"Flow Connect Edges"
-icon:	"Menu:_Epoly-Edges"
+icon:	"Menu:true"
 (
 	--on isVisible return Filters.Is_EPolySpecifyLevel #{3}
 	on isVisible return Filters.Is_EPolySpecifyLevel #{3}
@@ -14,6 +14,7 @@ icon:	"Menu:_Epoly-Edges"
 		macros.run "PolyTools" "FlowConnect"
 	)
 )
+
 
 /*
 	Select Edges By Material ID
@@ -99,7 +100,3 @@ icon:	"Menu:_Epoly-Edges"
 
 	macros.run "RacoonScripts" "ExtendBorders"
 )
-
-
-
-

@@ -1,5 +1,7 @@
 function MATERIALSmenu QuadMenu =
 (
-	QuadMenu.setTitle("Materials")
+	QuadMenu.setTitle(" MATERIALS")
+
+	QuadMenu.addMenu("_Material")
 
 )

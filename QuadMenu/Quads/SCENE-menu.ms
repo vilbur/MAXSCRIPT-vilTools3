@@ -5,13 +5,13 @@ function sceneMenu QuadMenu =
 (
 	print "sceneMenu()"
 
-	QuadMenu.setTitle("Scene")
+	QuadMenu.setTitle(" SCENE")
 
 	_SceneMenu	= Menu_v("_Scene")
 	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
 
 	--_SceneMenu.addSeparator()
-	_SceneMenu.addSeparator index:#( 3, 5)
+	_SceneMenu.addSeparator index:#( 3, 5, 6)
 	----_SceneMenu.addSeparator index:#( 3, 6 )
 	----_SceneMenu.addSeparator index:8
 	--

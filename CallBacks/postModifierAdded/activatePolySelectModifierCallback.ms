@@ -21,8 +21,8 @@ function activatePolySelectModifierKill =
  */
 function activatePolySelectTest =
 (
-	format "\n"; print ".ACTIVATEPOLYSELECTTEST()"
-	modPanel.setCurrentObject $.modifiers[2]
+	format "\n"; print "activatePolySelectTest()"
+	--modPanel.setCurrentObject $.modifiers[2]
 
 )
 

@@ -1,6 +1,6 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/EditablePoly/EditablePoly.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/EditPoly/EditPoly.ms" )
---filein( getFilenamePath(getSourceFileName()) + "/Lib/EpolySelection/EpolySelection.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/EditablePoly/EditablePoly.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/EditPoly/EditPoly.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/EpolySelection/EpolySelection.ms" )
 
 
 /** Epoly_v

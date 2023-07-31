@@ -30,7 +30,7 @@ macroscript	_scene_copy_object_between_max
 category:	"_Scene"
 buttontext:	"Copy Selection"
 toolTip:	"Copy objects in selection with hierarchy"
---icon:	"across:5|width:72|menu:_Scene"
+icon:	"menu:true"
 (
 	saveNodes selection (((GetDir #temp) as string ) + "\copy_paste_buffer.max")  quiet:true
 )
@@ -44,8 +44,44 @@ macroscript	_scene_paste_object_between_max
 category:	"_Scene"
 buttontext:	"Paste Selection"
 toolTip:	"Paste object to scene"
---icon:	"across:5|width:72|menu:_Scene"
+icon:	"menu:true"
 (
 	mergeMaxFile (((GetDir #temp) as string ) + "\copy_paste_buffer.max") #select
 
+)
+
+/*------------------------------------------------------------------------------
+
+	 FETCH \ HLOD
+
+--------------------------------------------------------------------------------*/
+
+
+/**
+ *
+ */
+macroscript	_scene_hold
+category:	"_Scene"
+buttontext:	"Hold\Fetch"
+toolTip:	"Hold scene"
+--icon:	"#(path, index)"
+(
+	if queryBox "Hold scene ?" title:"Hold scene"  beep:false then
+		holdMaxFile()
+)
+
+/**
+ *
+ */
+macroscript	_scene_fetch
+category:	"_Scene"
+buttontext:	"Hold\Fetch"
+toolTip:	"Fetch scene"
+--icon:	"#(path, index)"
+(
+	if queryBox "Fetch scene ?" title:"Fetch scene"  beep:false then
+	(
+		fetchMaxFile quiet:true
+		print "SCENE FETCHED"
+	)
 )
