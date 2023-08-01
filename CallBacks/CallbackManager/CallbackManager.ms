@@ -1,11 +1,13 @@
 
 
-
+/**
+  *
+  */
 struct Callback_v
 (
-	call,
-	id,
-	type,
+	callback,	-- function called on event
+	type,	-- event type
+	id,	-- callback id, can be sahre acrros mutliple callbacks
 
 	on create do
 	(
@@ -22,7 +24,7 @@ struct CallbackManager_v
 	/* construct */
 
 	/* properties */
-	List = Dictionary(),
+	List = Dictionary(), -- KEY: callback_fn_callback_type VALUE:Callback_v
 
 	/* dependency */
 	/* reference */
@@ -31,32 +33,78 @@ struct CallbackManager_v
 	/** Add Callback
 	  *
 	  */
-	function add callback_fn callback_type id:undefined  =
+	function add callback type id:undefined  =
 	(
-		format "\n"; print "CallbackManager_v.add()"
+		--format "\n"; print "CallbackManager_v.add()"
+		callback_key = this._getCallbackKey (callback)(type)(id)
 
-		callback_fn_name = this._getCallbackName (callback_fn)
+		this.List[callback_key] = Callback_v callback:(this._getCallbackFn (callback)) type:type id:( if id == undefined then unsupplied else id )
 
-		Callback = Callback_v call:(callback_fn_name as string +"()") type:callback_type id:id
-
-		this.List[callback_fn_name] = Callback
-
-		this.start (Callback)
+		this.start (this.List[callback_key])
 	),
 
 	/** Add Callback
 	  *
+	  * @retrun #(Callback_v) removed callbacks
 	  */
-	function remove callback_fn type: id:  =
+	function remove callback:undefined type:undefined id:undefined  =
 	(
-		--format "\n"; print "CallbackManager_v.add()"
-		callback_fn_name = this._getCallbackName (callback_fn)
+		--format "\n"; print "CallbackManager_v.remove()"
+		_Callbacks = this.getCallbacks(callback) (type) (id)
 
-		Callback = this.List[callback_fn_name]
+		--format "_Callbacks	= % \n" _Callbacks
+		--format "\n\n------------------------------------\n\n"
 
-		RemoveDictValue this.List callback_fn_name
+		if _Callbacks != undefined then
+			for _Callback in _Callbacks do
+				this.kill (_Callback)
 
-		this.kill (Callback)
+		_Callbacks --return
+	),
+
+	/** Get callbacks
+	 *
+	 * @return #(Callback_v)
+	 */
+	function getCallbacks callback type id  =
+	(
+		--format "\n"; print "Callback_v.getCallback()"
+		--format "\n\n------------------------------------\n\n"
+
+		/** Get callback by type
+		 */
+		function getCallbackByProperty key val option_key:undefined option_val:undefined =
+		(
+			for dataPair in this.List
+				where getProperty dataPair.value key == val and ( if option_val != undefined then getProperty dataPair.value option_key == option_val else true )
+				--where getProperty dataPair.value key == val
+					collect dataPair.value
+			--for dataPair in this.List where dataPair.value.type == type and ( if id != undefined then  dataPair.value.id == id else true ) collect dataPair.value
+		)
+
+
+		callback_exist	= callback	!= undefined
+		type_exist	= type	!= undefined
+		id_exist	= id	!= undefined
+
+		callback = (this._getCallbackFn(callback))
+
+		if not ( callback_exist and type_exist and id_exist ) then
+			case of
+			(
+				/*------ GET BY MULTIPLE PARAMS ------*/
+				(callback_exist and type_exist ):	getCallbackByProperty(#type)	(type)	option_key:#type	option_val:type
+				(callback_exist and id_exist ):	getCallbackByProperty(#callback)	(callback)	option_key:#id	option_val:id
+				(type_exist     and id_exist ):	getCallbackByProperty(#type)	(type)	option_key:#id	option_val:id
+
+				--/*------ GET BY SINGLE PARAM ------*/
+				(callback_exist ):	getCallbackByProperty(#callback)	(callback)
+				(type_exist ):	getCallbackByProperty(#type)	(type)
+				(id_exist ):	getCallbackByProperty(#id)	(id)
+			)
+		else
+			/*------ GET BY ALL PARAMS ------*/
+			#( this.List[this._getCallbackKey (callback)(type)(id)] )
 	),
 
 
@@ -65,11 +113,8 @@ struct CallbackManager_v
 	 */
 	function start Callback =
 	(
-		format "\n"; print "CallbackManager_v.start()"
-
-
-		callbacks.addScript Callback.type Callback.call id:Callback.id
-
+		--format "\n"; print "CallbackManager_v.start()"
+		callbacks.addScript Callback.type Callback.callback id:Callback.id
 	),
 
 	/** Kill
@@ -77,23 +122,38 @@ struct CallbackManager_v
 	 */
 	function kill Callback =
 	(
-		format "\n"; print "CallbackManager_v.kill()"
+		--format "\n"; print "CallbackManager_v.kill()"
+		--format "Callback.type = % \n" Callback.type
+		--format "Callback.id   = % \n" Callback.id
 		try( callbacks.removeScripts Callback.type id:Callback.id )catch()
 	),
 
 	private
 
-	/** Get callback name
+	/** Turn #name to string and add suffix "()"
 	 *
-	 *  @param string callback_fn E.G.: "fooFn()"
 	 *
-	 * @return #name E.G.: #fooFn
+	 * @return #name E.G.: "fooFn()"
 	 */
-	function _getCallbackName callback_fn =
+	function _getCallbackFn callback =
+	(
+		--format "\n"; print "Callback._getCallbackName()"
+		--if not matchPattern (callback) pattern:@"pattern"ignoreCase:false then
+
+		( trimRight ( callback as string ) "()" ) + "()" --return
+	),
+
+	/** Get callback key for this.List
+	 *
+	 * @return #name E.G.: #callbackFn_nodeCreated
+	 */
+	function _getCallbackKey callback type id =
 	(
 		--format "\n"; print "Callback._getCallbackName()"
 
-		( trimRight callback_fn "()" ) as name --return
+		id_string = if id != undefined then "_" + id as string else ""
+
+		(( trimRight (callback as string ) "()" ) +"_"+ (type as string ) + id_string ) as name --return
 	),
 
 	/**
