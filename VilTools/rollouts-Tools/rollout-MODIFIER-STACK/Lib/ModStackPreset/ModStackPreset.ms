@@ -26,7 +26,7 @@ struct ModStackPreset_v
 
 	ini,  --path to ini file, filename is  {classOf modifier|primitiveType}.ini E.G.:  SliceModifier.ini | Sphere.ini
 
-
+	blaclist_values = #( Point2 , Point3 ),
 
 	/** Set current modObject
 	 */
@@ -43,7 +43,7 @@ struct ModStackPreset_v
 	 */
 	function savePreset props: =
 	(
-		format "\n"; print "ModStackPreset_v.savePreset()"
+		--format "\n"; print "ModStackPreset_v.savePreset()"
 		--format "props	= % \n" props
 		this._setIniPath()
 
@@ -54,39 +54,45 @@ struct ModStackPreset_v
 
 		for prop in getPropNames modObject where findItem props prop > 0 do
 			setINISetting ini preset_name ( prop as string ) ( (getProperty modObject prop) as string )
+
+		format "\nMODIFIER PRESET	% HAS BEEN SAVED\n" preset_name
 	),
 
 	/** Load preset
 	 */
 	function loadPreset preset_name =
 	(
-		format "\n"; print "ModStackPreset_v.loadPreset()"
-		format "preset_name	= % \n" preset_name
+		--format "\n"; print "ModStackPreset_v.loadPreset()"
+		--format "preset_name	= % \n" preset_name
 
 		if not ( this._iniFileExists() )  then
 			return false
 
+		--format "\n"; print "ModStackPreset_v.loadPreset()"
 		for prop in getPropNames modObject do
 		(
 			val	= getINISetting ini preset_name ( prop as string )
 
-			format "ModStackPreset_v.loadPreset() % = % \n" prop val
+			--format "ModStackPreset_v.loadPreset() % = % \n" prop val
 
 			if val != "" then
 			(
-				value_formatted = this._formatDatatypeValue val
+				--value_formatted = this._formatDatatypeValue val
+				--value_formatted = execute val
 
 				--if( value_formatted != "undefined" ) then
-				try
-				(
-					setProperty modObject prop ( this._formatDatatypeValue val )
-				)
-				catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
+				--if( findItem this.blaclist_values (classOf value_formatted) == 0 ) then
+					try
+					(
+						--setProperty modObject prop ( this._formatDatatypeValue val )
+						setProperty modObject prop ( execute val)
+					)
+					catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
 			)
 
-			format "MODIFIER PRESET	% HAS BEEN LOADED" preset_name
 		)
 
+		format "\nMODIFIER PRESET	% HAS BEEN LOADED\n" preset_name
 		--(this.getPresetName()) = preset_name
 
 	),
@@ -166,7 +172,7 @@ struct ModStackPreset_v
 	 */
 	function hasPreset preset_name =
 	(
-		format "\n"; print "ModStackPreset_v.hasPreset()"
+		--format "\n"; print "ModStackPreset_v.hasPreset()"
 		( this._iniFileExists() ) and hasINISetting ini preset_name  --return
 	),
 
@@ -188,7 +194,7 @@ struct ModStackPreset_v
 	 */
 	function setPresetName =
 	(
-		format "\n"; print "ModStackPreset_v.getModName()"
+		--format "\n"; print "ModStackPreset_v.getModName()"
 		preset_name = ( if superClassOf modObject == modifier then modObject.name else classOf modObject ) as string
 	),
 
@@ -232,7 +238,7 @@ struct ModStackPreset_v
 
 	on create do
 	(
-		format "\n"; print "ModStackPreset_v.create()"
+		--format "\n"; print "ModStackPreset_v.create()"
 		--if modObject != undefined and superClassOf modObject != modifier then
 			--modObject = modPanel.getCurrentObject()
 

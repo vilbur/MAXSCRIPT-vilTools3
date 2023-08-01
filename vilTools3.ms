@@ -102,10 +102,12 @@ for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:tr
 		appendIfUnique filein_files callback_file
 
 
+filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\CallBacks\CallbackManager\CallbackManager.ms"
+
 /* FILE IN FILES */
-for file_path in filein_files do
+for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
 (
-	--format "FILE IN: = % \n" (file_path)
+	format "FILE IN: % \n" (file_path)
 
 	filein( file_path)
 )
@@ -114,6 +116,9 @@ for file_path in filein_files do
 
 
 global VILTOOLS
+global CALLBACKMANAGER = CallbackManager_v()
+
+
 /*------------------------------------------------------------------------------
 	START VilTools
 --------------------------------------------------------------------------------*/
@@ -155,11 +160,15 @@ try
 
 	--(NodeList_v()).loadNodes()
 
-	selectExportNodeInListCallbactAdd()
+	--selectExportNodeInListCallbactAdd()
 
-	loadModifierDefaultsCallback()
+	--loadModifierDefaultsCallback()
 
-	nodeCreatedSetDefaultPropertiesCallback()
+	--nodeCreatedSetDefaultPropertiesCallback()
+
+	CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
+	CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
+
 
 )
 catch()
