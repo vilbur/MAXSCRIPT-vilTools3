@@ -87,13 +87,13 @@ function PRIMITIVESmenu QuadMenu =
 	)
 
 	menus = #(
-
-		"Standard Primitives",	(Menu_v("_Create Standard Primitives")	flat:true ).addItems("Objects Primitives")(primitives[1]),
-		"Shapes",	 (Menu_v("_Shapes Primitives")	flat:true).addItems("Objects Shapes")(shapes_primitives),
-		"Helpers",	 (Menu_v("_Helpers Primitives")	flat:true).addItems("Objects Helpers")(helpers_primitives),
-		"Other Primitives",	(Menu_v("_Create Other Primitives")	flat:false).addItems("Objects Primitives")(primitives[2]),
-		"Extend Primitives",	(Menu_v("_Create Extended Primitives")	flat:false).addItems("Objects Primitives")(primitives[3]),
-		"Compounds",	 (Menu_v("_Compound Primitives")	flat:false).addItems("Objects Compounds")(compound_primitives)
+		/* SUBMENU TITLE */	        /* NAME OF MENU */	             /* CATEGORY O MACROSCRIPTS */	/* MACROSCRIPT`S NAMES */
+		"Standard Primitives",	(Menu_v("_Create Standard Primitives")	flat:true ).addItems("Objects Primitives")	(primitives[1]),
+		"Shapes",	(Menu_v("_Shapes Primitives")	flat:true).addItems("Objects Shapes")	(shapes_primitives),
+		"Helpers",	(Menu_v("_Helpers Primitives")	flat:true).addItems("Objects Helpers")	(helpers_primitives),
+		"Other Primitives",	(Menu_v("_Create Other Primitives")	flat:false).addItems("Objects Primitives")	(primitives[2]),
+		"Extend Primitives",	(Menu_v("_Create Extended Primitives")	flat:false).addItems("Objects Primitives")	(primitives[3]),
+		"Compounds",	(Menu_v("_Compound Primitives")	flat:false).addItems("Objects Compounds")	(compound_primitives)
 	)
 
 	QuadMenu.addMenus(menus) separator:true

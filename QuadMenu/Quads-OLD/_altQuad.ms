@@ -1,9 +1,15 @@
 /*
    DOCUMENTATION: "./readme.md"
+
+   IMPORTANT:
+	SOME HOW IT IS NOT POSSIBLE TO REMAP "Animation" Quad Menu
+
+	WORKAROUND:
+		DEFAULT "Animation" QUAD MENU MUST BE MODIFIED
 */
 
-global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
-
+--global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
+global MainQuad = QuadMenu_v("Animation")
 
 /*==============================================================================
 
@@ -12,24 +18,17 @@ global MainQuad = QuadMenu_v("_" + (getFilenameFile(getSourceFileName())))
 ================================================================================*/
 function editQuad1 QuadMenu =
 (
-	EditPolyMenu1	= Menu_v("Context Edit Poly Tools 1")
-	SplineToolsMenu2	= Menu_v("Context Spline Tools 2")
+	--QuadMenu.setTitle("Viewports            ")
+
+	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
 
 
-	QuadMenu.setTitle("Edit            ")
-
-	QuadMenu.addItem ("Modifier Stack") ("Convert_to_Poly") index:1
-
-	--QuadMenu.addSeparator()
-
-
-	--QuadMenu.addMenu("_Epoly-Edit")	--flat:false --index:1
-
-	QuadMenu.addMenu(EditPolyMenu1)	--flat:false --index:1
-
-
-	--QuadMenu.addMenu(SnapToMenu)	--flat:false --index:1
-
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
+	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1
+	QuadMenu.addItem ("_Animation") ("_options_toggle_keyframe_0_1") index:1
+	QuadMenu.addItem ("_Animation") ("_options_trackbar_show") index:2
+	--QuadMenu.addSeparator index:2
+	QuadMenu.addSeparator index:#(2,3)
 )
 
 /*==============================================================================
@@ -39,14 +38,9 @@ function editQuad1 QuadMenu =
 ================================================================================*/
 function editQuad2 QuadMenu =
 (
+	QuadMenu.setTitle("Visibility        ")
 
-	QuadMenu.setTitle("EDIT TOOLS            ")
-
-	HideMenu	= Menu_v("Context Hide/Unhide Tools")
-
-
-	QuadMenu.addMenu(HideMenu)	--flat:false --index:1
-
+	QuadMenu.addItem ("_Animation") ("_options_trackbar_show") index:2
 
 	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
@@ -58,14 +52,10 @@ function editQuad2 QuadMenu =
 ================================================================================*/
 function editQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("Selection            ")
+	--QuadMenu.setTitle("_Animation            ")
 
+	--QuadMenu.addMenu("_Animation")	--flat:false --index:1
 
-	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
-
-
-
-	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 )
 
 /*==============================================================================
@@ -75,15 +65,9 @@ function editQuad3 QuadMenu =
 ================================================================================*/
 function editQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("               Edit")
-	EditPolyMenu2	= Menu_v("Context Edit Poly Tools 2")
+	--QuadMenu.setTitle("               Title")
 
 	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
-
-	QuadMenu.addMenu(EditPolyMenu2)	--flat:false --index:1
-
-	QuadMenu.addItem ("PolyTools") ("SwiftLoop") --index:1
-
 )
 
 
@@ -94,7 +78,6 @@ function editQuad4 QuadMenu =
 ================================================================================*/
 
 
-
 editQuad1(MainQuad.Quads[1])
 editQuad2(MainQuad.Quads[2])
 editQuad3(MainQuad.Quads[3])
@@ -102,8 +85,8 @@ editQuad4(MainQuad.Quads[4])
 
 
 /* Set options */
-MainQuad.setRightClick() --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
+--MainQuad.setRightClick which:#altPressed  --which:#nonePressed #shiftPressed #altPressed #controlPressed #shiftAndAltPressed #shiftAndControlPressed #controlAndAltPressed #shiftAndAltAndControlPressed
 
---QuadMenu.showAllQuads()
+--MainQuad.showAllQuads()
 
 MainQuad = undefined

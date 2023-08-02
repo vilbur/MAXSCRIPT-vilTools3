@@ -93,10 +93,10 @@ AltQuad = createQuad( "Animation" ) #(
 --------------------------------------------------------------------------------*/
 ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 
+	#MODIFIERS,	 -- "./Quads/MODIFIERS-menu.ms"
+	#MODIFIERSSTACK,	 -- "./Quads/MODIFIERSSTACK-menu.ms"
 	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#MODIFIERS	 -- "./Quads/MODIFIERS-menu.ms"
+	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -130,12 +130,3 @@ AltQuad.setRightClick which:#altPressed
 ControlAltQuad.setRightClick which:#controlAndAltPressed
 
 CotrolShiftQuad.setRightClick which:#shiftAndControlPressed
-
-
-
-
-
-
-
-
-
