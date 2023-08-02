@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../../../../../CallBacks/nodeCreated/managePresetMenu.ms" )	-- "./../../../../../CallBacks/nodeCreated/managePresetMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../managePresetMenu/managePresetMenu.ms" ) -- "./../managePresetMenu/managePresetMenu.ms"
 
 /** Manage Modifier presets
   *
@@ -18,7 +18,7 @@ struct ModStackPreset_v
 	modObject, -- modifier or baseobject
 
 	/* Properties */
-	preset_name, -- modifier name or primitive class is used if undefined
+	preset_name, -- modifier name or primitive class is used if undefined E.G.: "Poly_Select|Sphere"
 
 
 	/* ini */
@@ -26,16 +26,47 @@ struct ModStackPreset_v
 
 	ini,  --path to ini file, filename is  {classOf modifier|primitiveType}.ini E.G.:  SliceModifier.ini | Sphere.ini
 
-	blaclist_values = #( Point2 , Point3 ),
+	--blaclist_props = #( Point2 , Point3 ),
+	blaclist_props = #( Point2 , Point3 ),
 
-	/** Set current modObject
+	/** Load preset to mod
+	 *
 	 */
-	function getCurrent =
+	function loadDefaults =
 	(
-		max modify mode
+		--format "\n"; print "ModStackPreset_v.loadDefaults()"
+		--format "modObject	= % \n" modObject
+		--format "classOf modObject	= % \n" ( classOf modObject)
+		--format "superClassOf modObject	= % \n" ( superClassOf modObject)
 
-		modObject = modPanel.getCurrentObject()
+		/** Test if modifier has default values
+		 *
+		 */
+		function modifierHasDefaultValues modObject =
+		(
+			--format "\n"; print "ModStackPreset_v.modifierHasDefaultValues()"
+			modObject_default = execute( (classOf modObject) as string + "()" )
+
+			values_current =  for prop in getPropNames modObject collect (getProperty modObject prop)
+
+			values_default = for prop in getPropNames modObject_default collect (getProperty modObject_default prop)
+
+			(with printAllElements on values_current ) as string == (with printAllElements on values_default) as string  --return
+		)
+
+		if this.hasPreset( preset_name ) and ( isCreatingObject() or modifierHasDefaultValues ( modObject )) then
+			this.loadPreset( preset_name )
 	),
+
+
+	--/** Set current modObject
+	-- */
+	--function getCurrent =
+	--(
+	--	max modify mode
+	--
+	--	modObject = modPanel.getCurrentObject()
+	--),
 
 	/** Save preset
 	  *
@@ -69,27 +100,20 @@ struct ModStackPreset_v
 			return false
 
 		--format "\n"; print "ModStackPreset_v.loadPreset()"
+		--for prop in getPropNames modObject where findItem this.blaclist_props (classOf value_formatted) == 0 do
 		for prop in getPropNames modObject do
 		(
 			val	= getINISetting ini preset_name ( prop as string )
 
-			--format "ModStackPreset_v.loadPreset() % = % \n" prop val
+			--format "prop:	% \nval:	% \n\n" prop val
 
 			if val != "" then
-			(
-				--value_formatted = this._formatDatatypeValue val
-				--value_formatted = execute val
-
-				--if( value_formatted != "undefined" ) then
-				--if( findItem this.blaclist_values (classOf value_formatted) == 0 ) then
-					try
-					(
-						--setProperty modObject prop ( this._formatDatatypeValue val )
-						setProperty modObject prop ( execute val)
-					)
-					catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
-			)
-
+				try
+				(
+					--setProperty modObject prop ( this._formatDatatypeValue val )
+					setProperty modObject prop ( execute val)
+				)
+				catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
 		)
 
 		format "\nMODIFIER PRESET	% HAS BEEN LOADED\n" preset_name
@@ -112,34 +136,27 @@ struct ModStackPreset_v
 	function savePresetDialog =
 	(
 		--format "\n"; print "ModStackPreset_v._savePresetDialog()"
-		--modObject = modPanel.getCurrentObject()
 
-		if superClassOf modObject == modifier then
-		(
-			/* DIALOG */
-			dialog_id = "dialog_" + (classOf modObject) as string + "_preset"
+		dialog_id	= "dialog_" + modObject as string + "_preset"
+		title 	= "Save "+ modObject as string  +" Preset"
 
-			Dialog 	    = Dialog_v title:("Save "+ (classOf modObject) as string  +" preset") id:dialog_id ini:(getSourceFileName() + "/../save-modifier-property.ini")
-			--Dialog 	    = Dialog_v title:("Save "+ (classOf modObject) as string  +" preset") id:dialog_id
+		Dialog 	    = Dialog_v title:(title) id:dialog_id ini:(getDir #temp + "/ini_files/Modifier-preset-dialog/"+title+".ini")
 
-			_Controls	= Dialog.Controls()
-			_Controls_props	= Dialog.Controls group:"Properties saved in preset"
-			_Controls_save	= Dialog.Controls()
+		_Controls_props	= Dialog.Controls group:"Properties saved in preset"
+		_Controls_save	= Dialog.Controls()
 
-			CheckAllCheckbox = _Controls.control #checkbox "Check\Uncheck all" across:1
+		/* CHECKBOX FOR EACH PROPERTY */
+		for prop in getPropNames modObject do
+			_Controls_props.control #checkbox ( prop as string ) id:(("cbx_"+prop as string )as name ) across:1
 
-			CheckAllCheckbox.Events.add #changed ("for control in "+dialog_id+".controls do try( control.state = val )catch()")
+		SaveButton =  _Controls_save.control #button "Save Preset" width:128 height:64 across:1
 
-			for prop in getPropNames modObject do
-				_Controls_props.control #checkbox ( prop as string ) id:(("cbx_"+prop as string )as name ) across:1
+		SaveButton.Events.add #pressed ("(ModStackPreset_v("+ modObject as string  +")).savePreset props:(for ctrl in "+dialog_id+".controls collect try(if ctrl.state then (trimLeft ctrl.name \"cbx_\") as name )catch()); DestroyDialog "+dialog_id+"")
 
-			SaveButton =  _Controls_save.control #button "Save Preset" width:128 height:64 across:1
+		/* DIALOG CREATE */
+		Dialog.create width:256 height:#auto pos:#mouse
 
-			SaveButton.Events.add #pressed ("(ModStackPreset_v("+ (classOf modObject) as string  +")).savePreset props:(for ctrl in "+dialog_id+".controls collect try(if ctrl.state then (trimLeft ctrl.name \"cbx_\") as name )catch()); DestroyDialog "+dialog_id+"")
-
-			/* DIALOG CREATE */
-			Dialog.create width:256 pos:#mouse
-		)
+		----)
 	),
 
 	/** Get objects with instance of given modObject
@@ -192,12 +209,11 @@ struct ModStackPreset_v
 	  *
 	  *  @return string modier name or class of object E.G.: Edit_Poly|Sphere
 	 */
-	function setPresetName =
+	function _getPresetName =
 	(
 		--format "\n"; print "ModStackPreset_v.getModName()"
-		preset_name = ( if superClassOf modObject == modifier then modObject.name else classOf modObject ) as string
+		( if superClassOf modObject == modifier then modObject.name else classOf modObject ) as string
 	),
-
 
 	private
 
@@ -238,14 +254,17 @@ struct ModStackPreset_v
 
 	on create do
 	(
-		--format "\n"; print "ModStackPreset_v.create()"
-		--if modObject != undefined and superClassOf modObject != modifier then
-			--modObject = modPanel.getCurrentObject()
+		format "\n"; print "ModStackPreset_v.create()"
 
-		this.setPresetName()
+		format "modObject	= % \n" modObject
+		format "classOf modObject	= % \n" ( classOf modObject)
+		format "superClassOf modObject	= % \n" ( superClassOf modObject)
+		--if classOf modObject == string then
+		--	modObject = execute modObject
+
+
+		preset_name = this._getPresetName()
 
 		this._setIniPath()
-
-		format "ini	= % \n" ini
 	)
 )

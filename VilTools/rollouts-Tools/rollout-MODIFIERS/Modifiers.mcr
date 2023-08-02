@@ -1,3 +1,7 @@
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms" ) -- "./../rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-MODIFIER-STACK/Lib/managePresetMenu/managePresetMenu.ms" ) -- "./../rollout-MODIFIER-STACK/Lib/managePresetMenu/managePresetMenu.ms"
+
+
 /*------------------------------------------------------------------------------
 	EDIT POLY
 --------------------------------------------------------------------------------*/
