@@ -1,8 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/createQuad.ms" ) -- "./createQuad.ms"
 
 
-clearListener()
-
 /*------ HELP ------*/
 
 /**
@@ -34,9 +32,9 @@ function PLACEHOLDERmenu QuadMenu =
 RightClickQuad = createQuad( "_RightClickQuad" ) #(
 
 	#EDIT1,	 -- "./Quads/EDIT1-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#EDIT2,	 -- "./Quads/EDIT2-menu.ms"
 	#EDIT3,	 -- "./Quads/EDIT3-menu.ms"
-	#EDIT2	 -- "./Quads/EDIT2-menu.ms"
+	#EDIT4	 -- "./Quads/EDIT4-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -93,9 +91,9 @@ AltQuad = createQuad( "Animation" ) #(
 --------------------------------------------------------------------------------*/
 ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 
+	#MODIFIERSCOMMON,	 -- "./Quads/MODIFIERS-COMMON-menu.ms"
 	#MODIFIERS,	 -- "./Quads/MODIFIERS-menu.ms"
 	#MODIFIERSSTACK,	 -- "./Quads/MODIFIERSSTACK-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
 )
 

@@ -5,8 +5,8 @@
 macroscript	edges_select_hard_edges
 category:	"_Epoly-Hard-Edges"
 buttontext:	"Select"
-toolTip:	"Select Hard Edges"
-icon:	"Menu:_Epoly-Hard-Edges"
+tooltip:	"Select Hard Edges"
+icon:	"MENU:true"
 (
 	on isVisible return Filters.Is_EPoly()
 
@@ -37,8 +37,8 @@ icon:	"Menu:_Epoly-Hard-Edges"
 macroscript	edges_show_hard_edges
 category:	"_Epoly-Hard-Edges"
 buttontext:	"Show"
-toolTip:	"Show Hard Edges"
-icon:	"Menu:_Epoly-Hard-Edges"
+tooltip:	"Show Hard Edges"
+icon:	"MENU:true"
 (
 	--on isEnabled return Filters.Is_EPolySpecifyLevel #{2..3}
 	--on isVisible return Filters.Is_EPolySpecifyLevel #{2..3}
@@ -62,8 +62,8 @@ icon:	"Menu:_Epoly-Hard-Edges"
 macroscript	edges_make_hard_edges
 category:	"_Epoly-Hard-Edges"
 buttontext:	"Make Hard"
-toolTip:	"Make Hard Edges"
-icon:	"Menu:_Epoly-Hard-Edges"
+tooltip:	"Make Hard Edges"
+icon:	"MENU:true"
 (
 	on isVisible return Filters.Is_EPoly()
 
@@ -89,8 +89,8 @@ icon:	"Menu:_Epoly-Hard-Edges"
 macroscript	edges_make_smooth_edges
 category:	"_Epoly-Hard-Edges"
 buttontext:	"Make Smooth"
-toolTip:	"Make Smooth Edges"
-icon:	"Menu:_Epoly-Hard-Edges"
+tooltip:	"Make Smooth Edges"
+icon:	"MENU:true"
 (
 	on isVisible return Filters.Is_EPoly()
 

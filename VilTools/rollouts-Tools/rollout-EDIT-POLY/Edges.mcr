@@ -1,21 +1,3 @@
-/**
- *
- */
-macroscript	edges_flow_connect
-category:	"_Epoly-Edges"
-buttontext:	"Flow Connect"
-toolTip:	"Flow Connect Edges"
-icon:	"Menu:true"
-(
-	--on isVisible return Filters.Is_EPolySpecifyLevel #{3}
-	on isVisible return Filters.Is_EPolySpecifyLevel #{3}
-
-	on execute do (
-		macros.run "PolyTools" "FlowConnect"
-	)
-)
-
-
 /*
 	Select Edges By Material ID
 	v.0.2 (2012.11.19-21) by Anubis
@@ -32,8 +14,9 @@ icon:	"Menu:true"
 */
 macroscript edges_seelct_material_borders
 category:	"_Epoly-Edges"
-buttontext:	"Select by mat ID"
+buttontext:	"Select Edges By Mat ID"
 tooltip:	"Select borders edges of material ID"
+icon:	"Menu:true"
 (
 	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-Edit-Poly\Edges.mcr")
 
@@ -92,8 +75,8 @@ tooltip:	"Select borders edges of material ID"
 macroscript	edges_extend_border
 category:	"_Epoly-Edges"
 buttontext:	"Extend Borders"
-toolTip:	"Extend Borders"
-icon:	"Menu:_Epoly-Edges"
+tooltip:	"Extend Borders"
+icon:	"Menu:true"
 (
 
 	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Edit-Poly/Extend_Borders_v1.2.mcr" )	-- "./../../../Lib/vendor/Edit-Poly/Extend_Borders_v1.2.mcr"

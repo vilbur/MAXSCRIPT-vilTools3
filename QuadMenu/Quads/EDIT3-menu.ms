@@ -5,27 +5,37 @@ function EDIT3menu QuadMenu =
 (
 	QuadMenu.setTitle(" Edit 3")
 
-	EditPolyMenu3	= Menu_v("Context Edit Poly Tools 3")
-	EpolyDialogs	= Menu_v("_Epoly-Dialogs")
 
-	EpolyDialogs.addSeparator index:1
-	
-	--EditPolyMenu3.addItem ("") ("Bridge") group:"Edit Poly" --index:1
-
-
-	--EditPolyMenu3.addItem ("Ribbon - Modeling") ("Edge Bridge") group:"Main UI" --index:1
-	--EditPolyMenu3.addItem ("") ("Bridge") group:"Editable Poly" --index:1
-	EditPolyMenu3.addItem "Ribbon - Modeling" "EdgeBridge"
-	EditPolyMenu3.addItem "Ribbon - Modeling" "RelaxSelection"
+	--EpolyToolsMainMenu	= Menu_v("_Epoly-Tools-Main") --flat:false
+	--EpolyToolsMainMenu.addSeparator index:1
+	--QuadMenu.addMenu(EpolyToolsMainMenu)
+	--
+	--ToolsOptionsMenu	= Menu_v("_Epoly-Tools-Options") --flat:false
+	--ToolsOptionsMenu.addSeparator index:1
+	--QuadMenu.addMenu(ToolsOptionsMenu)
 
 
-	--EditPolyMenu3.addItem "_Epoly-Dialogs" "epoly_open_mat_id_dialog"
-	--EditPolyMenu3.addItem "_Epoly-Dialogs" "epoly_open_smoothgroups_dialog"
+	EpolyObjectMenu	= Menu_v("_Epoly-Object") --flat:false
+	EpolyObjectMenu.addSeparator index:2
+	QuadMenu.addMenu(EpolyObjectMenu)
 
 
-	--QuadMenu.addMenu(EditPolyMenu2)	--flat:false --index:1
-	QuadMenu.addMenu(EditPolyMenu3)	--flat:false --index:1
-	QuadMenu.addMenu(EpolyDialogs)	--flat:false --index:1
+	--EpolyPolyToolsMenu	= Menu_v("_Epoly-PolyTools") --flat:false
+	--EpolyPolyToolsMenu.addSeparator index:1
+	--QuadMenu.addMenu(EpolyPolyToolsMenu)
+	--
+	--
+	--EpolyEditMenu	= Menu_v("_Epoly-Edit") --flat:false
+	--EpolyEditMenu.addSeparator index:1
+	--QuadMenu.addMenu(EpolyEditMenu)
+	--
+	--
+	--EpolyHardEdgesMenu	= Menu_v("_Epoly-Hard-Edges") --flat:false
+	--EpolyHardEdgesMenu.addSeparator index:1
+	--QuadMenu.addMenu(EpolyHardEdgesMenu)
 
-	--QuadMenu.addItem ("PolyTools") ("SwiftLoop") --index:1
+
+	EpolyExplodeMenu	= Menu_v("_Epoly-Explode") flat:false
+	EpolyExplodeMenu.addSeparator index:1
+	QuadMenu.addMenu(EpolyExplodeMenu) title:"Explode"
 )

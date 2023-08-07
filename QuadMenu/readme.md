@@ -8,17 +8,21 @@
 
 ## Righclick Quad
 
-1. ### EDIT
-	- Edit Poly
-	- Edit Spline
-	- Edit oher object types
+1. ### EDIT 1
+	- Epoly-Tools-Main
 
-1. ### EDIT
+1. ### EDIT 2
+	- Epoly-Edit
+	- Epoly-Hard-Edges
 
-1. ### EDIT
+1. ### EDIT 3
+	- Epoly-Tools-Object
+	- Epoly-Explode
 
-1. ### EDIT
-	- Edit Poly
+1. ### EDIT 4
+	- Epoly-Tools-Options
+	- Epoly-Tools-PolyTools
+
 
 <br>
 
@@ -91,4 +95,4 @@
 1. ### MODIFIERS
 1. ### MODIFIER STACK
 1. ###
-1. ### 
+1. ###

@@ -15,7 +15,7 @@ function MODIFIERSmenu QuadMenu =
 		#(
 			#PolySelect,
 			#Volumeselect,
-			#Select_by_area,	-- Plugin modifier
+			#select_by_face_size,	-- Plugin modifier
 			#Select_faces_by_mat_id	-- Plugin modifier
 		),
 		#(
@@ -47,20 +47,20 @@ function MODIFIERSmenu QuadMenu =
 			#Extrude,
 			#Lathe,
 			#Bevel,
-			#Normalize_Splin
+			#Normalize_Spline
 			--#OptimizeSplineMod,
 		)
 	)
 
 	menus = #(
 		/* SUBMENU TITLE */	        /* NAME OF MENU */	     /* CATEGORY O MACROSCRIPTS */	/* MACROSCRIPT`S NAMES */
-		"Modify-Object",	(Menu_v("_Modify-Object")	flat:true ).addItems("Modifiers")	(modifiers[1]),
-		"Poly-Select",	(Menu_v("_Modifiers-Poly-Select")	flat:true ).addItems("Modifiers")	(modifiers[2]),
-		"Poly-Surface",	(Menu_v("_Modifiers-Poly-Surface")	flat:true ).addItems("Modifiers")	(modifiers[3]),
-		"Poly-Modify",	(Menu_v("_Modifiers-Poly-Modify")	flat:true ).addItems("Modifiers")	(modifiers[4]),
-		"FFD",	(Menu_v("_Modifiers-FFD")	flat:true ).addItems("Modifiers")	(modifiers[5]),
-		"Deform-Object",	(Menu_v("_Modifiers-Deform-Object")	flat:true ).addItems("Modifiers")	(modifiers[6]),
-		"Shape Modifiers",	(Menu_v("_Modifiers-Spline")	flat:true ).addItems("Modifiers")	(modifiers[7])
+		"Modify-Object",	(Menu_v("_Modify-Object")	flat:false ).addItems("Modifiers")	(modifiers[1]),
+		"Poly-Select",	(Menu_v("_Modifiers-Poly-Select")	flat:false ).addItems("Modifiers")	(modifiers[2]),
+		"Poly-Surface",	(Menu_v("_Modifiers-Poly-Surface")	flat:false ).addItems("Modifiers")	(modifiers[3]),
+		"Poly-Modify",	(Menu_v("_Modifiers-Poly-Modify")	flat:false ).addItems("Modifiers")	(modifiers[4]),
+		"FFD",	(Menu_v("_Modifiers-FFD")	flat:false ).addItems("Modifiers")	(modifiers[5]),
+		"Deform-Object",	(Menu_v("_Modifiers-Deform-Object")	flat:false ).addItems("Modifiers")	(modifiers[6]),
+		"Shape Modifiers",	(Menu_v("_Modifiers-Spline")	flat:false ).addItems("Modifiers")	(modifiers[7])
 	)
 
 

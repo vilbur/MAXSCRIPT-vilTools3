@@ -4,7 +4,7 @@ macroscript	epoly_explode_by_element
 category:	"_Epoly-Explode"
 buttonText:	"Elements"
 toolTip:	"Explode by Elements"
-icon:	"across:5|width:80"
+icon:	"across:5|width:80|MENU:true"
 (
 	--clearListener()
 	undo "explodeByElement" on
@@ -21,6 +21,7 @@ macroscript	epoly_explode_by_material
 category:	"_Epoly-Explode"
 buttontext:	"Material"
 toolTip:	"Explode by Material"
+icon:	"menu:true"
 (
 	undo "explodeByMaterialId" on
 	(
@@ -34,6 +35,7 @@ macroscript	epoly_explode_by_sg
 category:	"_Epoly-Explode"
 buttonText:	"Smooth Group"
 toolTip:	"Explode by SmoothGroups"
+icon:	"menu:true"
 (
 	undo "explodeBySG" on
 	(
@@ -48,6 +50,7 @@ macroscript	epoly_explode_by_selected_edge
 category:	"_Epoly-Explode"
 buttontext:	"Edges"
 toolTip:	"Explode by selected edges"
+icon:	"menu:true"
 (
 	undo "explode By Edges" on
 	(
@@ -62,6 +65,7 @@ macroscript	epoly_explode_by_hard_edge
 category:	"_Epoly-Explode"
 buttontext:	"Hard Edges"
 toolTip:	"Explode by  HARD edges"
+icon:	"menu:true"
 (
 	undo "explodeByHardEdges" on
 	(
