@@ -3,9 +3,11 @@
 function autoEndResult =
 (
 	format "\n"; print "autoEndResult()"
-	format "subobjs	= % \n" ()
-	
-	subobjects = callbacks.notificationParam()
 
-	showEndResult = not (subobjects[1] > 0)
+	subobj_old = (callbacks.notificationParam())[1]
+	subobj_new = (callbacks.notificationParam())[2]
+
+	--subobjects = callbacks.notificationParam()
+	format "subobj_new:	% \n" subobj_new
+	showEndResult = not ( subobj_new > 0 )
 )

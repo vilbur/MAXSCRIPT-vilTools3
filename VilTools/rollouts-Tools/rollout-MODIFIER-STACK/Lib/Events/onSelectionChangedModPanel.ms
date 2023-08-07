@@ -101,7 +101,7 @@ function waitOnModifiyStackIsReadyKill =
  */
 function testNewSelection =
 (
-	--format "\n"; print "Callback: testNewSelection()"
+	format "\n"; print "Callback: testNewSelection()"
 
 	if( selection.count > 0 ) then
 	(
@@ -134,7 +134,7 @@ function testNewSelection =
  */
 function onModifyStackReady =
 (
-	--print "Callback: onModifyStackReady WAIT"
+	print "Callback: onModifyStackReady WAIT"
 
 	max modify mode
 
@@ -151,4 +151,4 @@ function onModifyStackReady =
 
 
 /* KILL ON STARTUP */
-waitOnModifiyStackIsReadyKill()
+--waitOnModifiyStackIsReadyKill()
