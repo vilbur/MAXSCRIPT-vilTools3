@@ -1,31 +1,3 @@
-/** Insert Loop
- */
-macroscript epoly_tools_Insert_Loop
-category:	"_Epoly-PolyTools"
-buttonText:	"Insert Loop"
-icon:	"MENU:true"
-(
-	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
-
-	on execute do (
-		macros.run "PolyTools" "InsertLoop"
-	)
-)
-
-/** Paint Connect
- */
-macroscript epoly_tools_Paint_Connect
-category:	"_Epoly-PolyTools"
-buttonText:	"Paint Connect"
-icon:	"MENU:true"
-(
-	on isVisible	do return isEpoly()
-
-	on execute do (
-		macros.run "PolyTools" "PaintConnect"
-	)
-)
-
 /** Spin Edge
  */
 macroscript epoly_tools_Spin_Edge
@@ -40,6 +12,48 @@ icon:	"MENU:true"
 	)
 )
 
+/** Build Loop End
+ */
+macroscript epoly_tools_Build_Loop_End
+category:	"_Epoly-PolyTools"
+buttonText:	"Build Loop End"
+icon:	"MENU:true"
+(
+	on isVisible	do return isEpoly()	and	isSubObject( 2 )
+
+	on execute do (
+		macros.run "PolyTools" "BuildLoopEnd"
+	)
+)
+
+/** Build Loop Corner
+ */
+macroscript epoly_tools_Build_Loop_Corner
+category:	"_Epoly-PolyTools"
+buttonText:	"Build Loop Corner"
+icon:	"MENU:true"
+(
+	on isVisible	do return isEpoly()	and	isSubObject( 2 )
+
+	on execute do (
+		macros.run "PolyTools" "BuildLoopCorner"
+	)
+)
+
+/** Build Loop End
+ */
+macroscript epoly_tools_Build_Loop_End
+category:	"_Epoly-PolyTools"
+buttonText:	"Build Loop End"
+icon:	"MENU:true"
+(
+	on isVisible	do return isEpoly()	and	isSubObject( 2 )
+
+	on execute do (
+		macros.run "PolyTools" "BuildLoopEnd"
+	)
+)
+
 /** Geo Poly
  */
 macroscript epoly_tools_Geo_Poly
@@ -51,20 +65,6 @@ icon:	"MENU:true"
 
 	on execute do (
 		macros.run "PolyTools" "GeoPoly"
-	)
-)
-
-/** Set Flow
- */
-macroscript epoly_tools_Set_Flow
-category:	"_Epoly-PolyTools"
-buttonText:	"Set Flow"
-icon:	"MENU:true"
-(
-	on isVisible	do return isEpoly()	and	isSubObject( 2 )
-
-	on execute do (
-		macros.run "PolyTools" "SetFlow"
 	)
 )
 

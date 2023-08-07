@@ -34,6 +34,7 @@ function isSubObject subobjects =
 			subobjects == subObjectLevel --return
 		else
 			findItem subobjects subObjectLevel > 0
+
 	)
 	else
 		false --return

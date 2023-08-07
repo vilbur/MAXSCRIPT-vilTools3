@@ -1,3 +1,17 @@
+/** Repeat Last
+ */
+macroscript epoly_tools_Repeat_Last
+category:	"_Epoly-Object"
+buttonText:	"Repeat Last"
+icon:	"MENU:true"
+(
+	on isVisible	do isEpoly()
+
+	on execute do (
+		macros.run "Editable Polygon Object" "EPoly_Repeat_Last"
+	)
+)
+
 /** Attach
  */
 macroscript epoly_tools_Attach
@@ -8,21 +22,35 @@ icon:	"MENU:true"
 	on isVisible	do isEpoly()
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "AttachMode"
+		macros.run "Ribbon - Modeling" AttachMode
 	)
 )
 
-/** Ignore Backfacing
+/** Dot Loop
  */
-macroscript epoly_tools_Ignore_Backfacing
+macroscript epoly_tools_Dot_Loop
 category:	"_Epoly-Object"
-buttonText:	"Ignore Backfacing"
+buttonText:	"Dot Loop"
 icon:	"MENU:true"
 (
-	on isVisible	do isEpoly()
+	on isVisible	do isEpoly()	and	isSubObject( 2 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "IgnoreBackfacing"
+		macros.run "PolyTools" "DotLoop"
+	)
+)
+
+/** Dot Ring
+ */
+macroscript epoly_tools_Dot_Ring
+category:	"_Epoly-Object"
+buttonText:	"Dot Ring"
+icon:	"MENU:true"
+(
+	on isVisible	do isEpoly()	and	isSubObject( 2 )
+
+	on execute do (
+		macros.run "PolyTools" "DotRing"
 	)
 )
 
@@ -54,31 +82,17 @@ icon:	"MENU:true"
 	)
 )
 
-/** Dot Loop
+/** Random Select
  */
-macroscript epoly_tools_Dot_Loop
+macroscript epoly_tools_Random_Select
 category:	"_Epoly-Object"
-buttonText:	"Dot Loop"
+buttonText:	"Random Select"
 icon:	"MENU:true"
 (
-	on isVisible	do isEpoly()	and	isSubObject( 2 )
+	on isVisible	do isEpoly()
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "DotLoop"
-	)
-)
-
-/** Dot Ring
- */
-macroscript epoly_tools_Dot_Ring
-category:	"_Epoly-Object"
-buttonText:	"Dot Ring"
-icon:	"MENU:true"
-(
-	on isVisible	do isEpoly()	and	isSubObject( 2 )
-
-	on execute do (
-		macros.run "Ribbon - Modeling" "DotRing"
+		macros.run "PolyTools" "RandomDialog"
 	)
 )
 

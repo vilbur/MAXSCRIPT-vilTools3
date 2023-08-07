@@ -8,7 +8,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "EdgeRemove"
+		macros.run "Ribbon - Modeling" EdgeRemove
 	)
 )
 
@@ -22,7 +22,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "EdgeSplit"
+		macros.run "Ribbon - Modeling" EdgeSplit
 	)
 )
 
@@ -36,7 +36,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "VertexBreak"
+		macros.run "Ribbon - Modeling" VertexBreak
 	)
 )
 
@@ -50,7 +50,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "CutsCut"
+		macros.run "Ribbon - Modeling" CutsCut
 	)
 )
 
@@ -64,21 +64,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "CutsQuickSlice"
-	)
-)
-
-/** Flow Connect
- */
-macroscript epoly_tools_Flow_Connect
-category:	"_Epoly-Tools-Main"
-buttonText:	"Flow Connect"
-icon:	"MENU:true"
-(
-	on isVisible	do return isEpoly()
-
-	on execute do (
-		macros.run "PolyTools" "FlowConnect"
+		macros.run "Ribbon - Modeling" CutsQuickSlice
 	)
 )
 
@@ -92,7 +78,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2, 3, 4 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "GeometryCollapse"
+		macros.run "Ribbon - Modeling" GeometryCollapse
 	)
 )
 
@@ -106,7 +92,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 3 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "Cap"
+		macros.run "Ribbon - Modeling" Cap
 	)
 )
 
@@ -134,7 +120,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "CreatePolygon"
+		macros.run "Ribbon - Modeling" CreatePolygon
 	)
 )
 
@@ -162,7 +148,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "EditTriangulation"
+		macros.run "Ribbon - Modeling" EditTriangulation
 	)
 )
 
@@ -176,7 +162,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "TurnEdge"
+		macros.run "Ribbon - Modeling" TurnEdge
 	)
 )
 
