@@ -12,6 +12,20 @@ icon:	"MENU:true"
 	)
 )
 
+/** Set Flow
+ */
+macroscript epoly_tools_Set_Flow
+category:	"_Epoly-Connect"
+buttonText:	"Set Flow"
+icon:	"MENU:true"
+(
+	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
+
+	on execute do (
+		macros.run "PolyTools" "SetFlow"
+	)
+)
+
 /** Flow Connect
  */
 macroscript epoly_tools_Flow_Connect
@@ -54,20 +68,6 @@ icon:	"MENU:true"
 	)
 )
 
-/** Distance Connect
- */
-macroscript epoly_tools_Distance_Connect
-category:	"_Epoly-Connect"
-buttonText:	"Distance Connect"
-icon:	"MENU:true"
-(
-	on isVisible	do return isEpoly()	and	isSubObject( 2 )
-
-	on execute do (
-		macros.run "PolyTools" "DistanceConnect"
-	)
-)
-
 /** Insert Loop
  */
 macroscript epoly_tools_Insert_Loop
@@ -79,6 +79,20 @@ icon:	"MENU:true"
 
 	on execute do (
 		macros.run "PolyTools" "InsertLoop"
+	)
+)
+
+/** Distance Connect
+ */
+macroscript epoly_tools_Distance_Connect
+category:	"_Epoly-Connect"
+buttonText:	"Distance Connect"
+icon:	"MENU:true"
+(
+	on isVisible	do return isEpoly()	and	isSubObject( 2 )
+
+	on execute do (
+		macros.run "PolyTools" "DistanceConnect"
 	)
 )
 

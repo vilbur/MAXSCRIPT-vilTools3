@@ -1,18 +1,3 @@
-/** Set Flow
- */
-macroscript epoly_tools_Set_Flow
-category:	"_Epoly-Loops"
-buttonText:	"Set Flow"
-toolTip:	"Ctrl: Autoloop"
-icon:	"MENU:true"
-(
-	on isVisible	do isEpoly() and isSubObject( 2 )	and	isSubObject #( 1 )
-
-	on execute do (
-		executeEpolyLoopTool "SetFlow"
-	)
-)
-
 /** Center Loop
  */
 macroscript epoly_tools_Center_Loop

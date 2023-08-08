@@ -6,89 +6,102 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/circleStack.ms"
   * 1) Activate modify panel if not active
   * 2) If modify panel is active, then select next enabled modifier
  */
-macroscript	modifier_stack_smart_circle_down
+macroscript	modifier_select_enabled_modifier_next
 category:	"_Modifier Stack"
-buttontext:	"Circle Stack"
-toolTip:	"Go modify panel down"
+buttontext:	"Next Enabled"
+tooltip:	"Select Next Enabled Modifier"
 (
-	format "GetCommandPanelTaskMode():	% \n" (GetCommandPanelTaskMode())
-	
 	if( GetCommandPanelTaskMode() != #modify ) then
 		max modify mode
 
+	circleStack(#up)
 
-	circleStack(#down)
-
-
-	--/**
-	-- */
-	--function selectNextEnabledModifier modifiers index =
-	--(
-	--	format "\n"; print ".selectNextEnabledModifier()"
-	--	index_next = index + 1
-	--
-	--	while index_next <= modifiers.count and modifiers[index_next].enabled == false do
-	--		index_next += 1
-	--
-	--	if selection.count > 1 then
-	--	(
-	--		print "SELECT MODIFIER - MUTLIPLE OBJECTS"
-	--
-	--		/* GO DOWN ISTACK n TIMES TO NEXT ENABLED MODIFIER */
-	--		if index_next <= modifiers.count then
-	--			for i = 1 to index_next - index do
-	--				max prev mod
-	--		else /* SELECT FIRST MODIFIER */
-	--			for i = 1 to modifiers.count do
-	--				max next mod
-	--
-	--	)
-	--	else
-	--	(
-	--		print "SELECT MODIFIER - SINGLE OBJECT"
-	--		modPanel.setCurrentObject selection[1].modifiers[index_next]
-	--	)
-	--
-	--)
-	--
-	--if selection.count > 0 then
-	--(
-	--	modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
-	--
-	--	if( GetCommandPanelTaskMode() != #modify ) then
-	--		max modify mode
-	--
-	--	if modifiers.count > 1 and ( current_mod = modPanel.getCurrentObject() ) != undefined then
-	--	(
-	--		index_current = if superClassOf current_mod == modifier then findItem modifiers current_mod else 0
-	--
-	--		if selection.count == 1 and index_current == modifiers.count then
-	--			modPanel.setCurrentObject $.baseObject -- select baseobject if last modifier is active
-	--
-	--		else if selection.count == 1 and index_current == 0 then
-	--			modPanel.setCurrentObject $.modifiers[1] -- select first modifier if baseobject is active
-	--
-	--		else
-	--			selectNextEnabledModifier( modifiers )( index_current )
-	--	)
-	--)
 )
 
 /**
   * 1) Activate modify panel if not active
   * 2) If modify panel is active, then select next enabled modifier
  */
-macroscript	modifier_stack_smart_circle_up
+macroscript	modifier_select_enabled_modifier_previous
 category:	"_Modifier Stack"
-buttontext:	"Circle Stack"
-toolTip:	"Go modify panel up"
+buttontext:	"Previous Enabled"
+tooltip:	"Select Previous Enabled Modifier"
 (
-
 	if( GetCommandPanelTaskMode() != #modify ) then
 		max modify mode
 
+	circleStack(#down)
+)
 
-	circleStack(#up)
+
+/**
+  * 1) Activate modify panel if not active
+  * 2) If modify panel is active, then select next enabled modifier
+ */
+macroscript	modifier_select_modifier_next
+category:	"_Modifier Stack"
+buttontext:	"Next Modifier"
+tooltip:	"Select Next Modifier"
+(
+
+
+	modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
+
+	if ( current_mod = modPanel.getCurrentObject() ) != undefined and modifiers.count > 0 then
+	(
+		index_current = if superClassOf current_mod == modifier then findItem modifiers current_mod else 0
+
+		format "index_current:	% \n" index_current
+		format "modifiers.count:	% \n" modifiers.count
+
+		if index_current == 1 then
+		(
+			if selection.count == 1 then
+				modPanel.setCurrentObject selection[1].baseObject -- select baseobject if last modifier is active
+			else
+				for i = 1 to modifiers.count - 1 do
+					max prev mod
+		)
+		else
+			max next mod
+
+
+	)
+)
+
+/**
+  * 1) Activate modify panel if not active
+  * 2) If modify panel is active, then select next enabled modifier
+ */
+macroscript	modifier_select_modifier_previous
+category:	"_Modifier Stack"
+buttontext:	"Previous Modifier"
+tooltip:	"Select Previous Modifier"
+(
+	clearListener(); print("Cleared in:"+getSourceFileName())
+	modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
+
+	if ( current_mod = modPanel.getCurrentObject() ) != undefined and modifiers.count > 0 then
+	(
+		index_current = if superClassOf current_mod == modifier then findItem modifiers current_mod else 0
+
+		if index_current == modifiers.count then
+		(
+			if selection.count == 1 then
+				modPanel.setCurrentObject selection[1].modifiers[1] node:selection[1]
+
+			else
+				for i = 1 to modifiers.count - 1  do
+					max next mod
+		)
+		else
+			max prev mod
+
+		--format "index_current:	% \n" index_current
+		format "modifiers.count:	% \n" modifiers.count
+	)
+
+
 
 )
 
