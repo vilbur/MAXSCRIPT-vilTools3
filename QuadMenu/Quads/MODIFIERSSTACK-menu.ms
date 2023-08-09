@@ -1,6 +1,6 @@
 function MODIFIERSSTACKmenu QuadMenu =
 (
-	QuadMenu.setTitle("MODIFIERS STACK")
+	QuadMenu.setTitle("S T A C K ")
 
 	ModifierStackMenu	= Menu_v("_Modifier Stack")
 

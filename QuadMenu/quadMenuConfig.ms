@@ -65,10 +65,10 @@ ControlQuad = createQuad( "_ControlQuad" ) #(
 --------------------------------------------------------------------------------*/
 ShiftQuad = createQuad( "_ShiftQuad" ) #(
 
-	#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
+	#visiblityOBJECTS,	 -- "./Quads/visiblityOBJECTS-menu.ms"
 	#visiblitySUBOBJECT,	 -- "./Quads/visiblitySUBOBJECT-menu.ms"
 	#LAYERS,	 -- "./Quads/LAYERS-menu.ms"
-	#visiblityOBJECTS	 -- "./Quads/visiblityOBJECTS-menu.ms"
+	#SELECTION	 -- "./Quads/SELECTION-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -91,10 +91,16 @@ AltQuad = createQuad( "Animation" ) #(
 --------------------------------------------------------------------------------*/
 ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 
-	#MODIFIERSCOMMON,	 -- "./Quads/MODIFIERS-COMMON-menu.ms"
-	#MODIFIERS,	 -- "./Quads/MODIFIERS-menu.ms"
+	#MODIFIERS1,	 -- "./Quads/MODIFIERS-1-menu.ms"
+	#MODIFIERS2,	 -- "./Quads/MODIFIERS-2-menu.ms"
 	#MODIFIERSSTACK,	 -- "./Quads/MODIFIERSSTACK-menu.ms"
-	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#MODIFIERS3	 -- "./Quads/MODIFIERS-3-menu.ms"
+
+	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	--#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
+
 )
 
 /*------------------------------------------------------------------------------

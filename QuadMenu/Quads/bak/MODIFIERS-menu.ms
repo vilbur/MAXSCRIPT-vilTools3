@@ -1,23 +1,31 @@
 function MODIFIERSmenu QuadMenu =
 (
-	QuadMenu.setTitle("MODIFIERS")
+	QuadMenu.setTitle(" M O D I F I E R S")
 
 
 	--ModifiersMenu	= Menu_v("_Modifiers")
 
 	modifiers = #(
 		#(
-			#Symmetry,
-			#MeshSmooth,
-			#DeleteMesh,
-			#VertexWeld
-		),
-		#(
+			#EditPolyMod,
 			#PolySelect,
 			#Volumeselect,
-			#select_by_face_size,	-- Plugin modifier
-			#Select_faces_by_mat_id	-- Plugin modifier
+			#Slice
+
 		),
+
+		#(
+			#FFDBox,
+			#FFD_2x2x2
+		),
+
+		#(
+			#MeshSmooth,
+			#Symmetry,
+			#VertexWeld,
+			#DeleteMesh
+		),
+
 		#(
 			#Smooth,
 			#Material_ID,
@@ -32,9 +40,19 @@ function MODIFIERSmenu QuadMenu =
 			#Outline_faces_poly	-- Plugin modifier
 		),
 		#(
-			#FFDBox,
-			#FFD_2x2x2
+			#Edit_Spline,
+			#Normalize_Spline
 		),
+
+
+		#(
+			#select_by_face_size,	-- Plugin modifier
+			#Select_faces_by_mat_id	-- Plugin modifier
+		),
+
+		#(
+		),
+
 		#(
 			#Bend,
 			#Taper,
@@ -44,10 +62,10 @@ function MODIFIERSmenu QuadMenu =
 		),
 		#(
 			#Edit_Spline,
-			#Extrude,
-			#Lathe,
-			#Bevel,
 			#Normalize_Spline
+			#Lathe,
+			#Extrude,
+			#Bevel,
 			--#OptimizeSplineMod,
 		)
 	)

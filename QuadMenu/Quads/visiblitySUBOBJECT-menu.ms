@@ -4,7 +4,7 @@
 function visiblitySUBOBJECTmenu QuadMenu =
 (
 	print "visiblitySUBOBJECT()"
-	QuadMenu.setTitle("SUBOBJECT")
+	QuadMenu.setTitle("S U B O B J E C T")
 
 	HidePolyMenu	= Menu_v("Context Hide/Unhide Tools")
 

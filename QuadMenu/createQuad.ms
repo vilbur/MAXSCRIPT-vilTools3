@@ -31,6 +31,8 @@ function createQuad quad_menu_name menu_functions =
 
 		fn_name = add_function as string + "menu"
 
+		--format "FN_NAME:	% \n" fn_name
+
 		if fn_name == undefined then
 			format "\nFUNCTION DOES NOT EXISTS: %()\n" fn_name
 

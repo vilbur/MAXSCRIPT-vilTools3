@@ -1,4 +1,4 @@
-clearListener()
+clearListener(); print("Cleared in:"+getSourceFileName())
 
 --RUN_ON_STARTUP = true
 
@@ -6,6 +6,7 @@ content_dir = "VilTools"
 --content_dir = "/Rollouts-Test" -- DEV
 
 current_dir = getFilenamePath(getSourceFileName())
+
 
 global VILTOOLS_DIR = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 
@@ -29,8 +30,14 @@ function importStdScripts =
 	filein_files = #(
 		"/rollout-SELECTION/Lib/Selection/Selection.ms",
 		"/rollout-TOOLS/Lib/ToolMode.ms",
-		"/rollout-EDIT-POLY/Subobject/Subobject.ms",
+		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
+		"/rollout-EDIT-POLY/Lib/Subobject.ms",
+		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
+		"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
+		"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
+		"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
 		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
+		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
 		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)
 
@@ -71,9 +78,12 @@ if doesFileExist export_node_plugin_source then
 )
 
 
+
 /*------------------------------------------------------------------------------
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
+
+filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
 
 /* MANNUAL IMPORT */
 filein_files = #(
@@ -121,31 +131,25 @@ global CALLBACKMANAGER = CallbackManager_v()
 
 /*------------------------------------------------------------------------------
 	START VilTools
---------------------------------------------------------------------------------*/
+------------------------------------------------------------------------------*/
 
 /** LOAD CONTENT */
-current_dir	= getFilenamePath(getSourceFileName())
-
---ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE
+----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
 ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName())
 
 /* CHANGE PROPERTIES oF ROLLOUTS */
---ContentLoader.Dialog.title = "VilTools"
+ContentLoader.Dialog.title = "VilTools"
 
 /* CREATE DIALOG */
 VILTOOLS = ContentLoader.create width:420 height:1024
 
 VILTOOLS.register()
 
-	--format " VilTools	= % \n" (classOf VilTools)
 
 /*------------------------------------------------------------------------------
 	QUADMENUS
 --------------------------------------------------------------------------------*/
 
-
-
---filein( getFilenamePath(getSourceFileName()) + "/QuadMenu/modifyQuadMenus.ms" ) -- "./QuadMenu/modifyQuadMenus.ms"
 
 
 /*------------------------------------------------------------------------------
@@ -156,17 +160,21 @@ VILTOOLS.register()
 /* import when UI exists */
 try
 (
-      filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+--    filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+--
+--	(NodeList_v()).loadNodes()
+--
+--	selectExportNodeInListCallbactAdd()
 
-	--(NodeList_v()).loadNodes()
+	if DIALOG_layers.CBXBTN_layer_manager.state then
+		showLayerManagerCallback()
 
-	--selectExportNodeInListCallbactAdd()
 
-	--loadModifierDefaultsCallback()
 
-	--nodeCreatedSetDefaultPropertiesCallback()
+	CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
 
 	CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
+
 	CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
 
 

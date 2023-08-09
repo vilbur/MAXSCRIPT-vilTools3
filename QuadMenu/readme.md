@@ -9,18 +9,23 @@
 ## Righclick Quad
 
 1. ### EDIT 1
-	- Epoly-Tools-Main
+	- Epoly-Tools-Options
+	- Epoly-Tools-Constraints
 
 1. ### EDIT 2
 	- Epoly-Edit
+	- Epoly-Connect
+	- Epoly-Edges
 	- Epoly-Hard-Edges
 
 1. ### EDIT 3
 	- Epoly-Tools-Object
+	- Epoly-Options
 	- Epoly-Explode
 
 1. ### EDIT 4
-	- Epoly-Tools-Options
+	- Epoly-Tools-Main
+	- Epoly-Loops
 	- Epoly-Tools-PolyTools
 
 
@@ -40,7 +45,7 @@
 
 1. ### PIVOT
 
-1. ### MODIFIERS
+1. ###
 
 <br>
 
@@ -90,7 +95,7 @@
 
 <br>
 
-## Control Shift Quad
+## Control Alt Quad
 
 1. ### MODIFIERS
 1. ### MODIFIER STACK

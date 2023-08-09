@@ -8,7 +8,7 @@
 function SELECTIONmenu QuadMenu =
 (
 	--format "\n"; print "selectionQuad.ms.selectionQuadMenu()"
-	QuadMenu.setTitle("SELECTION")
+	QuadMenu.setTitle("S E L EC T I O N " )
 
 	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
 
