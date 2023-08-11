@@ -11,15 +11,15 @@ function EDIT4menu QuadMenu =
 	QuadMenu.addMenu(EpolyToolsMainMenu)
 
 
-
-	EpolyLoopsMenu	= Menu_v("_Epoly-Loops") --flat:false
-	EpolyLoopsMenu.addSeparator index:1
-	QuadMenu.addMenu(EpolyLoopsMenu)
-
-
-	EpolyPolyToolsMenu	= Menu_v("_Epoly-PolyTools") --flat:false
+	EpolyPolyToolsMenu	= Menu_v("_Epoly-PolyTools") --flat:false  -- "./../../VilTools/rollouts-Tools/rollout-EDIT-POLY/-TOOLS-POLYTOOLS.mcr.ini"
 	EpolyPolyToolsMenu.addSeparator index:1
 	QuadMenu.addMenu(EpolyPolyToolsMenu)
+
+
+	EpolyLoopsMenu	= Menu_v("_Epoly-Loops") --flat:false
+	EpolyLoopsMenu.addSeparator index: #( 1, 2 )
+	QuadMenu.addMenu(EpolyLoopsMenu)
+
 
 
 )

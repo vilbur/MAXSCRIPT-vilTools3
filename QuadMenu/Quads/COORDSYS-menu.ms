@@ -4,6 +4,7 @@
 function COORDSYSmenu QuadMenu =
 (
 	--print "COORDSYSmenu"
+	QuadMenu.setTitle("C O O R D S Y S")
 
 	SnapSubmenu = QuadMenu.getSubMenu(1)
 

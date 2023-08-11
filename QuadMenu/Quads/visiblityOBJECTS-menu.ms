@@ -22,9 +22,11 @@ function visiblityOBJECTSmenu QuadMenu =
 	----
 	----format "HideSelection	= % \n" HideSelection
 
-	QuadMenu.addItem("Tools")("Hide Unselected")	group:"Main UI" title:"Hide UNSELECTED"
-	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"Hide SELECTED"
-	QuadMenu.addItem("Tools")("Unhide All")	group:"Main UI" title:"UNHIDE All"
+	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"HIDE SELECTED"
+	QuadMenu.addItem("Tools")("Hide Unselected")	group:"Main UI" title:"UNSELECTED"
+
+	QuadMenu.addSeparator()
+	QuadMenu.addItem("Tools")("Unhide All")	group:"Main UI" title:"UNHIDE ALL"
 
 	QuadMenu.addSeparator()
 	QuadMenu.addItem("Tools")("Freeze Selection")	group:"Main UI"

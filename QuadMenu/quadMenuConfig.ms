@@ -1,7 +1,10 @@
 filein( getFilenamePath(getSourceFileName()) + "/createQuad.ms" ) -- "./createQuad.ms"
 
+/*------ DOCUMENTATION ------
 
-/*------ HELP ------*/
+	 "./readme.md"
+
+*/
 
 /**
  *

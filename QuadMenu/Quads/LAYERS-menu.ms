@@ -11,7 +11,7 @@ function LAYERSmenu QuadMenu =
 	LayersVisibilityMenu	= Menu_v("_Layers Visibility")
 
 	ManageLayersMenu.addSeparator index:3
-	LayersVisibilityMenu.addSeparator index:#( 2, 6 )
+	LayersVisibilityMenu.addSeparator index:#( 2, 4, 6 )
 
 
 	QuadMenu.addMenu(LayersVisibilityMenu)	--flat:false --index:1

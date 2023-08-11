@@ -1,10 +1,12 @@
 function MODIFIERSSTACKmenu QuadMenu =
 (
-	QuadMenu.setTitle("S T A C K ")
+	QuadMenu.setTitle("M O D - S T A C K ")
 
-	ModifierStackMenu	= Menu_v("_Modifier Stack")
+	RemoteStackMenu	= Menu_v("_Modifiers-Remote")
+	ModifierStackMenu	= Menu_v("_Modifier-Stack")
 
-	ModifierStackMenu.addSeparator index:#( 2, 5 )
+	ModifierStackMenu.addSeparator index:#( 1, 2 )
 
+	QuadMenu.addMenu(RemoteStackMenu)	--flat:false --index:1
 	QuadMenu.addMenu(ModifierStackMenu)	--flat:false --index:1
 )
