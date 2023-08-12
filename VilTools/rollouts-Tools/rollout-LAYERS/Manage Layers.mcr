@@ -6,7 +6,10 @@
  */
 function showLayerManagerCallback =
 (
-	LayerManager.editLayerByName ""
+	try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
+
+	if not LayerManager.isDialogOpen()  then
+		LayerManager.editLayerByName ""
 )
 
 
@@ -15,30 +18,54 @@ function showLayerManagerCallback =
 macroscript	layers_manager_autorun
 category:	"_Layers"
 buttontext:	"Layer Manager"
-tooltip:	"Show\Hide Layer manager on scene open"
+tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
 icon:	"control:checkbutton"
 (
-	if EventFired.val then
-	(
-		LayerManager.editLayerByName ""
+	--format "EventFired:	% \n" EventFired
 
-		try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
-	)
-	else
-	(
-		LayerManager.closeDialog()
+	on execute do
+		if EventFired == undefined or (EventFired != undefined and EventFired.val) then -- run on startup if no fire by event
+		(
+			--LayerManager.editLayerByName ""
+			showLayerManagerCallback()
+		)
+		else
+		(
+			LayerManager.closeDialog()
 
-		try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
-	)
+			try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
+		)
 )
+
+
+
+/**
+ */
+macroscript	layers_manager_toogle_dialog
+category:	"_Layers"
+buttontext:	"Layer Toogle"
+tooltip:	"Open Manager Toogle Window.\n\nCreate for each layer of selected layer or object"
+icon:	"control:checkbutton"
+(
+	--format "EventFired:	% \n" EventFired
+
+	on execute do
+	(
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/LayersToogleDialog/LayersToogleDialog.ms" ) -- "./Lib/LayersToogleDialog/LayersToogleDialog.ms"
+
+		LayersToogleDialog = LayersToogleDialog_v()
+	)
+
+)
+
 
 
 /**
  */
 macroscript	_layers_manager_toggle
 category:	"_Layers"
-buttontext:	"Open Manager"
-tooltip:	"Show\Hide Layer manager & Scene Explorer"
+buttontext:	"Scene Explorer"
+tooltip:	"Show\Hide Scene Explorer.\n\nIf checked, then manager is open on scene open"
 (
 	--messageBox "Yupiii" title:"Title"  beep:false
 	LayerManager.editLayerByName ""
@@ -52,10 +79,66 @@ tooltip:	"Show\Hide Layer manager & Scene Explorer"
 
 /**
  */
+macroscript	_layers_expand_layers_of_selection
+category:	"_Layers"
+buttontext:	"Expand Selection"
+tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
+icon:	"MENU:true|title:EXPAND Selection"
+(
+	on execute do
+	(
+		LayersManager = LayersManager_v()
+
+		LayersManager.expandLayersByObejcts( selection )
+	)
+
+	on altExecute type do
+	(
+		(SceneExplorerManager.GetActiveExplorer()).AutoExpand = not (SceneExplorerManager.GetActiveExplorer()).AutoExpand
+	)
+
+
+)
+
+/*
+*/
+macroscript	layers_select_all_objects_selection
+category:	"_Layers"
+buttontext:	"Select Objects"
+toolTip:	"Select Objects of selected layers\objects."
+icon:	"MENU:true|title:SELECT Objects"
+(
+	undo "Select " on
+	(
+		(LayersManager_v()).isolateLayers( selection )
+	)
+)
+
+/*
+*/
+macroscript	layers_add_selection_to_current_layer
+category:	"_Layers"
+buttontext:	"Add to current layer"
+toolTip:	"Add selection to current layer."
+icon:	"MENU:true"
+(
+	undo "Add to current layer " on
+	(
+		layer_current = (LayersManager_v()).getCurrent()
+		--format "layer_current:	% \n" layer_current
+		for obj in selection do
+			layer_current.addNode obj
+	)
+)
+
+
+/**
+ */
 macroscript	_layers_manager_clone_layers
 category:	"_Layers"
 buttontext:	"Clone Layers"
 tooltip:	"Copy selected objects to new layers"
+icon:	"MENU:true"
 (
 	undo "Clone Layers" on
 	(
@@ -125,34 +208,6 @@ tooltip:	"Copy selected objects to new layers"
 		select new_objs
 	)
 )
-
-/**
- */
-macroscript	_layers_expand_layers_of_selection
-category:	"_Layers"
-buttontext:	"Expand Selection"
-tooltip:	"Expand layers of selection"
-icon:	"menu:true"
-(
-	LayersManager = LayersManager_v()
-
-	LayersManager.expandLayersByObejcts( selection )
-)
-
-/*
-*/
-macroscript	layers_select_all_objects_selection
-category:	"_Layers"
-buttontext:	"Select Objects"
-toolTip:	"Select Objects of selected layers\objects."
-icon:	"menu:true"
-(
-	undo "Slect " on
-	(
-		(LayersManager_v()).isolateLayers( selection )
-	)
-)
-
 
 --/**
 -- */

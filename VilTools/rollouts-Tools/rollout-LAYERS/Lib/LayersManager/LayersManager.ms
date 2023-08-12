@@ -55,7 +55,6 @@ struct LayersManager_v
 		--format "\n"; print "LayersManager_v.getSelectedLayers()"
 		 --for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
 		for layer in this.getAllLayers()where matchPattern layer.name pattern:pattern collect layer -- return
-
 	),
 
 	/** Set given layers visible
@@ -84,7 +83,7 @@ struct LayersManager_v
 	 */
 	function setVisibility layers state =
 	(
-		format "\n"; print "LayersManager_v.setVisibility()"
+		--format "\n"; print "LayersManager_v.setVisibility()"
 		--format "state = % \n" state
 		for layer in layers  do
 			layer.on = state
@@ -170,6 +169,14 @@ struct LayersManager_v
 				appendIfUnique layers_in_tree (curent_layer = curent_layer.getParent())
 
 		layers_in_tree --return
+	),
+
+	/** Test if any of given layers is current active, if not ativeate first
+	 */
+	function getCurrent =
+	(
+		--format "\n"; print "LayersManager_v.setCurrent()"
+		for layer in this.getAllLayers() where layer.current == true do return layer
 	),
 
 	/** Test if any of given layers is current active, if not ativeate first
