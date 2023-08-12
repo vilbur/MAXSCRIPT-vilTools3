@@ -22,7 +22,7 @@ struct MaterialId_v
 
 		colors	 = 6
 
-		if( (mat_existing = this.getMat mat_name) != false ) then
+		if( (mat_existing = this.getMat mat_name) != undefined ) then
 			return mat_existing
 
 		RGB_darker	= this.getColorsPallete colors minmax:#(130,	170)
@@ -50,12 +50,10 @@ struct MaterialId_v
 	 */
 	function getMat mat_name =
 	(
-		_materials = for mat in SceneMaterials where mat.name == mat_name collect mat
+		_materials = for mat in sceneMaterials where mat.name == mat_name collect mat
 		--print ( "_materials = " + _materials.count as string )
 		if( _materials.count > 0 ) then
 			_materials[1] --return
-		else
-			false
 	),
 
 	private
