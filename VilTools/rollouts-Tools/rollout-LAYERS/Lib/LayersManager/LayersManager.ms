@@ -20,20 +20,61 @@ struct LayersManager_v
 		LayerManager.editLayerByName ""
 	),
 
+	/** Create layer
+	  *
+	  * @param string|<MixinInterface:LayerProperties> parent
+	  */
+	function newLayer layer_name parent: =
+	(
+		--format "\n"; print "LayersManager_v.createLayer()"
+		LayerManager.newLayerFromName (layer_name) -- this method does not return layer properties, Maxscript BUG ?
+
+		new_layer = LayerManager.getLayerFromName layer_name
+
+		if parent != unsupplied then
+		(
+			parent_layer	= this._getLayer (parent)
+
+			if parent_layer != undefined then
+				new_layer.setParent (parent_layer)
+		)
+		new_layer --return
+	),
+
+	/** Delete
+	  *
+	  * @param string|array|<MixinInterface:LayerProperties> layers name, layer or array of them
+	  */
+	function deleteLayers layers =
+	(
+		--format "\n"; print "LayersManager_v.delete()"
+		if classOf layers != Array then
+			layers = #(layers)
+
+		for layer in layers do
+		(
+			layer_name	= if classOf layer == MixinInterface then layer.name else layer
+			layer	= this._getLayer (layer)
+
+			if layer.canDelete() then
+				LayerManager.deleteLayerByName (layer_name)
+		)
+	),
+
 	/** Get select layers
 	  *  1) By slection in layer manager
 	  *  2) By current obejcts selection if nothing is selected in layer manager
 	 */
 	function getSelectLayersOrBySelection =
 	(
-		format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
+		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
 		selected_layers = this.getSelectedLayers()
 
 		if selected_layers.count == 0 then
 			selected_layers = this.getLayersByObjects( selection )
 
-		for layer in selected_layers do
-			format "Selected: % \n" layer.name
+		--for layer in selected_layers do
+			--format "Selected: % \n" layer.name
 
 
 		selected_layers --return
@@ -102,12 +143,25 @@ struct LayersManager_v
 	),
 
 	/** Get top layers
+	  *
+	  * @return array of layers
 	 */
 	function getTopLayers layers =
 	(
 		--format "\n"; print "LayersManager_v.getAllTopLayers()"
 
 		for layer in this.getLayersInHierarchy(layers) where layer.getParent() == undefined collect layer
+	),
+
+	/** Get children
+	  *
+	  */
+	function getChildren layer =
+	(
+		--format "\n"; print "LayersManager_v.getChildren()"
+		layer	= this._getLayer (layer)
+
+		for i = 1 to layer.getNumChildren() collect layer.getChild i
 	),
 
 	/** Expand layers by obejcts
@@ -310,7 +364,16 @@ struct LayersManager_v
 		)
 	),
 
-	private
+
+	/** Get layer
+	  *
+	  * @param string|<MixinInterface:LayerProperties> parent
+	  */
+	function _getLayer layer =
+	(
+		--format "\n"; print "LayersManager_v._getLayer()"
+		if classOf layer == MixinInterface then layer else LayerManager.getLayerFromName (layer as string ) --return
+	),
 
 
 	/**

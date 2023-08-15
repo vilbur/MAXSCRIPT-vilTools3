@@ -45,7 +45,32 @@ macroscript	layers_manager_toogle_dialog
 category:	"_Layers"
 buttontext:	"Layer Toogle"
 tooltip:	"Open Manager Toogle Window.\n\nCreate for each layer of selected layer or object"
-icon:	"control:checkbutton"
+--icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
+icon:	"MENU:true|title:LAYER TOOGLE"
+(
+	--format "EventFired:	% \n" EventFired
+
+	on execute do
+	(
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/LayersToogleDialog/LayersToogleDialog.ms" ) -- "./Lib/LayersToogleDialog/LayersToogleDialog.ms"
+
+
+		LayersToogleDialog = LayersToogleDialog_v()
+
+
+		LayersToogleDialog.create()
+
+	)
+
+)
+
+/**
+ */
+macroscript	layers_manager_toogle_dialog_resetini
+category:	"_Layers"
+buttontext:	"Layer Toogle"
+tooltip:	"Reload with new layers set"
+--icon:	"control:checkbutton"
 (
 	--format "EventFired:	% \n" EventFired
 
@@ -54,7 +79,14 @@ icon:	"control:checkbutton"
 		filein( getFilenamePath(getSourceFileName()) + "/Lib/LayersToogleDialog/LayersToogleDialog.ms" ) -- "./Lib/LayersToogleDialog/LayersToogleDialog.ms"
 
 		LayersToogleDialog = LayersToogleDialog_v()
+
+
+		LayersToogleDialog.resetSelectedLayers()
+
+
+		LayersToogleDialog.create()
 	)
+
 
 )
 
