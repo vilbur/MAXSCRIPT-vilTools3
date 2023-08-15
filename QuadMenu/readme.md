@@ -37,15 +37,12 @@
 
 ## Control Quad
 
+1. ### SUBOBJECT VISIBILITY
+1. ### OBJECT VISIBILITY
+1. ### LAYERS VISIBILITY
+1. ### SELECTION & INSTANCES
 
-1. ### OBJECTS
-	 - Create
 
-1. ### SNAP & TRANSFORM
-
-1. ### PIVOT
-
-1. ###
 
 <br>
 
@@ -55,10 +52,11 @@
 
 ## Shift Quad
 
-1. ### SUBOBJECT VISIBILITY
-1. ### OBJECT VISIBILITY
-1. ### LAYERS VISIBILITY
-1. ### SELECTION & INSTANCES
+1. ### VIEWPORTS
+1. ### INSTANCES
+1. ### GROUP
+
+1. ### SNAP & TRANSFORM
 
 
 <br>
@@ -70,10 +68,14 @@
 
 ## Alt Quad
 
-1. ### VIEWPORTS
-1. ### INSTANCES
-1. ### GROUP
 1. ### ANIMATION
+
+1. ### OBJECTS
+	 - Create
+
+
+1. ### PIVOT
+
 
 <br>
 
@@ -84,9 +86,9 @@
 
 ## Control Shift Quad
 
-1. ### SCENE
-1. ### MATERIALS
-1. ### UVW
+1. ### MODIFIERS
+1. ### MODIFIER STACK
+1. ###
 1. ###
 
 <br>
@@ -97,7 +99,8 @@
 
 ## Control Alt Quad
 
-1. ### MODIFIERS
-1. ### MODIFIER STACK
+1. ### SCENE
+1. ### MATERIALS
+1. ### UVW
 1. ###
 1. ###

@@ -6,9 +6,7 @@ filein( getFilenamePath(getSourceFileName()) + "/createQuad.ms" ) -- "./createQu
 
 */
 
-/**
- *
- */
+
 macroscript	test_macroscript
 category:	"_Test"
 buttontext:	"Test"
@@ -18,12 +16,12 @@ toolTip:	"Test"
 (
 	messageBox "Test" title:"Test Macroscript"
 )
-/**
- */
+
 function PLACEHOLDERmenu QuadMenu =
 (
 	--format "\n"; print "PLACEHOLDERmenu()"
 )
+
 
 
 /*------------------------------------------------------------------------------
@@ -34,6 +32,7 @@ function PLACEHOLDERmenu QuadMenu =
 
 RightClickQuad = createQuad( "_RightClickQuad" ) #(
 
+	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#EDIT1,	 -- "./Quads/EDIT1-menu.ms"
 	#EDIT2,	 -- "./Quads/EDIT2-menu.ms"
 	#EDIT3,	 -- "./Quads/EDIT3-menu.ms"
@@ -47,20 +46,13 @@ RightClickQuad = createQuad( "_RightClickQuad" ) #(
 --------------------------------------------------------------------------------*/
 ControlQuad = createQuad( "_ControlQuad" ) #(
 
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#PRIMITIVES,	 -- "./Quads/PRIMITIVES-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
-
-	--#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
-	--#PIVOT,	 -- "./Quads/PIVOT-menu.ms"
-	--
-	--#(
-	--	#SNAP,	 -- "./Quads/SNAP-menu.ms"
-	--	#TRANSFORM	 -- "./Quads/TRANSFORM-menu.ms"
-	--)
+	#visiblityOBJECTS,	 -- "./Quads/visiblityOBJECTS-menu.ms"
+	#visiblitySUBOBJECT,	 -- "./Quads/visiblitySUBOBJECT-menu.ms"
+	#LAYERS,	 -- "./Quads/LAYERS-menu.ms"
+	#SELECTION	 -- "./Quads/SELECTION-menu.ms"
 
 )
+
 /*------------------------------------------------------------------------------
 
 	SHIFT QUAD
@@ -68,10 +60,11 @@ ControlQuad = createQuad( "_ControlQuad" ) #(
 --------------------------------------------------------------------------------*/
 ShiftQuad = createQuad( "_ShiftQuad" ) #(
 
-	#visiblityOBJECTS,	 -- "./Quads/visiblityOBJECTS-menu.ms"
-	#visiblitySUBOBJECT,	 -- "./Quads/visiblitySUBOBJECT-menu.ms"
-	#LAYERS,	 -- "./Quads/LAYERS-menu.ms"
-	#SELECTION	 -- "./Quads/SELECTION-menu.ms"
+	#SNAP,	 -- "./Quads/SNAP-menu.ms"
+	#COORDSYS,	 -- "./Quads/COORDSYS-menu.ms"
+	#TRANSFORM,	 -- "./Quads/TRANSFORM-menu.ms"
+	#PIVOT	 -- "./Quads/PIVOT-menu.ms"
+
 )
 
 /*------------------------------------------------------------------------------
@@ -82,9 +75,11 @@ ShiftQuad = createQuad( "_ShiftQuad" ) #(
 AltQuad = createQuad( "Animation" ) #(
 
 	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
-	#COORDSYS,	 -- "./Quads/COORDSYS-menu.ms"
-	#SNAP,	 -- "./Quads/SNAP-menu.ms"
-	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#PRIMITIVES,	 -- "./Quads/PRIMITIVES-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#GROUP	 -- "./Quads/GROUP-menu.ms"
+
+	--#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -94,15 +89,10 @@ AltQuad = createQuad( "Animation" ) #(
 --------------------------------------------------------------------------------*/
 ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 
-	#MODIFIERS1,	 -- "./Quads/MODIFIERS-1-menu.ms"
-	#MODIFIERS2,	 -- "./Quads/MODIFIERS-2-menu.ms"
-	#MODIFIERSSTACK,	 -- "./Quads/MODIFIERSSTACK-menu.ms"
-	#MODIFIERS3	 -- "./Quads/MODIFIERS-3-menu.ms"
-
-	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	--#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#SCENE,	 -- "./Quads/SCENE-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#MATERIALS	 -- "./Quads/MATERIALS-menu.ms"
 
 )
 
@@ -113,12 +103,28 @@ ControlAltQuad = createQuad( "_ControlAltQuad" ) #(
 --------------------------------------------------------------------------------*/
 CotrolShiftQuad = createQuad( "_CotrolShiftQuad" ) #(
 
-	#SCENE,	 -- "./Quads/SCENE-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#MATERIALS	 -- "./Quads/MATERIALS-menu.ms"
+	#MODIFIERS1,	 -- "./Quads/MODIFIERS-1-menu.ms"
+	#MODIFIERS2,	 -- "./Quads/MODIFIERS-2-menu.ms"
+	#MODIFIERSSTACK,	 -- "./Quads/MODIFIERSSTACK-menu.ms"
+	#MODIFIERS3	 -- "./Quads/MODIFIERS-3-menu.ms"
+
 )
 
+/*------------------------------------------------------------------------------
+
+	VIEPORTS QUAD - Under "V" key
+
+--------------------------------------------------------------------------------*/
+ViewportsMenu = createQuad( "Viewports" ) #(
+
+	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#ViewportsLayout,	 -- "./Quads/VIEWPORTS-LAYOUT-menu.ms"
+	#ViewportsManage,	 -- "./Quads/VIEWPORTS-MANAGE-menu.ms"
+	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
+	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
+
+)
 
 /*==============================================================================
 
@@ -137,3 +143,5 @@ AltQuad.setRightClick which:#altPressed
 ControlAltQuad.setRightClick which:#controlAndAltPressed
 
 CotrolShiftQuad.setRightClick which:#shiftAndControlPressed
+
+--ViewportsMenu.showAllQuads()

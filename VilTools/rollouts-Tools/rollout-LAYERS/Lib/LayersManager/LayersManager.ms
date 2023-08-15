@@ -164,24 +164,53 @@ struct LayersManager_v
 		for i = 1 to layer.getNumChildren() collect layer.getChild i
 	),
 
-	/** Expand layers by obejcts
+
+	/** Expand layers
 	  *
-	  * Achived by workaround with auto expansion
-	  *
-	 */
-	function expandLayersByObejcts _objects =
+	  */
+	function expand layers =
 	(
-		--format "\n"; print "LayersManager_v.expandLayersByObejcts()"
+		--format "\n"; print "LayersManager_v.expand()"
+		_selection = for o in selection collect o
+
+		max_mode = GetCommandPanelTaskMode()
+
 		auto_expand_state = ExplorerManager.AutoExpand
 
-		this.CollapseAll()
+		max create mode
 
 		ExplorerManager.AutoExpand = true
 
-		select _objects
+		first_objects_in_each_layer = for layer in layers where (layer_nodes = this.getObjectsInLayers(layer)).count > 0 collect layer_nodes[1]
+		--format "first_objects_in_each_layer:	% \n" first_objects_in_each_layer
+		select first_objects_in_each_layer
 
-		 ExplorerManager.AutoExpand = auto_expand_state
+		/* RESTORE STATE */
+		ExplorerManager.AutoExpand = auto_expand_state
+
+		select _selection
+
+		SetCommandPanelTaskMode(max_mode)
 	),
+
+	--/** Expand layers by obejcts
+	--  *
+	--  * Achived by workaround with auto expansion
+	--  *
+	-- */
+	--function expandLayersByObjects _objects =
+	--(
+	--	--format "\n"; print "LayersManager_v.expandLayersByObejcts()"
+	--	auto_expand_state = ExplorerManager.AutoExpand
+	--
+	--	this.CollapseAll()
+	--
+	--	ExplorerManager.AutoExpand = true
+	--
+	--	select _objects
+	--
+	--	ExplorerManager.AutoExpand = auto_expand_state
+	--),
 
 	/** Collapse all Layers
 	 */
@@ -251,9 +280,13 @@ struct LayersManager_v
 		--format "layers	= % \n" layers
 		layers_nodes = #()
 
+		if classOf layers != Array then
+			layers = #(layers)
+
 		for layer in layers do
 		(
 			layer.nodes &layer_nodes
+			--layer_nodes = refs.dependents layer
 
 			layers_nodes += layer_nodes
 		)
@@ -324,31 +357,31 @@ struct LayersManager_v
 	),
 
 
-	/** Show only layers of selected objects
-	  *
-	  * @return array #(<MixinInterface:LayerProperties>)
-	 */
-	function isolateLayers _objects =
-	(
-		layers_of_objects = #()
-
-		if _objects.count > 0 then
-		(
-			all_layers       = for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i
-
-			layers_of_objects = makeUniqueArray (for obj in _objects collect obj.layer)
-
-			for layer in all_layers do
-				layer.on = (findItem layers_of_objects layer > 0)
-
-			active_layer = for layer_of_selected_object in layers_of_objects where layer_of_selected_object.current collect layer_of_selected_object
-
-			if active_layer.count == 0 then
-				_objects[1].layer.current  = true
-		)
-
-		layers_of_objects --return
-	),
+	--/** Show only layers of selected objects
+	--  *
+	--  * @return array #(<MixinInterface:LayerProperties>)
+	-- */
+	--function isolateLayers _objects =
+	--(
+	--	layers_of_objects = #()
+	--
+	--	if _objects.count > 0 then
+	--	(
+	--		all_layers       = for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i
+	--
+	--		layers_of_objects = makeUniqueArray (for obj in _objects collect obj.layer)
+	--
+	--		for layer in all_layers do
+	--			layer.on = (findItem layers_of_objects layer > 0)
+	--
+	--		active_layer = for layer_of_selected_object in layers_of_objects where layer_of_selected_object.current collect layer_of_selected_object
+	--
+	--		if active_layer.count == 0 then
+	--			_objects[1].layer.current  = true
+	--	)
+	--
+	--	layers_of_objects --return
+	--),
 
 	/** Unhide layer
 	 */

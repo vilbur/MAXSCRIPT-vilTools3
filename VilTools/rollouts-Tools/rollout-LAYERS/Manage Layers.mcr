@@ -1,156 +1,68 @@
+
 /*------------------------------------------------------------------------------
-	LAYERS MANGER
-------------------------------------------------------------------------------*/
+	EXPAND \ COLLAPSE
+--------------------------------------------------------------------------------*/
 
-/**
- */
-function showLayerManagerCallback =
-(
-	try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
-
-	if not LayerManager.isDialogOpen()  then
-		LayerManager.editLayerByName ""
-)
-
-
-/**
- */
-macroscript	layers_manager_autorun
-category:	"_Layers"
-buttontext:	"Layer Manager"
-tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
-icon:	"control:checkbutton"
-(
-	--format "EventFired:	% \n" EventFired
-
-	on execute do
-		if EventFired == undefined or (EventFired != undefined and EventFired.val) then -- run on startup if no fire by event
-		(
-			--LayerManager.editLayerByName ""
-			showLayerManagerCallback()
-		)
-		else
-		(
-			LayerManager.closeDialog()
-
-			try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
-		)
-)
-
-
-
-/**
- */
-macroscript	layers_manager_toogle_dialog
-category:	"_Layers"
-buttontext:	"Layer Toogle"
-tooltip:	"Open Manager Toogle Window.\n\nCreate for each layer of selected layer or object"
---icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
-icon:	"MENU:true|title:LAYER TOOGLE"
-(
-	--format "EventFired:	% \n" EventFired
-
-	on execute do
-	(
-		filein( getFilenamePath(getSourceFileName()) + "/Lib/LayersToogleDialog/LayersToogleDialog.ms" ) -- "./Lib/LayersToogleDialog/LayersToogleDialog.ms"
-
-
-		LayersToogleDialog = LayersToogleDialog_v()
-
-
-		LayersToogleDialog.create()
-
-	)
-
-)
-
-/**
- */
-macroscript	layers_manager_toogle_dialog_resetini
-category:	"_Layers"
-buttontext:	"Layer Toogle"
-tooltip:	"Reload with new layers set"
---icon:	"control:checkbutton"
-(
-	--format "EventFired:	% \n" EventFired
-
-	on execute do
-	(
-		filein( getFilenamePath(getSourceFileName()) + "/Lib/LayersToogleDialog/LayersToogleDialog.ms" ) -- "./Lib/LayersToogleDialog/LayersToogleDialog.ms"
-
-		LayersToogleDialog = LayersToogleDialog_v()
-
-
-		LayersToogleDialog.resetSelectedLayers()
-
-
-		LayersToogleDialog.create()
-	)
-
-
-)
-
-
-
-/**
- */
-macroscript	_layers_manager_toggle
-category:	"_Layers"
-buttontext:	"Scene Explorer"
-tooltip:	"Show\Hide Scene Explorer.\n\nIf checked, then manager is open on scene open"
-(
-	--messageBox "Yupiii" title:"Title"  beep:false
-	LayerManager.editLayerByName ""
-
-	if not SceneExplorerManager.ExplorerExists(default_explorer = "Scene Explorer") then
-		SceneExplorerManager.CreateExplorerFromDefault(default_explorer)
-	else
-		SceneExplorerManager.OpenExplorer(default_explorer)
-)
-
-
-/**
+/** EXPAND SELECTED LAYERS
  */
 macroscript	_layers_expand_layers_of_selection
-category:	"_Layers"
-buttontext:	"Expand Selection"
+category:	"_Layers-Manage"
+buttontext:	"Expand Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
-icon:	"MENU:true|title:EXPAND Selection"
+icon:	"MENU:EXPAND Layers"
 (
 	on execute do
 	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Manage Layers.mcr"
 		LayersManager = LayersManager_v()
 
-		LayersManager.expandLayersByObejcts( selection )
+		selected_layers = LayersManager.getSelectLayersOrBySelection()
+
+		LayersManager.expand( selected_layers )
 	)
 
 	on altExecute type do
 	(
 		(SceneExplorerManager.GetActiveExplorer()).AutoExpand = not (SceneExplorerManager.GetActiveExplorer()).AutoExpand
 	)
-
-
 )
 
-/*
+/** COLLAPSE SELECTED LAYERS
+ */
+macroscript	_layers_collapse_all_layers
+category:	"_Layers-Manage"
+buttontext:	"Collapse Layers"
+tooltip:	"Collapse Layers in manager"
+icon:	"MENU:COLLAPSE Layers"
+(
+	on execute do
+		LayersManager.CollapseAll()
+)
+
+/* SELECT OBEJCTS IN LAYERS
 */
 macroscript	layers_select_all_objects_selection
-category:	"_Layers"
+category:	"_Layers-Manage"
 buttontext:	"Select Objects"
-toolTip:	"Select Objects of selected layers\objects."
+toolTip:	"Select Objects of selected layers, or layers of selected objects."
 icon:	"MENU:true|title:SELECT Objects"
 (
 	undo "Select " on
 	(
-		(LayersManager_v()).isolateLayers( selection )
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectLayersOrBySelection()
+
+		select (LayersManager.getObjectsInLayers( selected_layers ))
 	)
 )
 
-/*
+/* ADD TO CURRENT LAYER
 */
 macroscript	layers_add_selection_to_current_layer
-category:	"_Layers"
-buttontext:	"Add to current layer"
+category:	"_Layers-Manage"
+buttontext:	"Add to Layer"
 toolTip:	"Add selection to current layer."
 icon:	"MENU:true"
 (
@@ -164,10 +76,10 @@ icon:	"MENU:true"
 )
 
 
-/**
+/** CLONE LAYERS
  */
 macroscript	_layers_manager_clone_layers
-category:	"_Layers"
+category:	"_Layers-Manage"
 buttontext:	"Clone Layers"
 tooltip:	"Copy selected objects to new layers"
 icon:	"MENU:true"
@@ -240,19 +152,3 @@ icon:	"MENU:true"
 		select new_objs
 	)
 )
-
---/**
--- */
---macroscript	_layers_select_objects_of_selection
---category:	"_Layers"
---buttontext:	"Select objects"
---icon:	"Tooltip:'Select objects of selected layers\objects.\n'"
---(
---	messageBox "Manage Layers" title:"Title"  beep:false
---	LayersManager = LayersManager_v()
---
---	selected_layers = LayersManager.getSelectLayersOrBySelection()
---
---	--select (LayersManager.getObjectsInLayers(selected_layers))
---
---)

@@ -7,7 +7,7 @@ function EDIT4menu QuadMenu =
 
 
 	EpolyToolsMainMenu	= Menu_v("_Epoly-Tools-Main") --flat:false
-	EpolyToolsMainMenu.addSeparator index:1
+	EpolyToolsMainMenu.addSeparator index: #( 2, 4, 6 )
 	QuadMenu.addMenu(EpolyToolsMainMenu)
 
 

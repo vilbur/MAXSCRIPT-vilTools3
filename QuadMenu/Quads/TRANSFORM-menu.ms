@@ -3,9 +3,9 @@
   */
 function TRANSFORMmenu QuadMenu =
 (
-	QuadMenu.setTitle("Transform")
+	QuadMenu.setTitle("T R A N S F O R M")
 
-	--DefaulQuadMenu 	= (QuadMenuv("Title")).Quads[1]
+	--DefaulQuadMenu 	= (QuadMenu_v("Title")).Quads[1]
 
 	--QuadMenu.addSeparator()
 

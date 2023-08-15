@@ -3,7 +3,7 @@
   */
 function ANIMATIONmenu QuadMenu =
 (
-	QuadMenu.setTitle("Animation")
+	QuadMenu.setTitle("A N I M A T I O N")
 
 	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
 	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1

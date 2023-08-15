@@ -1,6 +1,6 @@
 function SNAPmenu QuadMenu =
 (
-	--QuadMenu.setTitle(" Snap")
+	QuadMenu.setTitle(" S N A P")
 
 	SnapQuadMenu 	= QuadMenu_v("Snap") -- Get Quad Menu "Snap"
 

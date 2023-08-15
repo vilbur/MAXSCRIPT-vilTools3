@@ -11,7 +11,7 @@ function sceneMenu QuadMenu =
 	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
 
 	--_SceneMenu.addSeparator()
-	_SceneMenu.addSeparator index:#( 3, 5, 6)
+	_SceneMenu.addSeparator index:#( 3, 5, 6 )
 	----_SceneMenu.addSeparator index:#( 3, 6 )
 	----_SceneMenu.addSeparator index:8
 	--

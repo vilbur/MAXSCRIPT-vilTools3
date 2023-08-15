@@ -12,10 +12,11 @@ toolTip:	"Create Honeycomb Plane"
 	on execute do startObjectCreation HoneycombPlane
 )
 
-
+/*
+*/
 function PRIMITIVESmenu QuadMenu =
 (
-	QuadMenu.setTitle(" Create")
+	QuadMenu.setTitle(" C R E A T E")
 	--
 	--standard_primitives_plugin = #(
 	--	#hexasphere,
@@ -96,9 +97,13 @@ function PRIMITIVESmenu QuadMenu =
 		"Compounds",	(Menu_v("_Compound Primitives")	flat:false).addItems("Objects Compounds")	(compound_primitives)
 	)
 
+
+	QuadMenu.removeItem #( 1 ) -- Remove Default submenu
+
+
 	QuadMenu.addMenus(menus) separator:true
 
-	QuadMenu.addItem ("Edit") ("Properties") group:"Main UI" index:1
+	QuadMenu.addItem ("Edit") ("Object Properties") group:"Main UI" index:1
 	QuadMenu.addSeparator index:#(2)
 
 

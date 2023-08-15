@@ -9,7 +9,8 @@ function visiblityOBJECTSmenu QuadMenu =
 
 	QuadMenu.setTitle(" O B J E C T S")
 
-	----HideMenuX	= Menu_v("Context Hide/Unhide Tools")
+	ObjectsVisibilityMenu	= Menu_v("_Selection-Visibility")
+
 	----format "HideMenuX	= % \n" HideMenuX
 	----QuadMenu.addMenu(HideMenuX)	--flat:false --index:1
 	--
@@ -29,7 +30,11 @@ function visiblityOBJECTSmenu QuadMenu =
 	QuadMenu.addItem("Tools")("Unhide All")	group:"Main UI" title:"UNHIDE ALL"
 
 	QuadMenu.addSeparator()
+	QuadMenu.addMenu(ObjectsVisibilityMenu)	--flat:false --index:1
+
+	QuadMenu.addSeparator()
 	QuadMenu.addItem("Tools")("Freeze Selection")	group:"Main UI"
 	QuadMenu.addItem("Tools")("Unfreeze All")	group:"Main UI"
+
 
 )
