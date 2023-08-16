@@ -43,13 +43,14 @@ LayersManager.deleteLayers( LayersManager.getAllLayers() )
 createLayersTree()
 
 
---select	$Top1
-select	$Top1Child1
---select	$Top1Child1Nested1
 
+--selectmore	$Top1
+--selectmore	$Top1Child1
+selectmore	$Top1Child1Nested1
+--
 
 LayersManager.hideUnselected()
---LayersManager.hideUnselected() isolate:true
+--LayersManager.hideUnselected isolate:true
 
 
 

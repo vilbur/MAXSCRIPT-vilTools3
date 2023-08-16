@@ -40,19 +40,9 @@ icon:	"MENU:ISOLATE Selected|Tooltip:Show only selected layers, or layers of obj
 	(
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getLayers()
+		undo "Isolate selected layers" on
+			LayersManager.hideUnselected isolate:true
 
-		undo "Hide unselected layers" on
-		(
-			--layers_in_hierarchy = LayersManager.setVisibleTree( selected_layers )
-
-			/* HIDE OBEJCTS IN PARENT LAYERS
-				parent_layers = LayersManager.difference( layers_in_hierarchy )(selected_layers)
-
-				LayersManager.setObjectsVisibility(parent_layers)(false)
-			*/
-			LayersManager.setVisibility( selected_layers )(true)
-		)
 
 		LayersManager.setCurrent( selected_layers )
 
@@ -125,19 +115,13 @@ icon:	"MENU:OFF Unselected"
 	(
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
+		undo "Hide unselected layers" on
+			LayersManager.hideUnselected()
 
-		top_layers_selected = LayersManager.getTopLayers( selected_layers )
-		top_layers_all		= LayersManager.getTopLayers( LayersManager.getAllLayers() )
-
-		top_layers_to_hide = LayersManager.difference (top_layers_all) (top_layers_selected)
-
-		undo "Hide unselected top layers" on
-			LayersManager.setVisibility (top_layers_to_hide) (false)
-
-		LayersManager.expand( selected_layers )
 
 		LayersManager.setCurrent( selected_layers )
+
+		LayersManager.expand( selected_layers )
 	)
 )
 

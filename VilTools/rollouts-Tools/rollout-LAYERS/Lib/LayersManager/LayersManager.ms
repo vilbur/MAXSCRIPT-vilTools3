@@ -196,11 +196,9 @@ struct LayersManager_v
 	function getObjectsInLayers layers =
 	(
 		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
-		--format "layers	= % \n" layers
-		layers_nodes = #()
+		if classOf layers != Array then layers = #(layers)
 
-		if classOf layers != Array then
-			layers = #(layers)
+		layers_nodes = #()
 
 		for layer in layers do
 		(
@@ -368,52 +366,55 @@ struct LayersManager_v
 	/** Hide unselecvted
 	  *
 	  */
-	function hideUnselected isolate: =
+	function hideUnselected ISOLATE:false =
 	(
 		format "\n"; print "LayersManager_v.isolateLayers()"
 
-		this._hideUnseleted(this.getLayers())
+		layers_selected = this.getLayers()
 
+		layers_in_hierarchy = this.getLayersInHierarchy(layers_selected)
 
-
-		--format "\n"; print "LayersManager_v.isolateLayers()"
+		this._hideUnseleted(layers_selected)(layers_selected)(layers_in_hierarchy) ISOLATE:ISOLATE
 	),
 
-	/** Hide unseleted
+
+	/** Hide unseleted layers, layers of selected objects or current layer if nothing selected
 	  *
 	  */
-	function _hideUnseleted layers =
+	function _hideUnseleted layers dont_hide_layers layers_in_hierarchy ISOLATE:false =
 	(
 		--format "\n"; print "LayersManager_v._hideUnseleted()"
 
-		layers_in_hierarchy = this.getLayersInHierarchy(layers)
-
 		for layer in layers do
 		(
-			format "ISOLATE:	% \n" layer.name
 			layer.on = true
 
-			--format "layer.name:	% \n" layer.name
+			/* HIDE CHILD LAYERS */
+			if ISOLATE then
+				for child_layer in this.getChildren(layer) where findItem layers_in_hierarchy child_layer == 0 do
+					child_layer.on = false
+
+			/* IF NESDTED LAYER */
 			if (parent_layer = layer.getParent()) != undefined then
 			(
-				format "parent_layer.name:	% \n" parent_layer.name
+				/* HIDE OBJECTS IN PARENT LAYER */
+				if ISOLATE then
+					for obj_in_parent_layer in this.getObjectsInLayers(parent_layer) where findItem dont_hide_layers parent_layer == 0 do
+						obj_in_parent_layer.isHidden = true
+
+				/* HIDE LAYERS ON SAME LEVEL */
 				for layer_of_same_level in this.getChildren(parent_layer) where findItem layers_in_hierarchy layer_of_same_level == 0 do
-				--for layer_of_same_level in this.getChildren(parent_layer)  do
 				(
-					format "layer_of_same_level:	% \n" layer_of_same_level.name
 					layer_of_same_level.on = false
 
-					this._hideUnseleted #(parent_layer)
+					/* REPEAT FOR PARENT LAYERS */
+					this._hideUnseleted #(parent_layer)(dont_hide_layers)(layers_in_hierarchy) ISOLATE:ISOLATE
 				)
-
 			)
-
+			else
+				for top_layer in this.getTopLayers (this.getAllLayers()) where findItem layers_in_hierarchy top_layer == 0 do
+					top_layer.on = false
 		)
-
-		for top_layer in this.getTopLayers (this.getAllLayers()) where findItem layers_in_hierarchy top_layer == 0 do
-			top_layer.on = false
-
-
 	),
 
 	/** Select visibily of obejcts in given layers
