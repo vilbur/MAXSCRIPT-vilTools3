@@ -1,5 +1,15 @@
 
 /** Toggle layers by prefix
+
+
+
+  MOVE THIS TO LayersManager
+
+
+
+
+
+
  */
 function toggleLayersByPrefix state =
 (
@@ -11,9 +21,6 @@ function toggleLayersByPrefix state =
 	if selected_layers.count == 0 then
 		selected_layers = LayersManager.getLayersByObjects( selection )
 
-	--format "selected_layers = % \n" selected_layers
-	--	for layer in selected_layers do
-	--		format "layer.name = % \n" layer.name
 
 	if selected_layers.count > 0 do
 	(
@@ -30,10 +37,9 @@ function toggleLayersByPrefix state =
 			prefix = layer_name
 
 		format "prefix = % \n" prefix
-		matching_layers = LayersManager.getLayers(prefix+"*")
+		matching_layers = LayersManager.getLayersByName(prefix+"*")
 
 		LayersManager.setVisibility(matching_layers)(state)
-
 
 	)
 

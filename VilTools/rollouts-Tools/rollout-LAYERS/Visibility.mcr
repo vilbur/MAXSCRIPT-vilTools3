@@ -34,29 +34,25 @@ macroscript	layers_isolate_selected
 category:	"_Layers-Visibility"
 buttontext:	"Isolate Selected"
 toolTip:	"Isolate Selected layers"
-icon:	"MENU:ISOLATE Selected|Tooltip:Show only selected layers, or layers of objects.\n"
+icon:	"MENU:ISOLATE Selected|Tooltip:Show only selected layers, or layers of objects.\nIsolate current Layer if nothing is selected"
 (
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Visibility.mcr"
 	on execute do
 	(
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
-
-		--format "selected_layers = % \n" selected_layers
+		selected_layers = LayersManager.getLayers()
 
 		undo "Hide unselected layers" on
-			layers_in_hierarchy = LayersManager.setVisibleTree( selected_layers )
+		(
+			--layers_in_hierarchy = LayersManager.setVisibleTree( selected_layers )
 
+			/* HIDE OBEJCTS IN PARENT LAYERS
+				parent_layers = LayersManager.difference( layers_in_hierarchy )(selected_layers)
 
-		/* HIDE OBEJCTS IN PARENT LAYERS
-			parent_layers = LayersManager.difference( layers_in_hierarchy )(selected_layers)
-
-			LayersManager.setObjectsVisibility(parent_layers)(false)
-		*/
-		LayersManager.setVisibility( selected_layers )(true)
+				LayersManager.setObjectsVisibility(parent_layers)(false)
+			*/
+			LayersManager.setVisibility( selected_layers )(true)
+		)
 
 		LayersManager.setCurrent( selected_layers )
 
@@ -118,7 +114,7 @@ icon:	"MENU:OFF Selected|Tooltip:Turn off selected layers, or layers of objects.
  */
 macroscript	layers_off_unselected_top
 category:	"_Layers-Visibility"
-buttontext:	"Hide unselected top"
+buttontext:	"Hide Unselected"
 toolTip:	"Hide unselected top layers"
 icon:	"MENU:OFF Unselected"
 (
@@ -181,7 +177,7 @@ icon:	"MENU:ON ALL layers"
  */
 macroscript	_layers_manager_toggle_same_prefix_off
 category:	"_Layers-Visibility"
-buttontext:	"Hide\Unhide by prefix"
+buttontext:	"ON\OFF by prefix"
 tooltip:	"Hide by layer prefix"
 icon:	"Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
 --icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
@@ -202,7 +198,7 @@ icon:	"Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
  */
 macroscript	_layers_manager_toggle_same_prefix_on
 category:	"_Layers-Visibility"
-buttontext:	"Hide\Unhide by prefix"
+buttontext:	"ON\OFF by prefix"
 tooltip:	"Unhide by layer prefix"
 --icon:	"MENU:ON by PREFIX"
 (

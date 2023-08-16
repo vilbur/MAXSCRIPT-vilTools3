@@ -6,13 +6,6 @@ filein( getFilenamePath(getSourceFileName()) + "/../../LayersManager/LayersManag
 filein( getFilenamePath(getSourceFileName()) + "/../LayersToogleDialog.ms" )	-- "./../LayersToogleDialog.ms"
 
 
-/*------------------------------------------------------------------------------
-
-	PREAPTE LAYERS TREE
-
---------------------------------------------------------------------------------*/
-LayersManager = LayersManager_v()
-
 /** Create layers tree
   *
   */
@@ -20,19 +13,25 @@ function createLayersTree =
 (
 	for t = 1 to 3 do
 	(
-		top_layer = LayersManager.newLayer ("Top Layer" + t as string )
+		title_top	= ("Top" + t as string )
+		top_layer	= LayersManager.newLayer(title_top)
+		top_layer.addNode (Teapot pos:[ (t * 100), 0, 0] name:title_top wirecolor:red )
 
-		for s = 1 to 2 do
+		for c = 1 to 2 do
 		(
-			child_layer = LayersManager.newLayer ("Child Layer"  + t as string + " " + s as string ) parent:top_layer
-
-			child_layer.addNode (Teapot pos:[ (s * 100), ( t * 100), 0] )
+			title_child	= title_top + "Child" + c as string
+			child_layer	= LayersManager.newLayer ( title_child ) parent:top_layer
+			child_layer.addNode (Teapot pos:[ (t * 100), (c * 100), 0] name:title_child wirecolor:green )
 
 			--for n = 1 to 3 do
 			--(
-				nesetd_layer = LayersManager.newLayer ("Nested Layer"  + t as string + " " + s as string + " " + s as string  ) parent:child_layer
-			--)
+				--title	+= " Nested: " + n as string
+				title_nested	= title_child +"Nested"
+				nested_layer = LayersManager.newLayer (title_nested) parent:child_layer
 
+				nested_layer.addNode (Teapot pos:[ (t * 100), ( c * 100), 100] name:title_nested  wirecolor:blue)
+
+			--)
 		)
 	)
 )
@@ -40,26 +39,18 @@ function createLayersTree =
 
 delete objects
 
+
+LayersManager = LayersManager_v()
+
 LayersManager.deleteLayers( LayersManager.getAllLayers() )
+
 createLayersTree()
 
 
-/*------------------------------------------------------------------------------
+select	$Top1Child2Nested
 
-	TEST DIALOG
-
-------------------------------------------------------------------------------*/
-
-select	objects[ 1 ]
---selectmore	objects[ 5 ]
-
-select objects
 
 LayersToogleDialog = LayersToogleDialog_v()
 
 
-LayersToogleDialog.resetSelectedLayers()
-
-
-LayersToogleDialog.create()
-
+LayersToogleDialog.create reset_layers:true

@@ -12,6 +12,211 @@ struct LayersManager_v
 	/* reference */
 	/* inhered */
 
+	/*------------------------------------------------------------------------------
+		GET LAYERS
+	--------------------------------------------------------------------------------*/
+
+	/** Get layers
+	  *  1) By slection in layer manager
+	  *  2) By current obejcts selection if nothing is selected in layer manager
+	  *  3) Get current layer if nothing is selected
+	  *
+	  * Return array of layers
+	 */
+	function getLayers =
+	(
+		--format "\n"; print "LayersManager_v.getLayers()"
+		if (selected_layers = this.getSelectLayersOrBySelection()).count == 0 then
+			selected_layers = #(this.getCurrent())
+
+		selected_layers --return
+	),
+
+	/** Get select layers
+	  *  1) By slection in layer manager
+	  *  2) By current obejcts selection if nothing is selected in layer manager
+	 */
+	function getSelectLayersOrBySelection =
+	(
+		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
+		selected_layers = this.getSelectedLayers()
+
+		if selected_layers.count == 0 then
+			selected_layers = this.getLayersByObjects( selection )
+
+		--for layer in selected_layers do
+			--format "Selected: % \n" layer.name
+
+
+		selected_layers --return
+	),
+
+	/** Get selected layers
+	 */
+	function getSelectedLayers =
+	(
+		--format "\n"; print "LayersManager_v.getSelectedLayers()"
+		 for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
+	),
+
+
+	/** Get layers by name
+	 */
+	function getLayersByName pattern =
+	(
+		--format "\n"; print "LayersManager_v.getSelectedLayers()"
+		 --for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
+		for layer in this.getAllLayers()where matchPattern layer.name pattern:pattern collect layer -- return
+	),
+
+	/** Get prefixes of given layers
+	  * Default Layaer is excluded
+	  *
+	  * Test if layer name starts with:
+	  * 		1) Something other then letter A-Z
+	  * 		2) Split by dash|underscore|whitespace
+	  *
+	  * Examples:
+	  *		"-layerName"	>>> "-"
+	  *		"1-layerName"	>>> "1"
+	  *		"Prefix_layerName"	>>> "_"
+	  *		"Prefix layerName"	>>> " "
+	  *
+	  * @return array of prefixes
+	 */
+	function getLayersPrefixes layers =
+	(
+
+		function getPrefix layer_name =
+		(
+			--format "\n"; print "getLayersByPrefix.ms.getPrefix()"
+			RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
+
+			layer_name = trimLeft layer_name
+
+			matches = RegEx.matches layer_name "^([^A-Za-z]+).*"
+
+			if matches.count > 0 then
+				prefix = matches.item[0].groups.item[1].value
+
+			else if (string_split = filterString layer_name "-_ ").count > 0 then
+				prefix = string_split[1]
+
+		)
+
+		prefixes = makeUniqueArray (for layer in layers where (prefix = getPrefix (layer.name)) != undefined collect prefix )
+
+		if ( index = findItem prefixes "0" ) > 0 then
+			deleteItem prefixes sn
+
+		prefixes --return
+	),
+
+
+
+	/** Get all layers
+	 */
+	function getAllLayers =
+	(
+		--format "\n"; print "LayersManager_v.getAllLayers()"
+		 for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i --return
+	),
+
+	/** Test if any of given layers is current active, if not ativeate first
+	 */
+	function getCurrent =
+	(
+		--format "\n"; print "LayersManager_v.setCurrent()"
+		for layer in this.getAllLayers() where layer.current == true do return layer
+	),
+
+	/** Get top layers
+	  *
+	  * @return array of layers
+	 */
+	function getTopLayers layers =
+	(
+		--format "\n"; print "LayersManager_v.getAllTopLayers()"
+
+		for layer in this.getLayersInHierarchy(layers) where layer.getParent() == undefined collect layer
+	),
+
+	/** Get children
+	  *
+	  */
+	function getChildren layer =
+	(
+		--format "\n"; print "LayersManager_v.getChildren()"
+		layer	= this._getLayer (layer)
+
+		for i = 1 to layer.getNumChildren() collect layer.getChild i
+	),
+
+	/** Get all layers in hierarchy in path to nested layers
+	 *
+	 * @return array of parent layers
+	 */
+	function getLayersInHierarchy layers =
+	(
+		--format "\n"; print "LayersManager_v.getLayersInHierarchy()"
+		if classOf layers != Array then layers = #(layers)
+
+		layers_in_tree = deepCopy  layers
+
+		for curent_layer in layers do
+			while curent_layer.getParent() != undefined do
+				appendIfUnique layers_in_tree (curent_layer = curent_layer.getParent())
+
+		layers_in_tree --return
+	),
+
+	/** Get layers by objects
+	 */
+	function getLayersByObjects _objects =
+	(
+		--format "\n"; print "LayersManager_v.getLayersByObjects()"
+		makeUniqueArray (for obj in _objects collect obj.layer) --return
+	),
+
+	/** Get layers not in hierarchy
+	  *
+	  */
+	function getLayersNotInHierarchy all_top_layers layers_in_hierarchy =
+	(
+		format "\n"; print "DEPRECATED: LayersManager_v.getLayersNotInHierarchy()"
+		--layers_not_in_hieararchy = #()
+		--
+		--this._getLayersNotInHierarchy(all_top_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
+		--
+		--layers_not_in_hieararchy --return
+	),
+
+	/** Get objects in layers
+	 */
+	function getObjectsInLayers layers =
+	(
+		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
+		--format "layers	= % \n" layers
+		layers_nodes = #()
+
+		if classOf layers != Array then
+			layers = #(layers)
+
+		for layer in layers do
+		(
+			layer.nodes &layer_nodes
+			--layer_nodes = refs.dependents layer
+
+			layers_nodes += layer_nodes
+		)
+
+		layers_nodes --return
+	),
+
+	/*------------------------------------------------------------------------------
+		MANAGE LAYERS
+	--------------------------------------------------------------------------------*/
+
 	/** Open layer manager
 	 */
 	function openLayerManager =
@@ -48,8 +253,7 @@ struct LayersManager_v
 	function deleteLayers layers =
 	(
 		--format "\n"; print "LayersManager_v.delete()"
-		if classOf layers != Array then
-			layers = #(layers)
+		if classOf layers != Array then layers = #(layers)
 
 		for layer in layers do
 		(
@@ -61,107 +265,24 @@ struct LayersManager_v
 		)
 	),
 
-	/** Get select layers
-	  *  1) By slection in layer manager
-	  *  2) By current obejcts selection if nothing is selected in layer manager
+	/** Test if any of given layers is current active, if not ativeate first
 	 */
-	function getSelectLayersOrBySelection =
+	function setCurrent layers =
 	(
-		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
-		selected_layers = this.getSelectedLayers()
-
-		if selected_layers.count == 0 then
-			selected_layers = this.getLayersByObjects( selection )
-
-		--for layer in selected_layers do
-			--format "Selected: % \n" layer.name
-
-
-		selected_layers --return
+		--format "\n"; print "LayersManager_v.setCurrent()"
+		if (for layer in layers where layer.current == true collect layer).count == 0 then
+			layers[1].current  = true
 	),
 
-
-	/** Get selected layers
-	 */
-	function getSelectedLayers =
-	(
-		--format "\n"; print "LayersManager_v.getSelectedLayers()"
-		 for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
-	),
-
-	/** Get layers by name
-	 */
-	function getLayers pattern =
-	(
-		--format "\n"; print "LayersManager_v.getSelectedLayers()"
-		 --for obj in ExplorerManager.SelectedItems() where superClassOf obj == Base_Layer collect obj --return
-		for layer in this.getAllLayers()where matchPattern layer.name pattern:pattern collect layer -- return
-	),
-
-	/** Set given layers visible
-	  * Works with nested layers too
-	  *
-	  * @return array of layers
-	 */
-	function setVisibleTree layers =
-	(
-		--format "\n"; print "LayersManager_v.setVisibleTree()"
-		layers_not_in_hieararchy = #()
-
-		layers_in_hierarchy = this.getLayersInHierarchy(layers)
-
-		all_top_layers = this.getTopLayers(this.getAllLayers())
-
-		this._getLayersNotInHierarchy(all_top_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
-
-		this.setVisibility (layers_in_hierarchy)     (true)
-		this.setVisibility (layers_not_in_hieararchy)(false)
-
-		layers_in_hierarchy --return
-	),
-
-	/** Set visibility
-	 */
-	function setVisibility layers state =
-	(
-		--format "\n"; print "LayersManager_v.setVisibility()"
-		--format "state = % \n" state
-		for layer in layers  do
-			layer.on = state
-	),
-
-	/** Select visibily of obejcts in given layers
-	  *
-	 */
-	function setObjectsVisibility layers state =
-	(
-		--format "\n"; print "LayersManager_v.setObjectsVisibility()"
-		objects_in_layers = this.getObjectsInLayers (layers)
-
-		for obj in objects_in_layers do
-			obj.isHidden = not state
-	),
-
-	/** Get top layers
-	  *
-	  * @return array of layers
-	 */
-	function getTopLayers layers =
-	(
-		--format "\n"; print "LayersManager_v.getAllTopLayers()"
-
-		for layer in this.getLayersInHierarchy(layers) where layer.getParent() == undefined collect layer
-	),
-
-	/** Get children
+	/** Select Layers
 	  *
 	  */
-	function getChildren layer =
+	function selectLayers layers =
 	(
-		--format "\n"; print "LayersManager_v.getChildren()"
-		layer	= this._getLayer (layer)
+		format "\n"; print "LayersManager_v.select()"
+		for layer in layers do format "layer.name:	% \n" layer.name
 
-		for i = 1 to layer.getNumChildren() collect layer.getChild i
+		for layer in layers do layer.select on
 	),
 
 
@@ -193,6 +314,121 @@ struct LayersManager_v
 		SetCommandPanelTaskMode(max_mode)
 	),
 
+	/** Collapse all Layers
+	 */
+	function collapseAll =
+	(
+		--format "\n"; print "LayersManager_v.collapseAll()"
+		ExplorerManager.collapseAll()
+	),
+
+	/*------------------------------------------------------------------------------
+		VISIBILITY
+	--------------------------------------------------------------------------------*/
+
+	/** Set given layers visible
+	  * Works with nested layers too
+	  *
+	  * @return array of layers
+	 */
+	function setVisibleTree layers state =
+	(
+		format "\n"; print "DEPRECATED: LayersManager_v.setVisibleTree()"
+		--
+		--layers_in_hierarchy = this.getLayersInHierarchy(layers)
+		--
+		--all_top_layers = this.getTopLayers(this.getAllLayers())
+		--
+		--
+		--this.setVisibility (layers_in_hierarchy) (state)
+		--
+		----layers_not_in_hieararchy = this.getLayersNotInHierarchy(all_top_layers)(layers_in_hierarchy)
+		----this.setVisibility (layers_not_in_hieararchy)(false)
+		--
+		--layers_in_hierarchy --return
+	),
+
+
+	/** Set visibility
+	 */
+	function setVisibility layers state =
+	(
+		--format "\n"; print "LayersManager_v.setVisibility()"
+		if classOf layers != Array then layers = #(layers)
+
+		for layer in layers do
+		(
+			layer.on = state
+
+			if state == true and (parent_layer = layer.getParent()) != undefined then
+				this.setVisibility(parent_layer)(true)
+		)
+	),
+
+	/** Hide unselecvted
+	  *
+	  */
+	function hideUnselected isolate: =
+	(
+		format "\n"; print "LayersManager_v.isolateLayers()"
+
+		this._hideUnseleted(this.getLayers())
+
+
+
+		--format "\n"; print "LayersManager_v.isolateLayers()"
+	),
+
+	/** Hide unseleted
+	  *
+	  */
+	function _hideUnseleted layers =
+	(
+		--format "\n"; print "LayersManager_v._hideUnseleted()"
+
+		layers_in_hierarchy = this.getLayersInHierarchy(layers)
+
+		for layer in layers do
+		(
+			format "ISOLATE:	% \n" layer.name
+			layer.on = true
+
+			--format "layer.name:	% \n" layer.name
+			if (parent_layer = layer.getParent()) != undefined then
+			(
+				format "parent_layer.name:	% \n" parent_layer.name
+				for layer_of_same_level in this.getChildren(parent_layer) where findItem layers_in_hierarchy layer_of_same_level == 0 do
+				--for layer_of_same_level in this.getChildren(parent_layer)  do
+				(
+					format "layer_of_same_level:	% \n" layer_of_same_level.name
+					layer_of_same_level.on = false
+
+					this._hideUnseleted #(parent_layer)
+				)
+
+			)
+
+		)
+
+		for top_layer in this.getTopLayers (this.getAllLayers()) where findItem layers_in_hierarchy top_layer == 0 do
+			top_layer.on = false
+
+
+	),
+
+	/** Select visibily of obejcts in given layers
+	  *
+	 */
+	function setObjectsVisibility layers state =
+	(
+		--format "\n"; print "LayersManager_v.setObjectsVisibility()"
+		objects_in_layers = this.getObjectsInLayers (layers)
+
+		for obj in objects_in_layers do
+			obj.isHidden = not state
+	),
+
+
 	--/** Expand layers by obejcts
 	--  *
 	--  * Achived by workaround with auto expansion
@@ -211,88 +447,6 @@ struct LayersManager_v
 	--
 	--	ExplorerManager.AutoExpand = auto_expand_state
 	--),
-
-	/** Collapse all Layers
-	 */
-	function collapseAll =
-	(
-		--format "\n"; print "LayersManager_v.collapseAll()"
-		ExplorerManager.collapseAll()
-	),
-
-
-	/** Get layers by objects
-	 */
-	function getLayersByObjects _objects =
-	(
-		--format "\n"; print "LayersManager_v.getLayersByObjects()"
-		makeUniqueArray (for obj in _objects collect obj.layer) --return
-	),
-
-	/** Get all layers
-	 */
-	function getAllLayers =
-	(
-		--format "\n"; print "LayersManager_v.getAllLayers()"
-		 for i = 0 to LayerManager.count - 1 collect LayerManager.getLayer i --return
-	),
-
-
-	/** Get layers in hierarchy
-	 *
-	 * @return array of parent layers
-	 */
-	function getLayersInHierarchy layers =
-	(
-		--format "\n"; print "LayersManager_v.getLayersInHierarchy()"
-		layers_in_tree = deepCopy  layers
-
-		for curent_layer in layers do
-			while curent_layer.getParent() != undefined do
-				appendIfUnique layers_in_tree (curent_layer = curent_layer.getParent())
-
-		layers_in_tree --return
-	),
-
-	/** Test if any of given layers is current active, if not ativeate first
-	 */
-	function getCurrent =
-	(
-		--format "\n"; print "LayersManager_v.setCurrent()"
-		for layer in this.getAllLayers() where layer.current == true do return layer
-	),
-
-	/** Test if any of given layers is current active, if not ativeate first
-	 */
-	function setCurrent layers =
-	(
-		--format "\n"; print "LayersManager_v.setCurrent()"
-		if (for layer in layers where layer.current == true collect layer).count == 0 then
-			layers[1].current  = true
-	),
-
-
-	/** Get objects in layers
-	 */
-	function getObjectsInLayers layers =
-	(
-		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
-		--format "layers	= % \n" layers
-		layers_nodes = #()
-
-		if classOf layers != Array then
-			layers = #(layers)
-
-		for layer in layers do
-		(
-			layer.nodes &layer_nodes
-			--layer_nodes = refs.dependents layer
-
-			layers_nodes += layer_nodes
-		)
-
-		layers_nodes --return
-	),
 
 	/** Get diferrence between 2 arrays
 	  */
@@ -339,21 +493,20 @@ struct LayersManager_v
 	 */
 	function _getLayersNotInHierarchy layers layers_in_hierarchy &layers_not_in_hieararchy =
 	(
-		--format "\n"; print "LayersManager_v.loopHierarchy()"
+		format "\n"; print "DEPRECATED: LayersManager_v._getLayersNotInHierarchy()"
 
-		for layer in layers  do
-			if findItem layers_in_hierarchy layer > 0 then
-			(
-				child_layers = for i = 1 to layer.getNumChildren() collect layer.getChild(i)
-
-				for child_layer in child_layers do
-
-				this._getLayersNotInHierarchy(child_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
-			)
-			else
-				appendIfUnique layers_not_in_hieararchy layer
-				--layer.on = false
-		layers_not_in_hieararchy --return
+		--for layer in layers  do
+		--	if findItem layers_in_hierarchy layer > 0 then
+		--	(
+		--		child_layers = for i = 1 to layer.getNumChildren() collect layer.getChild(i)
+		--
+		--		for child_layer in child_layers do
+		--			this._getLayersNotInHierarchy(child_layers)(layers_in_hierarchy)(layers_not_in_hieararchy)
+		--	)
+		--	else
+		--		appendIfUnique layers_not_in_hieararchy layer
+		--
+		--layers_not_in_hieararchy --return
 	),
 
 

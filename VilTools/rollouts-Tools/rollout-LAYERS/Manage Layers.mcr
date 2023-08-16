@@ -58,6 +58,9 @@ icon:	"MENU:true|title:SELECT Objects"
 	)
 )
 
+
+
+
 /* ADD TO CURRENT LAYER
 */
 macroscript	layers_add_selection_to_current_layer
@@ -150,5 +153,45 @@ icon:	"MENU:true"
 		)
 
 		select new_objs
+	)
+)
+
+/** SELECT BY PREFIX
+ */
+macroscript	_layers_manager_selct_layer_by_prefix
+category:	"_Layers-Manage"
+buttontext:	"Select By Prefix"
+tooltip:	"Select layers by prefix"
+icon:	"MENU:true"
+--icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+(
+	on execute do
+	(
+		clearListener(); print("Cleared in:"+getSourceFileName())
+		layers_by_prefix = #()
+
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getLayers()
+
+		prefixes = LayersManager.getLayersPrefixes(selected_layers)
+
+		format "PREFIXES:	% \n" PREFIXES
+		--
+		--for prefix in prefixes do
+		--(
+		--	layers = (LayersManager.getLayersByName (prefix+"*"))
+		--
+		--	format "layers:	% \n" layers
+		--)
+
+
+		for prefix in prefixes do join layers_by_prefix (LayersManager.getLayersByName (prefix+"*"))
+
+		--format "layers_by_prefix:	% \n" layers_by_prefix
+		if layers_by_prefix.count > 0 then
+			LayersManager.selectLayers(layers_by_prefix)
+
+
 	)
 )
