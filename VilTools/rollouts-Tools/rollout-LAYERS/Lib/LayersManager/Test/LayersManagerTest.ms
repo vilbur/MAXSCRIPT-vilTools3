@@ -11,13 +11,13 @@ function createLayersTree =
 	for t = 1 to 4 do
 	(
 		title_top	= ("Top" + t as string )
-		top_layer	= LayersManager.newLayer(title_top)
+		top_layer	= LayerManager.newLayerFromName (title_top)
 		top_layer.addNode (Teapot pos:[ (t * 100), 0, 0] name:title_top wirecolor:red )
 
 		for c = 1 to 3 do
 		(
 			title_child	= title_top + "Child" + c as string
-			child_layer	= LayersManager.newLayer ( title_child ) parent:top_layer
+			child_layer	= LayerManager.newLayerFromName ( title_child ); child_layer.setParent (top_layer)
 			child_layer.addNode (Teapot pos:[ (t * 100), (c * 100), 0] name:title_child wirecolor:green )
 
 			for n = 1 to 2 do
@@ -25,35 +25,95 @@ function createLayersTree =
 				title_nested	= title_child +"Nested"+ n as string
 
 				--title_nested	= title_child +"Nested"
-				nested_layer = LayersManager.newLayer (title_nested) parent:child_layer
+				nested_layer = LayerManager.newLayerFromName ( title_nested ); nested_layer.setParent (child_layer)
 
 				nested_layer.addNode (Teapot pos:[ (t * 100), ( c * 100),  ( n * 100)] name:title_nested  wirecolor:blue)
-
 			)
 		)
 	)
 )
 
---delete objects
+/** Prepare scene
+  */
+function prepareScene =
+(
+	resetMaxFile #noPrompt
 
+	LayerManager.editLayerByName ""
+
+	createLayersTree()
+)
+
+
+/* PREPARE SCENE */
+
+if objects.count == 0 then
+	prepareScene()
+
+/* INIT STRUCT */
 LayersManager = LayersManager_v()
 
---LayersManager.deleteLayers( LayersManager.getAllLayers() )
-
---createLayersTree()
 
 
+/*
 
+   SELECT NODES
+
+*/
+--clearSelection()
 --selectmore	$Top1
 --selectmore	$Top1Child1
 --selectmore	$Top1Child1Nested1
---
 
+/*
+
+  GET SELECTED LAYERS
+
+*/
+
+/* GET LAYERS by an type of identifier - integer|string|<MixinInterface:LayerProperties>|ReferenceTarget*/
+--for layer in (LayersManager.getLayers#( 0, "Top1", LayerManager.getLayer 1, (LayerManager.getLayer 1).layerAsRefTarg  )) do format "TEST:	% \n" ( classOf layer == MixinInterface)
+
+
+/* GET SELECTED LAYERS BY OBJECTS */
+--for layer in (LayersManager.getLayersByObjects( selection )) do format "layer.name:	% \n" layer.name
+
+/* GET SELECTED LAYERS IN MANAGER */
+--for layer in (LayersManager.getSelectedByManager()) do format "layer.name:	% \n" layer.name
+
+/* GET SELECTED OR CURRENT LAYER */
+--for layer in (LayersManager.getSelectedOrCurrent()) do format "layer.name:	% \n" layer.name
+
+
+
+/*
+
+  MANAGE LAYERS
+
+*/
+
+/* SELECT LAYER BY LAYERS */
+--for layer in ( LayersManager.selectLayers #( 1, "Top1Child1", LayerManager.getLayer 3) ) do format "layer.name:	% \n" layer.name
+
+/* SELECT LAYER BY OBEJCTS */
+--for layer in ( LayersManager.selectLayersByObjects #( objects[1] ) ) do format "layer.name:	% \n" layer.name
+
+
+/* HIDE UNSELECTED */
 --LayersManager.hideUnselected()
 --LayersManager.hideUnselected isolate:true
 
 
-
+/* EXPAND */
 --select	$Top1Child1Nested1
---LayersManager.expand(LayersManager.getLayers())
+--LayersManager.expand(  LayerManager.getLayer 1 )
+LayersManager.expand(  LayerManager.getLayer 1 ) children:true -- expand child layers too
+
+
+
+
+
+
+
+
 
