@@ -23,6 +23,7 @@ function createLayersTree =
 			for n = 1 to 2 do
 			(
 				title_nested	= title_child +"Nested"+ n as string
+
 				--title_nested	= title_child +"Nested"
 				nested_layer = LayersManager.newLayer (title_nested) parent:child_layer
 
@@ -33,26 +34,26 @@ function createLayersTree =
 	)
 )
 
-delete objects
-
+--delete objects
 
 LayersManager = LayersManager_v()
 
-LayersManager.deleteLayers( LayersManager.getAllLayers() )
+--LayersManager.deleteLayers( LayersManager.getAllLayers() )
 
-createLayersTree()
+--createLayersTree()
 
 
 
 --selectmore	$Top1
 --selectmore	$Top1Child1
-selectmore	$Top1Child1Nested1
+--selectmore	$Top1Child1Nested1
 --
 
-LayersManager.hideUnselected()
+--LayersManager.hideUnselected()
 --LayersManager.hideUnselected isolate:true
 
 
 
 --select	$Top1Child1Nested1
 --LayersManager.expand(LayersManager.getLayers())
+

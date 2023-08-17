@@ -54,6 +54,8 @@ icon:	"MENU:Working Layers Dialog"
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+
 		LayersToogleDialog = LayersToogleDialog_v()
 
 		LayersToogleDialog.create()
@@ -75,6 +77,7 @@ tooltip:	"Reload with new layers set"
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 		LayersToogleDialog = LayersToogleDialog_v()
 
 		LayersToogleDialog.create reset_layers:true

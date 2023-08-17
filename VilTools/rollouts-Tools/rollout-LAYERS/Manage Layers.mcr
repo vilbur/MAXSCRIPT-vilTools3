@@ -24,7 +24,10 @@ icon:	"MENU:EXPAND Layers"
 
 	on altExecute type do
 	(
-		(SceneExplorerManager.GetActiveExplorer()).AutoExpand = not (SceneExplorerManager.GetActiveExplorer()).AutoExpand
+		state = not (SceneExplorerManager.GetActiveExplorer()).AutoExpand
+
+		(SceneExplorerManager.GetActiveExplorer()).AutoExpand = state
+		print ("AUTO EXPAND OF LAYERS MANAGER: " + toUpper (state as string ) )
 	)
 )
 
@@ -57,9 +60,6 @@ icon:	"MENU:true|title:SELECT Objects"
 		select (LayersManager.getObjectsInLayers( selected_layers ))
 	)
 )
-
-
-
 
 /* ADD TO CURRENT LAYER
 */

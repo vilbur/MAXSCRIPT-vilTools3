@@ -59,7 +59,7 @@ macroscript	layers_unhide_selected
 category:	"_Layers-Visibility"
 buttontext:	"On Selected"
 toolTip:	"Unhide selected layers, or layers of objects"
-icon:	"MENU:ON Selected"
+icon:	"MENU:UNHIDE Selected"
 (
 	on execute do
 	(
@@ -81,7 +81,7 @@ macroscript	layers_by_selection_off_selected
 category:	"_Layers-Visibility"
 buttontext:	"Hide selected"
 toolTip:	"Hide selected layers"
-icon:	"MENU:OFF Selected|Tooltip:Turn off selected layers, or layers of objects.\n"
+icon:	"MENU:HIDE Selected|Tooltip:Turn off selected layers, or layers of objects.\n"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
@@ -106,7 +106,7 @@ macroscript	layers_off_unselected_top
 category:	"_Layers-Visibility"
 buttontext:	"Hide Unselected"
 toolTip:	"Hide unselected top layers"
-icon:	"MENU:OFF Unselected"
+icon:	"MENU:HIDE Unselected"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
@@ -137,7 +137,7 @@ macroscript	layers_all_on
 category:	"_Layers-Visibility"
 buttontext:	"Hide\Unhide"
 toolTip:	"Unhide all layers"
-icon:	"MENU:ON ALL layers"
+icon:	"MENU:UNHIDE ALL layers"
 (
 	on execute do
 	(
@@ -146,9 +146,14 @@ icon:	"MENU:ON ALL layers"
 		undo "Unhide all layers" on
 			LayersManager.setVisibility(LayersManager.getAllLayers())(true)
 	)
+
+	on altExecute type do
+	(
+		macros.run "_Layers-Visibility" "layers_all_on"
+
+		for obj in objects where obj.isHidden do obj.isHidden = false
+	)
 )
-
-
 
 
 /*------------------------------------------------------------------------------
@@ -164,7 +169,6 @@ category:	"_Layers-Visibility"
 buttontext:	"ON\OFF by prefix"
 tooltip:	"Hide by layer prefix"
 icon:	"Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
@@ -184,7 +188,6 @@ macroscript	_layers_manager_toggle_same_prefix_on
 category:	"_Layers-Visibility"
 buttontext:	"ON\OFF by prefix"
 tooltip:	"Unhide by layer prefix"
---icon:	"MENU:ON by PREFIX"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"

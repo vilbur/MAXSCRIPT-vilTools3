@@ -8,11 +8,7 @@ function toggleLayerVisiblity val =
 
 	/* TOGGLE LAYER OF BUTTON CLICKED */
 	if ( layer = LayerManager.getLayerFromName EventFired.Control.text ) != undefined then
-		--if EventFired.val then
-			LayersManager.setVisibility( layer ) (EventFired.val) -- Turn on with parent layers
-		--
-		--else
-		--	layer.on = false
+			(LayersManager_v()).setVisibility( layer ) (EventFired.val) -- Turn on with parent layers
 
 	/* UPDATE OTHER BUTTONS */
 	(LayersToogleDialog_v()).refreshButtons()
@@ -23,38 +19,28 @@ function toggleLayerVisiblity val =
   */
 function toggleWorkingLayers =
 (
-	format "\n"; print "LayersToogleDialog_v.toggleWorkingLayers()"
-	--format "EventFired:	% \n" EventFired
-	format "(EventFired.type == #pressed):	% \n" ((EventFired.type == #pressed))
+	--format "\n"; print "LayersToogleDialog_v.toggleWorkingLayers()"
+
 	LayersManager 	= LayersManager_v()
 	LayersToogleDialog 	= LayersToogleDialog_v()
 
 	LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (EventFired.type == #pressed)
 
 	LayersToogleDialog.refreshButtons()
-
 )
 
 /** Hide layers then are not in dialog
   *
   */
-function hideOtherLayers =
+function displayeOtherLayers =
 (
-	format "\n"; print "LayersToogleDialog_v.hideOtherLayers()"
+	--format "\n"; print "LayersToogleDialog_v.displayeOtherLayers()"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 
 	LayersManager 	= LayersManager_v()
 	LayersToogleDialog 	= LayersToogleDialog_v()
 
-	all_top_layers = LayersManager.getTopLayers( LayersManager.getAllLayers() )
-
-	layers_in_hierarchy = LayersManager.getLayersInHierarchy( LayersToogleDialog.getDialogLayers() )
-
-	layers_not_in_hieararchy = LayersManager.getLayersNotInHierarchy(all_top_layers)(layers_in_hierarchy)
-
-	undo "Show Only Working Layers" on
-		LayersManager.setVisibility( layers_not_in_hieararchy ) (EventFired.type == #pressed)
-
+	LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (EventFired.type == #pressed)
 )
 
 /** Layers toogle dialog
@@ -85,7 +71,7 @@ struct LayersToogleDialog_v
 	  */
 	function create reset_layers:false =
 	(
-		format "\n"; print "LayersToogleDialog.ms.layersToogleDialog()"
+		--format "\n"; print "LayersToogleDialog.ms.layersToogleDialog()"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		/* DIALOG */
 		this._setDialog()
@@ -95,16 +81,26 @@ struct LayersToogleDialog_v
 
 		this.selected_layers = this._getSelectedLayers() -- after ini
 
-		this.default_width = Dialog.width - 32
-		--format "DIALOG.WIDTH:	% \n" Dialog.width
-
-		for layer in this.selected_layers do
-			format "layer.name:	% \n" layer.name
-
 		top_layers = this.LayersManager.getTopLayers( this.selected_layers ) -- get top layers for group controls
 
+		this.selected_layers = this.LayersManager.difference( this.selected_layers )(top_layers)
+
+		this.default_width = Dialog.width - 32
+
+		--format "DIALOG.WIDTH:	% \n" Dialog.width
+		--format "\n----------------------\n"
+		--for layer in this.selected_layers do
+		--	format "SELECTED_LAYER:	% \n" layer.name
+
+		--for layer in top_layers do
+		--	format "TOP_LAYER:	% \n" layer.name
+
+		hide_btn	= #( "Toggle Layers", #( "ToggleWorkingLayers", "ToggleWorkingLayers" ))
+		hide_others_btn	= #( "Toggle Others",	#( "displayeOtherLayers", "displayeOtherLayers" ))
+		reload_btn	= #( "Reload",	#( "macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" ) )
+
 		/* CONTROLS */
-		buttons	= Dictionary #( #Reload, #( "macros.run \"_Layers\" \"layers_manager_toogle_dialog\"" ) ) #( #Hide_Layers, #( "ToggleWorkingLayers", "ToggleWorkingLayers" ) )  #( #Hide_Others, #( "hideOtherLayers", "hideOtherLayers" ))
+		buttons	= #(hide_btn, hide_others_btn, reload_btn)
 
 		this._createMainControls (Dialog.Controls())(buttons)
 
@@ -114,7 +110,7 @@ struct LayersToogleDialog_v
 		/* DIALOG CREATE */
 		Dialog.create height:undefined lockWidth:false
 
-		Dialog.register()
+		--Dialog.register()
 	),
 
 	/** Get dialog layers
@@ -147,12 +143,12 @@ struct LayersToogleDialog_v
 		--format "\n"; print "LayersToogleDialog_v._createMainControls()"
 		for data_pair in buttons do
 		(
-			_Button = _Controls.control #button ( substituteString ( data_pair.key as string ) "_" " " ) across:buttons.count
+			_Button = _Controls.control #button ( data_pair[1] ) across:buttons.count
 
-			_Button.Events.add #pressed ( data_pair.value[1] as string )
+			_Button.Events.add #pressed ( data_pair[2][1] as string )
 
-			if data_pair.value[2] != undefined then
-				_Button.Events.add #rightclick ( data_pair.value[2] as string )
+			if data_pair[2][2] != undefined then
+				_Button.Events.add #rightclick ( data_pair[2][2] as string )
 
 		)
 	),
@@ -163,13 +159,13 @@ struct LayersToogleDialog_v
 	  */
 	function createControlsGroupForLayer Layer _Rollout_parent =
 	(
-		--format "\n"; print "LayersToogleDialog_v.createControlsGroupForLayer()"
+		format "\n"; print "LayersToogleDialog_v.createControlsGroupForLayer()"
+		format "TOP LAYER:	% \n" Layer.name
 		_Controls   = Dialog.Controls group:layer.name
 
 		this.addLayerButton (_Controls) (layer)
 
 		this._createButtonForNesteLayers (_Controls) (layer) level:0
-
 	),
 
 	/** Create button for neste layers
@@ -178,13 +174,15 @@ struct LayersToogleDialog_v
 	function _createButtonForNesteLayers _Controls layer level: =
 	(
 		--format "\n"; print "LayersToogleDialog_v.craeteButtonForNesteLayers()"
+		--format "layer:	% \n" layer
 
 		/* BUTTONS */
 		for child_layer in LayersManager.getChildren(layer) do
 		(
 			level +=1
 
-			this.addLayerButton (_Controls) (child_layer) width:(this.default_width - (level * this.width_offset))
+			if ( findItem this.selected_layers child_layer ) > 0 then
+				this.addLayerButton (_Controls) (child_layer) width:(this.default_width - (level * this.width_offset))
 
 			this._createButtonForNesteLayers (_Controls) (child_layer) level:(level+1)
 		)
