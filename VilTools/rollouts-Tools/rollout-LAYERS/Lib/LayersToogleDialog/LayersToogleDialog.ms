@@ -1,48 +1,73 @@
 /** Toggle layer visiblity
   *
+  * CTRL: Select Layer members
+  *
+  *
   */
-function toggleLayerVisiblity val =
+function onClickLayerButton val =
 (
-	--format "\n"; print "LayersToogleDialog_v.toggleLayerVisiblity()"
+	--format "\n"; print "LayersToogleDialog_v.onClickLayerButton()"
 	--format "EventFired:	% \n" EventFired.Roll
+	layer = LayerManager.getLayerFromName EventFired.Control.text
 
-	/* TOGGLE LAYER OF BUTTON CLICKED */
-	if ( layer = LayerManager.getLayerFromName EventFired.Control.text ) != undefined then
+	if layer != undefined then
+	(
+		LayersManager 	= LayersManager_v()
+
+		if keyboard.controlPressed then
+			selectmore (LayersManager.getObjectsInLayers(layer))
+
+		/* TOGGLE LAYER OF BUTTON CLICKED */
+		else
 			(LayersManager_v()).setVisibility( layer ) (EventFired.val) -- Turn on with parent layers
 
-	/* UPDATE OTHER BUTTONS */
-	(LayersToogleDialog_v()).refreshButtons()
+		/* UPDATE OTHER BUTTONS */
+		(LayersToogleDialog_v()).refreshButtons()
+	)
 )
 
 /** Toggle working layers
   *
   */
-function toggleWorkingLayers =
+function displayWorkingLayers state =
 (
 	--format "\n"; print "LayersToogleDialog_v.toggleWorkingLayers()"
+	--format "state:	% \n" state
 
 	LayersManager 	= LayersManager_v()
 	LayersToogleDialog 	= LayersToogleDialog_v()
 
-	LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (EventFired.type == #pressed)
+	if not keyboard.controlPressed and not keyboard.shiftPressed then
+	(
+		LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (state)
 
-	LayersToogleDialog.refreshButtons()
+		LayersToogleDialog.refreshButtons()
+	)
+	else if keyboard.controlPressed then
+		LayersManager.selectLayers( LayersManager.getLayersByProp #isHidden false layers:(LayersToogleDialog.getDialogLayers())   ) -- Select displayed layers in dialog
+
+	else if keyboard.shiftPressed then
+		LayersManager.selectLayers( LayersToogleDialog.getDialogLayers() ) -- Select all layers in dialog
 )
 
 /** Hide layers then are not in dialog
   *
   */
-function displayeOtherLayers =
+function displayOtherLayers state =
 (
-	--format "\n"; print "LayersToogleDialog_v.displayeOtherLayers()"
+	format "\n"; print "LayersToogleDialog_v.displayOtherLayers()"
+	format "state:	% \n" state
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 
 	LayersManager 	= LayersManager_v()
 	LayersToogleDialog 	= LayersToogleDialog_v()
 
-	LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (EventFired.type == #pressed)
+	LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (state)
 )
 
+
+
+global DIALOG_toogle_layers
 /** Layers toogle dialog
  */
 struct LayersToogleDialog_v
@@ -58,7 +83,7 @@ struct LayersToogleDialog_v
 
 	button_height = 32,
 
-	width_offset = 8, -- less size of how nested button
+	width_offset = 8, -- less size of how nested buttonn
 
 	/* dependency */
 	LayersManager = LayersManager_v(),
@@ -71,7 +96,7 @@ struct LayersToogleDialog_v
 	  */
 	function create reset_layers:false =
 	(
-		--format "\n"; print "LayersToogleDialog.ms.layersToogleDialog()"
+		--format "\n"; print "LayersToogleDialog_v.create()"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		/* DIALOG */
 		this._setDialog()
@@ -79,7 +104,7 @@ struct LayersToogleDialog_v
 		if reset_layers then
 			this.resetSelectedLayers()
 
-		this.selected_layers = this._getSelectedLayers() -- after ini
+		this.selected_layers = this.getSelectedOrCurrent() -- after ini
 
 		top_layers = this.LayersManager.getTopLayers( this.selected_layers ) -- get top layers for group controls
 
@@ -87,22 +112,8 @@ struct LayersToogleDialog_v
 
 		this.default_width = Dialog.width - 32
 
-		--format "DIALOG.WIDTH:	% \n" Dialog.width
-		--format "\n----------------------\n"
-		--for layer in this.selected_layers do
-		--	format "SELECTED_LAYER:	% \n" layer.name
-
-		--for layer in top_layers do
-		--	format "TOP_LAYER:	% \n" layer.name
-
-		hide_btn	= #( "Toggle Layers", #( "ToggleWorkingLayers", "ToggleWorkingLayers" ))
-		hide_others_btn	= #( "Toggle Others",	#( "displayeOtherLayers", "displayeOtherLayers" ))
-		reload_btn	= #( "Reload",	#( "macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" ) )
-
 		/* CONTROLS */
-		buttons	= #(hide_btn, hide_others_btn, reload_btn)
-
-		this._createMainControls (Dialog.Controls())(buttons)
+		this._createMainControls (Dialog.Controls())
 
 		for layer in this.sortLayers(top_layers) do
 			this.createControlsGroupForLayer(layer)(Dialog)
@@ -138,33 +149,42 @@ struct LayersToogleDialog_v
 	/** Create main controls
 	  *
 	  */
-	function _createMainControls _Controls buttons =
+	function _createMainControls _Controls =
 	(
-		--format "\n"; print "LayersToogleDialog_v._createMainControls()"
-		for data_pair in buttons do
-		(
-			_Button = _Controls.control #button ( data_pair[1] ) across:buttons.count
+		format "\n"; print "LayersToogleDialog_v._createMainControls()"
 
-			_Button.Events.add #pressed ( data_pair[2][1] as string )
+		buttons_count = 3
 
-			if data_pair[2][2] != undefined then
-				_Button.Events.add #rightclick ( data_pair[2][2] as string )
+		_Controls.Default #across	buttons_count
+		_Controls.Default #width	(this.default_width / buttons_count)
 
-		)
+
+		HideBtn = _Controls.Control  #button "THIS" tooltip:"CRL: Select displayed layers in dialog.\nSHIFT:Select all layers in dialog.\n"
+
+		HideBtn.Event #pressed	"displayWorkingLayers" params:true	tooltip:"Show all layers in dialog"
+		HideBtn.Event #rightclick	"displayWorkingLayers" params:false	tooltip:"Hide all layers in dialog"
+
+		HideOthersBtn = _Controls.Control  #button "OTHERS"
+		HideOthersBtn.Event #pressed	"displayOtherLayers" params:true	tooltip:"Show all other layers then in dialog"
+		HideOthersBtn.Event #rightclick	"displayOtherLayers" params:false	tooltip:"Hide all other layers then in dialog"
+
+		HideOthersBtn = _Controls.Control  #button "RELOAD"
+		HideOthersBtn.Event #pressed	"macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" tooltip:"Reload dialog with new selection"
+
 	),
-
 
 	/** Create rollout for each top layer
 	  *
 	  */
 	function createControlsGroupForLayer Layer _Rollout_parent =
 	(
-		format "\n"; print "LayersToogleDialog_v.createControlsGroupForLayer()"
-		format "TOP LAYER:	% \n" Layer.name
+		--format "\n====================================\n"
 		_Controls   = Dialog.Controls group:layer.name
 
+		/* BUTTON FOR TOP LAYER */
 		this.addLayerButton (_Controls) (layer)
 
+		/* BUTTONS FOR NESTED LAYERS */
 		this._createButtonForNesteLayers (_Controls) (layer) level:0
 	),
 
@@ -194,13 +214,11 @@ struct LayersToogleDialog_v
 	  */
 	function addLayerButton _Controls layer width:default_width =
 	(
-		format "\n"; print "LayersToogleDialog_v.addLayerButton()"
-		format "layer:	% \n" layer.name
-		--format "layer:	% \n" layer.on
-		--_Button = _Controls.control #button layer.name across:1 width:default_width height:this.button_height
+		--format "\n"; print "LayersToogleDialog_v.addLayerButton()"
+
 		_Button = _Controls.control #checkbutton layer.name checked:layer.on across:1 width:width height:this.button_height align:#right
 
-		_Button.Events.add #changed ("toggleLayerVisiblity") params:layer.name
+		_Button.Event #changed ("onClickLayerButton") tooltip:"Toogle layer visibility.\n\nCTRL: Select objects in layer" --params:layer.name
 
 		_Button --return
 	),
@@ -241,9 +259,9 @@ struct LayersToogleDialog_v
 	/** Get selected layers
 	  *
 	  */
-	function _getSelectedLayers =
+	function getSelectedOrCurrent =
 	(
-		--format "\n"; print "LayersToogleDialog_v._getSelectedLayers()"
+		--format "\n"; print "LayersToogleDialog_v.getSelectedOrCurrent()"
 		--format "this.Ini:	% \n" this.Ini
 		--format "layers_ini:	% \n" layers_ini
 
@@ -251,7 +269,7 @@ struct LayersToogleDialog_v
 
 		if layers_ini.count == 0 then
 		(
-			selected_layers = LayersManager.getSelectLayersOrBySelection()
+			selected_layers = LayersManager.getSelectedOrCurrent()
 
 			for selected_layer in selected_layers do
 				this.Ini.save "selected_layers" selected_layer.name true

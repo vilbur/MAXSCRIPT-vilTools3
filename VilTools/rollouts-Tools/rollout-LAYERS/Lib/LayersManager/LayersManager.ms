@@ -1,4 +1,6 @@
 /** Wrapper for remote layers manager UI
+  *
+  * MixinInterface:LayerProperties https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-78B79975-7BA5-4A03-8FEF-27E78D14B575
  */
 struct LayersManager_v
 (
@@ -6,7 +8,7 @@ struct LayersManager_v
 
 
 	/* properties */
-	SceneExplorerInstance = SceneExplorerManager.GetActiveExplorer(),
+	SceneExplorerInstance,
 
 	/* dependency */
 	/* reference */
@@ -15,6 +17,14 @@ struct LayersManager_v
 	/*------------------------------------------------------------------------------
 		GET LAYERS
 	--------------------------------------------------------------------------------*/
+	/** Get current
+	  *
+	  */
+	function getCurrent =
+	(
+		for layer in this.getAllLayers() where layer.current do return layer
+	),
+
 	/** Get layers
 	  * @param integer|string|<MixinInterface:LayerProperties>|ReferenceTarget:BaseLayer|Array layers index, name, properties, refaTarget or array of them
 	  */
@@ -25,6 +35,17 @@ struct LayersManager_v
 		for layer in layers where (layer = this._getLayer(layer)) != undefined collect layer
 	),
 
+	/** Get layer by property
+	  *
+	  */
+	function getLayersByProp prop val layers: =
+	(
+		--format "\n"; print "LayersManager_v.getLayersByProp()"
+		layers = if layers != unsupplied then this.getLayers(layers) else this.getAllLayers()
+
+		for layer in layers where ( prop_val = getProperty layer prop ) == val collect layer
+	),
+
 	/** Get selected layers
 	  *  1) By slection in layer manager
 	  *  2) By current objects selection if nothing is selected in layer manager
@@ -33,7 +54,7 @@ struct LayersManager_v
 	 */
 	function getSelectedLayers =
 	(
-		--format "\n"; print "LayersManager_v.getLayersByAnySelection()"
+		--format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
 		if (selected_layers = this.getSelectedByManager()).count == 0 then
 			selected_layers = this.getLayersByObjects( selection )
 
@@ -68,6 +89,25 @@ struct LayersManager_v
 	function getLayersByObjects _objects =
 	(
 		makeUniqueArray (for obj in _objects collect obj.layer) --return
+	),
+
+
+	/** Get layer by name
+	  * @param string|#(string) patterns for matchPattern
+	  */
+	function getLayerByName patterns =
+	(
+		--format "\n"; print "LayersManager_v.getLayerByName()"
+		if classOf patterns != Array then patterns = #(patterns)
+
+		layers = #()
+		layers_all = this.getAllLayers()
+
+		for pattern in patterns do
+
+			layers = join layers ( for layer in layers_all where matchPattern layer.name pattern:pattern collect layer )
+
+		layers --return
 	),
 
 	/** Get all layers
@@ -184,9 +224,9 @@ struct LayersManager_v
 	 */
 	function getObjectsInLayers layers =
 	(
-		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
+		format "\n"; print "LayersManager_v.getObjectsInLayers()"
 		layers = this.getLayers(layers)
-
+		format "layers:	% \n" layers
 		layers_nodes = #()
 
 		for layer in layers do
@@ -196,11 +236,9 @@ struct LayersManager_v
 
 			layers_nodes += layer_nodes
 		)
-
+		format "layers_nodes:	% \n" layers_nodes
 		layers_nodes --return
 	),
-
-
 
 	/*------------------------------------------------------------------------------
 		MANAGE LAYERS
@@ -212,6 +250,42 @@ struct LayersManager_v
 	(
 		--format "\n"; print "LayersManager_v.openLayerManager()"
 		LayerManager.editLayerByName ""
+
+		--format "LayerManager.isDialogOpen():	% \n" (LayerManager.isDialogOpen())
+
+		SceneExplorerInstance = SceneExplorerManager.GetActiveExplorer()
+	),
+
+	/** Set current first layer of layers, if not current in layers array
+	  *
+	  * @pram <mixin> layers
+	 */
+	function setCurrent layers =
+	(
+		--format "\n"; print "LayersManager_v.setCurrent()"
+		layers = this.getLayers(layers)
+
+		if layers.count > 0 then
+		(
+			current_layers = for layer in layers where layer.current == true collect layer
+
+			if (for layer in layers where layer.current == true collect layer).count == 0 then
+				layers[1].current  = true
+
+		)
+		else if this.isCurrentHidden() then
+		(
+			/* GET ONLY VISIBLE LAYERS FROM SELECTED LAYERS */
+			selected_layers = this.getLayersByProp #isHidden false layers:(this.getSelectedLayers())
+
+			/* IF NOT CURRET IN SELECTED ALREADY */
+			if (this.getLayersByProp #current true layers:selected_layers).count == 0 and selected_layers.count > 0 then
+				this.setCurrent (selected_layers)
+
+			else
+				this.setCurrent (this.getLayersByProp #isHidden false layers:(this.getAllLayers())) -- select any of visible layers
+		)
+
 	),
 
 	/** Create layer
@@ -254,14 +328,7 @@ struct LayersManager_v
 		)
 	),
 
-	/** Test if any of given layers is current active, if not ativeate first
-	 */
-	function setCurrent layers =
-	(
-		--format "\n"; print "LayersManager_v.setCurrent()"
-		if (for layer in layers where layer.current == true collect layer).count == 0 then
-			layers[1].current  = true
-	),
+
 
 	/** Select Layers
 	  * @param string|<MixinInterface:LayerProperties>|array layers
@@ -269,11 +336,12 @@ struct LayersManager_v
 	function selectLayers layers =
 	(
 		format "\n"; print "LayersManager_v.selectLayers()"
+
 		layers = this.getLayers(layers)
 
-		_selection = for o in selection collect o
+		--_selection = for o in selection collect o
 
-		this._selectLayers (layers) (_selection) --return
+		this.selectLayersByObjects ( this.getObjectsInLayers(layers) )
 	),
 
 	/** Select layers by objects
@@ -281,11 +349,19 @@ struct LayersManager_v
 	  */
 	function selectLayersByObjects _objects =
 	(
-		--format "\n"; print "LayersManager_v.selectLayersByObjects()"
+		format "\n"; print "LayersManager_v.selectLayersByObjects()"
 
-		layers = this.getLayersByObjects(_objects)
+		clearSelection()
 
-		this._selectLayers (layers) (_objects) --return
+		auto_expand_state = SceneExplorerInstance.AutoExpand
+
+		SceneExplorerInstance.AutoExpand = true
+
+		select _objects
+
+		SceneExplorerInstance.SelectLayerOfSelection()
+
+		SceneExplorerInstance.AutoExpand = auto_expand_state
 	),
 
 	/** Expand layers
@@ -297,12 +373,22 @@ struct LayersManager_v
 		--format "\n"; print "LayersManager_v.expand()"
 		layers = this.getLayers(layers)
 
-		this.selectLayers (layers)
+		_selection = for o in selection collect o
 
-		SceneExplorerInstance.ExpandSelected()
+		this.selectLayersByObjects ( this.getObjectsInLayers(layers) )
 
-		if children == false then
-			for layer in layers do this.collapse(this.getChildren(layers))
+		select _selection
+
+		--this.selectLayers (layers)
+		--format "\n-----------\nARRAY:layers:%\n" layers; for layer in layers do format "layer:	%\n" layer.name
+
+		--SceneExplorerInstance.ExpandSelected()
+		--(SceneExplorerManager.GetActiveExplorer()).ExpandSelected()
+		--format "SceneExplorerInstance:	% \n" SceneExplorerInstance
+
+
+		--if children == false then
+			--for layer in layers do this.collapse(this.getChildren(layers))
 	),
 
 	/** Collapse slected
@@ -322,12 +408,22 @@ struct LayersManager_v
 	function collapseAll =
 	(
 		--format "\n"; print "LayersManager_v.collapseAll()"
+		--format "SceneExplorerInstance:	% \n" SceneExplorerInstance
 		SceneExplorerInstance.collapseAll()
 	),
 
 	/*------------------------------------------------------------------------------
 		VISIBILITY
 	--------------------------------------------------------------------------------*/
+
+	/** Is current hidden
+	  *
+	  */
+	function isCurrentHidden =
+	(
+		--format "\n"; print "LayersManager_v.isCurrentHidded()"
+		(for layer in this.getAllLayers() where layer.isHidden and layer.current collect layer).count > 0
+	),
 
 	/** Set given layers visible
 	  * Works with nested layers too
@@ -366,6 +462,8 @@ struct LayersManager_v
 			if state == true and (parent_layer = layer.getParent()) != undefined then
 				this.setVisibility(parent_layer)(true)
 		)
+
+
 	),
 
 
@@ -377,7 +475,7 @@ struct LayersManager_v
 		--format "\n"; print "LayersManager_v.hideOthers()"
 		layers_in_tree = this.getLayersTree(layers)
 
-		this._setVisibilityOthers(layers)(layers)(layers_in_tree) STATE:state ISOLATE:true
+		this._setVisibilityOthers(this.getAllLayers())(layers)(layers_in_tree) STATE:state ISOLATE:true
 	),
 
 	/** Hide unselecvted
@@ -385,24 +483,49 @@ struct LayersManager_v
 	  */
 	function hideUnselected ISOLATE:false =
 	(
-		format "\n"; print "LayersManager_v.isolateLayers()"
-
-		layers_selected = this.getLayersByAnySelection()
-
+		--format "\n"; print "LayersManager_v.hideUnselected()"
+		layers_selected = this.getSelectedOrCurrent()
+		--format "layers_selected:	% \n" layers_selected
 		layers_in_tree = this.getLayersTree(layers_selected)
+		--format "layers_in_tree:	% \n" layers_in_tree
+
+		top_layers =  this.getTopLayers(this.getAllLayers())
 
 		this.setVisibility (layers_selected) (true)
 
-		this._setVisibilityOthers(layers_selected)(layers_selected)(layers_in_tree) STATE:false ISOLATE:ISOLATE
+		this._setVisibilityOthers (top_layers)(layers_selected)(layers_in_tree) STATE:false ISOLATE:ISOLATE
+	),
+
+	/** Set visibility others
+	  *
+	  */
+	--function _setVisibilityOthers layers layers_in_hierarchy STATE:true =
+	function _setVisibilityOthers layers not_toggle layers_in_tree STATE:true ISOLATE:false =
+	(
+		--format "\n"; print "LayersManager_v._setVisibilityOthers()"
+		--for layer in not_toggle do format "NOT_TOGGLE:	% \n"  layer.name
+		for layer in layers do
+			if (findItem layers_in_tree layer) > 0 then
+			(
+				--format "NOT HIDE:	% \n"  layer.name
+				--format "ISOLATE:	% \n" ISOLATE
+				if ISOLATE then
+					for obj in this.getObjectsInLayers(layer) where findItem not_toggle layer == 0 do
+						obj.isHidden = not STATE
+
+
+				this._setVisibilityOthers (this.getChildren(layer))(not_toggle)(layers_in_tree) STATE:STATE ISOLATE:ISOLATE
+			)
+			else
+				layer.on = STATE
 	),
 
 	/** Hide unseleted layers, layers of selected objects or current layer if nothing selected
 	  *
 	  */
-	function _setVisibilityOthers layers not_toggle layers_in_hierarchy STATE:true ISOLATE:false =
+	function _setVisibilityOthersBak layers not_toggle layers_in_hierarchy STATE:true ISOLATE:false =
 	(
 		--format "\n"; print "LayersManager_v._setVisibilityOthers()"
-
 		for layer in layers do
 		(
 			/* HIDE CHILD LAYERS */
@@ -472,16 +595,21 @@ struct LayersManager_v
 
 		clearSelection()
 
+		--format "this.getObjectsInLayers(layers):	% \n" (this.getObjectsInLayers(layers))
 		--for layer in layers where (layer = this._getLayer(layer)) != undefined do layer.select on
-		for layer in layers where layer != undefined do layer.select on
+		--for layer in layers where layer != undefined do layer.select on
+
+		select ( this.getObjectsInLayers(layers) )
 
 		/* SELECT LAYER BY OBJECTS */
 		SceneExplorerInstance.SelectLayerOfSelection()
 
+		--(SceneExplorerManager.GetActiveExplorer()).SelectLayerOfSelection()
+		--macros.run "Scene Explorer" "SESelectLayerOfSelection"
+
 		selectmore _objects
 
 		this.getSelectedByManager() --return
-
 	),
 
 	/** Get layers which are not in hierarchy of given layers
@@ -530,17 +658,17 @@ struct LayersManager_v
 
 	/** Get layer
 	  *
-	  * @param string|<MixinInterface:LayerProperties> parent
+	  * @param integer|string|<MixinInterface:LayerProperties>|ReferenceTarget:BaseLayer layers index, name, properties, refaTarget
 	  */
 	function _getLayer layer =
 	(
 		--format "\n"; print "LayersManager_v._getLayer()"
 		case classOf layer of
 			(
-				integer:	LayerManager.getLayer	layer
-				string:	LayerManager.getLayerFromName	layer
+				string:	LayerManager.getLayerFromName	(layer)
+				integer:	LayerManager.getLayer	(layer)
 				MixinInterface:	layer
-				Base_LayerBase_Layer:	LayerManager.getLayerFromName	layer.name
+				Base_LayerBase_Layer:	LayerManager.getLayerFromName	(layer.name)
 				default:	undefined
 			)
 	),

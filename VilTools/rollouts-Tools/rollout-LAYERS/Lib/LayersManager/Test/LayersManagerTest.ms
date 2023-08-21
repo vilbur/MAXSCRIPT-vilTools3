@@ -33,26 +33,42 @@ function createLayersTree =
 	)
 )
 
-/** Prepare scene
-  */
-function prepareScene =
-(
-	resetMaxFile #noPrompt
-
-	LayerManager.editLayerByName ""
-
-	createLayersTree()
-)
-
+--/** Prepare scene
+--  */
+--function prepareScene =
+--(
+--	resetMaxFile #noPrompt
+--
+	--LayerManager.editLayerByName ""
+--
+--	createLayersTree()
+--)
 
 /* PREPARE SCENE */
 
 if objects.count == 0 then
-	prepareScene()
+(
+	resetMaxFile #noPrompt
+	--print "RESET"
+
+
+	createLayersTree()
+
+	--prepareScene()
+	LayerManager.editLayerByName ""
+
+	--holdMaxFile()
+)
+else
+	--fetchMaxFile  quiet:true
+	actionMan.executeAction 0 "277"  -- Tools: Unhide All
+
 
 /* INIT STRUCT */
 LayersManager = LayersManager_v()
 
+
+--format "LayersManager.getCurrent():	% \n" (LayersManager.getCurrent())
 
 
 /*
@@ -60,10 +76,14 @@ LayersManager = LayersManager_v()
    SELECT NODES
 
 */
---clearSelection()
+clearSelection()
 --selectmore	$Top1
 --selectmore	$Top1Child1
 --selectmore	$Top1Child1Nested1
+
+--selectmore	$Top2
+--selectmore	$Top2Child2
+--selectmore	$Top2Child2Nested2
 
 /*
 
@@ -93,27 +113,35 @@ LayersManager = LayersManager_v()
 */
 
 /* SELECT LAYER BY LAYERS */
---for layer in ( LayersManager.selectLayers #( 1, "Top1Child1", LayerManager.getLayer 3) ) do format "layer.name:	% \n" layer.name
+ --LayersManager.selectLayers 2
+ --LayersManager.selectLayers "Top1Child1"
+ LayersManager.selectLayers ( LayerManager.getLayer 3)
+
 
 /* SELECT LAYER BY OBEJCTS */
---for layer in ( LayersManager.selectLayersByObjects #( objects[1] ) ) do format "layer.name:	% \n" layer.name
+--LayersManager.selectLayersByObjects #( objects[3] )
+
+
+/* UNHIDE */
+--LayersManager.setVisibility(LayersManager.getAllLayers())(true)
 
 
 /* HIDE UNSELECTED */
---LayersManager.hideUnselected()
+LayersManager.hideUnselected()
 --LayersManager.hideUnselected isolate:true
+
+
+/* SET CURRENT */
+--LayersManager.setCurrent "Top3"
+
+/* SET CURRENT BY SELECTION */
+if LayersManager.isCurrentHidden() then
+	LayersManager.setCurrent #()
+
+
 
 
 /* EXPAND */
 --select	$Top1Child1Nested1
 --LayersManager.expand(  LayerManager.getLayer 1 )
-LayersManager.expand(  LayerManager.getLayer 1 ) children:true -- expand child layers too
-
-
-
-
-
-
-
-
-
+--LayersManager.expand(  LayerManager.getLayer 1 ) children:true -- expand child layers too

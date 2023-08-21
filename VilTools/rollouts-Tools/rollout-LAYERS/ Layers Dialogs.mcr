@@ -20,7 +20,6 @@ buttontext:	"Layer Manager"
 tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
 icon:	"control:checkbutton"
 (
-	--format "EventFired:	% \n" EventFired
 
 	on execute do
 		if EventFired == undefined or (EventFired != undefined and EventFired.val) then -- run on startup if no fire by event

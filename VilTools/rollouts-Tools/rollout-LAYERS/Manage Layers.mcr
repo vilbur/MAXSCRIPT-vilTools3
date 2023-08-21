@@ -13,12 +13,13 @@ icon:	"MENU:EXPAND Layers"
 (
 	on execute do
 	(
+		clearListener(); print("Cleared in:"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Manage Layers.mcr"
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
-
+		selected_layers = LayersManager.getSelectedOrCurrent()
+		format "\n-----------\nARRAY:selected_layers:%\n" selected_layers; for selected_layer in selected_layers do format "selected_layer:	%\n" selected_layer.name
 		LayersManager.expand( selected_layers )
 	)
 
@@ -40,7 +41,7 @@ tooltip:	"Collapse Layers in manager"
 icon:	"MENU:COLLAPSE Layers"
 (
 	on execute do
-		LayersManager.CollapseAll()
+		(LayersManager_v()).CollapseAll()
 )
 
 /* SELECT OBEJCTS IN LAYERS
@@ -55,7 +56,7 @@ icon:	"MENU:true|title:SELECT Objects"
 	(
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
+		selected_layers = LayersManager.getSelectedOrCurrent()
 
 		select (LayersManager.getObjectsInLayers( selected_layers ))
 	)
@@ -78,6 +79,100 @@ icon:	"MENU:true"
 	)
 )
 
+
+
+/** SELECT BY PREFIX
+ */
+macroscript	_layers_manager_select_layer_by_prefix
+category:	"_Layers-Manage"
+buttontext:	"Select By Prefix"
+tooltip:	"Select layers by prefix"
+icon:	"MENU:true"
+--icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+(
+	on execute do
+	(
+		clearListener(); print("Cleared in:"+getSourceFileName())
+
+		layers_by_prefix = #()
+
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectedOrCurrent()
+
+
+		prefixes = for prefix in (LayersManager.getLayersPrefixes(selected_layers)) collect prefix+"*"
+
+
+		format "prefixes:	% \n" prefixes
+		----format "layers_by_prefix:	% \n" layers_by_prefix
+		--if layers_by_prefix.count > 0 then
+
+
+		LayersManager.selectLayers( LayersManager.getLayerByName(prefixes) )
+
+
+
+		/**  WORKS BACKUP
+		  *
+		  */
+		--local sceneExplorerInstance = SceneExplorerManager.GetActiveExplorer()
+		--
+		--sceneExplorerInstance.SelectLayerOfSelection()
+		--
+		--selected_layers = for layer in sceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect layer --return
+		--
+		--format "selected_layers:	% \n" selected_layers
+		--for selected_layer in selected_layers do
+		--(
+		--	format "\n"
+		--	format "SELECTED_LAYER.name:	% \n" selected_layer.name
+		--	format "SELECTED_LAYER:	% \n" selected_layer
+		--
+		--)
+
+	)
+)
+
+/** SELECT BY OBEJCT
+ */
+macroscript	_layers_manager_select_layer_by_objects
+category:	"_Layers-Manage"
+buttontext:	"Select By Objects"
+tooltip:	"Select layers by Objects"
+icon:	"MENU:tooltip"
+--icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+(
+	on execute do
+	(
+		LayersManager = LayersManager_v()
+
+		LayersManager.selectLayersByObjects( for o in selection collect o )
+	)
+)
+/** SELECT CHILDREN LAYERS
+ */
+macroscript	_layers_manager_select_children_layer
+category:	"_Layers-Manage"
+buttontext:	"Select Child layers"
+tooltip:	"Select Child layers"
+icon:	"MENU:tooltip"
+--icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+(
+	on execute do
+	(
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectedOrCurrent()
+
+		layers_to_select = join selected_layers (LayersManager.getChildren(selected_layers))
+
+		LayersManager.selectLayers ( layers_to_select )
+
+		--LayersManager.selectLayersByObjects( for o in selection collect o )
+
+	)
+)
 
 /** CLONE LAYERS
  */
@@ -153,45 +248,5 @@ icon:	"MENU:true"
 		)
 
 		select new_objs
-	)
-)
-
-/** SELECT BY PREFIX
- */
-macroscript	_layers_manager_selct_layer_by_prefix
-category:	"_Layers-Manage"
-buttontext:	"Select By Prefix"
-tooltip:	"Select layers by prefix"
-icon:	"MENU:true"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
-(
-	on execute do
-	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-		layers_by_prefix = #()
-
-		LayersManager = LayersManager_v()
-
-		selected_layers = LayersManager.getLayers()
-
-		prefixes = LayersManager.getLayersPrefixes(selected_layers)
-
-		format "PREFIXES:	% \n" PREFIXES
-		--
-		--for prefix in prefixes do
-		--(
-		--	layers = (LayersManager.getLayersByName (prefix+"*"))
-		--
-		--	format "layers:	% \n" layers
-		--)
-
-
-		for prefix in prefixes do join layers_by_prefix (LayersManager.getLayersByName (prefix+"*"))
-
-		--format "layers_by_prefix:	% \n" layers_by_prefix
-		if layers_by_prefix.count > 0 then
-			LayersManager.selectLayers(layers_by_prefix)
-
-
 	)
 )

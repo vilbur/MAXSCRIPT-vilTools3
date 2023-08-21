@@ -15,7 +15,7 @@ icon:	"MENU:Set Current"
 	(
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
+		selected_layers = LayersManager.getSelectedOrCurrent()
 
 		LayersManager.setCurrent( selected_layers )
 	)
@@ -40,40 +40,20 @@ icon:	"MENU:ISOLATE Selected|Tooltip:Show only selected layers, or layers of obj
 	(
 		LayersManager = LayersManager_v()
 
+		layers_selected = LayersManager.getSelectedOrCurrent()
+
 		undo "Isolate selected layers" on
 			LayersManager.hideUnselected isolate:true
 
-
-		LayersManager.setCurrent( selected_layers )
+		LayersManager.setCurrent( layers_selected )
 
 		LayersManager.expand( selected_layers )
-
-	)
-
-)
-
-/**
- *
- */
-macroscript	layers_unhide_selected
-category:	"_Layers-Visibility"
-buttontext:	"On Selected"
-toolTip:	"Unhide selected layers, or layers of objects"
-icon:	"MENU:UNHIDE Selected"
-(
-	on execute do
-	(
-		LayersManager = LayersManager_v()
-
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
-
-		format "selected_layers:	% \n" selected_layers
-		undo "Unhide selected layers" on
-			LayersManager.setVisibility( selected_layers )(true)
 	)
 )
 
-
+/*------------------------------------------------------------------------------
+	HIDE
+--------------------------------------------------------------------------------*/
 /**
  *
  */
@@ -90,10 +70,11 @@ icon:	"MENU:HIDE Selected|Tooltip:Turn off selected layers, or layers of objects
 	(
 		LayersManager = LayersManager_v()
 
-		selected_layers = LayersManager.getSelectLayersOrBySelection()
+		selected_layers = LayersManager.getSelectedOrCurrent()
 
-		undo "Hide unselected layers" on
-			layers_in_hierarchy = LayersManager.setVisibility( selected_layers )(false)
+		undo "Hide selected layers" on
+			LayersManager.setVisibility( selected_layers )(false)
+
 	)
 )
 
@@ -115,20 +96,45 @@ icon:	"MENU:HIDE Unselected"
 	(
 		LayersManager = LayersManager_v()
 
+		--layers_hidden = LayersManager.getLayerByProp(#isHidden)(true)
+
 		undo "Hide unselected layers" on
 			LayersManager.hideUnselected()
 
-
 		LayersManager.setCurrent( selected_layers )
 
-		LayersManager.expand( selected_layers )
+		--LayersManager.expand( selected_layers )
 	)
 )
 
 
 /*------------------------------------------------------------------------------
-	UNHIDE ALL LAYERS
+	UNHIDE
 ------------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+macroscript	layers_unhide_selected
+category:	"_Layers-Visibility"
+buttontext:	"On Selected"
+toolTip:	"Unhide selected layers, or layers of objects"
+icon:	"MENU:UNHIDE Selected"
+(
+	on execute do
+	(
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectedOrCurrent()
+
+		--format "selected_layers:	% \n" selected_layers
+		undo "Unhide selected layers" on
+			LayersManager.setVisibility( selected_layers )(true)
+
+		LayersManager.setCurrent( selected_layers )
+	)
+)
+
 
 /**
  *
