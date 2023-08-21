@@ -104,6 +104,8 @@ clearSelection()
 /* GET SELECTED OR CURRENT LAYER */
 --for layer in (LayersManager.getSelectedOrCurrent()) do format "layer.name:	% \n" layer.name
 
+/* GET LAYERS INDEX */
+for id in (LayersManager.getLayersIndex#( 0, "Top1", LayerManager.getLayer 1, (LayerManager.getLayer 1).layerAsRefTarg  )) do format "Layer id:	% \n" id
 
 
 /*
@@ -115,7 +117,7 @@ clearSelection()
 /* SELECT LAYER BY LAYERS */
  --LayersManager.selectLayers 2
  --LayersManager.selectLayers "Top1Child1"
- LayersManager.selectLayers ( LayerManager.getLayer 3)
+ --LayersManager.selectLayers ( LayerManager.getLayer 3)
 
 
 /* SELECT LAYER BY OBEJCTS */
@@ -127,7 +129,7 @@ clearSelection()
 
 
 /* HIDE UNSELECTED */
-LayersManager.hideUnselected()
+--LayersManager.hideUnselected()
 --LayersManager.hideUnselected isolate:true
 
 
@@ -135,8 +137,8 @@ LayersManager.hideUnselected()
 --LayersManager.setCurrent "Top3"
 
 /* SET CURRENT BY SELECTION */
-if LayersManager.isCurrentHidden() then
-	LayersManager.setCurrent #()
+--if LayersManager.isCurrentHidden() then
+--	LayersManager.setCurrent #()
 
 
 
@@ -145,3 +147,15 @@ if LayersManager.isCurrentHidden() then
 --select	$Top1Child1Nested1
 --LayersManager.expand(  LayerManager.getLayer 1 )
 --LayersManager.expand(  LayerManager.getLayer 1 ) children:true -- expand child layers too
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,67 +4,74 @@
   *
   *
   */
-function onClickLayerButton val =
+function layerDialogButtonCallback val which =
 (
-	--format "\n"; print "LayersToogleDialog_v.onClickLayerButton()"
-	--format "EventFired:	% \n" EventFired.Roll
-	layer = LayerManager.getLayerFromName EventFired.Control.text
-
-	if layer != undefined then
-	(
-		LayersManager 	= LayersManager_v()
-
-		if keyboard.controlPressed then
-			selectmore (LayersManager.getObjectsInLayers(layer))
-
-		/* TOGGLE LAYER OF BUTTON CLICKED */
-		else
-			(LayersManager_v()).setVisibility( layer ) (EventFired.val) -- Turn on with parent layers
-
-		/* UPDATE OTHER BUTTONS */
-		(LayersToogleDialog_v()).refreshButtons()
-	)
-)
-
-/** Toggle working layers
-  *
-  */
-function displayWorkingLayers state =
-(
-	--format "\n"; print "LayersToogleDialog_v.toggleWorkingLayers()"
-	--format "state:	% \n" state
+	format "\n"; print "LayersToogleDialog_v.onClickLayerButton()"
+	format "EventFired:	% \n" EventFired
+	format "val:	% \n" val
+	format "which:	% \n" which
+	format "which:	% \n" (classOf which)
 
 	LayersManager 	= LayersManager_v()
 	LayersToogleDialog 	= LayersToogleDialog_v()
 
 	if not keyboard.controlPressed and not keyboard.shiftPressed then
 	(
-		LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (state)
+		if classOf which == integer then
+			LayersManager.setVisibility( which ) (val)
 
-		LayersToogleDialog.refreshButtons()
+		else if which == #dialog then
+			LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (val)
+
+		else if which == #others then
+			LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (val)
+
 	)
-	else if keyboard.controlPressed then
-		LayersManager.selectLayers( LayersManager.getLayersByProp #isHidden false layers:(LayersToogleDialog.getDialogLayers())   ) -- Select displayed layers in dialog
+	else
+	(
+		layers = case of
+		(
+			(classOf which == integer ): LayerManager.getLayer which
+			(which == #dialog): LayersToogleDialog.getDialogLayers()
+			(which == #others): LayersManager.difference(  LayersManager.getAllLayers() ) ( LayersToogleDialog.getDialogLayers() )
+		)
 
-	else if keyboard.shiftPressed then
-		LayersManager.selectLayers( LayersToogleDialog.getDialogLayers() ) -- Select all layers in dialog
+		format "layers:	% \n" layers
+
+
+		/* IF CONTROL PRESSED */
+		if keyboard.controlPressed then
+			selectmore (LayersManager.getObjectsInLayers(layers))
+
+		/* IF SHIFT PRESSED */
+		else if keyboard.shiftPressed then
+			LayersManager.selectLayers( layers ) -- Select all layers in dialog
+
+
+		if classOf which == name then
+			EventFired.control.state = not val
+
+	)
+
+
+	--layer = LayerManager.getLayerFromName EventFired.Control.text
+	--
+	--if layer != undefined then
+	--(
+	--	LayersManager 	= LayersManager_v()
+	--
+	--	if keyboard.controlPressed then
+	--		selectmore (LayersManager.getObjectsInLayers(layer))
+	--
+	--	/* TOGGLE LAYER OF BUTTON CLICKED */
+	--	else
+	--		(LayersManager_v()).setVisibility( layer ) (EventFired.val) -- Turn on with parent layers
+	--
+	--)
+
+	/* UPDATE OTHER BUTTONS */
+	(LayersToogleDialog_v()).refreshButtons()
 )
-
-/** Hide layers then are not in dialog
-  *
-  */
-function displayOtherLayers state =
-(
-	format "\n"; print "LayersToogleDialog_v.displayOtherLayers()"
-	format "state:	% \n" state
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-
-	LayersManager 	= LayersManager_v()
-	LayersToogleDialog 	= LayersToogleDialog_v()
-
-	LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (state)
-)
-
 
 
 global DIALOG_toogle_layers
@@ -156,17 +163,17 @@ struct LayersToogleDialog_v
 		buttons_count = 3
 
 		_Controls.Default #across	buttons_count
-		_Controls.Default #width	(this.default_width / buttons_count)
+		--_Controls.Default #width	(this.default_width / buttons_count)
+		_Controls.Default #width	32
 
 
-		HideBtn = _Controls.Control  #button "THIS" tooltip:"CRL: Select displayed layers in dialog.\nSHIFT:Select all layers in dialog.\n"
+		HideBtn = _Controls.Control  #checkbutton "DIALOG" tooltip:"CRL: Select displayed layers in dialog.\nSHIFT:Select all layers in dialog.\n"
+		HideBtn.Event #changed	"layerDialogButtonCallback" params:#dialog	tooltip:"Show all layers in dialog"
+		--HideBtn.Event #rightclick	"layerDialogButtonCallback" params:false	tooltip:"Hide all layers in dialog"
 
-		HideBtn.Event #pressed	"displayWorkingLayers" params:true	tooltip:"Show all layers in dialog"
-		HideBtn.Event #rightclick	"displayWorkingLayers" params:false	tooltip:"Hide all layers in dialog"
-
-		HideOthersBtn = _Controls.Control  #button "OTHERS"
-		HideOthersBtn.Event #pressed	"displayOtherLayers" params:true	tooltip:"Show all other layers then in dialog"
-		HideOthersBtn.Event #rightclick	"displayOtherLayers" params:false	tooltip:"Hide all other layers then in dialog"
+		HideOthersBtn = _Controls.Control  #checkbutton "OTHERS"
+		HideOthersBtn.Event #changed	"layerDialogButtonCallback" params:#others	tooltip:"Show all other layers then in dialog"
+		--HideOthersBtn.Event #rightclick	"layerDialogButtonCallback" params:false	tooltip:"Hide all other layers then in dialog"
 
 		HideOthersBtn = _Controls.Control  #button "RELOAD"
 		HideOthersBtn.Event #pressed	"macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" tooltip:"Reload dialog with new selection"
@@ -216,9 +223,11 @@ struct LayersToogleDialog_v
 	(
 		--format "\n"; print "LayersToogleDialog_v.addLayerButton()"
 
-		_Button = _Controls.control #checkbutton layer.name checked:layer.on across:1 width:width height:this.button_height align:#right
+		layer_index = LayersManager.getLayerIndex(layer)
+		--format "LAYER_INDEX:	% \n" layer_index
+		_Button = _Controls.control #checkbutton layer.name id:("layer_id_"+layer_index as string ) checked:layer.on across:1 width:width height:this.button_height align:#right
 
-		_Button.Event #changed ("onClickLayerButton") tooltip:"Toogle layer visibility.\n\nCTRL: Select objects in layer" --params:layer.name
+		_Button.Event #changed ("layerDialogButtonCallback") params:layer_index tooltip:"Toogle layer visibility.\n\nCTRL: Select objects in layer" --params:layer.name
 
 		_Button --return
 	),
@@ -231,6 +240,7 @@ struct LayersToogleDialog_v
 		--format "\n"; print "LayersToogleDialog_v.resetSelectedLayers()"
 		this.Ini.delete "selected_layers"
 	),
+
 
 	/** Get layers from ini
 	  *

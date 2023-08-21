@@ -224,9 +224,9 @@ struct LayersManager_v
 	 */
 	function getObjectsInLayers layers =
 	(
-		format "\n"; print "LayersManager_v.getObjectsInLayers()"
+		--format "\n"; print "LayersManager_v.getObjectsInLayers()"
 		layers = this.getLayers(layers)
-		format "layers:	% \n" layers
+
 		layers_nodes = #()
 
 		for layer in layers do
@@ -236,8 +236,29 @@ struct LayersManager_v
 
 			layers_nodes += layer_nodes
 		)
-		format "layers_nodes:	% \n" layers_nodes
+
 		layers_nodes --return
+	),
+
+	/** Get layers index
+	  *
+	  */
+	function getLayersIndex layers =
+	(
+		--format "\n"; print "LayersManager_v.getLayersIndex()"
+		layers = this.getLayers(layers)
+
+		for layer in layers collect this.getLayerIndex(layer)
+	),
+
+	/** Get layer index
+	  *
+	  */
+	function getLayerIndex layer =
+	(
+		--format "\n"; print "LayersManager_v._getLayerIndex()"
+		for i = 0 to LayerManager.count - 1 where LayerManager.getLayer i == layer do return i
+
 	),
 
 	/*------------------------------------------------------------------------------
@@ -425,35 +446,13 @@ struct LayersManager_v
 		(for layer in this.getAllLayers() where layer.isHidden and layer.current collect layer).count > 0
 	),
 
-	/** Set given layers visible
-	  * Works with nested layers too
-	  *
-	  * @return array of layers
-	 */
-	function setVisibleTree layers state =
-	(
-		format "\n"; print "DEPRECATED: LayersManager_v.setVisibleTree()"
-		--
-		--layers_in_hierarchy = this.getLayersInHierarchy(layers)
-		--
-		--all_top_layers = this.getTopLayers(this.getAllLayers())
-		--
-		--
-		--this.setVisibility (layers_in_hierarchy) (state)
-		--
-		----layers_not_in_hieararchy = this.getLayersNotInHierarchy(all_top_layers)(layers_in_hierarchy)
-		----this.setVisibility (layers_not_in_hieararchy)(false)
-		--
-		--layers_in_hierarchy --return
-	),
-
 
 	/** Set visibility
 	 */
 	function setVisibility layers state =
 	(
 		--format "\n"; print "LayersManager_v.setVisibility()"
-		if classOf layers != Array then layers = #(layers)
+		layers = this.getLayers(layers)
 
 		for layer in layers do
 		(
@@ -518,43 +517,6 @@ struct LayersManager_v
 			)
 			else
 				layer.on = STATE
-	),
-
-	/** Hide unseleted layers, layers of selected objects or current layer if nothing selected
-	  *
-	  */
-	function _setVisibilityOthersBak layers not_toggle layers_in_hierarchy STATE:true ISOLATE:false =
-	(
-		--format "\n"; print "LayersManager_v._setVisibilityOthers()"
-		for layer in layers do
-		(
-			/* HIDE CHILD LAYERS */
-			if ISOLATE then
-				for child_layer in this.getChildren(layer) where findItem layers_in_hierarchy child_layer == 0 do
-					child_layer.on = STATE
-
-			/* IF NESDTED LAYER */
-			if (parent_layer = layer.getParent()) != undefined then
-			(
-				/* HIDE OBJECTS IN PARENT LAYER */
-				if ISOLATE then
-					for obj_in_parent_layer in this.getObjectsInLayers(parent_layer) where findItem not_toggle parent_layer == 0 do
-						obj_in_parent_layer.isHidden = not STATE
-
-				/* HIDE LAYERS ON SAME LEVEL */
-				for layer_of_same_level in this.getChildren(parent_layer) where findItem layers_in_hierarchy layer_of_same_level == 0 do
-				(
-					layer_of_same_level.on = STATE
-
-					/* REPEAT FOR PARENT LAYERS */
-					this._setVisibilityOthers #(parent_layer)(not_toggle)(layers_in_hierarchy) STATE:STATE ISOLATE:ISOLATE
-				)
-			)
-			else
-				/* SET TOP LAYERS */
-				for top_layer in this.getTopLayers (this.getAllLayers()) where findItem layers_in_hierarchy top_layer == 0 do
-					top_layer.on = STATE
-		)
 	),
 
 	/** Select visibily of obejcts in given layers
@@ -672,6 +634,7 @@ struct LayersManager_v
 				default:	undefined
 			)
 	),
+
 
 
 	/**
