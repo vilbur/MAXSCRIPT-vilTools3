@@ -625,6 +625,7 @@ struct LayersManager_v
 	function _getLayer layer =
 	(
 		--format "\n"; print "LayersManager_v._getLayer()"
+		--format "layer:	% \n" layer
 		case classOf layer of
 			(
 				string:	LayerManager.getLayerFromName	(layer)
@@ -634,8 +635,6 @@ struct LayersManager_v
 				default:	undefined
 			)
 	),
-
-
 
 	/**
 	 */

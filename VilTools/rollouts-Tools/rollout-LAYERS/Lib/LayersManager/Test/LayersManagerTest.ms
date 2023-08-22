@@ -11,13 +11,18 @@ function createLayersTree =
 	for t = 1 to 4 do
 	(
 		title_top	= ("Top" + t as string )
-		top_layer	= LayerManager.newLayerFromName (title_top)
+		LayerManager.newLayerFromName (title_top)
+		top_layer	= LayerManager.getLayerFromName title_top
 		top_layer.addNode (Teapot pos:[ (t * 100), 0, 0] name:title_top wirecolor:red )
 
 		for c = 1 to 3 do
 		(
 			title_child	= title_top + "Child" + c as string
-			child_layer	= LayerManager.newLayerFromName ( title_child ); child_layer.setParent (top_layer)
+
+
+			LayerManager.newLayerFromName ( title_child );
+			child_layer	= LayerManager.getLayerFromName title_child
+			child_layer.setParent (top_layer)
 			child_layer.addNode (Teapot pos:[ (t * 100), (c * 100), 0] name:title_child wirecolor:green )
 
 			for n = 1 to 2 do
@@ -25,7 +30,9 @@ function createLayersTree =
 				title_nested	= title_child +"Nested"+ n as string
 
 				--title_nested	= title_child +"Nested"
-				nested_layer = LayerManager.newLayerFromName ( title_nested ); nested_layer.setParent (child_layer)
+				LayerManager.newLayerFromName ( title_nested );
+				nested_layer	= LayerManager.getLayerFromName title_nested
+				nested_layer.setParent (child_layer)
 
 				nested_layer.addNode (Teapot pos:[ (t * 100), ( c * 100),  ( n * 100)] name:title_nested  wirecolor:blue)
 			)
@@ -147,15 +154,3 @@ for id in (LayersManager.getLayersIndex#( 0, "Top1", LayerManager.getLayer 1, (L
 --select	$Top1Child1Nested1
 --LayersManager.expand(  LayerManager.getLayer 1 )
 --LayersManager.expand(  LayerManager.getLayer 1 ) children:true -- expand child layers too
-
-
-
-
-
-
-
-
-
-
-
-
