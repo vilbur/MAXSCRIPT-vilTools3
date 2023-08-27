@@ -1,4 +1,5 @@
-filein( getFilenamePath(getSourceFileName()) + "/EditPolyLoop/EditPolyLoop.ms" ) -- "./EditPolyLoop/EditPolyLoop.ms"
+filein
+( getFilenamePath(getSourceFileName()) + "/EditPolyLoop/EditPolyLoop.ms" ) -- "./EditPolyLoop/EditPolyLoop.ms"
 
 /** Edit poly selection
  */
@@ -173,16 +174,23 @@ struct EditPolyRingLoop_v
 	(
 		edge_selection = mod.GetSelection #Edge
 	),
+
 	/** Select edges in loops
 	 */
 	function _selectEdgesInLoops =
 	(
+		format "\n"; print "EditPolyRingLoop_v._selectEdgesInLoops()"
 		edge_selection = #{}
 
 		for Loop in Loops do
 			join edge_selection (Loop._selection as BitArray)
 
-		print ( "edge_selection = " + edge_selection as string )
+		format "edge_selection:	% \n" edge_selection
+		format "edge_selection.count:	% \n" edge_selection.count
+
+		if edge_selection.count == 0 then
+			return false
+
 		mod.SetSelection	#Edge #{}
 		mod.Select	#Edge edge_selection
 	),

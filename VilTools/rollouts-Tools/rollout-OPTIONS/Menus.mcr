@@ -2,7 +2,7 @@
  */
 macroscript	_options_install_menus
 category:	"_Otions"
-buttontext:	"Install Menus"
+buttontext:	"INSTALL MENUS"
 tooltip:	"Install Menus and Quad menus for VilTools3"
 (
 	clearListener(); print("Cleared in:"+getSourceFileName())
@@ -28,7 +28,15 @@ tooltip:	"Install Menus and Quad menus for VilTools3"
 
 	print "QUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
 
-	menuMan.saveMenuFile ((getDir #temp)+"\\vilTools3-Quads.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\temp\vilTools3-Quads.mnux
+	menuMan.saveMenuFile ((getDir #ui)+"\\MaxStartUI.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\en-US\UI\MaxStartUI.mnux"
+
+
+	/* OPEN HOTKEY EDITOR - for refresh quad menu keyboard shortcuts */
+	actionMan.executeAction 0 "59245"  -- Customize User Interface: Hotkey Editor
+
+	/* CLOSE HOTKEY EDITOR */
+	if (hotkey_dialog = (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "Hotkey Editor" collect hwnd)[1]) != undefined then
+		UIAccessor.CloseDialog hotkey_dialog
 
 )
 

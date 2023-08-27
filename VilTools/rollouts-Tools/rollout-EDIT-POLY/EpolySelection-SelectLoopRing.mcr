@@ -13,7 +13,7 @@ icon:	"control:checkbutton|across:1|width:256"
 	(
 		true:   ( getFilenamePath(getSourceFileName()) + "/Lib/EpolySelection/selectLoopOrRingOnMouseWheel.ahk" ) -- "./Lib/EpolySelection/selectLoopOrRingOnMouseWheel.ahk"
 		false:  ( getFilenamePath(getSourceFileName()) + "/Lib/EpolySelection/mouseKill.ahk" ) -- "./Lib/EpolySelection/mouseKill.ahk"
-
+ 
 	)
 	format "ahk_path:	% \n" ahk_path
 	--DOSCommand( "start \"\" """+ahk_path+"""")

@@ -17,29 +17,43 @@ struct CommandPanel_v
 	LB_GETTEXT = 0x189,
 	LB_GETTEXTLEN = 0x18A,
 
-	/** Toggle modifiers
+	/** Set state of modifiers in stack
 	 *
 	 *  @param obj
-	 *  @param boolean state desired state of modifiers
+	 *  @param boolean|#toggle state desired state of modifiers
 	 *  @param #ALL|#SELECTED
 	 *
 	 */
-	function toggleModifiers modifiers state which =
+	function setStateSelectedModifiers state which =
 	(
 		--format "\n"; print "CommandPanel_v.toggleModifiers()"
-		if getCommandPanelTaskMode()!= #modify then
+		_selection = selection
+
+		if GetCommandPanelTaskMode()!= #modify then
 			max modify mode
 
 		if which == #ALL then
-			this.selectAll true
+			this.selectAllModifiers true
 
+		if (modifiers = selection[1].modifiers).count == 0 then
+			return false
 
 		selected_items = this._getSlectedItems()
+
+		if selected_items.count == 0 then
+			return false
+
+
+		selected_modifiers = this.getSelectedModifiers(modifiers)
+
+		if state == #toggle then
+			state = not ((current_state = this. _getDominantState (modifiers)) != undefined and current_state == true ) -- swtich state to opposite
+
 
 		for modifier_index in this.getSelectedModifiers(modifiers) do
 			modifiers[modifier_index].enabled = state
 
-		modPanel.setCurrentObject( modPanel.getCurrentObject() ) -- refresh modifier stack
+		select _selection
 
 		this.selectItem (true) (selected_items)
 	),
@@ -55,9 +69,9 @@ struct CommandPanel_v
 		--format "\n"; print "CommandPanel_v.getSelectedModifiers()"
 
 		selection_states = this._getItemsSelectionStates()
-
+		--format "selection_states:	% \n" selection_states
 		all_items = this._getAllItems()
-
+		--format "all_items:	% \n" all_items
 		this._getSelectedModifiers (modifiers) (all_items) (selection_states)
 	),
 
@@ -69,7 +83,7 @@ struct CommandPanel_v
 	 */
 	function getModifiersListboxIndex modifiers =
 	(
-		--format "\n"; print "CommandPanel_v.getModifiersListboxIndex()"
+		----format "\n"; print "CommandPanel_v.getModifiersListboxIndex()"
 		modifier_indexes = #()
 
 		all_items = this._getAllItems()
@@ -97,8 +111,8 @@ struct CommandPanel_v
 	 */
 	function selectItem state which =
 	(
-		--format "\n"; print "CommandPanel_v.select()"
-		--format "index = % \n" index
+		----format "\n"; print "CommandPanel_v.select()"
+		----format "index = % \n" index
 
 		if classOf which == Array then
 			for index in which do
@@ -116,8 +130,8 @@ struct CommandPanel_v
 	 */
 	function _selectItem state index =
 	(
-		--format "\n"; print "CommandPanel_v.select()"
-		--format "index = % \n" index
+		----format "\n"; print "CommandPanel_v.select()"
+		----format "index = % \n" index
 
 		windows.sendMessage this.list_box LB_SETSEL state index
 	),
@@ -125,31 +139,56 @@ struct CommandPanel_v
 
 	/** Select
 	 */
-	function selectAll state =
+	function selectAllModifiers state =
 	(
-		--format "\n"; print "CommandPanel_v.select()"
+		----format "\n"; print "CommandPanel_v.select()"
 		windows.sendMessage this.list_box LB_SETSEL state -1
-
 	),
 
-	--private
+	private
+
+	/** Find if more modifiers are ENABLED or DISABLED
+	  *
+	  * @return true|false|undefined return boolean by dominant state of modifiers, undefined if states are equal
+	  */
+	function _getDominantState modifiers =
+	(
+		--format "\n"; print "CommandPanel_v.getDominantState()"
+		enabled  = for _modifier in modifiers where _modifier.enabled == true  collect _modifier
+		disabled = for _modifier in modifiers where _modifier.enabled == false collect _modifier
+
+		if enabled.count != disabled.count then
+			enabled.count > disabled.count --return
+	),
 
 	/** Get selected modifiers
+	  *
+	  * Pair command panel tree items with modifiers by name
 	 */
 	function _getSelectedModifiers modifers all_items selection_states =
 	(
+		--format "\n\n"; print "CommandPanel_v._getSelectedModifiers()"
+		----format "modifers.count:	% \n" modifers.count
+		--format "modifers:	% \n" modifers
+		--format "all_items:	% \n" all_items
+		--format "selection_states:	% \n" selection_states
 		modifier_indexes = #()
-
-		--format "\n"; print "CommandPanel_v._getSelectedModifiers()"
 
 		for modifier_index = 1 to modifers.count do
 		(
+			--format "\n\n"
+			--format "modifier_index:	% \n" modifier_index
+			--format "modifers[modifier_index].name:	% \n" modifers[modifier_index].name
 			item_index = findItem all_items modifers[modifier_index].name
+			--format "item_index:	% \n" item_index
 
-			all_items[item_index] = undefined
+			if item_index > 0 then
+			(
+				all_items[item_index] = undefined
 
-			if selection_states[item_index] == 1 then
-				append modifier_indexes modifier_index
+				if selection_states[item_index] == 1 then
+					append modifier_indexes modifier_index
+			)
 		)
 
 		modifier_indexes --return
@@ -160,7 +199,7 @@ struct CommandPanel_v
 	 */
 	function _setListboxHWND =
 	(
-		--format "\n"; print "CommandPanel_v.getListbox()"
+		----format "\n"; print "CommandPanel_v.getListbox()"
 		list_box = for c in windows.getChildrenHWND this.hwnd where  c[4] == "ListBox" do exit with c[1] --return
 	),
 
@@ -168,7 +207,7 @@ struct CommandPanel_v
 	 */
 	function _setModifiersItemsCount =
 	(
-		--format "\n"; print "CommandPanel_v._getModifiersItemsCount()"
+		----format "\n"; print "CommandPanel_v._getModifiersItemsCount()"
 
 		items_count = windows.sendMessage list_box LB_GETCOUNT 0 0 --return
 	),
@@ -179,7 +218,7 @@ struct CommandPanel_v
 	 */
 	function _getSlectedItems =
 	(
-		--format "\n"; print "CommandPanel_v._getSlectedItems()"
+		----format "\n"; print "CommandPanel_v._getSlectedItems()"
 
 		for i=0 to items_count - 1 where ( windows.sendMessage this.list_box LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
 	),
@@ -190,7 +229,7 @@ struct CommandPanel_v
 	 */
 	function _getItemsSelectionStates =
 	(
-		--format "\n"; print "CommandPanel_v._getSlectedItems()"
+		----format "\n"; print "CommandPanel_v._getSlectedItems()"
 		for i=0 to items_count-1 collect ( windows.sendMessage  this.list_box  LB_GETSEL i 0)
 	),
 

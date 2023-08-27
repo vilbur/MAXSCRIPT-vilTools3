@@ -6,7 +6,7 @@ buttonText:	"FFDBox"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "FFDBox"
 	)
 )
@@ -19,112 +19,125 @@ buttonText:	"FFD 2x2x2"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "FFD_2x2x2"
 	)
 )
 
-/** Shell
+/** CHAMFER
  */
-macroscript epoly_tools_Shell
+macroscript epoly_tools_ChamferMod
 category:	"_Modifiers-2"
-buttonText:	"Shell"
+buttonText:	"CHAMFER"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "Shell"
+	on execute do (
+		macros.run "Modifiers" "ChamferMod"
 	)
 )
 
-/** Face Extrude
+/** EXTRUDE
  */
 macroscript epoly_tools_Face_Extrude
 category:	"_Modifiers-2"
-buttonText:	"Face Extrude"
-icon:	"MENU:true"
+buttonText:	"EXTRUDE"
+icon:	"MENU:true|#id:extrude_face"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Face_Extrude"
 	)
 )
 
-/** Extrude faces poly
+/** SHELL
  */
-macroscript epoly_tools_Extrude_faces_poly
+macroscript epoly_tools_Shell
 category:	"_Modifiers-2"
-buttonText:	"Extrude faces poly"
+buttonText:	"SHELL"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "Extrude_faces_poly"
+	on execute do (
+		macros.run "Modifiers" "Shell"
 	)
 )
 
-/** Extrude edges poly
+/** Extrude Faces Poly
  */
-macroscript epoly_tools_Extrude_edges_poly
+macroscript epoly_tools_Extrude_Faces_Poly
 category:	"_Modifiers-2"
-buttonText:	"Extrude edges poly"
+buttonText:	"Extrude Faces Poly"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "Extrude_edges_poly"
+	on execute do (
+		macros.run "Modifiers" "Extrude_Faces_Poly"
 	)
 )
 
-/** Inset faces
+/** Extrude Edges Poly
  */
-macroscript epoly_tools_Inset_faces
+macroscript epoly_tools_Extrude_Edges_Poly
 category:	"_Modifiers-2"
-buttonText:	"Inset faces"
+buttonText:	"Extrude Edges Poly"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "Inset_faces"
+	on execute do (
+		macros.run "Modifiers" "Extrude_Edges_Poly"
 	)
 )
 
-/** Outline faces poly
+/** Inset Faces
  */
-macroscript epoly_tools_Outline_faces_poly
+macroscript epoly_tools_Inset_Faces
 category:	"_Modifiers-2"
-buttonText:	"Outline faces poly"
+buttonText:	"Inset Faces"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "Outline_faces_poly"
+	on execute do (
+		macros.run "Modifiers" "Inset_Faces"
 	)
 )
 
-/** select by face size
+/** Outline Faces Poly
  */
-macroscript epoly_tools_select_by_face_size
+macroscript epoly_tools_Outline_Faces_Poly
 category:	"_Modifiers-2"
-buttonText:	"select by face size"
+buttonText:	"Outline Faces Poly"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "select_by_face_size"
+	on execute do (
+		macros.run "Modifiers" "Outline_Faces_Poly"
 	)
 )
 
-/** Select faces by mat id
+/** select by Face Size
  */
-macroscript epoly_tools_Select_faces_by_mat_id
+macroscript epoly_tools_select_by_Face_Size
 category:	"_Modifiers-2"
-buttonText:	"Select faces by mat id"
+buttonText:	"select by Face Size"
 icon:	"MENU:true"
 (
 
- on execute do (
-		macros.run "Modifiers" "Select_faces_by_mat_id"
+	on execute do (
+		macros.run "Modifiers" "select_by_Face_Size"
+	)
+)
+
+/** Select Faces By Mat Id
+ */
+macroscript epoly_tools_Select_Faces_By_Mat_Id
+category:	"_Modifiers-2"
+buttonText:	"Select Faces By Mat Id"
+icon:	"MENU:true"
+(
+
+	on execute do (
+		macros.run "Modifiers" "Select_Faces_By_Mat_Id"
 	)
 )
 

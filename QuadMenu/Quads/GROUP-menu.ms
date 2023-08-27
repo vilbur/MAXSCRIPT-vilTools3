@@ -6,13 +6,12 @@ function GROUPmenu QuadMenu =
 	--format "\n"; print "GROUPmenu()"
 
 	QuadMenu.setTitle("G R O U P")
-
-	--DefaulQuadMenu 	= (QuadMenu_v("Title")).Quads[1]
-
 	QuadMenu.clearMenu()
 
-	QuadMenu.addMenu("_Group")	--flat:true --index:1
+	GroupMenu	= Menu_v("_Group")
+	GroupMenu.addSeparator index:#( 3, 5, 7 )
 
-	--QuadMenu.addMenu(menus)
-	
+
+	QuadMenu.addMenu(GroupMenu)	--flat:true --index:1
+
 )

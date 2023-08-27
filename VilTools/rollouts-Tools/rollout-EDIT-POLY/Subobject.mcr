@@ -16,7 +16,7 @@ macroscript enter_subobject_1
 category:	"_Subobject"
 buttonText:	"Enter 1"
 tooltip:	"Enter to subobject 1"
-icon:	"across:6"
+icon:	"across:6|width:62"
 (
 	format "EventFired = % \n" EventFired
 	(Subobject_v()).enterOrQuitSubobject 1

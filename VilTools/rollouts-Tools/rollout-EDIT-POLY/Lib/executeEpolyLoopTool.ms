@@ -4,14 +4,22 @@
   */
 function executeEpolyLoopTool macro =
 (
-	format "\n"; print "executeEpolyOperation.ms.executeEpolyOperation()"
+	--format "\n"; print "executeEpolyOperation.ms.executeEpolyOperation()"
 
-	command = "PolyToolsModeling." + macro + " " + keyboard.altPressed as string
+	if macro as name != #LoopTools then
+	(
+		command = "PolyToolsModeling." + macro + " " + keyboard.controlPressed as string
 
-	/* If #StraightLoop and Alt pressed then spaceLoop argument is used too */
-	if macro == "StraightLoop" then
-		command += " " + keyboard.altPressed as string
+		/* If #StraightLoop and Alt pressed then spaceLoop argument is used too */
+		if macro == "StraightLoop" or  macro == "CurveLoop" then
+			command += " " + keyboard.altPressed as string
 
-	--format "command:	% \n" command
-	execute( command )
+		--format "command:	% \n" command
+		execute( command )
+
+	)
+	else
+		macros.run "PolyTools" "LoopTools"
+
 )
+

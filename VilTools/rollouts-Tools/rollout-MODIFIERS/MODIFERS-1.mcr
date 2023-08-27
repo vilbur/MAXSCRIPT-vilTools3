@@ -6,7 +6,7 @@ buttonText:	"EditPolyMod"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "EditPolyMod"
 	)
 )
@@ -19,7 +19,7 @@ buttonText:	"Poly Select"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "PolySelect"
 	)
 )
@@ -32,7 +32,7 @@ buttonText:	"Volume Select"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "VolumeSelect"
 	)
 )
@@ -45,7 +45,7 @@ buttonText:	"Slice"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Slice"
 	)
 )
@@ -58,7 +58,7 @@ buttonText:	"PathDeform"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "PathDeform"
 	)
 )
@@ -71,7 +71,7 @@ buttonText:	"Bend"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Bend"
 	)
 )
@@ -84,7 +84,7 @@ buttonText:	"Noise"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Noise"
 	)
 )
@@ -97,7 +97,7 @@ buttonText:	"Taper"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Taper"
 	)
 )
@@ -110,7 +110,7 @@ buttonText:	"Twist"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Twist"
 	)
 )

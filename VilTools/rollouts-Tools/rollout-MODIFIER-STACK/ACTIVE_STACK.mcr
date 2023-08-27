@@ -25,7 +25,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/autoEndResult.ms"
 global AUTO_END_RESULT
 
 macroscript	modifiers_auto_end_result
-category:	"_Modifier Stack"
+category:	"_Modifier-Stack"
 buttontext:	"Auto End Result"
 toolTip:	"Enable\Disable show end result on Enter\Exit subobject"
 --toolTip:	"Turn off \"Show end result\" on subobject edit"
@@ -109,24 +109,25 @@ function keepActiveModifier which =
 *
 */
 macroscript	modifiers_keep_active_edit_poly
-category:	"_Modifier Stack"
+category:	"_Modifier-Stack"
 buttonText:	"Edit Poly"
 tooltip:	"Select Edit Poly modifier when object is selected"
 icon:	"control:checkbutton|menu:true"
 (
 
 	on execute do
-		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
+		format "EventFired:	% \n" EventFired
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
 
 
-	on IsChecked do KEEP_ACTIVE_NODIFIER == #EditPoly
+	--on IsChecked do KEEP_ACTIVE_NODIFIER == #EditPoly
 
 )
 /*
 *
 */
 macroscript	modifiers_keep_active_last_modifier
-category:	"_Modifier Stack"
+category:	"_Modifier-Stack"
 buttonText:	"Last Modifier"
 tooltip:	"Select last modifier when object is selected"
 icon:	"control:checkbutton|menu:true"
@@ -136,13 +137,13 @@ icon:	"control:checkbutton|menu:true"
 		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #LastModifier then undefined else #LastModifier)
 
 
-	on IsChecked do KEEP_ACTIVE_NODIFIER == #LastModifier
+	--on IsChecked do KEEP_ACTIVE_NODIFIER == #LastModifier
 )
 /*
 *
 */
 macroscript	modifiers_keep_active_unwrap
-category:	"_Modifier Stack"
+category:	"_Modifier-Stack"
 buttonText:	"Unwrap"
 tooltip:	"Select last modifier when object is selected"
 icon:	"control:checkbutton|menu:true"
@@ -152,7 +153,7 @@ icon:	"control:checkbutton|menu:true"
 		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #Unwrap then undefined else #Unwrap)
 
 
-	on IsChecked do KEEP_ACTIVE_NODIFIER == #Unwrap
+	--on IsChecked do KEEP_ACTIVE_NODIFIER == #Unwrap
 )
 
 
@@ -163,7 +164,7 @@ icon:	"control:checkbutton|menu:true"
 ----*
 ----*/
 ----macroscript	modifiers_activate_modifier
-----category:	"_Modifier Stack"
+----category:	"_Modifier-Stack"
 ----buttonText:	"Keep active modifier"
 ----tooltip:	"select first modifier when object is selected"
 ----icon:	"control:RadioButtons|items:#('Edit Poly', 'Unwrap', 'Last Modifier')|unselect:true|align:#left"

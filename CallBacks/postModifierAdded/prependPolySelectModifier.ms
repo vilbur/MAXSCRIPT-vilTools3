@@ -27,4 +27,6 @@ function prependPolySelectModifier =
 
 		CALLBACKMANAGER.add "activatePolySelectModifier"	#modPanelObjPostChange
 	)
+
+
 )

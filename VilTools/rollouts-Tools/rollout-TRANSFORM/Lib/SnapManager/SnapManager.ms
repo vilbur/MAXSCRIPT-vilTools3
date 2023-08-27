@@ -10,33 +10,36 @@ struct SnapManager_v
 
 	public
 
-	fn getAngleSnap =
+	function getState =
 	(
 		this.ip.ASnapStatus > 0 -- return value
 	),
 
-	fn setAngleSnap state =
+	function setState state =
 	(
 		if not isKindOf state BooleanClass then throw "Supplied value is not a boolean!"
 
 		if state then
-		(
-		   if not this.GetAngleSnap() then this.ip.ToggleASnap())else
-		(
-		   if this.GetAngleSnap() then this.ip.ToggleASnap()
-		)
+
+		   if not this.getState() then this.ip.ToggleASnap()
+		else
+
+		   if this.getState() then this.ip.ToggleASnap()
+
 		true -- return
 	),
 
-	fn getSnapAngle =
+	function getAngle =
 	(
 		this.ip.SnapAngle_ -- return value
 	),
 
-	fn setSnapAngle ang =
+	function setAngle ang =
 	(
 		if not isKindOf ang Number then
-			throw "Supplied value is not a number!"this.ip.SnapAngle_ = ang as float -- return value
+			throw "Supplied value is not a number!"
+
+		this.ip.SnapAngle_ = ang as float -- return value
 	),
 
 	on create do

@@ -1,8 +1,23 @@
-/** Center Loop
+/** Ｌ Ｏ Ｏ Ｐ   Ｔ Ｏ Ｏ Ｌ Ｓ ▼
+ */
+macroscript epoly_tools_Loop_Tools
+category:	"_Epoly-Loops"
+buttonText:	"Ｌ Ｏ Ｏ Ｐ   Ｔ Ｏ Ｏ Ｌ Ｓ ▼"
+toolTip:	"Ctrl: Autoloop"
+icon:	"MENU:true"
+(
+	on isVisible	do isEpoly() and isSubObject( 2 )
+
+	on execute do (
+		executeEpolyLoopTool #LoopTools
+	)
+)
+
+/** Center
  */
 macroscript epoly_tools_Center_Loop
 category:	"_Epoly-Loops"
-buttonText:	"Center Loop"
+buttonText:	"Center"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
 (
@@ -13,11 +28,11 @@ icon:	"MENU:true"
 	)
 )
 
-/** Space Loop
+/** Space
  */
 macroscript epoly_tools_Space_Loop
 category:	"_Epoly-Loops"
-buttonText:	"Space Loop"
+buttonText:	"Space"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
 (
@@ -28,11 +43,11 @@ icon:	"MENU:true"
 	)
 )
 
-/** Straigh Loop
+/** Straigh
  */
 macroscript epoly_tools_Straigh_Loop
 category:	"_Epoly-Loops"
-buttonText:	"Straigh Loop"
+buttonText:	"Straigh"
 toolTip:	"Ctrl: Autoloop \nAlt: Space vertices on loop evenly"
 icon:	"MENU:true"
 (
@@ -43,26 +58,26 @@ icon:	"MENU:true"
 	)
 )
 
-/** Curve Loops
+/** Curve
  */
-macroscript epoly_tools_Curve_Loops
+macroscript epoly_tools_Curve_Loop
 category:	"_Epoly-Loops"
-buttonText:	"Curve Loops"
-toolTip:	"Ctrl: Autoloop"
+buttonText:	"Curve"
+toolTip:	"Ctrl: Autoloop \nAlt: Space vertices on loop evenly"
 icon:	"MENU:true"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
 	on execute do (
-		executeEpolyLoopTool "CurveLoops"
+		executeEpolyLoopTool "CurveLoop"
 	)
 )
 
-/** Circle Loop
+/** Circle
  */
 macroscript epoly_tools_Circle_Loop
 category:	"_Epoly-Loops"
-buttonText:	"Circle Loop"
+buttonText:	"Circle"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
 (
@@ -73,13 +88,13 @@ icon:	"MENU:true"
 	)
 )
 
-/** Relax Loop
+/** Relax
  */
 macroscript epoly_tools_Relax_Loop
 category:	"_Epoly-Loops"
-buttonText:	"Relax Loop"
+buttonText:	"Relax"
 toolTip:	"Ctrl: Autoloop"
-icon:	"MENU:true"
+icon:	"MENU:true|#id:#Relax_loop"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 

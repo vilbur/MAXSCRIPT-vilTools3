@@ -65,7 +65,7 @@ function circleStack direction =
 
 	if selection.count > 0 then
 	(
-		modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
+		modifiers = if selection.count > 1 then (InstancedModifierFinder_v( selection )).getInstancedModifiers() else selection[1].modifiers
 
 		if modifiers.count > 1 and ( current_mod = modPanel.getCurrentObject() ) != undefined then
 		(

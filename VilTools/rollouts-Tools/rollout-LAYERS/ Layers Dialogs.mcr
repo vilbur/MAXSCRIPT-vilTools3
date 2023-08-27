@@ -18,7 +18,7 @@ macroscript	layers_manager_autorun
 category:	"_Layers-Dialogs"
 buttontext:	"Layer Manager"
 tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
-icon:	"control:checkbutton"
+icon:	"control:checkbutton|MENU:true"
 (
 
 	on execute do
@@ -51,15 +51,23 @@ icon:	"MENU:Working Layers Dialog"
 
 	on execute do
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 
 		LayersToogleDialog = LayersToogleDialog_v()
 
 		LayersToogleDialog.create()
 	)
+
+	on altExecute type do
+	(
+		macros.run "_Layers-Dialogs" "layers_manager_toogle_dialog_resetini"
+	)
+
 )
+
+
 
 
 /** WORKING LAYER DIALOG - RELAOD

@@ -81,8 +81,9 @@ function PRIMITIVESmenu QuadMenu =
 	shapes_primitives = #(
 		#lines,
 		#rectangle,
-		#Text,
 		#circle,
+		#Arc,
+		#Text,
 		#Ellipse,
 		#ShapeMerge
 	)
@@ -104,7 +105,8 @@ function PRIMITIVESmenu QuadMenu =
 	QuadMenu.addMenus(menus) separator:true
 
 	QuadMenu.addItem ("Edit") ("Object Properties") group:"Main UI" index:1
-	QuadMenu.addSeparator index:#(2)
+
+	QuadMenu.addSeparators #( 4 ) -- separator after helpers
 
 
 

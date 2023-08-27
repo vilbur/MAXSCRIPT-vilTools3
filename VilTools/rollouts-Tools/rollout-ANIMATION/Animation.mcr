@@ -20,7 +20,7 @@ function wireParamsDialog obj_1 obj_2 =
 
 		--CheckAllCheckbox = _Controls.control #checkbox "Check\Uncheck all" across:1
 		--
-		--CheckAllCheckbox.Events.add #changed ("for control in "+dialog_id+".controls do try( control.state = val )catch()")
+		--CheckAllCheckbox.Event #changed ("for control in "+dialog_id+".controls do try( control.state = val )catch()")
 		WIRE_PARAMS_LABELS[1] = obj_1
 		WIRE_PARAMS_LABELS[2] = obj_2
 
@@ -32,7 +32,7 @@ function wireParamsDialog obj_1 obj_2 =
 
 		ButtonConnect =  _Controls_connect.control #button "Connect" width:128 height:64 across:1
 
-		ButtonConnect.Events.add #pressed ("wireParamsCallback ( "+Radio_1.id+".state ) ( "+Radio_2.id+".state ) title:\"WIRE PARAMETERS \"")
+		ButtonConnect.Event #pressed ("wireParamsCallback ( "+Radio_1.id+".state ) ( "+Radio_2.id+".state ) title:\"WIRE PARAMETERS \"")
 
 		/* DIALOG CREATE */
 		Dialog.create width:512 --pos:#mouse

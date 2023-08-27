@@ -1,4 +1,44 @@
 
+/* NEW LAYER
+*/
+macroscript	layers_new_layer
+category:	"_Layers-3"
+buttontext:	"New Layer"
+--toolTip:	"Select Objects of selected layers, or layers of selected objects."
+icon:	"MENU:NEW Layer"
+(
+	undo "Select " on
+	(
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectedOrCurrent()
+
+		parent_layer = selected_layers[1]
+
+		parent_layer_name = if parent_layer != undefined then parent_layer.name else ""
+
+		-- instantiate the object
+		--default_text	= "default_text"
+		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" parent_layer_name
+		_dialog_result	= dotNetClass "System.Windows.Forms.DialogResult"
+
+		_dotNet.ShowModal()
+
+		_ok 	= dotNet.comparEenums (_dotNet.DialogResult) ( _dialog_result.Ok )
+		_canel	= dotNet.comparEenums (_dotNet.DialogResult) ( _dialog_result.Cancel )
+		--_string	= _dotNet.InstanceName
+
+		if( _ok and (_string = _dotNet.InstanceName) != ""  ) then
+		(
+			newLayer = LayersManager.newLayer(_string) parent:parent_layer
+
+			newLayer.addNodes( selection )
+
+			newLayer.addNodes( selection )
+		)
+	)
+)
+
 /*------------------------------------------------------------------------------
 	EXPAND \ COLLAPSE
 --------------------------------------------------------------------------------*/
@@ -6,7 +46,7 @@
 /** EXPAND SELECTED LAYERS
  */
 macroscript	_layers_expand_layers_of_selection
-category:	"_Layers-Manage"
+category:	"_Layers-3"
 buttontext:	"Expand Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
 icon:	"MENU:EXPAND Layers"
@@ -35,7 +75,7 @@ icon:	"MENU:EXPAND Layers"
 /** COLLAPSE SELECTED LAYERS
  */
 macroscript	_layers_collapse_all_layers
-category:	"_Layers-Manage"
+category:	"_Layers-3"
 buttontext:	"Collapse Layers"
 tooltip:	"Collapse Layers in manager"
 icon:	"MENU:COLLAPSE Layers"
@@ -44,143 +84,14 @@ icon:	"MENU:COLLAPSE Layers"
 		(LayersManager_v()).CollapseAll()
 )
 
-/* SELECT OBEJCTS IN LAYERS
-*/
-macroscript	layers_select_all_objects_selection
-category:	"_Layers-Manage"
-buttontext:	"Select Objects"
-toolTip:	"Select Objects of selected layers, or layers of selected objects."
-icon:	"MENU:true|title:SELECT Objects"
-(
-	undo "Select " on
-	(
-		LayersManager = LayersManager_v()
-
-		selected_layers = LayersManager.getSelectedOrCurrent()
-
-		select (LayersManager.getObjectsInLayers( selected_layers ))
-	)
-)
-
-/* ADD TO CURRENT LAYER
-*/
-macroscript	layers_add_selection_to_current_layer
-category:	"_Layers-Manage"
-buttontext:	"Add to Layer"
-toolTip:	"Add selection to current layer."
-icon:	"MENU:true"
-(
-	undo "Add to current layer " on
-	(
-		layer_current = (LayersManager_v()).getCurrent()
-		--format "layer_current:	% \n" layer_current
-		for obj in selection do
-			layer_current.addNode obj
-	)
-)
-
-
-
-/** SELECT BY PREFIX
- */
-macroscript	_layers_manager_select_layer_by_prefix
-category:	"_Layers-Manage"
-buttontext:	"Select By Prefix"
-tooltip:	"Select layers by prefix"
-icon:	"MENU:true"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
-(
-	on execute do
-	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-
-		layers_by_prefix = #()
-
-		LayersManager = LayersManager_v()
-
-		selected_layers = LayersManager.getSelectedOrCurrent()
-
-
-		prefixes = for prefix in (LayersManager.getLayersPrefixes(selected_layers)) collect prefix+"*"
-
-
-		format "prefixes:	% \n" prefixes
-		----format "layers_by_prefix:	% \n" layers_by_prefix
-		--if layers_by_prefix.count > 0 then
-
-
-		LayersManager.selectLayers( LayersManager.getLayerByName(prefixes) )
-
-
-
-		/**  WORKS BACKUP
-		  *
-		  */
-		--local sceneExplorerInstance = SceneExplorerManager.GetActiveExplorer()
-		--
-		--sceneExplorerInstance.SelectLayerOfSelection()
-		--
-		--selected_layers = for layer in sceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect layer --return
-		--
-		--format "selected_layers:	% \n" selected_layers
-		--for selected_layer in selected_layers do
-		--(
-		--	format "\n"
-		--	format "SELECTED_LAYER.name:	% \n" selected_layer.name
-		--	format "SELECTED_LAYER:	% \n" selected_layer
-		--
-		--)
-
-	)
-)
-
-/** SELECT BY OBEJCT
- */
-macroscript	_layers_manager_select_layer_by_objects
-category:	"_Layers-Manage"
-buttontext:	"Select By Objects"
-tooltip:	"Select layers by Objects"
-icon:	"MENU:tooltip"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
-(
-	on execute do
-	(
-		LayersManager = LayersManager_v()
-
-		LayersManager.selectLayersByObjects( for o in selection collect o )
-	)
-)
-/** SELECT CHILDREN LAYERS
- */
-macroscript	_layers_manager_select_children_layer
-category:	"_Layers-Manage"
-buttontext:	"Select Child layers"
-tooltip:	"Select Child layers"
-icon:	"MENU:tooltip"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
-(
-	on execute do
-	(
-		LayersManager = LayersManager_v()
-
-		selected_layers = LayersManager.getSelectedOrCurrent()
-
-		layers_to_select = join selected_layers (LayersManager.getChildren(selected_layers))
-
-		LayersManager.selectLayers ( layers_to_select )
-
-		--LayersManager.selectLayersByObjects( for o in selection collect o )
-
-	)
-)
 
 /** CLONE LAYERS
  */
 macroscript	_layers_manager_clone_layers
-category:	"_Layers-Manage"
+category:	"_Layers-3"
 buttontext:	"Clone Layers"
 tooltip:	"Copy selected objects to new layers"
-icon:	"MENU:true"
+icon:	"MENU:CLONE Layers"
 (
 	undo "Clone Layers" on
 	(

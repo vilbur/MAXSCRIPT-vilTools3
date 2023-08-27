@@ -43,7 +43,7 @@ icon:	"control:editText|across:3"
 macroscript selection_search_and_replace
 category:	"Selection"
 buttonText:	"Search & Replace"
-tooltip:	"Search & Replace in names of selection"
+tooltip:	"Regex Search & Replace in names of selection"
 icon:	"across:3"
 (
 

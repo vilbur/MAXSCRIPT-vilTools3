@@ -3,7 +3,7 @@
   * [Modify Panel help](https://help.autodesk.com/view/3DSMAX/2015/ENU/?guid=__files_GUID_BAC3CC23_9D1D_44CE_B4AF_C0CEBDD7099E_htm)
   *
  */
-struct InstancedModifierFinder
+struct InstancedModifierFinder_v
 (
 	--__construct = #(  ),
 	/* construct */
@@ -40,6 +40,23 @@ struct InstancedModifierFinder
 		indexes = for i = 1 to instances_in_stack.count where classOf instances_in_stack[i] == classof_modifier collect i
 
 		indexes --return
+	),
+
+	/** Get objects with instance of mmodifier
+	  *
+	  */
+	function getObjectsWithInstance _modifier =
+	(
+		--format "\n"; print "InstancedModifierFinder.getObjectsWithInstance()"
+		--format "_modifier:	% \n" _modifier.name
+		objects_with_mod = #()
+
+		for obj in nodes do
+		   for _mod in obj.modifiers where refhierarchy.IsRefTargetInstanced _mod do
+				if _mod == _modifier then
+					append objects_with_mod obj
+
+		objects_with_mod --return
 	),
 
 	private

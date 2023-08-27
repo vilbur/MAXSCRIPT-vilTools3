@@ -114,6 +114,7 @@ struct CallbackManager_v
 	function start Callback =
 	(
 		--format "\n"; print "CallbackManager_v.start()"
+		--format "CallbackManager_v.START TYPE:% CALLBACK:% ID:% \n\n" Callback.type Callback.callback Callback.id
 		callbacks.addScript Callback.type Callback.callback id:Callback.id
 	),
 
@@ -123,6 +124,7 @@ struct CallbackManager_v
 	function kill Callback =
 	(
 		--format "\n"; print "CallbackManager_v.kill()"
+		--format "Callback.callback = % \n" Callback.callback
 		--format "Callback.type = % \n" Callback.type
 		--format "Callback.id   = % \n" Callback.id
 		try( callbacks.removeScripts Callback.type id:Callback.id )catch()

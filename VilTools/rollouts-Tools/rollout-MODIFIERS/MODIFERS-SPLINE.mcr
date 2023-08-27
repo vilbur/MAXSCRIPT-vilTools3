@@ -7,7 +7,7 @@ icon:	"MENU:true"
 (
 	on isVisible	do mcrUtils.ValidMod Edit_Spline
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Edit_Spline"
 	)
 )
@@ -21,7 +21,7 @@ icon:	"MENU:true"
 (
 	on isVisible	do mcrUtils.ValidMod Normalize_Spline
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Normalize_Spline"
 	)
 )
@@ -35,7 +35,7 @@ icon:	"MENU:true"
 (
 	on isVisible	do mcrUtils.ValidMod Lathe
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Lathe"
 	)
 )
@@ -49,7 +49,7 @@ icon:	"MENU:true"
 (
 	on isVisible	do mcrUtils.ValidMod Extrude
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Extrude"
 	)
 )
@@ -63,7 +63,7 @@ icon:	"MENU:true"
 (
 	on isVisible	do mcrUtils.ValidMod Bevel
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Bevel"
 	)
 )

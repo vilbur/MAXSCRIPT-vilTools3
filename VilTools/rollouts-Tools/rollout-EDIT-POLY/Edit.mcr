@@ -27,12 +27,14 @@ buttonText:	"Insert vertex"
 tooltip:	"Insert vertex to selected edges\n\nPress Ctrl|Alt|Shift to add more vertices.\n\nEach pressed mod key adds 1 more vertex (E.G.: Ctrl+Alt+Shift = 4 vertices)"
 icon:	"MENU:true"
 (
-	on isVisible	do isEpoly() and isSubObject( 2 )
+	on isVisible	do isEpoly() and isSubObject #( 1, 2 )
 
 	on execute do
 	(
-		modkeys_pressed = for mod_key in #(keyboard.controlPressed, keyboard.altPressed, keyboard.shiftPressed) where mod_key == true collect mod_key
+		--filein( getFilenamePath(getSourceFileName()) + "/Lib/EpolySelection/EpolySelection.ms" )	-- "./Lib/EpolySelection/EpolySelection.ms"
 
+		modkeys_pressed = for mod_key in #(keyboard.controlPressed, keyboard.altPressed, keyboard.shiftPressed) where mod_key == true collect mod_key
+		
 		PolyToolsModeling.InsertVertex (1 + modkeys_pressed.count)
 	)
 )
@@ -133,5 +135,3 @@ icon:	"MENU:true"
 		catch ()
 	)
 )
-
-

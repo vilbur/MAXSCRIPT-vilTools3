@@ -6,7 +6,7 @@ buttonText:	"MeshSmooth"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "MeshSmooth"
 	)
 )
@@ -19,7 +19,7 @@ buttonText:	"Smooth"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Smooth"
 	)
 )
@@ -32,7 +32,7 @@ buttonText:	"Symmetry"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Symmetry"
 	)
 )
@@ -45,7 +45,7 @@ buttonText:	"Vertex Weld"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "VertexWeld"
 	)
 )
@@ -58,7 +58,7 @@ buttonText:	"Delete Mesh"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "DeleteMesh"
 	)
 )
@@ -71,7 +71,7 @@ buttonText:	"Material ID"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Material_ID"
 	)
 )
@@ -84,7 +84,7 @@ buttonText:	"Normal"
 icon:	"MENU:true"
 (
 
- on execute do (
+	on execute do (
 		macros.run "Modifiers" "Normalmodifier"
 	)
 )

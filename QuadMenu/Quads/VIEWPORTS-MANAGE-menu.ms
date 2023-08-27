@@ -7,7 +7,7 @@ function ViewportsManageMenu QuadMenu =
 
 	LayoutsMenu 	= Menu_v("_Viewports-Manage")
 
-	--QuadMenu.addSeparator()
+	LayoutsMenu.addSeparators #( 2 )
 
 	QuadMenu.addMenu( LayoutsMenu )	--flat:true --index:1
 

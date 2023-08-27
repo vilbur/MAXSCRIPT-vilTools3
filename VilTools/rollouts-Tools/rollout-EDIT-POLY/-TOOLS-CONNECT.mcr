@@ -1,11 +1,11 @@
-/** Swift Loop
+/** S W I F T loop
  */
 macroscript epoly_tools_Swift_Loop
 category:	"_Epoly-Connect"
-buttonText:	"Swift Loop"
+buttonText:	"S W I F T loop"
 icon:	"MENU:true"
 (
-	on isVisible	do return isEpoly()	and	isSubObject( 2 )
+	on isVisible	do return isEpoly()	and	isSubObject #( 0, 1, 2, 3, 4, 5 )
 
 	on execute do (
 		macros.run "PolyTools" "SwiftLoop"
@@ -26,11 +26,11 @@ icon:	"MENU:true"
 	)
 )
 
-/** Flow Connect
+/** F L O W C O N N E C T
  */
 macroscript epoly_tools_Flow_Connect
 category:	"_Epoly-Connect"
-buttonText:	"Flow Connect"
+buttonText:	"F L O W C O N N E C T"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
@@ -40,11 +40,11 @@ icon:	"MENU:true"
 	)
 )
 
-/** Connect Edges
+/** C O N N E C T
  */
 macroscript epoly_tools_Connect_Edges
 category:	"_Epoly-Connect"
-buttonText:	"Connect Edges"
+buttonText:	"C O N N E C T"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
@@ -54,25 +54,25 @@ icon:	"MENU:true"
 	)
 )
 
-/** Connect Vertex
+/** C O N N E C T VERTEX
  */
 macroscript epoly_tools_Connect_Vertex
 category:	"_Epoly-Connect"
-buttonText:	"Connect Vertex"
+buttonText:	"C O N N E C T VERTEX"
 icon:	"MENU:true"
 (
-	on isVisible	do return isEpoly()	and	isSubObject( 1 )
+	on isVisible	do return isEpoly()	and	isSubObject ( 1 )
 
 	on execute do (
 		macros.run "Editable Polygon Object" "EPoly_Connect"
 	)
 )
 
-/** Insert Loop
+/** I N S E R T Edge
  */
 macroscript epoly_tools_Insert_Loop
 category:	"_Epoly-Connect"
-buttonText:	"Insert Loop"
+buttonText:	"I N S E R T Edge"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
@@ -82,11 +82,11 @@ icon:	"MENU:true"
 	)
 )
 
-/** Distance Connect
+/** D I S T A N C E
  */
 macroscript epoly_tools_Distance_Connect
 category:	"_Epoly-Connect"
-buttonText:	"Distance Connect"
+buttonText:	"D I S T A N C E"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )

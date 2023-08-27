@@ -151,7 +151,7 @@ struct ModStackPreset_v
 
 		SaveButton =  _Controls_save.control #button "Save Preset" width:128 height:64 across:1
 
-		SaveButton.Events.add #pressed ("(ModStackPreset_v("+ modObject as string  +")).savePreset props:(for ctrl in "+dialog_id+".controls collect try(if ctrl.state then (trimLeft ctrl.name \"cbx_\") as name )catch()); DestroyDialog "+dialog_id+"")
+		SaveButton.Event #pressed ("(ModStackPreset_v("+ modObject as string  +")).savePreset props:(for ctrl in "+dialog_id+".controls collect try(if ctrl.state then (trimLeft ctrl.name \"cbx_\") as name )catch()); DestroyDialog "+dialog_id+"")
 
 		/* DIALOG CREATE */
 		Dialog.create width:256 height:#auto pos:#mouse

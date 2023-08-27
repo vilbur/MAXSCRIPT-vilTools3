@@ -7,7 +7,7 @@ toolTip:	"Explode by Elements"
 icon:	"across:5|width:80|MENU:true"
 (
 	--clearListener()
-	undo "explodeByElement" on
+	undo "Explode By Element" on
 	(
 		final_sel = (EditPolyExplode_v( selection )).explodeByElement()
 
@@ -23,7 +23,7 @@ buttontext:	"Material"
 toolTip:	"Explode by Material"
 icon:	"menu:true"
 (
-	undo "explodeByMaterialId" on
+	undo "Explode By Material Id" on
 	(
 		final_sel = (EditPolyExplode_v( selection )).explodeByMaterialId()
 
@@ -37,7 +37,7 @@ buttonText:	"Smooth Group"
 toolTip:	"Explode by SmoothGroups"
 icon:	"menu:true"
 (
-	undo "explodeBySG" on
+	undo "Explode By SG" on
 	(
 		final_sel = (EditPolyExplode_v( selection )).explodeBySG()
 
@@ -52,7 +52,7 @@ buttontext:	"Edges"
 toolTip:	"Explode by selected edges"
 icon:	"menu:true"
 (
-	undo "explode By Edges" on
+	undo "Explode By Edges" on
 	(
 		final_sel = (EditPolyExplode_v( selection )).explodeByElement()
 
@@ -67,7 +67,7 @@ buttontext:	"Hard Edges"
 toolTip:	"Explode by  HARD edges"
 icon:	"menu:true"
 (
-	undo "explodeByHardEdges" on
+	undo "Explode By Hard Edges" on
 	(
 
 		final_sel = (EditPolyExplode_v( selection )).explodeByHardEdges()

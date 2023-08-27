@@ -15,7 +15,7 @@ tooltip:	"Set different material ID for each object"
 (
 	--EditPoly = Epoly_v()
 	_selection = for o in geometry collect o
-	print ( "_selection=" + _selection.count as string )
+
 
 	for i=1 to _selection.count do
 	(

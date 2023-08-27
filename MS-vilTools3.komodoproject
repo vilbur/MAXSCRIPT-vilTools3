@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Komodo Project File - DO NOT EDIT -->
 <project id="640e1e37-f762-488e-ae28-11c19c36e314" kpf_version="5" name="MS-vilTools3.komodoproject">
-<livefolder id="16befc50-555b-46f1-8f11-52024c12c2b6" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollout-Subobject" url="Dialog/rollouts-Tools/rollout-Subobject/">
-</livefolder>
 <file id="1f2e24ce-70aa-4748-b407-2c3341f498b9" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="viltools-startup.ms" url="file:///C:/Program%20Files/Autodesk/3ds%20Max%202023/stdplugs/stdscripts/viltools-startup.ms">
 </file>
-<livefolder id="cabd75b0-03b8-4346-a36c-9c7e0ebb2fc9" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollout-Modifiers" url="Dialog/rollouts-Tools/rollout-Modifiers/">
+<livefolder id="2844e418-bd36-405a-a748-600d5a2eaa29" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollouts-Tools" url="VilTools/rollouts-Tools/">
 </livefolder>
-<livefolder id="e7ba407a-669c-4f61-baf6-d8844e31ade2" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="rollout-Selection" url="Dialog/rollouts-Tools/rollout-Selection/">
+<file id="4dd92d86-b799-43fc-87af-5f196567e7d6" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="vilTools3.ms" url="vilTools3.ms">
+</file>
+<livefolder id="5b12b6db-f639-4e51-8d59-44e65d21d0a6" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="QuadMenu" url="QuadMenu/">
+</livefolder>
+<folder id="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" idref="640e1e37-f762-488e-ae28-11c19c36e314" name="Rollouts">
+</folder>
+<livefolder id="199d8419-a8b9-401f-a9ab-e17c91195705" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-MODIFIER-STACK" url="VilTools/rollouts-Tools/rollout-MODIFIER-STACK/">
+</livefolder>
+<livefolder id="41c20b5d-2fc2-464b-930c-1a10b26891d0" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-EDIT-POLY" url="VilTools/rollouts-Tools/rollout-EDIT-POLY/">
+</livefolder>
+<livefolder id="6c6f05cf-a9d2-4eac-93fc-78ef215e5370" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-LAYERS" url="VilTools/rollouts-Tools/rollout-LAYERS/">
+</livefolder>
+<livefolder id="adf5291c-47b6-4861-be40-626076eb8647" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-MODIFIERS" url="VilTools/rollouts-Tools/rollout-MODIFIERS/">
+</livefolder>
+<livefolder id="c080d93d-a93b-483e-bb58-a120346a652a" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-EXPORT" url="VilTools/rollouts-Tools/rollout-EXPORT/">
 </livefolder>
 <preference-set idref="640e1e37-f762-488e-ae28-11c19c36e314" id="project" preftype="project">
   <long id="prefs_version">1</long>

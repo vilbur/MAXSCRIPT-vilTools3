@@ -22,7 +22,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "EdgeSplit""; print""SPLIT"
+		macros.run "Ribbon - Modeling" "EdgeSplit"; print"SPLITX"
 	)
 )
 
@@ -36,7 +36,7 @@ icon:	"MENU:true"
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
 	on execute do (
-		macros.run "Ribbon - Modeling" VertexBreak
+		macros.run "Ribbon - Modeling" "VertexBreak"
 	)
 )
 

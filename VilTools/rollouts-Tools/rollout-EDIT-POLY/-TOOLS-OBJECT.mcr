@@ -1,31 +1,3 @@
-/** Repeat Last
- */
-macroscript epoly_tools_Repeat_Last
-category:	"_Epoly-Object"
-buttonText:	"Repeat Last"
-icon:	"MENU:true"
-(
-	on isVisible	do isEpoly()
-
-	on execute do (
-		macros.run "Editable Polygon Object" "EPoly_Repeat_Last"
-	)
-)
-
-/** Attach
- */
-macroscript epoly_tools_Attach
-category:	"_Epoly-Object"
-buttonText:	"Attach"
-icon:	"MENU:true"
-(
-	on isVisible	do isEpoly()
-
-	on execute do (
-		macros.run "Ribbon - Modeling" AttachMode
-	)
-)
-
 /** Dot Loop
  */
 macroscript epoly_tools_Dot_Loop
@@ -54,6 +26,20 @@ icon:	"MENU:true"
 	)
 )
 
+/** Attach
+ */
+macroscript epoly_tools_Attach
+category:	"_Epoly-Object"
+buttonText:	"Attach"
+icon:	"MENU:true"
+(
+	on isVisible	do isEpoly()
+
+	on execute do (
+		macros.run "Ribbon - Modeling" "AttachMode"
+	)
+)
+
 /** Remove Isolated Verts
  */
 macroscript epoly_tools_Remove_Isolated_Verts
@@ -65,20 +51,6 @@ icon:	"MENU:true"
 
 	on execute do (
 		macros.run "Editable Polygon Object" "EPoly_RemoveIsolatedVerts"
-	)
-)
-
-/** Loop Tools
- */
-macroscript epoly_tools_Loop_Tools
-category:	"_Epoly-Object"
-buttonText:	"Loop Tools"
-icon:	"MENU:true"
-(
-	on isVisible	do isEpoly()
-
-	on execute do (
-		macros.run "PolyTools" "LoopTools"
 	)
 )
 

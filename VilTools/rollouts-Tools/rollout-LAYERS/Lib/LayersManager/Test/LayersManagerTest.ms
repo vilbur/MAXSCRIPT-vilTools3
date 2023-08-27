@@ -84,7 +84,7 @@ LayersManager = LayersManager_v()
 
 */
 clearSelection()
---selectmore	$Top1
+selectmore	$Top1
 --selectmore	$Top1Child1
 --selectmore	$Top1Child1Nested1
 
@@ -112,7 +112,10 @@ clearSelection()
 --for layer in (LayersManager.getSelectedOrCurrent()) do format "layer.name:	% \n" layer.name
 
 /* GET LAYERS INDEX */
-for id in (LayersManager.getLayersIndex#( 0, "Top1", LayerManager.getLayer 1, (LayerManager.getLayer 1).layerAsRefTarg  )) do format "Layer id:	% \n" id
+--for id in (LayersManager.getLayersIndex#( 0, "Top1", LayerManager.getLayer 1, (LayerManager.getLayer 1).layerAsRefTarg  )) do format "Layer id:	% \n" id
+
+/* GET ALL CHILDREN LAYERS */
+for layer in (LayersManager.getNestedLayers("Top1")) do format "layer.name:	% \n" layer.name
 
 
 /*
@@ -120,6 +123,10 @@ for id in (LayersManager.getLayersIndex#( 0, "Top1", LayerManager.getLayer 1, (L
   MANAGE LAYERS
 
 */
+
+/* NEW LAYER */
+--new_layer = LayersManager.newLayer("New Layer")
+--format "new_layer:	% \n" new_layer
 
 /* SELECT LAYER BY LAYERS */
  --LayersManager.selectLayers 2

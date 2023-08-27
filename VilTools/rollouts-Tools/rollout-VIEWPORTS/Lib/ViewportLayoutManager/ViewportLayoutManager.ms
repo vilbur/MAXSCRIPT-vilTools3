@@ -24,6 +24,15 @@ struct ViewportLayoutManager_v
 			this._saveIni ( this._collectViewportData(i) )(i)
 	),
 
+	/** Reset current
+	  *
+	  */
+	function resetCurrent =
+	(
+		--format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
+		this.restoreLayout ( viewport.getLayout() )
+	),
+
 	/** Restore Layout
 	 */
 	function restoreLayout layout_name =

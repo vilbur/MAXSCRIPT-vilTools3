@@ -4,11 +4,12 @@
 /**
   *
   */
-function visiblityOBJECTSmenu QuadMenu =
+function OBJECTmenu QuadMenu =
 (
 
 	QuadMenu.setTitle(" O B J E C T S")
 
+	ObjectMenu	= Menu_v("_Selection-Object")
 	ObjectsVisibilityMenu	= Menu_v("_Selection-Visibility")
 
 	----format "HideMenuX	= % \n" HideMenuX
@@ -23,8 +24,12 @@ function visiblityOBJECTSmenu QuadMenu =
 	----
 	----format "HideSelection	= % \n" HideSelection
 
-	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"HIDE SELECTED"
-	QuadMenu.addItem("Tools")("Hide Unselected")	group:"Main UI" title:"UNSELECTED"
+
+	QuadMenu.addMenu(ObjectMenu)	--flat:false --index:1
+	QuadMenu.addSeparator()
+
+	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"Hide SELECTED"
+	QuadMenu.addItem("Tools")("Hide Unselected")	group:"Main UI" title:"Hide UNSELECTED"
 
 	QuadMenu.addSeparator()
 	QuadMenu.addItem("Tools")("Unhide All")	group:"Main UI" title:"UNHIDE ALL"

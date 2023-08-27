@@ -28,25 +28,44 @@ function importStdScripts =
 (
 
 	filein_files = #(
+
+		( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/RolloutCreator/RolloutCreator.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/RolloutCreator/RolloutCreator.ms"
+
 		"/rollout-SELECTION/Lib/Selection/Selection.ms",
+
 		"/rollout-TOOLS/Lib/ToolMode.ms",
+
+		"/rollout-SCENE/RecentFile/RecentFile.ms",
+
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 		"/rollout-EDIT-POLY/Lib/Subobject.ms",
 		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
 		"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
 		"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
 		"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
+
+		"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",
+		"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
+
 		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
+		"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
+
+		"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
+
 		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)
 
 	for i = 1 to filein_files.count do
 		filein_files[i] =  rollouts_path + filein_files[i]
 
+
+
+	insertItem ( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms") filein_files 1
+
 	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms" -- "C:\Program Files\Autodesk\3ds Max 2023\stdplugs\stdscripts\viltools-startup.ms"
 
-	deleteFile stdscript_file_path
+	--deleteFile stdscript_file_path
 
 	stdscript_file = createFile stdscript_file_path
 
@@ -166,9 +185,10 @@ try
 --
 --	selectExportNodeInListCallbactAdd()
 
+	filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+
 	if DIALOG_layers.CBXBTN_layer_manager.state then
 		showLayerManagerCallback()
-
 
 
 	CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated

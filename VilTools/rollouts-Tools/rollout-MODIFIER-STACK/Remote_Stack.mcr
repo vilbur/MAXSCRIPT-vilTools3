@@ -1,13 +1,92 @@
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/CommandPanel/CommandPanel.ms" ) -- "./CommandPanel/CommandPanel.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/CommandPanel/CommandPanel.ms" ) -- "./Lib/CommandPanel/CommandPanel.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/circleStack.ms" ) -- "./Lib/CircleStack/circleStack.ms"
+
+
+/*------------------------------------------------------------------------------
+
+	ENABLE\DISABLE SELECTED MODIFIERS
+
+--------------------------------------------------------------------------------*/
+/**
+ */
+macroscript	modifiers_toggle_selected
+category:	"_Modifiers-Remote"
+buttontext:	"Toggle"
+toolTip:	"Toggle selected modifiers"
+icon:	"MENU:true|title:TOGGLE"
+(
+	on execute do
+	(
+		(CommandPanel_v()).setStateSelectedModifiers( #toggle )( #SELECTED )
+	)
+)
+
+
+/**
+ */
+macroscript	modifiers_enable_selected
+category:	"_Modifiers-Remote"
+buttontext:	"Enable"
+toolTip:	"Enable selected modifiers"
+icon:	"MENU:true|title:ENABLE"
+(
+	on execute do
+		(CommandPanel_v()).setStateSelectedModifiers( true )( #SELECTED )
+
+	on AltExecute type do
+		macros.run "_Modifiers-Remote" "modifiers_enable_all"
+)
+
+/**
+ */
+macroscript	modifiers_enable_all
+category:	"_Modifiers-Remote"
+buttontext:	"Enable"
+toolTip:	"Enable All modifiers"
+(
+	on execute do
+		(CommandPanel_v()).setStateSelectedModifiers( true )( #ALL )
+)
+
+/**
+ */
+macroscript	modifiers_disable_selected
+category:	"_Modifiers-Remote"
+buttontext:	"Disable"
+toolTip:	"Disable selected modifiers"
+icon:	"MENU:true|title:DISABLE"
+(
+	on execute do
+		(CommandPanel_v()).setStateSelectedModifiers( false )( #SELECTED )
+
+	on AltExecute type do
+		macros.run "_Modifiers-Remote" "modifiers_disable_all"
+)
+
+/**
+ */
+macroscript	modifiers_disable_all
+category:	"_Modifiers-Remote"
+buttontext:	"Disable"
+toolTip:	"Disable All modifiers"
+(
+	on execute do
+		(CommandPanel_v()).setStateSelectedModifiers( false )( #ALL )
+)
+
+/*------------------------------------------------------------------------------
+
+	GO THROUGHT MODIFIERS IN STACK
+
+--------------------------------------------------------------------------------*/
 
 /**
   * 1) Activate modify panel if not active
   * 2) If modify panel is active, then select next enabled modifier
  */
 macroscript	modifier_select_enabled_modifier_next
-category:	"_Modifier Stack"
+category:	"_Modifiers-Remote"
 buttontext:	"Next Enabled"
 tooltip:	"Select Next Enabled Modifier"
 (
@@ -15,7 +94,6 @@ tooltip:	"Select Next Enabled Modifier"
 		max modify mode
 
 	circleStack(#up)
-
 )
 
 /**
@@ -23,7 +101,7 @@ tooltip:	"Select Next Enabled Modifier"
   * 2) If modify panel is active, then select next enabled modifier
  */
 macroscript	modifier_select_enabled_modifier_previous
-category:	"_Modifier Stack"
+category:	"_Modifiers-Remote"
 buttontext:	"Previous Enabled"
 tooltip:	"Select Previous Enabled Modifier"
 (
@@ -39,7 +117,7 @@ tooltip:	"Select Previous Enabled Modifier"
   * 2) If modify panel is active, then select next enabled modifier
  */
 macroscript	modifier_select_modifier_next
-category:	"_Modifier Stack"
+category:	"_Modifiers-Remote"
 buttontext:	"Next Modifier"
 tooltip:	"Select Next Modifier"
 (
@@ -64,8 +142,6 @@ tooltip:	"Select Next Modifier"
 		)
 		else
 			max next mod
-
-
 	)
 )
 
@@ -74,11 +150,11 @@ tooltip:	"Select Next Modifier"
   * 2) If modify panel is active, then select next enabled modifier
  */
 macroscript	modifier_select_modifier_previous
-category:	"_Modifier Stack"
+category:	"_Modifiers-Remote"
 buttontext:	"Previous Modifier"
 tooltip:	"Select Previous Modifier"
 (
-	clearListener(); print("Cleared in:"+getSourceFileName())
+	--clearListener(); print("Cleared in:"+getSourceFileName())
 	modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
 
 	if ( current_mod = modPanel.getCurrentObject() ) != undefined and modifiers.count > 0 then
@@ -101,20 +177,18 @@ tooltip:	"Select Previous Modifier"
 		format "modifiers.count:	% \n" modifiers.count
 	)
 
-
-
 )
 
 
 --/**
 -- */
 --macroscript	modifiers_enable_selected
---category:	"_Modifier Stack"
+--category:	"_Modifiers-Remote"
 --buttontext:	"← → Mod"
 --toolTip:	"Select previous\next enabled modifier.\nCtrl:Select disabled modifiers too"
---icon:	"menu:toolTip"
+--icon:	"MENU:toolTip"
 --(
---	--clearListener()
+--	----clearListener()
 --	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
 --	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
 --
@@ -133,78 +207,6 @@ tooltip:	"Select Previous Modifier"
 --
 --)
 
-/**
- */
-macroscript	modifiers_enable_selected
-category:	"_Modifier Stack"
-buttontext:	"Enable"
-toolTip:	"Enable selected modifiers"
-icon:	"menu:toolTip"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
-
-	on execute do
-		(CommandPanel_v()).toggleModifiers( selection[1] )( true )( #SELECTED )
-
-
-	on AltExecute type do
-		macros.run "_Modifier Stack" "modifiers_enable_all"
-)
-
-/**
- */
-macroscript	modifiers_enable_all
-category:	"_Modifier Stack"
-buttontext:	"Enable"
-toolTip:	"Enable All modifiers"
---icon:	"menu:toolTip"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
-
-	on execute do
-		(CommandPanel_v()).toggleModifiers( selection[1] )( true )( #ALL )
-)
-
-/**
- */
-macroscript	modifiers_disable_selected
-category:	"_Modifier Stack"
-buttontext:	"Disable"
-toolTip:	"Disable selected modifiers"
-icon:	"menu:toolTip"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
-
-
-	on execute do
-		(CommandPanel_v()).toggleModifiers( selection[1] )( false )( #SELECTED )
-
-	on AltExecute type do
-		macros.run "_Modifier Stack" "modifiers_disable_all"
-)
-
-/**
- */
-macroscript	modifiers_disable_all
-category:	"_Modifier Stack"
-buttontext:	"Disable"
-toolTip:	"Disable All modifiers"
---icon:	"menu:toolTip"
-(
-	--clearListener()
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
-
-	on execute do
-		(CommandPanel_v()).toggleModifiers( selection[1] )( false )( #ALL )
-)
-
 
 --/**
 -- */
@@ -214,9 +216,9 @@ toolTip:	"Disable All modifiers"
 ----toolTip:	"Disable modifiers above active modifier when subobject is entered"
 ----icon:	"control:checkbox|enabled:false"
 --(
---	clearListener()
---	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
---	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
+--	C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
 --
 --	obj = selection[1]
 --

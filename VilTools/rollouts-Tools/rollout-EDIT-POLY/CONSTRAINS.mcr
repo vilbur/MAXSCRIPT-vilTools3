@@ -1,57 +1,61 @@
-/** None Constraints
+/** N O N E
  */
 macroscript epoly_tools_Constraints_None
 category:	"_Epoly-Constraints"
-buttonText:	"None Constraints"
+buttonText:	"N O N E"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 0
+	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 0
 
 	on execute do (
 		macros.run "Ribbon - Modeling" "ConstraintsNone"
 	)
 )
 
-/** Edge
+/** E D G E
  */
-macroscript epoly_tools_ConstraintsEdge
+macroscript epoly_tools_Constraints_Edge
 category:	"_Epoly-Constraints"
-buttonText:	"Edge"
+buttonText:	"E D G E"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 1
+	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 1
 
 	on execute do (
 		macros.run "Ribbon - Modeling" "ConstraintsEdge"
 	)
 )
 
-/** Face
+/** F A C E
  */
-macroscript epoly_tools_ConstraintsFace
+macroscript epoly_tools_Constraints_Face
 category:	"_Epoly-Constraints"
-buttonText:	"Face"
+buttonText:	"F A C E"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 2
+	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 2
 
 	on execute do (
 		macros.run "Ribbon - Modeling" "ConstraintsFace"
 	)
 )
 
-/** Normal
+/** N O R M A L
  */
-macroscript epoly_tools_ConstraintsNormal
+macroscript epoly_tools_Constraints_Normal
 category:	"_Epoly-Constraints"
-buttonText:	"Normal"
+buttonText:	"N O R M A L"
 icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 3
+	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 3
 
 	on execute do (
 		macros.run "Ribbon - Modeling" "ConstraintsNormal"

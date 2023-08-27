@@ -7,11 +7,11 @@ macroscript	_Transform_align
 category:	"_Transform"
 buttontext:	"Quick Align"
 --toolTip:	"Align by current active tool."
-icon:	"Tooltip:Align by current active tool in Main Toolbar.\n\nMove Tool:   Align position\nRotate Tool: Align rotation\nSelect Tool: Align all transform."
+icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (\"THIS & THIS TO HERE\")\n  \nMove Tool:   Align position \nRotate Tool: Align rotation \nSelect Tool: Align all transform."
 
 (
-	clearListener()
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM ⬇\Align.mcr"
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Align.mcr"
 
 	if( selection.count < 2 ) then
 		return messageBox "Select 2 obejcts at least" title:"QUICK ALIGN"  beep:false

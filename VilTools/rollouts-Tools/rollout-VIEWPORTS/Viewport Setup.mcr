@@ -1,5 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/viewportChangeCallback/viewportChange.ms" )
 
+
 /**
 *
 */
@@ -15,7 +16,6 @@ tooltip:	"Toogle Selection Brackets "
 		(NitrousGraphicsManager.GetViewportSetting i).ShowSelectionBracketsEnabled = not current_state
 
 )
-
 
 /**
 *

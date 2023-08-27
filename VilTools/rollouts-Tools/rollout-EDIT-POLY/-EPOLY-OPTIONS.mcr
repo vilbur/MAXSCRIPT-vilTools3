@@ -28,3 +28,18 @@ icon:	"MENU:true"
 	)
 )
 
+/** Select By Angle
+ */
+macroscript epoly_tools_Select_By_Angle
+category:	"_Epoly-Options"
+buttonText:	"Select By Angle"
+icon:	"MENU:true"
+(
+	on isVisible	do return isEpoly()
+	on isChecked	do (modPanel.getCurrentObject()).SelectByAngle == true
+
+	on execute do (
+		 (modPanel.getCurrentObject()).SelectByAngle = not (modPanel.getCurrentObject()).SelectByAngle
+	)
+)
+

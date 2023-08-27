@@ -145,7 +145,30 @@ struct LayersManager_v
 		children --return
 	),
 
-	/** Get layers in hierarchy up to top layer
+	/** Get All children of given layers
+	  */
+	function getNestedLayers layers =
+	(
+		--format "\n"; print "LayersManager_v.getNestedLayers()"
+		layers	= this.getLayers(layers)
+
+		children = #()
+
+		if (children_layers = this.getChildren(layers)).count > 0 then
+		(
+			--format "\n-----------\nARRAY:children_layers:%\n" children_layers; for layer in children_layers do format "layer:	%\n" layer.name
+			children = join children children_layers
+
+			nested_layers = this.getNestedLayers(children_layers)
+
+			children = join children nested_layers
+
+		)
+
+		children --return
+	),
+
+	/** Get parent layers in hierarchy up to top layer
 	  *
 	  */
 	function getLayersTree layers =
@@ -277,6 +300,28 @@ struct LayersManager_v
 		SceneExplorerInstance = SceneExplorerManager.GetActiveExplorer()
 	),
 
+	/** Create layer
+	  *
+	  * @param string|<MixinInterface:LayerProperties> parent
+	  */
+	function newLayer layer_name parent: =
+	(
+		--format "\n"; print "LayersManager_v.createLayer()"
+		LayerManager.newLayerFromName (layer_name) -- this method does not return layer properties, Maxscript BUG ?
+
+		new_layer = LayerManager.getLayerFromName layer_name
+
+		if parent != unsupplied then
+		(
+			parent_layer	= this._getLayer (parent)
+
+			if parent_layer != undefined then
+				new_layer.setParent (parent_layer)
+		)
+
+		new_layer --return
+	),
+
 	/** Set current first layer of layers, if not current in layers array
 	  *
 	  * @pram <mixin> layers
@@ -307,27 +352,6 @@ struct LayersManager_v
 				this.setCurrent (this.getLayersByProp #isHidden false layers:(this.getAllLayers())) -- select any of visible layers
 		)
 
-	),
-
-	/** Create layer
-	  *
-	  * @param string|<MixinInterface:LayerProperties> parent
-	  */
-	function newLayer layer_name parent: =
-	(
-		--format "\n"; print "LayersManager_v.createLayer()"
-		LayerManager.newLayerFromName (layer_name) -- this method does not return layer properties, Maxscript BUG ?
-
-		new_layer = LayerManager.getLayerFromName layer_name
-
-		if parent != unsupplied then
-		(
-			parent_layer	= this._getLayer (parent)
-
-			if parent_layer != undefined then
-				new_layer.setParent (parent_layer)
-		)
-		new_layer --return
 	),
 
 	/** Delete
@@ -461,8 +485,6 @@ struct LayersManager_v
 			if state == true and (parent_layer = layer.getParent()) != undefined then
 				this.setVisibility(parent_layer)(true)
 		)
-
-
 	),
 
 
