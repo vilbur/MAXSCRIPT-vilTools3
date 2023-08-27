@@ -1,4 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/../managePresetMenu/managePresetMenu.ms" ) -- "./../managePresetMenu/managePresetMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../ModifierRenamer/ModifierRenamer.ms" )	-- "./../ModifierRenamer/ModifierRenamer.ms"
 
 /** Manage Modifier presets
   *
@@ -29,6 +30,9 @@ struct ModStackPreset_v
 	--blaclist_props = #( Point2 , Point3 ),
 	blaclist_props = #( Point2 , Point3 ),
 
+	/* dependency */
+	ModifierRenamer = ModifierRenamer_v(),
+
 	/** Load preset to mod
 	 *
 	 */
@@ -54,71 +58,82 @@ struct ModStackPreset_v
 			(with printAllElements on values_current ) as string == (with printAllElements on values_default) as string  --return
 		)
 
-		if this.hasPreset( preset_name ) and ( isCreatingObject() or modifierHasDefaultValues ( modObject )) then
-			this.loadPreset( preset_name )
+		/* LOAD PROPERTIES */
+		if this._iniFileExists() then
+			if this.hasPreset( preset_name ) and ( isCreatingObject() or modifierHasDefaultValues ( modObject )) then
+				this.loadPreset( this._getPresetValues() )
+
+		/* RENAME MODIFIER */
+		if ( mod_name = ModifierRenamer.getName(modObject) ) != undefined then
+			modObject.name = mod_name
 	),
-
-
-	--/** Set current modObject
-	-- */
-	--function getCurrent =
-	--(
-	--	max modify mode
-	--
-	--	modObject = modPanel.getCurrentObject()
-	--),
 
 	/** Save preset
 	  *
-	  * @param	array	props	mask of property names will be saved
+	  * @param	array	properties	names of mod to save
 	 */
-	function savePreset props: =
+	function savePreset properties: =
 	(
 		--format "\n"; print "ModStackPreset_v.savePreset()"
-		--format "props	= % \n" props
+		--format "properties	= % \n" properties
 		this._setIniPath()
 
 		this.deletePreset()
 
-		if props == unsupplied then
-			props = getPropNames modObject
+		if properties == unsupplied then
+			properties = getPropNames modObject
 
-		for prop in getPropNames modObject where findItem props prop > 0 do
-			setINISetting ini preset_name ( prop as string ) ( (getProperty modObject prop) as string )
+		for prop in getPropNames modObject where findItem properties prop > 0 do
+		(
+			if ( val = getProperty modObject prop ) != undefined then
+			(
+				classof_val = superClassOf val
+				--format "val:	% \n" val
+				--format "classof_val:	% \n" classof_val
+				if classof_val == Number or classof_val == value then
+					setINISetting ini preset_name ( prop as string ) ( val as string )
+			)
+		)
 
 		format "\nMODIFIER PRESET	% HAS BEEN SAVED\n" preset_name
 	),
 
 	/** Load preset
 	 */
-	function loadPreset preset_name =
+	function loadPreset preset_values =
 	(
 		--format "\n"; print "ModStackPreset_v.loadPreset()"
 		--format "preset_name	= % \n" preset_name
 
-		if not ( this._iniFileExists() )  then
-			return false
-
-		--format "\n"; print "ModStackPreset_v.loadPreset()"
-		--for prop in getPropNames modObject where findItem this.blaclist_props (classOf value_formatted) == 0 do
-		for prop in getPropNames modObject do
-		(
-			val	= getINISetting ini preset_name ( prop as string )
-
-			--format "prop:	% \nval:	% \n\n" prop val
-
-			if val != "" then
-				try
-				(
-					--setProperty modObject prop ( this._formatDatatypeValue val )
-					setProperty modObject prop ( execute val)
-				)
-				catch(format "!!!!! ERROR IN TRY %\n\n" (getCurrentException()))
-		)
+		for data_pair in preset_values do
+			setProperty modObject data_pair.key data_pair.value
 
 		format "\nMODIFIER PRESET	% HAS BEEN LOADED\n" preset_name
 		--(this.getPresetName()) = preset_name
+	),
 
+	/** Get preset values
+	  *
+	  */
+	function _getPresetValues =
+	(
+		format "\n"; print "ModStackPreset_v._getPresetValues()"
+
+		preset_values	= Dictionary()
+
+		for prop in getPropNames modObject do
+		(
+			val	= getINISetting ini preset_name ( prop as string )
+			--format "\n"
+			--format "val:	% \n" val
+			--format "classof val:	% \n" (classof (execute val))
+
+			if val != "" then
+				preset_values[prop] = execute val
+		)
+		--format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
+
+		preset_values --return
 	),
 
 	/** Delete preset
@@ -126,8 +141,6 @@ struct ModStackPreset_v
 	function deletePreset =
 	(
 		--format "\n"; print "ModStackPreset_v.deletePreset()";
-		--this._setIniPath()
-
 		delINISetting ini preset_name
 	),
 
@@ -155,8 +168,6 @@ struct ModStackPreset_v
 
 		/* DIALOG CREATE */
 		Dialog.create width:256 height:#auto pos:#mouse
-
-		----)
 	),
 
 	/** Get objects with instance of given modObject
@@ -233,7 +244,6 @@ struct ModStackPreset_v
 			value --return string
 	),
 
-
 	/** Set ini path
 	 */
 	function _setIniPath =
@@ -262,8 +272,9 @@ struct ModStackPreset_v
 		--if classOf modObject == string then
 		--	modObject = execute modObject
 
-
 		preset_name = this._getPresetName()
+
+		--ModifierRenamer = ModifierRenamer_v(classOf modObject)
 
 		this._setIniPath()
 	)

@@ -9,6 +9,8 @@ buttonText:	"Save"
 tooltip:	"Save default preset of current object in Modifier Stack"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModStackPreset\ModStackPreset.ms"
 
 	max modify mode
 
@@ -18,7 +20,7 @@ tooltip:	"Save default preset of current object in Modifier Stack"
 		ModStackPreset = ModStackPreset_v(currMod)
 
 		if queryBox ("Save preset ?\n\n\""+ModStackPreset.preset_name+"\"") title:"SAVE STACK PRESET"  then
-			ModStackPreset.savePreset props:(getPropNames currMod)
+			ModStackPreset.savePreset properties:(getPropNames currMod)
 
 		--messageBox "Preset saved" title:"PRESET SAVE"
 	)
