@@ -1,7 +1,11 @@
 
---filein( getFilenamePath(getSourceFileName()) + "/Lib/CommandPanel/CommandPanel.ms" ) -- "./Lib/CommandPanel/CommandPanel.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/circleStack.ms" ) -- "./Lib/CircleStack/circleStack.ms"
 
+/* USE
+
+	"./Lib/CommandPanel/CommandPanel.ms"
+
+*/
 
 /*------------------------------------------------------------------------------
 
@@ -18,6 +22,7 @@ icon:	"MENU:true|title:TOGGLE"
 (
 	on execute do
 	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms"
 		(CommandPanel_v()).setStateSelectedModifiers( #toggle )( #SELECTED )
 	)
 )

@@ -3,5 +3,7 @@
 function setDefaultPropertiesToObject =
 (
 	--print "setDefaultPropertiesToObject()"
-	(ModStackPreset_v(callbacks.notificationParam())).loadDefaults()
+
+	if  isCreatingObject() then -- avoid execute on node cloned or created by script
+		(ModStackPreset_v(callbacks.notificationParam())).loadPreset()
 )

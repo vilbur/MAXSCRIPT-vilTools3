@@ -81,12 +81,3 @@ icon:	"MENU:HIDE Unselected"
 		--LayersManager.expand( selected_layers )
 	)
 )
-
-
-characters = "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[[\\]]^_`abcdefghijklmnopqrstuvwxyz"
-characters = "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[[\\]]^_`abcdefghijklmnopqrstuvwxyz{|}~⌂¢£¥₧ƒñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡≈°··√ⁿ■€‘„…†‡‰Š‹ŒŽ‘’“”—™š›œžŸ¤¦¨©¯²³´·¸¹¼½¾ÀÁÂÃÄÅÆÇÈÉÊËÌÍÏÏÐÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðòóôõö÷øúûüùýþÿ☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼!#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[[\\]]^_`abcdefghijklmnopqrstuvwxyz{|}~⌂¢£¥₧ƒñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡≈°··√ⁿ■€‘„…†‡‰Š‹ŒŽ‘’“”—™š›œžŸ¤¦¨©¯²³´·¸¹¼½¾ÀÁÂÃÄÅÆÇÈÉÊËÌÍÏÏÐÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðòóôõö÷øúûüùýþÿ"
-
-for i = 1 to characters.count do
-try(
-	LayerManager.newLayerFromName characters[i]
-)catch()

@@ -5,8 +5,23 @@
  */
 function loadModifierDefaults =
 (
+	--print "loadModifierDefaults()"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModStackPreset\ModStackPreset.ms"
 	max modify mode
 
-	(ModStackPreset_v( (callbacks.notificationParam())[2])).loadDefaults()
+	_modifier = (callbacks.notificationParam())[2]
+
+	ModStackPreset = ModStackPreset_v( _modifier )
+
+	if ModStackPreset.modIsDefault() then -- avoid execute on modifier copy
+	(
+		print "loadModifierDefaults.ms: Modifier created"
+
+		if ModStackPreset.hasPreset()  then
+			ModStackPreset.loadPreset()
+
+		_modifier.name = (ModifierRenamer_v(_modifier)).generateName()
+
+	)
 
 )

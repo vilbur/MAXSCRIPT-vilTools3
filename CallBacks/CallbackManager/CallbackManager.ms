@@ -36,6 +36,9 @@ struct CallbackManager_v
 	function add callback type id:undefined  =
 	(
 		--format "\n"; print "CallbackManager_v.add()"
+		--format "callback:	% \n" callback
+		--format "type:	% \n" type
+		
 		callback_key = this._getCallbackKey (callback)(type)(id)
 
 		this.List[callback_key] = Callback_v callback:(this._getCallbackFn (callback)) type:type id:( if id == undefined then unsupplied else id )

@@ -73,8 +73,8 @@ function layerDialogButtonCallback val which =
 
 
 		/* RESET "Dialog" & "Others" CHEKBUTTONS STATE */
-		if classOf which == name then
-			EventFired.control.state = not val
+		----if classOf which == name and then
+			--EventFired.control.state = not val
 
 	)
 
@@ -189,12 +189,12 @@ struct LayersToogleDialog_v
 
 
 		HideBtn = _Controls.Control	#checkbutton "DIALOG"	tooltip:(getTooltip("dialog"))
-		HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"LMB: Show all layers in dialog"
-		HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+		HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"Toggle all layers in dialog"
+		--HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
 
 		HideOthersBtn = _Controls.Control	#checkbutton "OTHERS"	tooltip:(getTooltip("not in dialog"))
-		HideOthersBtn.Event #changed	"layerDialogButtonCallback"	params:#others	tooltip:"Show all other layers then in dialog"
-		HideOthersBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #others)	tooltip:"Hide all layers in dialog"
+		HideOthersBtn.Event #changed	"layerDialogButtonCallback"	params:#others	tooltip:"Toggle all layers not in dialog"
+		--HideOthersBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #others)	tooltip:"Hide all layers not in dialog"
 
 		--HideOthersBtn = _Controls.Control  #button "RELOAD"
 		--HideOthersBtn.Event #pressed	"macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" tooltip:"Reload dialog with new selection"

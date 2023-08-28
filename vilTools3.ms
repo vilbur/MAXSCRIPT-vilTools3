@@ -37,6 +37,8 @@ function importStdScripts =
 
 		"/rollout-SCENE/RecentFile/RecentFile.ms",
 
+		"/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
+
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 		"/rollout-EDIT-POLY/Lib/Subobject.ms",
 		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
@@ -187,7 +189,7 @@ try
 
 	filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
 
-	if DIALOG_layers.CBXBTN_layer_manager.state then
+	if ROLLOUT_layers.CBXBTN_layer_manager.state then
 		showLayerManagerCallback()
 
 
@@ -199,4 +201,10 @@ try
 
 
 )
-catch()
+catch(
+	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+
+)

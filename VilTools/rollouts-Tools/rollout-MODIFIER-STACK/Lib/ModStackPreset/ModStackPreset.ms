@@ -1,5 +1,4 @@
 filein( getFilenamePath(getSourceFileName()) + "/../managePresetMenu/managePresetMenu.ms" ) -- "./../managePresetMenu/managePresetMenu.ms"
-filein( getFilenamePath(getSourceFileName()) + "/../ModifierRenamer/ModifierRenamer.ms" )	-- "./../ModifierRenamer/ModifierRenamer.ms"
 
 /** Manage Modifier presets
   *
@@ -31,41 +30,22 @@ struct ModStackPreset_v
 	blaclist_props = #( Point2 , Point3 ),
 
 	/* dependency */
-	ModifierRenamer = ModifierRenamer_v(),
 
-	/** Load preset to mod
-	 *
+	/** Test if modObject has default values
+	  *
+	  * Comnpare props values with default mod
 	 */
-	function loadDefaults =
+	function modIsDefault =
 	(
-		--format "\n"; print "ModStackPreset_v.loadDefaults()"
-		--format "modObject	= % \n" modObject
-		--format "classOf modObject	= % \n" ( classOf modObject)
-		--format "superClassOf modObject	= % \n" ( superClassOf modObject)
+		--format "\n"; print "ModStackPreset_v.modIsDefault()"
 
-		/** Test if modifier has default values
-		 *
-		 */
-		function modifierHasDefaultValues modObject =
-		(
-			--format "\n"; print "ModStackPreset_v.modifierHasDefaultValues()"
-			modObject_default = execute( (classOf modObject) as string + "()" )
+		modObject_default = execute( (classOf modObject) as string + "()" )
 
-			values_current =  for prop in getPropNames modObject collect (getProperty modObject prop)
+		values_current =  for prop in getPropNames modObject collect (getProperty modObject prop)
 
-			values_default = for prop in getPropNames modObject_default collect (getProperty modObject_default prop)
+		values_default = for prop in getPropNames modObject_default collect (getProperty modObject_default prop)
 
-			(with printAllElements on values_current ) as string == (with printAllElements on values_default) as string  --return
-		)
-
-		/* LOAD PROPERTIES */
-		if this._iniFileExists() then
-			if this.hasPreset( preset_name ) and ( isCreatingObject() or modifierHasDefaultValues ( modObject )) then
-				this.loadPreset( this._getPresetValues() )
-
-		/* RENAME MODIFIER */
-		if ( mod_name = ModifierRenamer.getName(modObject) ) != undefined then
-			modObject.name = mod_name
+		(with printAllElements on values_current ) as string == (with printAllElements on values_default) as string  --return
 	),
 
 	/** Save preset
@@ -100,12 +80,12 @@ struct ModStackPreset_v
 
 	/** Load preset
 	 */
-	function loadPreset preset_values =
+	function loadPreset =
 	(
-		--format "\n"; print "ModStackPreset_v.loadPreset()"
-		--format "preset_name	= % \n" preset_name
+		format "\n"; print "ModStackPreset_v.loadPreset()"
+		format "preset_name	= % \n" preset_name
 
-		for data_pair in preset_values do
+		for data_pair in  this._getPresetValues() do
 			setProperty modObject data_pair.key data_pair.value
 
 		format "\nMODIFIER PRESET	% HAS BEEN LOADED\n" preset_name
@@ -117,7 +97,7 @@ struct ModStackPreset_v
 	  */
 	function _getPresetValues =
 	(
-		format "\n"; print "ModStackPreset_v._getPresetValues()"
+		--format "\n"; print "ModStackPreset_v._getPresetValues()"
 
 		preset_values	= Dictionary()
 
@@ -131,7 +111,8 @@ struct ModStackPreset_v
 			if val != "" then
 				preset_values[prop] = execute val
 		)
-		--format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
+		
+		format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
 
 		preset_values --return
 	),
@@ -198,10 +179,10 @@ struct ModStackPreset_v
 
 	/** Test if modifier has preset
 	 */
-	function hasPreset preset_name =
+	function hasPreset =
 	(
 		--format "\n"; print "ModStackPreset_v.hasPreset()"
-		( this._iniFileExists() ) and hasINISetting ini preset_name  --return
+		( this._iniFileExists() ) and hasINISetting ini this.preset_name  --return
 	),
 
 	--/** Open ini
@@ -264,17 +245,15 @@ struct ModStackPreset_v
 
 	on create do
 	(
-		format "\n"; print "ModStackPreset_v.create()"
+		--format "\n"; print "ModStackPreset_v.create()"
 
-		format "modObject	= % \n" modObject
-		format "classOf modObject	= % \n" ( classOf modObject)
-		format "superClassOf modObject	= % \n" ( superClassOf modObject)
+		--format "modObject	= % \n" modObject
+		--format "classOf modObject	= % \n" ( classOf modObject)
+		--format "superClassOf modObject	= % \n" ( superClassOf modObject)
 		--if classOf modObject == string then
 		--	modObject = execute modObject
 
 		preset_name = this._getPresetName()
-
-		--ModifierRenamer = ModifierRenamer_v(classOf modObject)
 
 		this._setIniPath()
 	)

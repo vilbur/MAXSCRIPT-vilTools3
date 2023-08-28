@@ -26,7 +26,6 @@ tooltip:	"Install Menus and Quad menus for VilTools3"
    quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
 	if quadmenu != undefined do menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu
 
-	print "QUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
 
 	menuMan.saveMenuFile ((getDir #ui)+"\\MaxStartUI.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\en-US\UI\MaxStartUI.mnux"
 
@@ -38,6 +37,7 @@ tooltip:	"Install Menus and Quad menus for VilTools3"
 	if (hotkey_dialog = (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "Hotkey Editor" collect hwnd)[1]) != undefined then
 		UIAccessor.CloseDialog hotkey_dialog
 
+	print "QUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
 )
 
 

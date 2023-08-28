@@ -26,7 +26,8 @@ struct CommandPanel_v
 	 */
 	function setStateSelectedModifiers state which =
 	(
-		--format "\n"; print "CommandPanel_v.toggleModifiers()"
+		clearListener(); print("Cleared in:"+getSourceFileName())
+		format "\n"; print "CommandPanel_v.toggleModifiers()"
 		_selection = selection
 
 		if GetCommandPanelTaskMode()!= #modify then
@@ -43,15 +44,15 @@ struct CommandPanel_v
 		if selected_items.count == 0 then
 			return false
 
-
 		selected_modifiers = this.getSelectedModifiers(modifiers)
-
+		--format "SELECTED_MODIFIERS:	% \n" selected_modifiers
 		if state == #toggle then
-			state = not ((current_state = this. _getDominantState (modifiers)) != undefined and current_state == true ) -- swtich state to opposite
+			state = not ((current_state = this._getDominantState (selected_modifiers)) != undefined and current_state == true ) -- swtich state to opposite
 
+		--format "STATE:	% \n"( this._getDominantState (selected_modifiers))
 
-		for modifier_index in this.getSelectedModifiers(modifiers) do
-			modifiers[modifier_index].enabled = state
+		for selected_modifier in selected_modifiers do
+			selected_modifier.enabled = state
 
 		select _selection
 
@@ -69,10 +70,12 @@ struct CommandPanel_v
 		--format "\n"; print "CommandPanel_v.getSelectedModifiers()"
 
 		selection_states = this._getItemsSelectionStates()
-		--format "selection_states:	% \n" selection_states
+		--format "SELECTION_STATES:	% \n" selection_states
 		all_items = this._getAllItems()
-		--format "all_items:	% \n" all_items
-		this._getSelectedModifiers (modifiers) (all_items) (selection_states)
+		--format "ALL_ITEMS:	% \n" all_items
+		selected_items = this._getSelectedItemsInStack (modifiers) (all_items) (selection_states)
+
+		for selected_item in selected_items collect modifiers[selected_item]
 	),
 
 	/** Get indexes of modifiers items in lisbox
@@ -105,21 +108,20 @@ struct CommandPanel_v
 
 	/** Select item
 	  *
-	  * @param boolean	state desired state of modifiers
-	  * @index integer|#(integer)|#all	which index, starts at 1
-
+	  * @param boolean	state	desired state of modifiers
+	  * @index integer|#(integer)|#all	items_index	indexes of items in stack (starts at 1)
 	 */
-	function selectItem state which =
+	function selectItem state items_index =
 	(
 		----format "\n"; print "CommandPanel_v.select()"
 		----format "index = % \n" index
 
-		if classOf which == Array then
-			for index in which do
+		if classOf items_index == Array then
+			for index in items_index do
 				this._selectItem state (index - 1)
 
 		else
-			this._selectItem state (if which == #ALL then -1 else which )
+			this._selectItem state (if items_index == #ALL then -1 else items_index )
 	),
 
 	/** Select item
@@ -153,7 +155,10 @@ struct CommandPanel_v
 	  */
 	function _getDominantState modifiers =
 	(
-		--format "\n"; print "CommandPanel_v.getDominantState()"
+		--format "\n"; print "CommandPanel_v._getDominantState()"
+		--format "modifiers.count:	% \n" modifiers.count
+		--format "modifiers[1].enabled:	% \n" modifiers[1].enabled
+
 		enabled  = for _modifier in modifiers where _modifier.enabled == true  collect _modifier
 		disabled = for _modifier in modifiers where _modifier.enabled == false collect _modifier
 
@@ -165,13 +170,13 @@ struct CommandPanel_v
 	  *
 	  * Pair command panel tree items with modifiers by name
 	 */
-	function _getSelectedModifiers modifers all_items selection_states =
+	function _getSelectedItemsInStack modifers all_stack_items selection_states =
 	(
-		--format "\n\n"; print "CommandPanel_v._getSelectedModifiers()"
-		----format "modifers.count:	% \n" modifers.count
-		--format "modifers:	% \n" modifers
-		--format "all_items:	% \n" all_items
-		--format "selection_states:	% \n" selection_states
+		--format "\n\n"; print "CommandPanel_v._getSelectedItemsInStack()"
+		------format "modifers.count:	% \n" modifers.count
+		--format "MODIFERS:	% \n" modifers
+		--format "ALL_ITEMS:	% \n" all_stack_items
+		--format "SELECTION_STATES:	% \n" selection_states
 		modifier_indexes = #()
 
 		for modifier_index = 1 to modifers.count do
@@ -179,18 +184,18 @@ struct CommandPanel_v
 			--format "\n\n"
 			--format "modifier_index:	% \n" modifier_index
 			--format "modifers[modifier_index].name:	% \n" modifers[modifier_index].name
-			item_index = findItem all_items modifers[modifier_index].name
+			item_index = findItem all_stack_items modifers[modifier_index].name
 			--format "item_index:	% \n" item_index
 
 			if item_index > 0 then
 			(
-				all_items[item_index] = undefined
-
+				all_stack_items[item_index] = undefined -- remove item for next loop
+				--format "selection_states[item_index]:	% \n" selection_states[item_index]
 				if selection_states[item_index] == 1 then
 					append modifier_indexes modifier_index
 			)
 		)
-
+		--format "MODIFIER_INDEXES:	% \n" modifier_indexes
 		modifier_indexes --return
 	),
 

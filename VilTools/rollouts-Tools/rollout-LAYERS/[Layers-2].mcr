@@ -5,6 +5,7 @@ category:	"_Layers-2"
 buttontext:	"Set current"
 tooltip:	"Set current layer by selection"
 icon:	"MENU:Set Current"
+autoUndoEnabled:true
 (
 	on execute do
 	(
@@ -23,24 +24,23 @@ icon:	"MENU:Set Current"
 	)
 )
 
-
 /* ADD TO CURRENT LAYER
 */
 macroscript	layers_add_selection_to_current_layer
 category:	"_Layers-2"
-buttontext:	"Add to Layer"
+buttontext:	"Set current"
 toolTip:	"Add selection to current layer."
-icon:	"MENU:ADD to Layer"
+--icon:	"MENU:ADD to Layer"
+autoUndoEnabled:true
 (
-	undo "Add to current layer " on
-	(
-		layer_current = (LayersManager_v()).getCurrent()
-		--format "layer_current:	% \n" layer_current
-		for obj in selection do
-			layer_current.addNode obj
-	)
-)
+	on execute do
+		--undo "Add to current layer " on
+		(
+			current_layer = (LayersManager_v()).getCurrent()
 
+			current_layer.addNodes( selection )
+		)
+)
 
 /* SELECT OBEJCTS IN LAYERS
 */
@@ -49,48 +49,59 @@ category:	"_Layers-2"
 buttontext:	"Move to edit layer"
 --toolTip:	"Select Objects of selected layers, or layers of selected objects."
 icon:	"MENU:MOVE to edit layer"
+autoUndoEnabled:true
 (
-	undo "Select " on
-	(
+	on execute do
+		--undo "Select " on
+		(
+			LayersManager = LayersManager_v()
 
-		LayersManager = LayersManager_v()
+			editLayer = LayersManager.newLayer(" ------- EDIT -------")
 
-		editLayer = LayersManager.newLayer(" ------- EDIT -------")
-
-		editLayer.addNodes( selection )
-
-	)
+			editLayer.addNodes( selection )
+		)
 )
-
-
 
 /* SELECT OBEJCTS IN LAYERS
 */
 macroscript	layers_select_all_objects_selection
 category:	"_Layers-2"
 buttontext:	"Select Objects"
-toolTip:	"Select Objects of selected layers, or layers of selected objects."
-icon:	"MENU:SELECT Objects"
+toolTip:	"Select Objects of selected layers, or layers of selected objects \n\nMenu Option: Select objects in all nensted layers"
+icon:	"MENU:Select OBJECTS"
+autoUndoEnabled:true
 (
-	undo "Select Objects By Layer" on
+	on execute do
+		undo "Select Objects By Layer" on
+		(
+			LayersManager = LayersManager_v()
+
+			selected_layers = LayersManager.getSelectedOrCurrent()
+
+			select (LayersManager.getObjectsInLayers( selected_layers ))
+		)
+
+	on altExecute type do
 	(
 		LayersManager = LayersManager_v()
 
 		selected_layers = LayersManager.getSelectedOrCurrent()
 
-		select (LayersManager.getObjectsInLayers( selected_layers ))
-	)
-)
+		layers_tree = (LayersManager.getNestedLayers(selected_layers))
 
+		selectmore (LayersManager.getObjectsInLayers(layers_tree))
+	)
+
+)
 
 /** SELECT CHILDREN LAYERS
  */
 macroscript	_layers_manager_select_children_layer
 category:	"_Layers-2"
 buttontext:	"Select Child layers"
-tooltip:	"Select Child layers"
-icon:	"MENU:tooltip"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+tooltip:	"Select Child layers \n\nMenu Option: Select all nensted layers"
+icon:	"MENU:Select CHILD Layers"
+autoUndoEnabled:true
 (
 	on execute do
 	(
@@ -103,11 +114,18 @@ icon:	"MENU:tooltip"
 		LayersManager.selectLayers ( layers_to_select )
 
 		--LayersManager.selectLayersByObjects( for o in selection collect o )
+	)
+
+	on altExecute type do
+	(
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectedOrCurrent()
+
+		LayersManager.selectLayers (LayersManager.getNestedLayers(selected_layers))
 
 	)
 )
-
-
 
 
 /** SELECT BY OBEJCT
@@ -117,7 +135,7 @@ category:	"_Layers-2"
 buttontext:	"Select By Objects"
 tooltip:	"Select layers by Objects"
 icon:	"MENU:tooltip"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+autoUndoEnabled:true
 (
 	on execute do
 	(
@@ -134,8 +152,8 @@ macroscript	_layers_manager_select_layer_by_prefix
 category:	"_Layers-2"
 buttontext:	"Select By Prefix"
 tooltip:	"Select layers by prefix"
-icon:	"MENU:true"
---icon:	"MENU:OFF by PREFIX|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+icon:	"MENU:true|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+autoUndoEnabled:true
 (
 	on execute do
 	(
