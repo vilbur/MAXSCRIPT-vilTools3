@@ -4,6 +4,8 @@
   */
 function LAYERS2menu QuadMenu =
 (
+	QuadMenu.clearMenu()
+
 	QuadMenu.setTitle("H A N D L E")
 
 

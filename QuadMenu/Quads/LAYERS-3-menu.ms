@@ -4,8 +4,9 @@
   */
 function LAYERS3menu QuadMenu =
 (
-	QuadMenu.setTitle("M A N A G E")
+	QuadMenu.clearMenu()
 
+	QuadMenu.setTitle("M A N A G E")
 
 	Layers3Menu	= Menu_v("_Layers-3")
 	Layers3Menu.addSeparator index:#( 2,4 )

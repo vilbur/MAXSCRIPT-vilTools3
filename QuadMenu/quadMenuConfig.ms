@@ -36,7 +36,7 @@ EditQuad = createQuad( "_RightClickQuad" ) #(
 )
 
 /*------------------------------------------------------------------------------
-	CONTROL QUAD
+	CONTROL
 --------------------------------------------------------------------------------*/
 Object_Selection = createQuad( "_ControlQuad" ) #(
 
@@ -48,9 +48,9 @@ Object_Selection = createQuad( "_ControlQuad" ) #(
 )
 
 /*------------------------------------------------------------------------------
-	SHIFT ALT QUAD
+	SHIFT
 --------------------------------------------------------------------------------*/
-Snap_Transform_Pivot = createQuad( "_ShiftAltQuad" ) #(
+Snap_Transform_Pivot = createQuad( "_ShiftQuad" ) #(
 
 	#SNAP,	 -- "./Quads/SNAP-menu.ms"
 	#COORDSYS,	 -- "./Quads/COORDSYS-menu.ms"
@@ -60,9 +60,9 @@ Snap_Transform_Pivot = createQuad( "_ShiftAltQuad" ) #(
 )
 
 /*------------------------------------------------------------------------------
-	ALT QUAD
+	SHIFT ALT
 --------------------------------------------------------------------------------*/
-Group_Primitives = createQuad( "Animation" ) #(
+Group_Primitives = createQuad( "_ShiftAltQuad" ) #(
 
 	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
 	#PRIMITIVES,	 -- "./Quads/PRIMITIVES-menu.ms"
@@ -73,7 +73,7 @@ Group_Primitives = createQuad( "Animation" ) #(
 )
 
 /*------------------------------------------------------------------------------
-	CONTROL ALT QUAD
+	CONTROL ALT
 --------------------------------------------------------------------------------*/
 Scene_Materials = createQuad( "_ControlAltQuad" ) #(
 
@@ -85,7 +85,7 @@ Scene_Materials = createQuad( "_ControlAltQuad" ) #(
 )
 
 /*------------------------------------------------------------------------------
-	CONTROL SHIFT QUAD
+	CONTROL SHIFT
 --------------------------------------------------------------------------------*/
 Modifiers = createQuad( "_CotrolShiftQuad" ) #(
 
@@ -97,7 +97,7 @@ Modifiers = createQuad( "_CotrolShiftQuad" ) #(
 )
 
 /*------------------------------------------------------------------------------
-	VIEPORTS QUAD - Under "V" key
+	VIEPORTS - Under "V" key
 --------------------------------------------------------------------------------*/
 ViewportsMenu = createQuad( "Viewports" ) #(
 
@@ -107,10 +107,11 @@ ViewportsMenu = createQuad( "Viewports" ) #(
 	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
 
 )
+
 /*------------------------------------------------------------------------------
-	LAYERS QUAD
+	ALT
 --------------------------------------------------------------------------------*/
-Layers = createQuad( "_ShiftQuad" ) #(
+Layers = createQuad( "Animation" ) #(
 
 	#LAYERS1,	 -- "./Quads/LAYERS-1-menu.ms"
 	#LAYERS2,	 -- "./Quads/LAYERS-2-menu.ms"
@@ -132,10 +133,10 @@ EditQuad.setRightClick() --which:#nonePressed #shiftPressed #altPressed #control
 Object_Selection.setRightClick which:#controlPressed
 
 /* SHIFT */
-Layers.setRightClick which:#shiftPressed
+Snap_Transform_Pivot.setRightClick which:#shiftPressed
 
 /* ALT */
-Group_Primitives.setRightClick which:#altPressed
+Layers.setRightClick which:#altPressed
 
 /* CONTROL SHIFT */
 Modifiers.setRightClick which:#shiftAndControlPressed
@@ -144,4 +145,6 @@ Modifiers.setRightClick which:#shiftAndControlPressed
 Scene_Materials.setRightClick which:#controlAndAltPressed
 
 /* SHIFT ALT */
-Snap_Transform_Pivot.setRightClick which:#shiftAndAltPressed
+Group_Primitives.setRightClick which:#shiftAndAltPressed
+
+

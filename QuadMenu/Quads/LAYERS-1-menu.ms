@@ -4,6 +4,8 @@
   */
 function LAYERS1menu QuadMenu =
 (
+	QuadMenu.clearMenu()
+
 	QuadMenu.setTitle("H I D E")
 
 	Layers1Menu	= Menu_v("_Layers-1")

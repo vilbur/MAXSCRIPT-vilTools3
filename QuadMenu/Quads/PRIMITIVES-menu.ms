@@ -99,7 +99,7 @@ function PRIMITIVESmenu QuadMenu =
 	)
 
 
-	QuadMenu.removeItem #( 1 ) -- Remove Default submenu
+	--QuadMenu.removeItem #( 1 ) -- Remove Default submenu
 
 
 	QuadMenu.addMenus(menus) separator:true
