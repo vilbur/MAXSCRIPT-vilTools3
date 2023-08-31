@@ -1,10 +1,15 @@
-/** Circle stack
-
-  * @apram #ADD|#REMOVE|#GO add to selcction, remove from selection or go through stack
+/** Go through stack, select or deselect items in stack
+  *
+  *
+  * @apram #ADD|#ADD_ALL|#REMOVE|#GO add to selcction, remove from selection or go through stack
   */
 function circleStack direction mode:#GO which:#ENABLED =
 (
-	--format "\n"; print "CircleStack_v.circleStack()"
+	----format "\n"; print "CircleStack_v.circleStack()"
+	--format "DIRECTION:	% \n" direction
+	--format "MODE:	% \n" mode
+	--format "WHICH:	% \n" which
+
 	CommandPanel 	= CommandPanel_v()
 
 	items_count = CommandPanel.itemsCount()
@@ -13,28 +18,38 @@ function circleStack direction mode:#GO which:#ENABLED =
 
 	if selected_items.count > 0 then
 	(
-		format "MODE:	% \n" mode
-		format "ITEMS_COUNT:	% \n" items_count
-		format "SELECTED_ITEMS:	% \n" selected_items
+		--format "ITEMS_COUNT:	% \n" items_count
+		--format "SELECTED_ITEMS:	% \n" selected_items
 
 		change_index = if direction == #DOWN then selected_items[selected_items.count] else selected_items[1]
 
 		go_increment = if mode == #GO and selected_items.count == 1 then 1 else 0 -- go to next if only one item selected, otherwise go to first|last item in selection
 
-		format "DIRECTION:	% \n" direction
-		format "CHANGE_INDEX:	% \n" change_index
+		if mode == #ADD then
+			add_selection = join (deepCopy selected_items) #( change_index + ( if direction == #UP then -1 else 1 ) )
+
 
 		new_selection = case mode of
 		(
 			#ADD:
-				case direction of
-				(
-					#UP:	if change_index > 1           then join selected_items #( change_index - 1 ) else selected_items
-					#DOWN:	if change_index < items_count then join selected_items #( change_index + 1 ) else selected_items
-				)
+				if selected_items.count < items_count then
+					case direction of
+					(
+						#UP:	if change_index > 1           then add_selection
+						#DOWN:	if change_index < items_count then add_selection
+					)
+			#ADD_ALL:
+				if selected_items.count < items_count then
+					case direction of
+					(
+						#UP:	join (deepCopy selected_items) ( for i = 1 to change_index collect i )
+						#DOWN:	join (deepCopy selected_items) ( for i = change_index to items_count collect i )
+					)
+
 
 			#REMOVE:
-				deleteItem selected_items (findItem selected_items change_index )
+				deleteItem (deepCopy selected_items) (findItem selected_items change_index )
+
 
 			#GO:
 				case expr of
@@ -50,11 +65,15 @@ function circleStack direction mode:#GO which:#ENABLED =
 				)
 		)
 
-		format "NEW_SELECTION:	% \n" new_selection
+		if new_selection != undefined then
+			sort new_selection
 
-		if new_selection.count > 0 or selected_items != new_selection  then
+		--format "NEW_SELECTION:	% \n" new_selection
+		--format "SELECTED_ITEMS:	% \n" selected_items
+		--format "selected_items != new_selection:	% \n" (selected_items != new_selection)
+
+		if new_selection != undefined and ( new_selection.count > 0 and selected_items != new_selection ) then -- IF SELECTION HAS BEEN CHANGED
 			CommandPanel.selectItem true new_selection clear:true
 
 	)
-
 )

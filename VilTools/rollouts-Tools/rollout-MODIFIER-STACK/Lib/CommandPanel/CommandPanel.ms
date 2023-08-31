@@ -165,8 +165,8 @@ struct CommandPanel_v
 	 */
 	function selectItem state items_index clear:true =
 	(
-		format "\n"; print "CommandPanel_v.selectItem()"
-		format "items_index:	% \n" items_index
+		--format "\n"; print "CommandPanel_v.selectItem()"
+		--format "items_index:	% \n" items_index
 
 		if items_index != #ALL then
 		(
@@ -194,8 +194,8 @@ struct CommandPanel_v
 	  */
 	function goToItem item_index =
 	(
-		format "\n\n"; print "CommandPanel_v.goToItem()"
-		format "ITEM_INDEX:	% \n" item_index
+		--format "\n\n"; print "CommandPanel_v.goToItem()"
+		--format "ITEM_INDEX:	% \n" item_index
 
 		if ( obj = this._getObj (obj) ) == undefined then
 			return false
@@ -241,14 +241,14 @@ struct CommandPanel_v
 			--format "ITEMS_COUNT:	% \n" items_count
 
 			direction = if item_index > current_mod_index or current_mod_index == 1 then #DOWN else #UP
-			format "DIRECTION:	% \n" direction
+			--format "DIRECTION:	% \n" direction
 
 			count = case direction of
 			(
 				#DOWN:	if current_mod_index == items_count then items_count else item_index - current_mod_index
 				#UP:	if current_mod_index == 1           then items_count else current_mod_index - item_index
 			)
-			format "COUNT:	% \n" count
+			--format "COUNT:	% \n" count
 
 
 			for i = 1 to count do

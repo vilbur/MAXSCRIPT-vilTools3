@@ -12,8 +12,8 @@ struct ModifierNameUnifier_v
 	/* properties */
 	duplicit_names	= Dictionary (#string),
 
-	--white_space = "                                                 ", -- change is not visible in Command Panel UI
-	white_space = "",
+	white_space = "                                                 ", -- change is not visible in Command Panel UI
+	--white_space = "",
 
 	/* dependency */
 	/* reference */
@@ -31,8 +31,6 @@ struct ModifierNameUnifier_v
 
 		for _mod in mods do
 			this._collectDuplicates(_mod)
-
-		--format "\n-----------\nDICTIONARY:duplicit_names:%\n" duplicit_names; for data_pair in duplicit_names do format "%:	%\n" data_pair.key data_pair.value
 
 		this._makeNamesUnique()
 
@@ -57,7 +55,7 @@ struct ModifierNameUnifier_v
 	  */
 	function _collectDuplicates _mod =
 	(
-		format "\n"; print "ModifierNameUnifier_v._collectDuplicates()"
+		--format "\n"; print "ModifierNameUnifier_v._collectDuplicates()"
 		--mod_is_baseobject = _mod == this.obj.baseobject
 
 		baseobject_name = (classOf this.obj.baseobject ) as string
@@ -70,7 +68,6 @@ struct ModifierNameUnifier_v
 			this.duplicit_names[mod_name] = mods_by_name
 	),
 
-
 	/** Collect modifiers
 	  *
 	  */
@@ -78,15 +75,6 @@ struct ModifierNameUnifier_v
 	(
 		 for _mod in this.obj.modifiers where _mod.name == mod_name collect _mod
 	),
-
-	--/** Get modifiers index
-	--  *
-	--  */
-	--function _getModifiersIndex mods =
-	--(
-	--	--format "\n"; print "ModifierNameUnifier_v.getModifiersIndex()"
-	--	for i = 1 to this.obj.modifiers.count where findItem mods this.obj.modifiers[i] > 0 collect i
-	--),
 
 	/** Make names unique
 	  *
@@ -99,7 +87,6 @@ struct ModifierNameUnifier_v
 			 for _mod in data_pair.value do
 				_mod.name +=  white_space + getHandleByAnim _mod as string
 
-				--this.obj.modifiers[index].name +=  white_space + getHandleByAnim obj.modifiers[index] as string
 	),
 
 	/**
@@ -109,7 +96,5 @@ struct ModifierNameUnifier_v
 		--format "\n"; print "ModifierNameUnifier.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-
 	)
-
 )
