@@ -19,6 +19,8 @@ function circleStack direction mode:#GO which:#ENABLED =
 
 		change_index = if direction == #DOWN then selected_items[selected_items.count] else selected_items[1]
 
+		go_increment = if mode == #GO and selected_items.count == 1 then 1 else 0 -- go to next if only one item selected, otherwise go to first|last item in selection
+
 		format "DIRECTION:	% \n" direction
 		format "CHANGE_INDEX:	% \n" change_index
 
@@ -27,8 +29,8 @@ function circleStack direction mode:#GO which:#ENABLED =
 			#ADD:
 				case direction of
 				(
-					#UP:	if change_index > 1	        then join selected_items #( change_index - 1 ) else selected_items
-					#DOWN:	if change_index < items_count	then join selected_items #( change_index + 1 ) else selected_items
+					#UP:	if change_index > 1           then join selected_items #( change_index - 1 ) else selected_items
+					#DOWN:	if change_index < items_count then join selected_items #( change_index + 1 ) else selected_items
 				)
 
 			#REMOVE:
@@ -38,13 +40,13 @@ function circleStack direction mode:#GO which:#ENABLED =
 				case expr of
 				(
 					/* SELECT FIRST IF LAST ITEM IS SELCTED */
-					( change_index == items_count and direction == #DOWN ):	#(1)
+					( selected_items.count == 1 and  direction == #DOWN and change_index == items_count ):	#(1)
 
 					/* SELECT LAST IF FIRST ITEM IS SELCTED */
-					( change_index == 1 and direction == #UP ):	#(items_count)
+					( selected_items.count == 1 and direction == #UP  and change_index == 1 ):	#(items_count)
 
 					/* CHANGE INDEX */
-					default: if direction == #DOWN then #( change_index + 1 )  else #( change_index - 1 )
+					default: if direction == #DOWN then #( change_index + go_increment ) else #( change_index - go_increment )
 				)
 		)
 

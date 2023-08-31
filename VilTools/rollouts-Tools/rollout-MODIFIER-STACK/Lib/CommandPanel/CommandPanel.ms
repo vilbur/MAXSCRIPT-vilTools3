@@ -122,17 +122,17 @@ struct CommandPanel_v
 	 */
 	function _getModsListboxIndex mods =
 	(
-		format "\n"; print "CommandPanel_v._getModsListboxIndex()"
-		format "mods:	% \n" mods
+		--format "\n"; print "CommandPanel_v._getModsListboxIndex()"
+		--format "mods:	% \n" mods
 		modifier_indexes = #()
 
 		all_items = this._getAllItems()
-		format "all_items:	% \n" all_items
+		--format "all_items:	% \n" all_items
 
 		for mod_index = 1 to mods.count do
 		(
 			search_name =this._getModName( mods[mod_index] )
-			format "SEARCH_NAME:	% \n" search_name
+			--format "SEARCH_NAME:	% \n" search_name
 
 			if ( item_index = findItem all_items search_name) > 0 then
 			(
@@ -166,14 +166,16 @@ struct CommandPanel_v
 	function selectItem state items_index clear:true =
 	(
 		format "\n"; print "CommandPanel_v.selectItem()"
-
+		format "items_index:	% \n" items_index
 
 		if items_index != #ALL then
 		(
 			if classOf items_index != Array then
 				items_index = #(items_index)
 
-			this.goToItem items_index[1]
+
+			if items_index.count == 1 then
+				this.goToItem items_index[1]
 
 			/* CLEAR SELECTION */
 			if clear then

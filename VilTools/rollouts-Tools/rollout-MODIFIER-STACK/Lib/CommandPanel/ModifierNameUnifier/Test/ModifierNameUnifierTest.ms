@@ -11,7 +11,7 @@ function prepareScene =
 	--format "\n"; print "prepareScene()"
 	delete objects
 
-	_box	= Box()
+	global _box	= Box()
 
 	select _box
 
@@ -33,8 +33,8 @@ ModifierNameUnifier 	= ModifierNameUnifier_v(_box)
 /* SET UNIQUE NAMES */
 --ModifierNameUnifier.unify( _box.baseObject )
 --ModifierNameUnifier.unify( _box.modifiers[#Poly_Select] )
---ModifierNameUnifier.unify( _box.modifiers[#Material] )
-ModifierNameUnifier.unify( _box.modifiers[#Box] )
+-- ModifierNameUnifier.unify( _box.modifiers[#Material] )
+-- ModifierNameUnifier.unify( _box.modifiers[#Box] )
 
 
 /* RESTORE ORIGINAL NAMES */
