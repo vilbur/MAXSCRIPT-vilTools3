@@ -1,83 +1,58 @@
 /** Circle stack
-  *
+
+  * @apram #ADD|#REMOVE|#GO add to selcction, remove from selection or go through stack
   */
-function circleStack direction =
+function circleStack direction mode:#GO which:#ENABLED =
 (
-	--format "\n"; print "circleStack.ms.circleStack()"
+	--format "\n"; print "CircleStack_v.circleStack()"
+	CommandPanel 	= CommandPanel_v()
 
-	/**
-	 */
-	function selectPreviousEnabledModifier modifiers index =
+	items_count = CommandPanel.itemsCount()
+
+	selected_items = CommandPanel.getSlectedItems()
+
+	if selected_items.count > 0 then
 	(
-		if selection.count == 1 and index == modifiers.count then
-			modPanel.setCurrentObject $.baseObject -- select baseobject if last modifier is active
+		format "MODE:	% \n" mode
+		format "ITEMS_COUNT:	% \n" items_count
+		format "SELECTED_ITEMS:	% \n" selected_items
 
-		else if selection.count == 1 and index == 0 then
-			modPanel.setCurrentObject $.modifiers[1] -- select first modifier if baseobject is active
+		change_index = if direction == #DOWN then selected_items[selected_items.count] else selected_items[1]
 
-		else
+		format "DIRECTION:	% \n" direction
+		format "CHANGE_INDEX:	% \n" change_index
+
+		new_selection = case mode of
 		(
-			index_next = index + 1
+			#ADD:
+				case direction of
+				(
+					#UP:	if change_index > 1	        then join selected_items #( change_index - 1 ) else selected_items
+					#DOWN:	if change_index < items_count	then join selected_items #( change_index + 1 ) else selected_items
+				)
 
-			/* FIND NEXT MODIFIER */
-			while index_next <= modifiers.count and modifiers[index_next].enabled == false do
-				index_next += 1
+			#REMOVE:
+				deleteItem selected_items (findItem selected_items change_index )
 
-			/* GO DOWN ISTACK n TIMES TO NEXT ENABLED MODIFIER */
-			if index_next <= modifiers.count then
-				for i = 1 to index_next - index do
-					max prev mod
-			else /* SELECT FIRST MODIFIER */
-				for i = 1 to modifiers.count do
-					max next mod
+			#GO:
+				case expr of
+				(
+					/* SELECT FIRST IF LAST ITEM IS SELCTED */
+					( change_index == items_count and direction == #DOWN ):	#(1)
+
+					/* SELECT LAST IF FIRST ITEM IS SELCTED */
+					( change_index == 1 and direction == #UP ):	#(items_count)
+
+					/* CHANGE INDEX */
+					default: if direction == #DOWN then #( change_index + 1 )  else #( change_index - 1 )
+				)
 		)
-	)
 
-	/**
-	 */
-	function selectNextEnabledModifier modifiers index =
-	(
-		if selection.count == 1 and index == 1 then
-			modPanel.setCurrentObject $.baseObject -- select baseobject if last modifier is active
+		format "NEW_SELECTION:	% \n" new_selection
 
-		else
-		(
-			index_next = index - 1
+		if new_selection.count > 0 or selected_items != new_selection  then
+			CommandPanel.selectItem true new_selection clear:true
 
-			/* FIND PREVIOUS MODIFIER */
-			while index_next >= 1 and modifiers[index_next].enabled == false do
-				index_next -= 1
-
-			format "index_next:	% \n" index_next
-			format "index - index_next:	% \n" (index - index_next)
-
-			/* GO UP ISTACK n TIMES TO NEXT ENABLED MODIFIER */
-			if index_next != 0 then
-				for i = 1 to index - index_next  do
-					max next mod
-			else /* SELECT FIRST MODIFIER */
-				for i = 1 to modifiers.count do
-					max prev mod
-
-		)
-	)
-
-
-	if selection.count > 0 then
-	(
-		modifiers = if selection.count > 1 then (InstancedModifierFinder_v( selection )).getInstancedModifiers() else selection[1].modifiers
-
-		if modifiers.count > 1 and ( current_mod = modPanel.getCurrentObject() ) != undefined then
-		(
-			index_current = if superClassOf current_mod == modifier then findItem modifiers current_mod else 0
-
-			if direction == #down then
-				selectPreviousEnabledModifier( modifiers )( index_current )
-
-			else
-				selectNextEnabledModifier( modifiers )( index_current )
-
-		)
 	)
 
 )

@@ -7,6 +7,7 @@ struct CommandPanel_v
 	list_box,  	-- modifier stack HWND
 
 	/* properties */
+	obj,
 
 	/* lsitbox commands */
 	LB_GETSEL	= 0x187,
@@ -19,55 +20,146 @@ struct CommandPanel_v
 	/* reference */
 	/* inhered */
 
+	/** Find modifier in stack
+	  *
+	  */
+	function findModifierInStack modifiers_search =
+	(
+		--format "\n"; print "CommandPanel_v.findModifierInStack()"
+		--format "modifiers_search:	% \n" modifiers_search
+		obj = this._getObj (obj)
+
+		if classOf modifiers_search != Array then
+			modifiers_search = #(modifiers_search)
+
+		/** Rename duplicate names
+		  *
+		  */
+		function renameDuplicateNames modifiers_search =
+		(
+			name_duplicates	= Dictionary (#string)
+			white_space = "                                                 "
+
+			for modifier_search in modifiers_search do
+			(
+				mods_with_same_name = for _mod in obj.modifiers where _mod.name == modifier_search.name collect _mod
+				format "mods_with_same_name:	% \n" mods_with_same_name
+				if mods_with_same_name.count > 1 then
+					 name_duplicates[modifier_search.name] = for i = 1 to obj.modifiers.count where obj.modifiers[i].name == modifier_search.name collect i
+			)
+
+			/* TEMP RENAME MODS WQITH SAME NAME */
+			for data_pair in name_duplicates do
+				 for index in data_pair.value do
+					obj.modifiers[index].name +=  white_space + getHandleByAnim obj.modifiers[index] as string
+
+			name_duplicates --return
+		)
+
+		/** Restore names
+		  *
+		  */
+		function restoreNames name_duplicates =
+		(
+			--format "\n"; print "CommandPanel_v.restoreNames()"
+			for data_pair in name_duplicates do
+				 for index in data_pair.value do
+					obj.modifiers[index].name =  data_pair.key
+		)
+
+		name_duplicates	= renameDuplicateNames(modifiers_search)
+
+		modifier_indexes = this._getModifiersListboxIndex (modifiers_search)
+
+		restoreNames (name_duplicates)
+
+		modifier_indexes --return
+	),
+
+
+
 	/** Set state of CURRENTLY SELECTED modifiers in stack
 	 *
 	 *  @param boolean|#toggle state desired state of modifiers
 	 *  @param #ALL|#SELECTED wich items in stack should be set
 	 *
 	 */
-	function setStateSelectedModifiers state which =
+	function setStateSelectedModifiers state which obj: =
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		--format "\n"; print "CommandPanel_v.toggleModifiers()"
-		_selection = selection
+		--format "\n"; print "CommandPanel_v.setStateSelectedModifiers()"
+		--_selection = selection
 
-		if GetCommandPanelTaskMode()!= #modify then
-			max modify mode
+		if ( obj = this._getObj (obj) ) != undefined then
+		(
+			--format "OBJ:	% \n" OBJ
+			if GetCommandPanelTaskMode()!= #modify then
+				max modify mode
 
-		if which == #ALL then
-			this.selectAll
+			if which == #ALL then
+				this.selectAll
 
-		if (modifiers = selection[1].modifiers).count == 0 then
-			return false
+			if (modifiers = obj.modifiers).count == 0 then
+				return false
 
-		selected_items = this._getSlectedItems()
+			selected_items = this.getSlectedItems()
 
-		if selected_items.count == 0 then
-			return false
+			if selected_items.count == 0 then
+				return false
 
-		selected_modifiers = this._getSelectedModifiers(modifiers)
-		--format "SELECTED_MODIFIERS:	% \n" selected_modifiers
-		if state == #toggle then
-			state = not ((current_state = this._getDominantState (selected_modifiers)) != undefined and current_state == true ) -- swtich state to opposite
+			selected_modifiers = this.getSelectedModifiers obj:obj
+			--format "SELECTED_MODIFIERS:	% \n" selected_modifiers
+			if state == #toggle then
+				state = not ((current_state = this._getDominantState (selected_modifiers)) != undefined and current_state == true ) -- swtich state to opposite
 
-		--format "STATE:	% \n"( this._getDominantState (selected_modifiers))
+			--format "STATE:	% \n"( this._getDominantState (selected_modifiers))
 
-		for selected_modifier in selected_modifiers do
-			selected_modifier.enabled = state
+			for selected_modifier in selected_modifiers do
+				selected_modifier.enabled = state
 
-		select _selection
+			--select _selection
 
-		this.selectItem (true) (selected_items)
+			this.selectItem (true) (selected_items)
+		)
+	),
+
+	/** Get slected items
+	  *
+	  * @return array of selected items indexes
+	 */
+	function getSlectedItems =
+	(
+		--format "\n"; print "CommandPanel_v.getSlectedItems()"
+		for i=0 to this.itemsCount() - 1 where ( windows.sendMessage this.list_box LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
 	),
 
 	/** Get selected modifiers
 	 */
-	function getSelectedModifiers =
+	function getSelectedModifiers obj: =
 	(
 		--format "\n"; print "CommandPanel_v.getSelectedModifiers()"
+		--format "this._getObj (obj):	% \n" (this._getObj (obj))
 
-		this._getSelectedModifiers( selection[1].modifiers ) --return
+		if ( obj = this._getObj (obj) ) != undefined then
+			this._getSelectedModifiers( obj.modifiers ) --return
 	),
+
+	/** Get obj
+	  *
+	  */
+	function _getObj obj =
+	(
+		--format "\n"; print "CommandPanel_v._getObj()"
+		--format "superClassOf obj:	% \n" (superClassOf obj)
+		--format "superClassOf this.obj:	% \n" (superClassOf this.obj)
+		case of
+		(
+			( superClassOf this.obj	!= value ) :	this.obj
+			( superClassOf obj	!= value ) :	obj
+			( selection.count > 0 ):	selection[1]
+		)
+	),
+
 
 	/** Get indexes of modifiers items in lisbox
 	  *
@@ -75,14 +167,12 @@ struct CommandPanel_v
 	  *
 	  * @return #(integer)  E.G.: #( 1, 2, 5)
 	 */
-	function getModifiersListboxIndex modifiers =
+	function _getModifiersListboxIndex modifiers =
 	(
-		----format "\n"; print "CommandPanel_v.getModifiersListboxIndex()"
+		----format "\n"; print "CommandPanel_v._getModifiersListboxIndex()"
 		modifier_indexes = #()
 
 		all_items = this._getAllItems()
-
-		--modifiers = for _mod in obj.modifiers collect _mod
 
 		for modifier_index = 1 to modifiers.count do
 		(
@@ -96,6 +186,8 @@ struct CommandPanel_v
 		modifier_indexes --return
 	),
 
+
+
 	/** Select item
 	  *
 	  * @param boolean	state	desired state of modifiers
@@ -104,18 +196,85 @@ struct CommandPanel_v
 	 */
 	function selectItem state items_index clear:true =
 	(
-		----format "\n"; print "CommandPanel_v.select()"
+		format "\n"; print "CommandPanel_v.selectItem()"
 
-		/* CLEAR SELECTION */
-		if clear then
-			this.unselect()
+		if classOf items_index == Array and items_index.count > 1 then
+		(
+			/* CLEAR SELECTION */
+			if clear then
+				this.unselect()
 
-		if classOf items_index == Array then
 			for index in items_index do
 				this._selectItem state (index - 1)
+		)
+		else if items_index == #ALL then
+			this._selectItem state -1
 
 		else
-			this._selectItem state (if items_index == #ALL then -1 else items_index - 1 )
+			this.goToItem(items_index)
+	),
+
+	/** Select mod in stack
+	  */
+	function goToItem items_index =
+	(
+		format "\n"; print "CommandPanel_v.goToItem()"
+
+		new_index	= if classOf items_index == Array then items_index[1] else items_index
+
+		selected_items	= this.getSlectedItems()
+		items_count	= this.itemsCount()
+
+		current_index	= selected_items[1]
+
+		is_first_mod_selected	= current_index == 1
+		is_base_object_selected	= current_index	== items_count
+
+		select_first_mod	= is_base_object_selected and new_index == 1
+		select_baseobject	= new_index == items_count
+
+		is_multiple_items_selected = selected_items.count > 1
+
+		select_opposite_side_of_stack =  (is_first_mod_selected and select_baseobject) or (is_base_object_selected and select_first_mod)
+
+		/*
+		   SELECT MOD DIRECTLY IF:
+				is multiple items selected
+
+		*/
+		if selection.count == 1 and ( is_multiple_items_selected or select_opposite_side_of_stack ) then
+		(
+			set_modifier = case of
+			(
+				select_first_mod:	selection[1].modifiers[1]
+				select_baseobject:	selection[1].baseobject
+				default:	selection[1].modifiers[new_index]
+			)
+
+			modPanel.setCurrentObject( set_modifier ) node: selection[1]
+		)
+		else
+		(
+			format "ITEMS_COUNT:	% \n" items_count
+			format "CURRENT_INDEX:	% \n" current_index
+
+			direction = if new_index > current_index or current_index == 1 then #DOWN else #UP
+			format "DIRECTION:	% \n" direction
+			format "NEW_INDEX:	% \n" new_index
+
+			count = case direction of
+			(
+				#DOWN:	if current_index == items_count	then items_count else new_index - current_index
+				#UP:	if current_index == 1	           then items_count else current_index - new_index
+			)
+
+			for i = 1 to count do
+				if direction == #DOWN then
+					max prev mod
+				else
+					max next mod
+
+		)
 	),
 
 	/** Select last item
@@ -173,12 +332,12 @@ struct CommandPanel_v
 	 */
 	function _getSelectedModifiers modifiers =
 	(
-		--format "\n"; print "CommandPanel_v._getSelectedModifiers()"
+		format "\n"; print "CommandPanel_v._getSelectedModifiers()"
 
 		selection_states = this._getItemsSelectionStates()
 		--format "SELECTION_STATES:	% \n" selection_states
 		all_items = this._getAllItems()
-		--format "ALL_ITEMS:	% \n" all_items
+		format "ALL_ITEMS:	% \n" all_items
 		selected_items = this._getSelectedItemsInStack (modifiers) (all_items) (selection_states)
 
 		for selected_item in selected_items collect modifiers[selected_item]
@@ -245,15 +404,6 @@ struct CommandPanel_v
 
 
 
-	/** Get slected items
-	  *
-	  * @return array of selected items indexes
-	 */
-	function _getSlectedItems =
-	(
-		--format "\n"; print "CommandPanel_v._getSlectedItems()"
-		for i=0 to this.itemsCount() - 1 where ( windows.sendMessage this.list_box LB_GETSEL i 0) == 1 collect (i+1) --returnobj,
-	),
 
 	/** Get items state
 	  *
@@ -261,7 +411,7 @@ struct CommandPanel_v
 	 */
 	function _getItemsSelectionStates =
 	(
-		----format "\n"; print "CommandPanel_v._getSlectedItems()"
+		----format "\n"; print "CommandPanel_v.getSlectedItems()"
 		for i=0 to this.itemsCount() - 1 collect ( windows.sendMessage  this.list_box  LB_GETSEL i 0)
 	),
 
