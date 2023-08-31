@@ -1,3 +1,5 @@
+filein	( getFilenamePath(getSourceFileName()) + "/ModifierNameUnifier/ModifierNameUnifier.ms" )	-- "./ModifierNameUnifier/ModifierNameUnifier.ms"
+
 /** Command panel
  */
 struct CommandPanel_v
@@ -17,66 +19,34 @@ struct CommandPanel_v
 	LB_GETTEXTLEN	= 0x18A,
 
 	/* dependency */
+	ModifierNameUnifier,
+
 	/* reference */
 	/* inhered */
 
 	/** Find modifier in stack
 	  *
 	  */
-	function findModifierInStack modifiers_search =
+	function findModInStack mods_search =
 	(
-		--format "\n"; print "CommandPanel_v.findModifierInStack()"
-		--format "modifiers_search:	% \n" modifiers_search
+		--format "\n"; print "CommandPanel_v.findModInStack()"
+		--format "mods_search:	% \n" mods_search
 		obj = this._getObj (obj)
 
-		if classOf modifiers_search != Array then
-			modifiers_search = #(modifiers_search)
+		if classOf mods_search != Array then mods_search = #(mods_search)
 
-		/** Rename duplicate names
-		  *
-		  */
-		function renameDuplicateNames modifiers_search =
-		(
-			name_duplicates	= Dictionary (#string)
-			white_space = "                                                 "
+		ModifierNameUnifier 	= ModifierNameUnifier_v(obj)
 
-			for modifier_search in modifiers_search do
-			(
-				mods_with_same_name = for _mod in obj.modifiers where _mod.name == modifier_search.name collect _mod
-				format "mods_with_same_name:	% \n" mods_with_same_name
-				if mods_with_same_name.count > 1 then
-					 name_duplicates[modifier_search.name] = for i = 1 to obj.modifiers.count where obj.modifiers[i].name == modifier_search.name collect i
-			)
+		ModifierNameUnifier.unify(mods_search)
 
-			/* TEMP RENAME MODS WQITH SAME NAME */
-			for data_pair in name_duplicates do
-				 for index in data_pair.value do
-					obj.modifiers[index].name +=  white_space + getHandleByAnim obj.modifiers[index] as string
+		--format "\n-----------\nDICTIONARY:name_duplicates:%\n" name_duplicates; for data_pair in name_duplicates do format "%:	%\n" data_pair.key data_pair.value
 
-			name_duplicates --return
-		)
+		modifier_indexes = this._getModsListboxIndex (mods_search)
 
-		/** Restore names
-		  *
-		  */
-		function restoreNames name_duplicates =
-		(
-			--format "\n"; print "CommandPanel_v.restoreNames()"
-			for data_pair in name_duplicates do
-				 for index in data_pair.value do
-					obj.modifiers[index].name =  data_pair.key
-		)
-
-		name_duplicates	= renameDuplicateNames(modifiers_search)
-
-		modifier_indexes = this._getModifiersListboxIndex (modifiers_search)
-
-		restoreNames (name_duplicates)
+		ModifierNameUnifier.restoreNames()
 
 		modifier_indexes --return
 	),
-
-
 
 	/** Set state of CURRENTLY SELECTED modifiers in stack
 	 *
@@ -144,49 +114,48 @@ struct CommandPanel_v
 			this._getSelectedModifiers( obj.modifiers ) --return
 	),
 
-	/** Get obj
+	/** Get indexes of modifiers items or baseobject in lisbox
 	  *
-	  */
-	function _getObj obj =
-	(
-		--format "\n"; print "CommandPanel_v._getObj()"
-		--format "superClassOf obj:	% \n" (superClassOf obj)
-		--format "superClassOf this.obj:	% \n" (superClassOf this.obj)
-		case of
-		(
-			( superClassOf this.obj	!= value ) :	this.obj
-			( superClassOf obj	!= value ) :	obj
-			( selection.count > 0 ):	selection[1]
-		)
-	),
-
-
-	/** Get indexes of modifiers items in lisbox
-	  *
-	  * @param array modifiers in stack
+	  * @param array mods modifiers or baseobject in stack
 	  *
 	  * @return #(integer)  E.G.: #( 1, 2, 5)
 	 */
-	function _getModifiersListboxIndex modifiers =
+	function _getModsListboxIndex mods =
 	(
-		----format "\n"; print "CommandPanel_v._getModifiersListboxIndex()"
+		format "\n"; print "CommandPanel_v._getModsListboxIndex()"
+		format "mods:	% \n" mods
 		modifier_indexes = #()
 
 		all_items = this._getAllItems()
+		format "all_items:	% \n" all_items
 
-		for modifier_index = 1 to modifiers.count do
+		for mod_index = 1 to mods.count do
 		(
-			item_index = findItem all_items modifiers[modifier_index].name
+			search_name =this._getModName( mods[mod_index] )
+			format "SEARCH_NAME:	% \n" search_name
 
-			all_items[item_index] = undefined
+			if ( item_index = findItem all_items search_name) > 0 then
+			(
+				all_items[item_index] = undefined
 
-			append modifier_indexes item_index
+				append modifier_indexes item_index
+			)
+
 		)
 
 		modifier_indexes --return
 	),
 
+	/** Get mod name
+	  *
+	  * @retrun string name of modifier or baseobejct
+	  */
+	function _getModName _mod =
+	(
+		--format "\n"; print "CommandPanel_v.getModName()"
 
+		if superClassOf _mod == modifier then _mod.name else (classOf _mod ) as string
+	),
 
 	/** Select item
 	  *
@@ -198,40 +167,52 @@ struct CommandPanel_v
 	(
 		format "\n"; print "CommandPanel_v.selectItem()"
 
-		if classOf items_index == Array and items_index.count > 1 then
+
+		if items_index != #ALL then
 		(
+			if classOf items_index != Array then
+				items_index = #(items_index)
+
+			this.goToItem items_index[1]
+
 			/* CLEAR SELECTION */
 			if clear then
 				this.unselect()
 
 			for index in items_index do
 				this._selectItem state (index - 1)
+
 		)
-		else if items_index == #ALL then
+		else
 			this._selectItem state -1
 
-		else
-			this.goToItem(items_index)
 	),
 
 	/** Select mod in stack
 	  */
-	function goToItem items_index =
+	function goToItem item_index =
 	(
-		format "\n"; print "CommandPanel_v.goToItem()"
+		format "\n\n"; print "CommandPanel_v.goToItem()"
+		format "ITEM_INDEX:	% \n" item_index
 
-		new_index	= if classOf items_index == Array then items_index[1] else items_index
+		if ( obj = this._getObj (obj) ) == undefined then
+			return false
+
+		if ( curr_mod = modPanel.getCurrentObject() ) == undefined then
+			return false
+
+
+		current_mod_index = if (current_indexes = this.findModInStack (curr_mod )).count > 0 then current_indexes[1]
+
 
 		selected_items	= this.getSlectedItems()
 		items_count	= this.itemsCount()
 
-		current_index	= selected_items[1]
+		is_first_mod_selected	= current_mod_index == 1
+		is_base_object_selected	= current_mod_index	== items_count
 
-		is_first_mod_selected	= current_index == 1
-		is_base_object_selected	= current_index	== items_count
-
-		select_first_mod	= is_base_object_selected and new_index == 1
-		select_baseobject	= new_index == items_count
+		select_first_mod	= is_base_object_selected and item_index == 1
+		select_baseobject	= item_index == items_count
 
 		is_multiple_items_selected = selected_items.count > 1
 
@@ -246,34 +227,33 @@ struct CommandPanel_v
 		(
 			set_modifier = case of
 			(
-				select_first_mod:	selection[1].modifiers[1]
-				select_baseobject:	selection[1].baseobject
-				default:	selection[1].modifiers[new_index]
+				select_first_mod:	obj.modifiers[1]
+				select_baseobject:	obj.baseobject
+				default:	obj.modifiers[item_index]
 			)
 
-			modPanel.setCurrentObject( set_modifier ) node: selection[1]
+			modPanel.setCurrentObject( set_modifier ) node: obj
 		)
 		else
 		(
-			format "ITEMS_COUNT:	% \n" items_count
-			format "CURRENT_INDEX:	% \n" current_index
+			--format "ITEMS_COUNT:	% \n" items_count
 
-			direction = if new_index > current_index or current_index == 1 then #DOWN else #UP
+			direction = if item_index > current_mod_index or current_mod_index == 1 then #DOWN else #UP
 			format "DIRECTION:	% \n" direction
-			format "NEW_INDEX:	% \n" new_index
 
 			count = case direction of
 			(
-				#DOWN:	if current_index == items_count	then items_count else new_index - current_index
-				#UP:	if current_index == 1	           then items_count else current_index - new_index
+				#DOWN:	if current_mod_index == items_count then items_count else item_index - current_mod_index
+				#UP:	if current_mod_index == 1           then items_count else current_mod_index - item_index
 			)
+			format "COUNT:	% \n" count
+
 
 			for i = 1 to count do
 				if direction == #DOWN then
 					max prev mod
 				else
 					max next mod
-
 		)
 	),
 
@@ -332,12 +312,12 @@ struct CommandPanel_v
 	 */
 	function _getSelectedModifiers modifiers =
 	(
-		format "\n"; print "CommandPanel_v._getSelectedModifiers()"
+		--format "\n"; print "CommandPanel_v._getSelectedModifiers()"
 
 		selection_states = this._getItemsSelectionStates()
 		--format "SELECTION_STATES:	% \n" selection_states
 		all_items = this._getAllItems()
-		format "ALL_ITEMS:	% \n" all_items
+		--format "ALL_ITEMS:	% \n" all_items
 		selected_items = this._getSelectedItemsInStack (modifiers) (all_items) (selection_states)
 
 		for selected_item in selected_items collect modifiers[selected_item]
@@ -364,33 +344,31 @@ struct CommandPanel_v
 	  *
 	  * Pair command panel tree items with modifiers by name
 	 */
-	function _getSelectedItemsInStack modifers all_stack_items selection_states =
+	function _getSelectedItemsInStack mods all_stack_items selection_states =
 	(
 		--format "\n\n"; print "CommandPanel_v._getSelectedItemsInStack()"
-		------format "modifers.count:	% \n" modifers.count
-		--format "MODIFERS:	% \n" modifers
+		------format "mods.count:	% \n" mods.count
+		--format "MODIFERS:	% \n" mods
 		--format "ALL_ITEMS:	% \n" all_stack_items
 		--format "SELECTION_STATES:	% \n" selection_states
-		modifier_indexes = #()
+		mods_indexes = #()
 
-		for modifier_index = 1 to modifers.count do
+		for mod_index = 1 to mods.count do
 		(
-			--format "\n\n"
-			--format "modifier_index:	% \n" modifier_index
-			--format "modifers[modifier_index].name:	% \n" modifers[modifier_index].name
-			item_index = findItem all_stack_items modifers[modifier_index].name
-			--format "item_index:	% \n" item_index
+
+			item_index = findItem all_stack_items mods[mod_index].name
 
 			if item_index > 0 then
 			(
 				all_stack_items[item_index] = undefined -- remove item for next loop
 				--format "selection_states[item_index]:	% \n" selection_states[item_index]
 				if selection_states[item_index] == 1 then
-					append modifier_indexes modifier_index
+					append mods_indexes modifier_index
 			)
+
 		)
-		--format "MODIFIER_INDEXES:	% \n" modifier_indexes
-		modifier_indexes --return
+		--format "MODIFIER_INDEXES:	% \n" mods_indexes
+		mods_indexes --return
 	),
 
 
@@ -511,6 +489,23 @@ struct CommandPanel_v
 	(
 		----format "\n"; print "CommandPanel_v._getModifiersItemsCount()"
 		items_count = windows.sendMessage list_box LB_GETCOUNT 0 0 --return
+	),
+
+
+	/** Get obj
+	  *
+	  */
+	function _getObj obj =
+	(
+		--format "\n"; print "CommandPanel_v._getObj()"
+		--format "superClassOf obj:	% \n" (superClassOf obj)
+		--format "superClassOf this.obj:	% \n" (superClassOf this.obj)
+		case of
+		(
+			( superClassOf this.obj	!= value ) :	this.obj
+			( superClassOf obj	!= value ) :	obj
+			( selection.count > 0 ):	selection[1]
+		)
 	),
 
 	/**
