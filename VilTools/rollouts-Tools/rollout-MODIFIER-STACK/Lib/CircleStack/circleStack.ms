@@ -25,9 +25,11 @@ function circleStack direction mode:#GO which:#ENABLED =
 
 		go_increment = if mode == #GO and selected_items.count == 1 then 1 else 0 -- go to next if only one item selected, otherwise go to first|last item in selection
 
+		if mode == #GO and which == #ENABLED then
+			mode = #GO_ENABLED
+
 		if mode == #ADD then
 			add_selection = join (deepCopy selected_items) #( change_index + ( if direction == #UP then -1 else 1 ) )
-
 
 		new_selection = case mode of
 		(
@@ -46,10 +48,8 @@ function circleStack direction mode:#GO which:#ENABLED =
 						#DOWN:	join (deepCopy selected_items) ( for i = change_index to items_count collect i )
 					)
 
-
 			#REMOVE:
 				deleteItem (deepCopy selected_items) (findItem selected_items change_index )
-
 
 			#GO:
 				case expr of
@@ -63,6 +63,17 @@ function circleStack direction mode:#GO which:#ENABLED =
 					/* CHANGE INDEX */
 					default: if direction == #DOWN then #( change_index + go_increment ) else #( change_index - go_increment )
 				)
+
+			#GO_ENABLED:
+			(
+				next_enabled_mod = StackRemote.findEnabledModifierIndex(change_index)(direction)
+
+				if next_enabled_mod == undefined then
+					next_enabled_mod = if direction == #DOWN then items_count else 1
+
+				if next_enabled_mod != undefined then
+					#( next_enabled_mod )
+			)
 		)
 
 		if new_selection != undefined then
@@ -74,6 +85,5 @@ function circleStack direction mode:#GO which:#ENABLED =
 
 		if new_selection != undefined and ( new_selection.count > 0 and selected_items != new_selection ) then -- IF SELECTION HAS BEEN CHANGED
 			StackRemote.selectItem true new_selection clear:true
-
 	)
 )

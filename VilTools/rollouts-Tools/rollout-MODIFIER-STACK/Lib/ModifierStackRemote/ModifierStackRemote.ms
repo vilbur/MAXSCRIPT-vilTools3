@@ -54,6 +54,38 @@ struct ModifierStackRemote_v
 		ModsStack.pointers.count --return
 	),
 
+	/** Find enabled modifier
+	  *
+	  * @param integer	from_index	index where to start search for modifier
+	  * @param #UP|#DOWN	direction	in stack where to search for modifier
+	  */
+	function findEnabledModifierIndex from_index direction =
+	(
+		--format "\n"; print "ModifierStackRemote_v.findEnabledModifier()"
+
+		/** Is modifier enabled
+		  *
+		  */
+		function isModifierEnabled pointer =
+		(
+			_mod = getAnimByHandle pointer
+
+			if superClassOf _mod == modifier then _mod.enabled else true -- test modifier or return true if mod is baseobject
+		)
+
+		next_index = case direction of
+		(
+			#UP: if from_index > 1 then
+				for i = from_index - 1 to 1 by -1 where isModifierEnabled(ModsStack.pointers[i]) do return i -- go up
+
+			#DOWN: if from_index < ModsStack.pointers.count then
+				for i = from_index + 1 to ModsStack.pointers.count where isModifierEnabled(ModsStack.pointers[i]) do return i -- go down
+		)
+
+		if classOf next_index != OkClass then -- if loop return nothing
+			next_index --return
+	),
+
 	private
 
 	/** Set array
