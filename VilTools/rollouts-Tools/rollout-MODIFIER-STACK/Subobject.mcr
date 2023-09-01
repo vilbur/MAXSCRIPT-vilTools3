@@ -4,18 +4,20 @@
   *	Otherwise commands does not work on Max start up before vilTools are executed.
 */
 
---macroscript enter_subobject_toggle
---category:	"_Subobject"
---buttonText:	"Enter\Exit"
---tooltip:	"Enter\Exit subobject"
---(
---	(Subobject_v()).enterToogleLast()
---)
+macroscript enter_subobject_toggle
+category:	"_Subobject"
+buttonText:	"Enter\Exit"
+tooltip:	"Enter\Exit Subobject"
+(
+	on execute do
+		(Subobject_v()).enterExitSubobjectToggle()
+)
 
 macroscript enter_subobject_1
 category:	"_Subobject"
 buttonText:	"Enter 1"
 tooltip:	"Enter to subobject 1"
+
 icon:	"across:6|width:62"
 (
 	format "EventFired = % \n" EventFired

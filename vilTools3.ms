@@ -37,10 +37,11 @@ function importStdScripts =
 
 		"/rollout-SCENE/RecentFile/RecentFile.ms",
 
-		"/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
+		"/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
+		"/rollout-MODIFIER-STACK/Lib/ModStackPrese/ModStackPrese.ms",
+		"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
 
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
-		"/rollout-EDIT-POLY/Lib/Subobject.ms",
 		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
 		"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
 		"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",

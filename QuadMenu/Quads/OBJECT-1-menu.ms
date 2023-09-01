@@ -4,10 +4,10 @@
 /**
   *
   */
-function OBJECTmenu QuadMenu =
+function OBJECT1menu QuadMenu =
 (
 
-	QuadMenu.setTitle(" O B J E C T S")
+	QuadMenu.setTitle(" O B J E C T S 1")
 
 	ObjectMenu	= Menu_v("_Selection-Object")
 	ObjectsVisibilityMenu	= Menu_v("_Selection-Visibility")
@@ -25,21 +25,20 @@ function OBJECTmenu QuadMenu =
 	----format "HideSelection	= % \n" HideSelection
 
 
-	QuadMenu.addMenu(ObjectMenu)	--flat:false --index:1
-	QuadMenu.addSeparator()
 
 	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"Hide SELECTED"
 	QuadMenu.addItem("Tools")("Hide Unselected")	group:"Main UI" title:"Hide UNSELECTED"
 
 	QuadMenu.addSeparator()
-	QuadMenu.addItem("Tools")("Unhide All")	group:"Main UI" title:"UNHIDE ALL"
-
-	QuadMenu.addSeparator()
+	
 	QuadMenu.addMenu(ObjectsVisibilityMenu)	--flat:false --index:1
 
 	QuadMenu.addSeparator()
+
 	QuadMenu.addItem("Tools")("Freeze Selection")	group:"Main UI"
 	QuadMenu.addItem("Tools")("Unfreeze All")	group:"Main UI"
 
+	QuadMenu.addSeparator()
 
+	QuadMenu.addMenu(ObjectMenu)	--flat:false --index:1
 )

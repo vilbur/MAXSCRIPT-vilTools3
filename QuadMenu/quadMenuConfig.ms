@@ -40,10 +40,11 @@ EditQuad = createQuad( "_RightClickQuad" ) #(
 --------------------------------------------------------------------------------*/
 Object_Selection = createQuad( "_ControlQuad" ) #(
 
-	#OBJECT,	 -- "./Quads/OBJECT-menu.ms"
-	#visiblitySUBOBJECT,	 -- "./Quads/visiblitySUBOBJECT-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#SELECTION	 -- "./Quads/SELECTION-menu.ms"
+	#OBJECT1,	 -- "./Quads/OBJECT-1-menu.ms"
+	#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
+	--#visiblitySUBOBJECT,	 -- "./Quads/visiblitySUBOBJECT-menu.ms"
+	#OBJECT3,	 -- "./Quads/OBJECT-3-menu.ms"
+	#OBJECT4	 -- "./Quads/OBJECT-4-menu.ms"
 
 )
 

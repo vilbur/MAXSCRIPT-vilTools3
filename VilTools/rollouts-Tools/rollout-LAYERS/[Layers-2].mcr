@@ -29,17 +29,42 @@ autoUndoEnabled:true
 macroscript	layers_add_selection_to_current_layer
 category:	"_Layers-2"
 buttontext:	"Set current"
-toolTip:	"Add selection to current layer."
---icon:	"MENU:ADD to Layer"
+toolTip:	"Add to firdt selected layer \n or layer of last selected object."
+icon:	"MENU:ADD to Layer"
 autoUndoEnabled:true
 (
+	--on execute do
+	----undo "Add to current layer " on
+	--(
+	--	current_layer = (LayersManager_v()).getCurrent()
+	--
+	--	current_layer.addNodes( selection )
+	--)
+	--
 	on execute do
-		--undo "Add to current layer " on
-		(
-			current_layer = (LayersManager_v()).getCurrent()
+	--on altExecute type do
+	(
+		LayersManager = LayersManager_v()
 
-			current_layer.addNodes( selection )
+		selected_layers_in_mngr = LayersManager.getSelectedByManager()
+
+		if selected_layers_in_mngr.count > 1 then
+		(
+			selected_layers_in_mngr[1].addNodes( deleteItem _selection _selection.count )
 		)
+		else if selection.count >= 2 then
+		(
+			_selection = for o in selection collect o
+
+			master_obj = _selection[_selection.count]
+
+			master_obj.layer.addNodes( deleteItem _selection _selection.count )
+		)
+		else
+			messageBox "Select Layer in manager \n\n or \n\nSelect 2 obejcts at least. \nObejcts will be added to layer of last selection object" title:"ADD TO LAYER"
+
+	)
+
 )
 
 /* SELECT OBEJCTS IN LAYERS

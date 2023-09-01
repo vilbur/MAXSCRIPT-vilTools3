@@ -1,24 +1,35 @@
 
 /**  Set material of 1st selected object to all objects in selection
  */
-macroscript	material_by_1st_object
+macroscript	material_by_object
 category:	"_Material"
-buttonText:	"Mat by 1st object"
-tooltip:	"Select all visible objects with same materials as selection"
-icon:	"menu:true"
+buttonText:	"Mat by object"
+tooltip:	"Assign material to selection by last selected object"
+icon:	"MENU:true"
 (
 	--filein(@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MATERIALS\Materials.mcr")
+	on execute do
+	(
+		_selection = for o in selection where superClassOf o == GeometryClass collect o
 
-	_selection = for o in selection where superClassOf o == GeometryClass collect o
+		if _selection.count >= 2 then
+		(
+			source_object = _selection[_selection.count]
 
-	if _selection.count == 0 then
-		return false
-	source_object = _selection[1]
+			if source_object.material != undefined then
+			(
+				target_objects = deleteItem _selection _selection.count
 
-	target_objects = deleteItem _selection 1
+				for obj in target_objects do
+					obj.material =  source_object.material
 
-	for obj in objects where not obj.isHidden and obj.material == source_object.material do
-		selectmore  obj
+			)
+			else
+				messageBox "Last selected objects has not material" title:"SET MATERIAL"
+		)
+		else
+			messageBox "Select 2 objects at least. \n\nMaterial will be set to objects by last obejct in selection" title:"SET MATERIAL"
+	)
 )
 
 
@@ -29,10 +40,10 @@ macroscript	material_select_objs_by_material
 category:	"_Material"
 buttonText:	"Select By Mat"
 tooltip:	"Select objects by current material in material editor"
-icon:	"menu:true"
+icon:	"MENU:true"
 (
 	-- <array>SelectObjectByMaterial - returns array of objects a material is assigned to
-	fn SelectObjectByMaterial reqMatEditOpen materialIndex = (
+	function SelectObjectByMaterial reqMatEditOpen materialIndex = (
 		objarr = #()
 
 		-- Select ALL objects with this material

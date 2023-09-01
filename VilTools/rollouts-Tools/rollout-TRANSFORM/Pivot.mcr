@@ -59,9 +59,12 @@ toolTip:	"Set pivot to bottom\top for each object in selection"
 icon:	   "menu:true"
 (
 	on execute do
+    (
+        filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Pivot.mcr"
+
 		for o in ( _selection = getSelectionWithouGroupMembers()) do
 		(
-			obj_first = _selection
+			obj_first = _selection[1]
 
 			is_bottom = obj_first.min.z == obj_first.pivot.z
 
@@ -69,6 +72,8 @@ icon:	   "menu:true"
 
 			format "PIVOT SET TO % \n" ( if is_bottom then "TOP" else "BOTTOM" )
 		)
+	)
+
 )
 
 --/** ALIGN TO WORLD

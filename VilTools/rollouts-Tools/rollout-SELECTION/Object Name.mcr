@@ -3,11 +3,29 @@
 /**
   *
   */
+macroscript selection_renema_by_last
+category:	"_Object-Name"
+buttonText:	"Rename by last"
+tooltip:	"Rename by last selected object"
+--icon:	"control:checkbox|Groupbox:Prefix|across:1"
+icon:	"MENU:true"
+(
+
+	on execute do
+		for obj in selection do
+			obj.name = selection[selection.count].name
+
+)
+
+/**
+  *
+  */
 macroscript selection_name_convert_case_sence
-category:	"Selection"
+category:	"_Object-Name"
 buttonText:	"Convert Case"
 tooltip:	"Convert case of selected object names\n\nCapital Case >>> UPPER CASE >>> lower case"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
+icon:	"MENU:true"
 (
 	filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
@@ -98,7 +116,7 @@ tooltip:	"Convert case of selected object names\n\nCapital Case >>> UPPER CASE >
   *
   */
 macroscript selection_name_show_in_viewport
-category:	"Selection"
+category:	"_Object-Name"
 buttonText:	"Show Names"
 icon:	"control:checkbutton"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
@@ -129,11 +147,13 @@ icon:	"control:checkbutton"
 )
 
 
+
+
 /**  SUFFIX TEXT
   *
   */
 macroscript selection_remove_suffix_text
-category:	"Selection"
+category:	"_Object-Name"
 buttonText:	"[remove suffix text]"
 tooltip:	"RegEx of suffix to remove"
 icon:	"control:editText|across:2|width:256"
@@ -154,13 +174,13 @@ icon:	"control:editText|across:2|width:256"
   *
   */
 macroscript selection_remove_numbered_suffix
-category:	"Selection"
+category:	"_Object-Name"
 buttonText:	"Remove suffix"
 tooltip:	"Remove suffix from object name"
 icon:	"across:2|align:#right"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
-	filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
+	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
 	undo "Remove suffix" on
 	(
@@ -169,9 +189,8 @@ icon:	"across:2|align:#right"
 		for obj in selection do
 			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" ("("+suffix_text+")$")  ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase  ).Replace obj.name ""
 	)
-
-
 )
+
 
 /*------------------------------------------------------------------------------
 	GROUPBOX PREFIX
@@ -182,7 +201,7 @@ icon:	"across:2|align:#right"
 --  *
 --  */
 --macroscript selection_edit_name_prefix_by_parent
---category:	"Selection"
+--category:	"_Object-Name"
 --buttonText:	"by parent"
 --tooltip:	""
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
@@ -194,7 +213,7 @@ icon:	"across:2|align:#right"
 --  *
 --  */
 --macroscript selection_edit_name_prefix_by_layer
---category:	"Selection"
+--category:	"_Object-Name"
 --buttonText:	"by layer"
 --tooltip:	""
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
@@ -209,7 +228,7 @@ icon:	"across:2|align:#right"
 --  *
 --  */
 --macroscript selection_edit_name
---category:	"Selection"
+--category:	"_Object-Name"
 --buttonText:	"[Object base name]"
 --tooltip:	"original name is used, if name is empty"
 --icon:	"control:editText|Groupbox:Base Name|across:1"
@@ -223,7 +242,7 @@ icon:	"across:2|align:#right"
 --------------------------------------------------------------------------------*/
 
 --macroscript selection_edit_name_suffix_by_parent
---category:	"Selection"
+--category:	"_Object-Name"
 --buttonText:	"A-Z"
 --tooltip:	""
 --icon:	"control:checkbox|Groupbox:Suffix|across:1"
@@ -236,7 +255,7 @@ icon:	"across:2|align:#right"
 --  *
 --  */
 --macroscript selection_rename
---category:	"Selection"
+--category:	"_Object-Name"
 --buttonText:	"Rename"
 --tooltip:	"Load Selection"
 --icon:	"across:1|height:48"

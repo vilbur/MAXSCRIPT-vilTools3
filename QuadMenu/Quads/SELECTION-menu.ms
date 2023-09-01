@@ -8,9 +8,17 @@
 function SELECTIONmenu QuadMenu =
 (
 	--format "\n"; print "selectionQuad.ms.selectionQuadMenu()"
-	QuadMenu.setTitle("S E L EC T I O N " )
+	QuadMenu.setTitle("S E L E C T I O N " )
 
-	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
+	SelFilterMenu	= Menu_v("_Selection-Filter")
+
+	SelFilterMenu.addSeparators #( 4 )
+
+	QuadMenu.addMenu( SelFilterMenu )	--flat:false --index:1
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Selection-Instance")	--flat:false --index:1
 
 )
 --format "EMPTY_QUAD	= % \n" EMPTY_QUAD

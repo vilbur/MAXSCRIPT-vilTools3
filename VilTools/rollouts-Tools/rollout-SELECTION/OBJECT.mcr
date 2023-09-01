@@ -1,3 +1,15 @@
+/*
+*/
+macroscript	selection_link_to_last
+category:	"_Selection-Object"
+buttontext:	"Edit Properties"
+toolTip:	"Edi object properties"
+icon:	"MENU:true"
+(
+
+)
+
+
 /** Mass prop change callback
   *
   */
@@ -7,20 +19,19 @@ function massPropChangeCallback val inspin prop baseobject =
 	for obj in selection where hasProperty obj prop  do
 		setProperty obj prop val
 )
+
 /*
 */
 macroscript	selection_properties
 category:	"_Selection-Object"
-buttontext:	"Edit Properties"
-toolTip:	"Edi object properties"
+buttontext:	"Edit Mod Properties"
+toolTip:	"Edi current mod properties"
 icon:	"MENU:true"
 (
-
-
 	on execute do
 		if( selection.count > 0 ) then
 		(
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\OBJECT.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\OBJECT.mcr"
 			max modify mode
 
 			--if ( curr_mod = modPanel.getCurrentObject() ) == undefined then
@@ -77,33 +88,28 @@ icon:	"MENU:true"
 
 					title = prop as string
 
-					params = if control_type == #spinner then #( #type, (((classof val) as string ) as name ) as name ) else #()
-
 					val = getPropValue _objects prop
+
+					spinner_type =  ((classof val) as string ) as name
+
+					params = if control_type == #spinner then #( #type, spinner_type, #range, [0, 1000, val] ) else #()
+					--params = #()
+
 
 					--format "prop:	% \n" prop
 					--format "class:	% \n" (classOf val)
 					--format "val:	% \n" val
 					--format "params:	% \n" params
 					/* CONTROLS */
-					_Control = _Controls.control control_type title across:1 params:params  value:val --align:#left
+					_Control = _Controls.control control_type title across:1 params:params value:val --align:#left
 
-					--_Control.Event #changed "massPropChangeCallback" params:#(val, prop, (classOf curr_mod) as name )
-					--_Control.Event #changed "massPropChangeCallback" params:#( prop, #test )
-					--_Control.Event #changed "massPropChangeCallback" params:#( prop as string , classOf curr_mod )
 					_Control.Event #changed "massPropChangeCallback" params:#( prop , classOf curr_mod )
-
-
 				)
-
 			)
 
 			/* DIALOG CREATE */
 			Dialog.create height:undefined
-
 		)
-
-
 )
 
 /*
@@ -114,16 +120,14 @@ buttontext:	"Hide unselected in layer"
 toolTip:	"Select by wirecolor"
 icon:	"MENU:true"
 (
-	undo "Hide unselected in layer " on
-	(
-		LayersManager = LayersManager_v()
+	on execute do
+		undo "Hide unselected in layer " on
+		(
+			LayersManager = LayersManager_v()
 
-		obejcts_in_current_layer = LayersManager.getObjectsInLayers( LayersManager.getCurrent() )
+			obejcts_in_current_layer = LayersManager.getObjectsInLayers( LayersManager.getCurrent() )
 
-		for obj in obejcts_in_current_layer do
-			obj.isHidden = true
-
-	)
-
-
+			for obj in obejcts_in_current_layer do
+				obj.isHidden = true
+		)
 )

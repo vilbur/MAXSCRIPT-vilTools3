@@ -104,9 +104,10 @@ category:	"_Animation"
 buttontext:	"Keyframe 0\1"
 tooltip:	"Toggle Keyframe 0\1"
 --icon:	"control:label"
+autoUndoEnabled: true
 (
-
-	sliderTime = if sliderTime != 1f then 1f else 0f
+	on execute do
+		sliderTime = if sliderTime != 1f then 1f else 0f
 )
 
 /**

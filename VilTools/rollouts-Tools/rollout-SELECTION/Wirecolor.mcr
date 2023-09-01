@@ -1,41 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )
 
 /*------------------------------------------------------------------------------
-	SELECT BY WIRECOLOR
---------------------------------------------------------------------------------*/
-
---/*
---*/
---macroscript	wirecolor_select
---category:	"_Wirecolor"
---buttontext:	"Select"
---toolTip:	"Select objects by wirecolor"
---icon:	"menu:true"
---(
---	selection_colors = #()
---
---	for o in selection do appendIfUnique selection_colors o.wirecolor
---
---	select (for o in objects where findItem selection_colors o.wirecolor > 0 collect o)
---)
-
-/*
-*/
-macroscript	wirecolor_select_only_visible
-category:	"_Wirecolor"
-buttontext:	"Select"
-toolTip:	"Select by wirecolor"
-icon:	"menu:tooltip"
-(
-	selection_colors = #()
-
-	for o in selection do appendIfUnique selection_colors o.wirecolor
-
-	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
-)
-
-
-/*------------------------------------------------------------------------------
 	RANDOM WIRECOLOR
 --------------------------------------------------------------------------------*/
 
@@ -43,7 +8,7 @@ macroscript	wirecolor_random
 category:	"_Wirecolor"
 buttontext:	"Random color"
 toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
-icon:	"menu:true|tooltip:Random wirecolor to selected object\n"
+icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
 (
 	--(Wirecolor_v()).randomize brightness:128
 	--(Wirecolor_v()).randomize brightness:#(64, 255)
@@ -56,17 +21,25 @@ icon:	"menu:true|tooltip:Random wirecolor to selected object\n"
 
 	--(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164
 	--(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)
-	max create mode
 
-	Wirecolor = Wirecolor_v()
-
-	undo "Random Wirecolor" on
+	on execute do
 	(
+		max create mode
 
-		if keyboard.controlPressed then
-			Wirecolor.mode = #per_object
+		Wirecolor = Wirecolor_v()
 
-		Wirecolor.randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
+		undo "Random Wirecolor" on
+		(
+
+			if keyboard.controlPressed then
+				Wirecolor.mode = #per_object
+
+			Wirecolor.randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
+		)
+	)
+	on altExecute type do
+	(
+		macros.run "_Wirecolor" "wirecolor_random_menu"
 	)
 )
 
@@ -76,7 +49,7 @@ macroscript	wirecolor_random_menu
 category:	"_Wirecolor"
 buttontext:	"Random color"
 toolTip:	"Color menu"
-icon:	"menu:true"
+--icon:	"MENU:true"
 (
 	_Color 	= Color_v()
 
@@ -91,8 +64,6 @@ icon:	"menu:true"
 )
 
 
-
-
 /*------------------------------------------------------------------------------
 	WIRECOLOR BY LAST OBJECT
 --------------------------------------------------------------------------------*/
@@ -101,10 +72,48 @@ macroscript	wirecolor_by_last
 category:	"_Wirecolor"
 buttontext:	"Color By Last"
 toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
-icon:	"menu:true"
+icon:	"MENU:true"
 (
 	undo "Wirecolor By Last" on
 	(
 		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
 	)
 )
+
+
+/*------------------------------------------------------------------------------
+	SELECT BY WIRECOLOR
+--------------------------------------------------------------------------------*/
+
+--/*
+--*/
+--macroscript	wirecolor_select
+--category:	"_Wirecolor"
+--buttontext:	"Select"
+--toolTip:	"Select objects by wirecolor"
+--icon:	"MENU:true"
+--(
+--	selection_colors = #()
+--
+--	for o in selection do appendIfUnique selection_colors o.wirecolor
+--
+--	select (for o in objects where findItem selection_colors o.wirecolor > 0 collect o)
+--)
+
+/*
+*/
+macroscript	wirecolor_select_only_visible
+category:	"_Wirecolor"
+buttontext:	"Select"
+toolTip:	"Select by wirecolor"
+icon:	"MENU:tooltip"
+(
+	selection_colors = #()
+
+	for o in selection do appendIfUnique selection_colors o.wirecolor
+
+	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+)
+
+
+

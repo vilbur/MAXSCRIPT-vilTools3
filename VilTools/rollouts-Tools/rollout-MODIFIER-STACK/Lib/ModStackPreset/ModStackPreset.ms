@@ -1,5 +1,7 @@
 filein( getFilenamePath(getSourceFileName()) + "/../managePresetMenu/managePresetMenu.ms" ) -- "./../managePresetMenu/managePresetMenu.ms"
 
+filein( getFilenamePath(getSourceFileName()) + "/../ModifierPresetMenuCreator/ModifierPresetMenuCreator.ms" )	-- "./../ModifierPresetMenuCreator/ModifierPresetMenuCreator.ms"
+
 /** Manage Modifier presets
   *
   * Ini file location: "C:\Users\{username}\AppData\Local\Autodesk\3dsMax\{max version} - 64bit\ENU\temp\ni_files"
@@ -30,6 +32,7 @@ struct ModStackPreset_v
 	blaclist_props = #( Point2 , Point3 ),
 
 	/* dependency */
+	ModifierPresetMenuCreator = ModifierPresetMenuCreator_v(),
 
 	/** Test if modObject has default values
 	  *
@@ -75,6 +78,8 @@ struct ModStackPreset_v
 			)
 		)
 
+		ModifierPresetMenuCreator.createMenu(ini)
+
 		format "\nMODIFIER PRESET	% HAS BEEN SAVED\n" preset_name
 	),
 
@@ -82,8 +87,8 @@ struct ModStackPreset_v
 	 */
 	function loadPreset =
 	(
-		format "\n"; print "ModStackPreset_v.loadPreset()"
-		format "preset_name	= % \n" preset_name
+		--format "\n"; print "ModStackPreset_v.loadPreset()"
+		--format "preset_name	= % \n" preset_name
 
 		for data_pair in  this._getPresetValues() do
 			setProperty modObject data_pair.key data_pair.value
@@ -111,8 +116,8 @@ struct ModStackPreset_v
 			if val != "" then
 				preset_values[prop] = execute val
 		)
-		
-		format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
+
+		--format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
 
 		preset_values --return
 	),

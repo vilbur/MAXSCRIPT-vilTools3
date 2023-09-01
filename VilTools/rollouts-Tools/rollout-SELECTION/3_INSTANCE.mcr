@@ -9,7 +9,6 @@ macroscript	selection_select_instances
 category:	"_Selection"
 buttontext:	"Select instances"
 toolTip:	"Select instances"
---icon:	"#(path, index)"
 (
 	max create mode
 
@@ -52,27 +51,34 @@ toolTip:	"Select instances and references"
   *
   */
 macroscript	selection_reinstancer
-category:	"_Selection"
+category:	"_Selection-Instance"
 buttontext:	"Reinstance"
 toolTip:	"Reinstance selection.\n\nMaster object is last object in selection"
---icon:	"#(path, index)"
+icon:	"MENU:true"
+autoUndoEnabled: true
 (
-	max create mode
-
-	if selection.count >= 2 then
+	on execute do
 	(
-		undo "Reinstance Objects" on
+		max create mode
+
+		if selection.count >= 2 then
 		(
-			master_object	= selection[ selection.count ]
+			undo "Reinstance Objects" on
+			(
+				master_object	= selection[ selection.count ]
 
-			for_instance = deleteItem ( selection as Array ) selection.count
+				for_instance = deleteItem ( selection as Array ) selection.count
 
-			for obj in for_instance do
-				instanceReplace obj master_object
+				for obj in for_instance do
+					instanceReplace obj master_object
 
+			)
+
+			print "REINSTANCED"
 		)
+		else
+			messageBox "REINSTANCER: SELECT 2 OBJECTS AT LEAST" title:"Reinstancer"
+
 	)
-	else
-		messageBox "Select at least 2 objects for reinstancing" title:"Reinstancer"
 
 )

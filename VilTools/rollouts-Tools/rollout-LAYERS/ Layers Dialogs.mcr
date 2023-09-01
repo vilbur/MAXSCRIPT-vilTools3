@@ -36,7 +36,9 @@ icon:	"control:checkbutton|MENU:true"
 )
 
 
-
+/*------------------------------------------------------------------------------
+	WORKING LAYER DIALOG
+--------------------------------------------------------------------------------*/
 
 /** WORKING LAYER DIALOG
  */
@@ -52,7 +54,7 @@ icon:	"MENU:Working Layers Dialog"
 	on execute do
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 
 		LayersToogleDialog = LayersToogleDialog_v()
@@ -67,9 +69,6 @@ icon:	"MENU:Working Layers Dialog"
 
 )
 
-
-
-
 /** WORKING LAYER DIALOG - RELAOD
  */
 macroscript	layers_manager_toogle_dialog_resetini
@@ -82,9 +81,9 @@ tooltip:	"Reload with new layers set"
 
 	on execute do
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 		LayersToogleDialog = LayersToogleDialog_v()
 
 		LayersToogleDialog.create reset_layers:true
@@ -92,22 +91,65 @@ tooltip:	"Reload with new layers set"
 
 )
 
-/** SCENE EXPLORER
- */
-macroscript	_layers_scene_explorer
-category:	"_Layers-Dialogs"
-buttontext:	"Scene Explorer"
-tooltip:	"Show\Hide Scene Explorer.\n\nIf checked, then manager is open on scene open"
-(
-	--messageBox "Yupiii" title:"Title"  beep:false
-	LayerManager.editLayerByName ""
+--/** SCENE EXPLORER
+-- */
+--macroscript	_layers_scene_explorer
+--category:	"_Layers-Dialogs"
+--buttontext:	"Scene Explorer"
+--tooltip:	"Show\Hide Scene Explorer.\n\nIf checked, then manager is open on scene open"
+--(
+--	--messageBox "Yupiii" title:"Title"  beep:false
+--	LayerManager.editLayerByName ""
+--
+--	if not SceneExplorerManager.ExplorerExists(default_explorer = "Scene Explorer") then
+--		SceneExplorerManager.CreateExplorerFromDefault(default_explorer)
+--	else
+--		SceneExplorerManager.OpenExplorer(default_explorer)
+--)
 
-	if not SceneExplorerManager.ExplorerExists(default_explorer = "Scene Explorer") then
-		SceneExplorerManager.CreateExplorerFromDefault(default_explorer)
-	else
-		SceneExplorerManager.OpenExplorer(default_explorer)
+/*------------------------------------------------------------------------------
+	SCENE EXPLORER
+--------------------------------------------------------------------------------*/
+
+/**
+ */
+function showSceneExplorerCallback =
+(
+	SceneExplorerManager.CreateExplorerFromDefault "Scene Explorer"
 )
 
+
+/**
+ */
+macroscript	_options_scene_explorer_toggle
+category:	"_Otions"
+buttontext:	"Scene Explorer"
+tooltip:	"Show\Hide Scene Explorer.\n\nIf checked, then manager is open on scene open"
+icon:	"control:checkbutton"
+(
+
+	default_explorer = "Scene Explorer"
+
+	--explorer_exist = SceneExplorerManager.ExplorerExists(default_explorer)
+
+	if EventFired.val then
+	(
+		if not SceneExplorerManager.ExplorerExists(default_explorer) then
+			SceneExplorerManager.CreateExplorerFromDefault(default_explorer)
+		else
+			SceneExplorerManager.OpenExplorer(default_explorer)
+
+
+		try( callbacks.addScript #filePostOpenProcess "showSceneExplorerCallback()" id:#showSceneExplorerCallback )catch()
+	)
+	else
+	(
+		SceneExplorerManager.CloseExplorer(default_explorer)
+
+		try( callbacks.removeScripts #filePostOpenProcess id:#showSceneExplorerCallback )catch()
+	)
+
+)
 
 
 --/**

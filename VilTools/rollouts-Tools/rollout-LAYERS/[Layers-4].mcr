@@ -10,6 +10,7 @@ category:	"_Layers-4"
 buttontext:	"Hide\Unhide"
 toolTip:	"Unhide all layers"
 icon:	"MENU:UNHIDE ALL layers"
+autoUndoEnabled:true
 (
 	on execute do
 	(
@@ -34,8 +35,9 @@ icon:	"MENU:UNHIDE ALL layers"
 macroscript	layers_unhide_selected
 category:	"_Layers-4"
 buttontext:	"On Selected"
-toolTip:	"Unhide selected layers, or layers of objects"
+toolTip:	"Unhide selected layers, or layers of objects. \n\nMenu Option:Unhide objects also"
 icon:	"MENU:UNHIDE Selected"
+autoUndoEnabled:true
 (
 	on execute do
 	(
@@ -43,12 +45,30 @@ icon:	"MENU:UNHIDE Selected"
 
 		selected_layers = LayersManager.getSelectedOrCurrent()
 
-		--format "selected_layers:	% \n" selected_layers
-		undo "Unhide selected layers" on
+		format "selected_layers:	% \n" selected_layers[1].name
+
+		--undo "Unhide selected layers" on
+		LayersManager.setVisibility( selected_layers )(true)
+
+		--LayersManager.setCurrent( selected_layers )
+	)
+
+	on altExecute type do
+	(
+		LayersManager = LayersManager_v()
+
+		selected_layers = LayersManager.getSelectedOrCurrent()
+
+		--format "selected_layers:	% \n" selected_layers[1].name
+
+		--undo "Unhide selected layers" on
 			LayersManager.setVisibility( selected_layers )(true)
 
-		LayersManager.setCurrent( selected_layers )
+		for obj in LayersManager.getObjectsInLayers( selected_layers ) do
+			obj.isHidden = false
+
 	)
+
 )
 
 
@@ -65,6 +85,7 @@ category:	"_Layers-4"
 buttontext:	"ON\OFF by prefix"
 tooltip:	"Hide by layer prefix"
 icon:	"Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
+autoUndoEnabled:true
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"

@@ -59,6 +59,8 @@ icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (
 	redrawViews()
 )
 
+
+
 /** Screen: http://www.breidt.net/scripts/pics/3pt_align.gif
   *
   */
@@ -310,3 +312,13 @@ Tooltip:"3Pt Align"
 		snapMode.active = oldSnapMode
 	) -- on execute
 ) -- macroscript
+
+macroscript ThreePointAlign_help
+ButtonText:"3Pt Align"
+Category:"_Transform"
+Tooltip:"3Pt Align"
+(
+     image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
+
+	DOSCommand ("start \"\" \""+image_path+"\"")
+)

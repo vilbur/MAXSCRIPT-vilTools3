@@ -4,32 +4,30 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ObjectRenamer/ObjectRenamer
 	EDIT TEXT
 --------------------------------------------------------------------------------*/
 
-/**  SEARCH
-  *
+/**  SEARCH EDIT TEXT FIELD
   */
 macroscript selection_edit_search_in_names
 category:	"Selection"
 buttonText:	"[search in name]"
-tooltip:	"Search text in names of selection"
+tooltip:	"Search text in selection names"
 icon:	"control:editText|across:3"
 --icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 (
-	format "EventFired	= % \n" EventFired
+	--format "EventFired	= % \n" EventFired
 	--search_text = ROLLOUT_selection.search_in_name.text
 
 	--format "search_text	= % \n" search_text
 )
 
-/**  REPlACE
-  *
+/**  REPlACE EDIT TEXT FIELD
   */
 macroscript selection_edit_replace_in_names
 category:	"Selection"
 buttonText:	"[replace in name]"
-tooltip:	"Replace text in names of selection"
+tooltip:	"Replace text in selection names"
 icon:	"control:editText|across:3"
 (
-	format "EventFired	= % \n" EventFired
+	--format "EventFired	= % \n" EventFired
 
 )
 
@@ -61,8 +59,7 @@ icon:	"across:3"
 
 		if search_text != "" then
 			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" search_text ).Replace obj.name replace_text
-			--obj_name = ( dotNetObject "System.Text.RegularExpressions.Regex" "left" ).Replace obj.name "right"
-			--format "obj_name	= % \n" obj_name
+
 	)
 
 )

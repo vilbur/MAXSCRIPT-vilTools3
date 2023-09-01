@@ -194,21 +194,31 @@ struct CommandPanel_v
 	  */
 	function goToItem item_index =
 	(
-		--format "\n\n"; print "CommandPanel_v.goToItem()"
+		format "\n\n"; print "CommandPanel_v.goToItem()"
 		--format "ITEM_INDEX:	% \n" item_index
-
 		if ( obj = this._getObj (obj) ) == undefined then
 			return false
 
 		if ( curr_mod = modPanel.getCurrentObject() ) == undefined then
 			return false
 
+		items_count	= this.itemsCount()
 
-		current_mod_index = if (current_indexes = this.findModInStack (curr_mod )).count > 0 then current_indexes[1]
 
+		current_mod_index = if selection.count == 1 then
+			(
+				if superClassOf curr_mod == modifier then
+					modPanel.getModifierIndex obj ( curr_mod )
+				else
+					items_count -- if baseobject
+			)
+			else
+			(
+				if (current_indexes = this.findModInStack (curr_mod )).count > 0 then
+					current_indexes[1]
+			)
 
 		selected_items	= this.getSlectedItems()
-		items_count	= this.itemsCount()
 
 		is_first_mod_selected	= current_mod_index == 1
 		is_base_object_selected	= current_mod_index	== items_count

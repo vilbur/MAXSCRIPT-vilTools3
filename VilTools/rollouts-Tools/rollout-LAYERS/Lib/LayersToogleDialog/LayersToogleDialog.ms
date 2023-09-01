@@ -17,7 +17,7 @@
 function layerDialogButtonCallback val which =
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
-	--format "\n"; print "LayersToogleDialog_v.onClickLayerButton()"
+	format "\n"; print "LayersToogleDialog_v.onClickLayerButton()"
 	--format "EventFired:	% \n" EventFired
 	--format "val:	% \n" val
 	--format "which:	% \n" which
@@ -31,10 +31,10 @@ function layerDialogButtonCallback val which =
     if not keyboard.controlPressed and not keyboard.shiftPressed then
 	(
 		if classOf which == integer then
-		LayersManager.setVisibility( which ) (val)
+			LayersManager.setVisibility( which ) (val)
 
 		else if which == #dialog then
-		LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (val)
+			LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (val)
 
 		else if which == #others then
 			LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (val)
@@ -69,7 +69,13 @@ function layerDialogButtonCallback val which =
 
 		/* IF SHIFT PRESSED */
 		else if keyboard.shiftPressed then
-			LayersManager.selectLayers( layers ) -- Select all layers in dialog
+		(
+			layers_selected = LayersManager.getSelectedLayers()
+			format "\n-----------\nARRAY:layers_selected:%\n" layers_selected; for layer in layers_selected do format "layer:	%\n" layer.name
+			format "\n-----------\nARRAY:layers:%\n" layers; for layer in layers do format "layer:	%\n" layer.name
+
+			LayersManager.selectLayers( join layers_selected layers ) -- Select all layers in dialog
+		)
 
 
 		/* RESET "Dialog" & "Others" CHEKBUTTONS STATE */
@@ -179,22 +185,19 @@ struct LayersToogleDialog_v
 		  */
 		function getTooltip button_type = "CRL: Select displayed layers in "+button_type+".\nSHIFT:Select all layers in "+button_type+".\n"
 
-
 		buttons_count = 2
 
 		_Controls.Default #across	buttons_count
 		--_Controls.Default #width	(this.default_width / buttons_count)
 		_Controls.Default #width	32
 
-
-
 		HideBtn = _Controls.Control	#checkbutton "DIALOG"	tooltip:(getTooltip("dialog"))
 		HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"Toggle all layers in dialog"
-		--HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+		HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
 
 		HideOthersBtn = _Controls.Control	#checkbutton "OTHERS"	tooltip:(getTooltip("not in dialog"))
 		HideOthersBtn.Event #changed	"layerDialogButtonCallback"	params:#others	tooltip:"Toggle all layers not in dialog"
-		--HideOthersBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #others)	tooltip:"Hide all layers not in dialog"
+		HideOthersBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #others)	tooltip:"Hide all layers not in dialog"
 
 		--HideOthersBtn = _Controls.Control  #button "RELOAD"
 		--HideOthersBtn.Event #pressed	"macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" tooltip:"Reload dialog with new selection"
@@ -248,7 +251,13 @@ struct LayersToogleDialog_v
 	  */
 	function sanitazeName layer_name =
 	(
-		( dotNetObject "System.Text.RegularExpressions.Regex" ("^[^a-zA-Z]*(.*?(?=[^a-zA-Z0-9]+$)).*$") ).Replace layer_name "$1"
+		--format "\n"; print "LayersToogleDialog_v.sanitazeName()"
+		--format "LAYER_NAME:	% \n" layer_name
+
+		if layer_name == "0" then
+			"Default" --return
+		else
+			( dotNetObject "System.Text.RegularExpressions.Regex" ("^[^a-zA-Z]*(.*?(?=[^a-zA-Z0-9]+$)).*$") ).Replace layer_name "$1"
 	),
 
 	/** Add layer button

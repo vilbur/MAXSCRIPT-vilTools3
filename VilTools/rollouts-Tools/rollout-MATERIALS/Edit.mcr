@@ -8,9 +8,9 @@
 
 /**
  */
-macroscript	material_by_object
+macroscript	material_id_by_object
 category:	"_Material"
-buttonText:	"Mat By Object"
+buttonText:	"Mat ID By Object"
 tooltip:	"Set different material ID for each object"
 (
 	--EditPoly = Epoly_v()
@@ -35,7 +35,7 @@ macroscript	material_remove
 category:	"_Material"
 buttonText:	"Remove"
 tooltip:	"Remove material from selection"
-icon:	"menu:true"
+icon:	"MENU:true"
 (
 
 	selection.material = undefined

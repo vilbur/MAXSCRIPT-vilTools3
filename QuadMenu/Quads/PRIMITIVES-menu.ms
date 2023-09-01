@@ -68,6 +68,7 @@ function PRIMITIVESmenu QuadMenu =
 		#Boolean,
 		#ProBoolean,
 		#Procutter,
+		#Conform,
 		#Scatter,
 		#ShapeMerge
 	)

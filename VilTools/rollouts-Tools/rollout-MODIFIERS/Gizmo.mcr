@@ -1,3 +1,8 @@
+
+/*------------------------------------------------------------------------------
+	ALIGN SLICE GIZMO
+--------------------------------------------------------------------------------*/
+
 --******************************************************************************************************
 -- Created: 		26-06-2015
 -- Last Updated:	--	"23.2.2020 ?. 22:49:19"
@@ -15,10 +20,11 @@
 --******************************************************************************************************
 -- MODIFY THIS AT YOUR OWN RISK
 
-macroscript modifier_align_gizmo
+macroscript	modifier_align_gizmo
 category:	"_Modifiers"
 buttonText:	"Align Slice"
-tooltip:	"Align Slice Gizmo to 3 pts. Hold Shift - to align to Active Grid"
+tooltip:	"Align Slice Gizmo to 3 pts. \nShift: Hold to align to Active Grid"
+autoUndoEnabled: true
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIERS\Gizmo.mcr"
@@ -85,5 +91,69 @@ tooltip:	"Align Slice Gizmo to 3 pts. Hold Shift - to align to Active Grid"
 				curr_mod.slice_plane.transform = tempMatrix
 			)
 		)
+	)
+)
+
+
+/*------------------------------------------------------------------------------
+	ALIGN SLICE GIZMO
+--------------------------------------------------------------------------------*/
+/** Edit ffd spinner callback
+  *
+  */
+function editFFDcallback val inpsin =
+(
+	--format "\n"; print "GIZMO.mcr.editFFDcallback()"
+	format "EventFired:	% \n" EventFired
+
+	if classOf (curr_mod = modPanel.getCurrentObject()) == FFDBox then
+	(
+		max modify mode
+
+		setDimensions curr_mod [ DIALOG_editffd.SPIN_length.value, DIALOG_editffd.SPIN_width.value, DIALOG_editffd.SPIN_height.value]
+	)
+	else
+		messageBox "FFD Box is not active" title:"EDIT FFD BOX"
+
+)
+
+macroscript	modifier_set_ffd
+category:	"_Modifiers"
+buttonText:	"Set FFDxBox"
+tooltip:	"Set points of current active FFDxBox"
+autoUndoEnabled: true
+(
+	--clearListener(); print("Cleared in:"+getSourceFileName())
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIERS\Gizmo.mcr"
+
+	on execute do
+	(
+		max modify mode
+
+		if classOf (curr_mod = modPanel.getCurrentObject()) == FFDBox then
+		(
+			ffd_current = getDimensions curr_mod
+
+			/* DIALOG */
+			_Dialog = Dialog_v ("EditFFD") --ini:(getSourceFileName())
+
+			/* CONTROLS */
+			_Controls   = _Dialog.Controls() --group:"Controls"
+
+			/* CONTROLS */
+			dimensions = #( #Length, #Width, #Height )
+			for i = 1 to dimensions.count do
+			(
+				_Control = _Controls.control #spinner ( toUpper ( dimensions[i]  as string ) ) across:1 offset:[0,16] range:[2, 1000, ffd_current[i] ] params: #(#type, #integer)
+
+				_Control.Event #changed "editFFDcallback"
+			)
+
+			/* DIALOG CREATE */
+			_Dialog.create width:128
+
+		)
+		else
+			messageBox "FFD Box is not active" title:"EDIT FFD BOX"
 	)
 )

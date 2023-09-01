@@ -1,7 +1,7 @@
 /** Load modifiers defaults when modifier is added
   *
   * Callback is fired on paste when copy, but is suspeneded while modiifer has not default values
-
+  *
  */
 function loadModifierDefaults =
 (
@@ -15,13 +15,10 @@ function loadModifierDefaults =
 
 	if ModStackPreset.modIsDefault() then -- avoid execute on modifier copy
 	(
-		print "loadModifierDefaults.ms: Modifier created"
-
-		if ModStackPreset.hasPreset()  then
+		--print "loadModifierDefaults.ms: Modifier created"
+		if ModStackPreset.hasPreset() then
 			ModStackPreset.loadPreset()
 
 		_modifier.name = (ModifierRenamer_v(_modifier)).generateName()
-
 	)
-
 )

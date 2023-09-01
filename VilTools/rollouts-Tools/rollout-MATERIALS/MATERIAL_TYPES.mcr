@@ -32,9 +32,9 @@ buttonText:	"X-Ray"
 tooltip:	"Set transparency on objects material,\nor assign X-Ray material, if material is undefined"
 icon:	"menu:true"
 (
-	clearListener(); print("Cleared in:"+getSourceFileName())
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\Lib\Material\Material.ms"
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\MATERIAL TYPES.mcr"
+	--clearListener(); print("Cleared in:"+getSourceFileName())
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\Lib\Material\Material.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\MATERIAL TYPES.mcr"
 
 
 	_Material = Material_v()
@@ -68,9 +68,9 @@ buttonText:	"X-Ray"
 tooltip:	"Remove transparency on objects material"
 --icon:	"menu:true"
 (
-	clearListener(); print("Cleared in:"+getSourceFileName())
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\Lib\Material\Material.ms"
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\MATERIAL TYPES.mcr"
+	--clearListener(); print("Cleared in:"+getSourceFileName())
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\Lib\Material\Material.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\MATERIAL TYPES.mcr"
 
 
 	--_Material = Material_v()
@@ -127,4 +127,3 @@ icon:	"control:checkbutton"
 		select _selection
 	)
 )
-
