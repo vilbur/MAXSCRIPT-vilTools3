@@ -10,11 +10,11 @@ function circleStack direction mode:#GO which:#ENABLED =
 	--format "MODE:	% \n" mode
 	--format "WHICH:	% \n" which
 
-	CommandPanel 	= CommandPanel_v()
+	StackRemote 	= ModifierStackRemote_v()
 
-	items_count = CommandPanel.itemsCount()
+	items_count = StackRemote.itemsCount()
 
-	selected_items = CommandPanel.getSlectedItems()
+	selected_items = StackRemote.ListBox.getSlectedItems()
 
 	if selected_items.count > 0 then
 	(
@@ -73,7 +73,7 @@ function circleStack direction mode:#GO which:#ENABLED =
 		--format "selected_items != new_selection:	% \n" (selected_items != new_selection)
 
 		if new_selection != undefined and ( new_selection.count > 0 and selected_items != new_selection ) then -- IF SELECTION HAS BEEN CHANGED
-			CommandPanel.selectItem true new_selection clear:true
+			StackRemote.selectItem true new_selection clear:true
 
 	)
 )

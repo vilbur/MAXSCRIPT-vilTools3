@@ -38,8 +38,11 @@ function importStdScripts =
 		"/rollout-SCENE/RecentFile/RecentFile.ms",
 
 		"/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
-		"/rollout-MODIFIER-STACK/Lib/ModStackPrese/ModStackPrese.ms",
+		"/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms",
 		"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
+
+
+
 
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
@@ -54,6 +57,8 @@ function importStdScripts =
 		"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
 
 		"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
+		"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
+		
 		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
 
 		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"

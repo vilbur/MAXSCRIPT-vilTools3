@@ -324,14 +324,14 @@ struct CommandPanel_v
 	 */
 	function _getSelectedModifiers modifiers =
 	(
-		--format "\n"; print "CommandPanel_v._getSelectedModifiers()"
+		format "\n"; print "CommandPanel_v._getSelectedModifiers()"
 
 		selection_states = this._getItemsSelectionStates()
 		--format "SELECTION_STATES:	% \n" selection_states
 		all_items = this._getAllItems()
 		--format "ALL_ITEMS:	% \n" all_items
 		selected_items = this._getSelectedItemsInStack (modifiers) (all_items) (selection_states)
-
+		--format "SELECTED_ITEMS:	% \n" selected_items
 		for selected_item in selected_items collect modifiers[selected_item]
 	),
 
@@ -358,8 +358,8 @@ struct CommandPanel_v
 	 */
 	function _getSelectedItemsInStack mods all_stack_items selection_states =
 	(
-		--format "\n\n"; print "CommandPanel_v._getSelectedItemsInStack()"
-		------format "mods.count:	% \n" mods.count
+		format "\n\n"; print "CommandPanel_v._getSelectedItemsInStack()"
+
 		--format "MODIFERS:	% \n" mods
 		--format "ALL_ITEMS:	% \n" all_stack_items
 		--format "SELECTION_STATES:	% \n" selection_states
@@ -367,7 +367,6 @@ struct CommandPanel_v
 
 		for mod_index = 1 to mods.count do
 		(
-
 			item_index = findItem all_stack_items mods[mod_index].name
 
 			if item_index > 0 then
@@ -375,7 +374,7 @@ struct CommandPanel_v
 				all_stack_items[item_index] = undefined -- remove item for next loop
 				--format "selection_states[item_index]:	% \n" selection_states[item_index]
 				if selection_states[item_index] == 1 then
-					append mods_indexes modifier_index
+					append mods_indexes item_index
 			)
 
 		)

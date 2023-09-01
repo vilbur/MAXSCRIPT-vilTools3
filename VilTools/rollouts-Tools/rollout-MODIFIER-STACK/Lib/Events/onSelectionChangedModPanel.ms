@@ -29,7 +29,7 @@ global ON_MOD_PANEL_CHANGED_CALLBACKS = #()
  */
 function waitOnSelectionChanged =
 (
-	print "Start: waitOnSelectionChanged()"
+	--print "Start: waitOnSelectionChanged()"
 	callbacks.addScript #selectionSetChanged "testNewSelection()" id:#testNewSelection
 )
 
@@ -37,7 +37,7 @@ function waitOnSelectionChanged =
  */
 function waitOnSelectionChangedKill =
 (
-	print "Kill: waitOnSelectionChangedKill()"
+	--print "Kill: waitOnSelectionChangedKill()"
 	try(callbacks.removeScripts #selectionSetChanged   id:#testNewSelection)catch()
 )
 
@@ -70,12 +70,11 @@ function onSelectionChangedModPanelKill callbackFn =
 )
 
 
-
 /** Wait when modifier stack will be ready
  */
 function waitOnModifiyStackIsReady =
 (
-	print "Start: waitOnModifiyStackIsReady()"
+	--print "Start: waitOnModifiyStackIsReady()"
 	callbacks.addScript #modPanelObjPostChange "onModifyStackReady()" id:#onModifyStackReady
 )
 
@@ -83,7 +82,7 @@ function waitOnModifiyStackIsReady =
  */
 function waitOnModifiyStackIsReadyKill =
 (
-	print "Kill: waitOnModifiyStackIsReady()"
+	--print "Kill: waitOnModifiyStackIsReady()"
 	try(callbacks.removeScripts #modPanelObjPostChange id:#onModifyStackReady)catch()
 )
 
@@ -101,7 +100,7 @@ function waitOnModifiyStackIsReadyKill =
  */
 function testNewSelection =
 (
-	format "\n"; print "Callback: testNewSelection()"
+	--format "\n"; print "Callback: testNewSelection()"
 
 	if( selection.count > 0 ) then
 	(
@@ -114,7 +113,7 @@ function testNewSelection =
 
 		) else
 		(
-			--print "Object reselected"
+			--print "Reselected"
 		)
 	)
 	else -- if( selection.count == 0 ) then
@@ -134,18 +133,19 @@ function testNewSelection =
  */
 function onModifyStackReady =
 (
-	print "Callback: onModifyStackReady WAIT"
+	--format "\n"; print "Callback: onModifyStackReady WAIT"
 
 	max modify mode
 
 	if( (_modifier = modPanel.getCurrentObject()) != undefined ) then -- current object is undefined than Modify panel is fully loaded
 	(
-		print "Callback: onModifyStackReady READY"
+		--format "\n"; print "Callback: onModifyStackReady READY"
 
 		waitOnModifiyStackIsReadyKill()
 
 		for callback in ON_MOD_PANEL_CHANGED_CALLBACKS do
 			execute(callback+"()")
+
 	)
 )
 

@@ -1,30 +1,29 @@
 
-/** 
-  
-  1) Save last active modifier of previous selected object on selection change
-  
-  2) Load last active modifier on newly selected modifier
-  
+
+global LAST_ACTIVE_MODIFIER = Dictionary ( #string ) -- KEY: Obejct pointer VALUE: last active modifier pointer
+
+/**
  */
 function activateLastModifier =
 (
+	--print "activateLastModifier"
 	if selection.count == 1 then
 	(
+		saveLastModifierKill() -- kill callback before mod change
+
 		obj = selection[1]
-		
-		if (index_of_node = findItem LAST_MODIFIER_SAVER.nodes obj ) > 0 then
+		key = (getHandleByAnim obj) as string
+
+		if ( mod_handle = LAST_ACTIVE_MODIFIER[key] ) != undefined then
 		(
-			saveLastModifierKill()
-			
-			index_of_modifier = LAST_MODIFIER_SAVER.modifiers[index_of_node]
-			
-			if index_of_modifier > 0 then 
-				modPanel.setCurrentObject obj.modifiers[index_of_modifier] node:obj
-				
-			else
-				modPanel.setCurrentObject $.baseObject
-			
-			saveLastModifierStart()
+			_mod =  getAnimByHandle mod_handle
+
+			if _mod != undefined and ( modifier_index = modPanel.getModifierIndex obj _mod ) != undefined and modifier_index > 1 then -- do not set if modifier is first
+				modPanel.setCurrentObject _mod node:obj
 		)
+
+		saveLastModifierStart()
+
 	)
+
 )
