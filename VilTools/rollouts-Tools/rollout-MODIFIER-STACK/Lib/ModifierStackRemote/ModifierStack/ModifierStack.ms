@@ -20,12 +20,29 @@ struct ModifierStack_v
 	  */
 	function selectModByIndex index =
 	(
-		format "\n"; print "ModifierStack_v.selectModByIndex()"
-		format "INDEX:	% \n" index
-		current_index = this._getIndexByMod( modPanel.getCurrentObject() )
+		--format "\n"; print "ModifierStack_v.selectModByIndex()"
+		--format "INDEX:	% \n" index
+		current_index = this.getIndexByMod( modPanel.getCurrentObject() )
 
 		this.goToIndex (current_index) (index)
+	),
 
+	/** Get position of mod in modstack
+	  */
+	function getIndexByMod _mod =
+	(
+		--format "\n"; print "ModifierStack_v.getCurrentItemIndex()"
+		this._getPointerIndex (getHandleByAnim _mod)
+	),
+
+	/** Get modifier by index
+	  *
+	  */
+	function getModifierByIndex index =
+	(
+		--format "\n"; print "ModifierStack_v.getModifierByIndex()"
+		--format "index:	% \n" index
+		getAnimByHandle ( this.pointers[index] )
 	),
 
 	private
@@ -35,31 +52,23 @@ struct ModifierStack_v
 	  */
 	function goToIndex current_index index =
 	(
-		format "\n"; print "ModifierStack_v.goToIndex()"
-		format "current_index:	% \n" current_index
-		format "index:	% \n" index
+		--format "\n"; print "ModifierStack_v.goToIndex()"
+		--format "current_index:	% \n" current_index
+		--format "index:	% \n" index
 
 		direction = if index > current_index or current_index == 1 then #DOWN else #UP
-		format "direction:	% \n" direction
+		--format "direction:	% \n" direction
 		count = case direction of
 		(
 			#DOWN:	if current_index == items_count then items_count else index - current_index
 			#UP:	if current_index == 1           then items_count else current_index - index
 		)
-		format "count:	% \n" count
+		--format "count:	% \n" count
 		for i = 1 to count do
 			if direction == #DOWN then
 				max prev mod
 			else
 				max next mod
-	),
-
-	/** Get position of mod in modstack
-	  */
-	function _getIndexByMod _mod =
-	(
-		--format "\n"; print "ModifierStack_v.getCurrentItemIndex()"
-		this._getPointerIndex (getHandleByAnim _mod)
 	),
 
 	/** Get index
@@ -69,7 +78,6 @@ struct ModifierStack_v
 	(
 		--format "\n"; print "ModifierStack_v._getIndex()"
 		for i = 1 to pointers.count where pointers[i] == pointer do return i
-
 	),
 
 	/** Set pointers

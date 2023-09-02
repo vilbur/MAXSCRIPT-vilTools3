@@ -16,9 +16,9 @@ function prepareScene =
 	--addModifier _box  (Poly_Select ())
 	--addModifier _box  (Materialmodifier ())
 
-	--select _sphere
+	select _sphere
 	select _box
-	--select objects
+	select objects
 
 
 	addModifier _sphere  (Poly_Select ())
@@ -42,36 +42,53 @@ ModifierStack = ModifierStackRemote_v()
 
 
 --/* SELECT ITEMS */
---ModifierStack.selectItem true 1
---ModifierStack.selectItem true 2
---ModifierStack.selectItem true 3
---ModifierStack.selectItem true 3 clear:false -- add to selection
---ModifierStack.selectItem true #(2, 3)
+--ModifierStack.selectItem 1 true
+--ModifierStack.selectItem 2 true
+--ModifierStack.selectItem 3 true
+--ModifierStack.selectItem 4 true
+--ModifierStack.selectItem 6 true
+--ModifierStack.selectItem 3 true clear:false -- add to selection
+--ModifierStack.selectItem #(2, 3) true
+
+/* GET MODIFIERS */
+--format "MODIFIERS:	% \n" (ModifierStack.getModifiers( 2 ))
+--format "MODIFIERS:	% \n" (ModifierStack.getModifiers #( 2, 3 ))
+
 
 /* GET SELECTED ITEMS */
---format "SELECTED ITEMS:	% \n" (ModifierStack.getSlectedItems()) -- include baseobejct if selection == 1
+--format "SELECTED ITEMS:	% \n" (ModifierStack.ListBox.getSlectedItems()) -- include baseobejct if selection == 1
+
+/* GET SELECTED MODIFIERS */
 --format "SELECTED MODIFIERS:	% \n" (ModifierStack.getSelectedModifiers())
---format "SELECTED MODIFIERS:	% \n" (ModifierStack.getSelectedModifiers obj: selection[2])
---
-
---modPanel.setCurrentObject( $.modifiers[(ModifierStack.getSelectedModifiers())[1]] ) -- refresh modifier stack
-
 
 /* SELECT ALL */
---ModifierStack.selectAll()
+--ModifierStack.ListBox.selectAll()
+
 
 /* DESELECT ITEMS */
---ModifierStack.unselect()
---ModifierStack.selectItem false #all
+--ModifierStack.ListBox.unselect()
+
+
+/* SET MODIIERS STATE */
+--ModifierStack.setState 3 #enabled false
+--ModifierStack.setState #(2, 3, 4) #enabled false
+ModifierStack.setState #(2, 3, 4) #materialID 1
+
+/* SET STATE OF SELECTED MODIIERS  */
+--ModifierStack.setState #SELECTED	#enabled false
+
+/* SET STATE OF ALL MODIIERS  */
+--ModifierStack.setState #ALL	#enabled false
+
+/* TOGGLE STATE */
+--ModifierStack.setState #ALL	#enabled #TOGGLE
 
 
 
---/* SELECT LAST ITEM (Base object) */
---ModifierStack.selectLastItem( true)
---ModifierStack.selectLastItem( false ) -- deselect last item (bseobject if selection.count == 1 )
+/* DISABLE SELECTED MODIIERS */
+
 
 /* FIND MODIFIER IN STACK */
 -- format "BASEOBJECT INDEX:	% \n" ( ModifierStack.findModInStack( selection[1].baseobject) )
  --format "MODIFIER INDEX:	% \n" ( ModifierStack.findModInStack( selection[1].modifiers[#Material]) )
 --format "MODIFIER INDEX:	% \n" ( ModifierStack.findModInStack( selection[1].modifiers[2]) )
-
