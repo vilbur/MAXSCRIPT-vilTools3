@@ -1,14 +1,15 @@
 
 
 /*------------------------------------------------------------------------------
-	SAVE MODIFIER
+	SAVE CURRENT MODIFIER OF SELECTIOn
 --------------------------------------------------------------------------------*/
+global LAST_ACTIVE_MODIFIER = Dictionary ( #string ) -- KEY: Obejct pointer VALUE: last active modifier pointer
 
 /**
  */
 function saveLastModifierStart =
 (
-	--print "Start: saveLastModifierStart()"
+	print "START: saveLastModifierStart()"
 	callbacks.addScript #modPanelObjPostChange "saveLastModifier()" id:#saveLastModifier
 )
 
@@ -16,7 +17,7 @@ function saveLastModifierStart =
  */
 function saveLastModifierKill =
 (
-	--print "Kill: saveLastModifierKill()"
+	print "KILL: saveLastModifierKill()"
 	try(callbacks.removeScripts #modPanelObjPostChange id:#saveLastModifier)catch()
 )
 
@@ -24,10 +25,10 @@ function saveLastModifierKill =
  */
 function saveLastModifier =
 (
-
 	if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
 	(
-		print "Callback: saveLastModifier()"
+		print "CALLBACK: saveLastModifier()"
+
 		pointers = sort(for obj in selection where obj.modifiers.count > 0 collect (getHandleByAnim obj))
 
 		pointer_key = ""
@@ -37,6 +38,3 @@ function saveLastModifier =
 		LAST_ACTIVE_MODIFIER[pointer_key] = getHandleByAnim curr_mod
 	)
 )
-
-/* KILL ON STARTUP */
---saveLastModifierKill()

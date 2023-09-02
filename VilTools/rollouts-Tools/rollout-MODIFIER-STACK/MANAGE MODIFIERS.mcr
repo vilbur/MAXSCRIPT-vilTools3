@@ -30,36 +30,6 @@ icon:	"MENU:true"
 /**
   *
   */
-macroscript	modifiers_rename_current
-category:	"_Modifiers-Manage"
-buttontext:	"Rename"
-toolTip:	"Rename current modifier. \n\nOption in menu: Open Dialog"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-
-	on execute do
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
-
-		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-			curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
-	)
-	on altExecute type do
-	(
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
-
-		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-			(ModifierRenamer_v(curr_mod)).renameDialog generate:false
-	)
-)
-
-/**
-  *
-  */
 macroscript	modifiers_copy_name
 category:	"_Modifiers-Manage"
 buttontext:	"Copy Name"

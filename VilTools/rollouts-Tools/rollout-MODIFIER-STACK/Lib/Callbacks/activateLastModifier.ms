@@ -1,15 +1,13 @@
 
 
-global LAST_ACTIVE_MODIFIER = Dictionary ( #string ) -- KEY: Obejct pointer VALUE: last active modifier pointer
 
 /**
  */
 function activateLastModifier =
 (
-	--print "activateLastModifier"
-
 	if selection.count > 0 then
 	(
+		print "activateLastModifier"
 		pointers = sort(for obj in selection where obj.modifiers.count > 0 collect (getHandleByAnim obj))
 
 		pointer_key = ""

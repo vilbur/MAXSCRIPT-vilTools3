@@ -7,9 +7,6 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/CircleStack.ms"
 
 */
 
-
-
-
 /*------------------------------------------------------------------------------
 
 	ENABLE\DISABLE SELECTED MODIFIERS
@@ -20,68 +17,110 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/CircleStack.ms"
 macroscript	modifiers_toggle_selected
 category:	"_Modifiers-Remote"
 buttontext:	"Toggle"
-toolTip:	"Toggle selected modifiers"
+toolTip:	"Toggle selected modifiers. \n\nCTRL: Froce ENABLE modifiers. \n\nALT: Froce DIABLE modifiers"
 icon:	"MENU:true|title:TOGGLE"
 (
 	on execute do
 	(
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms"
-		(ModifierStackRemote_v()).setState ( #SELECTED )( #toggle )
+		state = case of
+		(
+			( keyboard.controlPressed):	true
+			( keyboard.altPressed):	false
+			default:	#toggle
+		)
+		(ModifierStackRemote_v()).setState ( #SELECTED )( state )
+	)
+)
+
+/*------------------------------------------------------------------------------
+	RENAME MODIFIER
+--------------------------------------------------------------------------------*/
+
+/**
+  */
+macroscript	modifiers_rename_current
+category:	"_Modifiers-Remote"
+buttontext:	"Rename"
+toolTip:	"Rename current modifier. \n\nOption in menu: Open Dialog"
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+
+		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+			curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
+	)
+
+	on altExecute type do
+	(
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+
+		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+			(ModifierRenamer_v(curr_mod)).renameDialog generate:false
 	)
 )
 
 
-/** ENABLE
- */
-macroscript	modifiers_enable_selected
-category:	"_Modifiers-Remote"
-buttontext:	"Enable"
-toolTip:	"Enable selected modifiers"
-icon:	"MENU:true|title:ENABLE"
-(
-	on execute do
-		(ModifierStackRemote_v()).setState ( #SELECTED )( #toggle )
 
-	on AltExecute type do
-		macros.run "_Modifiers-Remote" "modifiers_enable_all"
-)
 
-/** ENABLE RIGHTCLICK
- */
-macroscript	modifiers_enable_all
-category:	"_Modifiers-Remote"
-buttontext:	"Enable"
-toolTip:	"Enable All modifiers"
-(
-	on execute do
-		(ModifierStackRemote_v()).setState ( #SELECTED )( true )
-)
 
-/** DISABLE
- */
-macroscript	modifiers_disable_selected
-category:	"_Modifiers-Remote"
-buttontext:	"Disable"
-toolTip:	"Disable selected modifiers"
-icon:	"MENU:true|title:DISABLE"
-(
-	on execute do
-		(ModifierStackRemote_v()).setState ( #SELECTED )( false )
+--/** ENABLE
+-- */
+--macroscript	modifiers_enable_selected
+--category:	"_Modifiers-Remote"
+--buttontext:	"Enable"
+--toolTip:	"Enable selected modifiers"
+--icon:	"MENU:true|title:ENABLE"
+--(
+--	on execute do
+--		(ModifierStackRemote_v()).setState ( #SELECTED )( #toggle )
+--
+--	on AltExecute type do
+--		macros.run "_Modifiers-Remote" "modifiers_enable_all"
+--)
 
-	on AltExecute type do
-		macros.run "_Modifiers-Remote" "modifiers_disable_all"
-)
-
-/** DISABLE RIGHTCLICK
- */
-macroscript	modifiers_disable_all
-category:	"_Modifiers-Remote"
-buttontext:	"Disable"
-toolTip:	"Disable All modifiers"
-(
-	on execute do
-		(ModifierStackRemote_v()).setState ( #ALL )( false )
-)
+--/** ENABLE RIGHTCLICK
+-- */
+--macroscript	modifiers_enable_all
+--category:	"_Modifiers-Remote"
+--buttontext:	"Enable"
+--toolTip:	"Enable All modifiers"
+--(
+--	on execute do
+--		(ModifierStackRemote_v()).setState ( #SELECTED )( true )
+--)
+--
+--/** DISABLE
+-- */
+--macroscript	modifiers_disable_selected
+--category:	"_Modifiers-Remote"
+--buttontext:	"Disable"
+--toolTip:	"Disable selected modifiers"
+--icon:	"MENU:true|title:DISABLE"
+--(
+--	on execute do
+--		(ModifierStackRemote_v()).setState ( #SELECTED )( false )
+--
+--	on AltExecute type do
+--		macros.run "_Modifiers-Remote" "modifiers_disable_all"
+--)
+--
+--/** DISABLE RIGHTCLICK
+-- */
+--macroscript	modifiers_disable_all
+--category:	"_Modifiers-Remote"
+--buttontext:	"Disable"
+--toolTip:	"Disable All modifiers"
+--(
+--	on execute do
+--		(ModifierStackRemote_v()).setState ( #ALL )( false )
+--)
 
 /** DELETE
  */
@@ -125,7 +164,7 @@ icon:	"MENU:true|title:DELETE"
 macroscript	modifier_smart_remote_up
 category:	"_Modifiers-Remote"
 buttontext:	"Smart UP"
---tooltip:	"Select Previous Enabled Modifier"
+tooltip:	"GO | SELECT | DESELECT mods in stack. \n\nCTRL: On go mode select disabled mods also. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods UP"
 (
 	on execute do
 	(
@@ -165,7 +204,7 @@ buttontext:	"Smart UP"
 macroscript	modifier_smart_remote_down
 category:	"_Modifiers-Remote"
 buttontext:	"Smart Down"
---tooltip:	"Select Next Enabled Modifier"
+tooltip:	"GO | SELECT | DESELECT mods in stack. \n\nCTRL: On go mode select disabled mods also. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods DOWN"
 (
 
 	on execute do

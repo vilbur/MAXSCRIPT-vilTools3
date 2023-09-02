@@ -28,7 +28,6 @@ macroscript	modifiers_auto_end_result
 category:	"_Modifier-Stack"
 buttontext:	"Auto End Result"
 toolTip:	"Enable\Disable show end result on Enter\Exit subobject"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
 icon:	"control:checkbutton|MENU:true|across:1"
 (
 	on IsChecked do AUTO_END_RESULT != undefined
@@ -75,30 +74,34 @@ function keepActiveModifier which =
 	ROLLOUT_modifier_stack.CBXBTN_last_modifier.state	= false
 
 
-	if( which == #EditPoly ) then
+	case which of
 	(
-		activateFirstEditPoly()
+		#EditPoly:
+		(
+			activateFirstEditPoly()
 
-		onSelectionChangedModPanel ("activateFirstEditPoly")
+			onSelectionChangedModPanel ("activateFirstEditPoly")
 
-		ROLLOUT_modifier_stack.CBXBTN_edit_poly.state	= true
-	)
-	else if( which == #Unwrap ) then
-	(
-		activateFirstUnwrap()
+			ROLLOUT_modifier_stack.CBXBTN_edit_poly.state	= true
+		)
 
-		onSelectionChangedModPanel ("activateFirstUnwrap")
+		#Unwrap:
+		(
+			activateFirstUnwrap()
 
-		ROLLOUT_modifier_stack.CBXBTN_unwrap.state	= true
-	)
+			onSelectionChangedModPanel ("activateFirstUnwrap")
 
-	else if( which == #LastModifier ) then
-	(
-		saveLastModifierStart()
+			ROLLOUT_modifier_stack.CBXBTN_unwrap.state	= true
+		)
 
-		onSelectionChangedModPanel ("activateLastModifier")
+		#LastModifier:
+		(
+			saveLastModifierStart()
 
-		ROLLOUT_modifier_stack.CBXBTN_last_modifier.state	= true
+			onSelectionChangedModPanel ("activateLastModifier")
+
+			ROLLOUT_modifier_stack.CBXBTN_last_modifier.state	= true
+		)
 	)
 
 )
@@ -115,7 +118,9 @@ icon:	"control:checkbutton|MENU:true|across:3"
 
 	on execute do
 		--format "EventFired:	% \n" EventFired
-		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == undefined then #EditPoly )
+		keepActiveModifier ( if EventFired == undefined or (EventFired != undefined and EventFired.val ) then #EditPoly )
 
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #EditPoly
@@ -133,13 +138,17 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 
 	on execute do
 	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
-		--format "EventFired:	% \n" EventFired
+		clearListener(); print("Cleared in:"+getSourceFileName())
+		format "EventFired:	% \n" EventFired
+
+
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\Callbacks\activateLastModifier.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\Callbacks\saveLastModifier.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStackRemote.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStack\ModifierStack.ms"
-		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #LastModifier then undefined else #LastModifier)
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #LastModifier then undefined else #LastModifier)
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == undefined then #LastModifier )
+		keepActiveModifier ( if EventFired == undefined or (EventFired != undefined and EventFired.val ) then #LastModifier )
 	)
 
 
@@ -156,10 +165,9 @@ icon:	"control:checkbutton|MENU:true"
 (
 
 	on execute do
-		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #Unwrap then undefined else #Unwrap)
-		--format "EventFired:	% \n" EventFired
-
-
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #Unwrap then undefined else #Unwrap)
+		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == undefined then #Unwrap )
+		keepActiveModifier ( if EventFired == undefined or (EventFired != undefined and EventFired.val ) then #Unwrap )
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #Unwrap
 )
