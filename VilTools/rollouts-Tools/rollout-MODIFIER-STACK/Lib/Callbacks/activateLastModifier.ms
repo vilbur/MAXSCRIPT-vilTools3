@@ -7,23 +7,21 @@ global LAST_ACTIVE_MODIFIER = Dictionary ( #string ) -- KEY: Obejct pointer VALU
 function activateLastModifier =
 (
 	--print "activateLastModifier"
-	if selection.count == 1 then
+
+	if selection.count > 0 then
 	(
-		saveLastModifierKill() -- kill callback before mod change
+		pointers = sort(for obj in selection where obj.modifiers.count > 0 collect (getHandleByAnim obj))
 
-		obj = selection[1]
-		key = (getHandleByAnim obj) as string
+		pointer_key = ""
+		for pointer in pointers do pointer_key += "_" + pointer as string
+		pointer_key = trimLeft(pointer_key) "_"
 
-		if ( mod_handle = LAST_ACTIVE_MODIFIER[key] ) != undefined then
-		(
-			_mod =  getAnimByHandle mod_handle
+		saveLastModifierKill()
 
-			if _mod != undefined and ( modifier_index = modPanel.getModifierIndex obj _mod ) != undefined and modifier_index > 1 then -- do not set if modifier is first
-				modPanel.setCurrentObject _mod node:obj
-		)
+		if ( mod_handle = LAST_ACTIVE_MODIFIER[pointer_key] ) != undefined then
+			(ModifierStackRemote_v()).selectByHandle (mod_handle ) true
 
 		saveLastModifierStart()
-
 	)
 
 )

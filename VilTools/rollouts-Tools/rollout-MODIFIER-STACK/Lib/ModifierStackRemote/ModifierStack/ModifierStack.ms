@@ -27,12 +27,15 @@ struct ModifierStack_v
 		this.goToIndex (current_index) (index)
 	),
 
+	/*------------------------------------------------------------------------------
+		GETTERS
+	--------------------------------------------------------------------------------*/
 	/** Get position of mod in modstack
 	  */
 	function getIndexByMod _mod =
 	(
 		--format "\n"; print "ModifierStack_v.getCurrentItemIndex()"
-		this._getPointerIndex (getHandleByAnim _mod)
+		this.getIndexByPointer (getHandleByAnim _mod)
 	),
 
 	/** Get modifier by index
@@ -45,6 +48,18 @@ struct ModifierStack_v
 		getAnimByHandle ( this.pointers[index] )
 	),
 
+	/** Get index
+	  *
+	  */
+	function getIndexByPointer pointer =
+	(
+		--format "\n"; print "ModifierStack_v._getIndex()"
+		index = for i = 1 to pointers.count where pointers[i] == pointer do return i
+
+		if classOf index != OkClass then
+			index --return
+	),
+
 	private
 
 	/** Go to index
@@ -52,9 +67,9 @@ struct ModifierStack_v
 	  */
 	function goToIndex current_index index =
 	(
-		--format "\n"; print "ModifierStack_v.goToIndex()"
-		--format "current_index:	% \n" current_index
-		--format "index:	% \n" index
+		format "\n"; print "ModifierStack_v.goToIndex()"
+		format "current_index:	% \n" current_index
+		format "index:	% \n" index
 
 		direction = if index > current_index or current_index == 1 then #DOWN else #UP
 		--format "direction:	% \n" direction
@@ -71,14 +86,6 @@ struct ModifierStack_v
 				max next mod
 	),
 
-	/** Get index
-	  *
-	  */
-	function _getPointerIndex pointer =
-	(
-		--format "\n"; print "ModifierStack_v._getIndex()"
-		for i = 1 to pointers.count where pointers[i] == pointer do return i
-	),
 
 	/** Set pointers
 	  *

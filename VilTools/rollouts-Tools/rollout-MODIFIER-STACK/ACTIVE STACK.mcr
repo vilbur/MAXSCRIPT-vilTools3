@@ -29,8 +29,9 @@ category:	"_Modifier-Stack"
 buttontext:	"Auto End Result"
 toolTip:	"Enable\Disable show end result on Enter\Exit subobject"
 --toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"control:checkbutton|menu:true"
+icon:	"control:checkbutton|MENU:true|across:1"
 (
+	on IsChecked do AUTO_END_RESULT != undefined
 
 	on execute do
 		if AUTO_END_RESULT == undefined then
@@ -45,10 +46,6 @@ icon:	"control:checkbutton|menu:true"
 
 			AUTO_END_RESULT = undefined
 		)
-
-	on IsChecked do AUTO_END_RESULT != undefined
-
-
 )
 
 
@@ -57,6 +54,7 @@ icon:	"control:checkbutton|menu:true"
 --------------------------------------------------------------------------------*/
 
 global KEEP_ACTIVE_NODIFIER
+global ROLLOUT_modifier_stack
 
 function keepActiveModifier which =
 (
@@ -112,12 +110,12 @@ macroscript	modifiers_keep_active_edit_poly
 category:	"_Modifier-Stack"
 buttonText:	"Edit Poly"
 tooltip:	"Select Edit Poly modifier when object is selected"
-icon:	"control:checkbutton|menu:true"
+icon:	"control:checkbutton|MENU:true|across:3"
 (
 
 	on execute do
-		format "EventFired:	% \n" EventFired
-		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
+		--format "EventFired:	% \n" EventFired
+		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
 
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #EditPoly
@@ -130,11 +128,19 @@ macroscript	modifiers_keep_active_last_modifier
 category:	"_Modifier-Stack"
 buttonText:	"Last Modifier"
 tooltip:	"Select last modifier when object is selected"
-icon:	"control:checkbutton|menu:true"
+icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 
 	on execute do
+	(
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		--format "EventFired:	% \n" EventFired
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\Callbacks\activateLastModifier.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\Callbacks\saveLastModifier.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStackRemote.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStack\ModifierStack.ms"
 		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #LastModifier then undefined else #LastModifier)
+	)
 
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #LastModifier
@@ -146,11 +152,13 @@ macroscript	modifiers_keep_active_unwrap
 category:	"_Modifier-Stack"
 buttonText:	"Unwrap"
 tooltip:	"Select last modifier when object is selected"
-icon:	"control:checkbutton|menu:true"
+icon:	"control:checkbutton|MENU:true"
 (
 
 	on execute do
 		keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #Unwrap then undefined else #Unwrap)
+		--format "EventFired:	% \n" EventFired
+
 
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #Unwrap

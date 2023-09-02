@@ -84,6 +84,6 @@ function circleStack direction mode:#GO which:#ENABLED =
 		--format "selected_items != new_selection:	% \n" (selected_items != new_selection)
 
 		if new_selection != undefined and ( new_selection.count > 0 and selected_items != new_selection ) then -- IF SELECTION HAS BEEN CHANGED
-			StackRemote.selectItem true new_selection clear:true
+			StackRemote.selectItem new_selection true clear:true
 	)
 )

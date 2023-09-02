@@ -26,7 +26,7 @@ icon:	"MENU:true|title:TOGGLE"
 	on execute do
 	(
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms"
-		(CommandPanel_v()).setStateSelectedModifiers( #toggle )( #SELECTED )
+		(ModifierStackRemote_v()).setState ( #SELECTED )( #toggle )
 	)
 )
 
@@ -40,7 +40,7 @@ toolTip:	"Enable selected modifiers"
 icon:	"MENU:true|title:ENABLE"
 (
 	on execute do
-		(CommandPanel_v()).setStateSelectedModifiers( true )( #SELECTED )
+		(ModifierStackRemote_v()).setState ( #SELECTED )( #toggle )
 
 	on AltExecute type do
 		macros.run "_Modifiers-Remote" "modifiers_enable_all"
@@ -54,7 +54,7 @@ buttontext:	"Enable"
 toolTip:	"Enable All modifiers"
 (
 	on execute do
-		(CommandPanel_v()).setStateSelectedModifiers( true )( #ALL )
+		(ModifierStackRemote_v()).setState ( #SELECTED )( true )
 )
 
 /** DISABLE
@@ -66,7 +66,7 @@ toolTip:	"Disable selected modifiers"
 icon:	"MENU:true|title:DISABLE"
 (
 	on execute do
-		(CommandPanel_v()).setStateSelectedModifiers( false )( #SELECTED )
+		(ModifierStackRemote_v()).setState ( #SELECTED )( false )
 
 	on AltExecute type do
 		macros.run "_Modifiers-Remote" "modifiers_disable_all"
@@ -80,7 +80,7 @@ buttontext:	"Disable"
 toolTip:	"Disable All modifiers"
 (
 	on execute do
-		(CommandPanel_v()).setStateSelectedModifiers( false )( #ALL )
+		(ModifierStackRemote_v()).setState ( #ALL )( false )
 )
 
 /** DELETE
@@ -93,12 +93,14 @@ icon:	"MENU:true|title:DELETE"
 (
 	on execute do
 	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote_Stack.mcr"
+		clearListener(); print("Cleared in:"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\REMOTE STACK.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStackRemote.ms"
+		--CommandPanel 	= ModifierStackRemote_v()
 
-		--CommandPanel 	= CommandPanel_v()
-
-		if (selected_modifiers = (CommandPanel_v()).getSelectedModifiers()).count > 0 then
+		--selected_modifiers =  (ModifierStackRemote_v()).getSelectedModifiers()
+		--format "SELECTED_MODIFIERS:	% \n" selected_modifiers
+		if (selected_modifiers = (ModifierStackRemote_v()).getSelectedModifiers()).count > 0 then
 			for obj in selection do
 				for selected_modifier in selected_modifiers do
 					deleteModifier obj selected_modifier
@@ -128,10 +130,9 @@ buttontext:	"Smart UP"
 	on execute do
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote_Stack.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStackRemote.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CircleStack\CircleStack.ms"
-		--format "keyboard.shiftPressed:	% \n" keyboard.shiftPressed
 
 		/** Is pressed
 		  *
@@ -153,9 +154,7 @@ buttontext:	"Smart UP"
 
 			default:	circleStack #UP
 		)
-
 	)
-
 )
 
 /** SMART REMOTE DOWN
@@ -172,9 +171,10 @@ buttontext:	"Smart Down"
 	on execute do
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote_Stack.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStackRemote.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CircleStack\CircleStack.ms"
+
 
 		function pressed key = execute ("keyboard."+key as string+"Pressed")
 
@@ -188,184 +188,14 @@ buttontext:	"Smart Down"
 			( pressed #CONTROL ):	circleStack #DOWN	which:#ALL
 			( pressed #SHIFT ):	circleStack #DOWN	which:#ALL mode:#ADD
 			( pressed #ALT ):	circleStack #UP 	which:#ALL mode:#REMOVE
+
 			default:	circleStack #DOWN
 		)
-
-	)
-
-)
-
-
-
-
-
-
-
-
-
-
-
-/*------------------------------------------------------------------------------
-
-	DEPRECATED
-
---------------------------------------------------------------------------------*/
-
-/** GO NEXT ENABLED
-  *
-  * 1) Activate modify panel if not active
-  * 2) If modify panel is active, then select next enabled modifier
- */
-macroscript	modifier_go_enabled_next
-category:	"_Modifiers-Remote"
-buttontext:	"Next Enabled"
-tooltip:	"Select Next Enabled Modifier"
-(
-	if( GetCommandPanelTaskMode() != #modify ) then
-		max modify mode
-
-	circleStack(#up)
-)
-
-/** GO PREVIOUS ENABLED
-  *
-  * 1) Activate modify panel if not active
-  * 2) If modify panel is active, then select next enabled modifier
- */
-macroscript	modifier_go_enabled_previous
-category:	"_Modifiers-Remote"
-buttontext:	"Previous Enabled"
-tooltip:	"Select Previous Enabled Modifier"
-(
-	if( GetCommandPanelTaskMode() != #modify ) then
-		max modify mode
-
-	circleStack(#down)
-)
-
-
-/** GO NEXT
-  *
-  * 1) Activate modify panel if not active
-  * 2) If modify panel is active, then select next enabled modifier
- */
-macroscript	modifier_go_next
-category:	"_Modifiers-Remote"
-buttontext:	"Next Modifier"
-tooltip:	"Select Next Modifier"
-(
-
-	modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
-
-	if ( current_mod = modPanel.getCurrentObject() ) != undefined and modifiers.count > 0 then
-	(
-		index_current = if superClassOf current_mod == modifier then findItem modifiers current_mod else 0
-
-		format "index_current:	% \n" index_current
-		format "modifiers.count:	% \n" modifiers.count
-
-		if index_current == 1 then
-		(
-			if selection.count == 1 then
-				modPanel.setCurrentObject selection[1].baseObject -- select baseobject if last modifier is active
-			else
-				for i = 1 to modifiers.count - 1 do
-					max prev mod
-		)
-		else
-			max next mod
 	)
 )
 
-/** GO PREVIOUS
-  *
-  * 1) Activate modify panel if not active
-  * 2) If modify panel is active, then select next enabled modifier
- */
-macroscript	modifier_go_previous
-category:	"_Modifiers-Remote"
-buttontext:	"Previous Modifier"
-tooltip:	"Select Previous Modifier"
-(
-	--clearListener(); print("Cleared in:"+getSourceFileName())
-	modifiers = if selection.count > 1 then (InstancedModifierFinder( selection )).getInstancedModifiers() else selection[1].modifiers
-
-	if ( current_mod = modPanel.getCurrentObject() ) != undefined and modifiers.count > 0 then
-	(
-		index_current = if superClassOf current_mod == modifier then findItem modifiers current_mod else 0
-
-		if index_current == modifiers.count then
-		(
-			if selection.count == 1 then
-				modPanel.setCurrentObject selection[1].modifiers[1] node:selection[1]
-
-			else
-				for i = 1 to modifiers.count - 1  do
-					max next mod
-		)
-		else
-			max prev mod
-
-		--format "index_current:	% \n" index_current
-		format "modifiers.count:	% \n" modifiers.count
-	)
-
-)
 
 
 
---/**
--- */
---macroscript	modifiers_enable_selected
---category:	"_Modifiers-Remote"
---buttontext:	"← → Mod"
---toolTip:	"Select previous\next enabled modifier.\nCtrl:Select disabled modifiers too"
---icon:	"MENU:toolTip"
---(
---	----clearListener()
---	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
---	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
---
---	on execute do
---	(
---		max modify mode
---
---		if( current_mod = modPanel.getCurrentObject() ) != undefined then
---		(
---
---
---
---		)
---
---	)
---
---)
 
 
---/**
--- */
---macroscript	modifiers_select_down
---category:	"_Modifier Stask"
---buttontext:	"Selected Down"
-----toolTip:	"Disable modifiers above active modifier when subobject is entered"
-----icon:	"control:checkbox|enabled:false"
---(
---	C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms
---	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Remote Stack.mcr"
---	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\CommandPanel\CommandPanel.ms"
---
---	obj = selection[1]
---
---	CommandPanel 	= CommandPanel_v()
---
---
---	format "CommandPanel.list_box = % \n" CommandPanel.list_box
---
---	--WM_LBUTTONDOWN = 0x0201
---	--
---	--windows.postMessage CommandPanel.list_box WM_LBUTTONDOWN  0 0
---
---
---	--modPanel.setCurrentObject( modPanel.getCurrentObject() ) -- refresh modifier stack
---
---)

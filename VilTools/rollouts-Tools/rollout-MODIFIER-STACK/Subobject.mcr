@@ -8,10 +8,21 @@ macroscript enter_subobject_toggle
 category:	"_Subobject"
 buttonText:	"Enter\Exit"
 tooltip:	"Enter\Exit Subobject"
+icon:	"across:6|width:62"
 (
 	on execute do
 		(Subobject_v()).enterExitSubobjectToggle()
 )
+
+--macroscript	enter_subobject_circle_x
+--category:	"_Subobject"
+--buttonText:	"Enter circle"
+--tooltip:	"Circle subobjects  1, 2, 4"
+--(
+--	format "EventFired = % \n" EventFired
+--	(Subobject_v()).circle #( 1, 2, 4)
+--)
+
 
 macroscript enter_subobject_1
 category:	"_Subobject"
@@ -60,14 +71,7 @@ tooltip:	"Enter to subobject 5"
 	(Subobject_v()).enterOrQuitSubobject 5
 )
 
-macroscript	enter_subobject_circle_x
-category:	"_Subobject"
-buttonText:	"Enter circle"
-tooltip:	"Circle subobjects  1, 2, 4"
-(
-	format "EventFired = % \n" EventFired
-	(Subobject_v()).circle #( 1, 2, 4)
-)
+
 
 /*------------------------------------------------------------------------------
 

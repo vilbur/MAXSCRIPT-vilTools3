@@ -21,52 +21,80 @@ struct ModifierStackRemote_v
 
 	/** Select item
 	  *
-	  * @index integer|#(integer)|#all	items_index	indexes of items in stack (STARTS AT 1)
+	  * @index integer|#(integer)|#all	items	indexes of items in stack (Index STARTS AT 1)
 	  * @param boolean	state	desired state of modifiers
 	  * @param boolean	clear	if TRUE, then new selection is created, if FALSE, then selection is added to current
 	 */
-	function selectItem items_index state clear:true =
+	function selectItem items state clear:true =
 	(
-		format "\n"; print "ModifierStackRemote_v.selectItem()"
-
-		this._setArray(&items_index)
+		--format "\n"; print "ModifierStackRemote_v.selectItem()"
+		this._getItemsIndex(&items)
 
 
 		if clear then
 			ListBox.unselect()
 		else
-			this._addToCurrentItems (&items_index)
+			this._addToCurrentItems (&items)
 
+		if items.count > 0 then
+			ModsStack.selectModByIndex(items[1])
 
-		ModsStack.selectModByIndex(items_index[1])
-
-		for index in items_index do
+		for index in items do
 			ListBox.selectItem (state) (index)
+	),
+
+	/** Select by handle
+	  *
+	  * @index IntegerPtr|#(IntegerPtr)	handles of items in stack
+	  */
+	function selectByHandle handles state =
+	(
+		--format "\n"; print "ModifierStackRemote_v.selectByHandle()"
+		--format "handles:	% \n" handles
+		--format "classOf handles:	% \n" (classOf handles)
+		if classOf handles != Array then handles = #(handles)
+
+		items = for handle in handles where (index = ModsStack.getIndexByPointer(handle)) != undefined collect index
+		--format "items:	% \n" items
+		--format "classOf items:	% \n" (classOf handles)
+
+		this.selectItem (items) (state)
+	),
+
+	/** Set state of modifiers in stack
+	 *
+	 * @param	integer|#(integer)|#ALL|#SELECTED	items	index or name of items to set state
+	 * @param	boolean|#toggle	state	desired state of modifiers
+	 *
+	 */
+	function setState items state =
+	(
+		--format "\n"; print "ModifierStackRemote_v.setState()"
+		--format "ITEMS:	% \n" items
+		this._getItemsIndex(&items)
+
+		if state == #TOGGLE then
+			state = this._getToggleState(items)(#enabled)
+
+		this.setProp (items) (#enabled) (state)
 	),
 
 	/** Set state of modifiers in stack
 	 *
 	 * @param	integer|#(integer)|#ALL|#SELECTED	items	index or name of items to set state
 	 * @pram	#name	property	neame of property to change
-	 * @param	boolean|#toggle	state	desired state of modifiers
+	 * @param	boolean|#toggle	val	desired val of modifiers
 	 *
 	 */
-	function setState items property state =
+	function setProp items property val =
 	(
-		--format "\n"; print "CommandPanel_v.setState()"
+		--format "\n"; print "ModifierStackRemote_v.setProp()"
+		this._getItemsIndex(&items)
 
-		items_index = case of
-		(
-			(classOf items == integer ):	#(items)
-			(items == #SELECTED):	ListBox.getSlectedItems()
-			(items == #ALL):	#{ 1..(this.itemsCount()) } as Array
-			default:items
-		)
+		if items == undefined then
+			return false
 
-		if state == #TOGGLE then
-			state = this._getToggleState(items_index)(property)
-
-		this._setState (items_index) (property) (state)
+		this._setProp (items) (property) (val)
 
 		this.refresh()
 	),
@@ -76,7 +104,7 @@ struct ModifierStackRemote_v
 	  */
 	function refresh =
 	(
-		format "\n"; print "ModifierStackRemote_v.refresh()"
+		--format "\n"; print "ModifierStackRemote_v.refresh()"
 		curr_mod = modPanel.getCurrentObject()
 
 		selected_items = ListBox.getSlectedItems()
@@ -114,12 +142,12 @@ struct ModifierStackRemote_v
 	/** Get modifiers
 	  *
 	  */
-	function getModifiers items_index =
+	function getModifiers items =
 	(
-		format "\n"; print "ModifierStackRemote_v.getModifiers()"
-		this._setArray(&items_index)
+		--format "\n"; print "ModifierStackRemote_v.getModifiers()"
+		this._getItemsIndex(&items)
 
-		for index in items_index collect ModsStack.getModifierByIndex (index)
+		for index in items collect ModsStack.getModifierByIndex (index)
 	),
 
 	/** Items count
@@ -168,36 +196,44 @@ struct ModifierStackRemote_v
 	/** Set array
 	  *
 	  */
-	function _setArray &items_index =
+	function _getItemsIndex &items =
 	(
-		--format "\n"; print "ModifierStackRemote_v._setArray()"
-		if classOf items_index != Array then items_index = #(items_index)
-
-		items_index --return
+		--format "\n"; print "ModifierStackRemote_v._getItemsIndex()"
+		--format "ITEMS:	% \n" ITEMS
+		items = case of
+		(
+			(classOf items == integer ):	#(items)
+			(classOf items == Array ):	items
+			(items == #SELECTED):	ListBox.getSlectedItems()
+			(items == #ALL):	#{ 1..(this.itemsCount()) } as Array
+		)
+		--format "ITEMS_INDEX:	% \n" items
+		items --return
 	),
 
 	/** Set state of modifier property
 	  *
 	  * @pram property name of property to change
 	  */
-	function _setState items_index property state =
+	function _setProp items property val =
 	(
-		format "\n"; print "ModifierStackRemote_v.setState()"
-		this._setArray(&items_index)
-
-		for _mod in this.getModifiers(items_index) do
-			setProperty _mod property state
-
-		this.refresh()
+		--format "\n"; print "ModifierStackRemote_v._setProp()"
+		for _mod in this.getModifiers(items) do
+			case property of
+			(
+				#ENABLED:	_mod.enabled	= val
+				#NAME:	_mod.name	= val
+				default:	if hasProperty _mod property then setProperty _mod property val
+			)
 	),
 
 	/** Get toggle state
 	  *
 	  */
-	function _getToggleState items_index property =
+	function _getToggleState items property =
 	(
 		--format "\n"; print "ModifierStackRemote_v.getToggleState()"
-		modifiers = this.getModifiers(items_index)
+		modifiers = this.getModifiers(items)
 
 		current_state = this._getDominantState ( modifiers ) ( property )
 
@@ -207,14 +243,12 @@ struct ModifierStackRemote_v
 	/** Add to current items
 	  *
 	  */
-	function _addToCurrentItems &items_index =
+	function _addToCurrentItems &items =
 	(
 		--format "\n"; print "ModifierStackRemote_v.addToCurrentItems()"
 		selected_items = ListBox.getSlectedItems()
 
-		items_index = sort( makeUniqueArray ( join selected_items items_index ) )
-
-		items_index --return
+		sort( makeUniqueArray ( join selected_items items ) )
 	),
 
 	/** Find if more modifiers are ENABLED or DISABLED
@@ -223,7 +257,7 @@ struct ModifierStackRemote_v
 	  */
 	function _getDominantState modifiers property =
 	(
-		--format "\n"; print "CommandPanel_v._getDominantState()"
+		--format "\n"; print "ModifierStackRemote_v._getDominantState()"
 		--format "modifiers.count:	% \n" modifiers.count
 		--format "modifiers[1].enabled:	% \n" modifiers[1].enabled
 

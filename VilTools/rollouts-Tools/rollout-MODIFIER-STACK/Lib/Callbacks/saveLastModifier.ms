@@ -24,11 +24,18 @@ function saveLastModifierKill =
  */
 function saveLastModifier =
 (
-	--print "Callback: saveLastModifier()"
 
 	if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-		for obj in selection where obj.modifiers.count > 0 do
-			LAST_ACTIVE_MODIFIER[(getHandleByAnim obj) as string ] = getHandleByAnim curr_mod
+	(
+		print "Callback: saveLastModifier()"
+		pointers = sort(for obj in selection where obj.modifiers.count > 0 collect (getHandleByAnim obj))
+
+		pointer_key = ""
+		for pointer in pointers do pointer_key += "_" + pointer as string
+		pointer_key = trimLeft(pointer_key) "_"
+
+		LAST_ACTIVE_MODIFIER[pointer_key] = getHandleByAnim curr_mod
+	)
 )
 
 /* KILL ON STARTUP */

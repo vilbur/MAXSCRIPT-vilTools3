@@ -40,52 +40,55 @@ prepareScene()
 /* SET INSTANCE */
 ModifierStack = ModifierStackRemote_v()
 
+/* SELECET BY HANDLE */
+ModifierStack.selectByHandle (getHandleByAnim selection[1].modifiers[3] ) true
 
---/* SELECT ITEMS */
+/* SELECT ITEMS */
 --ModifierStack.selectItem 1 true
 --ModifierStack.selectItem 2 true
 --ModifierStack.selectItem 3 true
 --ModifierStack.selectItem 4 true
 --ModifierStack.selectItem 6 true
+--ModifierStack.selectItem 7 true
 --ModifierStack.selectItem 3 true clear:false -- add to selection
 --ModifierStack.selectItem #(2, 3) true
 
-/* GET MODIFIERS */
+--/* GET MODIFIERS */
 --format "MODIFIERS:	% \n" (ModifierStack.getModifiers( 2 ))
 --format "MODIFIERS:	% \n" (ModifierStack.getModifiers #( 2, 3 ))
-
-
-/* GET SELECTED ITEMS */
+--
+--
+--/* GET SELECTED ITEMS */
 --format "SELECTED ITEMS:	% \n" (ModifierStack.ListBox.getSlectedItems()) -- include baseobejct if selection == 1
-
-/* GET SELECTED MODIFIERS */
+--
+--/* GET SELECTED MODIFIERS */
 --format "SELECTED MODIFIERS:	% \n" (ModifierStack.getSelectedModifiers())
-
-/* SELECT ALL */
+--
+--/* SELECT ALL */
 --ModifierStack.ListBox.selectAll()
-
-
-/* DESELECT ITEMS */
+--
+--
+--/* DESELECT ITEMS */
 --ModifierStack.ListBox.unselect()
+--
+--
+--/* SET MODIIERS STATE */
+--ModifierStack.setState 3 false
+--ModifierStack.setState #(2, 3, 4) false
+--
+--/* SET STATE OF SELECTED MODIIERS  */
+--ModifierStack.setState #SELECTED false
+--
+--/* SET STATE OF ALL MODIIERS  */
+--ModifierStack.setState #ALL false
+--
+--/* TOGGLE STATE */
+--ModifierStack.setState #ALL #TOGGLE
+--
+--/* SET MODIIERS SET PROPERTY */
+--ModifierStack.setProp #ALL #materialID 1
+--ModifierStack.setProp #SELECTED #name "RENAMED MOD"
 
-
-/* SET MODIIERS STATE */
---ModifierStack.setState 3 #enabled false
---ModifierStack.setState #(2, 3, 4) #enabled false
-ModifierStack.setState #(2, 3, 4) #materialID 1
-
-/* SET STATE OF SELECTED MODIIERS  */
---ModifierStack.setState #SELECTED	#enabled false
-
-/* SET STATE OF ALL MODIIERS  */
---ModifierStack.setState #ALL	#enabled false
-
-/* TOGGLE STATE */
---ModifierStack.setState #ALL	#enabled #TOGGLE
-
-
-
-/* DISABLE SELECTED MODIIERS */
 
 
 /* FIND MODIFIER IN STACK */
