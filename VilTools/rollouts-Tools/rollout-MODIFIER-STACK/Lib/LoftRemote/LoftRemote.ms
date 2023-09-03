@@ -1,54 +1,80 @@
 filein( getFilenamePath(getSourceFileName()) + "/../../../../../Lib/UIAccessorWrapper/UIAccessorWrapper.ms" )	-- "./../../../../../Lib/UIAccessorWrapper/UIAccessorWrapper.ms"
 
 
-global CREATING_LOFT
+global LOFTCREATOR
 
-global addShapePickDialog
+global addShapePickDialogCallback
 
-global PICK_SHAPE
+global NEXT_SHAPE_DATA
+
+global LOFT_OBJECT
 
 /** Wait then loft object UI will be estabilished
   *	Then continue with creation
   */
 function resumeCreationCallback sender evt =
 (
+	--format "\n"; print "LoftRemote_v.resumeCreationCallback()"
 	-- important: don't repeat this timer event
 	sender.enabled = false
 	-- for sanity and cleanup
 	dotNet.removeEventHandler sender "Elapsed" resumeCreationCallback
 
-	CREATING_LOFT.addShapesToLoft()
+	LOFTCREATOR.addShapeToLoft()
 )
 
 /** Pick shape from dialog
   *
   */
-fn addShapePickDialog =
+fn addShapePickDialogCallback =
 (
-	format "\n"; print "LoftRemote_v.addShapePickDialog()"
-	format "PICK_SHAPE:	% \n" PICK_SHAPE
+	--format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
 	hwnd	= DialogMonitorOPS.getWindowHandle()
 	dialogTitle	= UIAccessor.getWindowText hwnd
-
-	if (dialogTitle == "Pick Object") then
+	--format "dialogTitle:	% \n" dialogTitle
+	--if (dialogTitle == "Select From Scene") then
+	if (dialogTitle == "Select From Scene" or dialogTitle == "Pick Object" ) then
 	(
+		format "\n"; print "LoftRemote_v.addShapePickDialogCallback()"
+		format "ADD SHAPE:	% \n" NEXT_SHAPE_DATA.obj.name
+		EM_SETSEL  = 0x00B1
+
 		dialog_controls = windows.getChildrenHWND hwnd
 
 		enter_text_ctrl = dialog_controls[15][1]
 
-		UIAccessor.SetWindowText enter_text_ctrl PICK_SHAPE
+		UIAccessor.SetWindowText enter_text_ctrl NEXT_SHAPE_DATA.obj.name
 
-		PICK_SHAPE = undefined
 
-		UIAccessor.PressDefaultButton()
+		windows.sendMessage enter_text_ctrl EM_SETSEL 0 NEXT_SHAPE_DATA.obj.name.count -- press ENTER key
+
+		DOSCommand ("start \"\" \""+ ( getFilenamePath(getSourceFileName()) + "\\updatePickDialog.ahk" ) +"\" /min")
+
+		UIAccessor.PressButtonByName hwnd "Pick"
+		--UIAccessor.PressDefaultButton()
+
+		--LOFTCREATOR.addShapeToLoft()
+		LOFTCREATOR._addNextShapeAfterTimeout(1000)
+
 	)
 	true
 )
 
 
+
 /** Loft shapes
  */
-struct LoftShapeData_v( obj, pos)
+struct LoftShapeData_v
+(
+	obj,
+	pos,
+	pointer,
+
+	on create do
+	(
+		pointer = getHandleByAnim obj
+	)
+)
 
 /** Loft remote
  */
@@ -63,9 +89,12 @@ struct LoftRemote_v
 
 	method, -- #PERCENTAGE default
 
+	loft_object,
+	current_index = 0,
+
 	/* properties */
 	_path,
-	_Shapes = #(),
+	ShapeData = #(),
 
 	props = #( #path_steps, #shape_steps ),
 
@@ -86,7 +115,7 @@ struct LoftRemote_v
 		this._path   = _path
 		this._shapes = _shapes
 
-		CREATING_LOFT = this
+		LOFTCREASTOR = this
 
 		this.setOptions()
 
@@ -94,7 +123,7 @@ struct LoftRemote_v
 
 		macros.run "Objects Compounds" "Loft"
 
-		this._setTimer(500)
+		this._addNextShapeAfterTimeout(500)
 	),
 
 	/** Create
@@ -104,13 +133,15 @@ struct LoftRemote_v
 	(
 		format "\n"; print "LoftRemote_v.create()"
 
-		CREATING_LOFT = this
+		LOFTCREATOR = this
+
+		NEXT_SHAPE_DATA = undefined
 
 		select this._path
 
 		macros.run "Objects Compounds" "Loft"
 
-		this._setTimer(500)
+		this._addNextShapeAfterTimeout(100)
 	),
 
 	/** Set path
@@ -129,63 +160,140 @@ struct LoftRemote_v
 	(
 		--format "\n"; print "LoftRemote_v.setShape()"
 
-		append this._Shapes ( LoftShapeData_v (_shape)(pos) )
+		append this.ShapeData ( LoftShapeData_v (_shape)(pos) )
 	),
 
 	/** Set shapes
 	  *
 	  */
-	function addShapesToLoft =
+	function loftCreationStart =
 	(
-		format "\n"; print "LoftRemote_v.addShapesToLoft()"
+		format "\n"; print "LoftRemote_v.loftCreationStart()"
 		UIAccess = UIAccessorWrapper_v( #CommandPanel )
 
 		if this.method == undefined then this.setMethod(1)
 
 		this._setMethodOption()
 
-		for _Shape in this._Shapes do
+		for _Shape in this.ShapeData do
 			this.addShapeToLoft (_Shape)
 
 		--UIAccess.list()
 
-		CREATING_LOFT = undefined
+		LOFTCREASTOR = undefined
 	),
 
-	/** Set shape
+
+	/** Add shape to loft
+	  *
+	  * Adding next shape is fored in addShapePickDialogCallback()
+	  */
+	function addShapeToLoft =
+	(
+		format "\n-------------------------------------\n\n"; print "LoftRemote_v.addShapeToLoft()"
+
+		NEXT_SHAPE_DATA = ShapeData[this.current_index + 1]
+		format "this.current_index:	% \n" this.current_index
+		format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
+
+
+		/* TURN OFF CREATION AFTER FIRST SHAPE */
+		if this.current_index > 0 then
+			UIAccess.press ("Get Shape")
+
+
+		this.current_index += 1
+
+		if NEXT_SHAPE_DATA != undefined then
+			this._pickShape()
+
+
+
+
+		--/* TURN OFF CREATION AFTER FIRST SHAPE */
+		--if this.current_index > 0 then
+		--(
+		--	print "=========== ADD NEXT SHAPE ==========="
+		--
+		--	this.current_index += 1
+		--
+		--	UIAccess.press ("Get Shape")
+		--
+		--	if NEXT_SHAPE_DATA != undefined then
+		--		this._pickShape()
+		--)
+		--else
+		--
+		--if NEXT_SHAPE_DATA != undefined then
+		--(
+		--	print "=========== ADD FIRST SHAPE ==========="
+		--
+		--	this.current_index += 1
+		--
+		--	this._pickShape() -- pick first
+		--)
+
+
+
+	),
+
+	/** Test
 	  *
 	  */
-	function addShapeToLoft ShapeData =
+	function test =
 	(
-		format "\n"; print "LoftRemote_v.addShapeToLoft()"
+		format "\n"; print "LoftRemote_v.test()"
+		format "this.current_index:	% \n" this.current_index
+		format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
 
-		format "ShapeData:	% \n" ShapeData
+	),
+
+	/** Add shape to loft
+	  *
+	  * Adding next shape is fored in addShapePickDialogCallback()
+	  */
+	function _pickShape =
+	(
+		--format "\n"; print "LoftRemote_v._pickShape()"
 
 		function pickDialogCallbackStart =
 		(
-			DialogMonitorOPS.RegisterNotification addShapePickDialog id:#GetShapePopUp
+			--format "\n"; print "LoftRemote_v.pickDialogCallbackStart()"
+			DialogMonitorOPS.RegisterNotification addShapePickDialogCallback id:#GetShapePopUp
 			DialogMonitorOPS.enabled = true
 		)
 		function pickDialogCallbackStop =
 		(
+			format "\n"; print "LoftRemote_v.pickDialogCallbackStop()"
 			DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
 			DialogMonitorOPS.enabled = false
 		)
 
+		this._setUiAccessor()
 
-		this._setShapePosition (ShapeData.pos)
-
-		pickDialogCallbackStart()
-
-		PICK_SHAPE = ShapeData.obj.name
+		this._setShapePosition()
 
 		UIAccess.press ("Get Shape")
 
+		pickDialogCallbackStart()
+
 		max tool hlist -- open pick dialog
 
-		pickDialogCallbackStop()
-
+		--pickDialogCallbackStop()
 	),
+	function pickDialogCallbackStart =
+	(
+		--format "\n"; print "LoftRemote_v.pickDialogCallbackStart()"
+		DialogMonitorOPS.RegisterNotification addShapePickDialogCallback id:#GetShapePopUp
+		DialogMonitorOPS.enabled = true
+	),
+	function pickDialogCallbackStop =
+	(
+		format "\n"; print "LoftRemote_v.pickDialogCallbackStop()"
+		DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
+		DialogMonitorOPS.enabled = false
+	),
+
 
 	/** Set method of adding shapes to loft
 	  *
@@ -233,22 +341,24 @@ struct LoftRemote_v
 
 	/** Set value to spinner of shape position
 	  */
-	function _setShapePosition pos =
+	function _setShapePosition =
 	(
 		format "\n"; print "LoftRemote_v._setShapePosition()"
-		format "pos:	% \n" pos
-		if pos == 0 then
+		format "NEXT_SHAPE_DATA.pos:	% \n" NEXT_SHAPE_DATA.pos
+
+		if NEXT_SHAPE_DATA.pos == 0 then
 			return true
 
-		UIAccess.setVal "Path:" pos
+		UIAccess.setVal "Path:"( (NEXT_SHAPE_DATA.pos as string ) + ",0")
 	),
 
 	/** Set timer
 	  *
 	  */
-	function _setTimer delay_ms =
+	function _addNextShapeAfterTimeout delay_ms =
 	(
-		--format "\n"; print "LoftRemote_v._setTimer()"
+		format "\n"; print "LoftRemote_v._addNextShapeAfterTimeout()"
+
 		delay_timer = dotNetObject "Windows.Forms.Timer"
 
 		delay_timer.Interval = delay_ms

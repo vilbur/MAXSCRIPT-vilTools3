@@ -26,14 +26,15 @@ function prepareScene =
 
 	/* CREATE SHAPE */
     --global _shape = splineShape name:"Shape"
-	ShapeFirst = Circle name:"ShapeFirst"   radius:10 pos:[ -50 , 0 ,0 ]
-	ShapeSecond = Circle name:"ShapeSecond" radius:3  pos:[ -100 , 0 ,0 ]
+	ShapeFirst  = Circle name:"ShapeFirst"	radius:3	pos:[ -100 , 0 ,0 ] wirecolor:red
+	ShapeSecond = Circle name:"ShapeSecond"	radius:15	pos:[ -70 , 0 ,0 ]  wirecolor:green
+	ShapeSecond = Circle name:"ShapeThird"	radius:70	pos:[ -30 , 0 ,0 ]  wirecolor:blue
 
 )
 
 max modify mode
 
---prepareScene()
+prepareScene()
 
 
 LoftRemote 	= LoftRemote_v()
@@ -41,11 +42,19 @@ LoftRemote 	= LoftRemote_v()
 --LoftRemote.setMethod(3)
 --LoftRemote.setMethod(#STEPS)
 
+
+
 LoftRemote.setPath	($LoftPath)
+
 LoftRemote.setShape 	($ShapeFirst)	pos:0
---LoftRemote.setShape	($ShapeSecond)	pos:100
+LoftRemote.setShape	($ShapeSecond)	pos:50
+LoftRemote.setShape	($ShapeThird)	pos:100
+
 
 LoftRemote.create()
+
+--LoftRemote.UIAccess.list()
+
 
 
 --LoftRemote 	= LoftRemote_v path_steps:0
