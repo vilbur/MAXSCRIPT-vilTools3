@@ -7,7 +7,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../LoftRemote.ms" )	-- "./../Lo
 /** Prepare scene
   *
   */
-function prepareScene path_knots shapes_count path_steps =
+function prepareScene path_segments shapes_count path_steps =
 (
 	--format "\n"; print "LoftRemoteTest.ms.prepareScene()"
 	delete objects
@@ -18,8 +18,8 @@ function prepareScene path_knots shapes_count path_steps =
  	addNewSpline loftPath
 
 
- 	for i = 0 to (path_knots * 100) by 100 do
- 		addKnot loftPath 1 #smooth #curve [random -50 50, i, 0]
+ 	for i = 0 to (path_segments * 100) by 100 do
+ 		addKnot loftPath 1 #smooth #curve [random -100 100, i, 0]
 
 	select loftPath
  	--addKnot loftPath 1 #smooth #curve [ 0 , 0 ,0 ]
@@ -27,7 +27,7 @@ function prepareScene path_knots shapes_count path_steps =
 
 	/* CREATE SHAPE */
     for i = 1 to shapes_count do
-		selectmore (Circle name:( "Shape_"+i as string )	radius:( random 3 15  )	pos:[ ( i * 10 ) , 0 ,0 ] )
+		selectmore (Circle name:( "Shape_"+i as string )	radius:( random 1 50  )	pos:[ ( i * 10 ) , 0 ,0 ] )
 
 
 )
@@ -35,12 +35,15 @@ function prepareScene path_knots shapes_count path_steps =
 max modify mode
 
 
---path_steps   = 3
-path_knots   = 4
-shapes_count = 6
+path_steps    = 6
+path_segments = 20
+
+shapes_count = 2
+--shapes_count = 3
+shapes_count = 10
 
 
-prepareScene( path_knots )( shapes_count )( path_steps )
+prepareScene( path_segments )( shapes_count )( path_steps )
 
 
 LoftRemote 	= LoftRemote_v()

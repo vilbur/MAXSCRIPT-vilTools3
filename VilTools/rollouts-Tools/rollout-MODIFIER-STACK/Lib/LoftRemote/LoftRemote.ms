@@ -130,6 +130,7 @@ struct LoftRemote_v
 	function create =
 	(
 		format "\n"; print "LoftRemote_v.create()"
+		format "SHAPES COUNT:	% \n" this.ShapesData.count
 
 		LOFTCREATOR = this
 
@@ -150,10 +151,8 @@ struct LoftRemote_v
 
 		this.setPathSteps(this.path_steps)
 
-		--this._setPatLength()
-
-		--if this._setupShapes() then
-			--this._addNextShapeAfterTimeout(100)
+		if this._setupShapes() then
+			this._addNextShapeAfterTimeout(100)
 	),
 
 	/** Set path
@@ -180,7 +179,7 @@ struct LoftRemote_v
 	  */
 	function loftCreationStart =
 	(
-		format "\n"; print "LoftRemote_v.loftCreationStart()"
+		--format "\n"; print "LoftRemote_v.loftCreationStart()"
 		UIAccess = UIAccessorWrapper_v( #CommandPanel )
 
 		for _Shape in this.ShapesData do
@@ -196,7 +195,7 @@ struct LoftRemote_v
 	  */
 	function _setupLoft =
 	(
-		format "\n"; print "LoftShapeData_v._setupLoft()"
+		--format "\n"; print "LoftShapeData_v._setupLoft()"
 		format "this.method:	% \n" this.method
 
 		case this.method of
@@ -216,7 +215,7 @@ struct LoftRemote_v
 	  */
 	function setPathSteps steps =
 	(
-		format "\n"; print "LoftShapeData_v.setPathSteps()"
+		--format "\n"; print "LoftShapeData_v.setPathSteps()"
 
 		if steps == undefined then
 			this.path_steps = this.pathShape.steps
@@ -233,7 +232,7 @@ struct LoftRemote_v
 	  */
 	function setShapeSteps steps =
 	(
-		format "\n"; print "LoftShapeData_v.setPathSteps()"
+		--format "\n"; print "LoftShapeData_v.setPathSteps()"
 
 		if steps != undefined then
 		(
@@ -245,39 +244,12 @@ struct LoftRemote_v
 		)
 	),
 
-	--/** Set total length
-	--  *
-	--  */
-	--function _setPatLength =
-	--(
-	--	--format "\n"; print "LoftShapeData_v.setTotalLength()"
-	--	segments_length = getSegLengths this.pathShape 1
-	--
-	--	this.path_length = case this.method of
-	--	(
-	--		#DISTANCE: units.formatValue segments_length[segments_length.count]
-	--
-	--		#PERCENTAGE:	100
-	--
-	--		#STEPS:
-	--		(
-	--			spline_knots = numKnots this.pathShape
-	--			--format "spline_knots:	% \n" spline_knots
-	--
-	--			spline_steps = (UIAccess.getSpinnerValue "Path Steps:") as integer
-	--			--format "spline_steps:	%\n" spline_steps
-	--
-	--			( segments_length.count * spline_steps) + spline_knots
-	--		)
-	--	)
-	--),
-
 	/** Setup shapes
 	  *
 	  */
 	function _setupShapes =
 	(
-		format "\n"; print "LoftShapeData_v._setupShapes()"
+		format "\n\n"; print "LoftShapeData_v._setupShapes()"
 
 		/** Convert to display units
 		  */
@@ -303,38 +275,47 @@ struct LoftRemote_v
 
 		/** Set length of path in percentage, knots count or distance
 		  */
-		segments_length = getSegLengths this.pathShape 1
 
 		path_length = case this.method of
 		(
 			--#DISTANCE: units.formatValue segments_length[segments_length.count]
-			#DISTANCE: convertToDisplayUnits (segments_length[segments_length.count])
-
 			#PERCENTAGE:	100
+
+			#DISTANCE:
+			(
+				segments_length = getSegLengths this.pathShape 1
+
+				convertToDisplayUnits (segments_length[segments_length.count])
+			)
 
 			#STEPS:
 			(
-				spline_knots = numKnots this.pathShape
-				--format "spline_knots:	% \n" spline_knots
+				path_knots = numKnots this.pathShape
 
-				spline_steps = (UIAccess.getSpinnerValue "Path Steps:") as integer
-				--format "spline_steps:	%\n" spline_steps
+				segments_count = path_knots - 1
+				format "segments_count:	% \n" segments_count
+				format "path_knots:	% \n" path_knots
 
-				( segments_length.count * spline_steps) + spline_knots
+				--spline_steps = (UIAccess.getSpinnerValue "Path Steps:") as integer
+				format "path_steps:	%\n" path_steps
+
+				( ( segments_count * path_steps) + path_knots ) as integer
 			)
 		)
 
 		--shapes_without_pos = for ShapeData in ShapesData where ShapeData.pos == undefined collect ShapeData
-		format "path_length:	% \n" path_length
+		format "PATH_LENGTH:	% \n" path_length
 		--format "path_length:	% \n" (units.decodeValue ( units.formatValue path_length ) )
 
+		if ShapesData.count > 1 then
+			for index = 1 to ShapesData.count do
+				ShapesData[index].pos = path_length / (ShapesData.count - 1) * (index - 1)
 
-		for index = 1 to ShapesData.count do
-			ShapesData[index].pos = path_length / (ShapesData.count - 1) * (index - 1)
-			--setShapePos(i)
+		else
+			ShapesData[1].pos = (if this.method == #PERCENTAGE then 0.0 else 0)
 
-		--for ShapeData in ShapesData do
-			--format "ShapeData:	% \n" ShapeData.pos
+		for ShapeData in ShapesData do
+		    format "ShapeData: % \n" ShapeData.pos
 
 		if this.method == #STEPS and ShapesData.count > path_length then
 		(
@@ -353,11 +334,11 @@ struct LoftRemote_v
 	  */
 	function addShapeToLoft =
 	(
-		format "\n-------------------------------------\n\n"; print "LoftRemote_v.addShapeToLoft()"
+		--format "\n-------------------------------------\n\n"; print "LoftRemote_v.addShapeToLoft()"
 
 		NEXT_SHAPE_DATA = ShapesData[this.current_index + 1]
-		format "this.current_index:	% \n" this.current_index
-		format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
+		--format "this.current_index:	% \n" this.current_index
+		--format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
 
 		/* TURN OFF CREATION AFTER FIRST SHAPE */
 		if this.current_index > 0 then
@@ -378,7 +359,7 @@ struct LoftRemote_v
 	  */
 	function _pickShape =
 	(
-		--format "\n"; print "LoftRemote_v._pickShape()"
+		format "\n-------------------------------------\n\n"; print "LoftRemote_v._pickShape()"
 
 		this._setUiAccessor()
 
@@ -404,7 +385,7 @@ struct LoftRemote_v
 	  */
 	function pickDialogCallbackStop =
 	(
-		format "\n"; print "LoftRemote_v.pickDialogCallbackStop()"
+		--format "\n"; print "LoftRemote_v.pickDialogCallbackStop()"
 		DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
 		DialogMonitorOPS.enabled = false
 	),
@@ -457,8 +438,8 @@ struct LoftRemote_v
 	  */
 	function _setShapePosition =
 	(
-		format "\n"; print "LoftRemote_v._setShapePosition()"
-		format "NEXT_SHAPE_DATA.pos:	% \n" NEXT_SHAPE_DATA.pos
+		--format "\n"; print "LoftRemote_v._setShapePosition()"
+		format "SHAPE POSITION:	% \n" NEXT_SHAPE_DATA.pos
 
 		if NEXT_SHAPE_DATA.pos == 0 then
 			return true
@@ -472,7 +453,7 @@ struct LoftRemote_v
 	  */
 	function _addNextShapeAfterTimeout delay_ms =
 	(
-		format "\n"; print "LoftRemote_v._addNextShapeAfterTimeout()"
+		--format "\n"; print "LoftRemote_v._addNextShapeAfterTimeout()"
 
 		delay_timer = dotNetObject "Windows.Forms.Timer"
 
