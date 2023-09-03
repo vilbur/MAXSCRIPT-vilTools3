@@ -54,13 +54,11 @@ fn addShapePickDialogCallback =
 		--UIAccessor.PressDefaultButton()
 
 		--LOFTCREATOR.addShapeToLoft()
-		LOFTCREATOR._addNextShapeAfterTimeout(1000)
+		LOFTCREATOR._addNextShapeAfterTimeout(500)
 
 	)
 	true
 )
-
-
 
 /** Loft shapes
  */
@@ -82,7 +80,7 @@ struct LoftRemote_v
 (
 	/* construct */
 
-	path_steps,
+	path_steps, -- default is intepolation of path
 	shape_steps,
 
 	methods = #( #PERCENTAGE, #DISTANCE, #STEPS ),
@@ -93,8 +91,8 @@ struct LoftRemote_v
 	current_index = 0,
 
 	/* properties */
-	_path,
-	ShapeData = #(),
+	pathShape,
+	ShapesData = #(),
 
 	props = #( #path_steps, #shape_steps ),
 
@@ -107,19 +105,19 @@ struct LoftRemote_v
 	/** Create loft
 	  *
 	  */
-	function createLoft _path _shapes =
+	function createLoft pathShape _shapes =
 	(
 		format "\n"; print "LoftRemote_v.createLoft()"
-		format "_path:	% \n" _path
+		format "pathShape:	% \n" pathShape
 		format "_shapes:	% \n" _shapes
-		this._path   = _path
+		this.pathShape   = pathShape
 		this._shapes = _shapes
 
 		LOFTCREASTOR = this
 
 		this.setOptions()
 
-		select _path
+		select pathShape
 
 		macros.run "Objects Compounds" "Loft"
 
@@ -137,30 +135,44 @@ struct LoftRemote_v
 
 		NEXT_SHAPE_DATA = undefined
 
-		select this._path
+		if this.method == undefined then this.setMethod(1)
+
+		--this._setMethodOption()
+
+		select this.pathShape
 
 		macros.run "Objects Compounds" "Loft"
 
-		this._addNextShapeAfterTimeout(100)
+		/* AFTRER LOFT IS ESTABILSHED */
+		this._setUiAccessor()
+
+		this._setupLoft()
+
+		this.setPathSteps(this.path_steps)
+
+		--this._setPatLength()
+
+		--if this._setupShapes() then
+			--this._addNextShapeAfterTimeout(100)
 	),
 
 	/** Set path
 	  *
 	  */
-	function setPath _path =
+	function setPath pathShape =
 	(
 		--format "\n"; print "LoftRemote_v.setPath()"
-		this._path = _path
+		this.pathShape = pathShape
 	),
 
 	/** Set shape
 	  *
 	  */
-	function setShape _shape pos: =
+	function setShape _shape pos:undefined =
 	(
 		--format "\n"; print "LoftRemote_v.setShape()"
 
-		append this.ShapeData ( LoftShapeData_v (_shape)(pos) )
+		append this.ShapesData ( LoftShapeData_v (_shape)(pos) )
 	),
 
 	/** Set shapes
@@ -171,11 +183,7 @@ struct LoftRemote_v
 		format "\n"; print "LoftRemote_v.loftCreationStart()"
 		UIAccess = UIAccessorWrapper_v( #CommandPanel )
 
-		if this.method == undefined then this.setMethod(1)
-
-		this._setMethodOption()
-
-		for _Shape in this.ShapeData do
+		for _Shape in this.ShapesData do
 			this.addShapeToLoft (_Shape)
 
 		--UIAccess.list()
@@ -183,6 +191,161 @@ struct LoftRemote_v
 		LOFTCREASTOR = undefined
 	),
 
+	/** Setup loft
+	  *
+	  */
+	function _setupLoft =
+	(
+		format "\n"; print "LoftShapeData_v._setupLoft()"
+		format "this.method:	% \n" this.method
+
+		case this.method of
+		(
+			#PERCENTAGE:	UIAccess.press "Percentage"
+			#DISTANCE:	UIAccess.press "Distance"
+			#STEPS:	UIAccess.press "Path Steps"
+		)
+		--UIAccess.list type:#Button
+		--UIAccess.list type:#Button
+		--UIAccess.list type:#static
+		--UIAccess.list()
+	),
+
+	/** Set path steps
+	  *
+	  */
+	function setPathSteps steps =
+	(
+		format "\n"; print "LoftShapeData_v.setPathSteps()"
+
+		if steps == undefined then
+			this.path_steps = this.pathShape.steps
+
+		UIAccess.suspendWarning()
+
+		UIAccess.setVal "Path Steps:" ( this.path_steps as string )
+
+		UIAccess.suspendWarningStop()
+	),
+
+	/** Set path steps
+	  *
+	  */
+	function setShapeSteps steps =
+	(
+		format "\n"; print "LoftShapeData_v.setPathSteps()"
+
+		if steps != undefined then
+		(
+			UIAccess.suspendWarning()
+
+			UIAccess.setVal "Shape Steps:" ( steps as string )
+
+			UIAccess.suspendWarningStop()
+		)
+	),
+
+	--/** Set total length
+	--  *
+	--  */
+	--function _setPatLength =
+	--(
+	--	--format "\n"; print "LoftShapeData_v.setTotalLength()"
+	--	segments_length = getSegLengths this.pathShape 1
+	--
+	--	this.path_length = case this.method of
+	--	(
+	--		#DISTANCE: units.formatValue segments_length[segments_length.count]
+	--
+	--		#PERCENTAGE:	100
+	--
+	--		#STEPS:
+	--		(
+	--			spline_knots = numKnots this.pathShape
+	--			--format "spline_knots:	% \n" spline_knots
+	--
+	--			spline_steps = (UIAccess.getSpinnerValue "Path Steps:") as integer
+	--			--format "spline_steps:	%\n" spline_steps
+	--
+	--			( segments_length.count * spline_steps) + spline_knots
+	--		)
+	--	)
+	--),
+
+	/** Setup shapes
+	  *
+	  */
+	function _setupShapes =
+	(
+		format "\n"; print "LoftShapeData_v._setupShapes()"
+
+		/** Convert to display units
+		  */
+		function convertToDisplayUnits val  =
+		(
+			val = case units.SystemType of -- convert to milimeters
+			(
+				#centimeters:	val * 10
+				#meters:	val * 1000
+				#kilometers:	val * 1000000
+				default:	val -- mnilimeters or non metric units
+			)
+
+			val = case units.MetricType of -- convert to dispaly units
+			(
+				#centimeters:	val / 10
+				#meters:	val / 1000
+				#kilometers:	val / 1000000
+				default:	val -- mnilimeters or non metric units
+			)
+			val --return
+		)
+
+		/** Set length of path in percentage, knots count or distance
+		  */
+		segments_length = getSegLengths this.pathShape 1
+
+		path_length = case this.method of
+		(
+			--#DISTANCE: units.formatValue segments_length[segments_length.count]
+			#DISTANCE: convertToDisplayUnits (segments_length[segments_length.count])
+
+			#PERCENTAGE:	100
+
+			#STEPS:
+			(
+				spline_knots = numKnots this.pathShape
+				--format "spline_knots:	% \n" spline_knots
+
+				spline_steps = (UIAccess.getSpinnerValue "Path Steps:") as integer
+				--format "spline_steps:	%\n" spline_steps
+
+				( segments_length.count * spline_steps) + spline_knots
+			)
+		)
+
+		--shapes_without_pos = for ShapeData in ShapesData where ShapeData.pos == undefined collect ShapeData
+		format "path_length:	% \n" path_length
+		--format "path_length:	% \n" (units.decodeValue ( units.formatValue path_length ) )
+
+
+		for index = 1 to ShapesData.count do
+			ShapesData[index].pos = path_length / (ShapesData.count - 1) * (index - 1)
+			--setShapePos(i)
+
+		--for ShapeData in ShapesData do
+			--format "ShapeData:	% \n" ShapeData.pos
+
+		if this.method == #STEPS and ShapesData.count > path_length then
+		(
+			messageBox "Shape is more then stemps on path" title:"LOFT ERROR"
+
+			false --return
+		)
+		else
+			true --return
+
+	),
 
 	/** Add shape to loft
 	  *
@@ -192,60 +355,21 @@ struct LoftRemote_v
 	(
 		format "\n-------------------------------------\n\n"; print "LoftRemote_v.addShapeToLoft()"
 
-		NEXT_SHAPE_DATA = ShapeData[this.current_index + 1]
+		NEXT_SHAPE_DATA = ShapesData[this.current_index + 1]
 		format "this.current_index:	% \n" this.current_index
 		format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
-
 
 		/* TURN OFF CREATION AFTER FIRST SHAPE */
 		if this.current_index > 0 then
 			UIAccess.press ("Get Shape")
-
 
 		this.current_index += 1
 
 		if NEXT_SHAPE_DATA != undefined then
 			this._pickShape()
 
-
-
-
-		--/* TURN OFF CREATION AFTER FIRST SHAPE */
-		--if this.current_index > 0 then
-		--(
-		--	print "=========== ADD NEXT SHAPE ==========="
-		--
-		--	this.current_index += 1
-		--
-		--	UIAccess.press ("Get Shape")
-		--
-		--	if NEXT_SHAPE_DATA != undefined then
-		--		this._pickShape()
-		--)
-		--else
-		--
-		--if NEXT_SHAPE_DATA != undefined then
-		--(
-		--	print "=========== ADD FIRST SHAPE ==========="
-		--
-		--	this.current_index += 1
-		--
-		--	this._pickShape() -- pick first
-		--)
-
-
-
-	),
-
-	/** Test
-	  *
-	  */
-	function test =
-	(
-		format "\n"; print "LoftRemote_v.test()"
-		format "this.current_index:	% \n" this.current_index
-		format "NEXT_SHAPE_DATA:	% \n" NEXT_SHAPE_DATA
-
+		else
+			this.pickDialogCallbackStop()
 	),
 
 	/** Add shape to loft
@@ -256,44 +380,34 @@ struct LoftRemote_v
 	(
 		--format "\n"; print "LoftRemote_v._pickShape()"
 
-		function pickDialogCallbackStart =
-		(
-			--format "\n"; print "LoftRemote_v.pickDialogCallbackStart()"
-			DialogMonitorOPS.RegisterNotification addShapePickDialogCallback id:#GetShapePopUp
-			DialogMonitorOPS.enabled = true
-		)
-		function pickDialogCallbackStop =
-		(
-			format "\n"; print "LoftRemote_v.pickDialogCallbackStop()"
-			DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
-			DialogMonitorOPS.enabled = false
-		)
-
 		this._setUiAccessor()
 
 		this._setShapePosition()
 
 		UIAccess.press ("Get Shape")
 
-		pickDialogCallbackStart()
+		this.pickDialogCallbackStart()
 
 		max tool hlist -- open pick dialog
-
-		--pickDialogCallbackStop()
 	),
+
+	/**
+	  */
 	function pickDialogCallbackStart =
 	(
 		--format "\n"; print "LoftRemote_v.pickDialogCallbackStart()"
 		DialogMonitorOPS.RegisterNotification addShapePickDialogCallback id:#GetShapePopUp
 		DialogMonitorOPS.enabled = true
 	),
+
+	/**
+	  */
 	function pickDialogCallbackStop =
 	(
 		format "\n"; print "LoftRemote_v.pickDialogCallbackStop()"
 		DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
 		DialogMonitorOPS.enabled = false
 	),
-
 
 	/** Set method of adding shapes to loft
 	  *
@@ -322,21 +436,21 @@ struct LoftRemote_v
 
 	private
 
-	/** Set method option in ui
-	  *
-	  */
-	function _setMethodOption =
-	(
-		format "\n"; print "LoftShapeData_v.setMethodOption()"
-		method_control = case this.method of
-		(
-			#DISTANCE:	"Distance"
-			#STEPS:	"Path Steps"
-			default:	"Percentage"
-		)
-
-		UIAccess.press (method_control)
-	),
+	--/** Set method option in ui
+	--  *
+	--  */
+	--function _setMethodOption =
+	--(
+	--	format "\n"; print "LoftShapeData_v.setMethodOption()"
+	--	method_control = case this.method of
+	--	(
+	--		#DISTANCE:	"Distance"
+	--		#STEPS:	"Path Steps"
+	--		default:	"Percentage"
+	--	)
+	--
+	--	UIAccess.press (method_control)
+	--),
 
 
 	/** Set value to spinner of shape position
@@ -349,7 +463,8 @@ struct LoftRemote_v
 		if NEXT_SHAPE_DATA.pos == 0 then
 			return true
 
-		UIAccess.setVal "Path:"( (NEXT_SHAPE_DATA.pos as string ) + ",0")
+		--UIAccess.setVal "Path:"( (NEXT_SHAPE_DATA.pos as string ) + ",0")
+		UIAccess.setVal "Path:" ( NEXT_SHAPE_DATA.pos as string )
 	),
 
 	/** Set timer
@@ -381,6 +496,6 @@ struct LoftRemote_v
 	 */
 	on create do
 	(
-		this._setUiAccessor()
+		--this._setUiAccessor()
 	)
 )

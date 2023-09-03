@@ -7,48 +7,64 @@ filein( getFilenamePath(getSourceFileName()) + "/../LoftRemote.ms" )	-- "./../Lo
 /** Prepare scene
   *
   */
-function prepareScene =
+function prepareScene path_knots shapes_count path_steps =
 (
 	--format "\n"; print "LoftRemoteTest.ms.prepareScene()"
 	delete objects
 
 	/* CREATE PATH */
-	_path = SplineShape name:"LoftPath"
+	loftPath = SplineShape name:"LoftPath" steps:path_steps
 
- 	addNewSpline _path
+ 	addNewSpline loftPath
 
- 	--for i = 0 to 50 by 10 do
- 		--addKnot _path 1 #smooth #curve [random -10 10, i,0]
 
- 	addKnot _path 1 #smooth #curve [ 0 , 0 ,0 ]
- 	addKnot _path 1 #smooth #curve [ 100 , 0 ,0 ]
+ 	for i = 0 to (path_knots * 100) by 100 do
+ 		addKnot loftPath 1 #smooth #curve [random -50 50, i, 0]
 
+	select loftPath
+ 	--addKnot loftPath 1 #smooth #curve [ 0 , 0 ,0 ]
+ 	--addKnot loftPath 1 #smooth #curve [ 100 , 0 ,0 ]
 
 	/* CREATE SHAPE */
-    --global _shape = splineShape name:"Shape"
-	ShapeFirst  = Circle name:"ShapeFirst"	radius:3	pos:[ -100 , 0 ,0 ] wirecolor:red
-	ShapeSecond = Circle name:"ShapeSecond"	radius:15	pos:[ -70 , 0 ,0 ]  wirecolor:green
-	ShapeSecond = Circle name:"ShapeThird"	radius:70	pos:[ -30 , 0 ,0 ]  wirecolor:blue
+    for i = 1 to shapes_count do
+		selectmore (Circle name:( "Shape_"+i as string )	radius:( random 3 15  )	pos:[ ( i * 10 ) , 0 ,0 ] )
+
 
 )
 
 max modify mode
 
-prepareScene()
+
+--path_steps   = 3
+path_knots   = 4
+shapes_count = 6
+
+
+prepareScene( path_knots )( shapes_count )( path_steps )
 
 
 LoftRemote 	= LoftRemote_v()
 
+LoftRemote.setMethod
+
 --LoftRemote.setMethod(3)
---LoftRemote.setMethod(#STEPS)
+LoftRemote.setMethod(#STEPS)  -- default steps count is intepolation of path
+--LoftRemote.setMethod(#PERCENTAGE)
+--LoftRemote.setMethod(#DISTANCE)
 
 
+LoftRemote.setPath	( selection[1] )
 
-LoftRemote.setPath	($LoftPath)
+for i = 1 to shapes_count do
+	LoftRemote.setShape ( selection[ i + 1 ]  )	--pos:0
 
-LoftRemote.setShape 	($ShapeFirst)	pos:0
-LoftRemote.setShape	($ShapeSecond)	pos:50
-LoftRemote.setShape	($ShapeThird)	pos:100
+--LoftRemote.setShape 	($ShapeFirst)	pos:0
+--LoftRemote.setShape	($ShapeSecond)	pos:50
+--LoftRemote.setShape	($ShapeThird)	pos:100
+
+
+--LoftRemote.setShape	($ShapeSecond)	--pos:50
+--LoftRemote.setShape	($ShapeThird)	--pos:100
 
 
 LoftRemote.create()
