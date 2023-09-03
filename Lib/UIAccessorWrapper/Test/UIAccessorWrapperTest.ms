@@ -36,8 +36,7 @@ function prepareScene =
 
 
 	/* CREATE SHAPE */
-    local nodeShape = splineShape name:"Shape"
-	nodeShape = Circle radius:10 pos:[ -100 , 0 ,0 ]
+	nodeShape = Circle  name:"ShapeBig" radius:10 pos:[ -100 , 0 ,0 ]
 
 	select nodePath
 
@@ -53,10 +52,12 @@ function prepareScene =
 prepareScene()
 
 
+
 UIAccess = UIAccessorWrapper_v( #CommandPanel )
 
 UIAccess.press "Path Steps"
 UIAccess.setVal "Path Steps:" 0
+
 
 
 UIAccess.list()

@@ -39,7 +39,7 @@ struct UIAccessorWrapper_v
 	  */
 	function press ui_text type: =
 	(
-		format "\n"; print "UIAccessorWrapper_v.press()"
+		--format "\n"; print "UIAccessorWrapper_v.press()"
 		/** Press button
 		  */
 		function pressButton ctrl_pointer =
@@ -56,10 +56,9 @@ struct UIAccessorWrapper_v
 			windows.sendMessage ctrl_pointer BM_CLICK 0 0
 		)
 
-
 		if (ctrl_hwnd = this.getControl(ui_text) type:type ) != undefined then
 		(
-			format "CTRL_HWND:	% \n" ctrl_hwnd
+			--format "CTRL_HWND:	% \n" ctrl_hwnd
 
 			case ctrl_hwnd[4] as name of
 			(
@@ -68,6 +67,7 @@ struct UIAccessorWrapper_v
 				--default:
 			)
 		)
+
 	),
 
 	/** Set value to spinner, or edit text
@@ -81,7 +81,7 @@ struct UIAccessorWrapper_v
 	  */
 	function setVal ui_text val =
 	(
-		format "\n"; print "UIAccessorWrapper_v.setVal()"
+		--format "\n"; print "UIAccessorWrapper_v.setVal()"
 
 		function isLabel ctrl_hwnd = ctrl_hwnd[4] as name == #static
 
@@ -93,13 +93,12 @@ struct UIAccessorWrapper_v
 			WM_CHAR 	= 0x0102
 			VK_RETURN 	= 0x000D
 
-			uiaccessor.setwindowtext ctrl_pointer ( val as string ) -- set value
+			UIAccessor.setWindowText ctrl_pointer ( val as string ) -- set value
 
 			windows.sendMessage ctrl_pointer WM_CHAR VK_RETURN 0 -- press ENTER key
 		)
 
 
-		this.suspendWarning()
 
 		if (ctrl_hwnd = this.getControl(ui_text) ) != undefined then
 		(
@@ -116,15 +115,6 @@ struct UIAccessorWrapper_v
 					format "ctrl_edit:	% \n" ctrl_edit
 				)
 			)
-
-		--
-		--	case ctrl_hwnd[4] as name of
-		--	(
-		--		#CustButton:	pressButton(ctrl_hwnd[1])
-		--		#Button:	click(ctrl_hwnd[1]) -- click radio button
-		--		--default:
-		--	)
-
 		)
 
 		this.suspendWarningStop()
@@ -135,8 +125,8 @@ struct UIAccessorWrapper_v
 	  */
 	function getControl ui_text type: =
 	(
-		format "\n"; print "LoftRemote_v.getButton()"
-		format "ui_text:	% \n" ui_text
+		--format "\n"; print "LoftRemote_v.getButton()"
+		--format "ui_text:	% \n" ui_text
 
 		ctrl_hwnd = undefined
 
@@ -147,9 +137,6 @@ struct UIAccessorWrapper_v
 
 		ctrl_hwnd --return
 	),
-
-
-
 
 	/** Add callback to Suspend warning dialog
 	  */
@@ -175,6 +162,7 @@ struct UIAccessorWrapper_v
 	  */
 	function list type: =
 	(
+		clearListener(); print("Cleared in:"+getSourceFileName())
 		format "\n"; print "UIAccessorWrapper_v.listControls()"
 
 		--for ctrl in windows.getChildrenHWnd this.commandPanelHWnd where ctrl[4] == control_types[#RADIO] as string do
