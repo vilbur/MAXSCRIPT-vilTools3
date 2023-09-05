@@ -37,6 +37,7 @@ icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
 			Wirecolor.randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
 		)
 	)
+
 	on altExecute type do
 	(
 		macros.run "_Wirecolor" "wirecolor_random_menu"
@@ -85,21 +86,6 @@ icon:	"MENU:true"
 	SELECT BY WIRECOLOR
 --------------------------------------------------------------------------------*/
 
---/*
---*/
---macroscript	wirecolor_select
---category:	"_Wirecolor"
---buttontext:	"Select"
---toolTip:	"Select objects by wirecolor"
---icon:	"MENU:true"
---(
---	selection_colors = #()
---
---	for o in selection do appendIfUnique selection_colors o.wirecolor
---
---	select (for o in objects where findItem selection_colors o.wirecolor > 0 collect o)
---)
-
 /*
 */
 macroscript	wirecolor_select_only_visible
@@ -108,12 +94,20 @@ buttontext:	"Select"
 toolTip:	"Select by wirecolor"
 icon:	"MENU:tooltip"
 (
+	fn compareNames val_1 val_2 = stricmp val_1.name val_2.name
+
 	selection_colors = #()
 
 	for o in selection do appendIfUnique selection_colors o.wirecolor
 
-	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+
+	objects_by_color = (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+
+	objects_by_name = qsort objects_by_color compareNames
+
+	for obj in objects_by_name do format "obj.name:	% \n" obj.name
+
+	select ( objects_by_name )
+
+
 )
-
-
-

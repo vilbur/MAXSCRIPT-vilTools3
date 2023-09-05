@@ -7,7 +7,7 @@ struct Selection_v
 
 	/** Get instances
 	  *
-	  * @param	node	obj	for finding instances
+	  * @param	node	_objects	for get instances
 	  * @param	boolean	visible	if true only visible objects are returned
 	  *
 	  * @param	#ALL|#INSTANCE|#REFERENCE type mode for selecting instances or references
@@ -15,18 +15,82 @@ struct Selection_v
 	  * 	#INSTANCE:	Get only instances  of obj without references
 	  * 	#REFERENCE:	Get only references of obj without instances
 	 */
-	function getInstances obj type:#ALL visible:false  =
+	function getInstances _objects type:#ALL visible:false  =
 	(
 		--format "\n"; print "Selection_v.getInstances()"
-		--instances = #()
+		instances = #()
+
+		this.sortByPointers (&_objects)
+
+		unique_objects = this.filterUniqueObjects( _objects )
+
+		for obj in unique_objects do
+			join instances (this._getInstances obj type:type visible:visible )
+
+		instances --return
+	),
+
+	/** Select only Unique objects.
+	  *	Deselect mutliple instances
+	  *
+	  * @return	array selection
+	 */
+	function filterUniqueObjects _objects =
+	(
+		unique_objects	= #()
+		instances_all	= #()
+
+		this.sortByPointers (&_objects)
+
+		for obj in _objects where findItem instances_all obj == 0 do
+		(
+			local obj_instances
+
+			InstanceMgr.GetInstances obj &obj_instances
+
+			append unique_objects obj
+
+			join instances_all obj_instances
+		)
+
+		--for obj in unique_objects do format "unique:	%\n" obj.name
+
+		unique_objects
+	),
+
+	private
+
+	/** Get instances
+	  *
+	  */
+	function _getInstances obj type: visible:  =
+	(
+		--format "\n"; print "Selection_v._getInstances()"
+		--format "type:	% \n" type
+
+		/** Get references
+		  *
+		  * @param boolean test true == instance, false == reference
+		 */
+		function getReferences obj instances test =
+		(
+			references = #()
+
+			for _instance in instances where  (areNodesInstances obj _instance) == test  do
+				append references _instance
+
+			references --return
+		)
+
+		local instances
 
 		InstanceMgr.GetInstances obj &instances
 
 		result = case type of
 		(
-			#INSTANCE:	this._getReferences obj instances true --return
-			#REFERENCE:	this._getReferences obj instances false --return
-			default:	instances --return
+			#INSTANCE:	getReferences obj instances true
+			#REFERENCE:	getReferences obj instances false
+			default:	instances
 		)
 
 		if visible == true then
@@ -36,91 +100,14 @@ struct Selection_v
 
 	),
 
-	/** Select only Unique objects.
-	  *	Deselect mutliple instances
-	  *
-	  * @return	array selection
-	 */
-	function filterUniqueObjects =
+	/* Sort objects by order of creation */
+	function sortByPointers &_objects =
 	(
-		for obj in selection do
-		(
-			local obj_instances
+		pointers = sort (for obj in _objects collect getHandleByAnim obj)
 
-			InstanceMgr.GetInstances obj &obj_instances
-			--format "obj_instances = % \n" obj_instances.count
+		_objects = for pointer in pointers collect getAnimByHandle pointer
 
-			if( obj_instances.count > 1 ) then
-			(
-				deleteItem obj_instances (findItem obj_instances obj)
-				deselect obj_instances
-			)
-		)
-
-		selection as Array --return
-	),
-
-	/** Collapse selection
-	  *
-	  *
-	  * TODO: MOVE THIS METHOD TO EDIT ROLLOUT
-	 */
-	function collapse =
-	(
-		for o in this.geometry() do
-			maxOps.CollapseNodeTo o 1 off
-	),
-
-	/** Set name to objects
-	  *
-	  * TODO: set auto name by
-	  *		1) GROUP
-	  *		2) LAYER
-	  *		3) SELECTION SET
-	  *		4) FILE NAME
-	  *
-	 */
-	function name _name =
-	(
-		_selection	= this.geometry()
-
-		if( _name=="file" ) then
-			_name = getFilenameFile maxFileName
-
-		_name	= ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace _name "" -- remove
-
-		if( _selection.count == 1 ) then
-			selection[1].name = _name
-
-		else
-			for o in _selection do
-				o.name = uniqueName _name
-	),
-
-
-	/** Get selection of geometry
-	 *	@return	collection
-	 */
-	function geometry =
-	(
-		for o in selection where superclassof o == GeometryClass collect o
-	),
-
-
-	private
-
-
-	/** Get references
-	 */
-	function _getReferences obj instances test =
-	(
-		--format "\n"; print "Selection_v._getReferences()"
-		references = #()
-
-		for _instance in instances where  (areNodesInstances obj _instance) == test  do
-			appendIfUnique references _instance
-
-		references --return
+		_objects --return
 	),
 
 	/**

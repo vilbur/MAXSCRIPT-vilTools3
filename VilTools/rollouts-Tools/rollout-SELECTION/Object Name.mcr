@@ -1,9 +1,9 @@
---filein( getFilenamePath(getSourceFileName()) + "/Lib/ObjectRenamer/ObjectRenamer.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/showObjectNames.ms" )	-- "./Lib/showObjectNames.ms"
 
 /**
   *
   */
-macroscript selection_renema_by_last
+macroscript selection_reneme_by_last
 category:	"_Object-Name"
 buttonText:	"Rename by last"
 tooltip:	"Rename by last selected object"
@@ -14,7 +14,6 @@ icon:	"MENU:true"
 	on execute do
 		for obj in selection do
 			obj.name = selection[selection.count].name
-
 )
 
 /**
@@ -27,169 +26,73 @@ tooltip:	"Convert case of selected object names\n\nCapital Case >>> UPPER CASE >
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 icon:	"MENU:true"
 (
-	filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
-
-	for obj in selection do
+	on execute do
 	(
-		----obj_name = obj.name
-		RX = ( dotNetClass "System.Text.RegularExpressions.RegEx" )
-		has_lowercase = (RX.match obj.name "[a-z]").success
-		has_uppercase = (RX.match obj.name "[A-Z]").success
+		filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 
-		if has_lowercase and not has_uppercase then -- if "lower case" then "Capital Case"
+		for obj in selection do
 		(
-			capital_string	= ""
-			delimeters	= "-_, "
+			----obj_name = obj.name
+			RX = ( dotNetClass "System.Text.RegularExpressions.RegEx" )
+			has_lowercase = (RX.match obj.name "[a-z]").success
+			has_uppercase = (RX.match obj.name "[A-Z]").success
 
-			test_delimeters	= RX.matches obj.name ("["+delimeters+"]") ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
-			delimeters_match	= (for matchIdx = 0 to test_delimeters.count-1 collect for groupIdx = 0 to test_delimeters.item[matchIdx].groups.count-1 collect ( test_delimeters.item[matchIdx].groups.item[groupIdx].value )) --return
+			if has_lowercase and not has_uppercase then -- if "lower case" then "Capital Case"
+			(
+				capital_string	= ""
+				delimeters	= "-_, "
 
-			delimeter = if delimeters_match.count > 0 then delimeters_match[1][1] else ""
+				test_delimeters	= RX.matches obj.name ("["+delimeters+"]") ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+				delimeters_match	= (for matchIdx = 0 to test_delimeters.count-1 collect for groupIdx = 0 to test_delimeters.item[matchIdx].groups.count-1 collect ( test_delimeters.item[matchIdx].groups.item[groupIdx].value )) --return
 
-			for word in (filterString obj.name delimeters) do
-				capital_string += replace word 1 1 ( toUpper word[1]) + delimeter
+				delimeter = if delimeters_match.count > 0 then delimeters_match[1][1] else ""
 
-			obj.name = trimRight capital_string delimeter
+				for word in (filterString obj.name delimeters) do
+					capital_string += replace word 1 1 ( toUpper word[1]) + delimeter
+
+				obj.name = trimRight capital_string delimeter
+			)
+			else if has_uppercase and not has_lowercase then -- if "lower case" then "Capital Case"
+				obj.name = toLower obj.name
+
+			else if has_lowercase and has_uppercase then
+				obj.name = toUpper obj.name
 		)
-		else if has_uppercase and not has_lowercase then -- if "lower case" then "Capital Case"
-			obj.name = toLower obj.name
-
-		else if has_lowercase and has_uppercase then
-			obj.name = toUpper obj.name
 	)
-
 )
 
---fn showObjectNames = --start
---(
----- 	o=$
-----	gw.setTransform(Matrix3 1)
-----	for o in selection where not o.isHidden do
-----	(
-----
-----		mdZpos = o.pos.z
-----
-----
-----		nameString = o.name
-----		newName = ""
-----
-----
-----			if findstring nameString "\\" != 0 then
-----			(
-----
-----				NameTokens = filterString nameString "\\"
-----
-----				for w=1 to NameTokens.count do
-----				(
-----					word = NameTokens[w]
-----					append newName word
-----
-----					if w <  NameTokens.count  then append newName "\\\\"
-----				)
-----
-----				nameString = newName
-----
-----			)
-----
-----
------- 		Print ("DEBUG ----- showObjectNames: " + nameString )
-----
------- 		gw.text o.pos nameString color:yellow
-----		gw.text o.center nameString color:yellow
-----
-----
------- 		gw.text o.pos (o.modifiers[1].name as string) color:yellow
-----
------- 		if o.modifiers.count > 0 then
------- 		(
-----		--for m in o.modifiers do	gw.text  [o.pos.x,o.pos.y,(mdZpos -= 140)] "SHIT" color:yellow
------- 		gw.text  [o.pos.x,o.pos.y,(mdZpos -= 140)] "SHIT" color:yellow
------- 		)
-----
-----	)
-----	gw.enlargeUpdateRect #whole
-----	gw.updateScreen()
---)
---
 
-/** CHECKBUTTON DOES NOT WORK, UI CREATE NORMAL BUTTON
+
+
+/** https://forums.cgsociety.org/t/unregister-a-redrawviewscallback-in-scripted-modifier/2048394/4
   *
   */
 macroscript selection_name_show_in_viewport
 category:	"_Object-Name"
 buttonText:	"Show Names"
-icon:	"control:checkbutton"
+--icon:	"control:checkbutton"
+icon:	"MENU:true"
 --icon:	"control:checkbox|Groupbox:Prefix|across:1"
 (
-
-	fn GW_displayObjectNames =
+	on execute do
 	(
-	  gw.setTransform (matrix3 1)
-	  for o in objects where not o.isHiddenInVpt do
-		gw.text o.pos (o as string) color:yellow
-	  gw.enlargeUpdateRect #whole
-	)
+		clearListener(); print("Cleared in:"+getSourceFileName())
 
-	if EventFired.val then
-		unregisterRedrawViewsCallback showObjectNames
-	else
-			registerRedrawViewsCallback GW_displayObjectNames
+		is_registred = (for _callback in showRegisteredRedrawViewsCallbacks asArray:true where _callback[1] == "displayObjectNames" collect _callback).count > 0
 
-	format "EventFired.val	= % \n" EventFired.val
+		unregisterRedrawViewsCallback displayObjectNames
 
---format "Control	= % \n" (classOf EventFired.Control)
-	--format "EventFired.Control.state	= % \n" EventFired.Control.state
+		if not is_registred then
+			registerRedrawViewsCallback displayObjectNames
 
-	--registerRedrawViewsCallback showObjectNames
-	--showObjectNames()
-	--global showObjectNamesCallback = true
-
-)
-
-
-
-
-/**  SUFFIX TEXT
-  *
-  */
-macroscript selection_remove_suffix_text
-category:	"_Object-Name"
-buttonText:	"[remove suffix text]"
-tooltip:	"RegEx of suffix to remove"
-icon:	"control:editText|across:2|width:256"
---icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
-(
-	format "EventFired	= % \n" EventFired
-	--search_text = ROLLOUT_selection.search_in_name.text
-
-
-	if EventFired.val == " " then
-		EventFired.control.text = "[-_]|LEFT|RIGHT|\d+"
-
-	--format "search_text	= % \n" search_text
-
-)
-
-/**
-  *
-  */
-macroscript selection_remove_numbered_suffix
-category:	"_Object-Name"
-buttonText:	"Remove suffix"
-tooltip:	"Remove suffix from object name"
-icon:	"across:2|align:#right"
---icon:	"control:checkbox|Groupbox:Prefix|across:1"
-(
-	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
-
-	undo "Remove suffix" on
-	(
-		suffix_text = ROLLOUT_selection.ET_remove_suffix_text.text
-
-		for obj in selection do
-			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" ("("+suffix_text+")$")  ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase  ).Replace obj.name ""
 	)
 )
+
+
+
+
+
+
 
 
 /*------------------------------------------------------------------------------
