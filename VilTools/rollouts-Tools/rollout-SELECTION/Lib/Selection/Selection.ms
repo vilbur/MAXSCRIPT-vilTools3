@@ -5,39 +5,72 @@
 struct Selection_v
 (
 	instances	= #(),
-	references 	= #(),
-
 
 	/** Get instances
 	  */
-	function getInstancesAll _objects visible:false =
+	function getInstancesAndReferences _objects =
 	(
-		if classOf _objects != Array then _objects = #(_objects)
-
-		for obj in _objects do
-			for inst in this._getObjInstances(obj) do
-				appendIfUnique this.instances inst
-
-		 this.instances--return
+		this._getInstancesOrReferences _objects #ALL
 	),
 
 	/** Get instances
 	  */
-	function getInstances _objects visible:false =
+	function getInstances _objects =
 	(
 		this._getInstancesOrReferences _objects #INSTANCE
-
-		this.instances--return
 	),
 
 	/** Get instances
 	  */
-	function getReferences _objects visible:false =
+	function getReferences _objects =
 	(
-		this._getInstancesOrReferences _objects #REFERENCE
+		instances_and_references = this.getInstancesAndReferences _objects
 
-		this.instances--return
+		this._filter instances_and_references #REFERENCE
 	),
+
+
+	/** Filter reference
+	  *
+	  */
+	function filterInstance _objects =
+	(
+		this._filter _objects #INSTANCE
+	),
+	/** Filter reference
+	  *
+	  */
+	function filterReference _objects =
+	(
+		this._filter _objects #REFERENCE
+	),
+
+	/** Select only Unique objects.
+	  *	Deselect mutliple instances
+	  *
+	  * @return	array selection
+	 */
+	function getUnique _objects =
+	(
+		unique_objects	= #()
+		instances_all	= #()
+
+		this._getObjects( &_objects )
+
+		this._sortByPointers (&_objects)
+
+		for obj in _objects where findItem instances_all obj == 0 do
+		(
+			appendIfUnique unique_objects obj
+
+
+			join instances_all (this._getObjInstances(obj))
+		)
+
+		unique_objects
+	),
+
+	private
 
 	/** Get instances
 	  *
@@ -51,59 +84,28 @@ struct Selection_v
 	 */
 	function _getInstancesOrReferences _objects type  =
 	(
-		--format "\n"; print "Selection_v.getInstances()"
-		--format "classOf _objects:	% \n" (classOf _objects)
-		--if classOf _objects != Array and classOf _objects != ObjectSet then _objects = #(_objects)
+		this.instances	= #()
+
+		--format "\n"; print "Selection_v._getInstancesOrReferences()"
 		this._getObjects( &_objects )
+		--format "_objects:	% \n" _objects
 
-		format "classOf _objects:	% \n" (classOf _objects)
+		if _objects != undefined then
+			for obj in _objects where findItem this.instances obj == 0 do
+				for inst in this._getInstancesByType obj type where findItem this.instances inst == 0 do
+					appendIfUnique this.instances inst
 
-		for obj in _objects do
-			for inst in this._setInstances obj type:type do
-				appendIfUnique this.instances inst
+		this.instances--return
 	),
-
-	/** Select only Unique objects.
-	  *	Deselect mutliple instances
-	  *
-	  * @return	array selection
-	 */
-	function filterUniqueObjects _objects =
-	(
-		this._getObjects( &_objects )
-
-
-		unique_objects	= #()
-		instances_all	= #()
-
-		this.sortByPointers (&_objects)
-
-		for obj in _objects where findItem instances_all obj == 0 do
-		(
-			local obj_instances
-
-			InstanceMgr.GetInstances obj &obj_instances
-
-			appendIfUnique unique_objects obj
-
-			join instances_all obj_instances
-		)
-
-		--for obj in unique_objects do format "unique:	%\n" obj.name
-
-		unique_objects
-	),
-
-	private
 
 	/** Get instances
 	  *
 	  */
-	function _setInstances obj type: =
+	function _getInstancesByType obj type =
 	(
-		format "\n"; print "Selection_v._setInstances()"
-		--format "type:	% \n" type
-		format "obj:	% \n\n" obj.name
+		--format "\n"; print "Selection_v._getInstancesByType()"
+		--format "type	% \n" type
+		--format "obj:	% \n\n" obj.name
 
 		/** Get references
 		  *
@@ -120,20 +122,29 @@ struct Selection_v
 		)
 
 		instances_all = this._getObjInstances(obj)
-		format "\n\n"; for inst in instances_all do format "inst:	%\n" inst.name
+		--format "\n\n"; for obj in instances_all do format "obj:	%\n" obj.name
+		--this._sortByPointers (&instances_all)
+		--format "\n\n"; for obj in instances_all do format "obj:	%\n" obj.name
 
-		references = instanceReferenceTest obj instances_all false
-		format "\n\n"; for ref in references do format "ref:	%\n" ref.name
-
-		instances_only =  for inst in instances_all where findItem references inst == 0 collect inst
-		format "\n\n"; for inst in instances_only do format "inst only:	%\n" inst.name
-
-		case type of
+		if type != #ALL then
 		(
-			#INSTANCE:	instances_only
-			#REFERENCE:	references
-		)
+			references = instanceReferenceTest obj instances_all false
+			--format "\n\n"; for ref in references do format "ref:	%\n" ref.name
 
+			instances_only =  for inst in instances_all where findItem references inst == 0 collect inst
+			--format "\n\n"; for inst in instances_only do format "inst only:	%\n" inst.name
+
+			case type of  --return
+			(
+				#INSTANCE:	if instances_only.count > 1 then instances_only else #()
+				#REFERENCE:	references
+			)
+		)
+		else
+		(
+			if instances_all.count > 1 then instances_all else #()
+		)
+			--instances_all --return
 	),
 
 	/** Get obj instances
@@ -146,11 +157,30 @@ struct Selection_v
 
 		InstanceMgr.GetInstances obj &instances_obj
 
-		instances_obj --return
+		instances_obj
+	),
+
+
+	/** Filter reference
+	  *
+	  */
+	function _filter _objects type =
+	(
+		this._getObjects( &_objects )
+
+		this._sortByPointers (&_objects)
+
+		--format "\n"; print "Selection_v._filter()"
+
+		inst_or_ref = this._getInstancesOrReferences _objects type
+
+		--format "\n\n"; for inst_or_ref in objects do format "inst_or_ref:	%\n" inst_or_ref.name
+
+		for ref in inst_or_ref where findItem _objects ref > 0 collect ref
 	),
 
 	/* Sort objects by order of creation */
-	function sortByPointers &_objects =
+	function _sortByPointers &_objects =
 	(
 		pointers = sort (for obj in _objects collect getHandleByAnim obj)
 

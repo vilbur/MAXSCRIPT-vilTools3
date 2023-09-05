@@ -29,62 +29,79 @@ function prepareScene =
 (
 	delete objects
 
-	--format "\n"; print "SelectionTest.ms.prepareScene()"
-	_Teapot	= Teapot	pos:[ 0, -100, 0 ]	wirecolor:green name:"Original"
-	--_Sphere	= Sphere	pos:[ 0,   0, 0 ]	wirecolor:green
-	--_Box	= Box	pos:[ 0, 100, 0 ]	wirecolor:blue
+	_Teapot	= Teapot	pos:[ 0, -100, 0 ]	wirecolor:yellow name:"Original"
+
+	offset_inst = [ 100, 0,0]
+	offset_ref = [ 0, 0, 100]
 
 
-	--clones	= cloneNodes	1 #( _Teapot )	#copy	offset:[ 100,0,0]
-	--clones.wirecolor = color  128 128 128
-
-	instances	= cloneNodes	2 #( _Teapot )	#instance	offset:[ 0,100,0]
-	instances.wirecolor = color  64 164 64
+	instances	= cloneNodes	2 #( _Teapot )	#instance	offset:offset_inst
 	for i = 1 to instances.count do
 		instances[i].name = "Instance" + i as string
 
 
-	references	= cloneNodes	1 ( objects as Array )	#reference	offset:[ 0,0, 100]
-	references.wirecolor = color  64 64 164
+
+	references	= cloneNodes	3 ( _Teapot )	#reference	offset:offset_ref
 	for i = 1 to references.count do
+	(
 		references[i].name = "Reference" + i as string
+		references[i].wirecolor = color ( random 128 255 ) ( random 128 255 ) ( random 128 255 )
 
+	)
 
-	instances_of_refs	= cloneNodes	1 ( references )	#instance	offset:[ 0,0, 100]
-	instances_of_refs.wirecolor = color  164 64 164
+	instances_of_refs	= cloneNodes	1 ( references )	#instance	offset:(offset_inst)
+	instances_of_refs.wirecolor = color 16 164 16
 	for i = 1 to instances_of_refs.count do
-		instances_of_refs[i].name = "InstOfReference" + i as string
+		instances_of_refs[i].name = "InstanceOfReference" + i as string
 
-	refs_instances_of_refs	= cloneNodes	1 ( instances_of_refs )	#reference	offset:[ 0,0, 100]
-	refs_instances_of_refs.wirecolor = color  164 64 64
-	for i = 1 to refs_instances_of_refs.count do
-		refs_instances_of_refs[i].name = "RefOfInstOfReference" + i as string
 
 )
 
+--prepareScene()
 
 /* GET AL ISNTANCES AND REFERENCES */
---select ((Selection_v()).getInstancesAll( $Original ))
---select ((Selection_v()).getInstancesAll( $InstOfReference1 ))
---select ((Selection_v()).getInstancesAll( $RefOfInstOfReference1 ))
+--select ((Selection_v()).getInstancesAndReferences( $Original ))
+--select ((Selection_v()).getInstancesAndReferences( objects ))
+--select ((Selection_v()).getInstancesAndReferences( $Copy1 ))
 
 /* GET ISNTANCE */
 --select ((Selection_v()).getInstances( $Original ))
---select ((Selection_v()).getInstances( $InstOfReference1 ))
---select ((Selection_v()).getInstances( $RefOfInstOfReference1 ))
+--select ((Selection_v()).getInstances( $Reference1 ))
+
 
 --/* GET REFERENCE */
 --select ((Selection_v()).getReferences( $Original ))
---select ((Selection_v()).getInstances( $InstOfReference1 ))
---select ((Selection_v()).getInstances( $RefOfInstOfReference1 ))
+
+--select  $ReferenceOfInstance2
+--select ((Selection_v()).getReferences( $Reference1 ))
+--select ((Selection_v()).getReferences( $ReferenceOfInstance1 ))
+--select ((Selection_v()).getReferences( $InstanceOfReference1 ))
+
+--select $ReferenceOfInstance1
+--select ((Selection_v()).getReferences( $ReferenceOfInstance1 ))
+
+--select ((Selection_v()).getReferences( $ReferenceOfInstance1 ))
 
 
 /* GET REFERENCE OF MULTIPLE OBJECTS */
-select $Reference*
-select ((Selection_v()).getInstances ( selection ))
+--select ((Selection_v()).getInstances ( $Reference* ))
 
 
 /* GET UNIQUE */
---select ((Selection_v()).filterUniqueObjects( objects ))
---select $Reference*
---select ((Selection_v()).filterUniqueObjects ( selection ))
+--select ((Selection_v()).getUnique( objects ))
+
+--select ((Selection_v()).getUnique( $Instance* ))
+
+
+/* FILTER REFERENCES */
+--select ((Selection_v()).filterReference ( objects ))
+select ((Selection_v()).filterReference ( $*Inst* ))
+
+
+/* FILTER ISNTANCES */
+--select ((Selection_v()).filterInstance ( objects ))
+--select ((Selection_v()).filterInstance ( $*Inst* ))
+
+
+
+
