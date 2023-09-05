@@ -4,6 +4,40 @@
  */
 struct Selection_v
 (
+	instances	= #(),
+	references 	= #(),
+
+
+	/** Get instances
+	  */
+	function getInstancesAll _objects visible:false =
+	(
+		if classOf _objects != Array then _objects = #(_objects)
+
+		for obj in _objects do
+			for inst in this._getObjInstances(obj) do
+				appendIfUnique this.instances inst
+
+		 this.instances--return
+	),
+
+	/** Get instances
+	  */
+	function getInstances _objects visible:false =
+	(
+		this._getInstancesOrReferences _objects #INSTANCE
+
+		this.instances--return
+	),
+
+	/** Get instances
+	  */
+	function getReferences _objects visible:false =
+	(
+		this._getInstancesOrReferences _objects #REFERENCE
+
+		this.instances--return
+	),
 
 	/** Get instances
 	  *
@@ -15,19 +49,18 @@ struct Selection_v
 	  * 	#INSTANCE:	Get only instances  of obj without references
 	  * 	#REFERENCE:	Get only references of obj without instances
 	 */
-	function getInstances _objects type:#ALL visible:false  =
+	function _getInstancesOrReferences _objects type  =
 	(
 		--format "\n"; print "Selection_v.getInstances()"
-		instances = #()
+		--format "classOf _objects:	% \n" (classOf _objects)
+		--if classOf _objects != Array and classOf _objects != ObjectSet then _objects = #(_objects)
+		this._getObjects( &_objects )
 
-		this.sortByPointers (&_objects)
+		format "classOf _objects:	% \n" (classOf _objects)
 
-		unique_objects = this.filterUniqueObjects( _objects )
-
-		for obj in unique_objects do
-			join instances (this._getInstances obj type:type visible:visible )
-
-		instances --return
+		for obj in _objects do
+			for inst in this._setInstances obj type:type do
+				appendIfUnique this.instances inst
 	),
 
 	/** Select only Unique objects.
@@ -37,6 +70,9 @@ struct Selection_v
 	 */
 	function filterUniqueObjects _objects =
 	(
+		this._getObjects( &_objects )
+
+
 		unique_objects	= #()
 		instances_all	= #()
 
@@ -48,7 +84,7 @@ struct Selection_v
 
 			InstanceMgr.GetInstances obj &obj_instances
 
-			append unique_objects obj
+			appendIfUnique unique_objects obj
 
 			join instances_all obj_instances
 		)
@@ -63,41 +99,54 @@ struct Selection_v
 	/** Get instances
 	  *
 	  */
-	function _getInstances obj type: visible:  =
+	function _setInstances obj type: =
 	(
-		--format "\n"; print "Selection_v._getInstances()"
+		format "\n"; print "Selection_v._setInstances()"
 		--format "type:	% \n" type
+		format "obj:	% \n\n" obj.name
 
 		/** Get references
 		  *
 		  * @param boolean test true == instance, false == reference
 		 */
-		function getReferences obj instances test =
+		function instanceReferenceTest obj instances_obj test =
 		(
 			references = #()
 
-			for _instance in instances where  (areNodesInstances obj _instance) == test  do
-				append references _instance
+			for obj_inst in instances_obj where  (areNodesInstances obj obj_inst) == test  do
+				appendIfUnique references obj_inst
 
 			references --return
 		)
 
-		local instances
+		instances_all = this._getObjInstances(obj)
+		format "\n\n"; for inst in instances_all do format "inst:	%\n" inst.name
 
-		InstanceMgr.GetInstances obj &instances
+		references = instanceReferenceTest obj instances_all false
+		format "\n\n"; for ref in references do format "ref:	%\n" ref.name
 
-		result = case type of
+		instances_only =  for inst in instances_all where findItem references inst == 0 collect inst
+		format "\n\n"; for inst in instances_only do format "inst only:	%\n" inst.name
+
+		case type of
 		(
-			#INSTANCE:	getReferences obj instances true
-			#REFERENCE:	getReferences obj instances false
-			default:	instances
+			#INSTANCE:	instances_only
+			#REFERENCE:	references
 		)
 
-		if visible == true then
-			for o in result where o.isHidden == false do deleteItem result (findItem result o )  --return
+	),
 
-		result --return
+	/** Get obj instances
+	  *
+	  */
+	function _getObjInstances obj =
+	(
+		--format "\n"; print "Selection_v.getObjInstances()"
+		local instances_obj
 
+		InstanceMgr.GetInstances obj &instances_obj
+
+		instances_obj --return
 	),
 
 	/* Sort objects by order of creation */
@@ -108,6 +157,15 @@ struct Selection_v
 		_objects = for pointer in pointers collect getAnimByHandle pointer
 
 		_objects --return
+	),
+
+	/** Get objects
+	  *
+	  */
+	function _getObjects &_objects =
+	(
+		--format "\n"; print "Selection_v._getObjects()"
+		if classOf _objects != Array and classOf _objects != ObjectSet then #(_objects) else _objects
 	),
 
 	/**
