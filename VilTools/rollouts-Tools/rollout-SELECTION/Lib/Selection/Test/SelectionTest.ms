@@ -87,15 +87,15 @@ function prepareScene =
 --select ((Selection_v()).getInstances ( $Reference* ))
 
 
-/* GET UNIQUE */
---select ((Selection_v()).getUnique( objects ))
+/* FILTER UNIQUE */
+select ((Selection_v()).filterUnique( objects ))
 
---select ((Selection_v()).getUnique( $Instance* ))
+--select ((Selection_v()).filterUnique( $Instance* ))
 
 
 /* FILTER REFERENCES */
 --select ((Selection_v()).filterReference ( objects ))
-select ((Selection_v()).filterReference ( $*Inst* ))
+--select ((Selection_v()).filterReference ( $*Inst* ))
 
 
 /* FILTER ISNTANCES */

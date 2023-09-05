@@ -46,7 +46,8 @@ autoUndoEnabled: true
 	on execute do
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
-
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\Selection\Selection.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\3_INSTANCE.mcr"
 
 		function compareArrays array1 array2 = ( (with printAllElements on array1) as string == (with printAllElements on array2) as string )
 
@@ -56,44 +57,70 @@ autoUndoEnabled: true
 
 		_selection_old = for o in selection collect o
 
-		instances_all = _Selection.getInstances( _selection_old ) type:#ALL
+		inst_and_ref_all = _Selection.getInstancesAndReferences( _selection_old )
 
-		instances_only = _Selection.getInstances( instances_all ) type:#INSTANCE
-
-		references = _Selection.getInstances( _selection_old ) type:#REFERENCE
-
-		unique_objects = _Selection.filterUniqueObjects( instances_all )
-
-		format "_selection_old.count:	% \n" _selection_old.count
-		format "instances_all.count:	% \n" instances_all.count
-		format "instances_only.count:	% \n" instances_only.count
-		format "references.count:	% \n" references.count
+		instances_only = _Selection.getInstances( _selection_old )
 
 
+		references = _Selection.getReferences( _selection_old )
 
-		instances_all_selected	= compareArrays _selection_old instances_all
+		unique_objects = _Selection.filterUnique( inst_and_ref_all )
+
+
+		--format "_selection_old.count:	% \n" _selection_old.count
+		--format "inst_and_ref_all.count:	% \n" inst_and_ref_all.count
+		--format "instances_only.count:	% \n" instances_only.count
+		--format "references.count:	% \n" references.count
+
+
+		--format "\n"
+		--for obj in inst_and_ref_all do format "inst_and_ref_all:	%\n" obj.name
+		--
+		--format "\n"
+		--for obj in instances_only do format "instances_only:	%\n" obj.name
+		--
+		--format "\n"
+		--for obj in references do format "references:	%\n" obj.name
+
+
+		instances_all_selected	= compareArrays _selection_old inst_and_ref_all
 		instances_only_selected	= compareArrays _selection_old instances_only
 		references_selected	= compareArrays _selection_old references
 		unique_selected	= compareArrays _selection_old unique_objects
 
-		format "\n"
-		format "instances_all_selected:	% \n" instances_all_selected
-		format "instances_only_selected:	% \n" instances_only_selected
-		format "references_selected:	% \n" references_selected
-		format "unique_selected:	% \n" unique_selected
-
+		--format "\n"
+		--format "instances_all_selected:	% \n" instances_all_selected
+		--format "instances_only_selected:	% \n" instances_only_selected
+		--format "references_selected:	% \n" references_selected
+		--format "unique_selected:	% \n" unique_selected
 
 		selection_new = case of
 		(
-			(unique_selected):	instances_all
 			(instances_all_selected):	instances_only
 			(instances_only_selected):	references
-			--(references_selected):	unique_objects
-			default:	unique_objects
+			(references_selected):	unique_objects
+			default:	inst_and_ref_all
 		)
-		format "selection_new:	% \n" selection_new
+
+		format "\n\n"
+		--for obj in unique_objects do format "obj:	%\n" obj.name
+		--for obj in selection_new do format "selection_new:	%\n" obj.name
+
+
 		if selection_new != undefined then
-		select selection_new
+		(
+			success_msg = case of
+			(
+				(instances_all_selected):	"INSTANCES_ONLY"
+				(instances_only_selected):	"REFERENCES"
+				(references_selected):	"UNIQUE OBJECTS"
+				default:	"ALL INSTANCES AND REFERENCES"
+			)
+
+			print ("SELECT: "+success_msg)
+
+			select selection_new
+		)
 	)
 )
 

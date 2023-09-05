@@ -50,7 +50,7 @@ struct Selection_v
 	  *
 	  * @return	array selection
 	 */
-	function getUnique _objects =
+	function filterUnique _objects =
 	(
 		unique_objects	= #()
 		instances_all	= #()
@@ -62,7 +62,6 @@ struct Selection_v
 		for obj in _objects where findItem instances_all obj == 0 do
 		(
 			appendIfUnique unique_objects obj
-
 
 			join instances_all (this._getObjInstances(obj))
 		)
