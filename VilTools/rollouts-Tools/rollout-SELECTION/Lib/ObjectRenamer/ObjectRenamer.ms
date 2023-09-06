@@ -1,3 +1,15 @@
+
+/** Name includes
+ */
+struct NameIncludes_v
+(
+	layer,	-- boolean
+	parent,	-- boolean
+	type,	-- boolean
+
+	on create do()
+)
+
 /** Object renamer
  */
 struct ObjectRenamer_v
@@ -5,35 +17,59 @@ struct ObjectRenamer_v
 	--__construct = #( #property_name ),
 
 	/* construct */
-	/* dependency */
 	/* reference */
 	/* inhered */
 	/* properties */
 	base_name,
 
+	prefix = NameIncludes_v(),
+	suffix = NameIncludes_v(),
+
+	delimentr = "-",
+
 	_objects,
+	objects_to_rename,
 
-	prefix_by_parent,
-	_objects_unique,
+	ins_or_ref	= Dictionary #( #INSTANCE, "Inst" ) #( #REFERENCE, "Ref"	 ), -- prefix for instaces or references
 
-	ascii_lowercase = "abcdefghijklmnopqrstuvwxyz",
-	ascii_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	private
+
+	/* dependency */
+	InstaceManager = InstaceManager_v(),
+
+	--ascii_lowercase = "abcdefghijklmnopqrstuvwxyz",
+	--ascii_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+
+
+	public
 
 	/** Rename
 	 */
 	function rename _objects  =
 	(
-		--prefix_by_parent	= VilTools.Tools.ROLLOUT_OBJECTSSELECTION.CHECKBOX_by_parent.checked
-		--base_name	= VilTools.Tools.ROLLOUT_OBJECTSSELECTION.EDITTEXT_base_name.text
+		format "\n"; print "ObjectRenamer_v.rename()"
 
-		this._objects = _objects
+		format "this.prefix:	% \n" this.prefix
+		format "this.suffix:	% \n" this.suffix
 
-		_objects_unique	= this.filterUniqueObjects()
 
-		--select _objects_unique
+		this._objects = if classOf _objects == ObjectSet then _objects as Array else _objects
 
-		for i = 1 to _objects_unique.count do
-			this._renameObject ( _objects_unique[i] )( i )
+
+		this.sanitizeBaseName()
+
+		format "base_name:	[%] \n" base_name
+
+
+		objects_to_rename	= this.InstaceManager.filterUnique(_objects)
+
+		 format "\n"
+		 for obj in _objects do format "obj:	%\n" obj.name
+		 format "\n"
+		 for obj in objects_to_rename do format "objects_to_rename:	%\n" obj.name
+
+		for i = 1 to objects_to_rename.count do
+			this._renameObject ( objects_to_rename[i] )( i )
 	),
 
 	private
@@ -42,43 +78,35 @@ struct ObjectRenamer_v
 	 */
 	function _renameObject obj index =
 	(
-		format "\n"; print "ObjectRenamer_v._renameObject()"
+		format "\n-------------\n"; print "ObjectRenamer_v._renameObject()"
+		--format "obj.name:	% \n" obj.name
+		obj.name = base_name + delimentr + (this._getSuffixNumber index _objects.count )
 
-		--obj = _objects_unique[index]
-
-		--obj.name = (this._getPrefix obj) + base_name + "-" + ascii_uppercase[index]
-		obj.name = base_name + "-" + (this._getSuffixNumber index )
-
-		InstanceMgr.GetInstances obj &obj_instances
-
-		--format "obj_instances:	% \n" obj_instances
-		deleteItem obj_instances ( findItem obj_instances obj )
-
-		for i = 1 to obj_instances.count do
-			obj_instances[i].name = obj.name + ascii_uppercase[i]
-
-
-		--this._renameInstances obj obj.name
+		this.renameInstancesAndReferences (obj)
 	),
+
+	/** Rename instances and references
+	  *
+	  */
+	function renameInstancesAndReferences obj =
+	(
+		--format "\n"; print "NameIncludes_v.renameInstancesAndReferences()"
+		local ins_or_ref_objects
+
+		for data in ins_or_ref do
+			for i = 1 to (ins_or_ref_objects = this._getInstancesOrReferences (obj) data.key ).count do
+				ins_or_ref_objects[i].name = obj.name + delimentr + data.value + delimentr + (this._getSuffixNumber i ins_or_ref_objects.count)
+	),
+
 
 	/** _rename instances
 	 */
-	function _renameInstances obj obj_name =
+	function _getInstancesOrReferences obj instance_or_reference =
 	(
-		if( (obj_instances = this._getInstances obj).count > 1 ) then
-			for i = 1 to obj_instances.count do
-				obj_instances[i].name = obj_name + "-" + this._getSuffixNumber (i) (obj_instances.count)
-	),
-
-	/** _get instances
-	 */
-	function _getInstances obj =
-	(
-		obj_instances = #()
-
-		InstanceMgr.GetInstances obj &obj_instances
-		format "obj_instances	= % \n" obj_instances
-		obj_instances --return
+		--format "\n"; print "ObjectRenamer_v._getInstancesOrReferences()"
+		for inst_ref_obj in this.InstaceManager.getInstancesOrReferences(obj)(instance_or_reference) -- get instances or references
+			where findItem this._objects inst_ref_obj > 0 and inst_ref_obj != obj -- if in this._objects to rename and is not unique obejcts
+				collect inst_ref_obj
 	),
 
 	/** _get prefix
@@ -90,14 +118,14 @@ struct ObjectRenamer_v
 
 	/** _get suffix number
 	 */
-	function _getSuffixNumber index =
+	function _getSuffixNumber index objects_count =
 	(
 
 		digits_prefix	= ""
 		index_length	= ( index as string ).count
-		instances_length	= ( _objects_unique.count as string ).count
+		count_length	= ( objects_count as string ).count
 
-		if (length_difference = instances_length - index_length) > 0 then
+		if (length_difference = count_length - index_length) > 0 then
 			for d = 1 to length_difference do
 				digits_prefix += "0"
 
@@ -105,32 +133,18 @@ struct ObjectRenamer_v
 	),
 
 
-	/** Select only Unique objects.
-	  *	Deselect mutliple instances
+
+	/** Sanitize base name
 	  *
-	  * @return	array selection
-	 */
-	function filterUniqueObjects =
+	  */
+	function sanitizeBaseName =
 	(
-		unique_objects	= #()
-		instances_all	= #()
+		--format "\n"; print "NameIncludes_v.sanitizeBaseName()"
 
-		for obj in this._objects where findItem instances_all obj == 0 do
-		(
-			local obj_instances
+		base_name = trimRight base_name  "_- " -- left side is left becasuse of custom prefix E.G.: _object-name
 
-			InstanceMgr.GetInstances obj &obj_instances
-
-			append unique_objects obj
-
-			join instances_all obj_instances
-		)
-
-		for obj in unique_objects do format "unique:	%\n" obj.name
-
-		unique_objects
+		base_name = substituteString base_name " " delimentr
 	),
-
 
 	/**
 	 */

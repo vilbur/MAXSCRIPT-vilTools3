@@ -9,9 +9,9 @@ tooltip: "Save selection"
 	messageBox "Yupiii" beep:false
 	--filein ( getFilenamePath(getSourceFileName()) + "/Selection.ms" )
 
-	--_Selection	= Selection_v
+	--_Selection	= InstaceManager_v
 
-	--global _GLOBAL_Selection_v_selection = for o in selection where superclassof o == GeometryClass collect o
+	--global _GLOBAL_InstaceManager_v_selection = for o in selection where superclassof o == GeometryClass collect o
 )
 
 macroscript SelectionLoad
@@ -25,10 +25,10 @@ tooltip: "Load Selection"
 	--filein ( getFilenamePath(getSourceFileName()) + "/Selection.ms" )
 	--rollout_selection.selection_test_.text = "XXX"
 
-	--_Selection	= Selection_v
+	--_Selection	= InstaceManager_v
 	--fn Kboard_pick =
 
-	--select _GLOBAL_Selection_v_selection
+	--select _GLOBAL_InstaceManager_v_selection
 )
 
 

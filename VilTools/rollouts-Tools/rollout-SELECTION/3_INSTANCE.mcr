@@ -14,7 +14,7 @@ autoUndoEnabled: true
 	(
 		max create mode
 
-		_Selection = Selection_v()
+		_Selection = InstaceManager_v()
 
 		_selection = for o in selection collect o
 
@@ -45,15 +45,15 @@ autoUndoEnabled: true
 (
 	on execute do
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\Selection\Selection.ms"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\3_INSTANCE.mcr"
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\Selection\Selection.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\3_INSTANCE.mcr"
 
 		function compareArrays array1 array2 = ( (with printAllElements on array1) as string == (with printAllElements on array2) as string )
 
 		max create mode
 
-		_Selection = Selection_v()
+		_Selection = InstaceManager_v()
 
 		_selection_old = for o in selection collect o
 
