@@ -120,12 +120,13 @@ icon:	"control:checkbutton|MENU:true|across:3"
 		--format "EventFired:	% \n" EventFired
 		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #EditPoly then undefined else #EditPoly)
 		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == undefined then #EditPoly )
-		keepActiveModifier ( if EventFired == undefined or (EventFired != undefined and EventFired.val ) then #EditPoly )
+		keepActiveModifier ( if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then #EditPoly )
 
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #EditPoly
 
 )
+
 /*
 *
 */
@@ -138,22 +139,14 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 
 	on execute do
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-		format "EventFired:	% \n" EventFired
-
-
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\Callbacks\activateLastModifier.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\Callbacks\saveLastModifier.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStackRemote.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierStackRemote\ModifierStack\ModifierStack.ms"
-		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #LastModifier then undefined else #LastModifier)
-		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == undefined then #LastModifier )
-		keepActiveModifier ( if EventFired == undefined or (EventFired != undefined and EventFired.val ) then #LastModifier )
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		keepActiveModifier ( if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then #LastModifier )
 	)
 
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #LastModifier
 )
+
 /*
 *
 */
@@ -165,9 +158,7 @@ icon:	"control:checkbutton|MENU:true"
 (
 
 	on execute do
-		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == #Unwrap then undefined else #Unwrap)
-		--keepActiveModifier (if KEEP_ACTIVE_NODIFIER == undefined then #Unwrap )
-		keepActiveModifier ( if EventFired == undefined or (EventFired != undefined and EventFired.val ) then #Unwrap )
+		keepActiveModifier ( if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then #Unwrap )
 
 	--on IsChecked do KEEP_ACTIVE_NODIFIER == #Unwrap
 )

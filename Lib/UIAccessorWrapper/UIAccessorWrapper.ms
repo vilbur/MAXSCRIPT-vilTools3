@@ -28,7 +28,7 @@ struct UIAccessorWrapper_v
 	dialog_hwnd,
 	controls,
 
-	control_types	= Dictionary #( #RADIO, #Button ) #( #BUTTON, #CustButton ) #( #CHECKBOX, #Button ) #( #SPINNER, #Static ),
+	control_types	= Dictionary #( #RADIO, #Button ) #( #BUTTON, #CustButton ) #( #CHECKBOX, #Button ) #( #LABEL, #Static ),
 
 	/* dependency */
 	/* reference */
@@ -67,7 +67,6 @@ struct UIAccessorWrapper_v
 				--default:
 			)
 		)
-
 	),
 
 	/** Set value to spinner, or edit text
@@ -99,7 +98,6 @@ struct UIAccessorWrapper_v
 		)
 
 
-
 		if (ctrl_hwnd = this.getControl(ui_text) ) != undefined then
 		(
 			if isLabel ctrl_hwnd then
@@ -112,12 +110,29 @@ struct UIAccessorWrapper_v
 
 					setEditvalue(ctrl_edit[1])(val)
 
-					format "ctrl_edit:	% \n" ctrl_edit
+					--format "ctrl_edit:	% \n" ctrl_edit
 				)
 			)
 		)
 
 		this.suspendWarningStop()
+	),
+
+	/** Get spinner value
+	  *
+	  */
+	function getSpinnerValue ui_text =
+	(
+		--format "\n"; print "UIAccessorWrapper_v.getSpinnerValue()"
+		label_index = this.getControlIndex(ui_text)
+
+		--format "label_index:	% \n" label_index
+
+		if label_index != undefined then
+			spinner_value = this.controls[label_index + 3][5]
+
+		--format "spinner_edit:	% \n" spinner_edit
+		spinner_value --return
 	),
 
 	/** Get control from ui
@@ -136,6 +151,22 @@ struct UIAccessorWrapper_v
 				ctrl_hwnd = ctrl
 
 		ctrl_hwnd --return
+	),
+
+	/** Get control from ui
+	  *
+	  */
+	function getControlIndex ui_text =
+	(
+		--format "\n"; print "LoftRemote_v.getButton()"
+		--format "ui_text:	% \n" ui_text
+
+		index = undefined
+
+		for i = 1 to this.controls.count where this.controls[i][5]  == ui_text do
+			index = i
+
+		index --return
 	),
 
 	/** Add callback to Suspend warning dialog
@@ -162,13 +193,13 @@ struct UIAccessorWrapper_v
 	  */
 	function list type: =
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
+		--clearListener(); print("Cleared in:"+getSourceFileName())
 		format "\n"; print "UIAccessorWrapper_v.listControls()"
 
 		--for ctrl in windows.getChildrenHWnd this.commandPanelHWnd where ctrl[4] == control_types[#RADIO] as string do
 
 		for ctrl in this.controls do
-			if type == unsupplied or (type != unsupplied and ctrl[4] == control_types[type]) then
+			if type == unsupplied or (type != unsupplied and ctrl[4] as name == type as name ) then
 				format "CTRL:	% \n" ctrl
 	),
 

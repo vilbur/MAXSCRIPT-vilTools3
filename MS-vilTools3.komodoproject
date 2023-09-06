@@ -13,6 +13,8 @@
 </folder>
 <livefolder id="199d8419-a8b9-401f-a9ab-e17c91195705" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-MODIFIER-STACK" url="VilTools/rollouts-Tools/rollout-MODIFIER-STACK/">
 </livefolder>
+<livefolder id="2fe78d34-0373-4bdd-875b-5e9cf441d28f" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-OBJECT" url="VilTools/rollouts-Tools/rollout-OBJECT/">
+</livefolder>
 <livefolder id="41c20b5d-2fc2-464b-930c-1a10b26891d0" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-EDIT-POLY" url="VilTools/rollouts-Tools/rollout-EDIT-POLY/">
 </livefolder>
 <livefolder id="5a4df1c1-3c0f-44a4-9374-da9a93b59d33" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-SELECTION" url="VilTools/rollouts-Tools/rollout-SELECTION/">
@@ -20,6 +22,8 @@
 <livefolder id="6c6f05cf-a9d2-4eac-93fc-78ef215e5370" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-LAYERS" url="VilTools/rollouts-Tools/rollout-LAYERS/">
 </livefolder>
 <livefolder id="adf5291c-47b6-4861-be40-626076eb8647" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-MODIFIERS" url="VilTools/rollouts-Tools/rollout-MODIFIERS/">
+</livefolder>
+<livefolder id="ba651d26-da47-47a4-aa14-b0c29cba26bb" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-SCENE" url="VilTools/rollouts-Tools/rollout-SCENE/">
 </livefolder>
 <livefolder id="c080d93d-a93b-483e-bb58-a120346a652a" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-EXPORT" url="VilTools/rollouts-Tools/rollout-EXPORT/">
 </livefolder>

@@ -6,8 +6,8 @@ struct RecentFile_v
 
 
 	/* properties */
-	xml_doc = dotNetObject "System.Xml.XmlDocument",
-	recent_documents_file = (getDir #maxData) + "RecentDocuments.xml",
+	xml_doc	= dotNetObject "System.Xml.XmlDocument",
+	recent_file	= (getDir #maxData) + "RecentDocuments.xml",
 
 
 	/* dependency */
@@ -19,13 +19,37 @@ struct RecentFile_v
 	function getMostRecentFile =
 	(
 		--format "\n"; print "RecentFile_v.getMostRecentFile()"
-		xml_doc.load recent_documents_file
+		xml_doc.load recent_file
 
-		file_path = xml_doc.GetElementsByTagName "FilePath"
+		file_paths = xml_doc.GetElementsByTagName "FilePath"
 
-		(file_path.item 0).InnerXML --return
+		(file_paths.item 0).InnerXML --return
 	),
-	
+
+	/** Get recent file not matching mask in blacklist
+	  * @param Array dir_blacklist aray of directories which not should be opened
+	  */
+	function getRecentFileNotIn dir_blacklist =
+	(
+		--format "\n"; print "RecentFile_v.getRecentFileNotBackup()"
+		xml_doc.load recent_file
+
+		file_paths = xml_doc.GetElementsByTagName "FilePath"
+
+		for i = 0 to file_paths.count - 1 where (file_path_xml = (file_paths.item i)) != undefined  do
+		(
+			file_path = file_path_xml.InnerXML
+
+			find_in_blacklist = false
+
+			for mask in dir_blacklist where matchPattern file_path  pattern:( "*\\" + mask + "\\*" ) do
+				find_in_blacklist = true
+
+			if not find_in_blacklist then
+				return file_path
+		)
+	),
+
 	private
 
 

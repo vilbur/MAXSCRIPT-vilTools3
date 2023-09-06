@@ -33,10 +33,10 @@ function prepareScene path_segments shapes_count path_steps =
 )
 
 max modify mode
-
-
+/* SETUP SHAPES */
 path_steps    = 6
 path_segments = 20
+path_segments = 2
 
 shapes_count = 2
 --shapes_count = 3
@@ -46,9 +46,9 @@ shapes_count = 10
 prepareScene( path_segments )( shapes_count )( path_steps )
 
 
+/* SETUP LOFT */
 LoftRemote 	= LoftRemote_v()
 
-LoftRemote.setMethod
 
 --LoftRemote.setMethod(3)
 LoftRemote.setMethod(#STEPS)  -- default steps count is intepolation of path
@@ -56,6 +56,7 @@ LoftRemote.setMethod(#STEPS)  -- default steps count is intepolation of path
 --LoftRemote.setMethod(#DISTANCE)
 
 
+/* SET SHAPES */
 LoftRemote.setPath	( selection[1] )
 
 for i = 1 to shapes_count do
@@ -70,7 +71,8 @@ for i = 1 to shapes_count do
 --LoftRemote.setShape	($ShapeThird)	--pos:100
 
 
-LoftRemote.create()
+/* CREATE LOFT */
+--LoftRemote.create()
 
 --LoftRemote.UIAccess.list()
 

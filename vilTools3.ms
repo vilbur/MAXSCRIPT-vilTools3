@@ -30,8 +30,9 @@ function importStdScripts =
 	filein_files = #(
 
 		( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/RolloutCreator/RolloutCreator.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/RolloutCreator/RolloutCreator.ms"
+		"/../../Lib/RegExer/RegExer.ms",
 
-		"/rollout-SELECTION/Lib/Selection/Selection.ms",
+		"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
 
 		"/rollout-TOOLS/Lib/ToolMode.ms",
 
@@ -40,9 +41,9 @@ function importStdScripts =
 		"/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
 		"/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms",
 		"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
+		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
 
-
-
+		"/rollout-OBJECT/Lib/OnNewNodeCallback.ms",
 
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
@@ -56,10 +57,10 @@ function importStdScripts =
 		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
 		"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
 
+		"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
 		"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 		"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
-		
-		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
+
 
 		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)
@@ -139,15 +140,22 @@ for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:tr
 		appendIfUnique filein_files callback_file
 
 
-filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\CallBacks\CallbackManager\CallbackManager.ms"
+try(
+	/* FILE IN FILES */
+	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
+	(
+		--format "FILE IN: % \n" (file_path)
+		if doesFileExist file_path then
+			filein( file_path)
+	)
 
-/* FILE IN FILES */
-for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
-(
-	format "FILE IN: % \n" (file_path)
-
-	filein( file_path)
+)catch(
+	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+	format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
 )
+
 
 
 
@@ -155,27 +163,31 @@ for file_path in filein_files where not matchPattern file_path pattern:"*Test*" 
 global VILTOOLS
 global CALLBACKMANAGER = CallbackManager_v()
 
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
 /*------------------------------------------------------------------------------
 	START VilTools
 ------------------------------------------------------------------------------*/
+try(
 
-/** LOAD CONTENT */
-----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
-ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName())
+	/** LOAD CONTENT */
+	----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
+	ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName())
 
-/* CHANGE PROPERTIES oF ROLLOUTS */
-ContentLoader.Dialog.title = "VilTools"
+	/* CHANGE PROPERTIES oF ROLLOUTS */
+	ContentLoader.Dialog.title = "VilTools"
 
-/* CREATE DIALOG */
-VILTOOLS = ContentLoader.create width:420 height:1024
+	/* CREATE DIALOG */
+	VILTOOLS = ContentLoader.create width:420 height:1024
 
-VILTOOLS.register()
+	VILTOOLS.register()
 
-
-/*------------------------------------------------------------------------------
-	QUADMENUS
---------------------------------------------------------------------------------*/
+)catch(
+	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+	format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+)
 
 
 
@@ -193,17 +205,17 @@ try
 --
 --	selectExportNodeInListCallbactAdd()
 
-	filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
-
-	if ROLLOUT_layers.CBXBTN_layer_manager.state then
-		showLayerManagerCallback()
-
-
-	CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
-
-	CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
-
-	CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
+	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+	--
+	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
+	--	showLayerManagerCallback()
+	--
+	--
+	--CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
+	--
+	--CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
+	--
+	--CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
 
 
 )

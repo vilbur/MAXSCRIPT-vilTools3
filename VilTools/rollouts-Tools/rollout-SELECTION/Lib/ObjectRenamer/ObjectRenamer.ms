@@ -22,8 +22,8 @@ struct ObjectRenamer_v
 	/* properties */
 	base_name,
 
-	prefix = NameIncludes_v(),
-	suffix = NameIncludes_v(),
+	prefix	= NameIncludes_v(),
+	sufix	= NameIncludes_v(),
 
 	delimentr = "-",
 
@@ -50,23 +50,19 @@ struct ObjectRenamer_v
 		format "\n"; print "ObjectRenamer_v.rename()"
 
 		format "this.prefix:	% \n" this.prefix
-		format "this.suffix:	% \n" this.suffix
+		format "this.sufix:	% \n" this.sufix
 
 
 		this._objects = if classOf _objects == ObjectSet then _objects as Array else _objects
 
-
 		this.sanitizeBaseName()
-
-		format "base_name:	[%] \n" base_name
-
 
 		objects_to_rename	= this.InstaceManager.filterUnique(_objects)
 
-		 format "\n"
-		 for obj in _objects do format "obj:	%\n" obj.name
-		 format "\n"
-		 for obj in objects_to_rename do format "objects_to_rename:	%\n" obj.name
+		 --format "\n"
+		 --for obj in _objects do format "obj:	%\n" obj.name
+		 --format "\n"
+		 --for obj in objects_to_rename do format "objects_to_rename:	%\n" obj.name
 
 		for i = 1 to objects_to_rename.count do
 			this._renameObject ( objects_to_rename[i] )( i )
@@ -78,9 +74,9 @@ struct ObjectRenamer_v
 	 */
 	function _renameObject obj index =
 	(
-		format "\n-------------\n"; print "ObjectRenamer_v._renameObject()"
-		--format "obj.name:	% \n" obj.name
-		obj.name = base_name + delimentr + (this._getSuffixNumber index _objects.count )
+		--format "\n-------------\n"; print "ObjectRenamer_v._renameObject()"
+
+		obj.name = (this._getPrefixSufix(obj)(#PREFIX)) + base_name + this._getPrefixSufix(obj)(#SUFIX) + delimentr + (this._getSufixNumber (index) (objects_to_rename.count) )
 
 		this.renameInstancesAndReferences (obj)
 	),
@@ -95,7 +91,7 @@ struct ObjectRenamer_v
 
 		for data in ins_or_ref do
 			for i = 1 to (ins_or_ref_objects = this._getInstancesOrReferences (obj) data.key ).count do
-				ins_or_ref_objects[i].name = obj.name + delimentr + data.value + delimentr + (this._getSuffixNumber i ins_or_ref_objects.count)
+				ins_or_ref_objects[i].name = obj.name + delimentr + data.value + delimentr + (this._getSufixNumber i ins_or_ref_objects.count)
 	),
 
 
@@ -111,22 +107,68 @@ struct ObjectRenamer_v
 
 	/** _get prefix
 	 */
-	function _getPrefix obj =
+	function _getPrefixSufix obj prefix_sifix_param =
 	(
-		if prefix_by_parent and obj.parent != undefined then obj.parent.name + "-" else "" --return
+		--format "\n"; print "ObjectRenamer_v._getPrefixSufix()"
+		--format "prefix_sifix_param:	% \n" prefix_sifix_param
+
+		/** Set delimeter before or after string
+		  */
+		function setDelimeter &_string prefix_sifix_param =
+		(
+			--format "\n"; print "NameIncludes_v.setDelimeter()"
+			if  _string != "" then
+				case prefix_sifix_param of
+				(
+					#PREFIX:	_string = _string + this.delimentr
+					#SUFIX:	_string = this.delimentr + _string
+				)
+			else
+				_string
+		)
+
+		/** Remove prefix or sufix
+		  */
+		function sanititizeString _string = ( trimRight ( trimLeft _string "_- " )  "_- " )
+
+		prefix_sifix = ""
+
+		NameIncludes = getProperty this prefix_sifix_param
+
+		for prop in #( #layer, #parent, #type ) where ( val = getProperty NameIncludes prop ) != undefined do
+		(
+			--format "PROP:	% \n" prop
+			_string = case prop of
+			(
+				#parent: if obj.parent != undefined then obj.parent.name else ""
+				#layer:  sanititizeString(obj.layer.name)
+				#type:  (classOf obj) as string
+				default: ""
+			)
+
+			setDelimeter(&_string)(prefix_sifix_param)
+			--format "OUTPUT:	% \n" _string
+
+			prefix_sifix += _string
+
+			--format "PREFFIX_SIFFIX:	% \n" prefix_sifix
+			prefix_sifix --return
+		)
+
+		prefix_sifix --return
 	),
 
-	/** _get suffix number
+	/** _get sufix number
 	 */
-	function _getSuffixNumber index objects_count =
+	function _getSufixNumber index objects_count =
 	(
 
 		digits_prefix	= ""
 		index_length	= ( index as string ).count
 		count_length	= ( objects_count as string ).count
 
-		if (length_difference = count_length - index_length) > 0 then
-			for d = 1 to length_difference do
+		if (length_diference = count_length - index_length) > 0 then
+			for d = 1 to length_diference do
 				digits_prefix += "0"
 
 		digits_prefix + index as string --return

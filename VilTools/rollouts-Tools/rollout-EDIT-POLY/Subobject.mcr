@@ -24,7 +24,6 @@ icon:	"across:6|width:62"
 --)
 
 
-
 macroscript enter_subobject_1
 category:	"_Subobject"
 buttonText:	"Enter 1"

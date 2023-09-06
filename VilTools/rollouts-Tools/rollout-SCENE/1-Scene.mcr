@@ -13,7 +13,8 @@ icon:	"across:5|width:72|MENU:true"
 
 	on execute do
 	(
-		recent_document = (RecentFile_v()).getMostRecentFile()
+		recent_document = (RecentFile_v()).getRecentFileNotIn #( "autoback" )
+
 
 		if maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
 			loadMaxFile recent_document quiet:true
@@ -54,7 +55,7 @@ icon:	"across:5|width:72|MENU:true"
 	--	--	else
 	--	--		actionMan.executeAction 0 "203"  -- File: Last File 1
 	--	--)
-	--
+	--startObjectCreation
 	)
 	--	--messageBox "Open Recent"
 )
@@ -72,8 +73,9 @@ icon:	"across:5|width:72|MENU:true"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
 	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\1-Scene.mcr"
 
-		init_dir = if (last_file = (RecentFile_v()).getMostRecentFile()) != undefined then getFilenamePath( last_file ) else unsupplied
+		init_dir = if (last_file = (RecentFile_v()).getRecentFileNotIn #( "temp", "autoback" )) != undefined then getFilenamePath( last_file ) else unsupplied
 
 
 		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:(init_dir) historyCategory:"MAXScriptFileOpenSave"
@@ -97,65 +99,68 @@ buttontext:	"Save++"
 toolTip:	"Incremental save and copy basename file version"
 icon:	"offset:[-2, 0]"
 (
-	file_path = maxFilePath
-	file_name = maxFileName
-
-	if file_path == "" and (file_path_new = getMAXSaveFileName()) != undefined then
+	on execute do
 	(
-		file_path = getFilenamePath(  file_path_new )
-		file_name = filenameFromPath( file_path_new )
-	)
 
-	if file_path != "" then
-	(
-		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches file_name "(.*[^0-9]+)(\d+)*\.max" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+		file_path = maxFilePath
+		file_name = maxFileName
 
-		match	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value ))[1] --return
-
-		basename	= trimRight match[2] "-"
-		suffix_current	= match[3]
-
-		if (suffix_current = match[3]) == "" then
-			suffix_current = "001"
-
-		path_basename  = file_path + "\\" + basename
-		path_increment = path_basename + "-" + suffix_current
-
-		/*------ FIND NEXT AVAILABLE INCREMENTAL FILENAME ------*/
-		while doesFileExist (path_increment + ".max") do
+		if file_path == "" and (file_path_new = getMAXSaveFileName()) != undefined then
 		(
-			suffix_current = (suffix_current as integer ) + 1
+			file_path = getFilenamePath(  file_path_new )
+			file_name = filenameFromPath( file_path_new )
+		)
 
-			digit_prefix = case ( suffix_current as string ).count of -- create number string with 3 digits E.G.: "099"
+		if file_path != "" then
+		(
+			matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches file_name "(.*[^0-9]+)(\d+)*\.max" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+			match	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value ))[1] --return
+
+			basename	= trimRight match[2] "-"
+			suffix_current	= match[3]
+
+			if (suffix_current = match[3]) == "" then
+				suffix_current = "001"
+
+			path_basename  = file_path + "\\" + basename
+			path_increment = path_basename + "-" + suffix_current
+
+			/*------ FIND NEXT AVAILABLE INCREMENTAL FILENAME ------*/
+			while doesFileExist (path_increment + ".max") do
 			(
-				1: "00"
-				2: "0"
-				default: ""
+				suffix_current = (suffix_current as integer ) + 1
+
+				digit_prefix = case ( suffix_current as string ).count of -- create number string with 3 digits E.G.: "099"
+				(
+					1: "00"
+					2: "0"
+					default: ""
+				)
+
+				path_increment = path_basename + "-" + digit_prefix + suffix_current as string
 			)
 
-			path_increment = path_basename + "-" + digit_prefix + suffix_current as string
+			path_basename  += ".max"
+			path_increment += ".max"
+
+			format "path_increment	= % \n" path_increment
+			format "doesFileExist path_increment	= % \n" (doesFileExist path_increment)
+
+			if not (file_exists = doesFileExist path_increment) or (file_exists and queryBox ("Overwrite file "+filename+" ?") title:"FILE EXISTS" ) then
+			(
+				saveMaxFile path_increment
+
+				/* CREATE COPY OF FILE WITHOUT PREFIX */
+				if doesFileExist path_basename then
+					deleteFile path_basename
+
+				copyFile path_increment path_basename
+
+				print "File has been saved"
+
+			)
 		)
-
-		path_basename  += ".max"
-		path_increment += ".max"
-
-		format "path_increment	= % \n" path_increment
-		format "doesFileExist path_increment	= % \n" (doesFileExist path_increment)
-
-		if not (file_exists = doesFileExist path_increment) or (file_exists and queryBox ("Overwrite file "+filename+" ?") title:"FILE EXISTS" ) then
-		(
-			saveMaxFile path_increment
-
-			/* CREATE COPY OF FILE WITHOUT PREFIX */
-			if doesFileExist path_basename then
-				deleteFile path_basename
-
-			copyFile path_increment path_basename
-
-			print "File has been saved"
-
-		)
-
 	)
 )
 
@@ -174,11 +179,15 @@ buttontext:	"Open\Save Temp"
 toolTip:	"Open Temp File"
 icon:	"offset:[14, 0]|width:96|MENU:tooltip"
 (
-	if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+	on execute do
+	(
+		if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
 
-	--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
-		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-			loadMaxFile max_file quiet:true
+		--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+				loadMaxFile max_file quiet:true
+
+	)
 )
 /**
  */
@@ -188,9 +197,10 @@ buttontext:	"Open\Save Temp"
 toolTip:	"Save Temp File"
 icon:	"MENU:tooltip"
 (
-	if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
-		if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-			saveMaxFile max_file quiet:true
+	on execute do
+		if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
+			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+				saveMaxFile max_file quiet:true
 
 )
 

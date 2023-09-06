@@ -35,7 +35,7 @@ fn addShapePickDialogCallback =
 	--if (dialogTitle == "Select From Scene") then
 	if (dialogTitle == "Select From Scene" or dialogTitle == "Pick Object" ) then
 	(
-		format "\n"; print "LoftRemote_v.addShapePickDialogCallback()"
+		--format "\n"; print "LoftRemote_v.addShapePickDialogCallback()"
 		format "ADD SHAPE:	% \n" NEXT_SHAPE_DATA.obj.name
 		EM_SETSEL  = 0x00B1
 
@@ -79,20 +79,22 @@ struct LoftShapeData_v
 struct LoftRemote_v
 (
 	/* construct */
+	pathShape,
 
+	/* OPTIONS */
+	method, -- #PERCENTAGE default
 	path_steps, -- default is intepolation of path
 	shape_steps,
+	last_shape_on_end = true, 	--if true then last shape is forced to be set on end of path
+
+	/* properties */
+	ShapesData = #(),
 
 	methods = #( #PERCENTAGE, #DISTANCE, #STEPS ),
-
-	method, -- #PERCENTAGE default
 
 	loft_object,
 	current_index = 0,
 
-	/* properties */
-	pathShape,
-	ShapesData = #(),
 
 	props = #( #path_steps, #shape_steps ),
 
@@ -307,13 +309,27 @@ struct LoftRemote_v
 		format "PATH_LENGTH:	% \n" path_length
 		--format "path_length:	% \n" (units.decodeValue ( units.formatValue path_length ) )
 
+	
+
+		/* SET POSITION TO SHAPES */
 		if ShapesData.count > 1 then
-			for index = 1 to ShapesData.count do
+		(
+			for index = 1 to ShapesData.count where ShapesData[index].pos == undefined do
 				ShapesData[index].pos = path_length / (ShapesData.count - 1) * (index - 1)
 
+
+			if this.last_shape_on_end then
+				ShapesData[ShapesData.count].pos = case this.method of
+				(
+					#PERCENTAGE:	100.0
+					#STEPS:	path_length - 1
+					default:	path_length
+				)
+		)
 		else
 			ShapesData[1].pos = (if this.method == #PERCENTAGE then 0.0 else 0)
 
+		format "\n\n\n"
 		for ShapeData in ShapesData do
 		    format "ShapeData: % \n" ShapeData.pos
 

@@ -71,19 +71,25 @@ struct ModifierStack_v
 		format "current_index:	% \n" current_index
 		format "index:	% \n" index
 
-		direction = if index > current_index or current_index == 1 then #DOWN else #UP
-		--format "direction:	% \n" direction
-		count = case direction of
+		if current_index != undefined then
 		(
-			#DOWN:	if current_index == items_count then items_count else index - current_index
-			#UP:	if current_index == 1           then items_count else current_index - index
+
+			direction = if index > current_index or current_index == 1 then #DOWN else #UP
+			--format "direction:	% \n" direction
+			count = case direction of
+			(
+				#DOWN:	if current_index == items_count then items_count else index - current_index
+				#UP:	if current_index == 1           then items_count else current_index - index
+			)
+			--format "count:	% \n" count
+			for i = 1 to count do
+				if direction == #DOWN then
+					max prev mod
+				else
+					max next mod
+
 		)
-		--format "count:	% \n" count
-		for i = 1 to count do
-			if direction == #DOWN then
-				max prev mod
-			else
-				max next mod
+
 	),
 
 

@@ -66,8 +66,8 @@ Snap_Transform_Pivot = createQuad( "_ShiftQuad" ) #(
 Group_Primitives = createQuad( "_ShiftAltQuad" ) #(
 
 	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
+	#CREATE2,	 -- "./Quads/CREATE2-menu.ms"
 	#PRIMITIVES,	 -- "./Quads/PRIMITIVES-menu.ms"
-	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#GROUP	 -- "./Quads/GROUP-menu.ms"
 
 	--#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
@@ -147,5 +147,3 @@ Scene_Materials.setRightClick which:#controlAndAltPressed
 
 /* SHIFT ALT */
 Group_Primitives.setRightClick which:#shiftAndAltPressed
-
-

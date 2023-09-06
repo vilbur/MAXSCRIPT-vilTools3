@@ -22,7 +22,7 @@ icon:	"control:checkbutton|MENU:true"
 (
 
 	on execute do
-		if EventFired == undefined or (EventFired != undefined and EventFired.val) then -- run on startup if no fire by event
+		if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then -- run on startup if no fire by event
 		(
 			--LayerManager.editLayerByName ""
 			showLayerManagerCallback()

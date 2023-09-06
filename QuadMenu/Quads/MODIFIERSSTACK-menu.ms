@@ -6,7 +6,8 @@ function MODIFIERSSTACKmenu QuadMenu =
 	ModifierStackMenu	= Menu_v("_Modifier-Stack")	-- "./../../VilTools/rollouts-Tools/rollout-MODIFIER-STACK/ACTIVE_STACK.mcr"
 	ManageModsMenu	= Menu_v("_Modifiers-Manage")	-- "./../../VilTools/rollouts-Tools/rollout-MODIFIER-STACK/MANAGE_MODIFIERS.mcr"
 
-	ModifierStackMenu.addSeparator index:#( 1, 2 )
+	RemoteStackMenu.addSeparators	#(  2 )
+	ModifierStackMenu.addSeparators	#( 1, 2 )
 
 	QuadMenu.addMenu(RemoteStackMenu)	--flat:false --index:1
 

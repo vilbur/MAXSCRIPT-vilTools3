@@ -24,21 +24,21 @@ function prepareScene =
 	delete objects
 
 	/* CREATE PATH */
-	nodePath = SplineShape name:"Path"
+	loftPath = SplineShape name:"Path"
 
- 	addNewSpline nodePath
+ 	addNewSpline loftPath
 
- 	--for i = 0 to 50 by 10 do
- 		--addKnot nodePath 1 #smooth #curve [random -10 10, i,0]
+ 	for i = 0 to 30 by 10 do
+ 		addKnot loftPath 1 #smooth #curve [random -10 10, i,0]
 
- 	addKnot nodePath 1 #smooth #curve [ 0 , 0 ,0 ]
- 	addKnot nodePath 1 #smooth #curve [ 100 , 0 ,0 ]
+ 	--addKnot loftPath 1 #smooth #curve [ 0 , 0 ,0 ]
+ 	--addKnot loftPath 1 #smooth #curve [ 100 , 0 ,0 ]
 
 
 	/* CREATE SHAPE */
 	nodeShape = Circle  name:"ShapeBig" radius:10 pos:[ -100 , 0 ,0 ]
 
-	select nodePath
+	select loftPath
 
 	--max create mode
 
