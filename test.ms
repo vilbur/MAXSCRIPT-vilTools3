@@ -1,33 +1,68 @@
-clearListener()
+clearListener(); print("Cleared in:"+getSourceFileName())
 
+global GetShapeNotification
 
-try(cui.UnRegisterDialogBar MainRollout)catch() --try to unregister if already registered
-try(DestroyDialog  MainRollout)catch() --try to unregister if already registered
-
-rollout MainRollout "Main Rollout" width:325 height:200
-(	
-	on MainRollout resized new_size do
-	(
-		
-		if( GLOBAL_DIALOG_RESIZED == undefined ) then
-			GLOBAL_DIALOG_RESIZED = new_size
-			
-		else
-		(
-			GLOBAL_DIALOG_RESIZED = undefined
-			
-			format "Dialog has been resized = % \n" new_size
-		)
-		
-		
+fn GetShapeNotification =
+(
+	local hwnd = dialogMonitorOps.getWindowHandle()
+	local dialogTitle = uiAccessor.getWindowText hwnd
+	if (dialogTitle == "Pick Object") then (
+		local dialogChildren = windows.getChildrenHWND hwnd
+		UIAccessor.SetWindowText dialogChildren[15][1]  stShapeName
+		UIAccessor.PressDefaultButton()
 	)
+	true
+) --end fn GetShapeNotification =
+
+fn GenerateLoft nodePath =
+(
+	--constants for windows messages
+	select nodePath
+
+	--loft creation
+	macros.run "Objects Compounds" "Loft"
+	local mainHWND = windows.getDesktopHWND()
+
+	local children = windows.getChildrenHWND mainHWND
+	local stToSearch = "Get Shape"
+	local btnGetShape = undefined
+	for child in children where child[5] == stToSearch do btnGetShape = child
+	local btnGetShape_hwnd = btnGetShape[1]
+	UIAccessor.pressButton btnGetShape_hwnd
+
+	--Get shape
+	DialogMonitorOPS.RegisterNotification GetShapeNotification id:#GetShapePopUp
+	DialogMonitorOPS.enabled = true
+	max tool hlist
+	DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
+	DialogMonitorOPS.enabled = false
+	UIAccessor.pressButton btnGetShape_hwnd
+	local nodeLoft = selection[1]
+	--do what you want with the loft
+
 )
 
+ (
+ 	local stShapeName = "Shape"
 
-global GLOBAL_DIALOG_RESIZED
+ 	delete objects
+ 	local nodePath = SplineShape name:"Path"
 
-Dialog = createDialog MainRollout 
+ 	addNewSpline nodePath
 
+ 	for i = 0 to 50 by 10 do
+ 		addKnot nodePath 1 #smooth #curve [random -10 10, i,0]
 
-cui.RegisterDialogBar	MainRollout style:#(#cui_dock_left,#cui_dock_right,#cui_floatable,#cui_handles)
-cui.DockDialogBar MainRollout #cui_dock_right
+    local nodeShape = splineShape name:"Shape"
+
+ 	addNewSpline nodeShape
+ 	addKnot nodeShape 1 #corner #curve [1, 0,0]
+ 	addKnot nodeShape 1 #corner #curve [1, 1,0]
+ 	addKnot nodeShape 1 #corner #curve [-1, 1,0]
+ 	addKnot nodeShape 1 #corner #curve [-1, 0,0]
+ 	stShapeName = nodeShape.name
+
+ 	GenerateLoft nodePath
+ )
+
+delete objects

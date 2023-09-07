@@ -70,26 +70,38 @@ struct ModifierStack_v
 		format "\n"; print "ModifierStack_v.goToIndex()"
 		format "current_index:	% \n" current_index
 		format "index:	% \n" index
+		format "pointers.count:	% \n" pointers.count
 
 		if current_index != undefined then
 		(
+			saveLastModifierKill()
 
-			direction = if index > current_index or current_index == 1 then #DOWN else #UP
-			--format "direction:	% \n" direction
-			count = case direction of
+			if selection.count == 1 and abs (current_index - index) == 1 then
 			(
-				#DOWN:	if current_index == items_count then items_count else index - current_index
-				#UP:	if current_index == 1           then items_count else current_index - index
+				go_to_mod = if index == pointers.count then selection[1].baseobject else selection[1].modifiers[index]
+
+				modPanel.setCurrentObject( go_to_mod )
 			)
-			--format "count:	% \n" count
-			for i = 1 to count do
-				if direction == #DOWN then
-					max prev mod
-				else
-					max next mod
+			else
+			(
+				direction = if index > current_index or current_index == 1 then #DOWN else #UP
+				--format "direction:	% \n" direction
+				count = case direction of
+				(
+					#DOWN:	if current_index == pointers.count then pointers.count else index - current_index
+					#UP:	if current_index == 1           then pointers.count else current_index - index
+				)
+				--format "count:	% \n" count
+				for i = 1 to count do
+					if direction == #DOWN then
+						max prev mod
+					else
+						max next mod
+			)
+
+			saveLastModifierStart()
 
 		)
-
 	),
 
 

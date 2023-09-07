@@ -94,20 +94,18 @@ buttontext:	"Select"
 toolTip:	"Select by wirecolor"
 icon:	"MENU:tooltip"
 (
-	fn compareNames val_1 val_2 = stricmp val_1.name val_2.name
+	fn compareNames obj_1 obj_2 = stricmp obj_1.name obj_2.name
 
 	selection_colors = #()
 
 	for o in selection do appendIfUnique selection_colors o.wirecolor
 
 
-	objects_by_color = (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+	--objects_by_color = (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
 
-	objects_by_name = qsort objects_by_color compareNames
+	--objects_by_name = qsort objects_by_color compareNames
 
-	for obj in objects_by_name do format "obj.name:	% \n" obj.name
-
-	select ( objects_by_name )
-
+	--for obj in objects_by_name do format "obj.name:	% \n" obj.name
+	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
 
 )

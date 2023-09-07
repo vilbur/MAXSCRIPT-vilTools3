@@ -11,9 +11,9 @@ else
 /** Set scene
   *
   */
-function craeteRectangle =
+function createRectangle =
 (
-	format "\n"; print "SplineConvertorTest.ms.craeteRectangle()"
+	format "\n"; print "SplineConvertorTest.ms.createRectangle()"
 
 	delete objects
 
@@ -21,7 +21,7 @@ function craeteRectangle =
 
 	addModifier _Rectangle (Edit_Spline name:"Added Edit_Spline 2" )
 	addModifier _Rectangle (Edit_Spline name:"Added Edit_Spline 1" )
-	--addModifier _Rectangle (Edit_Poly   name:"Added Edit_Poly" )
+	addModifier _Rectangle (Edit_Poly   name:"Added Edit_Poly" )
 
 	LayerManager.newLayerFromName "Test Layer"
 
@@ -57,7 +57,7 @@ SplineConvertor = SplineConvertor_v()
 
 /* PREPARE SCENE */
 if objects.count == 0 then
-	craeteRectangle()
+	createRectangle()
 
 else if classOf $Rectangle.baseobject == Rectangle then
 	SplineConvertor.convert( $Rectangle )

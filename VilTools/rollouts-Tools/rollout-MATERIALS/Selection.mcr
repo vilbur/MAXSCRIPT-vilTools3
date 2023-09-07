@@ -2,7 +2,7 @@
 /**  Set material of 1st selected object to all objects in selection
  */
 macroscript	material_by_object
-category:	"_Material"
+category:	"_Material-Selection"
 buttonText:	"Mat by object"
 tooltip:	"Assign material to selection by last selected object"
 icon:	"MENU:true"
@@ -37,7 +37,7 @@ icon:	"MENU:true"
 /**
  */
 macroscript	material_select_objs_by_material
-category:	"_Material"
+category:	"_Material-Selection"
 buttonText:	"Select By Mat"
 tooltip:	"Select objects by current material in material editor"
 icon:	"MENU:true"
@@ -99,7 +99,7 @@ icon:	"MENU:true"
 /**
  */
 macroscript	material_select_faces_by_material_id
-category:	"_Material"
+category:	"_Material-Selection"
 buttontext:	"Sel Faces by Mat"
 toolTip:	"Select faces by material id - PALCEHOLDER"
 --icon:	"#(path, index)"

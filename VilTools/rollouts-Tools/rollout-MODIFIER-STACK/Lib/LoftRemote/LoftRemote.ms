@@ -95,6 +95,7 @@ struct LoftRemote_v
 	loft_object,
 	current_index = 0,
 
+	--params_skin	= Dictionary #( "", #value1 ) #( #key2, #value2 )
 
 	props = #( #path_steps, #shape_steps ),
 
@@ -176,13 +177,27 @@ struct LoftRemote_v
 		append this.ShapesData ( LoftShapeData_v (_shape)(pos) )
 	),
 
+
+	/** Set loft
+	  *
+	  */
+	function setLoft loft_object =
+	(
+		format "\n"; print "LoftRemote_v.setLoft()"
+		--format "classOf loft_object:	% \n" (classOf loft_object)
+		if classOf loft_object == Loft then
+			this.loft_object = loft_object
+		else
+			messageBox "Added object is not Loft\n\nMethod:\n\nLoftRemote_v.setLoft()\n\n" title:"SET LOFT ERROR"
+	),
+
 	/** Set shapes
 	  *
 	  */
 	function loftCreationStart =
 	(
 		--format "\n"; print "LoftRemote_v.loftCreationStart()"
-		UIAccess = UIAccessorWrapper_v( #CommandPanel )
+		this._setUiAccessor()
 
 		for _Shape in this.ShapesData do
 			this.addShapeToLoft (_Shape)
@@ -197,7 +212,7 @@ struct LoftRemote_v
 	  */
 	function _setupLoft =
 	(
-		--format "\n"; print "LoftShapeData_v._setupLoft()"
+		--format "\n"; print "LoftRemote_v._setupLoft()"
 		format "this.method:	% \n" this.method
 
 		case this.method of
@@ -309,7 +324,7 @@ struct LoftRemote_v
 		format "PATH_LENGTH:	% \n" path_length
 		--format "path_length:	% \n" (units.decodeValue ( units.formatValue path_length ) )
 
-	
+
 
 		/* SET POSITION TO SHAPES */
 		if ShapesData.count > 1 then
@@ -427,11 +442,27 @@ struct LoftRemote_v
 		--for prop in props where (val = getProperty this prop) = undefined do
 
 		--this.suspendWarning()
-
 	),
 
 
-	private
+
+	/** List options
+	  *
+	  */
+	function listOptions =
+	(
+		--format "\n"; print "LoftShapeData_v.listOptions()"
+		this._setUiAccessor()
+
+		--UIAccess.list()
+		--UIAccess.list type:#Button
+		_checkbox = UIAccess.getControl("Optimize Shapes")
+
+		UIAccess.getCeckboxVal _checkbox[1]
+
+	),
+
+	--private
 
 	--/** Set method option in ui
 	--  *

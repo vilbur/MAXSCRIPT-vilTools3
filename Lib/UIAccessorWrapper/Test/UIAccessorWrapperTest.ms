@@ -49,15 +49,22 @@ function prepareScene =
 
 
 
-prepareScene()
+--prepareScene()
 
 
 
 UIAccess = UIAccessorWrapper_v( #CommandPanel )
 
-UIAccess.press "Path Steps"
-UIAccess.setVal "Path Steps:" 0
+--UIAccess.press "Path Steps"
+--UIAccess.setVal "Path Steps:" 0
+controls_by_type = UIAccess.getControls ( #BUTTON )
 
+--format "\n-----------\nARRAY:controls_by_type:\n";  for ctrl in controls_by_type do format "ctrl:	%\n" ctrl
 
+--format "controls_by_type:	% \n" controls_by_type
+
+controls_values = UIAccess.getVal ( controls_by_type )
+
+--format "\n-----------\nARRAY:controls_values:\n";  for val in controls_values do format "val:	%\n" val
 
 UIAccess.list()

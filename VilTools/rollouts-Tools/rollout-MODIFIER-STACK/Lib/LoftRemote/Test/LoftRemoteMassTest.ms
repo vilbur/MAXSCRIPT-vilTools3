@@ -19,55 +19,60 @@ function prepareScene path_segments shapes_count path_steps =
 
 
  	for i = 0 to (path_segments * 100) by 100 do
- 		addKnot loftPath 1 #corner #line [random -100 100, i, 0]
+ 		addKnot loftPath 1 #smooth #curve [random -100 100, i, 0]
 
 	select loftPath
  	--addKnot loftPath 1 #smooth #curve [ 0 , 0 ,0 ]
  	--addKnot loftPath 1 #smooth #curve [ 100 , 0 ,0 ]
- 	for i = 1 to path_segments do
-		setMaterialID loftPath 1 i i
-
 
 	/* CREATE SHAPE */
     for i = 1 to shapes_count do
-		selectmore (Circle name:( "Shape_"+i as string )	radius:( random 5 30  )	pos:[ ( i * 10 ) , 0 ,0 ] )
+		selectmore (Circle name:( "Shape_"+i as string )	radius:( random 1 50  )	pos:[ ( i * 10 ) , 0 ,0 ] )
 
 
 )
 
 max modify mode
+/* SETUP SHAPES */
+path_steps    = 6
+path_segments = 20
+path_segments = 2
 
---/* SETUP SHAPES */
---path_steps    = 1
---path_segments = 2
---
---shapes_count = 2
-----shapes_count = 3
+shapes_count = 2
 --shapes_count = 3
---
---
---/* SETUP LOFT */
+shapes_count = 10
+
+
+prepareScene( path_segments )( shapes_count )( path_steps )
+
 
 /* SETUP LOFT */
-
 LoftRemote 	= LoftRemote_v()
 
+
+--LoftRemote.setMethod(3)
 LoftRemote.setMethod(#STEPS)  -- default steps count is intepolation of path
---
---/* SET SHAPES */
---LoftRemote.setPath	( selection[1] )
---
---for i = 1 to shapes_count do
---	LoftRemote.setShape ( selection[ i + 1 ]  )	--pos:0
---
---
---/* CREATE LOFT */
+--LoftRemote.setMethod(#PERCENTAGE)
+--LoftRemote.setMethod(#DISTANCE)
+
+
+/* SET SHAPES */
+LoftRemote.setPath	( selection[1] )
+
+for i = 1 to shapes_count do
+	LoftRemote.setShape ( selection[ i + 1 ]  )	--pos:0
+
+--LoftRemote.setShape 	($ShapeFirst)	pos:0
+--LoftRemote.setShape	($ShapeSecond)	pos:50
+--LoftRemote.setShape	($ShapeThird)	pos:100
+
+
+--LoftRemote.setShape	($ShapeSecond)	--pos:50
+--LoftRemote.setShape	($ShapeThird)	--pos:100
+
+
+/* CREATE LOFT */
 --LoftRemote.create()
-select $Loft001
-
-LoftRemote.setLoft( $Loft001 )
-
-LoftRemote.listOptions()
 
 
 --LoftRemote.UIAccess.list()

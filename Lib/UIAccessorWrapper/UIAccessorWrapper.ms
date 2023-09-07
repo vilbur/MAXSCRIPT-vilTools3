@@ -34,7 +34,7 @@ struct UIAccessorWrapper_v
 	/* reference */
 	/* inhered */
 
-	/** Press
+	/** Press buttin, radio button or checkbox
 	  *
 	  */
 	function press ui_text type: =
@@ -47,6 +47,7 @@ struct UIAccessorWrapper_v
 			--format "\n"; print "LoftRemote_v.pressButton()"
 			UIAccessor.pressButton ctrl_pointer
 		)
+
 		/** Click
 		  */
 		function click ctrl_pointer =
@@ -70,8 +71,6 @@ struct UIAccessorWrapper_v
 	),
 
 	/** Set value to spinner, or edit text
-
-
 		CTRL:	#(12721864P, 75110928P, 75110928P, "Edit", "5", 0P, 10753942P, 10753942P)
 		CTRL:	#(63972520P, 16517688P, 16517688P, "SpinnerControl", "", 0P, 10753942P, 10753942P)
 		CTRL:	#(17501894P, 16517688P, 16517688P, "Static", "Path Steps:", 0P, 10753942P, 10753942P)
@@ -118,21 +117,24 @@ struct UIAccessorWrapper_v
 		this.suspendWarningStop()
 	),
 
-	/** Get spinner value
+
+
+
+	/** Get controls
 	  *
 	  */
-	function getSpinnerValue ui_text =
+	function getControls type =
 	(
-		--format "\n"; print "UIAccessorWrapper_v.getSpinnerValue()"
-		label_index = this.getControlIndex(ui_text)
+		format "\n"; print "UIAccessorWrapper_v.getControls()"
+		--if classOf controls != Array then controls = #( controls )
 
-		--format "label_index:	% \n" label_index
+		controls_by_type = #()
 
-		if label_index != undefined then
-			spinner_value = this.controls[label_index + 3][5]
+		for ctrl in this.controls do
+			if ctrl[4] as name == type as name then
+				append controls_by_type ctrl
 
-		--format "spinner_edit:	% \n" spinner_edit
-		spinner_value --return
+		controls_by_type --return
 	),
 
 	/** Get control from ui
@@ -152,6 +154,73 @@ struct UIAccessorWrapper_v
 
 		ctrl_hwnd --return
 	),
+
+
+	/** Get spinner value
+	  *
+	  */
+	function getSpinnerValue ui_text =
+	(
+		--format "\n"; print "UIAccessorWrapper_v.getSpinnerValue()"
+		label_index = this.getControlIndex(ui_text)
+
+		--format "label_index:	% \n" label_index
+
+		if label_index != undefined then
+			spinner_value = this.controls[label_index + 3][5]
+
+		--format "spinner_edit:	% \n" spinner_edit
+		spinner_value --return
+	),
+
+	/** Get values
+	  *
+	  */
+	function getVal controls_get =
+	(
+		--format "\n"; print "UIAccessorWrapper_v.getValues()"
+
+		/** Get Button type value
+		  * @return 0|1|2  false|true|tristate
+		  */
+		function getNuttonVal ctrl_pointer =
+		(
+			--format "\n"; print "UIAccessorWrapper_v.getNuttonVal()"
+			BM_GETCHECK	=0x00F0
+
+			windows.sendMessage ctrl_pointer BM_GETCHECK 0 0
+		)
+
+
+		if classOf controls_get != Array then controls_get = #( controls_get )
+
+		values = Dictionary (#string)
+
+		for ctrl_get in controls_get where (ctrl = this.getControlByPointer ctrl_get[1] ) != undefined do
+
+			--format "ctrl_get[1]:	% \n" ctrl_get[1]
+			values[ctrl[5]] = case ctrl[4] as name of
+				(
+				--	--#Edit:	pressButton(ctrl_hwnd[1])
+					#BUTTON:	getNuttonVal(ctrl[1]) -- click radio button
+				--	--default:
+				)
+
+		values --return
+	),
+
+	/** Get control by pointer
+	  *
+	  */
+	function getControlByPointer ctrl_pointer =
+	(
+		--format "\n"; print "UIAccessorWrapper_v.getControlByPointer()"
+
+		for ctrl in this.controls where ctrl[1] == ctrl_pointer do
+			return ctrl
+	),
+
+
 
 	/** Get control from ui
 	  *
@@ -194,7 +263,7 @@ struct UIAccessorWrapper_v
 	function list type: =
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		format "\n"; print "UIAccessorWrapper_v.listControls()"
+		format "\n"; print "UIAccessorWrapper_v.list()"
 
 		--for ctrl in windows.getChildrenHWnd this.commandPanelHWnd where ctrl[4] == control_types[#RADIO] as string do
 

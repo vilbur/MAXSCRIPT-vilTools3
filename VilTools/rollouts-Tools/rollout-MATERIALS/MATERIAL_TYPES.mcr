@@ -17,7 +17,7 @@ macroscript	material_assign_idmat
 category:	"_Material-Types"
 buttonText:	"Multi ID"
 tooltip:	"Create multimaterial where each material ID has different color"
-icon:	"menu:true"
+icon:	"MENU:true"
 (
 	_Material = MaterialId_v()
 
@@ -30,7 +30,7 @@ macroscript	material_assign_xray_mat
 category:	"_Material-Types"
 buttonText:	"X-Ray"
 tooltip:	"Set transparency on objects material,\nor assign X-Ray material, if material is undefined"
-icon:	"menu:true"
+icon:	"MENU:true"
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MATERIALS\Lib\Material\Material.ms"

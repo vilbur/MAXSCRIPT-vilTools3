@@ -20,7 +20,9 @@ struct SplineConvertor_v
 	  */
 	function convert obj =
 	(
-		--format "\n"; print "SplineConvertor_v.convert()"
+		format "\n"; print "SplineConvertor_v.convert()"
+		format "obj:	% \n" obj
+
 		--format "superClassOf obj.baseobject:	% \n" (superClassOf obj.baseobject)
 		if superClassOf obj.baseobject == shape then
 		(
@@ -48,6 +50,7 @@ struct SplineConvertor_v
 
 	/** Revert
 	  *
+	  * @return reverted shape
 	  */
 	function revert obj =
 	(
@@ -63,15 +66,15 @@ struct SplineConvertor_v
 
 			--select this.obj
 
-			converted_from  = this._loadProperty (#converted_from)
+			original_shape  = this._loadProperty (#original_shape)
 			converted_props = this._loadProperty (#converted_props)
 
-			if converted_from == undefined or converted_props == undefined then
+			if original_shape == undefined or converted_props == undefined then
 				return false
 
 			this._saveObjectState()
 
-			this._createOriginalShape(converted_from)
+			this._createOriginalShape(original_shape)
 
 			this._loadProperties(converted_props)
 
@@ -79,6 +82,7 @@ struct SplineConvertor_v
 
 			SetCommandPanelTaskMode (current_max_mode)
 
+			this.obj --return
 		)
 	),
 
@@ -106,11 +110,11 @@ struct SplineConvertor_v
 	/** Create original
 	  *
 	  */
-	function _createOriginalShape converted_from =
+	function _createOriginalShape original_shape =
 	(
 		--format "\n"; print "SplineConvertor_v._createOriginalShape()"
-		--format "converted_from:	% \n" (converted_from)
-		new_shape = execute( converted_from as string + "()" )
+		--format "original_shape:	% \n" (original_shape)
+		new_shape = execute( original_shape as string + "()" )
 
 		--for i = this.obj.modifiers.count to 1 by -1 do
 		--	addModifier new_shape this.obj.modifiers[i]
@@ -135,7 +139,7 @@ struct SplineConvertor_v
 
 		--format "\n-----------\nDICTIONARY:props_save:%\n" props_save; for data_pair in props_save do format "%:	%\n" data_pair.key data_pair.value
 
-		this._setProperty #converted_from	(classOf this.obj.baseobject)
+		this._setProperty #original_shape	(classOf this.obj.baseobject)
 		this._setProperty #converted_props	(props_save)
 	),
 

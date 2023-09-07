@@ -102,8 +102,8 @@ icon:	"MENU:tooltip"
 (
 	if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
 		loadMaxFile ( maxFilePath + maxFileName ) quiet:true
-
 )
+
 /*------------------------------------------------------------------------------
 
 	RESET
@@ -112,7 +112,7 @@ icon:	"MENU:tooltip"
 
 macroscript	_scene_reset
 category:	"_Scene"
-buttontext:	"Reset SCene"
+buttontext:	"Reset Scene"
 
 icon:	"MENU:true"
 (
@@ -122,3 +122,36 @@ icon:	"MENU:true"
 		resetMaxFile()
 	)
 )
+
+/*------------------------------------------------------------------------------
+
+	RESTART MAX
+
+	Should be in different file, but this is suitbale because of quad menu
+
+--------------------------------------------------------------------------------*/
+
+macroscript	_scene_restart_max
+category:	"_Scene"
+buttontext:	"Restart"
+
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+
+		if queryBox "Restart Max ?" title:"RESTART" then
+		(
+			file_path = (getDir #maxroot) + "3dsmax.exe"
+
+			DOSCommand ("start \"\" \""+ file_path +"\"")
+
+			quitMax #noPrompt quiet:true
+
+		)
+
+	)
+)
+
+

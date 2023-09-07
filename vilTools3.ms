@@ -34,6 +34,8 @@ function importStdScripts =
 
 		"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
 
+		"/rollout-SPLINE/Lib/SplineConvertor/SplineConvertor.ms",
+
 		"/rollout-TOOLS/Lib/ToolMode.ms",
 
 		"/rollout-SCENE/RecentFile/RecentFile.ms",

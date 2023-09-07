@@ -139,7 +139,12 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 
 	on execute do
 	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
+		print("print in:"+getSourceFileName())
+		format "EventFired:	% \n" EventFired
+
+		format "EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ):	% \n" (EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ))
+		format "EventFired != undefined and EventFired.val != undefined and EventFired.val:	% \n" (EventFired != undefined and EventFired.val != undefined and EventFired.val)
+
 		keepActiveModifier ( if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then #LastModifier )
 	)
 

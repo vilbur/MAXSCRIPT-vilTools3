@@ -23,14 +23,14 @@ function OBJECT1menu QuadMenu =
 	----HideSelection = DefaultViewportQuad.Quads[2].getItem ("Hide Selection")
 	----
 	----format "HideSelection	= % \n" HideSelection
+	QuadMenu.addMenu("_Visibility-Hide")	--flat:false --index:1
 
 
-
-	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"Hide SELECTED"
+	-- QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"Hide SELECTED"
 	QuadMenu.addItem("Tools")("Hide Unselected")	group:"Main UI" title:"Hide UNSELECTED"
 
 	QuadMenu.addSeparator()
-	
+
 	QuadMenu.addMenu(ObjectsVisibilityMenu)	--flat:false --index:1
 
 	QuadMenu.addSeparator()

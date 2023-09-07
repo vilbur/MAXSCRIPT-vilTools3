@@ -26,7 +26,7 @@ function PLACEHOLDERmenu QuadMenu =
 	RIGHT CLICK QUAD
 --------------------------------------------------------------------------------*/
 
-EditQuad = createQuad( "_RightClickQuad" ) #(
+EditQuad = createQuad( "_RightClick" ) #(
 
 	--#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#EDIT1,	 -- "./Quads/EDIT1-menu.ms"
@@ -38,7 +38,7 @@ EditQuad = createQuad( "_RightClickQuad" ) #(
 /*------------------------------------------------------------------------------
 	CONTROL
 --------------------------------------------------------------------------------*/
-Object_Selection = createQuad( "_ControlQuad" ) #(
+Object_Selection = createQuad( "_Control" ) #(
 
 	#OBJECT1,	 -- "./Quads/OBJECT-1-menu.ms"
 	#SELECTION,	 -- "./Quads/SELECTION-menu.ms"
@@ -51,7 +51,7 @@ Object_Selection = createQuad( "_ControlQuad" ) #(
 /*------------------------------------------------------------------------------
 	SHIFT
 --------------------------------------------------------------------------------*/
-Snap_Transform_Pivot = createQuad( "_ShiftQuad" ) #(
+Snap_Transform_Pivot = createQuad( "_Shift" ) #(
 
 	#SNAP,	 -- "./Quads/SNAP-menu.ms"
 	#COORDSYS,	 -- "./Quads/COORDSYS-menu.ms"
@@ -63,7 +63,7 @@ Snap_Transform_Pivot = createQuad( "_ShiftQuad" ) #(
 /*------------------------------------------------------------------------------
 	SHIFT ALT
 --------------------------------------------------------------------------------*/
-Group_Primitives = createQuad( "_ShiftAltQuad" ) #(
+Group_Primitives = createQuad( "_ShiftAlt" ) #(
 
 	#ANIMATION,	 -- "./Quads/ANIMATION-menu.ms"
 	#CREATE2,	 -- "./Quads/CREATE2-menu.ms"
@@ -76,19 +76,19 @@ Group_Primitives = createQuad( "_ShiftAltQuad" ) #(
 /*------------------------------------------------------------------------------
 	CONTROL ALT
 --------------------------------------------------------------------------------*/
-Scene_Materials = createQuad( "_ControlAltQuad" ) #(
+Scene_Materials = createQuad( "_ControlAlt" ) #(
 
 	#SCENE,	 -- "./Quads/SCENE-menu.ms"
 	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
 	#PLACEHOLDER,	 -- "./Quads/PLACEHOLDER-menu.ms"
-	#MATERIALS	 -- "./Quads/MATERIALS-menu.ms"
+	#PLACEHOLDER	 -- "./Quads/PLACEHOLDER-menu.ms"
 
 )
 
 /*------------------------------------------------------------------------------
 	CONTROL SHIFT
 --------------------------------------------------------------------------------*/
-Modifiers = createQuad( "_CotrolShiftQuad" ) #(
+Modifiers = createQuad( "_CotrolShift" ) #(
 
 	#MODIFIERS1,	 -- "./Quads/MODIFIERS-1-menu.ms"
 	#MODIFIERS2,	 -- "./Quads/MODIFIERS-2-menu.ms"
@@ -120,6 +120,19 @@ Layers = createQuad( "Animation" ) #(
 	#LAYERS4	 -- "./Quads/LAYERS-4-menu.ms"
 
 )
+
+
+/*------------------------------------------------------------------------------
+	MATERIAL M KEY
+--------------------------------------------------------------------------------*/
+_Materials = createQuad( "_Material" ) #(
+
+	#MATERIAL1,	 -- "./Quads/MATERIAL-1-menu.ms"
+	#MATERIAL2,	 -- "./Quads/MATERIAL-2-menu.ms"
+	#MATERIAL3,	 -- "./Quads/MATERIAL-2-menu.ms"
+	#MATERIAL4	 -- "./Quads/MATERIAL-4-menu.ms"
+)
+
 
 /*==============================================================================
 

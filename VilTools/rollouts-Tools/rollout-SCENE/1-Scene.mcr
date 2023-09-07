@@ -13,7 +13,7 @@ icon:	"across:5|width:72|MENU:true"
 
 	on execute do
 	(
-		recent_document = (RecentFile_v()).getRecentFileNotIn #( "autoback" )
+		recent_document = (RecentFile_v()).getRecentFileNotIn #( "autoback", "temp" )
 
 
 		if maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
@@ -197,6 +197,8 @@ buttontext:	"Open\Save Temp"
 toolTip:	"Save Temp File"
 icon:	"MENU:tooltip"
 (
+	on isVisible return objects.count > 0
+
 	on execute do
 		if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
 			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
