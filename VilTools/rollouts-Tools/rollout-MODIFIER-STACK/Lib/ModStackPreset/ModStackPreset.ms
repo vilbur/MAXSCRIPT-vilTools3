@@ -38,17 +38,44 @@ struct ModStackPreset_v
 	  *
 	  * Comnpare props values with default mod
 	 */
-	function modIsDefault =
+	function modIsAddedNew obj =
 	(
-		--format "\n"; print "ModStackPreset_v.modIsDefault()"
+		-- format "\n"; print "ModStackPreset_v.modIsAddedNew()"
+		-- format "superClassOf modObject:	% \n" ( superClassOf modObject )
+		added_new = true
 
-		modObject_default = execute( (classOf modObject) as string + "()" )
+		if superClassOf modObject == modifier then
+		(
+			/* MODIFIER MOVED ON OBJECT */
+			if (for _mod in obj.modifiers where getHandleByAnim _mod == getHandleByAnim modObject collect _mod)[1] != undefined  then
+				added_new = false
 
-		values_current =  for prop in getPropNames modObject collect (getProperty modObject prop)
+			/* MODIFIER INSTANCED */
+			else if ( refs.dependentNodes modObject ).count != 0 then
+				added_new = false
 
-		values_default = for prop in getPropNames modObject_default collect (getProperty modObject_default prop)
+			/* MODIFIER COPIED */
+			else
+			(
+				modifier_values =  this._getModValues(modObject)
 
-		(with printAllElements on values_current ) as string == (with printAllElements on values_default) as string  --return
+				for modifier_in_scene in ( getClassInstances ( classOf modObject )) where modifier_in_scene.name == modObject.name do
+					if (with printAllElements on modifier_values ) as string == (with printAllElements on ( this._getModValues(modifier_in_scene))) as string  then
+						added_new = false
+			)
+		)
+
+		added_new --return
+	),
+
+	/** Test if modObject has default values
+	  *
+	  * Comnpare props values with default mod
+	 */
+	function _getModValues _mod =
+	(
+		format "\n"; print "ModStackPreset_v._getModValues()"
+		for prop in getPropNames _mod collect (getProperty _mod prop)
 	),
 
 	/** Save preset
