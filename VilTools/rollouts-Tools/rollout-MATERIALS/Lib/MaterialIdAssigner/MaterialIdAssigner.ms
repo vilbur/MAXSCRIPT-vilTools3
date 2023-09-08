@@ -11,6 +11,7 @@ struct MaterialIdAssigner_v
 	/* properties */
 	id,
 	obj,
+	_mod,
 
 	/* dependency */
 	/* reference */
@@ -96,11 +97,11 @@ struct MaterialIdAssigner_v
 	(
 		format "\n"; print "MaterialIdAssigner_v._setMaterialIdModifier()"
 
-		if classOf this.curr_mod != Materialmodifier then
+		if classOf this._mod != Materialmodifier then
 			modPanel.addModToSelection (Materialmodifier materialID:id ) ui:on
 
 		else
-			this.curr_mod.materialID = id
+			this._mod.materialID = id
 	),
 
 	/**

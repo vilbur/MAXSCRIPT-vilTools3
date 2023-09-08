@@ -50,7 +50,7 @@ icon:	"MENU:true"
 	on execute do
 	(
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
 
 		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
 			curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
@@ -66,6 +66,27 @@ icon:	"MENU:true"
 	)
 )
 
+/**
+  */
+macroscript	modifiers_rename_current_to_uppercase
+category:	"_Modifiers-Remote"
+buttontext:	"Uppercase Name"
+toolTip:	"Uppercase modifier name."
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+
+		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+			curr_mod.name = toUpper curr_mod.name
+	)
+
+
+)
 
 
 
@@ -232,9 +253,3 @@ tooltip:	"GO | SELECT | DESELECT mods in stack. \n\nCTRL: On go mode select disa
 		)
 	)
 )
-
-
-
-
-
-

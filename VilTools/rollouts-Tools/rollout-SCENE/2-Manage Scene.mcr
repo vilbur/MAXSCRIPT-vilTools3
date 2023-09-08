@@ -140,12 +140,16 @@ icon:	"MENU:true"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
 	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\2-Manage Scene.mcr"
 
 		if queryBox "Restart Max ?" title:"RESTART" then
 		(
-			file_path = (getDir #maxroot) + "3dsmax.exe"
 
-			DOSCommand ("start \"\" \""+ file_path +"\"")
+			max_path = (getDir #maxroot) + "3dsmax.exe"
+
+			file_path = if maxFileName != "" then "\"" + maxFilePath + maxFileName +"\"" else ""
+
+			DOSCommand ("start \"\" \""+ max_path +"\" "+ file_path)
 
 			quitMax #noPrompt quiet:true
 
@@ -153,5 +157,3 @@ icon:	"MENU:true"
 
 	)
 )
-
-

@@ -45,6 +45,8 @@ function importStdScripts =
 		"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
 		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
 
+		"/rollout-MATERIALS/Lib/MaterialIdAssigner/MaterialIdAssigner.ms",
+
 		"/rollout-OBJECT/Lib/OnNewNodeCallback.ms",
 
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
@@ -201,23 +203,23 @@ try(
 /* import when UI exists */
 try
 (
---    filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
---
---	(NodeList_v()).loadNodes()
---
---	selectExportNodeInListCallbactAdd()
+    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
 
-	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
-	--
+	--(NodeList_v()).loadNodes()
+
+	--selectExportNodeInListCallbactAdd()
+
+	filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+
 	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
-	--	showLayerManagerCallback()
-	--
-	--
-	--CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
-	--
-	--CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
-	--
-	--CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
+		--showLayerManagerCallback()
+
+
+	CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
+
+	CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
+
+	CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
 
 
 )

@@ -74,7 +74,8 @@ struct ModifierStack_v
 
 		if current_index != undefined then
 		(
-			saveLastModifierKill()
+			if saveLastModifierKill != undefined then
+				saveLastModifierKill()
 
 			if selection.count == 1 and abs (current_index - index) == 1 then
 			(
@@ -98,8 +99,9 @@ struct ModifierStack_v
 					else
 						max next mod
 			)
-
-			saveLastModifierStart()
+			
+			if saveLastModifierStart != undefined then
+				saveLastModifierStart()
 
 		)
 	),

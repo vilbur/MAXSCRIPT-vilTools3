@@ -17,9 +17,9 @@ struct ModifierRenamer_v
 	function generateName =
 	(
 		--format "\n"; print "ModifierRenamer_v.generateName()"
-		--format "classOf modObject:	% \n" (classOf this.modObject)
+		format "classOf modObject:	% \n" (classOf this.modObject)
 
-		this._getModProperties()
+		--this._printModProperties()
 
 		case classOf this.modObject of
 		(
@@ -27,6 +27,7 @@ struct ModifierRenamer_v
 			SliceModifier:	this._SliceModifier()
 			Poly_Select:	this._PolySelect()
 			Vol__Select:	this._VolSelect()
+			Chamfer:	this._Chamfer()
 			Face_Extrude:	"Extrude Face"
 			Materialmodifier:	"Mat ID " + this.modObject.materialID as string
 			FFDBox:	"FFDBox"
@@ -60,8 +61,52 @@ struct ModifierRenamer_v
 
 	private
 
-	/** Extrude
+	/** Chamfer
 	  *
+	  */
+	function _Chamfer =
+	(
+		format "\n"; print "ModifierRenamer_v.chamfer()"
+		chamfer_name = "Chamfer"
+
+		selection_option = case this.modObject.selectionoption of
+			(
+				0: "Sel"
+				1: "Sel Edge"
+				2: "Sel Face Edge"
+				3: "Sel Face Broder"
+				4: "Sel Edge Verts"
+				5: "All Edges"
+				6: "Sel Verts"
+				7: "All Verts"
+			)
+
+		smooth_type = case this.modObject.SmoothType of
+			(
+				0: ""
+				1: "Smooth"
+				1: "Hard"
+			)
+
+		material_option = case this.modObject.materialoption of
+			(
+				0: ""
+				1: "Diff Mat"
+				1: "Same Mat"
+			)
+
+
+		for val in #( selection_option, smooth_type, material_option  ) where val != "" do chamfer_name += " " + val
+
+		ammount = this.convertToDisplayUnits(this.modObject.amount)
+
+		chamfer_name +=  " " + (if ammount as integer == ammount then ammount as integer else ammount) as string
+		--format "chamfer_name:	% \n" chamfer_name
+
+		chamfer_name --return
+	),
+
+	/** Extrude
 	  */
 	function _SliceModifier =
 	(
@@ -85,7 +130,7 @@ struct ModifierRenamer_v
 	(
 		--format "\n"; print "ModifierRenamer_v._PolySelect()"
 
-		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._getModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
+		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._printModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		--format "subObjectLevel:	% \n" subObjectLevel
 		mod_name = "Select"
@@ -161,13 +206,13 @@ struct ModifierRenamer_v
 		--format "MOD_NAME:	% \n" mod_name
 		mod_name --return
 	),
-	/** Get mod propertiees
+	/* Get mod propertiees
 	  *
 	  * For development
 	  */
-	function _getModProperties =
+	function _printModProperties =
 	(
-		--format "\n"; print "ModifierRenamer_v._getModProperties()"
+		--format "\n"; print "ModifierRenamer_v._printModProperties()"
 		mod_values	= Dictionary()
 
 		for prop in getPropNames modObject do
@@ -182,9 +227,31 @@ struct ModifierRenamer_v
 			)
 		)
 
-		--format "\n-----------\nDICTIONARY:preset_values:%\n" mod_values; for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
+		format "\n-----------\nDICTIONARY:preset_values:%\n" mod_values; for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		mod_values --return
+	),
+
+	/** Convert to display units
+	  */
+	function convertToDisplayUnits val  =
+	(
+		val = case units.SystemType of -- convert to milimeters
+		(
+			#centimeters:	val * 10
+			#meters:	val * 1000
+			#kilometers:	val * 1000000
+			default:	val -- mnilimeters or non metric units
+		)
+
+		val = case units.MetricType of -- convert to dispaly units
+		(
+			#centimeters:	val / 10
+			#meters:	val / 1000
+			#kilometers:	val / 1000000
+			default:	val -- mnilimeters or non metric units
+		)
+		val --return
 	),
 
 	/**
