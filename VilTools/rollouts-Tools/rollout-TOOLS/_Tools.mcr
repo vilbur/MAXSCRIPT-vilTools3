@@ -1,5 +1,5 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ToolMode.ms" )
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/toolModeViewportTextCallback.ms" )	-- "./Lib/toolModeViewportTextCallback.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ToolMode.ms" )	-- "./Lib/ToolMode.ms"
 /*---------------------------------------
 	SELECT
 ---------------------------------------*/
@@ -47,6 +47,7 @@ icon:	"menu:_Tools"
 	on isVisible  return selection.count>0
 
 	on execute do( (ToolMode_v tool_mode:#Move perspective:#( #X, #Y, #Z ) ortho:#( #X, #Y ) ).setToolOrChangeAxis())
+
 )
 
 /**  Move tool
@@ -150,4 +151,25 @@ toolTip:	"Scale tool:  XY | ZX | YZ | XYZ"
 
 	format "% \n" ( if toolMode.commandmode == #Uscale then "UNIFORM SCALE" else "NON UNIFORM SCALE")
 
+)
+
+/*------------------------------------------------------------------------------
+
+	TOOLMODE VIEWPORT TEXT INFO CALLBACK
+
+--------------------------------------------------------------------------------*/
+
+
+/**
+ */
+macroscript	_maxscript_tool_mode_viewport_info
+category:	"_Otions"
+buttontext:	"Show info about tools in viewport"
+icon:	"control:checkbox|autorun:true|align:#left"
+(
+	on execute do
+		if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then
+			registerRedrawViewsCallback toolModeViewportTextCallback
+		else
+			unregisterRedrawViewsCallback toolModeViewportTextCallback
 )

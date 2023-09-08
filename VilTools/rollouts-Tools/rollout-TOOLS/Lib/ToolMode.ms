@@ -18,11 +18,14 @@ struct ToolMode_v
 	ortho,	-- axises allowed in ortho view,	if undefined then axises are used
 	perspective,	-- axises allowed in perspective view,	if undefined then axises are used
 
+	/* dependency */
+
+
 	/** Set tool or change axis
 	 */
 	function setToolOrChangeAxis =
 	(
-		this._setAxisesByTypeOfView()
+		this._setAxisesByViewAndCoordSystem()
 
 		this._setToolOrCircleAxis()
 	),
@@ -40,7 +43,6 @@ struct ToolMode_v
 	(
 		if not ( this._setTool() ) then
 			this.circleSelectionTypes (selection_types)
-
 	),
 
 	/** Circle axis modes axises in array
@@ -48,7 +50,7 @@ struct ToolMode_v
 	 */
 	function circleAxis  =
 	(
-		next_axis_index	= this.findNextIndex axises (findItem axises (this.activeAxis()))
+		next_axis_index	= this._findNextIndex axises (findItem axises (this.activeAxis()))
 
 		toolMode.axisConstraints = axises[next_axis_index]
 	),
@@ -61,7 +63,7 @@ struct ToolMode_v
 		if( current_selection_type == undefined ) then
 			global current_selection_type
 
-		next_index	= this.findNextIndex selection_types (findItem selection_types current_selection_type)
+		next_index	= this._findNextIndex selection_types (findItem selection_types current_selection_type)
 		current_selection_type	= selection_types[next_index]
 
 		case current_selection_type of
@@ -95,7 +97,7 @@ struct ToolMode_v
 	function _getNextAxis =
 	(
 		--format "\n"; print "ToolMode_v.getNextAxis()"
-		next_axis_index	= this.findNextIndex axises (findItem axises (this.activeAxis()))
+		next_axis_index	= this._findNextIndex axises (findItem axises (this.activeAxis()))
 
 		axises[next_axis_index] --return
 	),
@@ -108,26 +110,20 @@ struct ToolMode_v
 			this.circleAxis()
 	),
 
-	/** _set axises by type of view
+	/** Set axises by type of view - Ortho or Perspective
+	  *
+	  * Allow only X|Y in ortho view BUT NOT IF #local coordsystem is active
+	  *
 	 */
-	function _setAxisesByTypeOfView =
+	function _setAxisesByViewAndCoordSystem =
 	(
 
-		if ( this._isOrthoView() and this.ortho != undefined ) then
-		(
-
+		if ( GetRefCoordSys() != #local and  this._isOrthoView() and this.ortho != undefined ) then
 			this.axises = this.ortho
-			format "ORTHO axises	= % \n" axises
 
-		)
 
 		else if ( not this._isOrthoView() and this.perspective != undefined ) then
-		(
-
 			this.axises = this.perspective
-			format "PERSPECTIVE axises	= % \n" axises
-		)
-
 
 		this._disableWorldSystemInOrthoView()
 	),
@@ -147,12 +143,12 @@ struct ToolMode_v
 		cord_sys = getRefCoordSys()
 
 		if ( cord_sys == #world and this._isOrthoView() ) then
-			toolMode.coordsys #view
+			toolMode.coordSys #view
 	),
 
 	/** Find next index
 	 */
-	function findNextIndex array current_index =
+	function _findNextIndex array current_index =
 	(
 		next_index	= current_index + 1
 
