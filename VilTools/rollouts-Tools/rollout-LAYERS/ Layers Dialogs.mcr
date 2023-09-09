@@ -56,8 +56,11 @@ icon:	"MENU:Working Layers Dialog"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\ Layers Dialogs.mcr"
 
 		LayersToogleDialog = LayersToogleDialog_v()
+
+
 
 		LayersToogleDialog.create()
 	)
@@ -86,8 +89,41 @@ tooltip:	"Reload with new layers set"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 		LayersToogleDialog = LayersToogleDialog_v()
 
-		LayersToogleDialog.create reset_layers:true
+		LayersToogleDialog.resetLayers()
+
+		LayersToogleDialog.create()
 	)
+)
+
+/** WORKING LAYER DIALOG
+ */
+macroscript	layers_manager_toogle_dialog_add_selected_layers
+category:	"_Layers-Dialogs"
+buttontext:	"Working Layers Add"
+tooltip:	"Add selected layer to Working Layers Dialog"
+--icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
+icon:	"MENU:Working Layers Add"
+(
+	--format "EventFired:	% \n" EventFired
+
+	on execute do
+	(
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\ Layers Dialogs.mcr"
+
+		LayersToogleDialog = LayersToogleDialog_v()
+
+		old_layers = LayersToogleDialog.getIniOrSelectedOrCurrent()
+		add_layers = LayersToogleDialog.getSelectedLayers()
+
+		--format "old_layers:	% \n" old_layers
+		--format "add_layers:	% \n" add_layers
+
+		LayersToogleDialog.create layers:( makeUniqueArray ( join old_layers add_layers)  )
+	)
+
 
 )
 

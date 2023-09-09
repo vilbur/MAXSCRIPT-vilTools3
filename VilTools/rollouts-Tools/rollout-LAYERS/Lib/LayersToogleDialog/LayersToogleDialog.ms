@@ -99,7 +99,7 @@ global DIALOG_toogle_layers
 struct LayersToogleDialog_v
 (
 	/* construct */
-	selected_layers,
+	layers,
 	Dialog,
 
 	/* properties */
@@ -120,24 +120,28 @@ struct LayersToogleDialog_v
 	/* reference */
 	/* inhered */
 
+
+
 	/** Layers toogle dialog
 	  *
 	  */
-	function create reset_layers:false =
+	function create layers: =
 	(
-		--format "\n"; print "LayersToogleDialog_v.create()"
+		format "\n"; print "LayersToogleDialog_v.create()"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		/* DIALOG */
-		this._setDialog()
 
-		if reset_layers then
-			this.resetSelectedLayers()
+		--if reset_layers then
+			--this.resetLayers()
 
-		this.selected_layers = this.getSelectedOrCurrent() -- after ini
+		if layers == unsupplied then
+			layers = this.getIniOrSelectedOrCurrent() -- after ini
 
-		top_layers = this.LayersManager.getTopLayers( this.selected_layers ) -- get top layers for group control
+		--format "layers:	% \n" layers
 
-		this.selected_layers = this.LayersManager.difference( this.selected_layers )(top_layers)
+		top_layers = this.LayersManager.getTopLayers( layers ) -- get top layers for group control
+
+		this.layers = this.LayersManager.difference( layers )(top_layers)
 
 		this.default_width = Dialog.width - 3
 		/* CONTROLS */
@@ -235,7 +239,7 @@ struct LayersToogleDialog_v
 			--level +=1
 			--format "child_layer:	% \n" child_layer.name
 			--format "CHILD_LAYER:	% \n" child_layer
-			if ( findItem this.selected_layers child_layer ) > 0 then
+			if ( findItem this.layers child_layer ) > 0 then
 				this.addLayerButton (_Controls) (child_layer) width:(this.default_width - (level * this.width_offset)) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer
 
 			this._createButtonForNesteLayers (_Controls) (child_layer) level:(level)
@@ -296,10 +300,10 @@ struct LayersToogleDialog_v
 	/** Reset selected layers
 	  *
 	  */
-	function resetSelectedLayers =
+	function resetLayers =
 	(
-		--format "\n"; print "LayersToogleDialog_v.resetSelectedLayers()"
-		this.Ini.delete "selected_layers"
+		--format "\n"; print "LayersToogleDialog_v.resetLayers()"
+		this.Ini.delete "layers"
 	),
 
 
@@ -309,7 +313,7 @@ struct LayersToogleDialog_v
 	--function getLayersFromIni =
 	--(
 	--	--format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
-	--	layers_ini = this.Ini.keys "selected_layers"
+	--	layers_ini = this.Ini.keys "layers"
 	--
 	--	for layer_name in layers_ini where (layer = LayerManager.getLayerFromName layer_name ) != undefined collect layer
 	--),
@@ -319,7 +323,7 @@ struct LayersToogleDialog_v
 	function getLayersFromIni =
 	(
 		--format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
-		keys = this.Ini.keys "selected_layers"
+		keys = this.Ini.keys "layers"
 
 		layers = #()
 
@@ -335,15 +339,22 @@ struct LayersToogleDialog_v
 		layers --return
 	),
 
+	/** Get selected layers
+	  *
+	  */
+	function getSelectedLayers =
+	(
+		--format "\n"; print "LayersToogleDialog_v.getSelectedLayers()"
+		LayersManager.getSelectedLayers() --return
+	),
 
-	private
 
 	/** Get selected layers
 	  *
 	  */
-	function getSelectedOrCurrent =
+	function getIniOrSelectedOrCurrent =
 	(
-		--format "\n"; print "LayersToogleDialog_v.getSelectedOrCurrent()"
+		--format "\n"; print "LayersToogleDialog_v.getIniOrSelectedOrCurrent()"
 		--format "this.Ini:	% \n" this.Ini
 		--format "layers_ini:	% \n" layers_ini
 
@@ -351,18 +362,21 @@ struct LayersToogleDialog_v
 
 		if layers_ini.count == 0 then
 		(
-			selected_layers	= LayersManager.getSelectedOrCurrent()
-			layers_index	= LayersManager.getLayersIndex(selected_layers)
+			layers	= LayersManager.getSelectedLayers()
+			layers_index	= LayersManager.getLayersIndex(layers)
 
-			for i = 1 to selected_layers.count do
-				this.Ini.save "selected_layers" layers_index[i] selected_layers[i].on
+			for i = 1 to layers.count do
+				this.Ini.save "layers" layers_index[i] layers[i].on
 
-			selected_layers --return
+			layers --return
 		)
 		else
 			layers_ini --return
 
 	),
+
+
+	private
 
 
 	/** Get layer by control
@@ -390,7 +404,6 @@ struct LayersToogleDialog_v
 		--format "this._getSceneBaseName():	% \n" (this._getSceneBaseName())
 		this.Dialog = Dialog_v ("Toogle Layers") width:this.default_width ini:( getDir #temp + "\\ini_files\\LayersToogleDialog\\"+ (this._getSceneBaseName()) + ".ini" )
 
-		this.Ini = this.Dialog.ini
 	),
 
 	/** Get visible layers
@@ -444,12 +457,10 @@ struct LayersToogleDialog_v
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
 
+		this._setDialog()
 
-		--format "this.selected_layers:	% \n" this.selected_layers
+		this.Ini = this.Dialog.ini
 
-		--if this.selected_layers.count > 0 then
-		--else
-		--	messageBox "NOTHING SELECTED\n\nSelect layer in layer manager\n\n\tor\n\n       some object" title:"Title"  beep:false
 
 	)
 
