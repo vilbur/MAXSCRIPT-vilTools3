@@ -98,6 +98,8 @@ autoUndoEnabled: true
 /*------------------------------------------------------------------------------
 	ALIGN SLICE GIZMO
 --------------------------------------------------------------------------------*/
+
+
 /** Edit ffd spinner callback
   *
   */
@@ -132,6 +134,8 @@ autoUndoEnabled: true
 
 		if classOf (curr_mod = modPanel.getCurrentObject()) == FFDBox then
 		(
+			global DIALOG_editffd
+
 			ffd_current = getDimensions curr_mod
 
 			/* DIALOG */

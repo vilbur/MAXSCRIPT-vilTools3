@@ -41,8 +41,8 @@ icon:	"MENU:true|title:TOGGLE"
   */
 macroscript	modifiers_rename_current
 category:	"_Modifiers-Remote"
-buttontext:	"Rename"
-toolTip:	"Rename current modifier. \n\nOption in menu: Open Dialog"
+buttontext:	"Generate Name"
+toolTip:	"Generate name for current modifier."
 icon:	"MENU:true"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
@@ -56,10 +56,30 @@ icon:	"MENU:true"
 			curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
 	)
 
-	on altExecute type do
+	--on altExecute type do
+	--(
+	--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
+	--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+	--
+	--	if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+	--		(ModifierRenamer_v(curr_mod)).renameDialog generate:false
+	--)
+)
+
+/**
+  */
+macroscript	modifiers_rename_current_dialog
+category:	"_Modifiers-Remote"
+buttontext:	"Rename"
+toolTip:	"Rename current modifier dialog. \n\nOption in menu: Open Dialog"
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+
+	on execute do
 	(
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
 
 		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
 			(ModifierRenamer_v(curr_mod)).renameDialog generate:false

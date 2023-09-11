@@ -5,29 +5,27 @@ key_shortcuts = #( #shiftPressed, #altPressed, #controlPressed, #shiftAndAltPres
 
 for menu_file in getFiles (getFilenamePath(getSourceFileName()) + "\\QuadMenus\\*.ms") do
 (
-	format "\n"
-	format "menu_file:	% \n" menu_file
+	--format "\n";	format "menu_file:	% \n" menu_file
 
 	filein( menu_file )
 
+	filename = getFilenameFile( menu_file )
+
 	 if QUAD_MENU_INSTALL != undefined then
 	 (
-		format "QUAD_MENU_INSTALL:	% \n" QUAD_MENU_INSTALL.name
+		--format "QUAD_MENU_INSTALL:	% \n" filename
 	--try(
 
-
-		if QUAD_MENU_INSTALL.name == "RightClick" then
+		if filename == "RightClick" then
 			QUAD_MENU_INSTALL.setRightClick()
 
 		else
 		(
-			menu_shortcut = ( QUAD_MENU_INSTALL.name as string + "Pressed" ) as name
+			menu_shortcut = ( filename + "Pressed" ) as name
 
 			if ( index = findItem key_shortcuts menu_shortcut ) > 0 then
-			(
-				format "menu_shortcut:	% \n" menu_shortcut
 				QUAD_MENU_INSTALL.setRightClick which:menu_shortcut
-			)
+
 		)
 
 		QUAD_MENU_INSTALL = undefined

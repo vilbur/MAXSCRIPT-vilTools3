@@ -44,7 +44,7 @@ struct ModStackPreset_v
 		-- format "superClassOf modObject:	% \n" ( superClassOf modObject )
 		added_new = true
 
-		if superClassOf modObject == modifier then
+		if obj != undefined and superClassOf modObject == modifier then
 		(
 			/* MODIFIER MOVED ON OBJECT */
 			if (for _mod in obj.modifiers where getHandleByAnim _mod == getHandleByAnim modObject collect _mod)[1] != undefined  then
@@ -74,7 +74,7 @@ struct ModStackPreset_v
 	 */
 	function _getModValues _mod =
 	(
-		format "\n"; print "ModStackPreset_v._getModValues()"
+		--format "\n"; print "ModStackPreset_v._getModValues()"
 		for prop in getPropNames _mod collect (getProperty _mod prop)
 	),
 

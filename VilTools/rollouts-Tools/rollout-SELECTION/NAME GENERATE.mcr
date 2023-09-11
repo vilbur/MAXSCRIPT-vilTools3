@@ -55,7 +55,7 @@ icon:	"control:editText|across:2|width:256|align:#left|offset:[ 0, 16]"
 --icon:	"control:editText|across:1|offset:[ 0, 8 ]"
 (
 	--format "EventFired:	% \n" EventFired
-	
+
 	if EventFired.val == " " and selection.count > 0 then
 		ROLLOUT_selection.ET_base_name.text = selection[1].name
 )
@@ -85,7 +85,7 @@ tooltip:	"Rename selected objects"
 icon:	"across:2|offset:[ 4, 8 ]|height:36|align:#right"
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\ObjectRenamer\ObjectRenamer.ms"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\ObjectRenamer\ObjectRenamer.ms"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\NAME GENERATE.mcr"
 
 	ObjectRenamer = ObjectRenamer_v()
@@ -111,5 +111,3 @@ icon:	"across:2|offset:[ 4, 8 ]|height:36|align:#right"
 
 	ObjectRenamer.rename( selection )
 )
-
-

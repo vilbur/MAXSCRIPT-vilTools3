@@ -3,17 +3,15 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 1")
+	QuadMenu.setTitle("QUAD 1")
 
-	ModifiersMenu = Menu_v("_Modifiers-1") flat:true
-	SplineModsMenu = Menu_v("_Modifiers-Spline") flat:true
+	--Fooo	= Menu_v("")
 
+	--QuadMenu.addMenu("")
 
-	ModifiersMenu.addSeparator index: #( 5 )
-
-	QuadMenu.addMenu(SplineModsMenu)
-	QuadMenu.addSeparator index: #( 2 )
-	QuadMenu.addMenu(ModifiersMenu)
+	--QuadMenu.addSeparator index:1
+	--QuadMenu.addSeparator()
+	--QuadMenu.addSeparators #()
 )
 
 /*------------------------------------------------------------------------------
@@ -21,13 +19,10 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 2")
+	QuadMenu.setTitle("L A Y O U T")
 
-	ModifiersMenu = Menu_v("_Modifiers-2") flat:true
-
-	ModifiersMenu.addSeparator index:#( 3, 6 )
-
-	QuadMenu.addMenu(ModifiersMenu)
+	for layout in #(#layout_restore_layout_4, #layout_restore_layout_2v, #layout_restore_layout_3vl, #layout_restore_layout_4vl  ) do
+		QuadMenu.addItem ("_Viewports-Layout") ( layout as string )
 )
 
 /*------------------------------------------------------------------------------
@@ -35,13 +30,13 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 3")
+	QuadMenu.setTitle("M A N A G E")
 
-	--ModifiersMenu = Menu_v("_Modifiers-2") flat:true
-	--
-	--ModifiersMenu.addSeparator index:#( 3, 6 )
+	LayoutsMenu 	= Menu_v("_Viewports-Manage")
 
-	--QuadMenu.addMenu(ModifiersMenu)
+	LayoutsMenu.addSeparators #( 2 )
+
+	QuadMenu.addMenu( LayoutsMenu )	--flat:true --index:1
 )
 
 /*------------------------------------------------------------------------------
@@ -49,20 +44,15 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 3")
+	QuadMenu.setTitle("QUAD 4")
 
-	ModifiersMenu = Menu_v("_Modifiers-3") flat:true
-
-	ModifiersMenu.addSeparator index:#( 6, 8 )
-
-	QuadMenu.addMenu(ModifiersMenu)
 )
 
 
 
 /** DEFIEN QUAD
   */
-QUAD_MENU_INSTALL = QuadMenu_v( "_" + getFilenameFile( getSourceFileName() ) )
+QUAD_MENU_INSTALL = QuadMenu_v( getFilenameFile( getSourceFileName() ) )
 
 
 /** ADD QUAD MENUS

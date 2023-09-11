@@ -30,7 +30,7 @@ struct ObjectRenamer_v
 	_objects,
 	objects_to_rename,
 
-	ins_or_ref	= Dictionary #( #INSTANCE, "Inst" ) #( #REFERENCE, "Ref"	 ), -- prefix for instaces or references
+	ins_or_ref	= Dictionary #( #INSTANCE, "I" ) #( #REFERENCE, "R"	 ), -- prefix for instaces or references
 
 	private
 
@@ -49,9 +49,8 @@ struct ObjectRenamer_v
 	(
 		format "\n"; print "ObjectRenamer_v.rename()"
 
-		format "this.prefix:	% \n" this.prefix
-		format "this.sufix:	% \n" this.sufix
-
+		--format "this.prefix:	% \n" this.prefix
+		--format "this.sufix:	% \n" this.sufix
 
 		this._objects = if classOf _objects == ObjectSet then _objects as Array else _objects
 
@@ -76,33 +75,23 @@ struct ObjectRenamer_v
 	(
 		--format "\n-------------\n"; print "ObjectRenamer_v._renameObject()"
 
-		obj.name = (this._getPrefixSufix(obj)(#PREFIX)) + base_name + this._getPrefixSufix(obj)(#SUFIX) + delimentr + (this._getSufixNumber (index) (objects_to_rename.count) )
+		main_name = (this._getPrefixSufix(obj)(#PREFIX)) + base_name + this._getPrefixSufix(obj)(#SUFIX) + (this._getSufixNumber (index) (objects_to_rename.count) )
 
-		this.renameInstancesAndReferences (obj)
+		for data in ins_or_ref do
+			if (ins_or_ref_objects = this._getInstancesOrReferences (obj) data.key).count > 1 then
+				this.renameInstancesAndReferences (ins_or_ref_objects)(main_name)(data.value)
+			else
+				obj.name = main_name
 	),
 
 	/** Rename instances and references
 	  *
 	  */
-	function renameInstancesAndReferences obj =
+	function renameInstancesAndReferences ins_or_ref_objects main_name ins_or_ref =
 	(
 		--format "\n"; print "NameIncludes_v.renameInstancesAndReferences()"
-		local ins_or_ref_objects
-
-		for data in ins_or_ref do
-			for i = 1 to (ins_or_ref_objects = this._getInstancesOrReferences (obj) data.key ).count do
-				ins_or_ref_objects[i].name = obj.name + delimentr + data.value + delimentr + (this._getSufixNumber i ins_or_ref_objects.count)
-	),
-
-
-	/** _rename instances
-	 */
-	function _getInstancesOrReferences obj instance_or_reference =
-	(
-		--format "\n"; print "ObjectRenamer_v._getInstancesOrReferences()"
-		for inst_ref_obj in this.InstaceManager.getInstancesOrReferences(obj)(instance_or_reference) -- get instances or references
-			where findItem this._objects inst_ref_obj > 0 and inst_ref_obj != obj -- if in this._objects to rename and is not unique obejcts
-				collect inst_ref_obj
+			for i = 1 to ins_or_ref_objects.count do
+				ins_or_ref_objects[i].name = main_name + delimentr + ( ins_or_ref as string ) + (this._getSufixNumber i ins_or_ref_objects.count)
 	),
 
 	/** _get prefix
@@ -142,7 +131,7 @@ struct ObjectRenamer_v
 			(
 				#parent: if obj.parent != undefined then obj.parent.name else ""
 				#layer:  sanititizeString(obj.layer.name)
-				#type:  (classOf obj) as string
+				#type:  (classOf obj.baseobject) as string
 				default: ""
 			)
 
@@ -162,19 +151,35 @@ struct ObjectRenamer_v
 	 */
 	function _getSufixNumber index objects_count =
 	(
+		format "\n"; print "ObjectRenamer_v._getSufixNumber()"
+		format "objects_count:	% \n" objects_count
 
-		digits_prefix	= ""
-		index_length	= ( index as string ).count
-		count_length	= ( objects_count as string ).count
+		if objects_count > 1 then
+		(
+			digits_prefix	= ""
+			index_length	= ( index as string ).count
+			count_length	= ( objects_count as string ).count
 
-		if (length_diference = count_length - index_length) > 0 then
-			for d = 1 to length_diference do
-				digits_prefix += "0"
+			if (length_diference = count_length - index_length) > 0 then
+				for d = 1 to length_diference do
+					digits_prefix += "0"
 
-		digits_prefix + index as string --return
+			delimentr + digits_prefix + index as string --return
+		)
+		else
+			""
+
 	),
 
-
+	/** _rename instances
+	 */
+	function _getInstancesOrReferences obj instance_or_reference =
+	(
+		--format "\n"; print "ObjectRenamer_v._getInstancesOrReferences()"
+		for inst_ref_obj in this.InstaceManager.getInstancesOrReferences(obj)(instance_or_reference) -- get instances or references
+			where findItem this._objects inst_ref_obj > 0 -- if in this._objects to rename and is not unique obejcts
+				collect inst_ref_obj
+	),
 
 	/** Sanitize base name
 	  *

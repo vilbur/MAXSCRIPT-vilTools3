@@ -20,9 +20,10 @@ tooltip:	"Install Menus and Quad menus for VilTools3"
 	/* IMPORT *.mcr files*/
 	filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"
 
-	filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/quadMenuConfig.ms" ) -- "./../../../QuadMenu/quadMenuConfig.ms"
+	filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/installQuads.ms" ) -- "./../../../QuadMenu/installQuads.ms"
+	--filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenuOld/quadMenuConfig.ms" ) -- "./../../../QuadMenu/quadMenuConfig.ms"
 
-	/*  */
+	/* SET DEFAULT QUADMENU  TO CTRL+SHIFT+AL+RMB */
    quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
 	if quadmenu != undefined do menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu
 

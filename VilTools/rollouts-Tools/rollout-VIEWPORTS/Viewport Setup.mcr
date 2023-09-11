@@ -1,4 +1,5 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/viewportChangeCallback/viewportChange.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportInfoCallback.ms" )	-- "./Lib/Callbacks/viewportInfoCallback.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportChangeCallback.ms" )	-- "./Lib/Callbacks/viewportChangeCallback.ms"
 
 
 /**
@@ -97,6 +98,29 @@ icon:	"width:72"
 	format "\nGRID SPACING: %mm" spacings[next_index]
 
 )
+
+/*------------------------------------------------------------------------------
+
+	TOOLMODE VIEWPORT TEXT INFO CALLBACK
+
+--------------------------------------------------------------------------------*/
+
+
+/**
+ */
+macroscript	_viewport_hud_info
+category:	"_Viewports"
+buttontext:	"HUD Info"
+icon:	"control:checkbox|autorun:true|align:#left"
+(
+	on execute do
+		-- if EventFired == undefined or ( EventFired != undefined and EventFiredg.get #val != undefined and EventFired.val ) then
+		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
+			registerRedrawViewsCallback viewportInfoCallback
+		else
+			unregisterRedrawViewsCallback viewportInfoCallback
+)
+
 
 --
 -- /**

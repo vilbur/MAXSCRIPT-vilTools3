@@ -5,23 +5,17 @@
 --------------------------------------------------------------------------------*/
 
 /**  SEARCH
-  *
   */
 macroscript layers_edit_search_in_names
 category:	"Layers"
 buttonText:	"[search in name]"
 tooltip:	"Search text in names of selection"
 icon:	"control:editText|across:3"
---icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 (
 	format "EventFired	= % \n" EventFired
-	--search_text = ROLLOUT_selection.search_in_name.text
-
-	--format "search_text	= % \n" search_text
 )
 
 /**  REPlACE
-  *
   */
 macroscript layers_edit_replace_in_names
 category:	"Layers"
@@ -38,7 +32,6 @@ icon:	"control:editText|across:3"
 --------------------------------------------------------------------------------*/
 
 /**
-  *
   */
 macroscript layers_search_and_replace
 category:	"Layers"
@@ -81,4 +74,54 @@ icon:	"across:3"
 				--format "obj_name	= % \n" obj_name
 		)
 
+)
+
+/*------------------------------------------------------------------------------
+	MANAGE LAYERS NAME
+--------------------------------------------------------------------------------*/
+
+/**  Uppercase
+  */
+macroscript layers_name_case_toggle
+category:	"Layers"
+buttonText:	"Toogle case"
+tooltip:	"Toggle selected layers name upprcase\lowercase"
+icon:		"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Layers Name.mcr"
+
+	/** Regex get match
+	  */
+	function rxGetMatch _string pattern ignore_case:true =
+	(
+		RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
+
+		IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+		matches = if ignore_case then RegEx.matches _string pattern IgnoreCase else RegEx.matches _string pattern
+
+		groups = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
+
+		if groups.count == 1 then groups[1] else groups
+	)
+
+	layer_names_string = ""
+
+	LayersManager = LayersManager_v()
+
+	selected_layers = LayersManager.getSelectedOrCurrent()
+
+	for layer in selected_layers do layer_names_string += layer.name
+
+	lower_case = rxGetMatch layer_names_string "[a-z]" ignore_case:false
+	upper_case = rxGetMatch layer_names_string "[A-Z]" ignore_case:false
+
+	for layer in selected_layers do
+	(
+		temp_name = ( if upper_case.count > lower_case.count  then toLower layer.name else toUpper layer.name ) + "#"
+
+		layer.setName (temp_name)
+
+		layer.setName ( trimRight layer.name "#" )
+	)
 )

@@ -3,9 +3,16 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 1")
+	QuadMenu.clearMenu()
 
-	--Fooo	= Menu_v("")
+	QuadMenu.setTitle("H I D E")
+
+	Layers1Menu	= Menu_v("_Layers-1")
+
+	Layers1Menu.addSeparator index:#( 2 )
+
+
+	QuadMenu.addMenu(Layers1Menu)	--flat:false --index:1
 
 	--QuadMenu.addMenu("")
 
@@ -19,9 +26,15 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 2")
+	QuadMenu.clearMenu()
+
+	QuadMenu.setTitle("H A N D L E")
 
 
+	Layers2Menu	= Menu_v("_Layers-2")
+	Layers2Menu.addSeparator index:#( 2, 4 )
+
+	QuadMenu.addMenu(Layers2Menu)	--flat:false --index:1
 )
 
 /*------------------------------------------------------------------------------
@@ -29,9 +42,18 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 3")
+	QuadMenu.clearMenu()
 
+	QuadMenu.setTitle("M A N A G E")
 
+	Layers3Menu	= Menu_v("_Layers-3")
+	Layers3Menu.addSeparator index:#( 2,4 )
+
+	QuadMenu.addMenu(Layers3Menu)	--flat:false --index:1
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Layers-Dialogs")	--flat:false --index:1
 )
 
 /*------------------------------------------------------------------------------
@@ -39,15 +61,21 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 4")
+	QuadMenu.clearMenu()
+
+	QuadMenu.setTitle("U N H I D E")
 
 
+	Layers4Menu	= Menu_v("_Layers-4")
+
+	QuadMenu.addMenu(Layers4Menu)	--flat:false --index:1
 )
 
 
 /** DEFIEN QUAD
   */
-QUAD_MENU_INSTALL = QuadMenu_v( getFilenameFile( getSourceFileName() ) )
+QUAD_MENU_INSTALL = QuadMenu_v( "Animation" )
+--QUAD_MENU_INSTALL = QuadMenu_v( "_" + getFilenameFile( getSourceFileName() ) )
 
 
 /** ADD QUAD MENUS

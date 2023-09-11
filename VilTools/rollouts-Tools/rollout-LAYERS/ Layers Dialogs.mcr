@@ -18,11 +18,11 @@ macroscript	layers_manager_autorun
 category:	"_Layers-Dialogs"
 buttontext:	"Layer Manager"
 tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
-icon:	"control:checkbutton|MENU:true"
+icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 
 	on execute do
-		if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then -- run on startup if no fire by event
+		if EventFired == undefined or ( EventFired.get #val ) then -- run on startup if no fire by event
 		(
 			--LayerManager.editLayerByName ""
 			showLayerManagerCallback()
@@ -33,98 +33,6 @@ icon:	"control:checkbutton|MENU:true"
 
 			try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
 		)
-)
-
-
-/*------------------------------------------------------------------------------
-	WORKING LAYER DIALOG
---------------------------------------------------------------------------------*/
-
-/** WORKING LAYER DIALOG
- */
-macroscript	layers_manager_toogle_dialog
-category:	"_Layers-Dialogs"
-buttontext:	"Working Layers"
-tooltip:	"Open Working Layers Dialog.\n\nCreate for each layer of selected layer or selected object"
---icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
-icon:	"MENU:Working Layers Dialog"
-(
-	--format "EventFired:	% \n" EventFired
-
-	on execute do
-	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\ Layers Dialogs.mcr"
-
-		LayersToogleDialog = LayersToogleDialog_v()
-
-
-
-		LayersToogleDialog.create()
-	)
-
-	on altExecute type do
-	(
-		macros.run "_Layers-Dialogs" "layers_manager_toogle_dialog_resetini"
-	)
-
-)
-
-/** WORKING LAYER DIALOG - RELAOD
- */
-macroscript	layers_manager_toogle_dialog_resetini
-category:	"_Layers-Dialogs"
-buttontext:	"Working Layers"
-tooltip:	"Reload with new layers set"
---icon:	"control:checkbutton"
-(
-	--format "EventFired:	% \n" EventFired
-
-	on execute do
-	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-		LayersToogleDialog = LayersToogleDialog_v()
-
-		LayersToogleDialog.resetLayers()
-
-		LayersToogleDialog.create()
-	)
-)
-
-/** WORKING LAYER DIALOG
- */
-macroscript	layers_manager_toogle_dialog_add_selected_layers
-category:	"_Layers-Dialogs"
-buttontext:	"Working Layers Add"
-tooltip:	"Add selected layer to Working Layers Dialog"
---icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
-icon:	"MENU:Working Layers Add"
-(
-	--format "EventFired:	% \n" EventFired
-
-	on execute do
-	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\ Layers Dialogs.mcr"
-
-		LayersToogleDialog = LayersToogleDialog_v()
-
-		old_layers = LayersToogleDialog.getIniOrSelectedOrCurrent()
-		add_layers = LayersToogleDialog.getSelectedLayers()
-
-		--format "old_layers:	% \n" old_layers
-		--format "add_layers:	% \n" add_layers
-
-		LayersToogleDialog.create layers:( makeUniqueArray ( join old_layers add_layers)  )
-	)
-
-
 )
 
 --/** SCENE EXPLORER

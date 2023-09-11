@@ -11,7 +11,7 @@ category:	"_Visibility-Hide"
 buttonText:	"Hide Selected"
 -- tooltip:	"Hide \ Unhide selected objects. \n\nSelected object is not hidden if SubObject is active. \n\nIf "
 tooltip:	"Hide Selected Toggle"
-icon:	"MENU:true|tooltip:Hide selected objects. \nUnhide last hidden objects. \n\nSelected object is not hidden if SubObject is active. Hidden objects stay hidden"
+icon:	"tooltip:Hide selected objects. \nUnhide last hidden objects. \n\nSelected object is not hidden if SubObject is active. Hidden objects stay hidden"
 autoUndoEnabled: true
 (
 	on execute do undo "Hide Toggle" on

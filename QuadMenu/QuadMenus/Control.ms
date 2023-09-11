@@ -93,7 +93,7 @@ function addQuad4 QuadMenu =
 
 /** DEFIEN QUAD
   */
-QUAD_MENU_INSTALL = QuadMenu_v( getFilenameFile( getSourceFileName() ) )
+QUAD_MENU_INSTALL = QuadMenu_v( "_" + getFilenameFile( getSourceFileName() ) )
 
 
 /** ADD QUAD MENUS

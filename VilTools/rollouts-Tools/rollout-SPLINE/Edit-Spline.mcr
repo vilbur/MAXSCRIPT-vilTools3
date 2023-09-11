@@ -1,4 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ConnectVertices.ms" )
 
 /**
  *
@@ -14,6 +13,8 @@ icon:	"menu:_Context Spline"
 
 	on execute do
 	(
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/ConnectVertices.ms" )
+
 		(ConnectVertices_v(for o in selection where superClassOf o == shape collect o)).connect()
 	)
 
@@ -92,7 +93,20 @@ icon:	"menu:_Context Spline|index:1"
 		setFocus roll_spline_interpolation.spn_interpolation
 	)
 )
-
+/**
+ *
+ */
+macroscript	_spline_from_intersect
+category:	"_Edit-Spline"
+buttontext:	"Spline Intersect"
+tooltip:	"Create Spline From Intersect Of Geometry"
+icon:	"menu:_Context Spline"
+(
+	on IsVisible return Filters.Is_EditSpline()
+	--on IsVisible return Filters.CanSwitchTo_Spline()
+	on execute do
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Lucax3D/splineFromIntersect.mse" )	-- "./../../../Lib/vendor/Lucax3D/splineFromIntersect.mse"
+)
 
 
 /**

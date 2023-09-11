@@ -1,8 +1,8 @@
 
 /**
  */
-macroscript	_options_listener_toggle
-category:	"_Otions"
+macroscript	_miscellaneous_listener_toggle
+category:	"_miscellaneous"
 buttontext:	"MAXScript Wins"
 tooltip:	"MAXScript Windows Toggle"
 (
@@ -31,8 +31,8 @@ tooltip:	"MAXScript Windows Toggle"
 --------------------------------------------------------------------------------*/
 /**
  */
-macroscript	_options_free_memory
-category:	"_Otions"
+macroscript	_miscellaneous_free_memory
+category:	"_miscellaneous"
 buttontext:	"Free Memory"
 tooltip:	"Remove Undo\n\nClean Texture Memory"
 (
@@ -43,6 +43,7 @@ tooltip:	"Remove Undo\n\nClean Texture Memory"
 
 	messageBox "Memory CLeaned" title:"Memory Clean"
 )
+
 
 /*------------------------------------------------------------------------------
 
@@ -55,14 +56,14 @@ tooltip:	"Remove Undo\n\nClean Texture Memory"
 /**
  */
 macroscript	_maxscript_test
-category:	"_Otions"
+category:	"_miscellaneous"
 buttontext:	"TEST"
 icon:	"control:checkbutton"
 (
 
 	on execute do
 	(
-		
+
 	--	unregisterRedrawViewsCallback showGWtextTest
 	--
 	--

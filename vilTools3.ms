@@ -215,9 +215,9 @@ try
 		--showLayerManagerCallback()
 
 
-	CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
+	--CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
 
-	CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
+	--CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
 
 	CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
 

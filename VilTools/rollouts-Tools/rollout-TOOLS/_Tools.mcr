@@ -1,4 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/toolModeViewportTextCallback.ms" )	-- "./Lib/toolModeViewportTextCallback.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ToolMode.ms" )	-- "./Lib/ToolMode.ms"
 /*---------------------------------------
 	SELECT
@@ -153,23 +152,3 @@ toolTip:	"Scale tool:  XY | ZX | YZ | XYZ"
 
 )
 
-/*------------------------------------------------------------------------------
-
-	TOOLMODE VIEWPORT TEXT INFO CALLBACK
-
---------------------------------------------------------------------------------*/
-
-
-/**
- */
-macroscript	_maxscript_tool_mode_viewport_info
-category:	"_Otions"
-buttontext:	"Show info about tools in viewport"
-icon:	"control:checkbox|autorun:true|align:#left"
-(
-	on execute do
-		if EventFired == undefined or ( EventFired != undefined and EventFired.val != undefined and EventFired.val ) then
-			registerRedrawViewsCallback toolModeViewportTextCallback
-		else
-			unregisterRedrawViewsCallback toolModeViewportTextCallback
-)

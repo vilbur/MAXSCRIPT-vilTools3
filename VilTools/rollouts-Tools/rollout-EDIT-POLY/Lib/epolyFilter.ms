@@ -3,7 +3,7 @@
  */
 function isEpoly =
 (
-	matchPattern (( modPanel.getCurrentObject()) as string ) pattern:"Edit* Poly"
+	matchPattern (( modPanel.getCurrentObject()) as string ) pattern:"Edit*Poly*"
 )
 
 /** Test if is Editable_Poly or Edit_Poly
@@ -39,4 +39,3 @@ function isSubObject subobjects =
 	else
 		false --return
 )
-

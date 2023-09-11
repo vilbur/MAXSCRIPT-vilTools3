@@ -3,17 +3,18 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 1")
+	QuadMenu.setTitle("M A T E R I A L 1")
 
-	ModifiersMenu = Menu_v("_Modifiers-1") flat:true
-	SplineModsMenu = Menu_v("_Modifiers-Spline") flat:true
+	QuadMenu.addMenu("_Material-Edit")
 
+	QuadMenu.addSeparators #( 2 )
+	--Fooo	= Menu_v("")
 
-	ModifiersMenu.addSeparator index: #( 5 )
+	--QuadMenu.addMenu("")
 
-	QuadMenu.addMenu(SplineModsMenu)
-	QuadMenu.addSeparator index: #( 2 )
-	QuadMenu.addMenu(ModifiersMenu)
+	--QuadMenu.addSeparator index:1
+	--QuadMenu.addSeparator()
+	--QuadMenu.addSeparators #()
 )
 
 /*------------------------------------------------------------------------------
@@ -21,13 +22,9 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 2")
+	QuadMenu.setTitle("M A T E R I A L 2")
 
-	ModifiersMenu = Menu_v("_Modifiers-2") flat:true
-
-	ModifiersMenu.addSeparator index:#( 3, 6 )
-
-	QuadMenu.addMenu(ModifiersMenu)
+	QuadMenu.addMenu("_Material-Selection")
 )
 
 /*------------------------------------------------------------------------------
@@ -35,13 +32,9 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 3")
+	QuadMenu.setTitle("M A T E R I A L 3")
 
-	--ModifiersMenu = Menu_v("_Modifiers-2") flat:true
-	--
-	--ModifiersMenu.addSeparator index:#( 3, 6 )
-
-	--QuadMenu.addMenu(ModifiersMenu)
+	QuadMenu.addMenu("_Material-ID")
 )
 
 /*------------------------------------------------------------------------------
@@ -49,13 +42,9 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 3")
+	QuadMenu.setTitle("M A T E R I A L 4")
 
-	ModifiersMenu = Menu_v("_Modifiers-3") flat:true
-
-	ModifiersMenu.addSeparator index:#( 6, 8 )
-
-	QuadMenu.addMenu(ModifiersMenu)
+	QuadMenu.addMenu("_Material-Types")
 )
 
 

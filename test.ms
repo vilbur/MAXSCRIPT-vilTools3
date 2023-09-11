@@ -1,68 +1,77 @@
 clearListener(); print("Cleared in:"+getSourceFileName())
 
-global GetShapeNotification
-
-fn GetShapeNotification =
+/** Regex is match
+  *
+  * @return boolean
+  */
+function rxIsMatch _string pattern ignore_case:true =
 (
-	local hwnd = dialogMonitorOps.getWindowHandle()
-	local dialogTitle = uiAccessor.getWindowText hwnd
-	if (dialogTitle == "Pick Object") then (
-		local dialogChildren = windows.getChildrenHWND hwnd
-		UIAccessor.SetWindowText dialogChildren[15][1]  stShapeName
-		UIAccessor.PressDefaultButton()
-	)
-	true
-) --end fn GetShapeNotification =
+	RegExDotNet	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
 
-fn GenerateLoft nodePath =
+	IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+	if ignore_case then RegExDotNet.isMatch _string pattern IgnoreCase else  RegExDotNet.isMatch _string pattern
+)
+
+/** Regex get match
+  */
+function rxGetMatch _string pattern ignore_case:true =
 (
-	--constants for windows messages
-	select nodePath
+	RegExDotNet	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
 
-	--loft creation
-	macros.run "Objects Compounds" "Loft"
-	local mainHWND = windows.getDesktopHWND()
+	IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 
-	local children = windows.getChildrenHWND mainHWND
-	local stToSearch = "Get Shape"
-	local btnGetShape = undefined
-	for child in children where child[5] == stToSearch do btnGetShape = child
-	local btnGetShape_hwnd = btnGetShape[1]
-	UIAccessor.pressButton btnGetShape_hwnd
+	matches = if ignore_case then RegExDotNet.matches _string pattern IgnoreCase else  RegExDotNet.matches _string pattern
 
-	--Get shape
-	DialogMonitorOPS.RegisterNotification GetShapeNotification id:#GetShapePopUp
-	DialogMonitorOPS.enabled = true
-	max tool hlist
-	DialogMonitorOPS.unRegisterNotification id:#GetShapePopUp --not needed more
-	DialogMonitorOPS.enabled = false
-	UIAccessor.pressButton btnGetShape_hwnd
-	local nodeLoft = selection[1]
-	--do what you want with the loft
+	groups = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
+
+	if groups.count == 1 then groups[1] else groups
+
 
 )
 
- (
- 	local stShapeName = "Shape"
 
- 	delete objects
- 	local nodePath = SplineShape name:"Path"
+/** Regex replace
+  */
+function rxReplace _string _search _replace ignore_case:true =
+(
+	RegExDotNet	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
 
- 	addNewSpline nodePath
+	IgnoreCaseOption = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 
- 	for i = 0 to 50 by 10 do
- 		addKnot nodePath 1 #smooth #curve [random -10 10, i,0]
+	RegExReplace = if ignore_case then ( dotNetObject "System.Text.RegularExpressions.Regex" _search IgnoreCaseOption ) else ( dotNetObject "System.Text.RegularExpressions.Regex" _search )
 
-    local nodeShape = splineShape name:"Shape"
+	RegExReplace.Replace _string _replace
+)
 
- 	addNewSpline nodeShape
- 	addKnot nodeShape 1 #corner #curve [1, 0,0]
- 	addKnot nodeShape 1 #corner #curve [1, 1,0]
- 	addKnot nodeShape 1 #corner #curve [-1, 1,0]
- 	addKnot nodeShape 1 #corner #curve [-1, 0,0]
- 	stShapeName = nodeShape.name
 
- 	GenerateLoft nodePath
- )
+input = "fox foo FOO bar 333 999"
 
-delete objects
+
+--format "isMatch:	% \n" (rxIsMatch input "foo")
+
+format "rxGetMatch:	% \n" (rxGetMatch input "(foo)" )
+
+--format "rxReplace:	% \n" (rxReplace input "foo" "TEST" ignore_case:false )
+
+
+/* IS MATCH \GET MATCH */
+--format "MATCH:	% \n" ((regex input ".*" )	== input )
+--format "MATCH:	% \n" ((regex input "\s" )	== " " )
+--format "MATCH:	% \n" ((regex input "jumps" )	== "jumps" )
+--
+--
+--/* GET MATCH GROUP */
+--format "GROUP:	% \n" ((regex input "([^\s]+)" )	== #( "quick", "fox", "jumps", "over", "foo", "bar" ) )
+--
+--
+--/* GET MATCH MULTIPLE GROUPS */
+--
+--regex input ".*(foo)" 	-- #(#("foo", "foo"))
+--regex input ".*(foo)" ignore_case:false	-- #(#("foo", "foo"))
+----
+----format "GROUPS:	% \n" ((regex input "(foo)" ignore_case:false )	== #(#( "fox", "foo" )  , #( "bar" )) )
+----format "GROUPS:	% \n" ((regex input "(foo)" )	== #(#( "fox", "foo" )  , #( "bar" )) )
+----format "GROUPS:	% \n" ((regex input "(foo)" )	== #(#( "fox", "foo" )  , #( "bar" )) )
+----format "GROUPS:	% \n" ((regex input "(\d+)" )	== #(#( "fox", "foo" )  , #( "bar" )) )
+----format "GROUPS:	% \n" ((regex input ".*(333)\s(999)" )	== #(#( "fox", "foo" )  , #( "bar" )) )

@@ -1,12 +1,12 @@
 
-unregisterRedrawViewsCallback toolModeViewportTextCallback ---- TURNOFF TEXT
+unregisterRedrawViewsCallback viewportInfoCallback ---- TURNOFF TEXT
 
 /** Tool mode viewport textfn
-  *fn
+  *
   */
-function toolModeViewportTextCallback =
+function viewportInfoCallback =
 (
-	--format "\n"; print "ToolModeViewportText_v.toolModeViewportTextCallback()"
+	--format "\n"; print "ToolModeViewportText_v.viewportInfoCallback()"
 
 	axis_colors = Dictionary #( #x, red ) #( #y, green ) #( #z, ( color 50 150 230 ) )
 
@@ -38,7 +38,11 @@ function toolModeViewportTextCallback =
 
 	column_width = 16
 
-	viewport_mid_X = (gw.getWinSizeX()/2)
+	viewport_mid_X = (gw.getWinSizeX()/2) - 64
+
+	position_Y = if viewport.numViews  == 1 then 128 else 64 --  if viewport  ismaximized
+
+	line_height = 16
 
 	axist_string = toolMode.axisConstraints as string
 
@@ -47,15 +51,27 @@ function toolModeViewportTextCallback =
 
 	gw.setTransform( Matrix3 1 )
 
+
+	/* CURRENT LAYER */
+		gw.wText ( [viewport_mid_X, position_Y, 0] ) ( (LayerManager.current).name ) color:yellow
+
+
 	/* COORD SYS */
 	if coord_sys != #world then
-		gw.wText ( [viewport_mid_X, 32, 0] ) ( toUpper (coord_sys as string ) ) color:coord_sys_color
+		gw.wText ( [viewport_mid_X + 16, position_Y += line_height, 0] ) ( toUpper (coord_sys as string ) ) color:coord_sys_color
 
+
+	position_Y += line_height -- set height for a AXISES loop
+
+	/* AXISES */
+	for i = 1 to axises.count do
+		gw.wText ( [viewport_mid_X + (column_width * ( i - 1 ) ) ,  position_Y, 0] ) ( toUpper (axises[i]) ) color:axis_colors[axises[i] as name]
 
 
 	/* AXIS SNAP */
 	if toolMode.commandmode == #MOVE and snapMode.axisConstraint then
-		gw.wText ( [viewport_mid_X + 32 , 48, 0] ) "Snap" color:white
+		gw.wText ( [viewport_mid_X + 32 ,position_Y, 0] ) "Snap Axis" color:white
+
 
 	/* ANGLE SNAP */
 	if toolMode.commandmode == #ROTATE then
@@ -66,17 +82,19 @@ function toolModeViewportTextCallback =
 		(
 			snap_value = if (snap_value = AngleSnapClass.SnapAngle_) as integer == snap_value then  snap_value as integer else  snap_value
 
-			gw.wText ( [viewport_mid_X + 32 , 48, 0] ) ("Snap " + snap_value as string + "°" ) color:white
+			gw.wText ( [viewport_mid_X + 32 , position_Y, 0] ) ("Snap Angle " + snap_value as string + "°" ) color:white
 		)
 	)
 
 
-	/* AXISES */
-	for i = 1 to axises.count do
-		gw.wText ( [viewport_mid_X  , 48, 0] ) ( toUpper (axises[i]) ) color:axis_colors[axises[i] as name]
 
-	/* SNAPS */
-	gw.wText ( [ viewport_mid_X , 64, 0] ) snap_modes color:( color 164 164 164 )
+	/* SNAPS MODES */
+	gw.wText ( [ viewport_mid_X ,  position_Y += line_height, 0] ) snap_modes color:( color 164 164 164 )
+
+
+	/* SELECTION FILETER */
+	if GetSelectFilter() != 1 then
+		gw.wText ( [ viewport_mid_X , position_Y += 64, 0] ) ( "------ "+ toUpper (GetSelectFilterName(GetSelectFilter())) + " ------" ) color:red
 
 
 
@@ -85,13 +103,3 @@ function toolModeViewportTextCallback =
 	CompleteRedraw()
 
 )
-
-
-
-
-
-
-
-
-
-

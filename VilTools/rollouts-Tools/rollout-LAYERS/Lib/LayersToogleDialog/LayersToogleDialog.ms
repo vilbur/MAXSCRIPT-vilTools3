@@ -10,9 +10,6 @@
 		Ctrl:	Select layer objects
 		Ctrl+Shift:	Select all children, layers and objects
 
-
-
-
   */
 function layerDialogButtonCallback val which =
 (
@@ -93,7 +90,7 @@ function layerDialogButtonCallback val which =
 )
 
 
-global DIALOG_toogle_layers
+--global DIALOG_toogle_layers
 /** Layers toogle dialog
  */
 struct LayersToogleDialog_v
@@ -117,10 +114,11 @@ struct LayersToogleDialog_v
 	/* dependency */
 	LayersManager = LayersManager_v(),
 
+	RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" ),
+
+	IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase,
 	/* reference */
 	/* inhered */
-
-
 
 	/** Layers toogle dialog
 	  *
@@ -129,19 +127,17 @@ struct LayersToogleDialog_v
 	(
 		format "\n"; print "LayersToogleDialog_v.create()"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		/* DIALOG */
-
-		--if reset_layers then
-			--this.resetLayers()
 
 		if layers == unsupplied then
 			layers = this.getIniOrSelectedOrCurrent() -- after ini
 
-		--format "layers:	% \n" layers
+		this._saveLayerToIni()
+
+		--format "\n-----------\nARRAY:layers:\n";  for layer in layers do format "layer:	%\n" layer.name
 
 		top_layers = this.LayersManager.getTopLayers( layers ) -- get top layers for group control
 
-		this.layers = this.LayersManager.difference( layers )(top_layers)
+		this.layers = this.difference( layers )( top_layers )
 
 		this.default_width = Dialog.width - 3
 		/* CONTROLS */
@@ -155,6 +151,15 @@ struct LayersToogleDialog_v
 		Dialog.create height:undefined lockWidth:false
 
 		Dialog.register()
+	),
+
+	/** Differrence layer
+	  *
+	  */
+	function difference arr_1 arr_2 =
+	(
+		--format "\n"; print "LayersToogleDialog_v.differrenceLayer()"
+		this.LayersManager.difference( arr_1 )( arr_2 )
 	),
 
 	/** Get dialog layers
@@ -261,7 +266,7 @@ struct LayersToogleDialog_v
 		if layer_name == "0" then
 			"Default" --return
 		else
-			( dotNetObject "System.Text.RegularExpressions.Regex" ("^[^a-zA-Z]*(.*?(?=[^a-zA-Z0-9]+$)).*$") ).Replace layer_name "$1"
+			this._rxReplace (layer_name) ("^[^a-zA-Z]*(.*?(?=[^a-zA-Z0-9]+$)).*$") ("$1")
 	),
 
 	/** Add layer button
@@ -282,8 +287,9 @@ struct LayersToogleDialog_v
 			--( dotNetObject "System.Text.RegularExpressions.Regex" ("[\s_-]*"+ this.sanitazeName(parent_layer_name) + "[\s_-]*") ).Replace child_layer_name ""
 			top_layer = ( LayersManager.getTopLayers( parent_layer ))[1]
 
-			( dotNetObject "System.Text.RegularExpressions.Regex" ("[\s_-]*"+ this.sanitazeName(top_layer.name) + "[\s_-]*$") ).Replace child_layer_name ""
+			search = ("[\s_-]*"+ this.sanitazeName(top_layer.name) + "[\s_-]*$")
 
+			this._rxReplace (child_layer_name) (search) ""
 		)
 
 		button_caption = if parent_layer == unsupplied then this.sanitazeName(layer.name) else removeParentLayerName(parent_layer)(layer.name)
@@ -297,6 +303,8 @@ struct LayersToogleDialog_v
 		_Button --return
 	),
 
+
+
 	/** Reset selected layers
 	  *
 	  */
@@ -306,23 +314,14 @@ struct LayersToogleDialog_v
 		this.Ini.delete "layers"
 	),
 
-
-	--/** Get layers from ini
-	--  *
-	--  */
-	--function getLayersFromIni =
-	--(
-	--	--format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
-	--	layers_ini = this.Ini.keys "layers"
-	--
-	--	for layer_name in layers_ini where (layer = LayerManager.getLayerFromName layer_name ) != undefined collect layer
-	--),
 	/** Get layers from ini
 	  *
 	  */
 	function getLayersFromIni =
 	(
-		--format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
+		format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
+		format "this.Ini:	% \n" this.Ini
+
 		keys = this.Ini.keys "layers"
 
 		layers = #()
@@ -358,26 +357,27 @@ struct LayersToogleDialog_v
 		--format "this.Ini:	% \n" this.Ini
 		--format "layers_ini:	% \n" layers_ini
 
-		layers_ini = this.getLayersFromIni()
+		if (layers_ini = this.getLayersFromIni()).count == 0 then
+			LayersManager.getSelectedLayers()
 
-		if layers_ini.count == 0 then
-		(
-			layers	= LayersManager.getSelectedLayers()
-			layers_index	= LayersManager.getLayersIndex(layers)
-
-			for i = 1 to layers.count do
-				this.Ini.save "layers" layers_index[i] layers[i].on
-
-			layers --return
-		)
 		else
 			layers_ini --return
 
 	),
 
+	/** Save layer to ini
+	  *
+	  */
+	function _saveLayerToIni =
+	(
+		--format "\n"; print "LayersToogleDialog_v._saveLayerToIni()"
+		layers_index	= LayersManager.getLayersIndex(layers)
+
+		for i = 1 to layers.count do
+			this.Ini.save "layers" layers_index[i] layers[i].on
+	),
 
 	private
-
 
 	/** Get layer by control
 	  *
@@ -395,16 +395,19 @@ struct LayersToogleDialog_v
 			LayerManager.getLayer layer_id
 	),
 
-	/** Set dialog
-	  *
-	  */
-	function _setDialog =
-	(
+	 /** Set dialog
+	   *
+	   */
+	 function _setDialog =
+	 (
 		--format "\n"; print "LayersToogleDialog_v._setDialog()"
 		--format "this._getSceneBaseName():	% \n" (this._getSceneBaseName())
-		this.Dialog = Dialog_v ("Toogle Layers") width:this.default_width ini:( getDir #temp + "\\ini_files\\LayersToogleDialog\\"+ (this._getSceneBaseName()) + ".ini" )
+		ini_file = ( getDir #temp + "\\ini_files\\LayersToogleDialog\\"+ (this._getSceneBaseName()) + ".ini" )
 
-	),
+		--format "ini_file:	% \n" ini_file
+		 this.Dialog = Dialog_v ("Toogle Layers") width:this.default_width ini:ini_file
+
+	 ),
 
 	/** Get visible layers
 	  *
@@ -424,16 +427,16 @@ struct LayersToogleDialog_v
 	(
 		if (file_name = maxFileName ) != "" then
 		(
-			matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches file_name "(.*[^0-9]+)(\d+)*\.max" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+			matches = this._rxGetMatch file_name "(.*[^0-9]+)(\d+)*\.max"
 
-			match	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value ))[1] --return
+			--format "matches:	% \n" matches
 
-			trimRight match[2] "-"
+			--trimRight match[2] "-"
+			"test"
 		)
 		else
 			"untitled"
 	),
-
 
 	/** Sort layers
 	  *
@@ -449,6 +452,36 @@ struct LayersToogleDialog_v
 
 		layers --return
 	),
+
+	/** Regex is match
+	  *
+	  * @return boolean
+	  */
+	function _rxIsMatch _string pattern ignore_case:true =
+	(
+		if ignore_case then RegEx.isMatch _string pattern IgnoreCase else  RegEx.isMatch _string pattern
+	),
+
+	/** Regex get match
+	  */
+	function _rxGetMatch _string pattern ignore_case:true =
+	(
+		matches = if ignore_case then RegEx.matches _string pattern IgnoreCase else  RegEx.matches _string pattern
+
+		groups = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
+
+		if groups.count == 1 then groups[1] else groups
+	),
+
+	/** Regex replace
+	  */
+	function _rxReplace _string _search _replace ignore_case:true =
+	(
+		RegExReplace = if ignore_case then ( dotNetObject "System.Text.RegularExpressions.Regex" _search IgnoreCase ) else ( dotNetObject "System.Text.RegularExpressions.Regex" _search )
+
+		RegExReplace.Replace _string _replace
+	),
+
 	/**
 	 */
 	on create do
@@ -456,12 +489,9 @@ struct LayersToogleDialog_v
 		--format "\n"; print "LayersToogleDialog.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-
 		this._setDialog()
 
-		this.Ini = this.Dialog.ini
-
-
+		this.Ini = this.Dialog.Ini
 	)
 
 )

@@ -19,7 +19,7 @@ struct ModifierRenamer_v
 		--format "\n"; print "ModifierRenamer_v.generateName()"
 		format "classOf modObject:	% \n" (classOf this.modObject)
 
-		--this._printModProperties()
+		this._printModProperties()
 
 		case classOf this.modObject of
 		(
@@ -94,7 +94,6 @@ struct ModifierRenamer_v
 				1: "Diff Mat"
 				1: "Same Mat"
 			)
-
 
 		for val in #( selection_option, smooth_type, material_option  ) where val != "" do chamfer_name += " " + val
 
@@ -197,11 +196,13 @@ struct ModifierRenamer_v
 				2: " by Cylinder"
 				3: " by "    + modObject.node.name
 				4: " by "    + getTextureName(modObject.texture) + ( if modObject.mapChannel > 1 then " "+ modObject.mapChannel as string else "" )
-				5: " by ID " + modObject.matID	as string
-				6: " by SG " + modObject.smGroup	as string
+				5: " ID " + modObject.matID	as string
+				6: " SG " + modObject.smGroup	as string
 
 				default:	""
 			)
+
+		mod_name += if this.modObject.invert then " invert" else ""
 
 		--format "MOD_NAME:	% \n" mod_name
 		mod_name --return
