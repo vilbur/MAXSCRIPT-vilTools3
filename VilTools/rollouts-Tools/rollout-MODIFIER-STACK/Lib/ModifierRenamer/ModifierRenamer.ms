@@ -28,7 +28,8 @@ struct ModifierRenamer_v
 			Poly_Select:	this._PolySelect()
 			Vol__Select:	this._VolSelect()
 			Chamfer:	this._Chamfer()
-			Face_Extrude:	"Extrude Face"
+			Face_Extrude:	"Extrude"
+			DeleteMesh:	"Delete"
 			Materialmodifier:	"Mat ID " + this.modObject.materialID as string
 			FFDBox:	"FFDBox"
 			FFD_2x2x2:	"FFD2"
@@ -112,14 +113,22 @@ struct ModifierRenamer_v
 		--format "\n"; print "ModifierRenamer_v._SliceModifier()"
 
 		--format "modObject.Slice_Type:	% \n" modObject.Slice_Type
+		mod_name = ""
 
-		case this.modObject.Slice_Type of
+
+		mod_name += case this.modObject.Slice_Type of
 		(
 			0: "Refine"
 			1: "Split"
 			2: "Remove Positive"
 			3: "Remove Negative"
 		)
+
+		if this.modObject.cap then
+			mod_name += " Cap"
+
+		mod_name --return
+
 	),
 
 	/** Name based on subobject level selected and material if not ID 1
@@ -179,13 +188,20 @@ struct ModifierRenamer_v
 		)
 
 		/* STACK SELECTIONM LEVEL */
-		mod_name += case modObject.level of
-		(
-			0: " Object"
-			1: " Vertex"
-			2: " Face"
-			default:	""
-		)
+
+		if this.modObject.volume != 3 then -- if not by object
+			mod_name += case modObject.level of
+			(
+				0: " Object"
+				1: " Vertex"
+				2: " Face"
+				default:	""
+			)
+
+
+		/* INVERT */
+		--mod_name += if this.modObject.invert then " not" else ""
+
 
 		/* SELECT BY */
 		if modObject.level > 0 then -- if not "object" mode
@@ -194,7 +210,7 @@ struct ModifierRenamer_v
 				0: " by Box"
 				1: " by Sphere"
 				2: " by Cylinder"
-				3: " by "    + modObject.node.name
+				3: " by "    + modObject.node.name -- by object
 				4: " by "    + getTextureName(modObject.texture) + ( if modObject.mapChannel > 1 then " "+ modObject.mapChannel as string else "" )
 				5: " ID " + modObject.matID	as string
 				6: " SG " + modObject.smGroup	as string
@@ -202,7 +218,8 @@ struct ModifierRenamer_v
 				default:	""
 			)
 
-		mod_name += if this.modObject.invert then " invert" else ""
+		/* INVERT */
+		mod_name += if this.modObject.invert then " [invert]" else ""
 
 		--format "MOD_NAME:	% \n" mod_name
 		mod_name --return

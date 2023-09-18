@@ -1,51 +1,57 @@
 /**  SET CUSTOM QUADS
  */
 macroscript	_options_install_menus
-category:	"_Otions"
+category:	"_Options"
 buttontext:	"INSTALL MENUS"
 tooltip:	"Install Menus and Quad menus for VilTools3"
+icon:	"MENU:true"
 (
-	clearListener(); print("Cleared in:"+getSourceFileName())
 
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\ContentLoader\ContentSubrollouts\ContentRollout\ScriptFile\ScriptFile.ms"
+	on execute do
+	(
+		clearListener(); print("Cleared in:"+getSourceFileName())
 
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Menus\QuadMenu\Menu\Menu.ms"
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Menus\QuadMenu\QuadMenu.ms"
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\ContentLoader\ContentSubrollouts\ContentRollout\ScriptFile\ScriptFile.ms"
 
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\generateMacroscripts.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Menus\QuadMenu\Menu\Menu.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Menus\QuadMenu\QuadMenu.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
 
-	macros.run "_Otions" "_options_quadmenu_reset"
+		filein( getFilenamePath(getSourceFileName()) + "/../../../generateMacroscripts.ms" )	-- "./../../../generateMacroscripts.ms"
 
-	/* IMPORT *.mcr files*/
-	filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"
+		macros.run "_Options" "_options_quadmenu_reset"
 
-	filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/installQuads.ms" ) -- "./../../../QuadMenu/installQuads.ms"
-	--filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenuOld/quadMenuConfig.ms" ) -- "./../../../QuadMenu/quadMenuConfig.ms"
+		/* IMPORT *.mcr files*/
+		filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"
 
-	/* SET DEFAULT QUADMENU  TO CTRL+SHIFT+AL+RMB */
-   quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
-	if quadmenu != undefined do menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu
+		filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/installQuads.ms" ) -- "./../../../QuadMenu/installQuads.ms"
+		--filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenuOld/quadMenuConfig.ms" ) -- "./../../../QuadMenu/quadMenuConfig.ms"
+
+		/* SET DEFAULT QUADMENU  TO CTRL+SHIFT+AL+RMB */
+	   quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
+		if quadmenu != undefined do menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu
 
 
-	menuMan.saveMenuFile ((getDir #ui)+"\\MaxStartUI.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\en-US\UI\MaxStartUI.mnux"
+		menuMan.saveMenuFile ((getDir #ui)+"\\MaxStartUI.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\en-US\UI\MaxStartUI.mnux"
 
 
-	/* OPEN HOTKEY EDITOR - for refresh quad menu keyboard shortcuts */
-	actionMan.executeAction 0 "59245"  -- Customize User Interface: Hotkey Editor
+		/* OPEN HOTKEY EDITOR - for refresh quad menu keyboard shortcuts */
+		actionMan.executeAction 0 "59245"  -- Customize User Interface: Hotkey Editor
 
-	/* CLOSE HOTKEY EDITOR */
-	if (hotkey_dialog = (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "Hotkey Editor" collect hwnd)[1]) != undefined then
-		UIAccessor.CloseDialog hotkey_dialog
+		/* CLOSE HOTKEY EDITOR */
+		if (hotkey_dialog = (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "Hotkey Editor" collect hwnd)[1]) != undefined then
+			UIAccessor.CloseDialog hotkey_dialog
 
-	print "QUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
+		print "QUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
+
+	)
 )
 
 
 /**  RESET TO DEFAULT QUADS
  */
 macroscript	_options_quadmenu_reset
-category:	"_Otions"
+category:	"_Options"
 buttontext:	"Reset Menus"
 tooltip:	"Load default quad menu and menus"
 (

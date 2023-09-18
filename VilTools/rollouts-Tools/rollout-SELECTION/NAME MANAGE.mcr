@@ -1,26 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/showObjectNames.ms" )	-- "./Lib/showObjectNames.ms"
 
-/** https://forums.cgsociety.org/t/unregister-a-redrawviewscallback-in-scripted-modifier/2048394/4
-  */
-macroscript selection_name_show_in_viewport
-category:	"_Object-Name"
-buttonText:	"Show Names"
-icon:	"MENU:true"
-(
-	on execute do
-	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-
-		is_registred = (for _callback in showRegisteredRedrawViewsCallbacks asArray:true where _callback[1] == "displayObjectNames" collect _callback).count > 0
-
-		unregisterRedrawViewsCallback displayObjectNames
-
-		if not is_registred then
-			registerRedrawViewsCallback displayObjectNames
-
-	)
-)
-
 
 /** RENAME BY LAST
   */
@@ -86,6 +65,7 @@ macroscript selection_remove_suffix
 category:	"_Object-Name"
 buttonText:	"Remove sufix"
 tooltip:	"Remove sufix from object name"
+icon:	"MENU:true"
 autoUndoEnabled: true
 (
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
@@ -98,10 +78,26 @@ autoUndoEnabled: true
 )
 
 
+/** https://forums.cgsociety.org/t/unregister-a-redrawviewscallback-in-scripted-modifier/2048394/4
+  */
+macroscript selection_name_show_in_viewport
+category:	"_Object-Name"
+buttonText:	"Show Names"
+icon:	"MENU:true"
+(
+	on execute do
+	(
+		clearListener(); print("Cleared in:"+getSourceFileName())
 
+		is_registred = (for _callback in showRegisteredRedrawViewsCallbacks asArray:true where _callback[1] == "displayObjectNames" collect _callback).count > 0
 
+		unregisterRedrawViewsCallback displayObjectNames
 
+		if not is_registred then
+			registerRedrawViewsCallback displayObjectNames
 
+	)
+)
 
 
 

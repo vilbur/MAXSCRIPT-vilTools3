@@ -1,91 +1,104 @@
-/** MeshSmooth
+/** FFDBox
  */
-macroscript epoly_tools_MeshSmooth
+macroscript epoly_tools_FFDBox
 category:	"_Modifiers-3"
-buttonText:	"MeshSmooth"
+buttonText:	"FFDBox"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "MeshSmooth"
+		macros.run "Modifiers" "FFDBox"
 	)
 )
 
-/** Smooth
+/** FFD 2x2x2
  */
-macroscript epoly_tools_Smooth
+macroscript epoly_tools_FFD_2x2x2
 category:	"_Modifiers-3"
-buttonText:	"Smooth"
+buttonText:	"FFD 2x2x2"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Smooth"
+		macros.run "Modifiers" "FFD_2x2x2"
 	)
 )
 
-/** Symmetry
+/** PathDeform
  */
-macroscript epoly_tools_Symmetry
+macroscript epoly_tools_PathDeform
 category:	"_Modifiers-3"
-buttonText:	"Symmetry"
+buttonText:	"PathDeform"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Symmetry"
+		macros.run "Modifiers" "PathDeform"
 	)
 )
 
-/** Vertex Weld
+/** Bend
  */
-macroscript epoly_tools_Vertex_Weld
+macroscript epoly_tools_Bend
 category:	"_Modifiers-3"
-buttonText:	"Vertex Weld"
+buttonText:	"Bend"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "VertexWeld"
+		macros.run "Modifiers" "Bend"
 	)
 )
 
-/** Delete Mesh
+/** Noise
  */
-macroscript epoly_tools_Delete_Mesh
+macroscript epoly_tools_Noise
 category:	"_Modifiers-3"
-buttonText:	"Delete Mesh"
+buttonText:	"Noise"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "DeleteMesh"
+		macros.run "Modifiers" "Noise"
 	)
 )
 
-/** Material ID
+/** Taper
  */
-macroscript epoly_tools_Material_ID
+macroscript epoly_tools_Taper
 category:	"_Modifiers-3"
-buttonText:	"Material ID"
+buttonText:	"Taper"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Material_ID"
+		macros.run "Modifiers" "Taper"
 	)
 )
 
-/** Normal
+/** Twist
  */
-macroscript epoly_tools_Normalmodifier
+macroscript epoly_tools_Twist
 category:	"_Modifiers-3"
-buttonText:	"Normal"
+buttonText:	"Twist"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Normalmodifier"
+		macros.run "Modifiers" "Twist"
+	)
+)
+
+/** Cap Holes
+ */
+macroscript epoly_tools_Cap_Holes
+category:	"_Modifiers-3"
+buttonText:	"Cap Holes"
+icon:	"MENU:true"
+(
+
+	on execute do (
+		macros.run "Modifiers" "Cap_Holes"
 	)
 )
 

@@ -3,7 +3,7 @@
  */
 macroscript	material_by_object
 category:	"_Material-Selection"
-buttonText:	"Mat by object"
+buttonText:	"Mat by last"
 tooltip:	"Assign material to selection by last selected object"
 icon:	"MENU:true"
 (

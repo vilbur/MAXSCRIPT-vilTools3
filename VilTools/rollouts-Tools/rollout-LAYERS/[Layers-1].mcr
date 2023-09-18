@@ -29,10 +29,9 @@ icon:	"MENU:ISOLATE Selected|Tooltip:Show only selected layers, or layers of obj
 /*------------------------------------------------------------------------------
 	HIDE
 --------------------------------------------------------------------------------*/
-/**
- *
+/** HIDE SELECTED
  */
-macroscript	layers_by_selection_off_selected
+macroscript	layers_by_selection_of_selected
 category:	"_Layers-1"
 buttontext:	"Hide selected"
 toolTip:	"Hide selected layers"
@@ -55,14 +54,13 @@ icon:	"MENU:HIDE Selected|Tooltip:Turn off selected layers, or layers of objects
 	)
 )
 
-/** UNHIDE TOP LAYERS
- *
+/** HIDE UNSELECTED LAYERS
  */
 macroscript	layers_off_unselected_top
 category:	"_Layers-1"
 buttontext:	"Hide Unselected"
 toolTip:	"Hide unselected top layers"
-icon:	"MENU:HIDE Unselected"
+icon:	"MENU:HIDE Unselected layers"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
@@ -81,3 +79,4 @@ icon:	"MENU:HIDE Unselected"
 		--LayersManager.expand( selected_layers )
 	)
 )
+

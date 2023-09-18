@@ -5,7 +5,8 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("M O D - S T A C K  1")
 
-	QuadMenu.addMenu("_Modifiers-Remote")	--flat:false --index:1
+	QuadMenu.addMenu("_Modifiers-Manage")	--flat:false --index:1
+
 
 	--QuadMenu.addMenu("")
 
@@ -21,6 +22,12 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("M O D - S T A C K  2")
 
+	NameMenu 	= Menu_v("_Modifiers-Name")
+
+	NameMenu.addSeparators #( 4 )
+
+	QuadMenu.addMenu(NameMenu)	--flat:false --index:1
+
 )
 
 /*------------------------------------------------------------------------------
@@ -30,7 +37,8 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("M O D - S T A C K  3")
 
-	QuadMenu.addMenu("_Modifiers-Manage")	--flat:false --index:1
+	QuadMenu.addMenu("_Modifiers-Remote-Stack")	--flat:false --index:1
+
 )
 
 /*------------------------------------------------------------------------------
@@ -40,6 +48,7 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("M O D - S T A C K  4")
 
+	QuadMenu.addMenu("_Modifiers-Gizmo")
 )
 
 

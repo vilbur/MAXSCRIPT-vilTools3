@@ -130,7 +130,7 @@ struct LayersManager_v
 		for layer in this.getLayersTree(layers) where layer.getParent() == undefined collect layer
 	),
 
-	/** Get children of given layers
+	/** Get children layers of given layers
 	  */
 	function getChildren layers =
 	(
@@ -139,8 +139,9 @@ struct LayersManager_v
 
 		children = #()
 
-		for layer in layers do
-			children = join children ( for i = 1 to layer.getNumChildren() collect layer.getChild i )
+		if layers.count > 0 then
+			for layer in layers do
+				children = join children ( for i = 1 to layer.getNumChildren() collect layer.getChild i )
 
 		children --return
 	),
@@ -162,7 +163,6 @@ struct LayersManager_v
 			nested_layers = this.getNestedLayers(children_layers)
 
 			children = join children nested_layers
-
 		)
 
 		children --return

@@ -29,7 +29,8 @@ function importStdScripts =
 
 	filein_files = #(
 
-		( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/RolloutCreator/RolloutCreator.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/RolloutCreator/RolloutCreator.ms"
+		( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+
 		"/../../Lib/RegExer/RegExer.ms",
 
 		"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
@@ -115,7 +116,7 @@ if doesFileExist export_node_plugin_source then
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
-filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
 
 /* MANNUAL IMPORT */
 filein_files = #(
@@ -184,7 +185,7 @@ try(
 	/* CREATE DIALOG */
 	VILTOOLS = ContentLoader.create width:420 height:1024
 
-	VILTOOLS.register()
+	--VILTOOLS.register()
 
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
@@ -201,32 +202,32 @@ try(
 
 
 /* import when UI exists */
-try
-(
-    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
-
-	--(NodeList_v()).loadNodes()
-
-	--selectExportNodeInListCallbactAdd()
-
-	filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
-
-	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
-		--showLayerManagerCallback()
-
-
+--try
+--(
+--    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+--
+--	--(NodeList_v()).loadNodes()
+--
+--	--selectExportNodeInListCallbactAdd()
+--
+--	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+--
+--	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
+--		--showLayerManagerCallback()
+--
+--
 	--CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
-
+--
 	--CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
-
-	CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
-
-
-)
-catch(
-	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
-
-)
+--
+--	--CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
+--
+--
+--)
+--catch(
+--	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+--	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+--    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+--	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+--
+--)

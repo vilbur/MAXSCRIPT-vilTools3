@@ -57,7 +57,7 @@ struct InstaceManager_v
 
 		this._getObjects( &_objects )
 
-		this._sortByPointers (&_objects)
+		--this._sortByPointers (&_objects)
 
 		for obj in _objects where findItem instances_all obj == 0 do
 		(
@@ -85,7 +85,7 @@ struct InstaceManager_v
 
 		--format "\n"; print "InstaceManager_v.getInstancesOrReferences()"
 		this._getObjects( &_objects )
-		
+
 		this._sortByPointers (&_objects)
 
 		--format "_objects:	% \n" _objects

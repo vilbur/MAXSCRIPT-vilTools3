@@ -6,13 +6,11 @@ function addQuad1 QuadMenu =
 	QuadMenu.setTitle("M O D I F I E R S 1")
 
 	ModifiersMenu = Menu_v("_Modifiers-1") flat:true
-	SplineModsMenu = Menu_v("_Modifiers-Spline") flat:true
 
 
-	ModifiersMenu.addSeparator index: #( 5 )
+	--ModifiersMenu.addSeparator index: #( 5 )
 
-	QuadMenu.addMenu(SplineModsMenu)
-	QuadMenu.addSeparator index: #( 2 )
+	--QuadMenu.addSeparator index: #( 2 )
 	QuadMenu.addMenu(ModifiersMenu)
 )
 
@@ -25,7 +23,7 @@ function addQuad2 QuadMenu =
 
 	ModifiersMenu = Menu_v("_Modifiers-2") flat:true
 
-	ModifiersMenu.addSeparator index:#( 3, 6 )
+	--ModifiersMenu.addSeparator index:#( 3, 6 )
 
 	QuadMenu.addMenu(ModifiersMenu)
 )
@@ -37,11 +35,17 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("M O D I F I E R S 3")
 
+	ModifiersMenu = Menu_v("_Modifiers-3") flat:true
+	--SplineModsMenu = Menu_v("_Modifiers-Spline") flat:true
+
+	QuadMenu.addMenu("_Modifiers-Spline")
+
+
 	--ModifiersMenu = Menu_v("_Modifiers-2") flat:true
 	--
 	--ModifiersMenu.addSeparator index:#( 3, 6 )
 
-	--QuadMenu.addMenu(ModifiersMenu)
+	QuadMenu.addMenu(ModifiersMenu)
 )
 
 /*------------------------------------------------------------------------------
@@ -49,11 +53,11 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("M O D I F I E R S 3")
+	QuadMenu.setTitle("M O D I F I E R S 4")
 
-	ModifiersMenu = Menu_v("_Modifiers-3") flat:true
+	ModifiersMenu = Menu_v("_Modifiers-4") flat:true
 
-	ModifiersMenu.addSeparator index:#( 6, 8 )
+	--ModifiersMenu.addSeparator index:#( 6, 8 )
 
 	QuadMenu.addMenu(ModifiersMenu)
 )

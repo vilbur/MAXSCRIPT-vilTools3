@@ -21,13 +21,16 @@
 -- MODIFY THIS AT YOUR OWN RISK
 
 macroscript	modifier_align_gizmo
-category:	"_Modifiers"
+category:	"_Modifiers-Gizmo"
 buttonText:	"Align Slice"
 tooltip:	"Align Slice Gizmo to 3 pts. \nShift: Hold to align to Active Grid"
+icon:	"MENU:true"
 autoUndoEnabled: true
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIERS\Gizmo.mcr"
+
+	on isVIsible return selection.count > 0 and classof ( modPanel.getCurrentObject()) == SliceModifier
 
 	on execute do  with undo off
 	(
@@ -120,13 +123,17 @@ function editFFDcallback val inpsin =
 )
 
 macroscript	modifier_set_ffd
-category:	"_Modifiers"
+category:	"_Modifiers-Gizmo"
 buttonText:	"Set FFDxBox"
 tooltip:	"Set points of current active FFDxBox"
+icon:	"MENU:true"
 autoUndoEnabled: true
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIERS\Gizmo.mcr"
+
+	on isVIsible return selection.count > 0 and classof ( modPanel.getCurrentObject()) == FFDBox
+
 
 	on execute do
 	(

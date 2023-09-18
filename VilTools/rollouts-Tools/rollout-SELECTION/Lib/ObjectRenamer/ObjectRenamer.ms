@@ -35,8 +35,7 @@ struct ObjectRenamer_v
 	private
 
 	/* dependency */
-	InstaceManager = InstaceManager_v(),
-
+	InstaceManager = InstaceManager_v(), 	-- "./../InstaceManager/InstaceManager.ms"
 	--ascii_lowercase = "abcdefghijklmnopqrstuvwxyz",
 	--ascii_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 

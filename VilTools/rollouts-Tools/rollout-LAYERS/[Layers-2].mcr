@@ -28,7 +28,7 @@ autoUndoEnabled:true
 */
 macroscript	layers_add_selection_to_current_layer
 category:	"_Layers-2"
-buttontext:	"Add to layer"
+buttontext:	"Add to seelcted layer"
 toolTip:	"Add to first selected layer \n or layer of last selected object."
 icon:	"MENU:ADD to Layer"
 autoUndoEnabled:true

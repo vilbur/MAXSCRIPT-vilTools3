@@ -7,7 +7,7 @@
 /**  SEARCH
   */
 macroscript layers_edit_search_in_names
-category:	"Layers"
+category:	"_Layers"
 buttonText:	"[search in name]"
 tooltip:	"Search text in names of selection"
 icon:	"control:editText|across:3"
@@ -18,7 +18,7 @@ icon:	"control:editText|across:3"
 /**  REPlACE
   */
 macroscript layers_edit_replace_in_names
-category:	"Layers"
+category:	"_Layers"
 buttonText:	"[replace in name]"
 tooltip:	"Replace text in names of selection"
 icon:	"control:editText|across:3"
@@ -34,7 +34,7 @@ icon:	"control:editText|across:3"
 /**
   */
 macroscript layers_search_and_replace
-category:	"Layers"
+category:	"_Layers"
 buttonText:	"Search & Replace"
 tooltip:	"Regex Search & Replace in layer names in selected layers"
 icon:	"across:3"
@@ -76,15 +76,54 @@ icon:	"across:3"
 
 )
 
+
+
+
+
+
 /*------------------------------------------------------------------------------
 	MANAGE LAYERS NAME
 --------------------------------------------------------------------------------*/
 
+/**  Rename Dialog
+  */
+macroscript layers_rename_selected_layers
+category:	"_Layers-Name"
+buttonText:	"Rename Layers"
+tooltip:	"Rename selected layers"
+icon:		"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Layers Name.mcr"
+
+	layer_names_string = ""
+
+	LayersManager = LayersManager_v()
+
+    selected_layers = LayersManager.getSelectedOrCurrent()
+
+	for selected_layer in selected_layers do
+	(
+		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" selected_layer.name
+		_dialog_result	= dotNetClass "System.Windows.Forms.DialogResult"
+
+		_dotNet.ShowModal()
+
+		_ok 	= dotNet.comparEenums (_dotNet.DialogResult) ( _dialog_result.Ok )
+		_canel	= dotNet.comparEenums (_dotNet.DialogResult) ( _dialog_result.Cancel )
+
+        if( _ok and (_string = _dotNet.InstanceName) != "" and _standroid != selected_layer.name  ) then
+	    (
+			selected_layer.setName ( _string + "#")
+
+			selected_layer.setName ( trimRight selected_layer.name "#" )
+		)
+	)
+)
 /**  Uppercase
   */
 macroscript layers_name_case_toggle
-category:	"Layers"
-buttonText:	"Toogle case"
+category:	"_Layers-Name"
+buttonText:	"Toggle case"
 tooltip:	"Toggle selected layers name upprcase\lowercase"
 icon:		"MENU:true"
 (

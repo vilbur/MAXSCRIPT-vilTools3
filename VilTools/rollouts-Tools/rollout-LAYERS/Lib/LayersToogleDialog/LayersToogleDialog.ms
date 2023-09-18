@@ -1,3 +1,6 @@
+
+global DIALOG_toogle_layers -- define global for use in callbacks
+
 /** Toggle layer visiblity
   *
   * CTRL: Select Layer members
@@ -90,7 +93,8 @@ function layerDialogButtonCallback val which =
 )
 
 
---global DIALOG_toogle_layers
+
+
 /** Layers toogle dialog
  */
 struct LayersToogleDialog_v
@@ -131,7 +135,7 @@ struct LayersToogleDialog_v
 		if layers == unsupplied then
 			layers = this.getIniOrSelectedOrCurrent() -- after ini
 
-		this._saveLayerToIni()
+		this.saveLayerToIni()
 
 		--format "\n-----------\nARRAY:layers:\n";  for layer in layers do format "layer:	%\n" layer.name
 
@@ -153,14 +157,6 @@ struct LayersToogleDialog_v
 		Dialog.register()
 	),
 
-	/** Differrence layer
-	  *
-	  */
-	function difference arr_1 arr_2 =
-	(
-		--format "\n"; print "LayersToogleDialog_v.differrenceLayer()"
-		this.LayersManager.difference( arr_1 )( arr_2 )
-	),
 
 	/** Get dialog layers
 	  *
@@ -238,18 +234,20 @@ struct LayersToogleDialog_v
 		--format "parent_layer:	% \n" parent_layer
 		level +=1
 
-		/* BUTTONS */
-		for child_layer in LayersManager.getChildren(parent_layer) do
+		if (children_layers = (LayersManager.getChildren(parent_layer))).count > 0 then
 		(
-			--level +=1
-			--format "child_layer:	% \n" child_layer.name
-			--format "CHILD_LAYER:	% \n" child_layer
-			if ( findItem this.layers child_layer ) > 0 then
-				this.addLayerButton (_Controls) (child_layer) width:(this.default_width - (level * this.width_offset)) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer
+			/* BUTTONS */
+			for child_layer in this.sortLayers (children_layers) do
+			(
+				--level +=1
+				--format "child_layer:	% \n" child_layer.name
+				--format "CHILD_LAYER:	% \n" child_layer
+				if ( findItem this.layers child_layer ) > 0 then
+					this.addLayerButton (_Controls) (child_layer) width:(this.default_width - (level * this.width_offset)) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer
 
-			this._createButtonForNesteLayers (_Controls) (child_layer) level:(level)
+				this._createButtonForNesteLayers (_Controls) (child_layer) level:(level)
+			)
 		)
-
 	),
 
 	/** Remove
@@ -365,12 +363,22 @@ struct LayersToogleDialog_v
 
 	),
 
+
+	/** Differrence layer
+	  *
+	  */
+	function difference arr_1 arr_2 =
+	(
+		--format "\n"; print "LayersToogleDialog_v.differrenceLayer()"
+		this.LayersManager.difference( arr_1 )( arr_2 )
+	),
+
 	/** Save layer to ini
 	  *
 	  */
-	function _saveLayerToIni =
+	function saveLayerToIni =
 	(
-		--format "\n"; print "LayersToogleDialog_v._saveLayerToIni()"
+		--format "\n"; print "LayersToogleDialog_v.saveLayerToIni()"
 		layers_index	= LayersManager.getLayersIndex(layers)
 
 		for i = 1 to layers.count do

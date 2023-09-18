@@ -68,3 +68,31 @@ icon:	"MENU:true"
 	)
 )
 
+/** CrossSection
+ */
+macroscript epoly_tools_CrossSection
+category:	"_Modifiers-Spline"
+buttonText:	"CrossSection"
+icon:	"MENU:true"
+(
+	on isVisible	do mcrUtils.ValidMod CrossSection
+
+	on execute do (
+		macros.run "Modifiers" "CrossSection"
+	)
+)
+
+/** Surface
+ */
+macroscript epoly_tools_Surface
+category:	"_Modifiers-Spline"
+buttonText:	"Surface"
+icon:	"MENU:true"
+(
+	on isVisible	do mcrUtils.ValidMod Surface
+
+	on execute do (
+		macros.run "Modifiers" "Surface"
+	)
+)
+

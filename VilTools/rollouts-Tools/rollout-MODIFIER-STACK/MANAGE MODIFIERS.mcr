@@ -1,5 +1,91 @@
 
 
+/*------------------------------------------------------------------------------
+
+	ENABLE\DISABLE SELECTED MODIFIERS
+
+--------------------------------------------------------------------------------*/
+
+
+/** TOGGLE
+ */
+macroscript	modifiers_toggle_selected
+category:	"_Modifiers-Manage"
+buttontext:	"Toggle"
+toolTip:	"Toggle selected modifiers. \n\nCTRL: Froce ENABLE modifiers. \n\nALT: Froce DIABLE modifiers"
+icon:	"MENU:true|title:TOGGLE   Ctrl:on Alt:off"
+(
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\CommandPanel\CommandPanel.ms"
+		state = case of
+		(
+			( keyboard.controlPressed):	true
+			( keyboard.altPressed):	false
+			default:	#toggle
+		)
+		(ModifierStackRemote_v()).setState ( #SELECTED )( state )
+	)
+)
+
+/** Copy
+ */
+macroscript	modifiers_copy_modifier
+category:	"_Modifiers-Manage"
+buttontext:	"Copy Modifier"
+toolTip:	"Copy current modifier"
+icon:	"MENU:true"
+(
+	on execute do
+	(
+		if( GetCommandPanelTaskMode() != #modify ) then
+			max modify mode
+
+		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+		(
+
+			--modPanel.addModToSelection (copy curr_mod)  ui:on
+
+
+
+			--addModifierWithLocalData selection[1]  curr_mod selection[1] <modifier index in source stack>
+
+
+		)
+	)
+)
+/** TOGGLE
+ */
+macroscript	modifiers_toggle_by_prefix
+category:	"_Modifiers-Manage"
+buttontext:	"Toggle by Prefix"
+toolTip:	"Toggle selected modifiers. \n\nCTRL: Froce ENABLE modifiers. \n\nALT: Froce DIABLE modifiers"
+icon:	"MENU:true|title:TOGGLE"
+(
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+
+		if (selected_modifiers = (ModifierStackRemote_v()).getSelectedModifiers()).count > 0 then
+		(
+			if (mod_name_split = filterString (selected_modifiers[1].name) "-_ ").count > 0 then
+			(
+				mods_by_prefix = #()
+
+				for obj in selection do
+					for _mod in obj.modifiers where matchPattern _mod.name pattern:( mod_name_split[1] + "*" ) do
+						appendIfUnique mods_by_prefix _mod
+
+				state = not mods_by_prefix[1].enabled
+
+				for _mod in mods_by_prefix do _mod.enabled = state
+
+				modPanel.setCurrentObject( modPanel.getCurrentObject() )
+
+			)
+		)
+	)
+)
 
 /*------------------------------------------------------------------------------
 	SELECT MODIFIERS INSTANCES
@@ -25,78 +111,4 @@ icon:	"MENU:true"
 		else
 			messageBox "There is no objects with this modifier instance" title:"MODIFIER INSTANCE"
 	)
-)
-
-/**
-  *
-  */
-macroscript	modifiers_copy_name
-category:	"_Modifiers-Manage"
-buttontext:	"Copy Name"
-toolTip:	"Copy Modifier name."-- \n\nOption in menu: Open Dialog"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-
-	on execute do
-	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
-
-		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-			if (selected_modifiers = (ModifierStackRemote_v()).getSelectedModifiers()).count > 0 then
-				setclipboardText selected_modifiers[1].name
-
-	)
-	--on altExecute type do
-	--(
-	--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-	--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
-	--
-	--	--if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-	--		--(ModifierRenamer_v(curr_mod)).renameDialog generate:false
-	--)
-
-)
-
-/**
-  *
-  */
-macroscript	modifiers_name
-category:	"_Modifiers-Manage"
-buttontext:	"Paste Name"
-toolTip:	"Paste Modifier name."-- \n\nOption in menu: Open Dialog"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-
-	on execute do
-	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
-
-		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-		(
-			clip_text = getclipboardText()
-
-			if (selected_modifiers = (ModifierStackRemote_v()).getSelectedModifiers()).count > 0 then
-				for selected_modifier in selected_modifiers do
-					selected_modifiers[1].name = clip_text
-
-		)
-
-			--curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
-	)
-	--on altExecute type do
-	--(
-	--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE_MODIFIERS.mcr"
-	--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
-	--
-	--	--if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-	--		--(ModifierRenamer_v(curr_mod)).renameDialog generate:false
-	--)
-
-
 )

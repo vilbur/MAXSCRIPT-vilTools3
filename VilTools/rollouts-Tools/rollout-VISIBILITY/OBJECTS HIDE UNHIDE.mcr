@@ -82,6 +82,35 @@ autoUndoEnabled: true
 	)
 )
 
+
+/* HIDE UNSELECTED IN LAYERS
+*/
+macroscript	selection_hide_objects_in_same_layer
+category:	"_Visibility-Hide"
+buttontext:	"Hide unselected in layer"
+toolTip:	"Select by wirecolor"
+icon:	"MENU:true"
+(
+	on execute do
+		undo "Hide unselected in layer " on
+		(
+
+			_selection = for obj in selection collect obj
+
+			LayersManager = LayersManager_v()
+
+			obejcts_in_current_layer = LayersManager.getObjectsInLayers( LayersManager.getCurrent() )
+
+			/* hide not selected objects in selected layers */
+			for obj in obejcts_in_current_layer where findItem _selection obj == 0 do
+				obj.isHidden = true
+
+			/* unhide selected objects */
+			for obj in _selection do
+				obj.isHidden = false
+		)
+)
+
 /*
 */
 macroscript	visibility_unhide_selected

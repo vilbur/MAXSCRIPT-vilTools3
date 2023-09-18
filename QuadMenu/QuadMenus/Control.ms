@@ -5,9 +5,6 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle(" O B J E C T S 1")
 
-	ObjectMenu	= Menu_v("_Selection-Object")
-	ObjectsVisibilityMenu	= Menu_v("_Selection-Visibility")
-
 	----format "HideMenuX	= % \n" HideMenuX
 	----QuadMenu.addMenu(HideMenuX)	--flat:false --index:1
 	--
@@ -19,7 +16,6 @@ function addQuad1 QuadMenu =
 	----HideSelection = DefaultViewportQuad.Quads[2].getItem ("Hide Selection")
 	----
 	----format "HideSelection	= % \n" HideSelection
-	QuadMenu.addMenu("_Visibility-Hide")	--flat:false --index:1
 
 
 	QuadMenu.addItem("Tools")("Hide Selection")	group:"Main UI" title:"Hide SELECTED"
@@ -27,7 +23,11 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addSeparator()
 
-	QuadMenu.addMenu(ObjectsVisibilityMenu)	--flat:false --index:1
+	QuadMenu.addMenu("_Visibility-Hide")	--flat:false --index:1
+	
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Selection-Visibility")	--flat:false --index:1
 
 	QuadMenu.addSeparator()
 
@@ -36,7 +36,7 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addSeparator()
 
-	QuadMenu.addMenu(ObjectMenu)	--flat:false --index:1
+	QuadMenu.addMenu("_Selection-Object")	--flat:false --index:1
 )
 
 /*------------------------------------------------------------------------------

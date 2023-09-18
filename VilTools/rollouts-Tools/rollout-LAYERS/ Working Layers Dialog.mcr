@@ -60,7 +60,7 @@ tooltip:	"Reload with new layers set"
  */
 macroscript	layers_manager_toogle_dialog_add_selected_layers
 category:	"_Layers-Dialogs"
-buttontext:	"Layers Add"
+buttontext:	"Working Layers Add"
 tooltip:	"Add selected layer to Working Layers Dialog"
 --icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
 icon:	"MENU:true"
@@ -87,7 +87,7 @@ icon:	"MENU:true"
  */
 macroscript	layers_manager_toogle_dialog_remove_selected_layers
 category:	"_Layers-Dialogs"
-buttontext:	"Layers Remove"
+buttontext:	"Working Layers Remove"
 tooltip:	"Remove selected layer to Working Layers Dialog"
 icon:	"MENU:true"
 (
@@ -111,7 +111,7 @@ icon:	"MENU:true"
 		format "\n-----------\nARRAY:remove_layers:\n";  for layer in remove_layers do format "remove_layers:	%\n" layer.name
 
 		LayersToogleDialog.create layers:( LayersToogleDialog.difference( old_layers )(remove_layers)  )
-		
+
 		--LayersToogleDialog.create layers:( old_layers  )
 	)
 )

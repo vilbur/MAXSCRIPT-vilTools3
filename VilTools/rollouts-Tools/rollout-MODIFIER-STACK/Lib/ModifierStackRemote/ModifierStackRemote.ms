@@ -74,9 +74,9 @@ struct ModifierStackRemote_v
 		this._getItemsIndex(&items)
 
 		if state == #TOGGLE then
-			state = this._getToggleState(items)(#enabled)
+			state = this._getToggleState(items)(#ENABLED)
 
-		this.setProp (items) (#enabled) (state)
+		this.setProp (items) (#ENABLED) (state)
 	),
 
 	/** Set state of modifiers in stack

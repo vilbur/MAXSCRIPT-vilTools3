@@ -50,10 +50,12 @@ icon:	"across:3"
 	--messageBox "Placeholder" title:""
 	format "EventFired	= % \n" EventFired
 
+	search_text  = ROLLOUT_selection.ET_search_in_name.text
+	replace_text = ROLLOUT_selection.ET_replace_in_name.text
+
 	for obj in selection do
 	(
-		search_text  = ROLLOUT_selection.ET_search_in_name.text
-		replace_text = ROLLOUT_selection.ET_replace_in_name.text
+
 		--format "search_text	= % \n" search_text
 		--format "replace_text	= % \n" replace_text
 

@@ -3,8 +3,8 @@
  */
 macroscript	_miscellaneous_listener_toggle
 category:	"_miscellaneous"
-buttontext:	"MAXScript Wins"
-tooltip:	"MAXScript Windows Toggle"
+buttontext:	"MAXScript Listener"
+tooltip:	"MAXScript Listener and Editor Toggle"
 (
 
 	listener_hwnd	= (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "MAXScript Listener"	collect hwnd)[1]

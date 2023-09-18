@@ -12,7 +12,7 @@ global ROLLOUT_selection
   */
 macroscript selection_name_include_layer_name
 category:	"_Object-Name"
-buttonText:	"          Layer Name"
+buttonText:	"       Layer Name"
 tooltip:	"Layer Name as sufix or prefix"
 icon:	"control:radiobuttons|items:#('Prefix','Sufix')||across:3|offset:[ -16, 0]"
 (
@@ -23,7 +23,7 @@ icon:	"control:radiobuttons|items:#('Prefix','Sufix')||across:3|offset:[ -16, 0]
   */
 macroscript selection_name_include_parent_name
 category:	"_Object-Name"
-buttonText:	"          Parent Name"
+buttonText:	"       Parent Name"
 tooltip:	"Parent Name as sufix or prefix"
 icon:	"control:radiobuttons|items:#('Prefix','Sufix')|across:3"
 (
@@ -34,7 +34,7 @@ icon:	"control:radiobuttons|items:#('Prefix','Sufix')|across:3"
   */
 macroscript selection_name_include_object_type
 category:	"_Object-Name"
-buttonText:	"          Object Type "
+buttonText:	"       Object Type "
 tooltip:	"Object Type as sufix or prefix"
 icon:	"control:radiobuttons|items:#('Prefix','Sufix')|across:3|offset:[ 14, 0]"
 (
@@ -111,3 +111,22 @@ icon:	"across:2|offset:[ 4, 8 ]|height:36|align:#right"
 
 	ObjectRenamer.rename( selection )
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -11,107 +11,107 @@ icon:	"MENU:true"
 	)
 )
 
-/** Poly Select
+/** EXTRUDE
  */
-macroscript epoly_tools_Poly_Select
+macroscript epoly_tools_Face_Extrude
 category:	"_Modifiers-1"
-buttonText:	"Poly Select"
-icon:	"MENU:true"
+buttonText:	"EXTRUDE"
+icon:	"MENU:true|#id:extrude_face"
 (
 
 	on execute do (
-		macros.run "Modifiers" "PolySelect"
+		macros.run "Modifiers" "Face_Extrude"
 	)
 )
 
-/** Volume Select
+/** CHAMFER
  */
-macroscript epoly_tools_Volume_Select
+macroscript epoly_tools_ChamferMod
 category:	"_Modifiers-1"
-buttonText:	"Volume Select"
+buttonText:	"CHAMFER"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "VolumeSelect"
+		macros.run "Modifiers" "ChamferMod"
 	)
 )
 
-/** Slice
+/** Extrude Faces Poly
  */
-macroscript epoly_tools_Slice
+macroscript epoly_tools_Extrude_Faces_Poly
 category:	"_Modifiers-1"
-buttonText:	"Slice"
+buttonText:	"Extrude Faces Poly"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Slice"
+		macros.run "Modifiers" "Extrude_Faces_Poly"
 	)
 )
 
-/** PathDeform
+/** Extrude Edges Poly
  */
-macroscript epoly_tools_PathDeform
+macroscript epoly_tools_Extrude_Edges_Poly
 category:	"_Modifiers-1"
-buttonText:	"PathDeform"
+buttonText:	"Extrude Edges Poly"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "PathDeform"
+		macros.run "Modifiers" "Extrude_Edges_Poly"
 	)
 )
 
-/** Bend
+/** Inset Faces
  */
-macroscript epoly_tools_Bend
+macroscript epoly_tools_Inset_Faces
 category:	"_Modifiers-1"
-buttonText:	"Bend"
+buttonText:	"Inset Faces"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Bend"
+		macros.run "Modifiers" "Inset_Faces"
 	)
 )
 
-/** Noise
+/** Outline Faces Poly
  */
-macroscript epoly_tools_Noise
+macroscript epoly_tools_Outline_Faces_Poly
 category:	"_Modifiers-1"
-buttonText:	"Noise"
+buttonText:	"Outline Faces Poly"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Noise"
+		macros.run "Modifiers" "Outline_Faces_Poly"
 	)
 )
 
-/** Taper
+/** select by Face Size
  */
-macroscript epoly_tools_Taper
+macroscript epoly_tools_select_by_Face_Size
 category:	"_Modifiers-1"
-buttonText:	"Taper"
+buttonText:	"select by Face Size"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Taper"
+		macros.run "Modifiers" "select_by_Face_Size"
 	)
 )
 
-/** Twist
+/** Select Faces By Mat Id
  */
-macroscript epoly_tools_Twist
+macroscript epoly_tools_Select_Faces_By_Mat_Id
 category:	"_Modifiers-1"
-buttonText:	"Twist"
+buttonText:	"Select Faces By Mat Id"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		macros.run "Modifiers" "Twist"
+		macros.run "Modifiers" "Select_Faces_By_Mat_Id"
 	)
 )
 

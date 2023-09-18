@@ -5,7 +5,7 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.clearMenu()
 
-	QuadMenu.setTitle("H I D E")
+	QuadMenu.setTitle("L A Y E R S 1")
 
 	Layers1Menu	= Menu_v("_Layers-1")
 
@@ -28,7 +28,7 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.clearMenu()
 
-	QuadMenu.setTitle("H A N D L E")
+	QuadMenu.setTitle("L A Y E R S 2")
 
 
 	Layers2Menu	= Menu_v("_Layers-2")
@@ -44,9 +44,10 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.clearMenu()
 
-	QuadMenu.setTitle("M A N A G E")
+	QuadMenu.setTitle("L A Y E R S 3")
 
 	Layers3Menu	= Menu_v("_Layers-3")
+
 	Layers3Menu.addSeparator index:#( 2,4 )
 
 	QuadMenu.addMenu(Layers3Menu)	--flat:false --index:1
@@ -63,12 +64,16 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.clearMenu()
 
-	QuadMenu.setTitle("U N H I D E")
+	QuadMenu.setTitle("L A Y E R S 4")
 
 
 	Layers4Menu	= Menu_v("_Layers-4")
 
 	QuadMenu.addMenu(Layers4Menu)	--flat:false --index:1
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Layers-Name")	--flat:false --index:1
 )
 
 

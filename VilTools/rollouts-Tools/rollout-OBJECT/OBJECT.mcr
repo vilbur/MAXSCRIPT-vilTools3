@@ -31,7 +31,7 @@ icon:	"MENU:true"
 	on execute do
 		if( selection.count > 0 ) then
 		(
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\OBJECT.mcr"
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\OBJECT.mcr"
 			max modify mode
 
 			--if ( curr_mod = modPanel.getCurrentObject() ) == undefined then
@@ -109,25 +109,5 @@ icon:	"MENU:true"
 
 			/* DIALOG CREATE */
 			Dialog.create height:undefined
-		)
-)
-
-/*
-*/
-macroscript	selection_hide_objects_in_same_layer
-category:	"_Selection-Visibility"
-buttontext:	"Hide unselected in layer"
-toolTip:	"Select by wirecolor"
-icon:	"MENU:true"
-(
-	on execute do
-		undo "Hide unselected in layer " on
-		(
-			LayersManager = LayersManager_v()
-
-			obejcts_in_current_layer = LayersManager.getObjectsInLayers( LayersManager.getCurrent() )
-
-			for obj in obejcts_in_current_layer do
-				obj.isHidden = true
 		)
 )

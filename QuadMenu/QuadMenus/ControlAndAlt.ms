@@ -47,6 +47,7 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("QUAD 4")
 
+	QuadMenu.addMenu("_Options")	--flat:false --index:1
 )
 
 

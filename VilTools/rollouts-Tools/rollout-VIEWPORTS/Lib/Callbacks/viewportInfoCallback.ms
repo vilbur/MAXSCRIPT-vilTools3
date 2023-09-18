@@ -51,14 +51,16 @@ function viewportInfoCallback =
 
 	gw.setTransform( Matrix3 1 )
 
+	layer_name = if ( LayerManager.current).name == "0" then "Default Layer" else ( LayerManager.current).name
+
 
 	/* CURRENT LAYER */
-		gw.wText ( [viewport_mid_X, position_Y, 0] ) ( (LayerManager.current).name ) color:yellow
+		gw.wText ( [viewport_mid_X, position_Y, 0] ) ( layer_name ) color:yellow
 
 
 	/* COORD SYS */
-	if coord_sys != #world then
-		gw.wText ( [viewport_mid_X + 16, position_Y += line_height, 0] ) ( toUpper (coord_sys as string ) ) color:coord_sys_color
+	--if coord_sys != #world then
+	gw.wText ( [viewport_mid_X + 16, position_Y += line_height, 0] ) ( toUpper (coord_sys as string ) ) color:coord_sys_color
 
 
 	position_Y += line_height -- set height for a AXISES loop
@@ -80,7 +82,8 @@ function viewportInfoCallback =
 
 		if AngleSnapClass.ASnapStatus then
 		(
-			snap_value = if (snap_value = AngleSnapClass.SnapAngle_) as integer == snap_value then  snap_value as integer else  snap_value
+			--snap_value = if (snap_value = AngleSnapClass.SnapAngle_) as integer == snap_value then  snap_value as integer else  snap_value
+			snap_value = AngleSnapClass.SnapAngle_
 
 			gw.wText ( [viewport_mid_X + 32 , position_Y, 0] ) ("Snap Angle " + snap_value as string + "°" ) color:white
 		)

@@ -40,7 +40,7 @@ struct ModStackPreset_v
 	 */
 	function modIsAddedNew obj =
 	(
-		-- format "\n"; print "ModStackPreset_v.modIsAddedNew()"
+		 format "\n"; print "ModStackPreset_v.modIsAddedNew()"
 		-- format "superClassOf modObject:	% \n" ( superClassOf modObject )
 		added_new = true
 
@@ -65,6 +65,7 @@ struct ModStackPreset_v
 			)
 		)
 
+		format "added_new:	% \n" added_new
 		added_new --return
 	),
 
