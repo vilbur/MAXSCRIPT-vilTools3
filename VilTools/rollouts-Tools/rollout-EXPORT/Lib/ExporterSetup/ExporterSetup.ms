@@ -37,7 +37,7 @@ struct ExporterSetup_v
 	 */
 	function export  =
 	(
-		format "\n"; print "PrintExporter_v.export()"
+		format "\n"; print "ExporterSetup_v.export()"
 
 		selectExportNodeInListCallbackRemove()
 
@@ -73,7 +73,7 @@ struct ExporterSetup_v
 	 */
 	function _exportObj =
 	(
-		format "\n"; print "Exporter_v._exportObj()"
+		format "\n"; print "ExporterSetup_v._exportObj()"
 		--ObjExporter 	= ObjExporter_v(#obj)
 	),
 
@@ -81,7 +81,7 @@ struct ExporterSetup_v
 	 */
 	function _exportPrint =
 	(
-		format "\n"; print "Exporter_v._exportPrint()"
+		format "\n"; print "ExporterSetup_v._exportPrint()"
 		PrintExporter =	(PrintExporter_v(this.export_nodes))
 
 		PrintExporter.params[#EXPORT_FORMAT]	= #("obj", "stl")[ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_export_format.state]
@@ -89,7 +89,7 @@ struct ExporterSetup_v
 		PrintExporter.params[#SUBDIR_BY_NODE]	= ROLLOUT_export.CBX_sub_directory_by_node_name.checked
 		PrintExporter.params[#FIX_POSITION]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.state
 		PrintExporter.params[#PROJECT_FILE_OPEN]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_project_file_open.state
-		PrintExporter.params[#CLOSE_INSTANCES]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_close_instances.state
+		PrintExporter.params[#CLOSE_INSTANCES]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_single_instance.state
 		PrintExporter.params[#OPEN_IN]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_open_in_program.state
 
 		PrintExporter.export()
@@ -101,14 +101,14 @@ struct ExporterSetup_v
 	 */
 	function _exportUnreal =
 	(
-		format "\n"; print "Exporter_v._exportUnreal()"
+		format "\n"; print "ExporterSetup_v._exportUnreal()"
 	),
 
 	/** Export obj
 	 */
 	function _exportZbrush =
 	(
-		format "\n"; print "Exporter_v._exportObj()"
+		format "\n"; print "ExporterSetup_v._exportObj()"
 	),
 
 	/*------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ struct ExporterSetup_v
 	 */
 	on create do
 	(
-		--format "\n"; print "ExporterSetup_v.onCreate()"
+		format "\n"; print "ExporterSetup_v.onCreate()"
 		this.ROLLOUT_export = execute "ROLLOUT_export"
 	)
 

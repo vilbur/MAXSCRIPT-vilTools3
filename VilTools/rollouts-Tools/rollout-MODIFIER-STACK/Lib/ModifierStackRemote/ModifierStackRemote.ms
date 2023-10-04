@@ -36,9 +36,11 @@ struct ModifierStackRemote_v
 		else
 			this._addToCurrentItems (&items)
 
+		/* SELECT MODIFIERS */
 		if items.count > 0 then
 			ModsStack.selectModByIndex(items[1])
 
+		/* SELECT ITEMS IN STACK */
 		for index in items do
 			ListBox.selectItem (state) (index)
 	),

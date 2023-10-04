@@ -94,6 +94,15 @@ function viewportInfoCallback =
 	/* SNAPS MODES */
 	gw.wText ( [ viewport_mid_X ,  position_Y += line_height, 0] ) snap_modes color:( color 164 164 164 )
 
+	/* CURENT KEY FRAME */
+	if sliderTime > 0 then
+		gw.wText ( [ viewport_mid_X , position_Y += 32, 0] ) ( "------------------ KEYFRAME: "+ trimRight (sliderTime as string ) "f" + " ------------------" ) color:red
+
+
+	/* DONT AFFECT CHILDRE */
+	if not maxOps.affectChildren then
+		gw.wText ( [ viewport_mid_X , position_Y += 32, 0] ) ( "------ "+ "DONT AFFECT CHILDREN" + " ------" ) color:red
+
 
 	/* SELECTION FILETER */
 	if GetSelectFilter() != 1 then

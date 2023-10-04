@@ -46,10 +46,13 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("P I V O T")
 
+	PivotMenu = menu_v("_Pivot")
 
-	QuadMenu.addMenu("_Pivot")	--flat:true --index:1
+	PivotMenu.addSeparators #(3)
 
-	--QuadMenu.removeItem ("Category") ("macroscript_nmae") index:1
+
+	QuadMenu.addMenu(PivotMenu)	--flat:true --index:1
+
 )
 
 /*------------------------------------------------------------------------------
@@ -65,13 +68,16 @@ function addQuad4 QuadMenu =
 	(SnapOptionsMenu.getItem 2).setTitle ("Snap To Frozen")
 	--QuadMenu.addSeparator  index:2
 
-	--DefaulQuadMenu 	= (QuadMenu_v("Title")).Quads[1]
 
 	QuadMenu.addMenu("_Transform")	--flat:false --index:1
 
 	QuadMenu.addSeparator()
+	--DefaulQuadMenu 	= (QuadMenu_v("Title")).Quads[1]
+	QuadMenu.addMenu( SnapOptionsMenu )	-- index:3 --flat:true
 
-	QuadMenu.addMenu( SnapOptionsMenu )	 index:3 --flat:true
+
+
+
 	--QuadMenu.addMenu("MenuName")	--flat:true --index:1
 	--QuadMenu.addMenu(DefaulQuadMenu.menu)	--flat:true --index:1
 	--QuadMenu.addItem ("Category") ("macroscript_nmae") index:1

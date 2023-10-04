@@ -150,9 +150,9 @@ autoUndoEnabled: true
 			(
 				master_object	= selection[ selection.count ]
 
-				for_instance = deleteItem ( selection as Array ) selection.count
+				for_replace = deleteItem ( selection as Array ) selection.count
 
-				for obj in for_instance do
+				for obj in for_replace do
 					instanceReplace obj master_object
 
 			)

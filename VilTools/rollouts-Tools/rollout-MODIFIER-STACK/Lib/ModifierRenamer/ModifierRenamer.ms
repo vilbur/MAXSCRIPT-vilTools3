@@ -33,6 +33,7 @@ struct ModifierRenamer_v
 			Materialmodifier:	"Mat ID " + this.modObject.materialID as string
 			FFDBox:	"FFDBox"
 			FFD_2x2x2:	"FFD2"
+			Meshsmooth:	this._Meshsmooth()
 
 			default: this.modObject.name
 		)
@@ -270,6 +271,20 @@ struct ModifierRenamer_v
 			default:	val -- mnilimeters or non metric units
 		)
 		val --return
+	),
+
+	/**  meshsmooth
+	  *
+	  */
+	function _Meshsmooth =
+	(
+		--format "\n"; print "ModifierRenamer_v._Meshsmooth()"
+		mod_name = "Meshsmooth"
+
+		if this.modObject.iterations >= 2 then
+			mod_name += " " + this.modObject.iterations  as string
+
+		mod_name --return
 	),
 
 	/**

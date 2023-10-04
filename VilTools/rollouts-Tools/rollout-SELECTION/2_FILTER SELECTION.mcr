@@ -1,6 +1,6 @@
 
 /*------------------------------------------------------------------------------
-	SELECTIONH FILTERS
+	SELECTION FILTERS
 --------------------------------------------------------------------------------*/
 /** GEOMETRY
   */
@@ -92,9 +92,11 @@ autoUndoEnabled: true
 	--undo "Filter unique objects" on
 
 	(
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/InstaceManager/InstaceManager.ms" )	-- "./Lib/InstaceManager/InstaceManager.ms"
+
 		max create mode
 
-		(Selection_v()).filterUniqueObjects()
+		select ((InstaceManager_v()).filterUnique( selection ))
 	)
 )
 

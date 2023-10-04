@@ -23,6 +23,7 @@ icon:	"MENU:true"
 				for obj in target_objects do
 					obj.material =  source_object.material
 
+				redrawViews() 
 			)
 			else
 				messageBox "Last selected objects has not material" title:"SET MATERIAL"

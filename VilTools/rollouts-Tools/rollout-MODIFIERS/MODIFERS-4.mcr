@@ -37,19 +37,6 @@ icon:	"MENU:true"
 	)
 )
 
-/** Symmetry
- */
-macroscript epoly_tools_Symmetry
-category:	"_Modifiers-4"
-buttonText:	"Symmetry"
-icon:	"MENU:true"
-(
-
-	on execute do (
-		macros.run "Modifiers" "Symmetry"
-	)
-)
-
 /** Vertex Weld
  */
 macroscript epoly_tools_Vertex_Weld
@@ -73,45 +60,6 @@ icon:	"MENU:true"
 
 	on execute do (
 		macros.run "Modifiers" "DeleteMesh"
-	)
-)
-
-/** Material ID
- */
-macroscript epoly_tools_Material_ID
-category:	"_Modifiers-4"
-buttonText:	"Material ID"
-icon:	"MENU:true"
-(
-
-	on execute do (
-		macros.run "Modifiers" "Material_ID"
-	)
-)
-
-/** Normal
- */
-macroscript epoly_tools_Normalmodifier
-category:	"_Modifiers-4"
-buttonText:	"Normal"
-icon:	"MENU:true"
-(
-
-	on execute do (
-		macros.run "Modifiers" "Normalmodifier"
-	)
-)
-
-/** SHELL
- */
-macroscript epoly_tools_Shell
-category:	"_Modifiers-4"
-buttonText:	"SHELL"
-icon:	"MENU:true"
-(
-
-	on execute do (
-		macros.run "Modifiers" "Shell"
 	)
 )
 

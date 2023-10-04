@@ -92,20 +92,24 @@ toolTip:	"Select by wirecolor"
 icon:	"MENU:true"
 (
 	on execute do
-		undo "Hide unselected in layer " on
+		undo "Hide unselected in layer" on
 		(
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VISIBILITY\OBJECTS HIDE UNHIDE.mcr"
+			LayersManager = LayersManager_v()
 
 			_selection = for obj in selection collect obj
 
-			LayersManager = LayersManager_v()
+			selected_layers = LayersManager.getSelectedOrCurrent()
 
-			obejcts_in_current_layer = LayersManager.getObjectsInLayers( LayersManager.getCurrent() )
+			objects_in_current_layer = LayersManager.getObjectsInLayers( selected_layers )
 
-			/* hide not selected objects in selected layers */
-			for obj in obejcts_in_current_layer where findItem _selection obj == 0 do
+			format "\n-----------\nARRAY:objects_in_current_layer:\n";  for obj in objects_in_current_layer do format "obj:	%\n" obj.name
+
+			/* HIDE not selected objects in selected layers */
+			for obj in objects_in_current_layer where findItem _selection obj == 0 do
 				obj.isHidden = true
 
-			/* unhide selected objects */
+			/* SHOW selected objects */
 			for obj in _selection do
 				obj.isHidden = false
 		)

@@ -1,4 +1,33 @@
 
+/** USE PIVOT CENTER
+*/
+macroscript _pivot_selection_center_toggle
+category:	"_Pivot"
+buttonText:	"Use Selection\Object"
+toolTip:	"Toggle object and selection pivot"
+icon:	"MENU:true|title:buttonText"
+(
+	on isChecked do GetCoordCenter() != #system
+
+	on execute do
+		SetCoordCenter ( if GetCoordCenter() == #local then #selection else #local  )
+)
+
+
+/** USE PIVOT CENTER TRANSFROM
+*/
+macroscript _pivot_use_transform_center
+category:	"_Pivot"
+buttonText:	"Use Transfrom Center"
+toolTip:	"Use Transform Coordinate Center"
+icon:	"MENU:true|title:buttonText"
+(
+	on isChecked do GetCoordCenter() == #system
+
+	on execute do
+		SetCoordCenter #system
+)
+
 /** Get selection without members of closed group
  */
 function getSelectionWithouGroupMembers =
@@ -27,8 +56,6 @@ category:	"_Pivot"
 buttonText:	"Visual"
 toolTip:	"Run visual pivot tool"
 icon:		    "menu:true"
---icon:	"images:#('/UI_ln/Icons/Maintoolbar_24i.bmp', 32 )"
---icon:	"images:#('$maxroot/UI_ln/Icons/Maintoolbar_24i.bmp', undefined, undefined, 31 )"
 (
 
 	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/i_pivot_v15.mse" ) -- "./../../../Lib/vendor/miauu/i_pivot_v15.mse"
@@ -54,9 +81,9 @@ icon:	"across:4|menu:true"
   */
 macroscript _pivot_bottom_top
 category:	"_Pivot"
-buttonText:	"⬇ ⬆"
+buttonText:	"Up\Down"
 toolTip:	"Set pivot to bottom\top for each object in selection"
-icon:	   "menu:true"
+icon:	   "MENU:true"
 (
 	on execute do
     (
@@ -90,42 +117,6 @@ icon:	   "menu:true"
 --)
 
 
-/*------------------------------------------------------------------------------
-	DONT AFFECT CHILDREN
---------------------------------------------------------------------------------*/
-
-/** ALIGN TO WORLD
-*/
-macroscript _transfrom_dont_affect_children
-category:	"_Transfrom"
-buttonText:	"Affect Children"
-toolTip:	"Don`t afffect children toggle"
-icon:	"control:checkbutton"
---icon:	"images:#('$maxroot/UI_ln/Icons/Maintoolbar_24i.bmp', undefined, undefined, 31 )"
-(
-	--format "EventFired	= % \n" EventFired
-
-	maxOps.affectChildren  = not EventFired.val
-)
-
-
-/*------------------------------------------------------------------------------
-	ALIGN PIVOT TO DIRECTION
---------------------------------------------------------------------------------*/
-
-/**
- *
- */
-macroscript	_align_pivot_to_direction
-category:	"_Transform"
-buttontext:	"To Direction"
---toolTip:	"Open Transform Randomizer Rollout"
---icon:	"#(path, index)"
-(
-    filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms" )	-- "./../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms"
-
-	macros.run "miauu" "miauuAlignPivotToVector"
-)
 
 
 

@@ -1,13 +1,14 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )	-- "./Lib/NodeList/NodeList.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	-- "./Lib/ExportNode/ExportNode.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup.ms" )	-- "./Lib/Exporter/Exporter.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup.ms" )	-- "./Lib/ExporterSetup/ExporterSetup.ms"
 /*==============================================================================
 
 	NODES CONTROL
 
 ================================================================================*/
+global NODE_GROUP_NAME_ROLLOUT
+global ROLLOUT_export
 
 /**  CREATE EXPORT NODE
 
@@ -42,60 +43,82 @@ buttontext:	"Link"
 toolTip:	"LINK TO NODE:\n(link selected obgjects to selcted node)"
 icon:	"pos:[ 246, 24 ]"
 (
-	undo "Link to node" on
+
+	/** Get selection without members of closed group
+	 */
+	function getSelectionWithouGroupMembers =
 	(
-		_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+		mapped function getAllChildren node &children = (if isValidNode node and isKindOf children Array do join children node.children)
 
-		if( _nodes.count > 0 ) then
-		(
-			for obj in selection do obj.parent = _nodes[1]
+		children = #()
 
-			object_names = ""
+		groups_closed = for o in ( _selection = selection as Array ) where isGroupHead o and isOpenGroupHead o == false and findItem _selection o.parent == 0 collect o
 
-			for obj in selection do object_names += "\n" + obj.name
+		getAllChildren groups_closed &children
 
-			messageBox ("OBJECTS: "+object_names+"\n\nNODE:\n" + _nodes[1].name ) title:"LINK TO NODE"  beep:false
-		)
+		for o in selection where findItem children o == 0 collect o --return
 	)
+
+
+	on execute do
+		undo "Link to node" on
+		(
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
+
+			_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+
+			if( _nodes.count > 0 ) then
+			(
+				objects_to_link = getSelectionWithouGroupMembers()
+
+				for obj in objects_to_link do obj.parent = _nodes[1]
+
+				object_names = ""
+
+				for obj in objects_to_link do object_names += "\n" + obj.name
+
+				messageBox ("OBJECTS: "+object_names+"\n\nNODE:\n" + _nodes[1].name ) title:"LINK TO NODE"  beep:false
+			)
+		)
 )
 
-/**  LINK TO GROUP
- */
-macroscript	_export_node_link_to_group
-category:	"_Export"
-buttontext:	"Link"
-toolTip:	"LINK TO GROUP\n( Link nodes to selected group )"
-icon:	"pos:[ 246, 24 ]"
-(
-	undo "Link to group" on
-	(
-		_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
-
-		all_groups = makeUniqueArray( for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect  obj.parent)
-
-		group_names_in_selection = for index in ROLLOUT_export.ML_node_groups.selection as Array collect ROLLOUT_export.ML_node_groups.items[index]
-
-		selected_groups = for _group in all_groups where findItem group_names_in_selection _group.name > 0 collect _group
-
-		format "_NODES	= % \n" _nodes
-		--if( _nodes.count > 0 ) then
-			--for obj in selection do obj.parent = _nodes[1]
-		format "selected_groups	= % \n" selected_groups
-
-		if _nodes.count > 0 and selected_groups.count > 0 then
-		(
-
-			for _node in _nodes do
-				_node.parent = selected_groups[1]
-
-			node_names = ""
-
-			for _node in _nodes do node_names += "\n" + _node.name
-
-			messageBox ("NODES: "+node_names+"\n\nGROUP:\n" + selected_groups[1].name ) title:"GROUP NODES"  beep:false
-		)
-	)
-)
+--/**  LINK TO GROUP
+-- */
+--macroscript	_export_node_link_to_group
+--category:	"_Export"
+--buttontext:	"Link"
+--toolTip:	"LINK TO GROUP\n( Link nodes to selected group )"
+--icon:	"pos:[ 246, 24 ]"
+--(
+--	undo "Link to group" on
+--	(
+--		_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+--
+--		all_groups = makeUniqueArray( for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect  obj.parent)
+--
+--		group_names_in_selection = for index in ROLLOUT_export.ML_node_groups.selection as Array collect ROLLOUT_export.ML_node_groups.items[index]
+--
+--		selected_groups = for _group in all_groups where findItem group_names_in_selection _group.name > 0 collect _group
+--
+--		format "_NODES	= % \n" _nodes
+--		--if( _nodes.count > 0 ) then
+--			--for obj in selection do obj.parent = _nodes[1]
+--		format "selected_groups	= % \n" selected_groups
+--
+--		if _nodes.count > 0 and selected_groups.count > 0 then
+--		(
+--
+--			for _node in _nodes do
+--				_node.parent = selected_groups[1]
+--
+--			node_names = ""
+--
+--			for _node in _nodes do node_names += "\n" + _node.name
+--
+--			messageBox ("NODES: "+node_names+"\n\nGROUP:\n" + selected_groups[1].name ) title:"GROUP NODES"  beep:false
+--		)
+--	)
+--)
 
 
 
@@ -116,7 +139,6 @@ icon:	"pos:[ 312, 24 ]"
 	selectExportNodeInListCallbactAdd()
 )
 
-global NODE_GROUP_NAME_ROLLOUT
 
 /**  GROUP NODES
  */
@@ -203,63 +225,6 @@ icon:	"pos:[ 246, 72]"
 
 
 
---
---/**
--- */
---macroscript	_export_preexport
---category:	"_Export"
---buttontext:	"Pre Export"
---toolTip:	"Save Eported nodes as separated max files in export folder"
-----icon:	"Groupbox:Nodes Control"
---(
---	clearListener()
---
---	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
---
---	format "selected_nodes	= % \n" selected_nodes
---
---	if( selected_nodes.count > 0 ) then
---		with redraw off
---			(ExporterDatasmith_v export_nodes:selected_nodes).export pre_export:true
---	else
---		messageBox "Export node is not selected" title:"Export node error"
---
---
---	redrawViews()
---)
---
-
-
-
---/*------------------------------------------------------------------------------
---	PRE-EXPORT TEST
-----------------------------------------------------------------------------------*/
---
---
---/**
--- */
---macroscript	_export_test
---category:	"_Export"
---buttontext:	"Test"
---toolTip:	"Export selected nodes to files"
---icon:	"height:64"
---(
---	--export_dir = execute ("@"+ "\""+EventFired.Roll.BROWSEPATH_Export_Dir.text +"\"")
---	clearListener()
---
---	filein( @"c:\scripts\vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\Lib\ExporterDatasmith\ExportChecker\ExportChecker.ms" ) -- DEV
---
---	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
---
---	format "selected_nodes	= % \n" selected_nodes
---
---	if( selected_nodes.count > 0 ) then
---		(ExportChecker_v export_nodes:selected_nodes).test()
---	else
---		messageBox "Export node is not selected" title:"Export node error"
---
---)
-
 /*==============================================================================
 
 		NODELIST
@@ -272,18 +237,23 @@ macroscript	_export_nodes_list
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
---icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:160|offset:[ 96, -224]"
 icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:160|offset:[ 0, -96]"
+--icon:	"control:multilistbox|across:2|height:20|width:160|offset:[ 0, -96]"
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
-	--clearListener()
-	--format "eventFired	= % \n" eventFired
+	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+	--filein @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
+	print "SELECTED"
+	format "eventFired	= % \n" eventFired
+
 	selectExportNodeInListCallbackRemove()
 
 	clearSelection()
 
 	selected_nodes = ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+
+	format "\n-----------\nARRAY:selected_nodes:\n";  for selected_node in selected_nodes do format "selected_node:	%\n" selected_node.name
 
 	/* OPEN PARENT GROUPS OF SELECTEDS NODES */
 	for selected_node in selected_nodes where selected_node.parent != undefined and isGroupHead selected_node.parent do setGroupOpen selected_node.parent true
@@ -291,7 +261,6 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:160|off
 	select selected_nodes
 
 	selectExportNodeInListCallbactAdd()
-
 
 	/*------------------------------------------------------------------------------
 		DEPRECATED FOR UNREAL
@@ -319,19 +288,27 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:160|off
 )
 
 
-/*------ NODELIST DOUBLE CLICK ------*/
+/*
+	NODELIST DOUBLE CLICK
 
+*/
 macroscript	_export_isolate_node_objects
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Isolate node children\n\nCtrl+LMB: Select node children."
-icon:	"control:multilistbox|across:2"
+icon:	"control:multilistbox|across:2|event:#doubleClicked"
 (
 	--format "EventFired	= % \n" EventFired
 
+	filein @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
+
+	print "DOUBLECLICKED"
+	format "eventFired	= % \n" eventFired
+
 	LayersManager 	= LayersManager_v()
+
 	all_children	= #()
-	--default_Layer	= LayerManager.getLayerFromName "0"
+	default_Layer	= LayerManager.getLayerFromName "0"
 
 	selectExportNodeInListCallbackRemove()
 
@@ -342,28 +319,45 @@ icon:	"control:multilistbox|across:2"
 
 	/* GET ALL CHILDREN OF NODES */
 	for selected_node in selected_nodes do all_children += (selected_node.getAllChildren())
+	--format "\n-----------\nARRAY:selected_nodes:\n";  for selected_node in selected_nodes do format "selected_node:	%\n" selected_node.name
 
-	/* SHOW ONLY LAYERS OF CHILDREN OBJECTS */
-	visible_layers = LayersManager.isolateLayers( all_children + selected_nodes )
+	nodes_and_objects = all_children + selected_nodes + (LayersManager.getObjectsInLayers(default_Layer))
 
-	/* DO NOT HIDE DEFAULT LAYER ( FOR EXCLUDING OBJECTS FROM THIS ) */
-	--default_Layer.on = true
+	layers_of_objects = LayersManager.getLayersByObjects( nodes_and_objects  )
 
-	--append visible_layers default_Layer
-	--format "visible_layers.count	= % \n" visible_layers.count
-	LayersManager.unhideLayer("0")
+	--format "\n-----------\nARRAY:layers_of_objects:\n";  for layer in layers_of_objects do format "layer:	%\n" layer.name
 
-	objects_of_visible_layers = LayersManager.getObjectsInLayers(visible_layers)
+	/* SHOW LAYERS OF NODES CHILDREN */
+	LayersManager.setVisibility (layers_of_objects) (true)
 
-	for obj in objects_of_visible_layers do
-		obj.isHidden = (findItem ( all_children + selected_nodes ) obj == 0)
+	/* UNHIDE DEFAULT LYER - Printer Dummy for 3d print is there */
+	LayersManager.setVisibility(default_Layer)(true)
+
+	/* SHOW OBLY OBJECTS OF NODES */
+	for obj in nodes_and_objects do
+		obj.isHidden = false
+
 
 	clearSelection()
 
 	max tool zoomextents all
 
-	select ( selected_nodes )
 
+	/* ISOLATE NODES AND OBJECTS IF NEEDED */
+	IsolateSelection.ExitIsolateSelectionMode()
+
+	not_hidden_other_objects = for obj in objects where obj.isHidden == false and findItem nodes_and_objects obj == 0 collect obj
+
+	if not_hidden_other_objects.count > 0 then
+	(
+		select ( nodes_and_objects )
+
+		IsolateSelection.EnterIsolateSelectionMode()
+	)
+
+	select selected_nodes
+
+	/* ENABLE CALLBACK */
 	selectExportNodeInListCallbactAdd()
 
 )
@@ -421,3 +415,63 @@ icon:	"control:multilistbox|event:#doubleClicked"
 
 	--select selected_groups
 )
+
+
+
+
+--
+--/**
+-- */
+--macroscript	_export_preexport
+--category:	"_Export"
+--buttontext:	"Pre Export"
+--toolTip:	"Save Eported nodes as separated max files in export folder"
+----icon:	"Groupbox:Nodes Control"
+--(
+--	clearListener()
+--
+--	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+--
+--	format "selected_nodes	= % \n" selected_nodes
+--
+--	if( selected_nodes.count > 0 ) then
+--		with redraw off
+--			(ExporterDatasmith_v export_nodes:selected_nodes).export pre_export:true
+--	else
+--		messageBox "Export node is not selected" title:"Export node error"
+--
+--
+--	redrawViews()
+--)
+--
+
+
+
+--/*------------------------------------------------------------------------------
+--	PRE-EXPORT TEST
+----------------------------------------------------------------------------------*/
+--
+--
+--/**
+-- */
+--macroscript	_export_test
+--category:	"_Export"
+--buttontext:	"Test"
+--toolTip:	"Export selected nodes to files"
+--icon:	"height:64"
+--(
+--	--export_dir = execute ("@"+ "\""+EventFired.Roll.BROWSEPATH_Export_Dir.text +"\"")
+--	clearListener()
+--
+--	filein( @"c:\scripts\vilTools3\Rollouts\rollouts-Unreal-Engine\rollout-UNREAL\Lib\ExporterDatasmith\ExportChecker\ExportChecker.ms" ) -- DEV
+--
+--	selected_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+--
+--	format "selected_nodes	= % \n" selected_nodes
+--
+--	if( selected_nodes.count > 0 ) then
+--		(ExportChecker_v export_nodes:selected_nodes).test()
+--	else
+--		messageBox "Export node is not selected" title:"Export node error"
+--
+--)

@@ -104,11 +104,12 @@ icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
   */
 macroscript	_export_open_in_close_instances
 category:	"_Export"
-buttontext:	"Close Instances"
+buttontext:	"Single Instance"
 toolTip:	"Close other instances of open in program"
 icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
 (
-	--format "EventFired	= % \n" EventFired
+	format "EventFired	= % \n" EventFired
+
 	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
 )
 
@@ -121,7 +122,9 @@ icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
 
 
 /*------------------------------------------------------------------------------
-	EXPORT
+
+	EXPORT BUTTON
+
 --------------------------------------------------------------------------------*/
 /**
   *
@@ -131,11 +134,14 @@ category:	"_Export"
 buttontext:	"Export"
 toolTip:	"Export selected nodes to files"
 icon:	"height:64|across:3"
---icon:	"Groupbox:Nodes|height:64"
 (
-	clearListener()
+	clearListener(); print("Cleared in:\n"+getSourceFileName())
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\3D-Print-Export.mcr"
+	--format "eventFired	= % \n" eventFired
 
 	--format "ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.triState	= % \n" ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.triState
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\3D-Print-Export.mcr"
+
 	(ExporterSetup_v(#Print)).export()
 	--(PrinterVolume_v()).fixPositionionObjects(ROLLOUT_export.SPIN_export_size.value)
 )

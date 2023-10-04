@@ -17,7 +17,16 @@ icon:	"across:5|width:72|MENU:true"
 
 
 		if maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
+		(
+			start_time = timestamp()
+
 			loadMaxFile recent_document quiet:true
+
+			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+		)
+
+	)
+
 
 	/*
 			BELLOW IS CODE FOR OPENING RECENT FILE ON MAX START
@@ -56,7 +65,7 @@ icon:	"across:5|width:72|MENU:true"
 	--	--		actionMan.executeAction 0 "203"  -- File: Last File 1
 	--	--)
 	--startObjectCreation
-	)
+	--)
 	--	--messageBox "Open Recent"
 )
 
@@ -81,7 +90,13 @@ icon:	"across:5|width:72|MENU:true"
 		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:(init_dir) historyCategory:"MAXScriptFileOpenSave"
 
 		if file_path != undefined then
+		(
+			start_time = timestamp()
+
 			loadMaxFile file_path quiet:true
+
+			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+		)
 
 	)
 )
@@ -155,6 +170,8 @@ icon:	"offset:[-2, 0]"
 				if doesFileExist path_basename then
 					deleteFile path_basename
 
+
+				/* COPY FILE WITHOUT SUFFIX NUMBER */
 				copyFile path_increment path_basename
 
 				print "File has been saved"

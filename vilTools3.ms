@@ -185,7 +185,7 @@ try(
 	/* CREATE DIALOG */
 	VILTOOLS = ContentLoader.create width:420 height:1024
 
-	--VILTOOLS.register()
+	VILTOOLS.register()
 
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())

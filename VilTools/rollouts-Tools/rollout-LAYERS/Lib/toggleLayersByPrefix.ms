@@ -29,7 +29,7 @@ function toggleLayersByPrefix state =
 		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches layer_name "^([^A-Za-z]+).*" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 
 		if matches.count > 0 then
-			prefix = matches.item[0].groups.item[1].value -- get second item from firs array
+			prefix = matches.item[0].groups.item[1].value -- get second item from first array (first item is full match)
 
 		else if (string_split = filterString layer_name "-_ ").count > 0 then
 			prefix = string_split[1]
