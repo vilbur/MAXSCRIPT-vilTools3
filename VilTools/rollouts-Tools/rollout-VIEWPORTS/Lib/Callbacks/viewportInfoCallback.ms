@@ -13,7 +13,6 @@ function viewportInfoCallback =
 	coord_sys = case ( coord_sys_current = GetRefCoordSys() ) of
 	(
 		#HYBRID:	#View
-		--:
 		default:	coord_sys_current
 	)
 
@@ -54,13 +53,16 @@ function viewportInfoCallback =
 	layer_name = if ( LayerManager.current).name == "0" then "Default Layer" else ( LayerManager.current).name
 
 
+
+
+
 	/* CURRENT LAYER */
 		gw.wText ( [viewport_mid_X, position_Y, 0] ) ( layer_name ) color:yellow
 
 
 	/* COORD SYS */
 	--if coord_sys != #world then
-	gw.wText ( [viewport_mid_X + 16, position_Y += line_height, 0] ) ( toUpper (coord_sys as string ) ) color:coord_sys_color
+	gw.wText ( [viewport_mid_X + 16, position_Y += line_height, 0] ) ( "coordsys:" +  toUpper (coord_sys as string ) ) color:coord_sys_color
 
 
 	position_Y += line_height -- set height for a AXISES loop
