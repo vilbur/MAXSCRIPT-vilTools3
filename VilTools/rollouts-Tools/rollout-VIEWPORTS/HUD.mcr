@@ -8,32 +8,33 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportInfoCallb
  */
 macroscript	_viewport_hud_info_test
 category:	"_Viewports"
-buttontext:	"TEST"
+buttontext:	"HUD OFF"
 --icon:	""
-icon:	"control:checkbutton"
+--icon:	"control:checkbutton"
 (
 	on execute do
 	(
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
 
 		format "EventFired:	% \n" EventFired
-
-		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
-		(
-			clearListener(); print("Cleared in:\n"+getSourceFileName())
-
-			Column = HudColumn_v ("Test")
-
-			Row = HudRow_v columns: #( Column )
-
-			HudDisplay = HudDisplay_v Rows: #( Row )
-
-			HUD_DISPLAYS[#TEST_HUD] = HudDisplay
-
-
-			registerRedrawViewsCallback viewportHudCallback
-		)
-		else
+		--
+		--if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
+		--(
+		--	clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--
+		--	Column = HudColumn_v ("Test")
+		--
+		--	Row = HudRow_v columns: #( Column )
+		--
+		--	HudDisplay = HudDisplay_v Rows: #( Row ) pos:[ 0, 64 ]
+		--	----HudDisplay = HudDisplay_v Rows: #( Row ) pos:[ 0, 0 ]
+		--
+		--	HUD_DISPLAYS[#TEST_HUD] = HudDisplay
+		--
+		--
+		--	registerRedrawViewsCallback viewportHudCallback
+		--)
+		--else
 			unregisterRedrawViewsCallback viewportHudCallback
 
 

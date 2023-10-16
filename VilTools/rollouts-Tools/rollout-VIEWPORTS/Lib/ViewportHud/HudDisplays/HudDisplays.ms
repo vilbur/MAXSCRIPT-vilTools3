@@ -8,8 +8,8 @@ struct HudColumn_v
 	text,
 
 	/* properties */
-	show_color = yellow,
-	offset	= 0, -- x position offset
+	color = white,
+	width	= 64,
 
 	private
 
@@ -26,7 +26,8 @@ struct HudRow_v
 	Columns = #(), -- #( HudColumn_v )
 
 	/* properties */
-	offset	= [ 0 , 0 ],
+	pos	= 12, -- row y position relative to previous row
+
 	show_color = yellow,
 
 	private
@@ -37,7 +38,6 @@ struct HudRow_v
 )
 
 
-
 /** Viewport hud
  */
 struct HudDisplay_v
@@ -46,8 +46,7 @@ struct HudDisplay_v
 	Rows = #(), -- #( HudRow_v )
 
 	/* properties */
-	offset	= [ 0 , 32 ],
-	row_height	= 64,
+	pos	= [ 0 , 32 ],  -- column offset to HudRow_v.offset
 
 	/* dependency */
 	/* reference */
@@ -56,10 +55,21 @@ struct HudDisplay_v
 
 	private
 
+	/** Adjust hud postion if is placed in Max native viewport controls
+	  * E.G.: left upper corner of viewport
+	  */
+	function checkHudposition =
+	(
+		if this.pos.x < 256 and this.pos.y < 32  then
+			pos = [ 256, 32 ]
+	),
 
 	/**
 	 */
-	on create do	()
+	on create do
+	(
+		this.checkHudposition()
+	)
 )
 
 
@@ -74,46 +84,45 @@ struct ShowHud_v
 
 	private
 
+	current_pos = [ 0, 0 ],
+
 	/** Show hud
-	  *
 	  */
 	function showHud =
 	(
 		--format "\n"; print "HudColumn_v.showHud()"
-
-		for HudRow in HudDisplay.Rows do
+		for HudRow in HudDisplay.Rows where HudRow != undefined do
 			this.showRow (HudRow)
-
 	),
 
 	/** Show row
-	  *
 	  */
 	function showRow HudRow =
 	(
-		--format "\n"; print "HudColumn_v.showRow()"
-			--format "HudRow:	% \n" HudRow
+		this.current_pos.x = HudDisplay.pos.x -- reset position for 1st position
 
 		for Column in HudRow.Columns do
-			--format "Column:	% \n" Column
 			this.showColumn (Column)
+
+		this.current_pos.y += HudRow.pos
 	),
 
 	/** Show column
-	  *
 	  */
 	function showColumn Column =
 	(
-		format "\n"; print "HudColumn_v.showColumn()"
-		--format "Column:	% \n" Column
-		gw.wText ( [ 256  , 256, 0] ) Column.text color:red
+		gw.wText [ this.current_pos.x, this.current_pos.y, 0 ] Column.text color:Column.color
 
+		this.current_pos.x += Column.width
 	),
+
 
 	/**
 	 */
 	on create do
 	(
+		this.current_pos = copy HudDisplay.pos
+
 		showHud()
 	)
 )
@@ -132,29 +141,12 @@ function viewportHudCallback =
 	/* SET SCREEN SPACE */
 	gw.setTransform( Matrix3 1 )
 
+	for HudDisplay_data in HUD_DISPLAYS do
+		ShowHud_v (HudDisplay_data.value)
 
-	try(
-		for HudDisplay_data in HUD_DISPLAYS do
-			ShowHud_v (HudDisplay_data.value)
-
-	)catch(
-		format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-		format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-		format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-		format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
-
-		unregisterRedrawViewsCallback viewportHudCallback
-	)
-
-
-	--gw.wText ( [0 , 32, 0] ) "Column.text" color:red
 
 	/* UPDATE VIEWPORT */
 	gw.enlargeUpdateRect #whole
 	gw.updateScreen()
 	CompleteRedraw()
 )
-
-
-
-
