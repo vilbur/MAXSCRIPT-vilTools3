@@ -15,6 +15,7 @@ function toggleHudCallback hud_name data: =
 
 	if data != unsupplied then
 	(
+		print "HudCallback: ON"
 
 		HUD_DISPLAYS[hud_name] = data
 
@@ -27,7 +28,11 @@ function toggleHudCallback hud_name data: =
 		RemoveDictValue HUD_DISPLAYS hud_name
 
 		if HUD_DISPLAYS.count == 0 then
+		(
 			unregisterRedrawViewsCallback viewportHudCallback
+
+			print "HudCallback: OFF"
+		)
 	)
 )
 
@@ -42,23 +47,26 @@ icon:	"control:checkbutton|autorun:true"
 (
 	on execute do
 	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
 
 
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
 		(
-			Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
-			Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (green) )
-			Row_3 = HudRow_v columns: #( HudColumn_v ("Column 1"),	HudColumn_v ("Column 2") )
+			HUD = HudDisplay_v pos:#( #CENTER, #CENTER )
 
-			Row_2.pos = 24
+			--Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
+			--Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (green) )
+			--Row_3 = HudRow_v columns: #( HudColumn_v ("Column 1"),	HudColumn_v ("Column 2") )
+			--
+			--Row_2.pos = 24
+			--
+			--Row_3.columns[1].width = 96
 
-			Row_3.columns[1].width = 96
 
 
-			HudDisplay = HudDisplay_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 0, 64 ]
+			append HUD.Rows ( HudRow_v columns: #( HudColumn_v ("XXXXXXXXXXXXXX") ) )
 
-			toggleHudCallback #VIEWPORT_INFO data:HudDisplay
+			toggleHudCallback #VIEWPORT_INFO data:HUD
 		)
 		else
 			toggleHudCallback #VIEWPORT_INFO
@@ -89,17 +97,13 @@ icon:	"control:checkbutton|autorun:true"
 			Row_3.columns[1].width = 96
 
 
-			HudDisplay = HudDisplay_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 256, 64 ]
+			HUD = HudDisplay_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 256, 64 ]
 
 
-			toggleHudCallback #OBJECT_INFO data:HudDisplay
+			toggleHudCallback #OBJECT_INFO data:HUD
 		)
 		else
 			toggleHudCallback #OBJECT_INFO
 
 	)
 )
-
-
-
-

@@ -6,7 +6,7 @@ struct HudDisplay_v
 	Rows = #(), -- #( HudRow_v )
 
 	/* properties */
-	pos	= [ 0 , 32 ],  -- column offset to HudRow_v.offset
+	pos,  -- position of HUD -- Point2|Array E.G.: [ 0, 0 ] OR #( #RIGHT|#CENTER, #TOP|CENTER )
 
 	/* dependency */
 	/* reference */
@@ -20,8 +20,9 @@ struct HudDisplay_v
 	  */
 	function checkHudposition =
 	(
-		if this.pos.x < 256 and this.pos.y < 32  then
-			pos = [ 256, 32 ]
+		if classOf pos == Point2 then
+			if this.pos.x < 256 and this.pos.y < 32  then
+				pos = [ 256, 32 ]
 	),
 
 	/**
