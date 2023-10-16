@@ -1,7 +1,7 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../ViewportHud.ms" )	-- "./../ViewportHud.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/../../Callbacks/viewportHudCallback.ms" )	-- "./../../Callbacks/viewportHudCallback.ms"
 
 
 unregisterRedrawViewsCallback viewportHudCallback
