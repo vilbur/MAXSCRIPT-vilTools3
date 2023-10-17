@@ -6,8 +6,6 @@ filein( getFilenamePath(getSourceFileName()) + "/../../Callbacks/viewportHudCall
 
 unregisterRedrawViewsCallback viewportHudCallback
 
-/* RESET HUDS */
---global HUD_DISPLAYS = Dictionary()
 
 /*------------------------------------------------------------------------------
 	DEFINE ROWS AND COLUMNS
@@ -49,22 +47,39 @@ unregisterRedrawViewsCallback viewportHudCallback
 ------------------------------------------------------------------------------*/
 
 
---HUD = Hud_v()
---HUD = Hud_v pos:#( #LEFT, #CENTER )
-HUD = Hud_v pos:#( #RIGHT, #BOTTOM )
---HUD = Hud_v pos:#( #CENTER, #CENTER )
---HUD = Hud_v pos:#( #CENTER, 32 )
+/* DEFAULT POSTION */
 
+--HUD = Hud_v()
+
+/* TOP POSTION */
+--HUD = Hud_v pos:#( #LEFT,	#TOP )
+--HUD = Hud_v pos:#( #CENTER,	#TOP )
+--HUD = Hud_v pos:#( #RIGHT,	#TOP )
+
+/* CENTER Y POSTION */
+--HUD = Hud_v pos:#( #LEFT,	#CENTER )
+HUD = Hud_v pos:#( #CENTER,	#CENTER )
+--HUD = Hud_v pos:#( #RIGHT,	#CENTER )
+--HUD = Hud_v pos:#( #RIGHT,	#CENTER )  offset:[ -256, 0]
+
+
+/* BOTTOM POSTION */
+
+--HUD = Hud_v pos:#( #LEFT,	#BOTTOM )
+--HUD = Hud_v pos:#( #CENTER,	#BOTTOM )
+--HUD = Hud_v pos:#( #RIGHT,	#BOTTOM )
+--HUD = Hud_v pos:#( #RIGHT,	#BOTTOM ) offset:[ -256, -512 ]
+
+
+/* DEFINE ROWS */
 HUD.row ( "Row 1" )
 HUD.row ( "Row 2" ) color:red pos:64
 HUD.row ( "Row 3" ) color:red pos:-64
 
+/* ADD TO HUD DATA */
 HUD_DISPLAYS[#QUICK_ADD] = HUD
 
 
 
-
-
-
-
+/* REGISTR CALLBACK */
 registerRedrawViewsCallback viewportHudCallback
