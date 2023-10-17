@@ -6,6 +6,40 @@ filein( getFilenamePath(getSourceFileName()) + "/../../Callbacks/viewportHudCall
 
 unregisterRedrawViewsCallback viewportHudCallback
 
+/*------------------------------------------------------------------------------
+	SET HUD DATA
+--------------------------------------------------------------------------------*/
+function setHudData =
+(
+	--format "\n"; print "ViewportHudTest.ms.setHudData()"
+	Column	= HudColumn_v "Row 1"
+	Row	= HudRow_v columns: #( Column )
+	HUD	= Hud_v Rows: #( Row )
+
+	HUD_DATA[#HUD_DATA] = HUD
+)
+/*------------------------------------------------------------------------------
+	SET HUD CALLBACK -- callback for refreshing data
+--------------------------------------------------------------------------------*/
+/** Data callback
+  *
+  */
+function refreshDataCallback =
+(
+	--format "\n"; print "ViewportHudTest.ms.refreshDataCallback()"
+	HUD_DATA[#CALLBACK_DATA].Rows[1].Columns[1].text = ((timestamp() / 1000) as string )
+)
+
+function setDataCallback =
+(
+	--format "\n"; print "ViewportHudTest.ms.setHudData()"
+	Column	= HudColumn_v "Callback"
+	Row	= HudRow_v columns: #( Column )
+	--HUD	= Hud_v Rows: #( Row )
+	HUD	= Hud_v callback: refreshDataCallback  Rows: #( Row )
+
+	HUD_DATA[#CALLBACK_DATA] = HUD
+)
 
 /*------------------------------------------------------------------------------
 	DEFINE ROWS AND COLUMNS
@@ -24,11 +58,8 @@ function defineRowsAndColumns =
 
 	HUD = Hud_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 0, 32 ]
 
-	HUD_DISPLAYS[#TEST_HUD] = HUD
-
+	HUD_DATA[#TEST_HUD] = HUD
 )
-
-
 
 /*------------------------------------------------------------------------------
 	POSITION TEST
@@ -45,15 +76,13 @@ function positionTest =
 	HUD = Hud_v pos:align_position Rows: #( Row_1 )
 
 
-	HUD_DISPLAYS[#HUD_RIGHT] = HUD
-
+	HUD_DATA[#HUD_RIGHT] = HUD
 )
-
 
 /*------------------------------------------------------------------------------
 	SHORTHAND DEFINE ONLY ROWS
 ------------------------------------------------------------------------------*/
-function simpleDefineOnlyRows =
+function shorthandDefinition =
 (
 	/* DEFAULT POSTION */
 	--HUD = Hud_v()
@@ -84,17 +113,19 @@ function simpleDefineOnlyRows =
 	HUD.row ( "Row 3" ) color:red height:-64
 
 	/* ADD TO HUD DATA */
-	HUD_DISPLAYS[#QUICK_ADD] = HUD
-
-
+	HUD_DATA[#QUICK_ADD] = HUD
 )
 
 /*------------------------------------------------------------------------------
 	RUN TEST
 --------------------------------------------------------------------------------*/
+
+--setHudData()
+setDataCallback()
+
 --defineRowsAndColumns()
 --positionTest()
-simpleDefineOnlyRows()
+--shorthandDefinition()
 
 
 

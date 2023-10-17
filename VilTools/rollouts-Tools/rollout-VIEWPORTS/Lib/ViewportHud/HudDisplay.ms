@@ -3,7 +3,7 @@ filein( getFilenamePath(getSourceFileName()) + "/HudRow.ms" )	-- "./HudRow.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Hud.ms" )	-- "./HudDisplay.ms"
 
 
-global HUD_DISPLAYS = Dictionary() -- #( #hud_name, HudData_v ),
+global HUD_DATA = Dictionary() -- #( #hud_name, HudData_v ),
 
 /** Show hud display
  */

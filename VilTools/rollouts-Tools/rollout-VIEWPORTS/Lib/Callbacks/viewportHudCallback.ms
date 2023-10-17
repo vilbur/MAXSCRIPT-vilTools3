@@ -11,8 +11,19 @@ function viewportHudCallback =
 	/* SET SCREEN SPACE */
 	gw.setTransform( Matrix3 1 )
 
-	for HudDisplay_data in HUD_DISPLAYS do
-		HudDisplay_v (HudDisplay_data.value)
+
+	--format "HUD_DATA:	% \n" HUD_DATA
+
+	for HUD_datapair in HUD_DATA do
+	(
+		HUD = HUD_datapair.value
+		--format "HUD.callback:	% \n" (classOf HUD.callback)
+
+		if HUD.callback != undefined then
+			HUD.callback()
+
+		HudDisplay_v (HUD)
+	)
 
 
 	/* UPDATE VIEWPORT */

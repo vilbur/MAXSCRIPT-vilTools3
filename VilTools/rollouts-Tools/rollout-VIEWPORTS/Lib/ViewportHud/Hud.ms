@@ -5,8 +5,10 @@ struct Hud_v
 	/* construct */
 	Rows = #(), -- #( HudRow_v )
 
+	callback,	-- callback for refreshing data
+
 	/* properties */
-	pos,  -- position of HUD -- Point2|Array E.G.: [ 0, 0 ] OR #( #LEFT|#RIGHT|#CENTER, #TOP|#BOTTOM|CENTER )
+	pos	= #( #CENTER,	#CENTER ),  -- position of HUD -- Point2|Array E.G.: [ 0, 0 ] OR #( #LEFT|#RIGHT|#CENTER, #TOP|#BOTTOM|CENTER )
 	offset,
 
 	/* private */
