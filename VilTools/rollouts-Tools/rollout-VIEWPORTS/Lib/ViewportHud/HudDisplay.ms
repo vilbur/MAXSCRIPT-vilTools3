@@ -8,7 +8,7 @@ global HUD_DISPLAYS = Dictionary() -- #( #hud_name, HudData_v ),
 
 /** Show hud display
  */
-struct ViewportHud_v
+struct HudDisplay_v
 (
 	/* construct */
 	HUD, -- Hud_v

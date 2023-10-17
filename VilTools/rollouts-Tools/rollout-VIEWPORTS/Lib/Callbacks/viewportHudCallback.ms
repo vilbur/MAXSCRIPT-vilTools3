@@ -12,7 +12,7 @@ function viewportHudCallback =
 	gw.setTransform( Matrix3 1 )
 
 	for HudDisplay_data in HUD_DISPLAYS do
-		ViewportHud_v (HudDisplay_data.value)
+		HudDisplay_v (HudDisplay_data.value)
 
 
 	/* UPDATE VIEWPORT */
