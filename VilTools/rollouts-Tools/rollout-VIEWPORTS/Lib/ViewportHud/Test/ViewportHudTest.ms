@@ -13,8 +13,8 @@ function setHudData =
 (
 	--format "\n"; print "ViewportHudTest.ms.setHudData()"
 	Column	= HudColumn_v "Row 1"
-	Row	= HudRow_v columns: #( Column )
-	HUD	= Hud_v Rows: #( Row )
+	Row	= HudRow_v	columns: #( Column )
+	HUD	= Hud_v	Rows: #( Row )
 
 	HUD_DATA[#HUD_DATA] = HUD
 )
@@ -33,10 +33,10 @@ function refreshDataCallback =
 function setDataCallback =
 (
 	--format "\n"; print "ViewportHudTest.ms.setHudData()"
-	Column	= HudColumn_v "Callback"
+	Column	= HudColumn_v "INIT TEXT"
 	Row	= HudRow_v columns: #( Column )
 	--HUD	= Hud_v Rows: #( Row )
-	HUD	= Hud_v callback: refreshDataCallback  Rows: #( Row )
+	HUD	= Hud_v callback: refreshDataCallback Rows: #( Row )
 
 	HUD_DATA[#CALLBACK_DATA] = HUD
 )
@@ -67,23 +67,7 @@ function defineRowsAndColumns =
 
 function positionTest =
 (
-	Row_1 = HudRow_v columns: #( HudColumn_v ("CENTER HUD") )
 
-	--HUD = Hud_v pos:[ #CENTER, #CENTER ] Rows: #( Row_1, Row_2, Row_3 )
-
-	align_position = #( #CENTER, #CENTER )
-
-	HUD = Hud_v pos:align_position Rows: #( Row_1 )
-
-
-	HUD_DATA[#HUD_RIGHT] = HUD
-)
-
-/*------------------------------------------------------------------------------
-	SHORTHAND DEFINE ONLY ROWS
-------------------------------------------------------------------------------*/
-function shorthandDefinition =
-(
 	/* DEFAULT POSTION */
 	--HUD = Hud_v()
 
@@ -106,11 +90,27 @@ function shorthandDefinition =
 	--HUD = Hud_v pos:#( #RIGHT,	#BOTTOM )
 	--HUD = Hud_v pos:#( #RIGHT,	#BOTTOM ) offset:[ -256, -512 ]
 
+	HUD.Rows = #( HudRow_v columns: #( HudColumn_v ("CENTER HUD") ) )
 
-	/* DEFINE ROWS */
-	HUD.row ( "Row 1" )
+	HUD_DATA[#HUD_RIGHT] = HUD
+)
+
+/*------------------------------------------------------------------------------
+	SHORTHAND DEFINE ONLY ROWS
+------------------------------------------------------------------------------*/
+function shorthandDefinition =
+(
+	HUD = Hud_v()
+
+	/* DEFINE ROW */
+	Row_1 = HUD.row ( "Row 1" )
+
+	Row_1.Column "Column 2" width:96
+	Row_1.Column "Column 3" color:yellow
+
+	/* OTHER ROWS */
 	HUD.row ( "Row 2" ) color:red height:64
-	HUD.row ( "Row 3" ) color:red height:-64
+	HUD.row ( "Row 3" ) color:red height:-32
 
 	/* ADD TO HUD DATA */
 	HUD_DATA[#QUICK_ADD] = HUD
@@ -121,11 +121,11 @@ function shorthandDefinition =
 --------------------------------------------------------------------------------*/
 
 --setHudData()
-setDataCallback()
+--setDataCallback()
 
 --defineRowsAndColumns()
 --positionTest()
---shorthandDefinition()
+shorthandDefinition()
 
 
 

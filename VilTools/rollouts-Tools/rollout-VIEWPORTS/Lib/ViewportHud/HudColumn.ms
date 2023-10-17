@@ -8,11 +8,19 @@ struct HudColumn_v
 
 	/* properties */
 	color = white,
-	width	= 64,
+	width,
+
+	/* private */
+	_width_default = 64,
+
 
 	private
 
 	/**
 	 */
-	on create do	()
+	on create do
+	(
+		if width == undefined then
+			width = _width_default
+	)
 )

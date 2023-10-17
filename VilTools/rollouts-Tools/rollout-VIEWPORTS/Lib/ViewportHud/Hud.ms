@@ -18,17 +18,20 @@ struct Hud_v
 	/* reference */
 	/* inhered */
 
-	/** Approw to to HUD
+	/** Shorthand for adding row to HUD
 	  *
+	  * @retrun HudRow_v
 	  */
-	function row row_text color:white pos:undefined =
+	function row row_text color:white height:undefined =
 	(
 		--format "\n"; print "ViewportHud_v.row()"
 		Column	= HudColumn_v (row_text)	color:color
 
-		HudRow	= HudRow_v columns:#( Column )	--pos:pos
+		HudRow	= HudRow_v columns:#( Column )	height:height
 
 		append this.Rows HudRow
+
+		HudRow --return
 	),
 
 	/** Adjust hud postion if is placed in Max native viewport controls
