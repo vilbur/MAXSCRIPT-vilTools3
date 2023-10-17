@@ -6,7 +6,7 @@ struct HudRow_v
 	Columns = #(), -- #( HudColumn_v )
 
 	/* properties */
-	pos	= 12, -- row y position relative to previous row
+	height	= 12, -- row y position relative to previous row
 
 	show_color = yellow,
 

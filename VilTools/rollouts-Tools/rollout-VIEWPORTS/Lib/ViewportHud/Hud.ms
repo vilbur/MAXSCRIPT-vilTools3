@@ -19,7 +19,7 @@ struct Hud_v
 	/** Approw to to HUD
 	  *
 	  */
-	function row row_text color:white pos:16 =
+	function row row_text color:white pos:undefined =
 	(
 		--format "\n"; print "ViewportHud_v.row()"
 		Column	= HudColumn_v (row_text)	color:color
@@ -86,7 +86,7 @@ struct Hud_v
 
 		if classOf pos_param == Array and this.offset == undefined then
 		(
-			format "\n"; print "Hud_v.setOffset()"
+			--format "\n"; print "Hud_v.setOffset()"
 			this._setDefaultOffset()
 
 			/* HORIZONTAL OFFSET */

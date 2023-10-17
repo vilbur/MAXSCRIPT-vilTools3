@@ -36,7 +36,7 @@ struct HudDisplay_v
 		--format "HudRow.pos:	% \n" HudRow.pos
 
 		this.current_pos.x = HUD.pos_init.x -- reset position for 1st position
-		this.current_pos.y += HudRow.pos
+		this.current_pos.y += HudRow.height
 
 		for Column in HudRow.Columns do
 			this._showColumn (Column)
