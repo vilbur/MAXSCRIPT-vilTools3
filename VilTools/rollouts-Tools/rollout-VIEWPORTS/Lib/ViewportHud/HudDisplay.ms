@@ -3,7 +3,6 @@ filein( getFilenamePath(getSourceFileName()) + "/HudRow.ms" )	-- "./HudRow.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Hud.ms" )	-- "./HudDisplay.ms"
 
 
---if HUD_DISPLAYS == undefined then -- DEV
 global HUD_DISPLAYS = Dictionary() -- #( #hud_name, HudData_v ),
 
 /** Show hud display
@@ -33,13 +32,15 @@ struct HudDisplay_v
 	function _showRow HudRow =
 	(
 		--format "\n"; print "HudColumn_v._showRow()"
-		--format "this.current_pos:	% \n" this.current_pos
-		this.current_pos.x = HUD.pos.x -- reset position for 1st position
+		--format "HUD.pos_init:	% \n" HUD.pos_init
+		--format "HudRow.pos:	% \n" HudRow.pos
+
+		this.current_pos.x = HUD.pos_init.x -- reset position for 1st position
+		this.current_pos.y += HudRow.pos
 
 		for Column in HudRow.Columns do
 			this._showColumn (Column)
 
-		this.current_pos.y += HudRow.pos
 	),
 
 	/** Show column
@@ -55,7 +56,7 @@ struct HudDisplay_v
 	 */
 	on create do
 	(
-		this.current_pos = copy HUD.pos
+		this.current_pos = copy HUD.pos_init
 
 		this._showHud()
 	)

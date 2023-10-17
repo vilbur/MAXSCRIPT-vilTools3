@@ -6,22 +6,24 @@ filein( getFilenamePath(getSourceFileName()) + "/../../Callbacks/viewportHudCall
 
 unregisterRedrawViewsCallback viewportHudCallback
 
+/* RESET HUDS */
+--global HUD_DISPLAYS = Dictionary()
 
 /*------------------------------------------------------------------------------
 	DEFINE ROWS AND COLUMNS
 --------------------------------------------------------------------------------*/
 
-Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
-Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (red) ) pos:32
-Row_3 = HudRow_v columns: #( HudColumn_v ("Column 1"),	HudColumn_v ("Column 2") )
-
---Row_2.pos = 24
-
-Row_3.columns[1].width = 96
-
-HUD = Hud_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 0, 64 ]
-
-HUD_DISPLAYS[#TEST_HUD] = HUD
+--Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
+--Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (red) ) pos:32
+--Row_3 = HudRow_v columns: #( HudColumn_v ("Column 1"),	HudColumn_v ("Column 2") )
+--
+--Row_3.pos = 24
+--
+--Row_3.columns[1].width = 96
+--
+--HUD = Hud_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 0, 32 ]
+--
+--HUD_DISPLAYS[#TEST_HUD] = HUD
 
 
 /*------------------------------------------------------------------------------
@@ -44,15 +46,21 @@ HUD_DISPLAYS[#TEST_HUD] = HUD
 
 /*------------------------------------------------------------------------------
 	SIMPLE DEFINE ONLY ROWS
---------------------------------------------------------------------------------*/
+------------------------------------------------------------------------------*/
 
+
+--HUD = Hud_v()
+--HUD = Hud_v pos:#( #LEFT, #CENTER )
+HUD = Hud_v pos:#( #RIGHT, #BOTTOM )
 --HUD = Hud_v pos:#( #CENTER, #CENTER )
---
---HUD.row ( "Row 1" )
---HUD.row ( "Row 2" ) color:red pos:64
---
---HUD_DISPLAYS[#QUICK_ADD] = HUD
---
+--HUD = Hud_v pos:#( #CENTER, 32 )
+
+HUD.row ( "Row 1" )
+HUD.row ( "Row 2" ) color:red pos:64
+HUD.row ( "Row 3" ) color:red pos:-64
+
+HUD_DISPLAYS[#QUICK_ADD] = HUD
+
 
 
 
