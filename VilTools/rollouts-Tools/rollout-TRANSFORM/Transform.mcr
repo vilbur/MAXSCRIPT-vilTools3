@@ -84,18 +84,16 @@ icon:		"MENU:true"
 
 			lock_keys = #( #POS_X, #POS_Y, #POS_Z, #ROT_X, #ROT_Y, #ROT_Z, #SCALE_X, #SCALE_Y, #SCALE_Z )
 
+			lock_states = (getTransformLockFlags selection[1]) as Array
 
 			for obj in selection do
 			(
-				lock_states = (getTransformLockFlags obj) as Array
-
 				state = if  lock_states.count == lock_keys.count then #none else #all
 
 				setTransformLockFlags obj state
 
 				if state == #all then
 					setUserProp obj "lock_transform" ( obj.transform as string )
-
 			)
 
 			--maxOps.affectChildren = not maxOps.affectChildren

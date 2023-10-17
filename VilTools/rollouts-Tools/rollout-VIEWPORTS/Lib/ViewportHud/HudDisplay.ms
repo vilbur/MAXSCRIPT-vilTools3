@@ -3,7 +3,7 @@ filein( getFilenamePath(getSourceFileName()) + "/HudRow.ms" )	-- "./HudRow.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Hud.ms" )	-- "./HudDisplay.ms"
 
 
-if HUD_DATA == undefined then -- DEV - if files are impoorted on macroscript run
+--if HUD_DATA == undefined then -- DEV - if files are impoorted on macroscript run
 global HUD_DATA = Dictionary() -- #( #hud_name, HudData_v ),
 
 /** Show hud display

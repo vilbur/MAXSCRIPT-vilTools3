@@ -7,13 +7,14 @@ function hudObjectInfoCallback =
 (
 	--format "\n"; print "hudMaxInfoCallback.ms.hudMaxInfoCallback()"
 
-	/** Test if objects in sele3ction has locked transfroms
+	/** Test if objects in selection has locked transfroms
 	  *
+	  * https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-8EB13535-72B4-439C-94D3-E93434BA163B
 	  */
 	function getLockedTransfroms =
 	(
 		--format "\n"; print "hudObjectInfoCallback.ms.getLockedTransfroms()"
-		state = "LOCKED"
+		state = if selection.count > 0 then "LOCKED" else ""
 
 		for obj in selection where ((getTransformLockFlags obj) as Array ).count != 9  do
 			state = ""

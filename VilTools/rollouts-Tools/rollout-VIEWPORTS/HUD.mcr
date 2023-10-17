@@ -16,12 +16,9 @@ function toggleHudCallback hud_name data: =
 (
 	--format "\n"; print "HUD.mcr.toggleHudCallbeack()"
 
-	--format "HUD_DATA:	% \n" (HUD_DATA.count)
-	--format "hud_name:	% \n" hud_name
-
 	if data != unsupplied then
 	(
-		print ("HudCallback ON: #"+ hud_name as string )
+		--print ("HudCallback ON: #"+ hud_name as string )
 
 		HUD_DATA[hud_name] = data
 
@@ -33,13 +30,13 @@ function toggleHudCallback hud_name data: =
 	(
 		RemoveDictValue HUD_DATA hud_name
 
-		print ("HudCallback OFF: #"+ hud_name as string )
+		--print ("HudCallback OFF: #"+ hud_name as string )
 
 		if HUD_DATA.count == 0 then
 		(
 			unregisterRedrawViewsCallback viewportHudCallback
 
-			print "HudCallback DISABLE"
+			--print "HudCallback DISABLE"
 		)
 	)
 )

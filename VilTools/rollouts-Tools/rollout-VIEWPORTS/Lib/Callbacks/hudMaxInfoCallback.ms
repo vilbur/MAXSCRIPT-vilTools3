@@ -7,10 +7,6 @@ function hudMaxInfoCallback =
 (
 	--format "\n"; print "hudMaxInfoCallback.ms.hudMaxInfoCallback()"
 
-	--Column	= HudColumn_v "Row 1"
-	--Row	= HudRow_v columns: #( Column )
-	--HUD	= Hud_v Rows:#(Row)
-
 	row_height_big = 24
 
 	/** Get snap modes
