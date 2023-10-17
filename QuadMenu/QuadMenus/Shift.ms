@@ -8,12 +8,23 @@ function addQuad1 QuadMenu =
 	SnapQuadMenu 	= QuadMenu_v("Snap") -- Get Quad Menu "Snap"
 
 	SnapMenu	= SnapQuadMenu.getMenu(#BOTTOM_RIGHT)
-	--SnapOptionsMenu	= SnapQuadMenu.getMenu(#TOP_LEFT)
+	SnapOptionsMenu	= (QuadMenu_v("Snap")).getMenu(#TOP_LEFT)
 
+
+	(SnapOptionsMenu.getItem 1).setTitle ("AXIS Snap")
+	(SnapOptionsMenu.getItem 2).setTitle ("Snap To Frozen")
+	SnapOptionsMenu.removeItem 4
+
+	/* REORDER ITEMS */
 	SnapMenu.moveItem ("Pivot") 4
 
 
-	QuadMenu.addMenu( SnapMenu )	 index:1 --flat:true
+	/* ADD MENUS */
+	QuadMenu.addMenu( SnapOptionsMenu )	-- index:3 --flat:true
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu( SnapMenu )	 --index:1 --flat:true
 )
 
 /*------------------------------------------------------------------------------
@@ -62,20 +73,11 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("T R A N S F O R M")
 
-	SnapOptionsMenu	= (QuadMenu_v("Snap")).getMenu(#TOP_LEFT)
+	TransformMenu = menu_v("_Transform")
 
-	(SnapOptionsMenu.getItem 1).setTitle ("AXIS Snap")
-	(SnapOptionsMenu.getItem 2).setTitle ("Snap To Frozen")
-	--QuadMenu.addSeparator  index:2
+	TransformMenu.addSeparators #(3)
 
-
-	QuadMenu.addMenu("_Transform")	--flat:false --index:1
-
-	QuadMenu.addSeparator()
-	--DefaulQuadMenu 	= (QuadMenu_v("Title")).Quads[1]
-	QuadMenu.addMenu( SnapOptionsMenu )	-- index:3 --flat:true
-
-
+	QuadMenu.addMenu(TransformMenu)	--flat:false --index:1
 
 
 	--QuadMenu.addMenu("MenuName")	--flat:true --index:1

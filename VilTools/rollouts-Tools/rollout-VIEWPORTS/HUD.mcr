@@ -4,6 +4,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportHud/HudDisplay.ms" 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportHudCallback.ms" )	-- "./Lib/Callbacks/viewportHudCallback.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/hudMaxInfoCallback.ms" )	-- "./Lib/Callbacks/hudMaxInfoCallback.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/hudObjectInfoCallback.ms" )	-- "./Lib/Callbacks/hudObjectInfoCallback.ms"
 
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/hudObjectInfo.ms" )	-- "./Lib/Callbacks/hudObjectInfo.ms"
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportInfoCallback.ms" )	-- "./Lib/Callbacks/viewportInfoCallback.ms"
@@ -15,9 +16,12 @@ function toggleHudCallback hud_name data: =
 (
 	--format "\n"; print "HUD.mcr.toggleHudCallbeack()"
 
+	--format "HUD_DATA:	% \n" (HUD_DATA.count)
+	--format "hud_name:	% \n" hud_name
+
 	if data != unsupplied then
 	(
-		print "HudCallback: ON"
+		print ("HudCallback ON: #"+ hud_name as string )
 
 		HUD_DATA[hud_name] = data
 
@@ -29,11 +33,13 @@ function toggleHudCallback hud_name data: =
 	(
 		RemoveDictValue HUD_DATA hud_name
 
+		print ("HudCallback OFF: #"+ hud_name as string )
+
 		if HUD_DATA.count == 0 then
 		(
 			unregisterRedrawViewsCallback viewportHudCallback
 
-			print "HudCallback: OFF"
+			print "HudCallback DISABLE"
 		)
 	)
 )
@@ -49,8 +55,8 @@ icon:	"control:checkbutton|autorun:true"
 (
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\Callbacks\hudMaxInfoCallback.ms"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\Callbacks\hudMaxInfoCallback.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
 
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
 		(
@@ -67,33 +73,22 @@ icon:	"control:checkbutton|autorun:true"
  */
 macroscript	_viewport_hud_info_object
 category:	"_Viewports"
-buttontext:	"Selection Info"
+buttontext:	"Object Info"
 --icon:	"control:checkbox|autorun:true|align:#left"
 icon:	"control:checkbutton|autorun:true"
 (
 	on execute do
 	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\Callbacks\hudObjectInfoCallback.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
-
 
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
 		(
-			Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
-			Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (green) )
-			Row_3 = HudRow_v columns: #( HudColumn_v ("Column 1"),	HudColumn_v ("Column 2") )
+			HUD = Hud_v callback: hudObjectInfoCallback
 
-			Row_2.pos = 24
-
-			Row_3.columns[1].width = 96
-
-
-			HUD = Hud_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 256, 64 ]
-
-
-			toggleHudCallback #OBJECT_INFO data:HUD
+			toggleHudCallback #OBJ_INFO data:HUD
 		)
 		else
-			toggleHudCallback #OBJECT_INFO
-
+			toggleHudCallback #OBJ_INFO
 	)
 )

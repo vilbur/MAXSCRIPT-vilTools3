@@ -1,4 +1,3 @@
-unregisterRedrawViewsCallback viewportHudCallback
 
 
 /** Viewport hud callback
