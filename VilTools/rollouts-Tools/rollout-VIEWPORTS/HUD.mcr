@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportHud/ViewportHud.ms" )	-- "./Lib/ViewportHud/ViewportHud.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportHud/Hud.ms" )	-- "./Lib/ViewportHud/ViewportHud.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportHudCallback.ms" )	-- "./Lib/Callbacks/viewportHudCallback.ms"
 
@@ -52,7 +52,7 @@ icon:	"control:checkbutton|autorun:true"
 
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
 		(
-			HUD = HudDisplay_v pos:#( #CENTER, #CENTER )
+			HUD = Hud_v pos:#( #CENTER, #CENTER )
 
 			--Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
 			--Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (green) )
@@ -97,7 +97,7 @@ icon:	"control:checkbutton|autorun:true"
 			Row_3.columns[1].width = 96
 
 
-			HUD = HudDisplay_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 256, 64 ]
+			HUD = Hud_v Rows: #( Row_1, Row_2, Row_3 ) pos:[ 256, 64 ]
 
 
 			toggleHudCallback #OBJECT_INFO data:HUD
