@@ -5,42 +5,22 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("Edit 1")
 
-	--Fooo	= Menu_v("")
-
-	--QuadMenu.addMenu("")
-
-	--QuadMenu.addSeparator index:1
-	--QuadMenu.addSeparator()
-	--QuadMenu.addSeparators #()
-	ConvertToMenu	= Menu_v("_Object-ConvertTo")
-	--ConvertToMenu.addSeparator index:( ConvertToMenu.numItems() + 1 )
-	--ConvertToMenu.addSeparator index:( 2 )
-
-	SplineToolsMenu1	= Menu_v("Context Spline Tools 1")
-	SplineToolsMenu1.addSeparator index:1
-	SplineToolsMenu1.removeItem("Bind")
-	SplineToolsMenu1.removeItem("Unbind")
-	SplineToolsMenu1.clearSeparators()
-
-	--ToolsOptionsMenu	= Menu_v("_Epoly-Tools-Options") --flat:false
-	ConstraintsMenu	= Menu_v("_Epoly-Constraints") --flat:false
-	ConstraintsMenu.addSeparator index:1
-
-
 
 	QuadMenu.addItem ("Modifier Stack") ("Convert To Editable Polygon") group:"Main UI" --index:1
 
-	QuadMenu.addMenu(ConvertToMenu)
-	--QuadMenu.addSeparator()
+	QuadMenu.addMenu("_Object-ConvertTo")
 
-	QuadMenu.addMenu(ConstraintsMenu)
-
-	QuadMenu.addMenu(SplineToolsMenu1)	--flat:false --index:1
+	QuadMenu.addMenu("_Epoly-Constraints")  separators: #( 1 )
 
 	QuadMenu.addMenu("_Epoly-Tools-Options")
 
+	SplineToolsMenu = QuadMenu.addMenu("Context Spline Tools 1") separators: #( 1 )	--flat:false --index:1
 
-	QuadMenu.addMenu(ConstraintsMenu)
+	/* EDIT SPLINE TOOLS MENU */
+	SplineToolsMenu.addSeparator index:1
+	SplineToolsMenu.removeItem("Bind")
+	SplineToolsMenu.removeItem("Unbind")
+	SplineToolsMenu.clearSeparators()
 )
 
 /*------------------------------------------------------------------------------
@@ -49,31 +29,19 @@ function addQuad1 QuadMenu =
 function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("Edit 2")
-	SplineToolsMenu2	= Menu_v("Context Spline Tools 2")
 
+	QuadMenu.addMenu("Context Spline Tools 2")
 
-	ConnectMenu	= Menu_v("_Epoly-Connect") --flat:false
-	ConnectMenu.addSeparator index:#( 2, 3)
-	QuadMenu.addMenu(ConnectMenu)
+	QuadMenu.addMenu("_Epoly-Connect") separators: #( 2, 3 )
 
+	QuadMenu.addMenu("_Epoly-Edit")	 separators: #( 1 ) --flat:false 	-- "./../../VilTools/rollouts-Tools/rollout-EDIT-POLY/EDIT.mcr"
 
-	EpolyEditMenu	= Menu_v("_Epoly-Edit") --flat:false
-	EpolyEditMenu.addSeparator index:#(1,3)
-	QuadMenu.addMenu(EpolyEditMenu)
+	QuadMenu.addMenu("_Epoly-Edges")	title:"Edges" separators: #( 1 )	--flat:false
 
-	EpolyEdgesMenu	= Menu_v("_Epoly-Edges") --flat:false
-	--EpolyEdgesMenu.addSeparator index:1
-	QuadMenu.addMenu(EpolyEdgesMenu) title:"Edges"
+	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1 )	--flat:false
 
-	QuadMenu.addSeparator()
+	QuadMenu.addMenu("_Epoly-Hard-Edges")	title:"H A R D - E D G E S" separators: #( 1 ) --flat:false
 
-
-	EpolyHardEdgesMenu	= Menu_v("_Epoly-Hard-Edges") flat:false
-	--EpolyHardEdgesMenu.addSeparator index:1
-	QuadMenu.addMenu(EpolyHardEdgesMenu) title:"H A R D - E D G E S"
-	--QuadMenu.addMenu(EpolyHardEdgesMenu) title:"𝗛 𝗔 𝗥 𝗗 - 𝗘 𝗗 𝗚 𝗘 𝗦"
-	--QuadMenu.addMenu(EpolyHardEdgesMenu) title:"Ｈ Ａ Ｒ Ｄ － Ｅ Ｄ Ｇ Ｅ Ｓ"
-	--QuadMenu.addMenu(EpolyHardEdgesMenu) title:""
 )
 
 /*------------------------------------------------------------------------------
@@ -83,21 +51,13 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("Edit 3")
 
-	EpolyOptionsMenu = Menu_v("_Epoly-Options") --flat:false
-	EpolyOptionsMenu.addSeparator index:#(3)
-	QuadMenu.addMenu(EpolyOptionsMenu)
+	QuadMenu.addMenu("_Epoly-Options") separators: #( 3 )	--flat:false
 
+	QuadMenu.addMenu("_Epoly-Object") separators: #( 1, 3 )	--flat:false
 
+	--QuadMenu.addSeparators #( 1 )
 
-	EpolyObjectMenu	= Menu_v("_Epoly-Object") --flat:false
-	EpolyObjectMenu.addSeparator index:#( 3 )
-	QuadMenu.addMenu(EpolyObjectMenu)
-
-	QuadMenu.addSeparator()
-
-	EpolyExplodeMenu	= Menu_v("_Epoly-Explode") flat:false
-	--EpolyExplodeMenu.addSeparator index:1
-	QuadMenu.addMenu(EpolyExplodeMenu) title:"E X P L O D E"
+	QuadMenu.addMenu("_Epoly-Explode") title:"E X P L O D E" flat:false
 )
 
 /*------------------------------------------------------------------------------
@@ -105,23 +65,13 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-
 	QuadMenu.setTitle("EDIT 4")
 
-	EpolyToolsMainMenu = Menu_v("_Epoly-Tools-Main") --flat:false
-	EpolyToolsMainMenu.addSeparator index: #( 2,  6 )
-	QuadMenu.addMenu(EpolyToolsMainMenu)
+	QuadMenu.addMenu("_Epoly-Tools-Main") separators: #( 2, 6 )
 
+	QuadMenu.addMenu("_Epoly-PolyTools") separators: #( 1 )
 
-	EpolyPolyToolsMenu	= Menu_v("_Epoly-PolyTools") --flat:false  -- "./../../VilTools/rollouts-Tools/rollout-EDIT-POLY/-TOOLS-POLYTOOLS.mcr.ini"
-	EpolyPolyToolsMenu.addSeparator index:1
-	QuadMenu.addMenu(EpolyPolyToolsMenu)
-
-
-	EpolyLoopsMenu	= Menu_v("_Epoly-Loops") --flat:false
-	EpolyLoopsMenu.addSeparator index: #( 1, 2 )
-	QuadMenu.addMenu(EpolyLoopsMenu)
-
+	QuadMenu.addMenu("_Epoly-Loops") separators: #( 1, 2 )
 )
 
 

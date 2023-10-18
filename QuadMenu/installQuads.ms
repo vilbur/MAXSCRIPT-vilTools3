@@ -1,4 +1,12 @@
 
+/* ADD QUAD MENUS FROM CONFIG FILES
+
+	USE:
+		-- "./../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/QuadMenu.ms"
+		-- "./../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenu/Menu/Menu.ms"
+*/
+
+
 global QUAD_MENU_INSTALL
 
 key_shortcuts = #( #shiftPressed, #altPressed, #controlPressed, #shiftAndAltPressed, #shiftAndControlPressed, #controlAndAltPressed, #shiftAndAltAndControlPressed )
