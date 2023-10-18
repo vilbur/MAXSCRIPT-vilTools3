@@ -22,6 +22,8 @@ struct Hud_v
 
 	/** Shorthand for adding row to HUD
 	  *
+	  * @param string row_text
+	  *
 	  * @retrun HudRow_v
 	  */
 	function row row_text color:undefined height:undefined =

@@ -49,7 +49,6 @@ function hudMaxInfoCallback =
 
 	axises = sort(for i = 1 to (axist_string = toolMode.axisConstraints as string ).count collect axist_string[i])
 
-	layer_name = if ( LayerManager.current).name == "0" then "Default Layer" else ( LayerManager.current).name
 
 	/*------------------------------------------------------------------------------
 		SET HUD ROWS
@@ -60,25 +59,27 @@ function hudMaxInfoCallback =
 	HUD = Hud_v pos:#( #CENTER, #TOP ) callback:hudMaxInfoCallback
 
 	/* CURRENT LAYER */
-	HUD.row (layer_name) color:yellow
+	HUD.row (if ( LayerManager.current).name == "0" then "Default Layer" else ( LayerManager.current).name) color:yellow
+
+
+	/* CURRENT TOOL */
+	RowTool	= HUD.row ( toUpper ( toolMode.commandmode as string ) )
+	RowTool.Columns[1].width = 48
 
 	/* COORD SYS */
-	HUD.row ( "coordsys: " +  toUpper ( coord_sys as string ) ) color:coord_sys_color
+	RowTool.Column ( toUpper ( coord_sys as string ) ) color:coord_sys_color width:36
+
+	/* AXISES */
+	for i = 1 to axises.count do
+		RowTool.Column (toUpper (axises[i])) color:axis_colors[axises[i] as name ] width:16
 
 
 	/* AXIS SNAP */
 	if toolMode.commandmode == #MOVE and snapMode.axisConstraint then
-	(
-		Row	= HUD.row "Snap: " color:white
-
-		/* AXISES */
-		for i = 1 to axises.count do
-			Row.Column (toUpper (axises[i])) color:axis_colors[axises[i] as name ] width:16
-	)
-
+		RowTool.Column ( "SNAP" )
 
 	/* ANGLE SNAP */
-	if toolMode.commandmode == #ROTATE then
+	else if toolMode.commandmode == #ROTATE then
 	(
 		AngleSnapClass = ((( dotNetClass "Autodesk.Max.GlobalInterface").Instance).COREInterface7)
 
@@ -87,7 +88,7 @@ function hudMaxInfoCallback =
 			--snap_value = if (snap_value = AngleSnapClass.SnapAngle_) as integer == snap_value then  snap_value as integer else  snap_value
 			snap_value = AngleSnapClass.SnapAngle_
 
-			HUD.row ("Snap Angle " + snap_value as string + "°" ) color:white
+			RowTool.Column  ("Snap " + snap_value as string + "°" ) color:white
 		)
 	)
 
