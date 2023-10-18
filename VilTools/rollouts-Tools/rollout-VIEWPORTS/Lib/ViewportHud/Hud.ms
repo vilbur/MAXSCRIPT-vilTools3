@@ -14,6 +14,8 @@ struct Hud_v
 	/* private */
 	pos_init = [ 8, 16 ],
 
+	default_options	= Dictionary #( #color, white ) #( #width, 64 )  #( #height, 14 ),
+
 	/* dependency */
 	/* reference */
 	/* inhered */
@@ -22,16 +24,33 @@ struct Hud_v
 	  *
 	  * @retrun HudRow_v
 	  */
-	function row row_text color:white height:undefined =
+	function row row_text color:undefined height:undefined =
 	(
 		--format "\n"; print "ViewportHud_v.row()"
-		Column	= HudColumn_v (row_text)	color:color
 
-		HudRow	= HudRow_v columns:#( Column )	height:height
+		Column	= HudColumn_v (row_text)	color:(if color == undefined then default_options[#color] else color) width:(if width == undefined then default_options[#width] else width)
+
+		HudRow	= HudRow_v columns:#( Column )	height:(if height == undefined then default_options[#height] else height)
 
 		append this.Rows HudRow
 
 		HudRow --return
+	),
+
+	/** Set Defaults to row and column
+	  *
+	  */
+	function defaults color: width: height: =
+	(
+		--format "\n"; print "Hud_v.defaultRow()"
+		if color != unsupplied then
+			this.default_options[#color] = color
+
+		if width != unsupplied then
+			this.default_options[#width] = width
+
+		if height != unsupplied then
+			this.default_options[#height] = height
 	),
 
 	/** Adjust hud postion if is placed in Max native viewport controls

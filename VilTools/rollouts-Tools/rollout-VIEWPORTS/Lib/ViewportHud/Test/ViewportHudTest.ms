@@ -45,9 +45,9 @@ function setDataCallback =
 	DEFINE ROWS AND COLUMNS
 --------------------------------------------------------------------------------*/
 
-function defineRowsAndColumns =
+function RowsAndColumns =
 (
-	--format "\n"; print "ViewportHudTest.ms.defineRowsAndColumns()"
+	--format "\n"; print "ViewportHudTest.ms.RowsAndColumns()"
 	Row_1 = HudRow_v columns: #( HudColumn_v ("Row 1") )
 	Row_2 = HudRow_v columns: #( HudColumn_v ("Row 2"),	HudColumn_v ("Row 2") (red) )
 	Row_3 = HudRow_v columns: #( HudColumn_v ("Column 1"),	HudColumn_v ("Column 2") )
@@ -102,6 +102,8 @@ function shorthandDefinition =
 (
 	HUD = Hud_v()
 
+	HUD.defaults color:green width:96 height:24 -- Set Defaults to row and column
+
 	/* DEFINE ROW */
 	Row_1 = HUD.row ( "Row 1" )
 
@@ -123,7 +125,7 @@ function shorthandDefinition =
 --setHudData()
 --setDataCallback()
 
---defineRowsAndColumns()
+--RowsAndColumns()
 --positionTest()
 shorthandDefinition()
 

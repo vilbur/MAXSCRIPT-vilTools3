@@ -26,7 +26,10 @@ function hudMaxInfoCallback =
 	)
 
 
-	/*------ GET HUD DATA ------*/
+	/*------------------------------------------------------------------------------
+		GET HUD DATA
+	--------------------------------------------------------------------------------*/
+
 	axis_colors = Dictionary #( #x, red ) #( #y, green ) #( #z, ( color 0 155 255 ) )
 
 	coord_sys = case ( coord_sys_current = GetRefCoordSys() ) of
@@ -44,11 +47,13 @@ function hudMaxInfoCallback =
 		default:	yellow
 	)
 
-	axist_string = toolMode.axisConstraints as string
-
-	axises = sort(for i = 1 to axist_string.count collect axist_string[i])
+	axises = sort(for i = 1 to (axist_string = toolMode.axisConstraints as string ).count collect axist_string[i])
 
 	layer_name = if ( LayerManager.current).name == "0" then "Default Layer" else ( LayerManager.current).name
+
+	/*------------------------------------------------------------------------------
+		SET HUD ROWS
+	--------------------------------------------------------------------------------*/
 
 
 	/*------ HUD ------*/
