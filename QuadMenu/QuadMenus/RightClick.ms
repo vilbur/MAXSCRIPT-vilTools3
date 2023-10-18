@@ -5,7 +5,6 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("Edit 1")
 
-
 	QuadMenu.addItem ("Modifier Stack") ("Convert To Editable Polygon") group:"Main UI" --index:1
 
 	QuadMenu.addMenu("_Object-ConvertTo")
@@ -38,10 +37,6 @@ function addQuad2 QuadMenu =
 
 	QuadMenu.addMenu("_Epoly-Edges")	title:"Edges" separators: #( 1 )	--flat:false
 
-	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1 )	--flat:false
-
-	QuadMenu.addMenu("_Epoly-Hard-Edges")	title:"H A R D - E D G E S" separators: #( 1 ) --flat:false
-
 )
 
 /*------------------------------------------------------------------------------
@@ -51,13 +46,11 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("Edit 3")
 
-	QuadMenu.addMenu("_Epoly-Options") separators: #( 3 )	--flat:false
 
 	QuadMenu.addMenu("_Epoly-Object") separators: #( 1, 3 )	--flat:false
 
 	--QuadMenu.addSeparators #( 1 )
 
-	QuadMenu.addMenu("_Epoly-Explode") title:"E X P L O D E" flat:false
 )
 
 /*------------------------------------------------------------------------------
@@ -71,7 +64,6 @@ function addQuad4 QuadMenu =
 
 	QuadMenu.addMenu("_Epoly-PolyTools") separators: #( 1 )
 
-	QuadMenu.addMenu("_Epoly-Loops") separators: #( 1, 2 )
 )
 
 

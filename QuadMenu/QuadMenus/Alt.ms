@@ -3,23 +3,10 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	--QuadMenu.clearMenu()
-
 	QuadMenu.setTitle("E D I T 1")
 
-	--Layers1Menu	= Menu_v("_Layers-1")
-	--
-	--Layers1Menu.addSeparator index:#( 2 )
-	--
-	--
-	--QuadMenu.addMenu(Layers1Menu)	--flat:false --index:1
 
-	--QuadMenu.addMenu("")
-
-	--QuadMenu.addSeparator index:1
-	--QuadMenu.addSeparator()
-	--QuadMenu.addSeparators #()
-	QuadMenu.addMenu("Selection")	separators: #( 1 )	--title:"" --index: --flat:false
+	QuadMenu.addMenu("_Epoly-Options") separators: #( 3 )	--flat:false
 )
 
 /*------------------------------------------------------------------------------
@@ -27,15 +14,12 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	--QuadMenu.clearMenu()
-
 	QuadMenu.setTitle("E D I T 2")
 
-	--
-	--Layers2Menu	= Menu_v("_Layers-2")
-	--Layers2Menu.addSeparator index:#( 2, 4 )
-	--
-	--QuadMenu.addMenu(Layers2Menu)	--flat:false --index:1
+	QuadMenu.addMenu("_Epoly-Hard-Edges")	title:"H A R D - E D G E S" separators: #( 1 ) --flat:false
+
+	QuadMenu.addMenu("_Epoly-Explode") title:"E X P L O D E" flat:false
+
 )
 
 /*------------------------------------------------------------------------------
@@ -43,19 +27,11 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	--QuadMenu.clearMenu()
-
 	QuadMenu.setTitle("E D I T 3")
 
-	--Layers3Menu	= Menu_v("_Layers-3")
-	--
-	--Layers3Menu.addSeparator index:#( 2,4 )
-	--
-	--QuadMenu.addMenu(Layers3Menu)	--flat:false --index:1
-	--
-	--QuadMenu.addSeparator()
-	--
-	--QuadMenu.addMenu("_Layers-Dialogs")	--flat:false --index:1
+	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1 )	--flat:false
+
+
 )
 
 /*------------------------------------------------------------------------------
@@ -63,18 +39,9 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	--QuadMenu.clearMenu()
-
 	QuadMenu.setTitle("E D I T 4")
 
-
-	--Layers4Menu	= Menu_v("_Layers-4")
-	--
-	--QuadMenu.addMenu(Layers4Menu)	--flat:false --index:1
-	--
-	--QuadMenu.addSeparator()
-	--
-	--QuadMenu.addMenu("_Layers-Name")	--flat:false --index:1
+	QuadMenu.addMenu("_Epoly-Loops-Tools") separators: #( 1, 2 )
 )
 
 

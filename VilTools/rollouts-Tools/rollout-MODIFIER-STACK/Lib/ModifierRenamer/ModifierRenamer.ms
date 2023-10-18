@@ -28,6 +28,7 @@ struct ModifierRenamer_v
 			Poly_Select:	this._PolySelect()
 			Vol__Select:	this._VolSelect()
 			Chamfer:	this._Chamfer()
+			Smooth:	this._Smooth()
 			Face_Extrude:	"Extrude"
 			DeleteMesh:	"Delete"
 			Materialmodifier:	"Mat ID " + this.modObject.materialID as string
@@ -285,6 +286,29 @@ struct ModifierRenamer_v
 			mod_name += " " + this.modObject.iterations  as string
 
 		mod_name --return
+	),
+
+	/**  Smooth
+	  */
+	function _Smooth =
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		format "\n"; print "ModifierRenamer_v._Smooth()"
+
+		 if this.modObject.autosmooth then
+		 (
+
+
+			threshold = if matchPattern ((threshold = this.modObject.threshold) as string ) pattern:"*.0" then threshold as integer else threshold -- remove float if not needed
+
+			"AutoSmooth " + 	threshold as string + "°"
+		 )
+
+		else if this.modObject.smoothingBits == 0 then
+			"Unsmooth"
+
+		else
+			"Smooth"
 	),
 
 	/**

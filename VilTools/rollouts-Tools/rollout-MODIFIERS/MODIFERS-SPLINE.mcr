@@ -26,6 +26,20 @@ icon:	"MENU:true"
 	)
 )
 
+/** Sweep
+ */
+macroscript epoly_tools_SweepMod
+category:	"_Modifiers-Spline"
+buttonText:	"Sweep"
+icon:	"MENU:true"
+(
+	on isVisible	do mcrUtils.ValidMod SweepMod
+
+	on execute do (
+		macros.run "Modifiers" "SweepMod"
+	)
+)
+
 /** Lathe
  */
 macroscript epoly_tools_Lathe

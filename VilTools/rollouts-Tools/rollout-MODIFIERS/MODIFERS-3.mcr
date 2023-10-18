@@ -89,6 +89,19 @@ icon:	"MENU:true"
 	)
 )
 
+/** Spherify
+ */
+macroscript epoly_tools_Spherify
+category:	"_Modifiers-3"
+buttonText:	"Spherify"
+icon:	"MENU:true"
+(
+
+	on execute do (
+		macros.run "Modifiers" "Spherify"
+	)
+)
+
 /** Cap Holes
  */
 macroscript epoly_tools_Cap_Holes

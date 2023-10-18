@@ -30,8 +30,8 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Flow_Connect
 category:	"_Epoly-Connect"
-buttonText:	"F L O W C O N N E C T"
-icon:	"MENU:true"
+buttonText:	"FLow Connect"
+icon:	"MENU:F L O W C O N N E C T"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -44,8 +44,8 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Connect_Edges
 category:	"_Epoly-Connect"
-buttonText:	"C O N N E C T"
-icon:	"MENU:true"
+buttonText:	"Connect"
+icon:	"MENU:C O N N E C T"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -58,8 +58,8 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Connect_Vertex
 category:	"_Epoly-Connect"
-buttonText:	"C O N N E C T VERTEX"
-icon:	"MENU:true"
+buttonText:	"Connect Vertex"
+icon:	"MENU:C O N N E C T VERTEX"
 (
 	on isVisible	do return isEpoly()	and	isSubObject ( 1 )
 
@@ -72,8 +72,8 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Insert_Loop
 category:	"_Epoly-Connect"
-buttonText:	"I N S E R T Edge"
-icon:	"MENU:true"
+buttonText:	"Insert Loop"
+icon:	"MENU:I N S E R T Loop"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
@@ -86,8 +86,8 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Distance_Connect
 category:	"_Epoly-Connect"
-buttonText:	"D I S T A N C E"
-icon:	"MENU:true"
+buttonText:	"Distance Connect"
+icon:	"MENU:D I S T A N C E Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -109,4 +109,3 @@ icon:	"MENU:true"
 		macros.run "PolyTools" "PaintConnect"
 	)
 )
-

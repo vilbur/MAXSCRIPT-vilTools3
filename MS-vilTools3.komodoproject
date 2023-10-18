@@ -39,6 +39,8 @@
 </livefolder>
 <livefolder id="e37c93d3-5dcb-45ff-9e99-5624bf6d0ce7" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-VIEWPORTS" url="VilTools/rollouts-Tools/rollout-VIEWPORTS/">
 </livefolder>
+<livefolder id="e4ab3889-9904-42af-b0a6-605ddce294d3" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-SPLINE" url="VilTools/rollouts-Tools/rollout-SPLINE/">
+</livefolder>
 <preference-set idref="640e1e37-f762-488e-ae28-11c19c36e314" id="project" preftype="project">
   <long id="prefs_version">1</long>
 </preference-set>
