@@ -3,7 +3,7 @@
 struct EditPolyLoop_v
 (
 	obj,
-	mod,
+	_mod,
 	loop,
 	_selection	= #(), -- selected edges in loop
 
@@ -13,59 +13,66 @@ struct EditPolyLoop_v
 	 */
 	function getLoopForEdge _edge =
 	(
-		mod.SetSelection	#Edge #{}
-		mod.Select	#Edge #{_edge}
-		mod.ButtonOp	#SelectEdgeLoop
+		format "\n"; print "EditPolyLoop_v.addOrRemoveEdgeInLoop()"
+		obj	= selection[1]
+
+		_mod.SetSelection	#Edge #{}
+		_mod.Select	#Edge #{_edge}
+		_mod.ButtonOp	#SelectEdgeLoop
 
 		loop = this._getEdgesInLoop()
-		--this._getEdgesInLoop()
-	),
 
+		format "LOOP:	% \n" loop
+	),
 
 	/** Append to selection
 	 */
 	function filterSelectionEdges selection_edges =
 	(
+		format "\n"; print "EditPolyLoop_v.filterSelectionEdges()"
+		format "SELECTION_EDGES:	% \n" selection_edges
+
 		if( loop != undefined ) then
 			for edge_in_loop in loop where this._isEdgeInSelection selection_edges edge_in_loop do
 				append _selection edge_in_loop
+
+		format "_SELECTION:	% \n" _selection
 	),
 	/** Select loop ring
 	 */
 	function addOrRemoveEdgeInLoop direction select_mode =
 	(
+		format "\n"; print "EditPolyLoop_v.addOrRemoveEdgeInLoop()"
+
 		first_or_last_edge = this._getFirstOrLastEdge direction
+		format "first_or_last_edge:	% \n" first_or_last_edge
 		--print "addOrRemoveEdgeInLoop"
 		--print ( "direction = " + direction as string )
-		case select_mode of
-		(
-			(#select):	this._addNextOrPrevEdgeToSelection 	first_or_last_edge direction
-			(#deselect):	this._removeEdgeFromSelection	first_or_last_edge
-		)
+		if first_or_last_edge != undefined then
+			case select_mode of
+			(
+				(#select):	this._addNextOrPrevEdgeToSelection 	first_or_last_edge direction
+				(#deselect):	this._removeEdgeFromSelection	first_or_last_edge
+			)
 
 	),
 	/*------------------------------------------------------------------------------
 		PRIVATE
 	--------------------------------------------------------------------------------*/
 
-	/** Is edge in selection
-	 */
-	function _isEdgeInSelection selection_edges _edge =
-	(
-		(findItem selection_edges _edge) != 0 --return
-	),
-
 	/** Get edge loop
 	 */
 	function _getEdgesInLoop =
 	(
-		obj	= selection[1]
-		edges_selected	= mod.GetSelection #Edge
+		format "\n"; print "EditPolyLoop_v._getEdgesInLoop()"
+		edges_selected	= _mod.GetSelection #Edge
 
-		edge_verts	= polyop.GetVertsUsingEdge obj edges_selected
+		edge_verts	= polyop.getVertsUsingEdge obj edges_selected
 		one_edge_verts	= for v in edge_verts where ( (edges_selected * ( polyop.getEdgesUsingVert obj v)).numberset	== 1) collect v
 		this_edge_loop	= #()
 		e0	= #{}
+
+		format "ONE_EDGE_VERTS:	% \n" one_edge_verts
 
 		if( one_edge_verts.count == 0 ) then
 			return this_edge_loop
@@ -87,12 +94,20 @@ struct EditPolyLoop_v
 			(
 				for i in e1 do appendIfUnique this_edge_loop i
 				--print ( "vL1 = " + vL1 as string )
-				vL1 = (polyop.getVertsUsingEdge obj e1) - vL1
+				vL1 = ( polyop.getVertsUsingEdge obj e1) - vL1
 				e0 = e1
 			)
 		)
-		----print ( "this_edge_loop = " + this_edge_loop as string )
+		format "THIS_EDGE_LOOP:	% \n" this_edge_loop
+
 		this_edge_loop --return
+	),
+
+	/** Is edge in selection
+	 */
+	function _isEdgeInSelection selection_edges _edge =
+	(
+		(findItem selection_edges _edge) != 0 --return
 	),
 
 	/** Get first or last edge of selection in loop
@@ -101,11 +116,15 @@ struct EditPolyLoop_v
 	 */
 	function _getFirstOrLastEdge direction =
 	(
-		if( direction == #forward ) then
-			_selection[_selection.count] --return
+		format "\n"; print "EditPolyLoop_v._getFirstOrLastEdge()"
+		format "_SELECTION:	% \n" _selection
 
-		else
-			_selection[1] --return
+		if _selection.count > 0 then
+			if( direction == #forward ) then
+				_selection[_selection.count] --return
+
+			else
+				_selection[1] --return
 	),
 
 	/** Set next or previous edge in loop selection for edge

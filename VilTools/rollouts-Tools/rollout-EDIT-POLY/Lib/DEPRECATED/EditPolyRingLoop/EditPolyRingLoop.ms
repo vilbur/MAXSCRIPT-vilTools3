@@ -1,14 +1,13 @@
-filein
-( getFilenamePath(getSourceFileName()) + "/EditPolyLoop/EditPolyLoop.ms" ) -- "./EditPolyLoop/EditPolyLoop.ms"
+filein( getFilenamePath(getSourceFileName()) + "/EditPolyLoop/EditPolyLoop.ms" ) -- "./EditPolyLoop/EditPolyLoop.ms"
 
 /** Edit poly selection
  */
 struct EditPolyRingLoop_v
 (
-	mod,
+	_mod,
 	obj,
 	edge_selection,
-	Loops	= #(),
+	EditPolyLoop	= #(),
 
 
 	/*------ Parameters ------*/
@@ -28,11 +27,14 @@ struct EditPolyRingLoop_v
 
 		this.setParameters loop_or_ring direction select_mode
 
-		mod	= modPanel.getCurrentObject()
+		_mod	= modPanel.getCurrentObject()
 
 		this._setEdgeSelection()
+
 		this._setLoops()
+
 		this._selectOrMoveEdges()
+
 		this._selectEdgesInLoops()
 	),
 
@@ -51,7 +53,7 @@ struct EditPolyRingLoop_v
 	 */
 	function _setLoops =
 	(
-		Loops = this._getLoops edge_selection
+		EditPolyLoop = this._getLoops edge_selection
 	),
 	/** Get loops for selected edges
 	 *	@param	BitArray	edge_selection	Edges for loops
@@ -59,16 +61,18 @@ struct EditPolyRingLoop_v
 	 */
 	function _getLoops edge_selection =
 	(
+		format "\n"; print "EditPolyRingLoop_v._getLoops()"
 	    obj  = selection[1]
 		_Loops	= #()
 		loops_processed	= #{}
 
 		for _edge in edge_selection where findItem loops_processed _edge == 0 do
 		(
-			EditPolyLoop 	= EditPolyLoop_v obj:obj mod:mod
+			EditPolyLoop 	= EditPolyLoop_v obj:obj _mod:_mod
+
 			EditPolyLoop.getLoopForEdge _edge
 			EditPolyLoop.filterSelectionEdges edge_selection
-			--print ( "edge_selection = " + edge_selection as string )
+
 			if( EditPolyLoop.loop != undefined ) then
 			(
 				append	_Loops EditPolyLoop
@@ -85,7 +89,7 @@ struct EditPolyRingLoop_v
 	 */
 	function _selectOrMoveEdges =
 	(
-		--print ( "select_mode = " + select_mode as string )
+		format "\n"; print "EditPolyRingLoop_v._selectOrMoveEdges()"
 		case loop_or_ring of
 		(
 			(#loop):
@@ -113,7 +117,7 @@ struct EditPolyRingLoop_v
 	 */
 	function _addOrRemoveEdgeInLoop =
 	(
-		for Loop in Loops do
+		for Loop in EditPolyLoop do
 			Loop.addOrRemoveEdgeInLoop direction select_mode
 	),
 	/** _move edges in loops
@@ -122,7 +126,7 @@ struct EditPolyRingLoop_v
 	(
 		direction_opposite	= if( direction == #forward )then #reverse else #forward
 
-		for Loop in Loops do
+		for Loop in EditPolyLoop do
 		(
 			Loop.addOrRemoveEdgeInLoop direction	#select
 			Loop.addOrRemoveEdgeInLoop direction_opposite 	#deselect
@@ -137,9 +141,9 @@ struct EditPolyRingLoop_v
 	(
 		this._selectEdgesInLoops()
 
-		mod.RingSelect 2 false true
+		_mod.RingSelect 2 false true
 
-		_selection_difference	= ( mod.GetSelection #Edge ) - edge_selection -- only new ring loops
+		_selection_difference	= ( _mod.GetSelection #Edge ) - edge_selection -- only new ring loops
 		_Loops_new	= this._getLoops _selection_difference
 		--print ( "_Loops_new = " + _Loops_new as string )
 		_Loop_new	= if( direction == #forward ) then _Loops_new[1] else _Loops_new[2]
@@ -151,9 +155,9 @@ struct EditPolyRingLoop_v
 	 */
 	function _deselectRing =
 	(
-		remove_index	= if( direction == #forward )then 1 else Loops.count
+		remove_index	= if( direction == #forward )then 1 else EditPolyLoop.count
 
-		Loops = deleteItem Loops remove_index
+		EditPolyLoop = deleteItem EditPolyLoop remove_index
 	),
 	/** _move ring
 	 */
@@ -172,7 +176,7 @@ struct EditPolyRingLoop_v
 	 */
 	function _setEdgeSelection =
 	(
-		edge_selection = mod.GetSelection #Edge
+		edge_selection = _mod.GetSelection #Edge
 	),
 
 	/** Select edges in loops
@@ -182,7 +186,7 @@ struct EditPolyRingLoop_v
 		format "\n"; print "EditPolyRingLoop_v._selectEdgesInLoops()"
 		edge_selection = #{}
 
-		for Loop in Loops do
+		for Loop in EditPolyLoop do
 			join edge_selection (Loop._selection as BitArray)
 
 		format "edge_selection:	% \n" edge_selection
@@ -191,20 +195,20 @@ struct EditPolyRingLoop_v
 		if edge_selection.count == 0 then
 			return false
 
-		mod.SetSelection	#Edge #{}
-		mod.Select	#Edge edge_selection
+		_mod.SetSelection	#Edge #{}
+		_mod.Select	#Edge edge_selection
 	),
 	/*------------------------------------------------------------------------------
 		EditPolyLoop_v
 	--------------------------------------------------------------------------------*/
-	/** Append or prepend new Loop in Loops
+	/** Append or prepend new Loop in EditPolyLoop
 	 */
 	function _addOrRemoveLoop Loop =
 	(
 		if( direction == #forward ) then
-			Loops = join #(Loop) Loops
+			EditPolyLoop = join #(Loop) EditPolyLoop
 		else
-			Loops = join Loops #(Loop)
+			EditPolyLoop = join EditPolyLoop #(Loop)
 	),
 
 	function test =
