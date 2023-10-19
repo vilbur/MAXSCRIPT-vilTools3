@@ -9,7 +9,7 @@ function replaceSideName obj =
 	--format "obj.name	= % \n" obj.name
 	ignore_case = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 	--RegEx = dotNetObject "System.Text.RegularExpressions.Regex"
-	matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches obj.name "(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)" ignore_case 
+	matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches obj.name "(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)" ignore_case
 	result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
 	--format "result	= % \n" result
 
@@ -17,14 +17,14 @@ function replaceSideName obj =
 	(
 		other_side = case (current_side = result[1][1] ) as name of
 		(
-			#LEFT:   "right"
-			#RIGHTR: "left"
-			#BACK:   "front"
-			#FRONT:  "back"
-			#TOP:    "bottom"
-			#BOTTOM: "top"
+			#LEFT:   "Right"
+			#RIGHTR: "Left"
+			#BACK:   "Front"
+			#FRONT:  "Back"
+			#TOP:    "Bottom"
+			#BOTTOM: "Top"
 		)
-		obj.name	= ( dotNetObject "System.Text.RegularExpressions.Regex" current_side ignore_case ).Replace obj.name other_side
+		obj.name	= ( dotNetObject "System.Text.RegularExpressions.Regex" (current_side+"\d+") ignore_case ).Replace obj.name other_side -- replace name E.G.: foo-Left001 >>> foo-Right
 	)
 
 	if obj.children.count > 0 then
@@ -36,20 +36,32 @@ function replaceSideName obj =
  */
 function mirrorSelection axis =
 (
+
+	/** Get selection without members of closed group
+	 */
+	function getSelectionWithouGroupMembers =
+	(
+		mapped function getAllChildren node &children = (if isValidNode node and isKindOf children Array do join children node.children)
+
+		children = #()
+
+		groups_closed = for o in ( _selection = selection as Array ) where isGroupHead o and isOpenGroupHead o == false and findItem _selection o.parent == 0 collect o
+
+		getAllChildren groups_closed &children
+
+		for o in selection where findItem children o == 0 collect o --return
+	)
+
 	mirror_tm = case axis of
 	(
-		#x:[-1,1,1]	
-		#y:[1,-1,1]	
-		#z:[1,1,-1]	
+		#x:[-1, 1, 1]
+		#y:[1, -1, 1]
+		#z:[1, 1, -1]
 	)
 
 	undo "Mirror" on
 	(
-		groups_children = #()
-
-		for o in selection where isGroupHead o do groups_children += o.children
-
-		objects_to_mirror = for o in selection where findItem groups_children o == 0 collect o
+		objects_to_mirror = getSelectionWithouGroupMembers()
 
 		new_instances = #()
 
@@ -61,7 +73,7 @@ function mirrorSelection axis =
 
 			append new_instances _instance
 
-			tm=_instance.transform
+			tm = _instance.transform
 
 			mirroredTm=tm*( ScaleMatrix mirror_tm )
 
@@ -73,47 +85,61 @@ function mirrorSelection axis =
 	)
 )
 
-/**  
-  *	
+/**
+  *
   */
 macroscript	selection_mirror_x
-category:	"_Selection"
+category:	"_Mirror"
 buttontext:	"Mirror X"
-toolTip:	"Mirror instances in world axis"
---icon:	"#(path, index)"
+toolTip:	"Mirror instances in world axis.\n\nRename mirrored objects LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP"
+icon:	"MENU:true"
 (
-	clearListener()
-	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
+	on execute do
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
 
-	mirrorSelection(#x)
+		undo "Mirror X" on
+			mirrorSelection(#X)
+	)
 )
 
-/**  
-  *	
+/**
+  *
   */
 macroscript	selection_mirror_y
-category:	"_Selection"
+category:	"_Mirror"
 buttontext:	"Mirror Y"
 toolTip:	"Mirror instances in world axis"
---icon:	"#(path, index)"
+icon:	"MENU:true"
 (
-	clearListener()
-	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
 
-	mirrorSelection(#y)
+	on execute do
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
+
+		undo "Mirror Y" on
+			mirrorSelection(#Y)
+	)
 )
 
-/**  
-  *	
+/**
+  *
   */
 macroscript	selection_mirror_z
-category:	"_Selection"
+category:	"_Mirror"
 buttontext:	"Mirror Z"
 toolTip:	"Mirror instances in world axis"
---icon:	"#(path, index)"
+icon:	"MENU:true"
 (
-	clearListener()
-	filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr")
+	on execute do
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
 
-	mirrorSelection(#z)
+		undo "Mirror Z" on
+			mirrorSelection(#Z)
+	)
+
 )
