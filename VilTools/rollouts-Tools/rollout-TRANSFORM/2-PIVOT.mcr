@@ -87,7 +87,7 @@ icon:	   "MENU:true"
 (
 	on execute do
     (
-        filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Pivot.mcr"
+        --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Pivot.mcr"
 
 		for o in ( _selection = getSelectionWithouGroupMembers()) do
 		(
@@ -102,6 +102,34 @@ icon:	   "MENU:true"
 	)
 
 )
+
+
+/* Round pivot position to tens
+  *
+  * E.G.: 123.456  >>> 120
+*/
+macroscript _pivot_round_position
+category:	"_Pivot"
+buttonText:	"Round Pivot Pos"
+toolTip:	"Round Pivot Position"
+icon:	"MENU:true"
+(
+	fn round val n = (floor ((val * (mult = 10.0 ^ n)) + 0.5)) / mult -- E.G.: round pi 0 as integer
+
+	on execute do
+		undo "Round pivot position" on
+		(
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Pivot.mcr"
+
+			for obj in selection do
+			(
+				obj.pivot.x = round obj.pivot.x -1
+				obj.pivot.y = round obj.pivot.y -1
+				obj.pivot.z = round obj.pivot.z -1
+			)
+		)
+)
+
 
 --/** ALIGN TO WORLD
 --*/

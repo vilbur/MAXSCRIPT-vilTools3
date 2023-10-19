@@ -108,7 +108,7 @@ icon:		"MENU:true"
 */
 macroscript _transfrom_restore_all
 category:	"_Transform"
-buttonText:	"Restore"
+buttonText:	"Restore Locked Pos"
 toolTip:	"Restore saved transforms"
 icon:	"MENU:true"
 (
@@ -122,6 +122,7 @@ icon:	"MENU:true"
 
 		)
 )
+
 
 
 
