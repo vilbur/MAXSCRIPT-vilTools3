@@ -25,6 +25,7 @@ function addQuad1 QuadMenu =
 	QuadMenu.addSeparator()
 
 	QuadMenu.addMenu( SnapMenu )	 --index:1 --flat:true
+
 )
 
 /*------------------------------------------------------------------------------
@@ -34,20 +35,13 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("C O O R D S Y S")
 
-
-	--SnapSubmenu = QuadMenu.getSubMenu(1)
-	--
 	SnapSubmenu = menu_v("Coordinate System")
 
-
-	SnapSubmenu.removeItem #(  )
-
-	SnapSubmenu.moveItem(7)(2) -- move "World" coord sys above "Local"
-	SnapSubmenu.moveItem(4)(3) -- move "Parent" coord sys
-
+	SnapSubmenu.moveItem("World")(2)
+	SnapSubmenu.moveItem("Parent")(3)
+	SnapSubmenu.moveItem("Local Aligned")(7)
 
 	QuadMenu.addMenu(SnapSubmenu)
-
 )
 
 /*------------------------------------------------------------------------------
@@ -57,13 +51,7 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("P I V O T")
 
-	PivotMenu = menu_v("_Pivot")
-
-	PivotMenu.addSeparators #(3)
-
-
-	QuadMenu.addMenu(PivotMenu)	--flat:true --index:1
-
+	QuadMenu.addMenu("_Pivot")	separators: #( 3, 5 )	--title:"" --index: --flat:false
 )
 
 /*------------------------------------------------------------------------------
@@ -73,11 +61,7 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("T R A N S F O R M")
 
-	TransformMenu = menu_v("_Transform")
-
-	TransformMenu.addSeparators #(3)
-
-	QuadMenu.addMenu(TransformMenu)	--flat:false --index:1
+	QuadMenu.addMenu("_Transform") separators: #( 3 ) --flat:false --index:1
 
 
 	--QuadMenu.addMenu("MenuName")	--flat:true --index:1

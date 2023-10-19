@@ -41,7 +41,8 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("E D I T 4")
 
-	QuadMenu.addMenu("_Epoly-Loops-Tools") separators: #( 1, 2 )
+	QuadMenu.addMenu("_Epoly-Loop-Tools") separators: #( 1, 2 )
+
 )
 
 
