@@ -90,35 +90,41 @@ struct EPolyRingLoop_v
 
 		direction_value = LOOP_RING_COUNT*direction
 
-		format "direction_value:	% \n" direction_value
+		--format "direction_value:	% \n" direction_value
 
-		if loop_or_ring == #loop
-			then
-				epoly.LoopSelect (direction_value) true false
-			else
-				epoly.RingSelect (direction_value) true false
-
-
-
-		LOOP_RING_COUNT = amin (LOOP_RING_COUNT += 1) 3
-		--LOOP_RING_COUNT = direction_value
-
-		if mode != #move then
+		undo "Edge Select" on
 		(
-			if mode != #select then
-			(
-				deselected = (subobject_sel - epoly.GetSelection #Edge)
+			if loop_or_ring == #loop
+				then
 
-				new_selection = subobject_sel - deselected
-
-				if ( new_selection as Array ).count > 0 then
-					epoly.SetSelection #Edge new_selection -- set new swelection
+					epoly.LoopSelect (direction_value) true false
 				else
-					epoly.SetSelection #Edge subobject_sel -- set old selection, prevent deselection of all elements
+					epoly.RingSelect (direction_value) true false
 
+
+
+			LOOP_RING_COUNT = amin (LOOP_RING_COUNT += 1) 3
+			--LOOP_RING_COUNT = direction_value
+
+			if mode != #move then
+			(
+				if mode != #select then
+				(
+					deselected = (subobject_sel - epoly.GetSelection #Edge)
+
+					new_selection = subobject_sel - deselected
+
+					if ( new_selection as Array ).count > 0 then
+						--undo "Edge Select" on
+							epoly.SetSelection #Edge new_selection -- set new swelection
+					else
+						epoly.SetSelection #Edge subobject_sel -- set old selection, prevent deselection of all elements
+
+				)
+				else
+					--undo "Edge Select" on
+						epoly.SetSelection #Edge  (subobject_sel + epoly.GetSelection #Edge)
 			)
-			else
-				epoly.SetSelection #Edge  (subobject_sel + epoly.GetSelection #Edge)
 		)
 
 	),

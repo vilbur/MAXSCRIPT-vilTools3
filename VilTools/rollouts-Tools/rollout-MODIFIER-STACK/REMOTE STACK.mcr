@@ -7,6 +7,76 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/CircleStack.ms"
 
 */
 
+/*------------------------------------------------------------------------------
+
+	SMART NAVIGATION IN STACK
+
+--------------------------------------------------------------------------------*/
+
+/** SMART REMOTE UP
+  *
+  * 1) Activate modify panel if not active
+  * 2) If modify panel is active, then select next enabled modifier
+ */
+macroscript	modifier_smart_remote_up
+category:	"_Modifiers-Remote-Stack"
+buttontext:	"Smart UP"
+tooltip:	"Select ENABLED modifier up. \n\nCTRL:Select modifier up. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods UP"
+(
+	on execute do
+	(
+		/** Is pressed
+		  *
+		  */
+		function pressed key = execute ("keyboard."+key as string+"Pressed")
+
+
+		if( GetCommandPanelTaskMode() != #modify ) then
+			max modify mode
+
+		case of
+		(
+
+			( pressed #CONTROL and pressed #SHIFT ):	circleStack #UP mode:#ADD_ALL
+			( pressed #CONTROL ):	circleStack #UP	which:#ALL
+			( pressed #SHIFT ):	circleStack #UP	which:#ALL mode:#ADD
+			( pressed #ALT ):	circleStack #DOWN	which:#ALL mode:#REMOVE
+
+
+			default:	circleStack #UP
+		)
+	)
+)
+
+/** SMART REMOTE DOWN
+  *
+  * 1) Activate modify panel if not active
+  * 2) If modify panel is active, then select next enabled modifier
+ */
+macroscript	modifier_smart_remote_down
+category:	"_Modifiers-Remote-Stack"
+buttontext:	"Smart Down"
+tooltip:	"Select ENABLED modifier down. \n\nCTRL:Select modifier down. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods DOWN"
+(
+	on execute do
+	(
+		function pressed key = execute ("keyboard."+key as string+"Pressed")
+
+		if( GetCommandPanelTaskMode() != #modify ) then
+			max modify mode
+
+		case of
+		(
+			( pressed #CONTROL and pressed #SHIFT ):	circleStack #DOWN mode:#ADD_ALL
+			( pressed #CONTROL ):	circleStack #DOWN	which:#ALL
+			( pressed #SHIFT ):	circleStack #DOWN	which:#ALL mode:#ADD
+			( pressed #ALT ):	circleStack #UP 	which:#ALL mode:#REMOVE
+
+			default:	circleStack #DOWN
+		)
+	)
+)
+
 
 
 /*------------------------------------------------------------------------------
@@ -49,83 +119,6 @@ icon:	"MENU:true"
 							deleteModifier obj i
 
 		)
-)
-
-
-
-/*------------------------------------------------------------------------------
-
-	SMART NAVIGATION IN STACK
-
---------------------------------------------------------------------------------*/
-
-/** SMART REMOTE UP
-  *
-  * 1) Activate modify panel if not active
-  * 2) If modify panel is active, then select next enabled modifier
- */
-macroscript	modifier_smart_remote_up
-category:	"_Modifiers-Remote-Stack"
-buttontext:	"Smart UP"
-tooltip:	"GO | SELECT | DESELECT mods in stack. \n\nCTRL: On go mode select disabled mods also. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods UP"
-(
-	on execute do
-	(
-		/** Is pressed
-		  *
-		  */
-		function pressed key = execute ("keyboard."+key as string+"Pressed")
-
-
-		if( GetCommandPanelTaskMode() != #modify ) then
-			max modify mode
-
-		case of
-		(
-
-			( pressed #CONTROL and pressed #SHIFT ):	circleStack #UP mode:#ADD_ALL
-			( pressed #CONTROL ):	circleStack #UP	which:#ALL
-			( pressed #SHIFT ):	circleStack #UP	which:#ALL mode:#ADD
-			( pressed #ALT ):	circleStack #DOWN	which:#ALL mode:#REMOVE
-
-
-			default:	circleStack #UP
-		)
-	)
-)
-
-/** SMART REMOTE DOWN
-  *
-  * 1) Activate modify panel if not active
-  * 2) If modify panel is active, then select next enabled modifier
- */
-macroscript	modifier_smart_remote_down
-category:	"_Modifiers-Remote-Stack"
-buttontext:	"Smart Down"
-tooltip:	"GO | SELECT | DESELECT mods in stack. \n\nCTRL: On go mode select disabled mods also. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods DOWN"
-(
-
-	on execute do
-	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
-
-
-		function pressed key = execute ("keyboard."+key as string+"Pressed")
-
-
-		if( GetCommandPanelTaskMode() != #modify ) then
-			max modify mode
-
-		case of
-		(
-			( pressed #CONTROL and pressed #SHIFT ):	circleStack #DOWN mode:#ADD_ALL
-			( pressed #CONTROL ):	circleStack #DOWN	which:#ALL
-			( pressed #SHIFT ):	circleStack #DOWN	which:#ALL mode:#ADD
-			( pressed #ALT ):	circleStack #UP 	which:#ALL mode:#REMOVE
-
-			default:	circleStack #DOWN
-		)
-	)
 )
 
 
