@@ -12,30 +12,30 @@ icon:	"MENU:Mirror Instance By Wolrd"
 	on execute do
 	(
 		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\MIRROR.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
-		undo "Mirror X" on
-			mirrorSelection(#WORLD)(#INSTANCE)
+		undo "Mirror" on
+			(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
 	)
 )
 
-/**
-  */
-macroscript	selection_mirror_copy
-category:	"_Mirror"
-buttontext:	"Copy By Wolrd"
-toolTip:	"Mirror Copy by pivot axis.\n\nRename mirrored objects LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP"
-icon:	"MENU:Mirror Copy By Wolrd"
-(
-	on execute do
-	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\MIRROR.mcr"
-
-		undo "Mirror X" on
-			mirrorSelection(#WORLD)(#COPY)
-	)
-)
+--/**
+--  */
+--macroscript	selection_mirror_copy
+--category:	"_Mirror"
+--buttontext:	"Copy By Wolrd"
+--toolTip:	"Mirror Copy by pivot axis.\n\nRename mirrored objects LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP"
+--icon:	"MENU:Mirror Copy By Wolrd"
+--(
+--	on execute do
+--	(
+--		clearListener(); print("Cleared in:\n"+getSourceFileName())
+--		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\MIRROR.mcr"
+--
+--		undo "Mirror X" on
+--			mirrorSelection(#WORLD)(#COPY)
+--	)
+--)
 
 --/*------------------------------------------------------------------------------
 --	MIRROR BY PIVOT

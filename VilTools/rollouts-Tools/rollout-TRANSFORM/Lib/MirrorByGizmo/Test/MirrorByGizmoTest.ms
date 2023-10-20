@@ -6,89 +6,114 @@ filein( getFilenamePath(getSourceFileName()) + "/../MirrorByGizmo.ms" )	-- "./..
 /** Create objects
   *
   */
-function createObjects pos wirecolor:green  =
+function createObjects pos count =
 (
 	--format "\n"; print "MirrorByGizmoTest.ms.createObjects()"
 	nodes = #()
 
-	for i = 1 to 3 do
+	delete objects
+
+	--for i = 1 to 3 do
+	for i = 1 to count do
+	--for i = 1 to 1 do
 	(
 		pos.y += 100
 
-		append nodes (Teapot pos:pos  wirecolor:wirecolor)
+		obj = Teapot pos:pos
+		--obj = Sphere pos:pos
+		--obj = Box pos:pos
+
+		obj.name += "Top"
+
+		obj.wirecolor = color  ( random 64 255 ) ( random 64 255 )  ( random 64 255 )
+
+		--obj.pivot = [ -50, 50, -10 ]
+		--obj.pivot += [ 0, 0, -10 ]
+		--obj.pivot += [ 0, 0, 0 ]
+
+		append nodes ( obj )
 	)
 
 	nodes --return
 )
 
-
-/** MIRROR EACH OBJECT BY ITS OWN PIVOT
+/** Mirror each object
   *
   */
-function mirrorByPivotPointCenter =
+function mirrorEachObject =
 (
-	--format "\n"; print "MirrorByGizmoTest.ms.mirrorSelectionByPivot()"
-	select (createObjects [-100, 0, 0] wirecolor:green )
+	select objects
 
-
+	/** MIRROR EACH OBJECT BY ITS OWN PIVOT
+	  *
+	  */
 	SetCoordCenter #LOCAL -- IMPORTANT
 
 	toolMode.axisConstraints = #Z
-
+	--toolMode.axisConstraints = #X
 
 	(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
-
 )
 
 
 /** MIRROR SELECTION BY WORLD
-  *
-  * HOW TO SET GIZMO FOR MIRRORING:
-  *
-  * 	1) Use Transform Coordinate Center https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-7FAE565D-05D2-4E34-98D0-490B6BBC3D0C
-  *
-  * 	2) Set WORLD Reference Coordinate System https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-0F3E2822-9296-42E5-A572-B600884B07E3
-  *
+  * 	 Use Transform Coordinate Center D2-4E34-98D0-490B6BBC3D0C
   */
-function mirrorByWorld =
+function mirrorSelectionByWorld =
 (
-	--format "\n"; print "MirrorByGizmoTest.ms.mirrorByWorld()"
+	select objects
 
-	select (createObjects [100, 0, 0] wirecolor:blue )
+	for obj in selection do obj.name += "Left"
 
-	toolMode.axisConstraints = #X
+	toolMode.axisConstraints = #Y
+
+	SetCoordCenter #SYSTEM  -- IMPORTANT https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-7FAE565D-05
+
+	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
 
 
-	SetCoordCenter #SYSTEM  -- IMPORTANT
-
-	--toolMode.coordsys #world
-
-	(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
+	mirrored_objects.wirecolor = green
 
 )
+
+
 
 /** MIRROR SELECTION BY SHARED PIVOT
   *
   */
 function mirrorBySelectionCenter =
 (
-	--format "\n"; print "MirrorByGizmoTest.ms.mirrorSelectionByPivot()"
-	nodes = #()
+	select objects
 
-	select (createObjects([-100, 0, 0]))
+	--move $ [ 0, 200, 0]
 
-	select nodes
+	toolMode.axisConstraints = #XY
+	--toolMode.axisConstraints = #YZ
+	--toolMode.axisConstraints = #Y
+	--toolMode.axisConstraints = #X
 
-	SetCoordCenter #SELECTION
+	SetCoordCenter #SELECTION  -- IMPORTANT  https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-7FAE565D-05D2-4E34-98D0-490B6BBC3D0C
+
+	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
+
+	--select mirrored_objects
+	--move mirrored_objects [ -10, 0, 0]
 
 )
 
 
-delete objects
+/*------------------------------------------------------------------------------
+	IMPORTANT: TEST ARE IN CHAIN EACH TEST DEPENDS ON PRECEDED TEST
+--------------------------------------------------------------------------------*/
 
---mirrorByPivotPointCenter()
+createObjects [-100, 0, 0] 2
 
-mirrorByWorld()
+--mirrorEachObject()
+--mirrorSelectionByWorld()
+mirrorBySelectionCenter()
 
---mirrorBySelectionCenter()
+
+
+
+
 

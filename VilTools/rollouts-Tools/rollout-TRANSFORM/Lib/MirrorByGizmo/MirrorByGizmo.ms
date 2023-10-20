@@ -1,11 +1,22 @@
 
 
-/** Mirror by gizmo
+/** Mirror		 by gizmo
  */
 struct MirrorByGizmo_v
 (
 	/* construct */
+	objects_to_mirror,
+
+	coord_center	= GetCoordCenter(), --  #LOCAL|#SELECTION|#SYSTEM -- #system is used as world "WORLD"
+
+	mirror_axis,
+
+	clone_type,
+
 	/* properties */
+
+
+	selection_center,
 
 	/** Mirror by current state of gizmo
 	  *
@@ -17,13 +28,42 @@ struct MirrorByGizmo_v
 	 */
 	function mirrorSelection clone_type =
 	(
-		/* GET CURRENT ACTIVE AXISES */
+		this.clone_type = clone_type
 
-		objects_to_mirror = this.getSelectionWithouGroupMembers()
+		this.mirror_axis = toolMode.axisConstraints
 
-		new_instances = #()
+		objects_to_mirror = this.getObjectsWithouGroupMembers( selection )
 
-		mirror_tm = case toolMode.axisConstraints of
+		mirrored_objects = #()
+
+		selection_center = selection.center
+
+
+		/* MIRROR EACH OBJECT  */
+		--if coord_center != #SELECTION then
+		for obj in objects_to_mirror do
+			append (mirrored_objects)(this.mirrorObj (obj))
+
+		mirrored_objects --return
+	),
+
+	/** Mirror obj
+	  *
+	  */
+	function mirrorObj obj =
+	(
+		format "\n"; print "MirrorByGizmo_v.mirrorObj()"
+
+
+		format "coord_center:	% \n" coord_center
+		format "selection_center:	% \n" selection_center
+
+		/** Get axis index
+		  *
+		  */
+		function getAxisIndex = for i = 1 to ( axises_string = this.mirror_axis as string ).count collect findItem #( #X, #Y, #Z ) (axises_string[i] as name )
+
+		mirror_tm = case mirror_axis of
 		(
 			#X:[-1, 1, 1]
 			#Y:[ 1,-1, 1]
@@ -34,27 +74,35 @@ struct MirrorByGizmo_v
 			#ZX:[-1, 1,-1]
 		)
 
-		for obj in objects_to_mirror do
+		axises = #( #X, #Y, #Z )
+
+		maxOps.cloneNodes obj cloneType:this.clone_type newNodes:&nll
+
+		mirrored_obj = nll[1]
+
+		mirrored_tm = mirrored_obj.transform * ( ScaleMatrix mirror_tm ) -- mirror by WORLD axis
+
+		if coord_center != #SYSTEM then -- #LOCAL -- set mirrored positions to original positions
+			mirrored_tm.pos = obj.pos
+
+		if coord_center == #SELECTION then -- flip mirrored positions by selection center
 		(
-			maxOps.cloneNodes obj cloneType:clone_type newNodes:&nnl
+			offset = selection_center + (selection_center - obj.transform.pos)
 
-			_instance = nnl[1]
-
-			append new_instances _instance
-
-			mirrored_transform = _instance.transform * ( ScaleMatrix mirror_tm )
-
-			if GetCoordCenter() == #LOCAL then -- mirro by each object pivot
-				mirrored_transform.pos = _instance.transform.pos
-
-			_instance.transform = mirrored_transform
-
-			this.replaceSideName (_instance)
+			for axis in getAxisIndex() do
+				case axis of
+				(
+					1: ( mirrored_tm.pos.x = offset.x )
+					2: ( mirrored_tm.pos.y = offset.y )
+					3: ( mirrored_tm.pos.z = offset.z )
+				)
 		)
 
-		select new_instances
+		mirrored_obj.transform = mirrored_tm
 
+		mirrored_obj --return
 	),
+
 
 	/** Replace name
 	 */
@@ -91,17 +139,17 @@ struct MirrorByGizmo_v
 
 	/** Get selection without members of closed group
 	 */
-	function getSelectionWithouGroupMembers =
+	function getObjectsWithouGroupMembers _objects =
 	(
 		mapped function getAllChildren node &children = (if isValidNode node and isKindOf children Array do join children node.children)
 
 		children = #()
 
-		groups_closed = for o in ( _selection = selection as Array ) where isGroupHead o and isOpenGroupHead o == false and findItem _selection o.parent == 0 collect o
+		groups_closed = for o in ( _selection = _objects as Array ) where isGroupHead o and isOpenGroupHead o == false and findItem _selection o.parent == 0 collect o
 
 		getAllChildren groups_closed &children
 
-		for o in selection where findItem children o == 0 collect o --return
+		for o in _objects where findItem children o == 0 collect o --return
 	),
 
 
