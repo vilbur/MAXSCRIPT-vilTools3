@@ -41,25 +41,26 @@ struct MirrorByGizmo_v
 
 		/* MIRROR EACH OBJECT  */
 		--if coord_center != #SELECTION then
-		for obj in objects_to_mirror do
-			append (mirrored_objects)(this.mirrorObj (obj))
+		for source_obj in objects_to_mirror do
+		(
+			mirrored_obj = this.mirrorObj (source_obj)
+
+			this._saveMirrorSetupToObjProps (source_obj) (mirrored_obj)
+
+			append (mirrored_objects)(mirrored_obj)
+		)
 
 		mirrored_objects --return
 	),
 
-	/** Mirror obj
+	/** Mirror source_obj
 	  *
 	  */
-	function mirrorObj obj =
+	function mirrorObj source_obj =
 	(
-		format "\n"; print "MirrorByGizmo_v.mirrorObj()"
-
-
-		format "coord_center:	% \n" coord_center
-		format "selection_center:	% \n" selection_center
+		--format "\n"; print "MirrorByGizmo_v.mirrorObj()"
 
 		/** Get axis index
-		  *
 		  */
 		function getAxisIndex = for i = 1 to ( axises_string = this.mirror_axis as string ).count collect findItem #( #X, #Y, #Z ) (axises_string[i] as name )
 
@@ -76,18 +77,18 @@ struct MirrorByGizmo_v
 
 		axises = #( #X, #Y, #Z )
 
-		maxOps.cloneNodes obj cloneType:this.clone_type newNodes:&nll
+		maxOps.cloneNodes source_obj cloneType:this.clone_type newNodes:&nll
 
 		mirrored_obj = nll[1]
 
 		mirrored_tm = mirrored_obj.transform * ( ScaleMatrix mirror_tm ) -- mirror by WORLD axis
 
 		if coord_center != #SYSTEM then -- #LOCAL -- set mirrored positions to original positions
-			mirrored_tm.pos = obj.pos
+			mirrored_tm.pos = source_obj.pos
 
 		if coord_center == #SELECTION then -- flip mirrored positions by selection center
 		(
-			offset = selection_center + (selection_center - obj.transform.pos)
+			offset = selection_center + (selection_center - source_obj.transform.pos)
 
 			for axis in getAxisIndex() do
 				case axis of
@@ -103,16 +104,81 @@ struct MirrorByGizmo_v
 		mirrored_obj --return
 	),
 
+	/** Get mirrored objects
+	  *
+	  */
+	function getMirroredObjects object_set =
+	(
+		--format "\n"; print "MirrorByGizmo_v.getMirroredObjects()"
+		for obj in object_set where getUserProp obj "mirror_setup" != undefined collect obj
+	),
+
+	/** Restore mirrors
+	  *
+	  * @param ObjectSet mirrored_objects obejcts with userprop "mirror_setup"
+	  */
+	function restoreMirrors mirrored_objects =
+	(
+		format "\n"; print "MirrorByGizmo_v.restoreMirrors()"
+		format "mirrored_objects:	% \n" mirrored_objects
+		for  mirrored_object in mirrored_objects where (mirror_setup = getUserProp mirrored_object "mirror_setup") != undefined do
+			--format "mirrored_object:	% \n" mirrored_object
+			this._restoreObject (mirrored_object) (execute mirror_setup)
+	),
+
+	private
+
+
+	/** Restore object
+	  *
+	  */
+	function _restoreObject mirrored_object mirror_setup =
+	(
+		format "\n"; print "MirrorByGizmo_v._restoreObject()"
+		format "mirrored_object:	% \n" mirrored_object
+		format "mirror_setup:	% \n" mirror_setup
+		if (source_obj = getAnimByHandle mirror_setup[#source] ) != undefined  then
+		(
+
+			for key in mirror_setup.keys where key != #source do
+				setProperty this key mirror_setup[key]
+
+			delete mirrored_object
+
+			remirrored = this.mirrorObj (source_obj)
+
+		)
+
+		remirrored --return
+	),
+
+
+
+	/** Save mirror setup to source_obj props
+	  *
+	  */
+	function _saveMirrorSetupToObjProps source_obj mirrored_obj =
+	(
+		--format "\n"; print "MirrorByGizmo_v.saveMirrorSetupToObjProps()"
+		setup = Dictionary()
+
+		setup[#source]	= getHandleByAnim source_obj
+		setup[#clone_type]	= clone_type
+		setup[#mirror_axis]	= mirror_axis
+		setup[#coord_center]	= coord_center
+
+		setUserProp mirrored_obj "mirror_setup" (setup as string )
+	),
 
 	/** Replace name
 	 */
-	function replaceSideName obj =
+	function replaceSideName source_obj =
 	(
 		--format "\n"; print ".replaceSideName()"
-		--format "obj.name	= % \n" obj.name
+		--format "source_obj.name	= % \n" source_obj.name
 		ignore_case = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 		--RegEx = dotNetObject "System.Text.RegularExpressions.Regex"
-		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches obj.name "(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)" ignore_case
+		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches source_obj.name "(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)" ignore_case
 		result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
 		--format "result	= % \n" result
 
@@ -127,15 +193,14 @@ struct MirrorByGizmo_v
 				#TOP:    "Bottom"
 				#BOTTOM: "Top"
 			)
-			obj.name	= ( dotNetObject "System.Text.RegularExpressions.Regex" (current_side+"\d+") ignore_case ).Replace obj.name other_side -- replace name E.G.: foo-Left001 >>> foo-Right
+			source_obj.name	= ( dotNetObject "System.Text.RegularExpressions.Regex" (current_side+"\d+") ignore_case ).Replace source_obj.name other_side -- replace name E.G.: foo-Left001 >>> foo-Right
 		)
 
-		if obj.children.count > 0 then
-			for child in obj.children do
+		if source_obj.children.count > 0 then
+			for child in source_obj.children do
 				replaceSideName(child)
 	),
 
-	private
 
 	/** Get selection without members of closed group
 	 */
