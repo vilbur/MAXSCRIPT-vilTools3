@@ -5,9 +5,9 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/MirrorByGizmo/MirrorByGizmo
   */
 macroscript	selection_mirror_instance
 category:	"_Mirror"
-buttontext:	"Instance By Wolrd"
-toolTip:	"Mirror instances by world axis.\n\nRename mirrored objects LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP"
-icon:	"MENU:Mirror Instance By Wolrd"
+buttontext:	"Mirror Instance"
+toolTip:	"Mirror instances.\n\nRename mirrored objects LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP.\n\nMirrored objects keeps data about mirroring in user properties"
+icon:	"MENU:true"
 (
 	on execute do
 	(
@@ -15,11 +15,85 @@ icon:	"MENU:Mirror Instance By Wolrd"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Mirror" on
-			(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
+			select ((MirrorByGizmo_v()).mirrorSelection(#INSTANCE))
 	)
 )
 
---/**
+/**
+  */
+macroscript	selection_mirror_copy
+category:	"_Mirror"
+buttontext:	"Mirror Copy"
+toolTip:	"Mirror copy.\n\nRename mirrored objects LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP.\n\nMirrored objects keeps data about mirroring in user properties"
+icon:	"MENU:true"
+(
+	on execute do
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+
+		undo "Mirror" on
+			select ((MirrorByGizmo_v()).mirrorSelection(#COPY))
+	)
+)
+
+/**
+  */
+macroscript	selection_mirror_restore
+category:	"_Mirror"
+buttontext:	"Restore Mirrors"
+toolTip:	"Restore mirroring of selected objects by data in user properties.\n\nIF NOTHING SELECTED, THEN ALL OBJECTS IN SCENE ARE RESTORED"
+icon:	"MENU:true"
+(
+	on execute do
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+
+		undo "Restore Mirrors" on
+		(
+			MirrorByGizmo = MirrorByGizmo_v()
+
+			objects_to_search =  if selection.count > 0 then selection else objects
+			--format "objects_to_search:	% \n" objects_to_search
+
+			mirrored_objects = MirrorByGizmo.getMirroredObjects( objects_to_search )
+			--format "mirrored_objects:	% \n" mirrored_objects
+			restored_mirrors = MirrorByGizmo.restoreMirrors( mirrored_objects )
+
+			--select restored_mirrors
+		)
+	)
+)
+
+/**
+  */
+macroscript	selection_mirror_get_source_objects
+category:	"_Mirror"
+buttontext:	"Get Source Objs"
+toolTip:	"Get source objects of mirrorred objects"
+icon:	"MENU:true"
+(
+	on execute do
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+
+		undo "Restore Mirrors" on
+		(
+			objects_to_search = if selection.count > 0 then selection else objects
+
+			source_objects = (MirrorByGizmo_v()).getSourceObjects( objects_to_search )
+
+			select source_objects
+		)
+	)
+)
+
+
+
+
+
 --  */
 --macroscript	selection_mirror_copy
 --category:	"_Mirror"

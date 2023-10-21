@@ -14,9 +14,13 @@ struct MirrorByGizmo_v
 	clone_type,
 
 	/* properties */
-
-
 	selection_center,
+
+	objects_to_mirror_source,
+
+	user_prop_key = "mirror_setup",
+
+	mirror_sources = Dictionary( #string ), -- #( "objectPointerOfSourceObject", #(mirrored_nodes) )
 
 	/** Mirror by current state of gizmo
 	  *
@@ -28,6 +32,8 @@ struct MirrorByGizmo_v
 	 */
 	function mirrorSelection clone_type =
 	(
+		this.objects_to_mirror_source = selection
+
 		this.clone_type = clone_type
 
 		this.mirror_axis = toolMode.axisConstraints
@@ -46,6 +52,8 @@ struct MirrorByGizmo_v
 			mirrored_obj = this.mirrorObj (source_obj)
 
 			this._saveMirrorSetupToObjProps (source_obj) (mirrored_obj)
+
+			this.replaceName(mirrored_obj)
 
 			append (mirrored_objects)(mirrored_obj)
 		)
@@ -107,24 +115,69 @@ struct MirrorByGizmo_v
 	/** Get mirrored objects
 	  *
 	  */
-	function getMirroredObjects object_set =
+	function getMirroredObjects _objects =
 	(
 		--format "\n"; print "MirrorByGizmo_v.getMirroredObjects()"
-		for obj in object_set where getUserProp obj "mirror_setup" != undefined collect obj
+		if classOf _objects == ObjectSet then
+			_objects = _objects as Array
+
+
+		mirrored_objects = for obj in _objects where this._getMirrorSetupData(obj) != undefined collect obj
+
+		if mirrored_objects.count > 0 then
+			mirrored_objects --return
+		else
+			#() -- fallback
 	),
 
 	/** Restore mirrors
 	  *
-	  * @param ObjectSet mirrored_objects obejcts with userprop "mirror_setup"
+	  * @param ObjectSet mirrored_objects obejcts with userprop user_prop_key
 	  */
 	function restoreMirrors mirrored_objects =
 	(
-		format "\n"; print "MirrorByGizmo_v.restoreMirrors()"
-		format "mirrored_objects:	% \n" mirrored_objects
-		for  mirrored_object in mirrored_objects where (mirror_setup = getUserProp mirrored_object "mirror_setup") != undefined do
-			--format "mirrored_object:	% \n" mirrored_object
-			this._restoreObject (mirrored_object) (execute mirror_setup)
+		--format "\n"; print "MirrorByGizmo_v.restoreMirrors()"
+		this._setMirrorSources()
+
+		mirrored_objects = this.getMirroredObjects (mirrored_objects)
+
+		re_mirrored_objects = #()
+
+		for  mirrored_obj in mirrored_objects do
+			append (re_mirrored_objects) (this._restoreObject (mirrored_obj))
+
+
+		if re_mirrored_objects.count == 0 then
+			messageBox "Nothing to restore" title:"RESTORE MIRRORED OBJECTS"  beep:false
+
+
+		mirrored_objects --return
 	),
+
+	/** Get source object
+	  *
+	  */
+	function getSourceObjects objects_to_search =
+	(
+		--format "\n"; print "MirrorByGizmo_v.getSourceObjects()"
+		source_objects = #()
+
+		mirrored_objects = this.getMirroredObjects (objects_to_search)
+
+		for mirrored_obj in mirrored_objects do
+		(
+			mirror_setup = this._getMirrorSetupData (mirrored_obj)
+
+			source_obj = getAnimByHandle mirror_setup[#source]
+
+			if isValidNode source_obj then
+				appendIfUnique source_objects source_obj
+
+		)
+
+		source_objects --return
+	),
+
 
 	private
 
@@ -132,26 +185,96 @@ struct MirrorByGizmo_v
 	/** Restore object
 	  *
 	  */
-	function _restoreObject mirrored_object mirror_setup =
+	function _restoreObject mirrored_obj  =
 	(
-		format "\n"; print "MirrorByGizmo_v._restoreObject()"
-		format "mirrored_object:	% \n" mirrored_object
-		format "mirror_setup:	% \n" mirror_setup
-		if (source_obj = getAnimByHandle mirror_setup[#source] ) != undefined  then
+		--format "\n"; print "MirrorByGizmo_v._restoreObject()"
+
+		/** Replace source object in objects
+		  *
+		  */
+		function replaceSourceInObjects mirrored_pointer remirrored_pointer =
+		(
+			--format "\n"; print "MirrorByGizmo_v.replaceSourceInObjects()"
+			for mirror_source_pointer in mirror_sources.keys where mirror_source_pointer == mirrored_pointer as string do
+				for mirrored_obj in mirror_sources[mirror_source_pointer] where isValidNode mirrored_obj do
+				(
+					mirror_setup = this._getMirrorSetupData (mirrored_obj)
+
+					mirror_setup[#source] = remirrored_pointer
+
+					this._setUserProps (mirrored_obj) (mirror_setup)
+				)
+		)
+
+		mirror_setup = this._getMirrorSetupData (mirrored_obj)
+
+		if (source_objects = this.getSourceObjects (mirrored_obj) ) != undefined  then
 		(
 
+			source_obj = source_objects[1]
+
+			/* CONFIGURE this for restore mirroring */
 			for key in mirror_setup.keys where key != #source do
 				setProperty this key mirror_setup[key]
 
-			delete mirrored_object
+			transform_bak	= mirrored_obj.transform
+			parent_bak	= mirrored_obj.parent
 
-			remirrored = this.mirrorObj (source_obj)
+			mirrored_pointer = getHandleByAnim mirrored_obj
+
+			delete mirrored_obj
+			--format "source_obj:	% \n" source_obj
+			remirrored_obj = this.mirrorObj (source_obj)
+
+			replaceSourceInObjects (mirrored_pointer) (getHandleByAnim remirrored_obj)
+
+			this._saveMirrorSetupToObjProps (source_obj) (remirrored_obj)
+
+			this.replaceName(remirrored_obj)
+
+			remirrored_obj.transform	= transform_bak
+			remirrored_obj.parent	= parent_bak
 
 		)
 
-		remirrored --return
+		remirrored_obj --return
 	),
 
+	/** Get mirrored objects in scene
+	  *
+	  */
+	function _setMirrorSources =
+	(
+		--format "\n"; print "MirrorByGizmo_v._setMirrorSources()"
+		mirrored_objects_in_scene = this.getMirroredObjects ( objects )
+		--format "mirrored_objects_in_scene:	% \n" mirrored_objects_in_scene
+		for obj in mirrored_objects_in_scene do
+		(
+			mirror_setup = this._getMirrorSetupData(obj)
+			--format "mirror_setup:	% \n" mirror_setup
+			source_pointer = mirror_setup[#source] as string
+			--format "source_pointer:	% \n" source_pointer
+			if mirror_sources[source_pointer] == undefined then
+				mirror_sources[source_pointer] = #()
+
+			append mirror_sources[source_pointer] obj
+		)
+		--format "mirror_sources:	% \n" mirror_sources
+
+	),
+
+	/** Get mirror setup data
+	  *
+	  */
+	function _getMirrorSetupData mirrored_obj =
+	(
+		--format "\n"; print "MirrorByGizmo_v._getMirrorSetupData()"
+
+		mirror_setup = getUserProp mirrored_obj user_prop_key
+		--format "mirror_setup:	% \n" mirror_setup
+		if mirror_setup != undefined  then
+			execute mirror_setup --return
+	),
 
 
 	/** Save mirror setup to source_obj props
@@ -160,31 +283,36 @@ struct MirrorByGizmo_v
 	function _saveMirrorSetupToObjProps source_obj mirrored_obj =
 	(
 		--format "\n"; print "MirrorByGizmo_v.saveMirrorSetupToObjProps()"
-		setup = Dictionary()
+		mirror_setup = Dictionary()
 
-		setup[#source]	= getHandleByAnim source_obj
-		setup[#clone_type]	= clone_type
-		setup[#mirror_axis]	= mirror_axis
-		setup[#coord_center]	= coord_center
+		mirror_setup[#source]	= getHandleByAnim source_obj
+		mirror_setup[#clone_type]	= clone_type
+		mirror_setup[#mirror_axis]	= mirror_axis
+		mirror_setup[#coord_center]	= coord_center
 
-		setUserProp mirrored_obj "mirror_setup" (setup as string )
+		this._setUserProps (mirrored_obj) (mirror_setup)
+	),
+
+	/** Set user props
+	  *
+	  */
+	function _setUserProps obj mirror_setup =
+	(
+		--format "\n"; print "MirrorByGizmo_v.setUserProps()"
+		setUserProp obj user_prop_key ( mirror_setup as string )
 	),
 
 	/** Replace name
 	 */
-	function replaceSideName source_obj =
+	function replaceName mirrored_obj =
 	(
-		--format "\n"; print ".replaceSideName()"
-		--format "source_obj.name	= % \n" source_obj.name
-		ignore_case = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
-		--RegEx = dotNetObject "System.Text.RegularExpressions.Regex"
-		matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches source_obj.name "(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)" ignore_case
-		result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
-		--format "result	= % \n" result
+		--format "\n"; print ".replaceName()"
+		orientation_match = this._rxGetMatch (mirrored_obj.name)("(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)\d*$")
+		--format "orientation_match:	% \n" orientation_match
 
-		if result.count > 0 then
+		if orientation_match.count > 0 then
 		(
-			other_side = case (current_side = result[1][1] ) as name of
+			other_side = case (current_side = orientation_match[2] ) as name of
 			(
 				#LEFT:   "Right"
 				#RIGHTR: "Left"
@@ -193,14 +321,14 @@ struct MirrorByGizmo_v
 				#TOP:    "Bottom"
 				#BOTTOM: "Top"
 			)
-			source_obj.name	= ( dotNetObject "System.Text.RegularExpressions.Regex" (current_side+"\d+") ignore_case ).Replace source_obj.name other_side -- replace name E.G.: foo-Left001 >>> foo-Right
+
+			mirrored_obj.name = this._rxReplace (mirrored_obj.name) (current_side+"\d*") (other_side)
 		)
 
-		if source_obj.children.count > 0 then
-			for child in source_obj.children do
-				replaceSideName(child)
+		if mirrored_obj.children.count > 0 then
+			for child in mirrored_obj.children do
+				this.replaceName(child)
 	),
-
 
 	/** Get selection without members of closed group
 	 */
@@ -217,6 +345,31 @@ struct MirrorByGizmo_v
 		for o in _objects where findItem children o == 0 collect o --return
 	),
 
+	/** Regex get match
+	  */
+	function _rxGetMatch _string pattern ignore_case:true =
+	(
+		RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
+
+		IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+		matches = if ignore_case then RegEx.matches _string pattern IgnoreCase else RegEx.matches _string pattern
+
+		groups = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
+
+		if groups.count == 1 then groups[1] else groups
+	),
+
+	/** Regex replace
+	  */
+	function _rxReplace _string _search _replace ignore_case:true =
+	(
+		IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+		RegExReplace = if ignore_case then ( dotNetObject "System.Text.RegularExpressions.Regex" _search IgnoreCase ) else ( dotNetObject "System.Text.RegularExpressions.Regex" _search )
+
+		RegExReplace.Replace _string _replace
+	),
 
 	/**
 	 */

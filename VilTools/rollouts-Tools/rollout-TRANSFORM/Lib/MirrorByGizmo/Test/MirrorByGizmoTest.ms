@@ -23,7 +23,7 @@ function createObjects pos count =
 		--obj = Sphere pos:pos
 		--obj = Box pos:pos
 
-		obj.name += "Top"
+		obj.name += "-Top"
 
 		obj.wirecolor = color  ( random 64 255 ) ( random 64 255 )  ( random 64 255 )
 
@@ -53,7 +53,9 @@ function mirrorEachObject =
 	--toolMode.axisConstraints = #X
 
 	--(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
-	(MirrorByGizmo_v()).mirrorSelection(#COPY)
+	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#COPY)
+
+	select mirrored_objects
 )
 
 
@@ -62,9 +64,9 @@ function mirrorEachObject =
   */
 function mirrorSelectionByWorld =
 (
-	select objects
+	--select objects
 
-	for obj in selection do obj.name += "Left"
+	for obj in selection do obj.name += "-Back"
 
 	toolMode.axisConstraints = #Y
 
@@ -83,7 +85,9 @@ function mirrorSelectionByWorld =
   */
 function mirrorBySelectionCenter =
 (
-	select objects
+	--select objects
+
+	for obj in selection do obj.name += "-Left"
 
 	toolMode.axisConstraints = #XY
 	--toolMode.axisConstraints = #YZ
@@ -93,8 +97,9 @@ function mirrorBySelectionCenter =
 	SetCoordCenter #SELECTION  -- IMPORTANT  https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-7FAE565D-05D2-4E34-98D0-490B6BBC3D0C
 
 	--(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
-	(MirrorByGizmo_v()).mirrorSelection(#COPY)
+	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#COPY)
 
+	select mirrored_objects
 )
 
 /** Restore mirrors
@@ -107,9 +112,13 @@ function restoreMirrors =
 
 	mirrored_objects = MirrorByGizmo.getMirroredObjects( objects )
 
-	select mirrored_objects
+	if mirrored_objects != undefined then
+	(
+		select mirrored_objects
 
-	MirrorByGizmo.restoreMirrors( mirrored_objects )
+		MirrorByGizmo.restoreMirrors( mirrored_objects )
+
+	)
 )
 
 
@@ -117,19 +126,20 @@ function restoreMirrors =
 	CREATE TEST OBEJCTS
 --------------------------------------------------------------------------------*/
 
+createObjects [-100, 0, 0] 1
 --createObjects [-100, 0, 0] 2
 
 /*------------------------------------------------------------------------------
 	MIRROR TEST
 --------------------------------------------------------------------------------*/
---mirrorEachObject()
---mirrorSelectionByWorld()
+mirrorEachObject()
+mirrorSelectionByWorld()
 --mirrorBySelectionCenter()
 
 /*------------------------------------------------------------------------------
 	RESTORE MIRRORS
 --------------------------------------------------------------------------------*/
-restoreMirrors()
+--restoreMirrors()
 
 
 
