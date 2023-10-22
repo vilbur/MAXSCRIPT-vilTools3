@@ -1,5 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/MirrorByGizmo/MirrorByGizmo.ms" )	-- "./Lib/MirrorByGizmo/MirrorByGizmo.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/MirrorRestore/MirrorRestore.ms" )	-- "./Lib/MirrorRestore/MirrorRestore.ms"
 
 /**
   */
@@ -15,7 +15,7 @@ icon:	"MENU:true"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Mirror" on
-			select ((MirrorByGizmo_v()).mirrorSelection(#INSTANCE))
+			select ((MirrorByGizmo_v()).mirrorObjects( selection )(#INSTANCE))
 	)
 )
 
@@ -33,7 +33,7 @@ icon:	"MENU:true"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Mirror" on
-			select ((MirrorByGizmo_v()).mirrorSelection(#COPY))
+			select ((MirrorByGizmo_v()).mirrorObjects( selection )(#COPY))
 	)
 )
 
@@ -52,16 +52,11 @@ icon:	"MENU:true"
 
 		undo "Restore Mirrors" on
 		(
-			MirrorByGizmo = MirrorByGizmo_v()
+			objects_to_search_for_restore =  if selection.count > 0 then selection else objects
 
-			objects_to_search =  if selection.count > 0 then selection else objects
-			--format "objects_to_search:	% \n" objects_to_search
+			restored_mirrors = (MirrorRestore_v()).restoreMirrors( objects_to_search_for_restore )
 
-			mirrored_objects = MirrorByGizmo.getMirroredObjects( objects_to_search )
-			--format "mirrored_objects:	% \n" mirrored_objects
-			restored_mirrors = MirrorByGizmo.restoreMirrors( mirrored_objects )
-
-			--select restored_mirrors
+			select restored_mirrors
 		)
 	)
 )
@@ -70,7 +65,7 @@ icon:	"MENU:true"
   */
 macroscript	selection_mirror_get_source_objects
 category:	"_Mirror"
-buttontext:	"Get Source Objs"
+buttontext:	"Get Source Objects"
 toolTip:	"Get source objects of mirrorred objects"
 icon:	"MENU:true"
 (
@@ -107,7 +102,7 @@ icon:	"MENU:true"
 --		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\MIRROR.mcr"
 --
 --		undo "Mirror X" on
---			mirrorSelection(#WORLD)(#COPY)
+--			mirrorObjects( selection )(#WORLD)(#COPY)
 --	)
 --)
 
@@ -128,7 +123,7 @@ icon:	"MENU:true"
 --		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
 --
 --		undo "Mirror X" on
---			mirrorSelection(#PIVOT)(#INSTANCE)
+--			mirrorObjects( selection )(#PIVOT)(#INSTANCE)
 --	)
 --)
 --
@@ -146,6 +141,6 @@ icon:	"MENU:true"
 --		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
 --
 --		undo "Mirror X" on
---			mirrorSelection(#PIVOT)(#COPY)
+--			mirrorObjects( selection )(#PIVOT)(#COPY)
 --	)
 --)

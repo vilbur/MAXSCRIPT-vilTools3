@@ -1,5 +1,4 @@
 
-
 /** Mirror		 by gizmo
  */
 struct MirrorByGizmo_v
@@ -7,20 +6,17 @@ struct MirrorByGizmo_v
 	/* construct */
 	objects_to_mirror,
 
+	/* setup */
 	coord_center	= GetCoordCenter(), --  #LOCAL|#SELECTION|#SYSTEM -- #system is used as world "WORLD"
 
 	mirror_axis,
 
 	clone_type,
 
-	/* properties */
 	selection_center,
 
-	objects_to_mirror_source,
-
+	/* properties */
 	user_prop_key = "mirror_setup",
-
-	mirror_sources = Dictionary( #string ), -- #( "objectPointerOfSourceObject", #(mirrored_nodes) )
 
 	/** Mirror by current state of gizmo
 	  *
@@ -30,33 +26,29 @@ struct MirrorByGizmo_v
 	  * @param #WOLRD|#PIVOT Mirror by world axis or object pivot
 	  *
 	 */
-	function mirrorSelection clone_type =
+	function mirrorObjects objects_to_mirror clone_type =
 	(
-		this.objects_to_mirror_source = selection
+		--format "\n"; print "MirrorByGizmo_v.mirrorObjects()"
+		mirrored_objects = #()
+
+		objects_to_mirror = this._getObjectsWithouGroupMembers( objects_to_mirror )
+
+		--this.objects_to_mirror_source = objects_to_mirror_source
 
 		this.clone_type = clone_type
 
 		this.mirror_axis = toolMode.axisConstraints
 
-		objects_to_mirror = this.getObjectsWithouGroupMembers( selection )
-
-		mirrored_objects = #()
 
 		selection_center = selection.center
 
+		--format "coord_center:	% \n" coord_center
 
 		/* MIRROR EACH OBJECT  */
 		--if coord_center != #SELECTION then
 		for source_obj in objects_to_mirror do
-		(
-			mirrored_obj = this.mirrorObj (source_obj)
+			append (mirrored_objects)(this.mirrorObj (source_obj))
 
-			this._saveMirrorSetupToObjProps (source_obj) (mirrored_obj)
-
-			this.replaceName(mirrored_obj)
-
-			append (mirrored_objects)(mirrored_obj)
-		)
 
 		mirrored_objects --return
 	),
@@ -66,7 +58,7 @@ struct MirrorByGizmo_v
 	  */
 	function mirrorObj source_obj =
 	(
-		--format "\n"; print "MirrorByGizmo_v.mirrorObj()"
+		format "\n"; print "MirrorByGizmo_v.mirrorObj()"
 
 		/** Get axis index
 		  */
@@ -91,7 +83,7 @@ struct MirrorByGizmo_v
 
 		mirrored_tm = mirrored_obj.transform * ( ScaleMatrix mirror_tm ) -- mirror by WORLD axis
 
-		if coord_center != #SYSTEM then -- #LOCAL -- set mirrored positions to original positions
+		if coord_center != #SYSTEM then -- if #LOCAL|#SELECTION -- set mirrored positions to original positions
 			mirrored_tm.pos = source_obj.pos
 
 		if coord_center == #SELECTION then -- flip mirrored positions by selection center
@@ -109,172 +101,14 @@ struct MirrorByGizmo_v
 
 		mirrored_obj.transform = mirrored_tm
 
+		this._saveMirrorSetupToObjProps (source_obj) (mirrored_obj)
+
+		this._replaceName(mirrored_obj)
+
 		mirrored_obj --return
 	),
 
-	/** Get mirrored objects
-	  *
-	  */
-	function getMirroredObjects _objects =
-	(
-		--format "\n"; print "MirrorByGizmo_v.getMirroredObjects()"
-		if classOf _objects == ObjectSet then
-			_objects = _objects as Array
-
-
-		mirrored_objects = for obj in _objects where this._getMirrorSetupData(obj) != undefined collect obj
-
-		if mirrored_objects.count > 0 then
-			mirrored_objects --return
-		else
-			#() -- fallback
-	),
-
-	/** Restore mirrors
-	  *
-	  * @param ObjectSet mirrored_objects obejcts with userprop user_prop_key
-	  */
-	function restoreMirrors mirrored_objects =
-	(
-		--format "\n"; print "MirrorByGizmo_v.restoreMirrors()"
-		this._setMirrorSources()
-
-		mirrored_objects = this.getMirroredObjects (mirrored_objects)
-
-		re_mirrored_objects = #()
-
-		for  mirrored_obj in mirrored_objects do
-			append (re_mirrored_objects) (this._restoreObject (mirrored_obj))
-
-
-		if re_mirrored_objects.count == 0 then
-			messageBox "Nothing to restore" title:"RESTORE MIRRORED OBJECTS"  beep:false
-
-
-		mirrored_objects --return
-	),
-
-	/** Get source object
-	  *
-	  */
-	function getSourceObjects objects_to_search =
-	(
-		--format "\n"; print "MirrorByGizmo_v.getSourceObjects()"
-		source_objects = #()
-
-		mirrored_objects = this.getMirroredObjects (objects_to_search)
-
-		for mirrored_obj in mirrored_objects do
-		(
-			mirror_setup = this._getMirrorSetupData (mirrored_obj)
-
-			source_obj = getAnimByHandle mirror_setup[#source]
-
-			if isValidNode source_obj then
-				appendIfUnique source_objects source_obj
-
-		)
-
-		source_objects --return
-	),
-
-
 	private
-
-
-	/** Restore object
-	  *
-	  */
-	function _restoreObject mirrored_obj  =
-	(
-		--format "\n"; print "MirrorByGizmo_v._restoreObject()"
-
-		/** Replace source object in objects
-		  *
-		  */
-		function replaceSourceInObjects mirrored_pointer remirrored_pointer =
-		(
-			--format "\n"; print "MirrorByGizmo_v.replaceSourceInObjects()"
-			for mirror_source_pointer in mirror_sources.keys where mirror_source_pointer == mirrored_pointer as string do
-				for mirrored_obj in mirror_sources[mirror_source_pointer] where isValidNode mirrored_obj do
-				(
-					mirror_setup = this._getMirrorSetupData (mirrored_obj)
-
-					mirror_setup[#source] = remirrored_pointer
-
-					this._setUserProps (mirrored_obj) (mirror_setup)
-				)
-		)
-
-		mirror_setup = this._getMirrorSetupData (mirrored_obj)
-
-		if (source_objects = this.getSourceObjects (mirrored_obj) ) != undefined  then
-		(
-
-			source_obj = source_objects[1]
-
-			/* CONFIGURE this for restore mirroring */
-			for key in mirror_setup.keys where key != #source do
-				setProperty this key mirror_setup[key]
-
-			transform_bak	= mirrored_obj.transform
-			parent_bak	= mirrored_obj.parent
-
-			mirrored_pointer = getHandleByAnim mirrored_obj
-
-			delete mirrored_obj
-			--format "source_obj:	% \n" source_obj
-			remirrored_obj = this.mirrorObj (source_obj)
-
-			replaceSourceInObjects (mirrored_pointer) (getHandleByAnim remirrored_obj)
-
-			this._saveMirrorSetupToObjProps (source_obj) (remirrored_obj)
-
-			this.replaceName(remirrored_obj)
-
-			remirrored_obj.transform	= transform_bak
-			remirrored_obj.parent	= parent_bak
-
-		)
-
-		remirrored_obj --return
-	),
-
-	/** Get mirrored objects in scene
-	  *
-	  */
-	function _setMirrorSources =
-	(
-		--format "\n"; print "MirrorByGizmo_v._setMirrorSources()"
-		mirrored_objects_in_scene = this.getMirroredObjects ( objects )
-		--format "mirrored_objects_in_scene:	% \n" mirrored_objects_in_scene
-		for obj in mirrored_objects_in_scene do
-		(
-			mirror_setup = this._getMirrorSetupData(obj)
-			--format "mirror_setup:	% \n" mirror_setup
-			source_pointer = mirror_setup[#source] as string
-			--format "source_pointer:	% \n" source_pointer
-			if mirror_sources[source_pointer] == undefined then
-				mirror_sources[source_pointer] = #()
-
-			append mirror_sources[source_pointer] obj
-		)
-		--format "mirror_sources:	% \n" mirror_sources
-
-	),
-
-	/** Get mirror setup data
-	  *
-	  */
-	function _getMirrorSetupData mirrored_obj =
-	(
-		--format "\n"; print "MirrorByGizmo_v._getMirrorSetupData()"
-
-		mirror_setup = getUserProp mirrored_obj user_prop_key
-		--format "mirror_setup:	% \n" mirror_setup
-		if mirror_setup != undefined  then
-			execute mirror_setup --return
-	),
 
 
 	/** Save mirror setup to source_obj props
@@ -304,18 +138,18 @@ struct MirrorByGizmo_v
 
 	/** Replace name
 	 */
-	function replaceName mirrored_obj =
+	function _replaceName mirrored_obj =
 	(
-		--format "\n"; print ".replaceName()"
+		--format "\n"; print "._replaceName()"
 		orientation_match = this._rxGetMatch (mirrored_obj.name)("(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)\d*$")
-		--format "orientation_match:	% \n" orientation_match
+		format "orientation_match:	% \n" orientation_match
 
 		if orientation_match.count > 0 then
 		(
 			other_side = case (current_side = orientation_match[2] ) as name of
 			(
 				#LEFT:   "Right"
-				#RIGHTR: "Left"
+				#RIGHT: "Left"
 				#BACK:   "Front"
 				#FRONT:  "Back"
 				#TOP:    "Bottom"
@@ -327,12 +161,12 @@ struct MirrorByGizmo_v
 
 		if mirrored_obj.children.count > 0 then
 			for child in mirrored_obj.children do
-				this.replaceName(child)
+				this._replaceName(child)
 	),
 
 	/** Get selection without members of closed group
 	 */
-	function getObjectsWithouGroupMembers _objects =
+	function _getObjectsWithouGroupMembers _objects =
 	(
 		mapped function getAllChildren node &children = (if isValidNode node and isKindOf children Array do join children node.children)
 

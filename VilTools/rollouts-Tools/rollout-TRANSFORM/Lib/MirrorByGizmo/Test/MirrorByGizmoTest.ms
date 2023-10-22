@@ -1,7 +1,7 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../MirrorByGizmo.ms" )	-- "./../MirrorByGizmo.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/../../MirrorRestore/MirrorRestore.ms" )	-- "./../../MirrorRestore/MirrorRestore.ms"
 
 /** Create objects
   *
@@ -52,8 +52,8 @@ function mirrorEachObject =
 	toolMode.axisConstraints = #Z
 	--toolMode.axisConstraints = #X
 
-	--(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
-	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#COPY)
+	--(MirrorByGizmo_v()).mirrorObjects( selection )(#INSTANCE)
+	mirrored_objects = (MirrorByGizmo_v()).mirrorObjects( selection )(#COPY)
 
 	select mirrored_objects
 )
@@ -72,8 +72,8 @@ function mirrorSelectionByWorld =
 
 	SetCoordCenter #SYSTEM  -- IMPORTANT https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-7FAE565D-05
 
-	--mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
-	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#COPY)
+	--mirrored_objects = (MirrorByGizmo_v()).mirrorObjects( selection )(#INSTANCE)
+	mirrored_objects = (MirrorByGizmo_v()).mirrorObjects( selection )(#COPY)
 
 	mirrored_objects.wirecolor = green
 )
@@ -96,29 +96,10 @@ function mirrorBySelectionCenter =
 
 	SetCoordCenter #SELECTION  -- IMPORTANT  https://help.autodesk.com/view/3DSMAX/2024/ENU/?guid=GUID-7FAE565D-05D2-4E34-98D0-490B6BBC3D0C
 
-	--(MirrorByGizmo_v()).mirrorSelection(#INSTANCE)
-	mirrored_objects = (MirrorByGizmo_v()).mirrorSelection(#COPY)
+	--(MirrorByGizmo_v()).mirrorObjects( selection )(#INSTANCE)
+	mirrored_objects = (MirrorByGizmo_v()).mirrorObjects( selection )(#COPY)
 
 	select mirrored_objects
-)
-
-/** Restore mirrors
-  *
-  */
-function restoreMirrors =
-(
-	--format "\n"; print "MirrorByGizmoTest.ms.restoreMirrors()"
-	MirrorByGizmo = MirrorByGizmo_v()
-
-	mirrored_objects = MirrorByGizmo.getMirroredObjects( objects )
-
-	if mirrored_objects != undefined then
-	(
-		select mirrored_objects
-
-		MirrorByGizmo.restoreMirrors( mirrored_objects )
-
-	)
 )
 
 
@@ -126,21 +107,20 @@ function restoreMirrors =
 	CREATE TEST OBEJCTS
 --------------------------------------------------------------------------------*/
 
-createObjects [-100, 0, 0] 1
+--createObjects [-100, 0, 0] 1
 --createObjects [-100, 0, 0] 2
 
 /*------------------------------------------------------------------------------
 	MIRROR TEST
 --------------------------------------------------------------------------------*/
-mirrorEachObject()
-mirrorSelectionByWorld()
+--mirrorEachObject()
+--mirrorSelectionByWorld()
 --mirrorBySelectionCenter()
 
 /*------------------------------------------------------------------------------
 	RESTORE MIRRORS
 --------------------------------------------------------------------------------*/
---restoreMirrors()
-
+(MirrorRestore_v()).restoreMirrors( objects )
 
 
 
