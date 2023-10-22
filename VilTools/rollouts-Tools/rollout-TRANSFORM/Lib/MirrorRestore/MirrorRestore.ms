@@ -52,7 +52,8 @@ struct MirrorRestore_v
 	  */
 	function _restoreObject mirrored_old  =
 	(
-		--format "\n"; print "MirrorByGizmo_v._restoreObject()"
+		format "\n"; print "MirrorByGizmo_v._restoreObject()"
+		format "mirrored_old:	% \n" mirrored_old
 
 		mirror_setup = this._getMirrorSetupData (mirrored_old)
 
@@ -62,7 +63,7 @@ struct MirrorRestore_v
 			saved_data = this._getObjectStateData (mirrored_old)
 
 			/* DELETE OLD MIRRORED OBEJCT */
-			delete mirrored_old
+			this._deleteOldObject(mirrored_old)
 
 			/* CONFIGURE MIRRORING */
 			this._configureMirrorByGizmo (mirror_setup)
@@ -99,13 +100,31 @@ struct MirrorRestore_v
 		--format "mirrored_old.children:	% \n" mirrored_old.children
 		saved_data = Dictionary()
 
+		children = #()
+
+		if not isGroupHead mirrored_old then
+			children = for child in mirrored_old.children collect child
+
 		saved_data[#transform]	= mirrored_old.transform
 		saved_data[#wirecolor]	= mirrored_old.wirecolor
 		saved_data[#parent]	= mirrored_old.parent
-		saved_data[#children]	= for child in mirrored_old.children collect child
+		saved_data[#children]	= children
 		saved_data[#pointer]	= getHandleByAnim mirrored_old
 
 		saved_data --return
+	),
+
+	/** Delete old object
+	  *
+	  */
+	function _deleteOldObject mirrored_old =
+	(
+		--format "\n"; print "MirrorRestore_v._deleteOldObject()"
+		if isGroupHead mirrored_old then
+			delete ( this._getGroupMembers (mirrored_old) )
+
+		else
+			delete mirrored_old
 	),
 
 	/** Get object state
@@ -184,7 +203,7 @@ struct MirrorRestore_v
 	  */
 	function _replaceSourceInObjects mirrored_pointer remirrored_pointer =
 	(
-		format "\n"; print "MirrorByGizmo_v._replaceSourceInObjects()"
+		--format "\n"; print "MirrorByGizmo_v._replaceSourceInObjects()"
 		for mirror_source_pointer in mirror_sources.keys where mirror_source_pointer == mirrored_pointer as string do
 			for mirrored_old in mirror_sources[mirror_source_pointer] where isValidNode mirrored_old do
 			(
@@ -194,6 +213,21 @@ struct MirrorRestore_v
 
 				this._setUserProps (mirrored_old) (mirror_setup)
 			)
+	),
+
+	/** Get group members
+	  *
+	  */
+	function _getGroupMembers _group =
+	(
+		--format "\n"; print "MirrorByGizmo_v._getGroupMembers()"
+		mapped function getAllChildren _node &children = ( join children #(_node); 	if _node.children.count > 0 then getAllChildren _node.children &children )
+
+		getAllChildren #( _group ) (children = #())
+
+		--format "children:	% \n" children
+
+		children --return
 	),
 
 	/** Get mirror setup data

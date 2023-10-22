@@ -28,27 +28,24 @@ struct MirrorByGizmo_v
 	 */
 	function mirrorObjects objects_to_mirror clone_type =
 	(
-		--format "\n"; print "MirrorByGizmo_v.mirrorObjects()"
+		format "\n"; print "MirrorByGizmo_v.mirrorObjects()"
 		mirrored_objects = #()
 
-		objects_to_mirror = this._getObjectsWithouGroupMembers( objects_to_mirror )
+		this.objects_to_mirror = objects_to_mirror as Array
 
-		--this.objects_to_mirror_source = objects_to_mirror_source
+		this._getObjectsWithoutGroupMembers()
+		format "\n-----------\nARRAY:objects_to_mirror:\n";  for obj in this.objects_to_mirror do format "obj:	%\n" obj.name
 
 		this.clone_type = clone_type
 
 		this.mirror_axis = toolMode.axisConstraints
 
-
 		selection_center = selection.center
-
-		--format "coord_center:	% \n" coord_center
 
 		/* MIRROR EACH OBJECT  */
 		--if coord_center != #SELECTION then
-		for source_obj in objects_to_mirror do
+		for source_obj in this.objects_to_mirror do
 			append (mirrored_objects)(this.mirrorObj (source_obj))
-
 
 		mirrored_objects --return
 	),
@@ -156,6 +153,10 @@ struct MirrorByGizmo_v
 				#BOTTOM: "Top"
 			)
 
+			if is_uppercase = (this._rxGetMatch (other_side)("[a-z]")).count > 0 then
+				other_side = toUpper other_side
+
+
 			mirrored_obj.name = this._rxReplace (mirrored_obj.name) (current_side+"\d*") (other_side)
 		)
 
@@ -166,17 +167,10 @@ struct MirrorByGizmo_v
 
 	/** Get selection without members of closed group
 	 */
-	function _getObjectsWithouGroupMembers _objects =
+	function _getObjectsWithoutGroupMembers =
 	(
-		mapped function getAllChildren node &children = (if isValidNode node and isKindOf children Array do join children node.children)
-
-		children = #()
-
-		groups_closed = for o in ( _selection = _objects as Array ) where isGroupHead o and isOpenGroupHead o == false and findItem _selection o.parent == 0 collect o
-
-		getAllChildren groups_closed &children
-
-		for o in _objects where findItem children o == 0 collect o --return
+		/* REMOVE OBJECTS WITH PARENT IN SELECTION E.G.: Remove group members from selection */
+		this.objects_to_mirror = for obj in ( this.objects_to_mirror ) where obj.parent == undefined or ( obj.parent != undefined and findItem this.objects_to_mirror obj.parent == 0 ) collect obj
 	),
 
 	/** Regex get match

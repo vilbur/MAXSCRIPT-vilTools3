@@ -11,8 +11,8 @@ icon:	"MENU:true"
 (
 	on execute do
 	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Mirror" on
 			select ((MirrorByGizmo_v()).mirrorObjects( selection )(#INSTANCE))
@@ -29,8 +29,8 @@ icon:	"MENU:true"
 (
 	on execute do
 	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Mirror" on
 			select ((MirrorByGizmo_v()).mirrorObjects( selection )(#COPY))
@@ -47,8 +47,8 @@ icon:	"MENU:true"
 (
 	on execute do
 	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Restore Mirrors" on
 		(
@@ -71,8 +71,8 @@ icon:	"MENU:true"
 (
 	on execute do
 	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\3-MIRROR.mcr"
 
 		undo "Restore Mirrors" on
 		(
@@ -98,8 +98,8 @@ icon:	"MENU:true"
 --(
 --	on execute do
 --	(
---		clearListener(); print("Cleared in:\n"+getSourceFileName())
---		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\MIRROR.mcr"
+--		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\MIRROR.mcr"
 --
 --		undo "Mirror X" on
 --			mirrorObjects( selection )(#WORLD)(#COPY)
@@ -119,8 +119,8 @@ icon:	"MENU:true"
 --(
 --	on execute do
 --	(
---		clearListener(); print("Cleared in:\n"+getSourceFileName())
---		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
+--		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
 --
 --		undo "Mirror X" on
 --			mirrorObjects( selection )(#PIVOT)(#INSTANCE)
@@ -137,8 +137,8 @@ icon:	"MENU:true"
 --(
 --	on execute do
 --	(
---		clearListener(); print("Cleared in:\n"+getSourceFileName())
---		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
+--		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SYMMETRY\Mirror.mcr"
 --
 --		undo "Mirror X" on
 --			mirrorObjects( selection )(#PIVOT)(#COPY)
