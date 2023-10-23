@@ -23,8 +23,7 @@ struct MirrorRestore_v
 	  */
 	function restoreMirrors objects_to_search_for_restore =
 	(
-		format "\n"; print "MirrorRestore_v.restoreMirrors()"
-
+		--format "\n"; print "MirrorRestore_v.restoreMirrors()"
 		this.mirrored_objects = this._getMirroredObjects (objects_to_search_for_restore)
 
 		this._setMirrorSources()
@@ -39,7 +38,6 @@ struct MirrorRestore_v
 		else
 			print "MIRRORS RESTORED"
 
-
 		re_mirrored_objects --return
 	),
 
@@ -52,8 +50,7 @@ struct MirrorRestore_v
 	  */
 	function _restoreObject mirrored_old  =
 	(
-		format "\n"; print "MirrorByGizmo_v._restoreObject()"
-		format "mirrored_old:	% \n" mirrored_old
+		--format "\n"; print "MirrorByGizmo_v._restoreObject()"
 
 		mirror_setup = this._getMirrorSetupData (mirrored_old)
 
@@ -62,7 +59,7 @@ struct MirrorRestore_v
 			/* SAVE OTHER PROPERTIES */
 			saved_data = this._getObjectStateData (mirrored_old)
 
-			/* DELETE OLD MIRRORED OBEJCT */
+			--/* DELETE OLD MIRRORED OBEJCT */
 			this._deleteOldObject(mirrored_old)
 
 			/* CONFIGURE MIRRORING */
@@ -74,7 +71,7 @@ struct MirrorRestore_v
 			/* KEEP MIRRORING CHAIN */
 			this._replaceSourceInObjects (saved_data[#pointer]) (getHandleByAnim mirrored_new)
 
-			/* RESTORE OTHER PROPERTIES */
+			--/* RESTORE OTHER PROPERTIES */
 			this._restoreObjectStateData (mirrored_new) (saved_data)
 		)
 
@@ -120,10 +117,10 @@ struct MirrorRestore_v
 	function _deleteOldObject mirrored_old =
 	(
 		--format "\n"; print "MirrorRestore_v._deleteOldObject()"
-		if isGroupHead mirrored_old then
-			delete ( this._getGroupMembers (mirrored_old) )
 
-		else
+		if isGroupHead mirrored_old and isOpenGroupHead mirrored_old then
+			setGroupOpen mirrored_old false
+
 			delete mirrored_old
 	),
 
@@ -175,7 +172,7 @@ struct MirrorRestore_v
 			append mirror_sources[source_pointer] obj
 		)
 
-		format "MIRROR_SOURCES:	% \n" mirror_sources
+		--format "MIRROR_SOURCES:	% \n" mirror_sources
 	),
 
 	/** Get mirrored objects
@@ -221,12 +218,12 @@ struct MirrorRestore_v
 	function _getGroupMembers _group =
 	(
 		--format "\n"; print "MirrorByGizmo_v._getGroupMembers()"
-		mapped function getAllChildren _node &children = ( join children #(_node); 	if _node.children.count > 0 then getAllChildren _node.children &children )
+		mapped function getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then getAllChildren _node.children &children )
 
-		getAllChildren #( _group ) (children = #())
+		children = #()
 
-		--format "children:	% \n" children
-
+		getAllChildren #( _group ) ( &children )
+		--format "\n-----------\nARRAY:children:\n";  for obj in children do format "obj:	%\n" obj.name
 		children --return
 	),
 
