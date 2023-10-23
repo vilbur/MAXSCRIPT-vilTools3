@@ -59,69 +59,9 @@ icon:	"control:checkbutton|MENU:true"
 			EventFired.control.state = not maxOps.affectChildren
 
 	)
-
 )
 
 
-
-
-/*------------------------------------------------------------------------------
-	LOCK TRANSFORMS
---------------------------------------------------------------------------------*/
-macroscript _transfrom_lock_toggle_all
-category:	"_Transform"
-buttonText:	"Lock\Unlock"
-toolTip:		"Lock and save transforms of selection"
-icon:		"MENU:true"
-(
-
-	on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
-
-	on execute do
-		undo "Lock transforms" on
-		(
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Transform.mcr"
-
-			lock_keys = #( #POS_X, #POS_Y, #POS_Z, #ROT_X, #ROT_Y, #ROT_Z, #SCALE_X, #SCALE_Y, #SCALE_Z )
-
-			lock_states = (getTransformLockFlags selection[1]) as Array
-
-			for obj in selection do
-			(
-				state = if  lock_states.count == lock_keys.count then #none else #all
-
-				setTransformLockFlags obj state
-
-				if state == #all then
-					setUserProp obj "lock_transform" ( obj.transform as string )
-			)
-
-			--maxOps.affectChildren = not maxOps.affectChildren
-			--
-			--if EventFired != undefined then
-			--	EventFired.control.state = not maxOps.affectChildren
-
-		)
-
-)
-/* Restore saved transforms
-*/
-macroscript _transfrom_restore_all
-category:	"_Transform"
-buttonText:	"Restore Locked Pos"
-toolTip:	"Restore saved transforms"
-icon:	"MENU:true"
-(
-	on execute do
-		undo "Restore transforms" on
-		(
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Transform.mcr"
-
-			for obj in selection where ( saved_transform = getUserProp obj "lock_transform" ) != undefined do
-				obj.transform = execute saved_transform
-
-		)
-)
 
 
 
@@ -139,9 +79,12 @@ buttontext:	"To Direction"
 --toolTip:	"Open Transform Randomizer Rollout"
 --icon: "#(path, index)"
 (
-    filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms" )	-- "./../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms"
+	on execute do
+   (
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms" ) -- "./../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms"
 
-	macros.run "miauu" "miauuAlignPivotToVector"
+		macros.run "miauu" "miauuAlignPivotToVector"
+	)
 )
 
 
