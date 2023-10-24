@@ -18,7 +18,7 @@ struct PlatformGenerator_v
 	extrude_bottom	= 2, -- height of base where
 	extrude_top	= 2, -- height of base where
 
-	materials	= Dictionary #( #TOP, 1 ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 ) #( #CHMAFER, 4 ), -- #top and #bottom are read-only and they are default by Edit Spline
+	materials	= Dictionary #( #TOP, 1 ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	/* dependency */
 	/* reference */
@@ -34,23 +34,27 @@ struct PlatformGenerator_v
 
 		this._generateLines()
 
+		select _shape
+
 		this._addSweepModifier()
 
 
+		/* EXTREUDE BOTTOM */
+		this._selectFace(materials[#BASE])("Select Base")
+
+		--this._extrude(extrude_bottom)(500)("Extrude Base")
+
+		this._taperBase()
+
+
 		/* EXTREUDE TOP */
-		this._selectCapFace(materials[#TOP])("Select Top Face")
+		this._selectFace(materials[#TOP])("Select Top Face")
 
 		this._chamfer("Chamfer Top")
 
-		this._selectCapFace(materials[#TOP])("Select Top Face")
+		this._selectFace(materials[#TOP])("Select Top Face")
 
 		this._extrude(extrude_top)(100)("Extrude Top")
-
-
-		/* EXTREUDE BOTTOM */
-		this._selectCapFace(materials[#BOTTOM])("Select Bottom Face")
-
-		this._extrude(extrude_bottom)(500)("Extrude Base")
 
 		this._addMeshmooth( 3 )
 
@@ -93,6 +97,12 @@ struct PlatformGenerator_v
 			addKnot _shape splines_count #corner #line pos
 
 			setMaterialID _shape spline_index 1 materials[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+
+			pos.z = 0
+
+			addKnot _shape splines_count #corner #line pos
+
+			setMaterialID _shape spline_index 2 materials[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
 
 		)
 
@@ -149,9 +159,9 @@ struct PlatformGenerator_v
 	/** Add select modifier
 	  *
 	  */
-	function _selectCapFace mat_id name =
+	function _selectFace mat_id name =
 	(
-		--format "\n"; print "PlatformGenerator_v._selectCapFace()"
+		--format "\n"; print "PlatformGenerator_v._selectFace()"
 
 		volume_sel_mod = Vol__Select name:name
 
@@ -189,7 +199,6 @@ struct PlatformGenerator_v
 
 
 		addModifier _shape chamfer_mod
-
 	),
 
 	--/** Cap hole
@@ -207,12 +216,32 @@ struct PlatformGenerator_v
 	function _extrude amount _scale name =
 	(
 		--format "\n"; print "PlatformGenerator_v._extrudeBase()"
-		extrude_mod = Face_Extrude amount:amount name:name
+		extrude_mod = Face_Extrude name:name
+
+		extrude_mod.amount	= amount
 
 		extrude_mod.scale	= _scale
 
 		addModifier _shape extrude_mod
+	),
 
+	/** Taper base
+	  *
+	  */
+	function _taperBase =
+	(
+		--format "\n"; print "PlatformGenerator_v._taperBase()"
+		taper_mod = Taper ()
+
+		taper_mod.name = "Taper Base"
+
+		taper_mod.amount = -5
+
+		taper_mod.limit = on
+
+		taper_mod.lowerlimit = -5
+
+		modPanel.addModToSelection ( taper_mod ) ui:on
 	),
 
 	/** Add meshmooth
@@ -229,6 +258,8 @@ struct PlatformGenerator_v
 		--meshsmooth_mod.sepBySmGroups = off
 		meshsmooth_mod.sepByMats	= true
 		meshsmooth_mod.iterations	= iterations
+
+		meshsmooth_mod.smoothResult = false
 	),
 
 	/**
