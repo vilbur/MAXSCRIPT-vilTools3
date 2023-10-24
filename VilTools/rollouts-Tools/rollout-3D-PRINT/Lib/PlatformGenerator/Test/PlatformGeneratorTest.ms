@@ -20,6 +20,7 @@ function prepareScene =
 	subObjectLevel = 1
 
 	_Plane.modifiers[#Edit_Poly].Select #Vertex #{5}
+	--_Plane.modifiers[#Edit_Poly].Select #Vertex #{3..5}
 )
 
 
@@ -30,3 +31,6 @@ PlatformGenerator 	= PlatformGenerator_v( selection[1] )
 platform_obj = PlatformGenerator.generate()
 
 select platform_obj
+
+macros.run "_Material-Types" "material_assign_idmat"
+
