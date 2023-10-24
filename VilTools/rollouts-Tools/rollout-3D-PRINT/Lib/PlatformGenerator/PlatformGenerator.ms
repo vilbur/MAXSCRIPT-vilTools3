@@ -8,16 +8,17 @@ struct PlatformGenerator_v
 
 	/* properties */
 	_shape,
-	mat_id_face_top	= 1,
-	mat_id_face_bottom	= 2,
 
 	/* options */
+	bar_width = 10,
+
 	bottom_layers_height = 2, -- height of base where
 
 
 	extrude_bottom	= 2, -- height of base where
 	extrude_top	= 2, -- height of base where
 
+	materials	= Dictionary #( #TOP, 1 ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 ) #( #CHMAFER, 4 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	/* dependency */
 	/* reference */
@@ -37,16 +38,19 @@ struct PlatformGenerator_v
 
 
 		/* EXTREUDE TOP */
-		this._selectCapFace(mat_id_face_top)
+		this._selectCapFace(materials[#TOP])("Select Top Face")
 
-		this._chamfer()
+		this._chamfer("Chamfer Top")
 
-		this._extrude(extrude_bottom)(50)
+		this._selectCapFace(materials[#TOP])("Select Top Face")
+
+		this._extrude(extrude_top)(100)("Extrude Top")
+
 
 		/* EXTREUDE BOTTOM */
-		this._selectCapFace(mat_id_face_bottom)
+		this._selectCapFace(materials[#BOTTOM])("Select Bottom Face")
 
-		this._extrude(extrude_bottom)(500)
+		this._extrude(extrude_bottom)(500)("Extrude Base")
 
 		this._addMeshmooth( 3 )
 
@@ -88,7 +92,7 @@ struct PlatformGenerator_v
 
 			addKnot _shape splines_count #corner #line pos
 
-			setMaterialID _shape spline_index 1 3 -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+			setMaterialID _shape spline_index 1 materials[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
 
 		)
 
@@ -136,24 +140,24 @@ struct PlatformGenerator_v
 
 		redrawViews() -- IMPORTANT TO UPDATE AFTER SETTING SHAPE AND BEFORE EDITING ITS PROPERTIES
 
-		--sweep_mod.CustomShapeName = ""
-		sweep_mod[#Bar_Section].length	= 10
-		sweep_mod[#Bar_Section].width 	= 10
+		sweep_mod[#Bar_Section].length	= bar_width
+		sweep_mod[#Bar_Section].width 	= bar_width
+
 		sweep_mod[#Bar_Section].cornerRadius = 0
 	),
 
 	/** Add select modifier
 	  *
 	  */
-	function _selectCapFace mat_id =
+	function _selectCapFace mat_id name =
 	(
 		--format "\n"; print "PlatformGenerator_v._selectCapFace()"
 
-		volume_sel_mod = Vol__Select()
+		volume_sel_mod = Vol__Select name:name
 
 		volume_sel_mod.level	= 2	-- select face
-		volume_sel_mod.volume	= 5	-- select material ID
-		volume_sel_mod.matID	= mat_id	-- select bottom face
+		volume_sel_mod.volume	= 5	-- select by material ID
+		volume_sel_mod.matID	= mat_id	-- select face by mat ID
 
 		addModifier _shape volume_sel_mod
 	),
@@ -169,15 +173,20 @@ struct PlatformGenerator_v
 	/** Chamfer
 	  *
 	  */
-	function _chamfer =
+	function _chamfer name =
 	(
 		--format "\n"; print "PlatformGenerator_v._chamfer()"
 
-		chamfer_mod = Chamfer amount:amount
+		chamfer_mod = Chamfer name:name
 
-		chamfer_mod.amountType = 0
-		chamfer_mod.amount = 3
-		chamfer_mod.segments = 2
+		--chamfer_mod.amountType = 0
+		chamfer_mod.amount 	 = ( bar_width / 3 ) as integer
+		chamfer_mod.segments = 0
+
+
+		chamfer_mod.setmaterial	= true
+		chamfer_mod.materialID	= materials[#CHMAFER]
+
 
 		addModifier _shape chamfer_mod
 
@@ -195,10 +204,10 @@ struct PlatformGenerator_v
 	/** Add extrude modifier
 	  *
 	  */
-	function _extrude amount _scale =
+	function _extrude amount _scale name =
 	(
 		--format "\n"; print "PlatformGenerator_v._extrudeBase()"
-		extrude_mod = Face_Extrude amount:amount
+		extrude_mod = Face_Extrude amount:amount name:name
 
 		extrude_mod.scale	= _scale
 
