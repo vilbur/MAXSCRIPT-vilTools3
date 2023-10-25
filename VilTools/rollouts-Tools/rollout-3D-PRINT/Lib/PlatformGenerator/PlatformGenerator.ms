@@ -8,11 +8,12 @@ struct PlatformGenerator_v
 
 	/* properties */
 	_shape,
+	_shapes = #(), -- store created shapes
 
 	/* options */
 	bar_width = 10,
 
-	bottom_layers_height = 2, -- height of base where
+	bottom_layers_height = 4, -- height of base where
 
 
 	extrude_bottom	= 2, -- height of base where
@@ -32,12 +33,13 @@ struct PlatformGenerator_v
 		format "\n"; print "PlatformGenerator_v.generate()"
 		format "obj:	% \n" obj
 
+		DisableSceneRedraw()
+
 		this._generateLines()
 
-		select _shape
+		select _shapes
 
 		this._addSweepModifier()
-
 
 		/* EXTREUDE BOTTOM */
 		this._selectFace(materials[#BASE])("Select Base")
@@ -46,6 +48,9 @@ struct PlatformGenerator_v
 
 		this._taperBase()
 
+		this._ffdBase()
+
+		this._chamfer("Chamfer Bottom")
 
 		/* EXTREUDE TOP */
 		this._selectFace(materials[#TOP])("Select Top Face")
@@ -58,11 +63,11 @@ struct PlatformGenerator_v
 
 		this._addMeshmooth( 3 )
 
-		--updateShape _shape
+		EnableSceneRedraw()
 
-		CompleteRedraw()
+		--CompleteRedraw()
 
-		_shape --return
+		_shapes --return
 	),
 
 	private
@@ -73,68 +78,56 @@ struct PlatformGenerator_v
 	function _generateLines =
 	(
 		format "\n"; print "PlatformGenerator_v.generateLines()"
-		_shape      	= SplineShape pos:obj.pos name:(obj.name + "-platform") wirecolor:green
+		--_shape      	= SplineShape pos:obj.pos name:(obj.name + "-platform") wirecolor:green
 		vertext_count	= getNumVerts obj.mesh
 		vertext_sel  	= (getVertSelection obj.mesh )	as Array
-
-		fn makeLine obj _shape vertex_index spline_index =
-		(
-			format "vertex_index:	% \n" vertex_index
-			addNewSpline _shape
-
-			splines_count = _shape.numSplines
-
-			pos = (getVert obj.mesh vertex_index) * obj.transform
-
-			addKnot _shape splines_count #corner #line pos
-
-			--normal = (getNormal obj.mesh vertex_index) * obj.transform - obj.pos
-
-			--pos += spnLength.value * normalize( normal )
-
-			pos.z = bottom_layers_height
-
-			addKnot _shape splines_count #corner #line pos
-
-			setMaterialID _shape spline_index 1 materials[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
-
-			pos.z = 0
-
-			addKnot _shape splines_count #corner #line pos
-
-			setMaterialID _shape spline_index 2 materials[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
-
-		)
 
 		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array
 
 		for i = 1 to verts_to_generate.count do
-			makeLine obj _shape verts_to_generate[i] i
+			append this._shapes (this._createLineForVertex (verts_to_generate[i]))
+	),
 
+	/** Create line for vertex
+	  *
+	  */
+	function _createLineForVertex vertex_index =
+	(
+		--format "\n"; print "PlatformGenerator_v.createLineForVertex()"
+		pos = (getVert obj.mesh vertex_index) * obj.transform
+
+		fn wirecolor  = ( _color =  this.obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then obj.wirecolor
+
+		_shape = SplineShape pos:pos name:( obj.name + "-platform-" + i as string ) wirecolor:(wirecolor())
+
+		addNewSpline _shape
+
+		addKnot _shape 1 #corner #line pos
+
+		/* BACKUP FOR FUTURE USE -- generate line from vertex normal
+
+			--normal = (getNormal obj.mesh vertex_index) * obj.transform - obj.pos
+
+			--pos += spnLength.value * normalize( normal )
+		*/
+
+		pos.z = bottom_layers_height
+
+		addKnot _shape 1 #corner #line pos
+
+		setMaterialID _shape 1 1 materials[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+
+		pos.z = 0
+
+		addKnot _shape 1 #corner #line pos
+
+		setMaterialID _shape 1 2 materials[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
 
 		updateShape _shape
 
-		--if spnSegments.value > 1 do for i = 1 to _shape.numSplines do
-		--(
-		--	subdivideSegment _shape i 1 ( spnSegments.value - 1 )
-		--
-		--	for j = 1 to numKnots _shape i do
-		--		setKnotType _shape i j #smooth
-		--)
+		_shape --return
 	),
 
-	/** Set spline mesh
-	  *
-	  */
-	function _setSplineMesh =
-	(
-		format "\n"; print "PlatformGenerator_v._setSplineMesh()"
-		format "_shape:	% \n" _shape
-
-		_shape.render_displayRenderMesh  = true -- show in viewport
-		--_shape.render_viewport_thickness   	= 5
-		--_shape.render_viewport_sides  	= 32
-	),
 
 	/** Add modifiers
 	  *
@@ -144,7 +137,7 @@ struct PlatformGenerator_v
 		--format "\n"; print "PlatformGenerator_v._addSweepModifier()"
 		sweep_mod = sweep()
 
-		addModifier _shape sweep_mod
+		modPanel.addModToSelection ( sweep_mod ) ui:on
 
 		sweep_mod.CurrentBuiltInShape = 2
 
@@ -169,15 +162,7 @@ struct PlatformGenerator_v
 		volume_sel_mod.volume	= 5	-- select by material ID
 		volume_sel_mod.matID	= mat_id	-- select face by mat ID
 
-		addModifier _shape volume_sel_mod
-	),
-
-	/** Delete bottom face
-	  *
-	  */
-	function _deleteBottomFace =
-	(
-		addModifier _shape (DeleteMesh ())
+		modPanel.addModToSelection ( volume_sel_mod ) ui:on
 	),
 
 	/** Chamfer
@@ -193,22 +178,15 @@ struct PlatformGenerator_v
 		chamfer_mod.amount 	 = ( bar_width / 3 ) as integer
 		chamfer_mod.segments = 0
 
+		chamfer_mod.materialoption = 1 -- different materials
 
 		chamfer_mod.setmaterial	= true
 		chamfer_mod.materialID	= materials[#CHMAFER]
 
+		modPanel.addModToSelection ( chamfer_mod ) ui:on
 
-		addModifier _shape chamfer_mod
 	),
 
-	--/** Cap hole
-	--  *
-	--  */
-	--function _capHole =
-	--(
-	--	--addModifier _shape (Cap_Holes ())
-	--	addModifier _shape (Cap_Holes smooth:false )
-	--),
 
 	/** Add extrude modifier
 	  *
@@ -222,26 +200,46 @@ struct PlatformGenerator_v
 
 		extrude_mod.scale	= _scale
 
-		addModifier _shape extrude_mod
+		modPanel.addModToSelection ( extrude_mod ) ui:on
 	),
 
-	/** Taper base
+	/** Taper base for each object individualy
 	  *
+	  * Every line MUST has its own gizmo
 	  */
 	function _taperBase =
 	(
 		--format "\n"; print "PlatformGenerator_v._taperBase()"
-		taper_mod = Taper ()
 
-		taper_mod.name = "Taper Base"
+		for _shape in this._shapes do
+		(
+			select _shape
 
-		taper_mod.amount = -5
+			taper_mod = Taper ()
 
-		taper_mod.limit = on
+			taper_mod.name = "Taper Base"
 
-		taper_mod.lowerlimit = -5
+			taper_mod.amount = -5
 
-		modPanel.addModToSelection ( taper_mod ) ui:on
+			taper_mod.limit = on
+
+			taper_mod.lowerlimit = -5
+
+			modPanel.addModToSelection ( taper_mod ) ui:on -- method addModifier() not work properly, it assign gizmo to whole object
+
+		)
+
+		select _shapes
+
+	),
+
+	/** Ffd base
+	  *
+	  */
+	function _ffdBase =
+	(
+		--format "\n"; print "PlatformGenerator_v._ffdBase()"
+		addModifier _shape (FFD_2x2x2 name: "FFD Base Position")
 	),
 
 	/** Add meshmooth
@@ -250,17 +248,31 @@ struct PlatformGenerator_v
 	function _addMeshmooth iterations =
 	(
 		--format "\n"; print "PlatformGenerator_v._addMeshmooth()"
-
 		meshsmooth_mod = meshsmooth()
 
-		addModifier _shape meshsmooth_mod
-
-		--meshsmooth_mod.sepBySmGroups = off
+		--meshsmooth_mod.sepBySmGroups = of
 		meshsmooth_mod.sepByMats	= true
 		meshsmooth_mod.iterations	= iterations
 
 		meshsmooth_mod.smoothResult = false
+
+		modPanel.addModToSelection ( meshsmooth_mod ) ui:on
+
 	),
+
+
+	--/** Set spline mesh
+	--  *
+	--  */
+	--function _setSplineMesh =
+	--(
+	--	format "\n"; print "PlatformGenerator_v._setSplineMesh()"
+	--	format "_shape:	% \n" _shape
+	--
+	--	_shape.render_displayRenderMesh  = true -- show in viewport
+	--	--_shape.render_viewport_thickness   	= 5
+	--	--_shape.render_viewport_sides  	= 32
+	--),
 
 	/**
 	 */
