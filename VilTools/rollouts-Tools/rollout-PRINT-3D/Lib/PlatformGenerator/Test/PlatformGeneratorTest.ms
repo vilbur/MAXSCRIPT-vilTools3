@@ -1,4 +1,4 @@
---clearListener(); print("Cleared in:\n"+getSourceFileName())
+clearListener(); print("Cleared in:\n"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../PlatformGenerator.ms" )	-- "./../PlatformGenerator.ms"
 
@@ -26,7 +26,7 @@ function prepareScene =
 
 	subObjectLevel = 1
 
-	--_Plane.modifiers[#Edit_Poly].Select #Vertex #{4}
+	_Plane.modifiers[#Edit_Poly].Select #Vertex #{4}
 	--_Plane.modifiers[#Edit_Poly].Select #Vertex #{2..3}
 
 )

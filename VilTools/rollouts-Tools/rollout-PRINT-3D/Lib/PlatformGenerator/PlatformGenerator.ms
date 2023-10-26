@@ -6,6 +6,8 @@ struct PlatformGenerator_v
 	/* construct */
 	obj, -- object to generate platforms
 
+	units_multiplier = 1,
+
 	/* properties */
 	_shape,
 	_shapes = #(), -- store created shapes
@@ -13,13 +15,10 @@ struct PlatformGenerator_v
 	command_panel_shown = cui.commandPanelOpen,
 
 	/* options */
-	bar_width = 10,
-
-	bottom_layers_height = 4, -- height of base where
-
-
-	extrude_bottom	= 2, -- height of base where
-	extrude_top	= 2, -- height of base where
+	bar_width 	= 10 * units_multiplier,
+	bottom_height	= 4 * units_multiplier, -- height of base where
+	extrude_bottom	= 2 * units_multiplier, -- height of base where
+	extrude_top	= 2 * units_multiplier, -- height of base where
 
 	materials	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
@@ -39,7 +38,7 @@ struct PlatformGenerator_v
 		this._getVertexToGenerate()
 
 		if not this._askToContinue() then
-			 return false
+			 return _shapes
 
 		start_time = timestamp()
 
@@ -76,6 +75,8 @@ struct PlatformGenerator_v
 		this._toggleCommandPannel()
 
 		EnableSceneRedraw()
+
+		redrawViews()
 
 		format "estimated_time:	% \n" estimated_time
 		format "% Platforms takes: % s\n" verts_to_generate.count ( ((timestamp()) - start_time) / 1000.0 )
@@ -129,7 +130,7 @@ struct PlatformGenerator_v
 				--pos += spnLength.value * normalize( normal )
 			*/
 
-			pos.z = bottom_layers_height
+			pos.z = bottom_height
 
 			addKnot _shape 1 #corner #line pos
 
@@ -152,7 +153,7 @@ struct PlatformGenerator_v
 			append this._shapes (_createLineForVertex (verts_to_generate[i]))
 	),
 
-	/** Add modifiers
+	/** ifiers
 	  *
 	  */
 	function _addSweepModifier =
@@ -244,7 +245,7 @@ struct PlatformGenerator_v
 
 		taper_mod.name = "Taper Base"
 
-		taper_mod.amount = -5
+		taper_mod.amount = -5 * units_multiplier
 
 		taper_mod.limit = true
 
