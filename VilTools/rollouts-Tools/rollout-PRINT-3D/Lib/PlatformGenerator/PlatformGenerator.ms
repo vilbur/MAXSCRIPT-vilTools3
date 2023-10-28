@@ -6,21 +6,24 @@ struct PlatformGenerator_v
 	/* construct */
 	obj, -- object to generate platforms
 
+	single_object, --
+
 	units_multiplier = 1,
 
 	/* properties */
 	_shape,
-	_shapes = #(), -- store created shapes
+	platforms = #(), -- store created shapes
+
 	estimated_time,
 	command_panel_shown = cui.commandPanelOpen,
 
 	/* options */
-	bar_width 	= 10 * units_multiplier,
-	bottom_height	= 6 * units_multiplier, -- height of base where
-	extrude_bottom	= 2 * units_multiplier, -- height of base where
-	extrude_top	= 3 * units_multiplier, -- height of base where
+	bar_width 	= 1.0	* units_multiplier,
+	bottom_height	= 1.0	* units_multiplier, -- height of base where
+	base_extrude	= 4	* units_multiplier, -- height of base where
+	extrude_top	= 0.25	* units_multiplier, -- height of base where
 
-	chamfer_bottom	= bar_width / 2,
+	chamfer_base	= bar_width / 2,
 	chamfer_top	= bar_width / 4,
 
 	materials	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
@@ -40,8 +43,10 @@ struct PlatformGenerator_v
 		--format "obj:	% \n" obj
 		this._getVertexToGenerate()
 
+		format "verts_to_generate:	% \n" verts_to_generate
+
 		if not this._askToContinue() then
-			 return _shapes
+			 return platforms
 
 		start_time = timestamp()
 
@@ -51,29 +56,9 @@ struct PlatformGenerator_v
 
 		this._generateLines()
 
-		select _shapes
+		select platforms
 
-		this._addSweepModifier()
-
-		/* BOTTOM OF PLATFORM */
-		this._selectFace(materials[#BASE])("Select Base")
-
-		this._taperBase()
-
-		this._ffdBase()
-
-		this._chamfer("Chamfer Bottom") ( chamfer_bottom ) (100)
-
-		/* TOP OF PLATFORM */
-		this._selectFace(materials[#TOP])("Select Top Face")
-
-		this._chamfer("Chamfer Top") ( chamfer_top ) (0)
-
-		this._selectFace(materials[#TOP])("Select Top Face")
-
-		this._extrude(extrude_top)(100)("Extrude Top")
-
-		this._addMeshmooth( 3 )
+		this._addModifiers()
 
 		this._toggleCommandPannel()
 
@@ -81,13 +66,37 @@ struct PlatformGenerator_v
 
 		redrawViews()
 
+		format "\n"
 		format "estimated_time:	% \n" estimated_time
 		format "% Platforms takes: % s\n" verts_to_generate.count ( ((timestamp()) - start_time) / 1000.0 )
 
-		_shapes --return
+		format "Timer % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+
+		platforms --return
 	),
 
 	private
+
+	/** Add modifiers
+	  *
+	  */
+	function _addModifiers =
+	(
+		--format "\n"; print "PlatformGenerator_v._addModifiers()"
+		this._addSweepModifier()
+
+		this._selectFace(materials[#BASE])("Select Base")
+
+		this._extrude(base_extrude)("Extrude Base")
+
+		this._chamfer("Chamfer Base") ( chamfer_base )
+
+		this._chamfer("Chamfer Middle") ( chamfer_top ) selectionoption:#ALL materialoption:#DIFFERENT
+
+		this._selectFace(materials[#TOP])("Select Top Face")
+
+		this._extrude(extrude_top)("Extrude Top")
+	),
 
 	/** Get vertex to generate
 	  *
@@ -110,21 +119,17 @@ struct PlatformGenerator_v
 	function _generateLines =
 	(
 
+		fn wirecolor  = ( _color =  this.obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then obj.wirecolor
+
 		/** Create line for vertex
 		  *
 		  */
-		function _createLineForVertex vertex_index =
+		function _createLineForVertex _shape spline_index vertex_index pos =
 		(
 			--format "\n"; print "PlatformGenerator_v.createLineForVertex()"
-			pos = (getVert obj.mesh vertex_index) * obj.transform
-
-			fn wirecolor  = ( _color =  this.obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then obj.wirecolor
-
-			_shape = SplineShape pos:pos name:( obj.name + "-platform-" + vertex_index as string ) wirecolor:(wirecolor())
-
 			addNewSpline _shape
 
-			addKnot _shape 1 #corner #line pos
+			addKnot _shape spline_index #corner #line pos
 
 			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
 
@@ -135,25 +140,51 @@ struct PlatformGenerator_v
 
 			pos.z = bottom_height
 
-			addKnot _shape 1 #corner #line pos
+			addKnot _shape spline_index #corner #line pos
 
-			setMaterialID _shape 1 1 materials[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+			setMaterialID _shape spline_index 1 materials[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
 
 			pos.z = 0
 
-			addKnot _shape 1 #corner #line pos
+			addKnot _shape spline_index #corner #line pos
 
-			setMaterialID _shape 1 2 materials[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+			setMaterialID _shape spline_index 2 materials[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
 
 			updateShape _shape
 
 			_shape --return
 		)
 
-		--format "\n"; print "PlatformGenerator_v.generateLines()"
-		--_shape      	= SplineShape pos:obj.pos name:(obj.name + "-platform") wirecolor:green
-		for i = 1 to verts_to_generate.count do
-			append this._shapes (_createLineForVertex (verts_to_generate[i]))
+		if this.single_object then
+		(
+			_shape = SplineShape pos:obj.pos name:( obj.name + "-platforms" ) wirecolor:(wirecolor())
+
+			for i = 1 to verts_to_generate.count do
+			(
+				vertex_index = verts_to_generate[i]
+
+				pos = (getVert obj.mesh vertex_index) * obj.transform
+
+				_createLineForVertex (_shape) (i) (vertex_index) (pos)
+			)
+
+			append this.platforms _shape
+		)
+		else
+			for i = 1 to verts_to_generate.count do
+			(
+				vertex_index = verts_to_generate[i]
+
+				pos = (getVert obj.mesh vertex_index) * obj.transform
+
+				_shape = SplineShape pos:pos name:( obj.name + "-platform-" + i as string ) wirecolor:(wirecolor())
+
+
+				platform = _createLineForVertex (_shape) (1) (vertex_index) (pos)
+
+				append this.platforms platform
+			)
+
 	),
 
 	/** ifiers
@@ -163,6 +194,8 @@ struct PlatformGenerator_v
 	(
 		--format "\n"; print "PlatformGenerator_v._addSweepModifier()"
 		format "Adding Sweep\n"
+		format "bar_width:	% \n" bar_width
+		format "bar_width:	% \n" (bar_width / 2)
 
 		sweep_mod = sweep()
 
@@ -177,8 +210,8 @@ struct PlatformGenerator_v
 		--sweep_mod[#Bar_Section].cornerRadius = 0
 
 		/* GENERATE MATERIAL ID */
-		sweep_mod.UseSectionIDs = false
-		sweep_mod.UsePathIDs = true
+		sweep_mod.UseSectionIDs	= false
+		sweep_mod.UsePathIDs	= true
 
 	),
 
@@ -202,26 +235,39 @@ struct PlatformGenerator_v
 	/** Chamfer
 	  *
 	  */
-	function _chamfer name amount minangle =
+	function _chamfer name amount minangle: selectionoption:#STACK materialoption:#OFF =
 	(
 		--format "\n"; print "PlatformGenerator_v._chamfer()"
-		format "Adding Chamfer\n"
+		format "Adding %\n" name
 
 		chamfer_mod = Chamfer name:name
 
+		chamfer_mod.selectionoption = case selectionoption of
+		(
+			#STACK:	0 -- from stack
+			#ALL:	5 -- all edges
+		)
+
 		/* SET CHAMFER VALUES */
-		chamfer_mod.amount 	 = amount as integer
+		chamfer_mod.amount 	 = amount
 
 		chamfer_mod.segments = 0
 
 		--chamfer_mod.minangle = minangle
 
 		/* CHAMFER MATERIAL */
-		chamfer_mod.materialoption = 1 -- different materials
+		chamfer_mod.materialoption = case materialoption of
+		(
+			#OFF:	0 -- materials off
+			#DIFFERENT:	1 -- different materials
+		)
 
-		chamfer_mod.setmaterial	= true
+		--chamfer_mod.materialoption = 0 -- materials off
+		--chamfer_mod.materialoption = 1 -- different materials
 
-		chamfer_mod.materialID	= materials[#CHMAFER]
+		--chamfer_mod.setmaterial	= true
+
+		--chamfer_mod.materialID	= materials[#CHMAFER]
 
 
 		/* UNSMOOTH OBJECT */
@@ -238,102 +284,18 @@ struct PlatformGenerator_v
 	/** Add extrude modifier
 	  *
 	  */
-	function _extrude amount _scale name =
+	function _extrude amount name scale: =
 	(
 		--format "\n"; print "PlatformGenerator_v._extrudeBase()"
 		extrude_mod = Face_Extrude name:name
 
 		extrude_mod.amount	= amount
 
-		extrude_mod.scale	= _scale
+		--if scale != unsupplied then
+			--extrude_mod.scale	= scale
 
 		modPanel.addModToSelection ( extrude_mod ) --ui:on
 	),
-
-	/** Taper base for each object individualy
-	  * 	IMPORTANT:Every line MUST has its own gizmo
-	  *
-	  */
-	function _taperBase =
-	(
-		--format "\n"; print "PlatformGenerator_v._taperBase()"
-		taper_mod = Taper ()
-
-		taper_mod.name = "Taper Base"
-
-		taper_mod.amount = -10
-
-
-		taper_mod.limit = true
-
-		taper_mod.lowerlimit = bottom_height / -2
-
-		select _shapes[1]
-
-		modPanel.addModToSelection ( taper_mod ) --ui:on -- method addModifier() not work properly, it assign gizmo to whole object
-
-		taper_mod_applied = _shapes[1].modifiers[#Taper_Base]
-
-		adding_taper_timer = timestamp()
-
-		for i = 2 to _shapes.count do
-		(
-			format "Adding Taper: % of % \n" i _shapes.count
-
-			select _shapes[i]
-
-			modPanel.addModToSelection ( taper_mod_applied ) --ui:on -- method addModifier() not work properly, it assign gizmo to whole object
-		)
-
-		format "\n\nAdding Taper Timer % s\n\n" ( ((timestamp()) - adding_taper_timer) / 1000.0 )
-
-		select _shapes
-	),
-
-	/** Ffd base
-	  *
-	  */
-	function _ffdBase =
-	(
-		--format "\n"; print "PlatformGenerator_v._ffdBase()"
-		format "Adding FFD\n"
-
-		addModifier _shape (FFD_2x2x2 name: "FFD Base Position")
-	),
-
-	/** Add meshmooth
-	  *
-	  */
-	function _addMeshmooth iterations =
-	(
-		--format "\n"; print "PlatformGenerator_v._addMeshmooth()"
-		format "Adding Meshsmooth\n"
-
-		meshsmooth_mod = meshsmooth()
-
-		--meshsmooth_mod.sepBySmGroups = of
-		meshsmooth_mod.sepByMats	= true
-		meshsmooth_mod.iterations	= iterations
-
-		meshsmooth_mod.smoothResult = false
-
-		modPanel.addModToSelection ( meshsmooth_mod ) --ui:on
-
-	),
-
-
-	--/** Set spline mesh
-	--  *
-	--  */
-	--function _setSplineMesh =
-	--(
-	--	--format "\n"; print "PlatformGenerator_v._setSplineMesh()"
-	--	--format "_shape:	% \n" _shape
-	--
-	--	_shape.render_displayRenderMesh  = true -- show in viewport
-	--	--_shape.render_viewport_thickness   	= 5
-	--	--_shape.render_viewport_sides  	= 32
-	--),
 
 	/** Toggle command pannel
 	  */
@@ -352,17 +314,8 @@ struct PlatformGenerator_v
 		--format "\n"; print "PlatformGenerator_v._askToContinue()"
 		_continue = true
 
-		--adding_taper	= (verts_to_generate.count * 0.1667) as integer
-		adding_taper	= (verts_to_generate.count * 0.185 ) as integer
-		format "Estimated adding taper:	% \n" adding_taper
-		adding_modifiers	= (verts_to_generate.count * 0.085 ) as integer
-		format "Estimated adding modifiers:	% \n" adding_modifiers
-
-		estimated_time = adding_taper + adding_modifiers
-
-		format "Estimated time:	% s \n" estimated_time
-
-		if verts_to_generate.count > 50 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+		if verts_to_generate.count > 100 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\n  CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
 			 _continue =  false
 
 		_continue --return
