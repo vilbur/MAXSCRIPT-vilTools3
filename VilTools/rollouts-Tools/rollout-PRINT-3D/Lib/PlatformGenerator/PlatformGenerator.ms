@@ -16,9 +16,12 @@ struct PlatformGenerator_v
 
 	/* options */
 	bar_width 	= 10 * units_multiplier,
-	bottom_height	= 4 * units_multiplier, -- height of base where
+	bottom_height	= 6 * units_multiplier, -- height of base where
 	extrude_bottom	= 2 * units_multiplier, -- height of base where
-	extrude_top	= 2 * units_multiplier, -- height of base where
+	extrude_top	= 3 * units_multiplier, -- height of base where
+
+	chamfer_bottom	= bar_width / 2,
+	chamfer_top	= bar_width / 4,
 
 	materials	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
@@ -59,12 +62,12 @@ struct PlatformGenerator_v
 
 		this._ffdBase()
 
-		this._chamfer("Chamfer Bottom")
+		this._chamfer("Chamfer Bottom") ( chamfer_bottom ) (100)
 
 		/* TOP OF PLATFORM */
 		this._selectFace(materials[#TOP])("Select Top Face")
 
-		this._chamfer("Chamfer Top")
+		this._chamfer("Chamfer Top") ( chamfer_top ) (0)
 
 		this._selectFace(materials[#TOP])("Select Top Face")
 
@@ -165,14 +168,13 @@ struct PlatformGenerator_v
 
 		modPanel.addModToSelection ( sweep_mod ) --ui:on
 
-		sweep_mod.CurrentBuiltInShape = 2
+		sweep_mod.CurrentBuiltInShape = 4 -- Set cylinder
 
 		redrawViews() -- IMPORTANT TO UPDATE AFTER SETTING SHAPE AND BEFORE EDITING ITS PROPERTIES
 
-		sweep_mod[#Bar_Section].length	= bar_width
-		sweep_mod[#Bar_Section].width 	= bar_width
+		sweep_mod[#Cylinder_Section].radius = bar_width / 2
 
-		sweep_mod[#Bar_Section].cornerRadius = 0
+		--sweep_mod[#Bar_Section].cornerRadius = 0
 
 		/* GENERATE MATERIAL ID */
 		sweep_mod.UseSectionIDs = false
@@ -200,21 +202,35 @@ struct PlatformGenerator_v
 	/** Chamfer
 	  *
 	  */
-	function _chamfer name =
+	function _chamfer name amount minangle =
 	(
 		--format "\n"; print "PlatformGenerator_v._chamfer()"
 		format "Adding Chamfer\n"
 
 		chamfer_mod = Chamfer name:name
 
-		--chamfer_mod.amountType = 0
-		chamfer_mod.amount 	 = ( bar_width / 3 ) as integer
+		/* SET CHAMFER VALUES */
+		chamfer_mod.amount 	 = amount as integer
+
 		chamfer_mod.segments = 0
 
+		--chamfer_mod.minangle = minangle
+
+		/* CHAMFER MATERIAL */
 		chamfer_mod.materialoption = 1 -- different materials
 
 		chamfer_mod.setmaterial	= true
+
 		chamfer_mod.materialID	= materials[#CHMAFER]
+
+
+		/* UNSMOOTH OBJECT */
+		chamfer_mod.smooth 	= true
+
+		chamfer_mod.SmoothType = 0
+
+		chamfer_mod.smooththreshold = 0
+
 
 		modPanel.addModToSelection ( chamfer_mod ) --ui:on
 	),
@@ -245,11 +261,12 @@ struct PlatformGenerator_v
 
 		taper_mod.name = "Taper Base"
 
-		taper_mod.amount = -5 * units_multiplier
+		taper_mod.amount = -10
+
 
 		taper_mod.limit = true
 
-		taper_mod.lowerlimit = -5
+		taper_mod.lowerlimit = bottom_height / -2
 
 		select _shapes[1]
 
@@ -345,7 +362,7 @@ struct PlatformGenerator_v
 
 		format "Estimated time:	% s \n" estimated_time
 
-		if verts_to_generate.count > 10 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n\tCONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+		if verts_to_generate.count > 50 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
 			 _continue =  false
 
 		_continue --return
