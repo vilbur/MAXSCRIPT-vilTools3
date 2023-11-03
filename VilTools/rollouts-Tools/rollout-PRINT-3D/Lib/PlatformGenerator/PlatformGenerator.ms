@@ -1,20 +1,29 @@
 filein( getFilenamePath(getSourceFileName()) + "/PlatformOptions/PlatformOptions.ms" )	-- "./PlatformOptions/PlatformOptions.ms"
 filein( getFilenamePath(getSourceFileName()) + "/PlatformModifiers/PlatformModifiers.ms" )	-- "./PlatformModifiers/PlatformModifiers.ms"
 
-/* Generate Platforms for 3D print from given Edit Poly Object or Line
+/* Generate Platforms for 3D print
+  *
+  * 1) Generate from Edit Poly Object
+  * 		A) from all vertices if nothing selected
+  * 		B) from selected vertices selected in Editable Poly|Edit Poly| Poly Select modifier| Volume Select modifier
+  *
+  * 2) Generate from Editable spline
+  *
+  *
  */
 struct PlatformGenerator_v
 (
 	/* construct */
-	obj, -- object to generate platforms
+	source_obj, -- object to generate platforms
 
 	/* options */
+	bind_to_parent = false, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
 
 	/* properties */
-	verts_to_generate, -- just for timer
+	verts_positions = #(), -- vertex positions to generate platforms
+
 	platform, -- result object
 	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
-
 
 
 	estimated_time,
@@ -32,91 +41,128 @@ struct PlatformGenerator_v
 	  */
 	function generate =
 	(
-		--format "\n"; print "PlatformGenerator_v.generate()"
-		--format "obj:	% \n" obj
-		this._getVertexToGenerate()
+		format "\n"; print "PlatformGenerator_v.generate()"
+		--format "source_obj:	% \n" source_obj
+		format "classOf source_obj:	% \n" (classOf source_obj)
+		format "superClassOf source_obj:	% \n" (superClassOf source_obj)
 
-		format "verts_to_generate:	% \n" verts_to_generate
+		if superClassOf source_obj == shape then
+			this._getVertexPositionsFromShape()
 
-		--if not this._askToContinue() then
-		--	 return platforms
+		else
+			this._getVertexPositionsFromEditablePoly()
 
-		--start_time = timestamp()
-
-		--DisableSceneRedraw()
-
-		--this._toggleCommandPannel()
 
 		this._generateLines()
 
-		PlatformModifiers.addModifiers()
+		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED
 
-		--this._toggleCommandPannel()
-		--
-		--EnableSceneRedraw()
-		--
-		--redrawViews()
-		--
-		--format "\n"
-		--format "estimated_time:	% \n" estimated_time
-		--format "% Platforms takes: % s\n" verts_to_generate.count ( ((timestamp()) - start_time) / 1000.0 )
-		--
-		--format "Timer % s\n" ( ((timestamp()) - start_time) / 1000.0 )
-		--
+
+		/* BACKUP
+			--if not this._askToContinue() then
+			--	 return platforms
+
+			--DisableSceneRedraw()
+
+			--this._toggleCommandPannel()
+
+
+			--EnableSceneRedraw()
+			--redrawViews()
+
+			--format "\n"
+			--format "estimated_time:	% \n" estimated_time
+			--format "% Platforms takes: % s\n" verts_to_generate.count ( ((timestamp()) - start_time) / 1000.0 )
+			--
+			--format "Timer % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+		*/
+
+		this._setParentOfPlatforms()
+
 		--for platform in platforms do
-		--	platform.pivot = obj.pivot
+		--	platform.pivot = source_obj.pivot
 
 		this.platform --return
 	),
 
 	private
 
-	/** Get vertex to generate
+	/** Get vertex positions from editable poly
 	  *
 	  */
-	function _getVertexToGenerate =
+	function _getVertexPositionsFromEditablePoly =
 	(
-		--format "\n"; print "PlatformGenerator_v._getVertexToGenerate()"
-		vertext_count	= getNumVerts obj.mesh
-		vertext_sel  	= (getVertSelection obj.mesh )	as Array
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		vertext_count	= getNumVerts source_obj.mesh
+		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
 
-		format "vertext_count:	% \n" vertext_count
-		format "vertext_sel:	% \n" vertext_sel
 		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array
+
+		for i = 1 to verts_to_generate.count do
+			append verts_positions ((getVert source_obj.mesh verts_to_generate[i]) * source_obj.transform)
+
+
+			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
+
+				--normal = (getNormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
+
+				--pos += spnLength.value * normalize( normal )
+			*/
 	),
+
+	/** Get vertex positions from spline
+	  */
+	function _getVertexPositionsFromShape =
+	(
+		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
+
+		/** Copy and collapse source spline
+		  */
+		function copyAndCollapseSourceObject =
+		(
+			format "\n"; print "PlatformGenerator_v.copyAndCollapseSourceObject()"
+			maxOps.cloneNodes this.source_obj cloneType:#copy newNodes:&nnl
+
+			format "nnl[1]:	% \n" nnl[1]
+			convertTo nnl[1] SplineShape
+
+			nnl[1] --return
+		)
+
+		source_obj_copy = copyAndCollapseSourceObject()
+
+		for spline_i = 1 to numSplines source_obj_copy do
+			for knot_i = 1 to numKnots source_obj_copy spline_i do
+				append verts_positions (getKnotPoint source_obj_copy spline_i knot_i)
+
+		delete source_obj_copy
+	),
+
 
 	/** Generate lines
 	  *
 	  */
 	function _generateLines =
 	(
-
-		fn wirecolor  = ( _color =  this.obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then obj.wirecolor
+		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
 
 		/** Create line for vertex
 		  *
 		  */
-		function _createLineForVertex _shape spline_index vertex_index pos =
+		function _createLineForVertex _shape spline_index pos =
 		(
 			--format "\n"; print "PlatformGenerator_v.createLineForVertex()"
 			addNewSpline _shape
 
 			addKnot _shape spline_index #corner #line pos
 
-			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
-
-				--normal = (getNormal obj.mesh vertex_index) * obj.transform - obj.pos
-
-				--pos += spnLength.value * normalize( normal )
-			*/
-
-			pos.z = this.Options.base_height
+			pos.z = this.Options.base_height -- set knot above grount to set base height and keep last segment straight for extrude
 
 			addKnot _shape spline_index #corner #line pos
 
 			setMaterialID _shape spline_index 1 mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
 
-			pos.z = 0
+			pos.z = 0 -- set platform to ground
 
 			addKnot _shape spline_index #corner #line pos
 
@@ -127,19 +173,28 @@ struct PlatformGenerator_v
 			_shape --return
 		)
 
+		this.platform = SplineShape pos:source_obj.pos name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
 
-		this.platform = SplineShape pos:obj.pos name:( obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
-
-		for i = 1 to verts_to_generate.count do
-		(
-			vertex_index = verts_to_generate[i]
-
-			pos = (getVert obj.mesh vertex_index) * obj.transform
-
-			_createLineForVertex (platform) (i) (vertex_index) (pos)
-		)
+		for i = 1 to verts_positions.count do
+			_createLineForVertex (platform) (i) (verts_positions[i])
 
 	),
+
+	/** Set parent of platforms
+	  *
+	  */
+	function _setParentOfPlatforms =
+	(
+		format "\n"; print "PlatformGenerator_v._setParentOfPlatforms()"
+		if bind_to_parent and this.source_obj.parent != undefined then
+			this.platform.parent = this.source_obj.parent
+
+		else
+			this.platform.parent = this.source_obj
+
+		format "this.platform.parent:	% \n" this.platform.parent
+	),
+
 
 	/** Toggle command pannel
 	  */

@@ -26,7 +26,7 @@ struct PlatformModifiers_v
 
 		this._selectFace("Select Base")(mat_ids[#BASE])
 
-		this._extrude("Extrude Base")(this.Options.base_extrude)
+		this._extrude("Extrude Base") (this.Options.base_extrude)
 
 		this._chamfer("Chamfer Base") ( this.Options.chamfer_base )
 

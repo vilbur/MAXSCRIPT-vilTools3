@@ -10,7 +10,7 @@ function createTestPlane segments:1 vertex_selection:#{} =
 	--format "\n"; print "PlatformGeneratorTest.ms.createTestPlane()"
 	delete objects
 
-	_Plane = Plane length:( 10 * segments ) width:( 10 * segments ) pos:[0, 0, 10] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
+	_Plane = Plane length:( 10 * segments ) width:( 10 * segments ) pos:[0, 0, 30] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
 
 	Rotate _Plane ( angleaxis 180 [1,0,0])
 
@@ -25,14 +25,40 @@ function createTestPlane segments:1 vertex_selection:#{} =
 
 )
 
+/** Create test line
+  *
+  */
+function createTestSpline =
+(
+	--format "\n"; print "PlatformGeneratorTest.ms.createTestSpline()"
+	delete objects
 
-createTestPlane segments:1
+	_Circle = Circle radius:16.5236 pos:[0,0,30] isSelected:on
+
+	normalize_mod = Normalize_Spline2 NormalizeType:1 numKnots: 10
+
+	modPanel.addModToSelection (normalize_mod) ui:on
+
+	--format "classOf obj:	% \n" (classOf _Circle)
+	--format "superClassOf obj:	% \n" (superClassOf _Circle)
+	--
+	--convertTo $ SplineShape
+	--
+	--format "classOf obj:	% \n" (classOf _Circle)
+	--format "superClassOf obj:	% \n" (superClassOf _Circle)
+
+)
+
+/* TEST EDIABLE POLY */
+--createTestPlane segments:1
 --createTestPlane segments:31
 --createTestPlane segments:1 vertex_selection:#{3..4}
 
+/* TEST EDIABLE SPLINE */
+createTestSpline()
 
-PlatformGenerator 	= PlatformGenerator_v( selection[1] )
---PlatformGenerator 	= PlatformGenerator_v( selection[1] )
+
+PlatformGenerator 	= PlatformGenerator_v( selection[1] ) bind_to_parent:true
 
 platform_obj = PlatformGenerator.generate()
 
