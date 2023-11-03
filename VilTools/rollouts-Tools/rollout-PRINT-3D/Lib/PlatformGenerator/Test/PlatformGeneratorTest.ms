@@ -3,45 +3,36 @@ clearListener(); print("Cleared in:\n"+getSourceFileName())
 filein( getFilenamePath(getSourceFileName()) + "/../PlatformGenerator.ms" )	-- "./../PlatformGenerator.ms"
 
 
-/** Prepare scene
-  *
+/**
   */
-function prepareScene =
+function createTestPlane segments:1 vertex_selection:#{} =
 (
-	--format "\n"; print "PlatformGeneratorTest.ms.prepareScene()"
+	--format "\n"; print "PlatformGeneratorTest.ms.createTestPlane()"
 	delete objects
 
-	segments = 1
-	--segments = 4
-	--segments = 9
-	--segments = 20
-	segments = 31
-	--segments = 50
-
-	_Plane = Plane length:(40 * segments ) width:(40 * segments ) pos:[0, 0, 100] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
+	_Plane = Plane length:( 10 * segments ) width:( 10 * segments ) pos:[0, 0, 10] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
 
 	Rotate _Plane ( angleaxis 180 [1,0,0])
 
 	modPanel.addModToSelection (Edit_Poly ()) ui:on
+	format "vertex_selection.count:	% \n" vertex_selection.count
+	if vertex_selection.count > 0 then
+	(
+		subObjectLevel = 1
 
-	subObjectLevel = 1
-
-	_Plane.modifiers[#Edit_Poly].Select #Vertex #{4}
-	--_Plane.modifiers[#Edit_Poly].Select #Vertex #{2..3}
+		_Plane.modifiers[#Edit_Poly].Select #Vertex vertex_selection
+	)
 
 )
 
 
-prepareScene()
+createTestPlane segments:1
+--createTestPlane segments:31
+--createTestPlane segments:1 vertex_selection:#{3..4}
+
 
 PlatformGenerator 	= PlatformGenerator_v( selection[1] )
+--PlatformGenerator 	= PlatformGenerator_v( selection[1] )
 
 platform_obj = PlatformGenerator.generate()
 
---select platform_obj
-
---
---try(
---
---	macros.run "_Material-Types" "material_assign_idmat"
---)catch()
