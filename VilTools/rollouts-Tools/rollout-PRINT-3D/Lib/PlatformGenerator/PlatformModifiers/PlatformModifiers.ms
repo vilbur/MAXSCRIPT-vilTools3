@@ -21,7 +21,8 @@ struct PlatformModifiers_v
 	  */
 	function addModifiers =
 	(
-		--format "\n"; print "PlatformGenerator_v._addModifiers()"
+		format "\n"; print "PlatformGenerator_v._addModifiers()"
+
 		this._addSweepModifier("Bar Width")
 
 		this._selectFace("Select Base")(mat_ids[#BASE])

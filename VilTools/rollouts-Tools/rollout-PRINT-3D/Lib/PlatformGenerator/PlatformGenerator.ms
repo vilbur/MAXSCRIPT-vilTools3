@@ -16,8 +16,11 @@ struct PlatformGenerator_v
 	/* construct */
 	source_obj, -- object to generate platforms
 
-	/* options */
+	export_size	= 1,
+
 	bind_to_parent = false, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
+
+	/* options */
 
 	/* properties */
 	verts_positions = #(), -- vertex positions to generate platforms
@@ -41,10 +44,8 @@ struct PlatformGenerator_v
 	  */
 	function generate =
 	(
-		format "\n"; print "PlatformGenerator_v.generate()"
+		--format "\n"; print "PlatformGenerator_v.generate()"
 		--format "source_obj:	% \n" source_obj
-		format "classOf source_obj:	% \n" (classOf source_obj)
-		format "superClassOf source_obj:	% \n" (superClassOf source_obj)
 
 		if superClassOf source_obj == shape then
 			this._getVertexPositionsFromShape()
@@ -114,16 +115,16 @@ struct PlatformGenerator_v
 	  */
 	function _getVertexPositionsFromShape =
 	(
-		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
 
 		/** Copy and collapse source spline
 		  */
 		function copyAndCollapseSourceObject =
 		(
-			format "\n"; print "PlatformGenerator_v.copyAndCollapseSourceObject()"
+			--format "\n"; print "PlatformGenerator_v.copyAndCollapseSourceObject()"
 			maxOps.cloneNodes this.source_obj cloneType:#copy newNodes:&nnl
 
-			format "nnl[1]:	% \n" nnl[1]
+			--format "nnl[1]:	% \n" nnl[1]
 			convertTo nnl[1] SplineShape
 
 			nnl[1] --return
