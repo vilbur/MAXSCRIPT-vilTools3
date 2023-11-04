@@ -48,7 +48,7 @@ struct PlatformModifiers_v
 		--format "\n"; print "PlatformGenerator_v._addSweepModifier()"
 		format "Adding Sweep\n"
 		format "bar_width:	% \n" this.Options.bar_width
-		format "bar_width:	% \n" (this.Options.bar_width / 2)
+		format "bar_radius:	% \n" (this.Options.bar_width / 2)
 
 		sweep_mod = sweep name:name
 

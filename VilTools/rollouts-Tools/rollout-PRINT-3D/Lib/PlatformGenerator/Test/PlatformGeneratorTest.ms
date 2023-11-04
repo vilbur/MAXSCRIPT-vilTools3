@@ -10,15 +10,14 @@ global 	display_units = case units.SystemType of
 	   default:	1.0
 	)
 
-
 /**
   */
-function createTestPlane segments:1 vertex_selection:#{} =
+function createTestPlane export_size segments:1 vertex_selection:#{} =
 (
 	--format "\n"; print "PlatformGeneratorTest.ms.createTestPlane()"
 	delete objects
 
-	_Plane = Plane length:( 5 * segments / display_units ) width:( 10 * segments ) pos:[0, 0, 30.0 / display_units ] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
+	_Plane = Plane length:( 5 * segments / display_units  / export_size ) width:( 10 * segments ) pos:[0, 0, 30.0 / display_units / export_size ] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
 
 	Rotate _Plane ( AngleAxis 180 [1,0,0])
 
@@ -30,46 +29,63 @@ function createTestPlane segments:1 vertex_selection:#{} =
 
 		_Plane.modifiers[#Edit_Poly].Select #Vertex vertex_selection
 	)
-
 )
 
 /** Create test line
   *
   */
-function createTestSpline =
+function createTestSpline export_size =
 (
 	--format "\n"; print "PlatformGeneratorTest.ms.createTestSpline()"
 	delete objects
 
-
-
-	_Circle = Circle radius:( 15 / display_units ) pos:[0,0, 30.0 / display_units ] isSelected:on -- diameter 3 cm
+	_Circle = Circle radius:( 15 / display_units / export_size ) pos:[0,0, 30.0 / display_units / export_size] isSelected:on -- diameter 3 cm
 
 	normalize_mod = Normalize_Spline2 NormalizeType:1 numKnots: 10
 
 	modPanel.addModToSelection (normalize_mod) ui:on
-
-	--format "classOf obj:	% \n" (classOf _Circle)
-	--format "superClassOf obj:	% \n" (superClassOf _Circle)
-	--
-	--convertTo $ SplineShape
-	--
-	--format "classOf obj:	% \n" (classOf _Circle)
-	--format "superClassOf obj:	% \n" (superClassOf _Circle)
-
 )
 
+
+/*------------------------------------------------------------------------------
+	 DIFFERENT SETUP OF UNITS
+--------------------------------------------------------------------------------*/
+
+/* UNITS MILLIMETERS */
+units.SystemType	= #millimeters
+units.MetricType	= #millimeters
+export_size	= 1
+
+
+/* UNITS MILLIMETERS, DISPLAY CENTIMETERS */
+units.SystemType	= #millimeters
+units.MetricType	= #centimeters
+export_size	= 1
+
+
+/* BIG OBJECT RESCALED */
+units.SystemType	= #centimeters
+units.MetricType	= #centimeters
+export_size	= 0.01
+
+
+/*------------------------------------------------------------------------------
+	CREATE TEST OBJECTS
+--------------------------------------------------------------------------------*/
+
 /* TEST EDIABLE POLY */
---createTestPlane segments:1
---createTestPlane segments:31
---createTestPlane segments:1 vertex_selection:#{3..4}
+createTestPlane export_size segments:1
+--createTestPlane export_size segments:31
+--createTestPlane export_size segments:1 vertex_selection:#{3..4}
 
 /* TEST EDIABLE SPLINE */
-createTestSpline()
+--createTestSpline(export_size)
 
 
---PlatformGenerator 	= PlatformGenerator_v( selection[1] ) 	 bind_to_parent:true
-PlatformGenerator 	= PlatformGenerator_v( selection[1] ) export_size:0.1
 
-platform_obj = PlatformGenerator.generate()
+
+--PlatformGenerator 	= PlatformGenerator_v bind_to_parent:true
+PlatformGenerator 	= PlatformGenerator_v export_size:export_size
+
+platform_obj = PlatformGenerator.generate( selection[1] )
 

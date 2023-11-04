@@ -33,8 +33,8 @@ struct PlatformGenerator_v
 	command_panel_shown = cui.commandPanelOpen,
 
 	/* dependency */
-	Options	= PlatformOptions_v(),
-	PlatformModifiers 	= PlatformModifiers_v(Options)(mat_ids),
+	Options,	--PlatformOptions_v(),
+	PlatformModifiers,	--PlatformModifiers_v(),
 
 	/* reference */
 	/* inhered */
@@ -42,16 +42,19 @@ struct PlatformGenerator_v
 	/** /** Generate
 	  *
 	  */
-	function generate =
+	function generate source_obj =
 	(
-		--format "\n"; print "PlatformGenerator_v.generate()"
-		--format "source_obj:	% \n" source_obj
+		format "\n"; print "PlatformGenerator_v.generate()"
+		format "source_obj:	% \n" source_obj
+
+		this.source_obj = source_obj
 
 		if superClassOf source_obj == shape then
 			this._getVertexPositionsFromShape()
 
 		else
 			this._getVertexPositionsFromEditablePoly()
+
 
 
 		this._generateLines()
@@ -225,5 +228,8 @@ struct PlatformGenerator_v
 	 */
 	on create do
 	(
+		Options	= PlatformOptions_v(export_size)
+		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
+
 	)
 )
