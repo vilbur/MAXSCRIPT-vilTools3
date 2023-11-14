@@ -29,11 +29,11 @@ replaceUI:	true
 		radius 	ui:SP_radius	type:#float	default:50
 		width	ui:SP_width	type:#float	default:20
 		height	ui:SP_height	type:#integer default:20
-		chamfer	ui:SP_chamfer	type:#float	default:0
+		gap_angle	ui:SP_gap_angle	type:#float	default:0
 
 		on radius	set val do this.generate()
 		on height	set val do this.generate()
-		on chamfer	set val do this.generate()
+		on gap_angle	set val do this.generate()
 		on width		set val do this.generate()
 
 	)
@@ -43,9 +43,7 @@ replaceUI:	true
 		wrap_angle	ui:SP_wrap	type:#float	default:360
 
 		angle_min	ui:SP_angle_min	type:#integer default:90
-		angle_var	ui:SP_angle_var	type:#integer default:0
-
-		random_angle 	ui:CBX_random_angle	type:#boolean	default:false
+		angle_max	ui:SP_angle_max	type:#integer default:90
 
 		on wrap_angle	set val do this.generate()
 		on random_angle set val do this.generate()
@@ -55,9 +53,11 @@ replaceUI:	true
 
 	parameters main rollout:params_variation
 	(
-		random_radius 	ui:CBX_random_radius	type:#boolean	default:false
+		radius_mode 	ui:RB_radius_mode	type:#integer	default:1
+		angle_mode 	ui:RB_angle_mode	type:#integer	default:1
 
-		on random_radius set val do this.generate()
+		on radius_mode set val do this.generate()
+
 	)
 
 	parameters main rollout:params_extended
@@ -68,7 +68,7 @@ replaceUI:	true
 		close_line	ui:SP_close_line	type:#boolean	default:false
 
 		on weld_line			set val do this.weldAllVerts()
-		on attach_to_line	set val do this.attachAllToObj()
+		--on attach_to_line	set val do if val then this.attachAllToObj() else this.generate() -- regenerate unattached if uncheckled
 		on connect_line		set val do this.createConnectLine()
 	)
 
@@ -83,22 +83,42 @@ replaceUI:	true
 		spinner	SP_radius	"Radius"	range:[ 0, 9999, radius ]
 		spinner	SP_width	"Width"	range:[ -9999, 9999, width ]
 		spinner	SP_height	"Height"	range:[ 0, 9999, height ]
-		spinner	SP_chamfer	"Chamfer"	range:[ 0, 10, 0 ]	type:#float
+		spinner	SP_gap_angle	"Gap Angle"	range:[ 0, 10, 0 ]	type:#float tooltip:"Gap angle between segments"
 	)
 
-	rollout params_angle "Anlges"
+	rollout params_angle "Angles"
 	(
 		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 9999, wrap_angle ]	 tooltip:"Total radius of line"
 		spinner	SP_angle_min	"Angle Min"	range:[ 1, 9999, 90 ] tooltip:"Angle of arch segment"
-		spinner	SP_angle_var	"Angle Variation"	range:[ 0, 9999, 0 ]
+		spinner	SP_angle_max	"Angle Max"	range:[ 0, 9999, 0 ]
 
-		checkbox	CBX_random_angle "Random Angle"
+
+		/* ON ANGLE MIN CHANGED -- dont allow angle_min > angle_max */
+		on SP_angle_min changed val do
+			if val > angle_max  then
+				angle_max = val
+
+
+		/* ON ANGLE MAX CHANGED -- dont allow angle_max > angle_max */
+		on SP_angle_max changed val do
+			if val > angle_min  then
+				angle_min = val
+
 
 	)
 
 	rollout params_variation "Variations"
 	(
-		checkbox	CBX_random_radius 	"Random Radius"
+		radiobuttons RB_radius_mode "Radius Mode"	labels:#("Random", "Incremental", "Event\Odd") --offset:[-8, 16]
+		radiobuttons RB_angle_mode "Angle Mode"	labels:#("Random", /*"Incremental",*/ "Event\Odd") --offset:[-8, 16]
+
+		/* ON RADIUS MODE CHANGED */
+		on RB_angle_mode changed val do
+			this.generate()
+
+		/* ON ANGLE MODE CHANGED */
+		on RB_angle_mode changed val do
+			this.generate()
 	)
 
 	rollout params_extended "Parameters Extends"
@@ -162,7 +182,6 @@ replaceUI:	true
 	  */
 	function createConnectLine =
 	(
-		if not initialized then return false
 
 		--format "\n"; print "TechArch.ms.createConnectLine()"
 
@@ -222,6 +241,7 @@ replaceUI:	true
 			verts_pos_all --return
 		)
 
+		if not initialized then return false
 
 		this._setNodeObject()
 
@@ -233,9 +253,6 @@ replaceUI:	true
 
 		for i = 1 to verts_pos.count do
 		(
-			--format "i:	% \n" i
-			--format "verts_pos:	% \n" verts_pos
-
 			addNewSpline connect_line_shape
 
 			addKnot connect_line_shape i #corner #line verts_pos[i][1]
@@ -271,7 +288,6 @@ replaceUI:	true
 	(
 		--format "\n"; print "TechArch.ms.generateArches()"
 
-		--format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
 
 		/** Set arches
 		  *
@@ -279,40 +295,30 @@ replaceUI:	true
 		function setArchesByAngle =
 		(
 			--format "\n"; print "TechArch.ms.setArches()"
-
 			angle_counter = 0
 
 			while angle_counter < wrap_angle do
 			(
 				arc_data	= Dictionary()
 
-				arc_data[#FROM]	= 0 --+ chamfer
-				arc_data[#TO]	= angle_min --- chamfer
-				arc_data[#RADIUS]	= radius
-				arc_data[#ROTATION]	= angle_counter
+				arc_index = arcs_data.count+1
 
-				angle_counter += angle_min
+				final_angle = case angle_mode of
+				(
+					--2:
+					3: if this.isOdd(arc_index) then angle_min else angle_max -- Even arch is min, odd is max
+					default: random angle_min angle_max
+				)
+
+				arc_data[#FROM]	= 0 + gap_angle
+				arc_data[#TO]	= final_angle - gap_angle
+				arc_data[#ROTATION]	= angle_counter
+				arc_data[#RADIUS]	= radius
+
+				angle_counter += final_angle
 
 				append arcs_data arc_data
 			)
-
-			--format "arcs_data.count:	% \n" arcs_data.count
-		)
-
-
-		/** Get angles
-		  *
-		  */
-		function getAngles =
-		(
-			--format "\n"; print "TechArch.ms.getAngles()"
-			angles = for i = 1 to arcs_data.count collect  wrap_angle / arcs_data.count
-
-			angle_increment = ( wrap_angle / arcs_data.count )
-
-			for i = 1 to arcs_data.count do append angles ( angle_increment * i )
-
-			angles --return
 		)
 
 		/** Get radiuse value of arch splines
@@ -320,24 +326,21 @@ replaceUI:	true
 		function setRadiusVariations =
 		(
 			--format "\n"; print "TechArch.ms.getAngles()"
-			if width == 0 then
-				return false --return
+			--format "radius_mode:	% \n" radius_mode
+			if width == 0 then return false --return
 
 			for i = 1 to arcs_data.count do
-				if random_radius == false then
+			(
+				arcs_data[i][#RADIUS] = case radius_mode of
 				(
-					/* RADIUS INCREMENTAL FROM MIN for FIRST TO MAX LAST ARCH */
-					radius_increment = width / ( arcs_data.count -  1 ) as float
-
-					arcs_data[i][#RADIUS] +=  radius_increment * (i - 1)
+					1: random (radius)(radius + width)
+					2: arcs_data[i][#RADIUS] +  (width / ( arcs_data.count -  1 ) * (i - 1) ) --increemanetal radius from lowest to highest
+					3: if this.isOdd(i) then radius else radius + width -- Even arch is min, odd is max
 				)
-				else
-					arcs_data[i][#RADIUS] = random (radius)(radius + width)
+			)
 
-
-			arcs_data[1][#RADIUS]	= radius	-- set min radius to FIRST RADIUS
-			arcs_data[arcs_data.count][#RADIUS]	= (radius + width)	-- set max radius to LAST RADIUS
-
+			--arcs_data[i][#RADIUS] = radius
+			--arcs_data[1][#RADIUS]	= radius	-- set min radius to FIRST RADIUS
 		)
 
 		/** Get height positions
@@ -350,7 +353,6 @@ replaceUI:	true
 
 			for i = 1 to arcs_data.count do
 				arcs_data[i][#POSITION] =  [ this.obj.pos.x, this.obj.pos.x, this.obj.pos.z + ( height_increment * (i - 1) ) ]
-
 		)
 
 		/** Create arch obejcts
@@ -358,7 +360,7 @@ replaceUI:	true
 		  */
 		function createArcsObjects =
 		(
-			--format "\n"; print "TechArch.ms.createArcsObjects()"
+			format "\n"; print "TechArch.ms.createArcsObjects()"
 
 			for arc_data in arcs_data do
 			(
@@ -368,9 +370,8 @@ replaceUI:	true
 
 				arc_data[#NODE] = arc_obj
 
-				arc_obj.parent = this.obj
+				--arc_obj.parent = this.obj
 			)
-
 		)
 
 		setArchesByAngle()
@@ -405,7 +406,6 @@ replaceUI:	true
 	function attatchLines spline splines =
 	(
 		for s in splines where s != spline do addAndWeld spline ( convertToSplineShape s) -1
-
 	)
 
 	/** Remove lines
@@ -458,6 +458,8 @@ replaceUI:	true
 		this.obj = nodes[1] --return
 	)
 
+	fn isOdd num = ( mod num 2) != 0
+
 	/*------------------------------------------------------------------------------
 
 		EVENTS
@@ -480,14 +482,6 @@ replaceUI:	true
 	--on postCreate do initialized = true
 
 	--on buildShape do rebuildShape()
-	--
-	/** Test
-	  *
-	  */
-	function test =
-	(
-		--format "\n"; print "!!!!!!!!!!!!!!!!!!!! TEST !!!!!!!!!!!!!!!!!!!"
-	)
 
 	tool create numPoints:3
 	(
