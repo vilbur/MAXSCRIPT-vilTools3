@@ -27,43 +27,49 @@ replaceUI:	true
 	parameters main rollout:params
 	(
 		radius 	ui:SP_radius	type:#float	default:50
-		--arcs_data.count 	ui:SP_pieces	type:#integer	default:5
 		width	ui:SP_width	type:#float	default:20
 		height	ui:SP_height	type:#integer default:20
 		chamfer	ui:SP_chamfer	type:#float	default:0
 
-
-		on radius		set val do if initialized then this.generate()
-		--on arcs_data.count	  set val do if initialized then this.generate()
-		--on wrap_angle		set val do if initialized then this.generate()
-		on width		set val do if initialized then this.generate()
+		on radius	set val do this.generate()
+		on height	set val do this.generate()
+		on chamfer	set val do this.generate()
+		on width		set val do this.generate()
 
 	)
 
 	parameters main rollout:params_angle
 	(
-		wrap_angle	ui:SP_wrap	type:#float	default:270
+		wrap_angle	ui:SP_wrap	type:#float	default:360
 
-		angle_to	ui:SP_angle_min	type:#integer default:90
+		angle_min	ui:SP_angle_min	type:#integer default:90
 		angle_var	ui:SP_angle_var	type:#integer default:0
 
 		random_angle 	ui:CBX_random_angle	type:#boolean	default:false
 
-		on random_angle  set val do if initialized then this.generate()
+		on wrap_angle	set val do this.generate()
+		on random_angle set val do this.generate()
+		on angle_min    set val do( if val <= 0 then angle_min = 1; this.generate())
+
 	)
 
 	parameters main rollout:params_variation
 	(
 		random_radius 	ui:CBX_random_radius	type:#boolean	default:false
 
-		on random_radius set val do if initialized then this.generate()
+		on random_radius set val do this.generate()
 	)
 
 	parameters main rollout:params_extended
 	(
+		attach_to_line	ui:SP_attach_to_line	type:#boolean	default:true
+		weld_line	ui:SP_weld_line	type:#boolean	default:true
+		connect_line	ui:SP_connect_line	type:#boolean	default:true
+		close_line	ui:SP_close_line	type:#boolean	default:false
 
-		attach_to_line	ui:SP_attach_to_line	type:#boolean	default:false
-		connect_line	ui:SP_connect_line	type:#boolean	default:false
+		on weld_line			set val do this.weldAllVerts()
+		on attach_to_line	set val do this.attachAllToObj()
+		on connect_line		set val do this.createConnectLine()
 	)
 
 	/*------------------------------------------------------------------------------
@@ -75,41 +81,41 @@ replaceUI:	true
 	rollout params "Parameters"
 	(
 		spinner	SP_radius	"Radius"	range:[ 0, 9999, radius ]
-		--spinner	SP_pieces	"Pieces"	range:[ 1, 9999, arcs_data.count ]	type:#integer tooltip:"Number anlge arcs_data.count"
-		spinner	SP_width	"Width"	range:[ 0, 9999, width ]
+		spinner	SP_width	"Width"	range:[ -9999, 9999, width ]
 		spinner	SP_height	"Height"	range:[ 0, 9999, height ]
-		spinner	SP_chamfer "Chamfer"	range:[ 0, 10, 0 ]	type:#float
-
+		spinner	SP_chamfer	"Chamfer"	range:[ 0, 10, 0 ]	type:#float
 	)
 
 	rollout params_angle "Anlges"
 	(
-		spinner	SP_angle_min	"Angle Min"	range:[ 0, 9999, 90 ] tooltip:"Angle of arch segment"
+		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 9999, wrap_angle ]	 tooltip:"Total radius of line"
+		spinner	SP_angle_min	"Angle Min"	range:[ 1, 9999, 90 ] tooltip:"Angle of arch segment"
 		spinner	SP_angle_var	"Angle Variation"	range:[ 0, 9999, 0 ]
-		spinner	SP_wrap	"Wrap"	range:[ 1, 9999, wrap_angle ]	 tooltip:"Total radius of line"
 
 		checkbox	CBX_random_angle "Random Angle"
-
 
 	)
 
 	rollout params_variation "Variations"
 	(
 		checkbox	CBX_random_radius 	"Random Radius"
-
 	)
-
 
 	rollout params_extended "Parameters Extends"
 	(
-
 		checkbox	SP_attach_to_line 	"Attach line"
 		checkbox	SP_connect_line 	"Connect line"
-		checkbox	SP_close_line	"Close line"
+		checkbox	SP_weld_line 	"Weld"
+		checkbox	SP_close_line	"Close line"  enabled:SP_weld_line.state
 
 		button btn_generate "Generate"	width:64
 		button btn_attach   "Attach"		width:64
 		button btn_test      "Test"			width:64
+
+
+		on SP_connect_line changed val do
+			SP_close_line.enabled = val
+
 
 		on btn_generate pressed do this.generate()
 		on btn_attach pressed do this.attachAllToObj()
@@ -127,10 +133,12 @@ replaceUI:	true
 	  */
 	function generate =
 	(
-		format "\n"; print "TechArch.ms.generate()"
+		if not initialized then return false
+
+		--format "\n"; print "TechArch.ms.generate()"
 		--format "ROUNDS:	% \n" arcs_data.count
 
-		initialized = false
+		--initialized = false
 
 		with redraw off
 		(
@@ -142,12 +150,11 @@ replaceUI:	true
 
 			if connect_line then
 				this.createConnectLine()
+
+			this.weldAllVerts()
 		)
 
-		--DisableSceneRedraw()
-
 		initialized = true
-
 	)
 
 	/** Create connect line
@@ -155,26 +162,40 @@ replaceUI:	true
 	  */
 	function createConnectLine =
 	(
-		format "\n"; print "TechArch.ms.createConnectLine()"
+		if not initialized then return false
+
+		--format "\n"; print "TechArch.ms.createConnectLine()"
 
 		/** Get First And Last Vertext From Each Spline
 		  *
 		  */
-		function getFirstAndLastVertextFromEachSpline =
+		function getConnectVertsPositions is_attached =
 		(
-			format "\n"; print "TechArch.ms.getFirstAndLastVertextFromEachSpline()"
+			--format "\n"; print "TechArch.ms.getConnectVertsPositions()"
+
 			last_knot_i = 1
 			verts_pos_all = #()
 
-			for spline_current = 1 to numSplines this.obj - 1 do
+			spline_to_get = this.obj
+
+			if is_attached == false then
+			(
+				maxOps.cloneNodes (this.getArcNodes()) cloneType:#copy newNodes:&arcs_copy
+
+				spline_to_get = convertToSplineShape arcs_copy[1]
+
+				for s in arcs_copy where s != spline_to_get do addAndWeld spline_to_get ( convertToSplineShape s) -1
+			)
+
+
+			/* GET VERTICES */
+			for spline_current = 1 to numSplines spline_to_get - 1 do
 			(
 				spline_next = spline_current + 1
-				num_knots	= numKnots this.obj spline_current
+				num_knots	= numKnots spline_to_get spline_current
 
-				--format "last_knot_i:	% \n" last_knot_i
-				--format "num_knots:	% \n" num_knots
-				spline_current_last_vert	= getKnotPoint this.obj (spline_current) ( numKnots this.obj spline_current  )
-				spline_next_first_vert	= getKnotPoint this.obj (spline_next) 1
+				spline_current_last_vert	= getKnotPoint spline_to_get (spline_current) ( numKnots spline_to_get spline_current  )
+				spline_next_first_vert	= getKnotPoint spline_to_get (spline_next) 1
 
 				append verts_pos_all #( spline_current_last_vert, spline_next_first_vert )
 				--append verts_pos_all #( last_knot_i, last_knot_i + num_knots - 1 )
@@ -182,15 +203,33 @@ replaceUI:	true
 				last_knot_i += num_knots
 			)
 
+			--format "TEST:	% \n" (connect_line and close_line and weld_line)
+			/* CLOSE SPLINE SEGMENT */
+			if connect_line and close_line and weld_line then
+			(
+				line_start_pos	= getKnotPoint	spline_to_get 1 1
+				last_spline	= numSplines	spline_to_get
+				line_end_pos	= getKnotPoint	spline_to_get last_spline ( numKnots spline_to_get last_spline )
+
+				if line_start_pos != line_end_pos then
+					append verts_pos_all #( line_start_pos, line_end_pos )
+			)
+
+			/* DELETE TEMP OBJECTS */
+			if spline_to_get != this.obj then
+				delete spline_to_get
+
 			verts_pos_all --return
 		)
 
+
 		this._setNodeObject()
 
-		verts_pos = getFirstAndLastVertextFromEachSpline()
+		verts_pos = getConnectVertsPositions( (this.getArcNodes()).count == 0 )
 
+
+		/* CREATE CONNECT LINE */
 		connect_line_shape = SplineShape()
-
 
 		for i = 1 to verts_pos.count do
 		(
@@ -205,26 +244,32 @@ replaceUI:	true
 
 		/* ATTACH TO OBJECT */
 		this.attatchLines this.obj  #(connect_line_shape)
-	)
+
+
+		--/* CLOSE LINE IF ALLOWED */
+		--if close_line then
+		--	this.closeSpline()
+)
 
 	/** Remove connect line
 	  *
 	  */
 	function removeConnectLine =
 	(
-		format "\n"; print "TechArch.ms.removeConnectLine()"
-		for spline_i = Arcs.count + 1 to numSplines this.obj do
+		--format "\n"; print "TechArch.ms.removeConnectLine()"
+		for spline_i = arcs_data.count + 1 to numSplines this.obj do
 			deleteSpline this.obj 1
 
 		updateShape this.obj
 	)
+
 
 	/** Generate arch
 	  *
 	  */
 	function generateArches =
 	(
-		format "\n"; print "TechArch.ms.generateArches()"
+		--format "\n"; print "TechArch.ms.generateArches()"
 
 		--format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
 
@@ -233,7 +278,7 @@ replaceUI:	true
 		  */
 		function setArchesByAngle =
 		(
-			format "\n"; print "TechArch.ms.setArches()"
+			--format "\n"; print "TechArch.ms.setArches()"
 
 			angle_counter = 0
 
@@ -242,11 +287,11 @@ replaceUI:	true
 				arc_data	= Dictionary()
 
 				arc_data[#FROM]	= 0 --+ chamfer
-				arc_data[#TO]	= angle_to --- chamfer
+				arc_data[#TO]	= angle_min --- chamfer
 				arc_data[#RADIUS]	= radius
 				arc_data[#ROTATION]	= angle_counter
 
-				angle_counter += angle_to
+				angle_counter += angle_min
 
 				append arcs_data arc_data
 			)
@@ -313,7 +358,7 @@ replaceUI:	true
 		  */
 		function createArcsObjects =
 		(
-			format "\n"; print "TechArch.ms.createArcsObjects()"
+			--format "\n"; print "TechArch.ms.createArcsObjects()"
 
 			for arc_data in arcs_data do
 			(
@@ -322,6 +367,8 @@ replaceUI:	true
 				Rotate arc_obj ( AngleAxis arc_data[#ROTATION] [0,0,1])
 
 				arc_data[#NODE] = arc_obj
+
+				arc_obj.parent = this.obj
 			)
 
 		)
@@ -343,37 +390,14 @@ replaceUI:	true
 	  */
 	function attachAllToObj =
 	(
+		if not initialized then return false
 		--format "\n"; print "TechArch.ms.attachAllToObj()"
-		all_arcs = for arc_data in arcs_data where isValidNode arc_data[#NODE] collect arc_data[#NODE]
+		all_arcs = this.getArcNodes()
 
 		this.attatchLines (this.obj) ( all_arcs )
+
+		this.weldAllVerts()
 	)
-
-	/** Remove lines
-	  *
-	  */
-	function removeAllLines =
-	(
-		format "\n"; print "TechArch.ms.removeAllLines()"
-		--format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
-
-		for arc_data in arcs_data where isValidNode arc_data[#NODE] do delete arc_data[#NODE]
-
-		this.arcs_data = #()
-
-		/* DELETE SPLINE SEGMENTS */
-		for spline_i = 1 to numSplines this.obj do
-			deleteSpline this.obj 1
-			--deleteSpline this.obj 1
-
-		updateShape this.obj
-	)
-
-	/*------------------------------------------------------------------------------
-
-		PRIVATE
-
-	--------------------------------------------------------------------------------*/
 
 	/** Attatch lines
 	  *`
@@ -382,7 +406,47 @@ replaceUI:	true
 	(
 		for s in splines where s != spline do addAndWeld spline ( convertToSplineShape s) -1
 
-		weldSpline spline 0.01
+	)
+
+	/** Remove lines
+	  *
+	  */
+	function removeAllLines =
+	(
+		--format "\n"; print "TechArch.ms.removeAllLines()"
+		--format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
+
+		for obj in this.getArcNodes() do delete obj
+
+		/* DELETE SPLINE SEGMENTS */
+		for spline_i = 1 to numSplines this.obj do
+			deleteSpline this.obj 1
+			--deleteSpline this.obj 1
+
+		this.arcs_data = #()
+
+		updateShape this.obj
+	)
+
+	/** Get arc nodes
+	  *
+	  */
+	function getArcNodes =
+	(
+		--format "\n"; print "TechArch.ms.getArcNodes()"
+		for arc_data in arcs_data where isValidNode arc_data[#NODE] collect arc_data[#NODE] --return
+	)
+
+	/** Weld all verts
+	  *
+	  */
+	function weldAllVerts =
+	(
+		--format "\n"; print "TechArch.ms.weldAllVerts()"
+		if not initialized then return false
+
+		if weld_line  then
+			weldSpline this.obj 0.001
 	)
 
 	/** Get node obejct
@@ -394,15 +458,21 @@ replaceUI:	true
 		this.obj = nodes[1] --return
 	)
 
+	/*------------------------------------------------------------------------------
 
+		EVENTS
+
+	--------------------------------------------------------------------------------*/
 	--on create do generate()
-	--on postCreate do generate()
+	--on postCreate do
 
 	on attachedToNode _node  do
 	(
 		--format "\n"; print ".attachedToNode()"
 		--format "_node:	% \n" _node
 		this.obj = _node
+
+		this.initialized = true
 
 		this.generate()
 		--this._node.name = _node
@@ -411,6 +481,14 @@ replaceUI:	true
 
 	--on buildShape do rebuildShape()
 	--
+	/** Test
+	  *
+	  */
+	function test =
+	(
+		--format "\n"; print "!!!!!!!!!!!!!!!!!!!! TEST !!!!!!!!!!!!!!!!!!!"
+	)
+
 	tool create numPoints:3
 	(
 		on mousePoint click do if click == 1 do
