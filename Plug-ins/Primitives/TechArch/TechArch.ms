@@ -8,62 +8,93 @@ classID:	#( 0x3083a88, 0x27add00b ) -- genClassID() -- genrate id
 version:	0.1
 replaceUI:	true
 (
-
 	/* options */
 	/* properties */
-	local radius = 40
-	local radius_outter = 50
-
 	/* properties */
 	local initialized = false
 
-
 	/* store */
 	local obj
+	local arcs_data = #()
 
-	--local pieces = 3
-	--local
+	/*------------------------------------------------------------------------------
 
-	local Arcs = #()
+		PARAMETERS
 
-	--local chamfer_val = 2
-	local angle_from = 0
-	local angle_to = 0
-
+	--------------------------------------------------------------------------------*/
 
 	parameters main rollout:params
 	(
-		pieces  default:3 type:#integer	ui:SP_pices
-		chamfer_val default:0 type:#float	ui:SP_chamfer
-		connect_line default:true type:#boolean	ui:SP_connect_line
+		radius 	ui:SP_radius	type:#float	default:50
+		pieces 	ui:SP_pieces	type:#integer	default:5
+		wrap	ui:SP_wrap	type:#float	default:270
+		width	ui:SP_width	type:#float	default:20
 
-		on pieces set val do if initialized then this.generate()
-		on chamfer_val set val do if initialized then this.generate()
-
+		on radius	set val do if initialized then this.generate()
+		on pieces	set val do if initialized then this.generate()
+		on wrap		set val do if initialized then this.generate()
+		on width		set val do if initialized then this.generate()
 	)
+
+	parameters main rollout:params_variation
+	(
+		random_radius 	ui:CBX_random_radius	type:#boolean	default:false
+
+		on random_radius set val do if initialized then this.generate()
+	)
+
+
+	/*------------------------------------------------------------------------------
+
+		ROLLOUTS
+
+	--------------------------------------------------------------------------------*/
 
 	rollout params "Parameters"
 	(
-		--spinner	SP_pices  "Rounds: "   range:[ 2, 10, 3 ] type:#integer
-		spinner	SP_pices  "Rounds: "   range:[ 3, 10, 3 ] type:#integer
-		spinner	SP_chamfer "Chamfer: " range:[ 0, 10, 3 ] type:#float
+		spinner	SP_radius	"Radius"	range:[ 0, 9999999, radius ]
+		spinner	SP_pieces	"Pieces"	range:[ 1, 9999999, pieces ]	type:#integer tooltip:"Number anlge pieces"
+		spinner	SP_wrap	"Wrap"	range:[ 1, 9999999, wrap ]	 tooltip:"Total radius of line"
+		spinner	SP_width	"Width"	range:[ 0, 9999999, width ]
+	)
 
-		button	SP_generate "Generate"
-		button	SP_reset "Reset"
+	rollout params_variation "Variations"
+	(
+		checkbox	CBX_random_radius 	"Random Radius"
+
+	)
+
+	parameters main rollout:params_extended
+	(
+		height	ui:SP_height	type:#integer default:20
+		chamfer	ui:SP_chamfer	type:#float	default:0
+
+		connect_line	ui:SP_connect_line	type:#boolean	default:true
+
+		on chamfer	 set val do if initialized then this.generate()
+		on height		set val do if initialized then this.generate()
+
+		--on chamfer set val do if initialized then this.generate()
+	)
+
+	rollout params_extended "Parameters Extends"
+	(
+		spinner	SP_height "Height"	type:#float
+		spinner	SP_chamfer "Chamfer"	range:[ 0, 10, 0 ]	type:#float
+
 		checkbox	SP_connect_line 	"Connect line"
 		checkbox	SP_close_line	"Close line"
 
-		button	BTN_test "Test"
+		button btn_test "Generate"
 
-		on SP_reset	    pressed do	this.removeAllLines()
-		--on SP_generate	pressed do this.generate()
-
-		on SP_connect_line changed val do if initialized do if val then this.createConnectLine() else this.removeConnectLine()
-		--this.removeAllLines()
-
-		--on BTN_test pressed do	--this.removeAllLines()
-			--messageBox "Yupiii" title:"Title"  beep:false
+		on btn_test pressed do this.generate()
 	)
+
+	/*------------------------------------------------------------------------------
+
+		METHODS
+
+	--------------------------------------------------------------------------------*/
 
 	/** Generate
 	  *
@@ -90,9 +121,6 @@ replaceUI:	true
 
 			this.generateArches()
 
-			--this.attatchLines this.obj  #(connect_line)
-
-			--format "CONNECT_LINE:	% \n" connect_line
 			if connect_line then
 				this.createConnectLine()
 		)
@@ -100,20 +128,7 @@ replaceUI:	true
 
 		initialized = true
 
-		--if selection[1] != this.obj then
-			--select this.obj
-
 		--SetCommandPanelTaskMode(max_mode)
-	)
-
-	/** Attatch lines
-	  *`
-	  */
-	function attatchLines spline splines =
-	(
-		for s in splines where s != spline do addAndWeld spline ( convertToSplineShape s) -1
-
-		weldSpline spline 0.01
 	)
 
 	/** Create connect line
@@ -128,15 +143,12 @@ replaceUI:	true
 		  */
 		function getFirstAndLastVertextFromEachSpline =
 		(
-			--format "\n"; print "TechArch.ms.getFirstAndLastVertextFromEachSpline()"
+			format "\n"; print "TechArch.ms.getFirstAndLastVertextFromEachSpline()"
 			last_knot_i = 1
 			verts_pos_all = #()
 
 			for spline_current = 1 to numSplines this.obj - 1 do
 			(
-				--format "\n"
-				--format "spline_current:	% \n" spline_current
-
 				spline_next = spline_current + 1
 				num_knots	= numKnots this.obj spline_current
 
@@ -160,9 +172,11 @@ replaceUI:	true
 
 		connect_line_shape = SplineShape()
 
+
 		for i = 1 to verts_pos.count do
 		(
-			format "i:	% \n" i
+			--format "i:	% \n" i
+			--format "verts_pos:	% \n" verts_pos
 
 			addNewSpline connect_line_shape
 
@@ -170,6 +184,7 @@ replaceUI:	true
 			addKnot connect_line_shape i #corner #line verts_pos[i][2]
 		)
 
+		/* ATTACH TO OBJECT */
 		this.attatchLines this.obj  #(connect_line_shape)
 
 	)
@@ -191,33 +206,129 @@ replaceUI:	true
 	  */
 	function generateArches =
 	(
-		--format "\n"; print "TechArch.ms.generateArches()"
+		format "\n"; print "TechArch.ms.generateArches()"
 
-		--delete objects
-
-		this.Arcs = #()
-
-		angle_increment = ( 360 / pieces )
-
-		radius_increment = ( radius_outter - radius ) / ( pieces -  1 ) as float
-
-		radiuses = #(radius)
-
-		for i = 1 to pieces - 1 do append radiuses ( radius + ( radius_increment * i ))
-
-		for i = 1 to pieces do
+		format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
+		/** Get angles
+		  *
+		  */
+		function getAngles =
 		(
-			_Arc = Arc radius:radiuses[i] from:(angle_from + chamfer_val) to:( angle_increment - chamfer_val ) pie:off reverse:off pos:[0, 0, 10 * (i - 1) ]
+			--format "\n"; print "TechArch.ms.getAngles()"
+			angles = for i = 1 to pieces collect  wrap / pieces
 
-			Rotate _Arc ( AngleAxis angle_to [0,0,1])
-			--angle_from	+= angle_to
-			angle_to	+= angle_increment
+			angle_increment = ( wrap / pieces )
 
-			append Arcs _Arc
+			for i = 1 to pieces do append angles ( angle_increment * i )
+
+			angles --return
 		)
 
-		this.attatchLines (this.obj) (this.Arcs)
+		/** Get radiuse value of arch splines
+		  */
+		function getRadiuses =
+		(
+			--format "\n"; print "TechArch.ms.getAngles()"
+			/* RADIUS EQUAL */
+			radiuses = for i = 1 to pieces collect radius
+
+			if width > 0 then
+			(
+				--format "random_radius:	% \n" random_radius
+				if random_radius == false then
+				(
+					/* RADIUS INCREMENT */
+					radius_increment = width / ( pieces -  1 ) as float
+
+					for i = 1 to radiuses.count do
+						radiuses[i] +=  radius_increment * (i - 1)
+				)
+				else
+					radiuses = for i = 1 to pieces collect random (radius)(radius + width)
+
+				radiuses[1]	= radius	-- set min radius to first radius
+				radiuses[radiuses.count]	= (radius + width)	-- set max radius to last radius
+
+			)
+
+			radiuses --return
+		)
+
+		/** Get height positions
+		  *
+		  */
+		function getHeightPositions =
+		(
+			--format "\n"; print "TechArch.ms.getHeightPositions()"
+			height_increment = height / ( pieces -  1 ) as float
+
+			for i = 1 to pieces collect [ this.obj.pos.x, this.obj.pos.x, this.obj.pos.z + ( height_increment * (i - 1) ) ]
+		)
+
+
+		/** Create arch obejcts
+		  *
+		  */
+		function setArcsData radiuses angles positions =
+		(
+			--format "\n"; print "TechArch.ms.setArcData()"
+
+			angle_counter = 0
+
+			for i = 1 to pieces do
+			(
+				arc_data	= Dictionary()
+
+				arc_data[#RADIUS]	= radiuses[i]
+				arc_data[#FROM]	= 0 + chamfer
+				arc_data[#TO]	= angles[i] - chamfer
+				arc_data[#POSITION]	= positions[i]
+				arc_data[#ROTATION]	= angle_counter
+
+				append this.arcs_data arc_data
+
+				angle_counter	+= angles[i]
+
+			)
+		)
+
+		/** Create arch obejcts
+		  *
+		  */
+		function createArcsObjects =
+		(
+			--format "\n"; print "TechArch.ms.setArcData()"
+
+			arcs_lines = #()
+
+
+			for arc_data in arcs_data do
+			(
+				arc_line = Arc radius:arc_data[#RADIUS] from:arc_data[#FROM]  to:arc_data[#TO] pos:arc_data[#POSITION] pie:off reverse:off
+
+				Rotate arc_line ( AngleAxis arc_data[#ROTATION] [0,0,1])
+
+				append arcs_lines arc_line
+			)
+
+			arcs_lines --return
+		)
+
+		angles 	= getAngles()
+		radiuses 	= getRadiuses()
+		positions 	= getHeightPositions()
+
+
+		if arcs_data.count == 0 then
+			setArcsData(radiuses)(angles)(positions)
+
+		arcs_lines = createArcsObjects()
+
+		/* ATTACH TO OBJECT */
+		this.attatchLines (this.obj) (arcs_lines)
 	)
+
+
 
 	/** Remove lines
 	  *
@@ -249,6 +360,16 @@ replaceUI:	true
 
 	--------------------------------------------------------------------------------*/
 
+	/** Attatch lines
+	  *`
+	  */
+	function attatchLines spline splines =
+	(
+		for s in splines where s != spline do addAndWeld spline ( convertToSplineShape s) -1
+
+		weldSpline spline 0.01
+	)
+
 	/** Get node obejct
 	 */
 	function _setNodeObject =
@@ -257,6 +378,9 @@ replaceUI:	true
 
 		this.obj = nodes[1] --return
 	)
+
+
+
 
 	--on create do generate()
 	--on postCreate do generate()
