@@ -20,7 +20,7 @@ function defaultSetup =
 function mainSetup =
 (
 	--format "\n"; print "TechArchTest.ms.mainSetup()"
-	radius	= 100
+	radius	= 60
 
 	wrap_angle	= 720
 	wrap_angle	= 360
@@ -47,18 +47,18 @@ function lineSetup =
 (
 	--format "\n"; print "TechArchTest.ms.lineSetup()"
 	attach_to_line	= true
-	attach_to_line	= false
+	--attach_to_line	= false
 
 	weld_line	= true
-	weld_line	= false
+	--weld_line	= false
 
 	connect_line	= true
-	connect_line	= false
+	--connect_line	= false
 
 	close_line	= true
-	close_line	= false
+	--close_line	= false
 
-	tech_arch = techArch attach_to_line:attach_to_line weld_line:weld_line connect_line:connect_line close_line:close_line
+	tech_arch = techArch attach_to_line:attach_to_line weld_line:weld_line connect_line:connect_line close_line:close_line height:10
 
 )
 
@@ -69,9 +69,9 @@ delete objects
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
-defaultSetup()
+--defaultSetup()
 
---mainSetup()
+mainSetup()
 
 --lineSetup()
 
