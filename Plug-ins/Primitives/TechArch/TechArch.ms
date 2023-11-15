@@ -1,12 +1,7 @@
---plugin simpleSpline techArch -- superclasses: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-B0B9C1BF-168C-47D2-A4BE-12D93116FE79
-plugin shape techArch -- superclasses: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-B0B9C1BF-168C-47D2-A4BE-12D93116FE79
+plugin SimpleSpline techArch -- superclasses: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-B0B9C1BF-168C-47D2-A4BE-12D93116FE79
 name:	"Tech Arch"
 category:	"Splines"
-extends:	SplineShape
-
-classID:	#( 0x3083a88, 0x27add00b ) -- genClassID() -- genrate id
-version:	0.1
-replaceUI:	true
+classID:	#( 0x3083a88, 0x27add00b ) -- genClassID()
 (
 	/* options */
 	/* properties */
@@ -17,6 +12,9 @@ replaceUI:	true
 	/* store */
 	local obj
 	local arcs_data = #()
+	local sketch
+
+	local circles = #()
 
 	/*------------------------------------------------------------------------------
 
@@ -27,14 +25,14 @@ replaceUI:	true
 	parameters main rollout:params
 	(
 		radius 	ui:SP_radius	type:#float	default:50
-		width	ui:SP_width	type:#float	default:20
-		height	ui:SP_height	type:#integer default:20
+		width	ui:SP_width	type:#float	default:0
+		height	ui:SP_height	type:#float default:0
 		gap_angle	ui:SP_gap_angle	type:#float	default:0
 
-		on radius	set val do this.generate()
-		on height	set val do this.generate()
-		on gap_angle	set val do this.generate()
-		on width		set val do this.generate()
+		on radius	set val do this.setRadius()
+		on width	set val do this.setWidth()
+		on height	set val do this.setHeight()
+		--on gap_angle	set val do this.generate()
 
 	)
 
@@ -42,8 +40,8 @@ replaceUI:	true
 	(
 		wrap_angle	ui:SP_wrap	type:#float	default:360
 
-		angle_min	ui:SP_angle_min	type:#integer default:90
-		angle_max	ui:SP_angle_max	type:#integer default:90
+		angle_min	ui:SP_angle_min	type:#integer default:180
+		angle_max	ui:SP_angle_max	type:#integer default:180
 
 		on wrap_angle	set val do this.generate()
 		on random_angle set val do this.generate()
@@ -88,29 +86,27 @@ replaceUI:	true
 
 	rollout params_angle "Angles"
 	(
-		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 9999, wrap_angle ]	 tooltip:"Total radius of line"
+		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 9999, wrap_angle ]  scale:10.0 tooltip:"Total radius of line"
 		spinner	SP_angle_min	"Angle Min"	range:[ 1, 9999, 90 ] tooltip:"Angle of arch segment"
 		spinner	SP_angle_max	"Angle Max"	range:[ 0, 9999, 0 ]
 
 
 		/* ON ANGLE MIN CHANGED -- dont allow angle_min > angle_max */
-		on SP_angle_min changed val do
-			if val > angle_max  then
-				angle_max = val
+		--on SP_angle_min changed val do
+		--	if val > angle_max  then
+		--		angle_max = val
 
 
 		/* ON ANGLE MAX CHANGED -- dont allow angle_max > angle_max */
-		on SP_angle_max changed val do
-			if val > angle_min  then
-				angle_min = val
-
-
+		--on SP_angle_max changed val do
+		--	if val > angle_min  then
+		--		angle_min = val
 	)
 
 	rollout params_variation "Variations"
 	(
-		radiobuttons RB_radius_mode "Radius Mode"	labels:#("Random", "Incremental", "Event\Odd") --offset:[-8, 16]
-		radiobuttons RB_angle_mode "Angle Mode"	labels:#("Random", /*"Incremental",*/ "Event\Odd") --offset:[-8, 16]
+		radiobuttons RB_radius_mode "Radius Mode"	labels:#("Event\Odd", "Random", "Incremental" ) --offset:[-8, 16]
+		radiobuttons RB_angle_mode "Angle Mode"		labels:#("Event\Odd", "Random" /*", Incremental"*/ ) --offset:[-8, 16]
 
 		/* ON RADIUS MODE CHANGED */
 		on RB_angle_mode changed val do
@@ -148,33 +144,131 @@ replaceUI:	true
 
 	--------------------------------------------------------------------------------*/
 
+	/** Generate circles
+	  *
+	  */
+	function generateCircles position =
+	(
+		format "\n"; print "TechArch.ms.generateCircles()"
+
+		if circles.count > 0 or position == undefined then
+			return true
+
+		circles_data = #()
+
+		angle_counter = 0
+
+		/* GET DATA FOR CIRCLES */
+		while angle_counter < wrap_angle do
+		(
+			circle_data	= Dictionary()
+
+			arc_index = arcs_data.count+1
+
+			angle_used = angle_min
+
+			circle_data[#ROTATION]	= angle_counter
+
+			angle_counter += angle_used
+
+			/* Fit last arc to wrap angle value */
+			if angle_counter > wrap_angle then
+				angle_used = wrap_angle - angle_counter
+
+
+			circle_data[#FROM]	= 0 + gap_angle
+			circle_data[#TO]	= angle_used - gap_angle
+			circle_data[#RADIUS]	= radius
+			--circle_data[#POSITION]	= position
+
+			append circles_data circle_data
+		)
+
+		/* CREATE CIRCLES */
+		for circle_data in circles_data do
+		(
+			--arc_obj = Arc radius:circle_data[#RADIUS] from:circle_data[#FROM] to:circle_data[#TO] pos:circle_data[#POSITION] pie:off reverse:off wirecolor:green name:( this.obj.name + "-arc" )
+			--circle = Arc radius:circle_data[#RADIUS] from:circle_data[#FROM] to:circle_data[#TO] pos:position pie:off reverse:off wirecolor:green
+			circle = Arc radius:0 from:circle_data[#FROM] to:circle_data[#TO] pos:position pie:off reverse:off wirecolor:green
+
+			Rotate circle ( AngleAxis circle_data[#ROTATION] [0,0,1])
+
+			append circles circle
+		)
+		--format "CIRCLES.COUNT:	% \n" CIRCLES.COUNT
+	)
+
+	/** Set radius
+	  *
+	  */
+	function setRadius =
+	(
+		format "\n"; print "TechArch.ms.setRadius()"
+		--if not initialized then return false
+
+		for circle in circles do circle.radius = radius
+	)
+
+	/** Set width of circle to create "tube" effect
+	  */
+	function setWidth =
+	(
+		if not initialized then return false
+		format "\n"; print "TechArch.ms.setWidth()"
+
+		circles[circles.count].radius = radius - width
+	)
+
+	/** Set height of circles to create "cylinder" effect
+	  */
+	function setHeight =
+	(
+		--format "this.obj:	% \n" this.obj
+		if not initialized then return false
+		format "\n"; print "TechArch.ms.setHeight()"
+
+		circles[circles.count].pos.z = this.obj.pos.z + height
+
+		--for circle in circles do circle.radius = radius
+	)
+
 	/** Generate
 	  *
 	  */
 	function generate =
 	(
+
 		if not initialized then return false
 
-		--format "\n"; print "TechArch.ms.generate()"
-		--format "ROUNDS:	% \n" arcs_data.count
-
-		--initialized = false
-
-		with redraw off
+		--if initialized then
 		(
-			this._setNodeObject()
+			max_mode = GetCommandPanelTaskMode()
 
-			this.removeAllLines()
+			--max create mode
 
-			this.generateArches()
+			with redraw off
+			(
 
-			if connect_line then
-				this.createConnectLine()
+				this._setNodeObject()
 
-			this.weldAllVerts()
+				this.removeAllLines()
+
+				this.generateArches()
+
+				if connect_line then
+					this.createConnectLine()
+
+				this.weldAllVerts()
+			)
+
+
+			--EnableSceneRedraw()
+			--SetCommandPanelTaskMode(max_mode)
+
+			if max_mode == #modify and classOf(curr_mod = modPanel.getCurrentObject()) != false then
+				modPanel.setCurrentObject this.obj.baseObject
+
 		)
-
-		initialized = true
 	)
 
 	/** Create connect line
@@ -266,7 +360,7 @@ replaceUI:	true
 		--/* CLOSE LINE IF ALLOWED */
 		--if close_line then
 		--	this.closeSpline()
-)
+	)
 
 	/** Remove connect line
 	  *
@@ -277,18 +371,15 @@ replaceUI:	true
 		for spline_i = arcs_data.count + 1 to numSplines this.obj do
 			deleteSpline this.obj 1
 
-		updateShape this.obj
+		updateShape this.ob
 	)
-
 
 	/** Generate arch
 	  *
 	  */
 	function generateArches =
 	(
-		--format "\n"; print "TechArch.ms.generateArches()"
-
-
+		format "\n"; print "TechArch.ms.generateArches()"
 		/** Set arches
 		  *
 		  */
@@ -303,7 +394,7 @@ replaceUI:	true
 
 				arc_index = arcs_data.count+1
 
-				final_angle = case angle_mode of
+				angle_used = case angle_mode of
 				(
 					--2:
 					3: if this.isOdd(arc_index) then angle_min else angle_max -- Even arch is min, odd is max
@@ -311,11 +402,11 @@ replaceUI:	true
 				)
 
 				arc_data[#FROM]	= 0 + gap_angle
-				arc_data[#TO]	= final_angle - gap_angle
+				arc_data[#TO]	= angle_used - gap_angle
 				arc_data[#ROTATION]	= angle_counter
 				arc_data[#RADIUS]	= radius
 
-				angle_counter += final_angle
+				angle_counter += angle_used
 
 				append arcs_data arc_data
 			)
@@ -346,13 +437,16 @@ replaceUI:	true
 		/** Get height positions
 		  *
 		  */
-		function setHeightPositions =
+		function setArcPositions =
 		(
 			--format "\n"; print "TechArch.ms.getHeightPositions()"
 			height_increment = height / ( arcs_data.count -  1 ) as float
 
+			for i = 1 to arcs_data.count do arcs_data[i][#POSITION] = this.obj.pos
+
+
 			for i = 1 to arcs_data.count do
-				arcs_data[i][#POSITION] =  [ this.obj.pos.x, this.obj.pos.x, this.obj.pos.z + ( height_increment * (i - 1) ) ]
+				arcs_data[i][#POSITION].z = this.obj.pos.z + ( height_increment * (i - 1) )
 		)
 
 		/** Create arch obejcts
@@ -376,7 +470,7 @@ replaceUI:	true
 
 		setArchesByAngle()
 
-		setHeightPositions()
+		setArcPositions()
 		setRadiusVariations()
 
 		createArcsObjects()
@@ -449,53 +543,102 @@ replaceUI:	true
 			weldSpline this.obj 0.001
 	)
 
-	/** Get node obejct
+	/** Get this.obj obejct
 	 */
 	function _setNodeObject =
 	(
-		nodes = for o in refs.dependents this where isValidNode o collect o
+		--nodes = for o in refs.dependents this where isValidNode o collect o
 
-		this.obj = nodes[1] --return
+		--this.obj = nodes[1] --return
 	)
 
-	fn isOdd num = ( mod num 2) != 0
+	function isOdd num = ( mod num 2) != 0
+
+	/*------------------------------------------------------------------------------
+
+		PRIVATE
+
+	--------------------------------------------------------------------------------*/
+
+	/** Init
+	  *
+	  */
+	function init obj: =
+	(
+		if this.initialized then return true
+		format "\n"; print "TechArch.ms.init()"
+
+		this.obj = if obj != unsupplied then obj else (for o in refs.dependents this where isValidNode o collect o)[1]
+
+		this.initialized = true
+	)
 
 	/*------------------------------------------------------------------------------
 
 		EVENTS
 
 	--------------------------------------------------------------------------------*/
-	--on create do generate()
-	--on postCreate do
 
-	on attachedToNode _node  do
+
+	on load do
 	(
-		--format "\n"; print ".attachedToNode()"
-		--format "_node:	% \n" _node
-		this.obj = _node
-
-		this.initialized = true
-
-		this.generate()
-		--this._node.name = _node
+		format "\n"; print ".load()"
 	)
-	--on postCreate do initialized = true
 
-	--on buildShape do rebuildShape()
-
-	tool create numPoints:3
+	on postLoad  do
 	(
-		on mousePoint click do if click == 1 do
-		(
-			format "\n"; print "tech-archs.ms.onCreate()"
-
-		)
-			--nodeTM.translation = gridPoint
-		--
-		--on mouseMove click do case click of
-		--(
-		--	2: radius = (gridDist.x^2 + gridDist.y^2)^.5
-		--	3: height = (gridDist.x^2 + gridDist.y^2)^.5
-		--)
+		format "\n"; print ".postLoad()"
+		--this.init()
 	)
+
+	on attachedToNode obj  do
+	(
+		format "\n"; print ".attachedToNode()"
+
+		--this.obj = obj
+		this.init obj:obj
+	)
+
+	/* Mouse events: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-619AF4D3-A347-4155-943B-707D421BC460
+	*/
+	tool create numPoints:4
+	(
+
+		local view_point
+
+		on mousePoint click do
+		  case click of
+		  (
+			1: (
+				nodeTM.translation = gridPoint
+
+				this.generateCircles(gridPoint)
+			)
+			4: #stop
+		  )
+
+		on mouseMove click do
+		  case click of
+		  (
+			2: this.radius 	= gridDist.x
+			3: this.width	= gridDist.x
+			4: this.height	= gridDist.z
+			--4: format "\nmouseMove 4"
+		  )
+
+		 --on mouseAbort click do <expr>
+
+	)
+
+
+	on create do
+	(
+		format "\n"; print ".create()"
+	)
+
+	on postCreate do
+	(
+		format "\n"; print ".postCreate()"
+	)
+
 )
