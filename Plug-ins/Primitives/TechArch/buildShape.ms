@@ -35,14 +35,14 @@
 
 		/** Get points up to 90 degrees
 		  */
-		function getArcPoints arc_radius arc_angle arc_points =
+		function getArcPoints arc_radius arc_angle =
 		(
-            format "\n"; print "testPlugin.ms.getArcPoints()"
-            format "arc_radius:	% \n" arc_radius
-            format "arc_angle:	% \n" arc_angle
-            format "arc_points:	% \n" arc_points
+            --format "\n"; print "testPlugin.ms.getArcPoints()"
+            --format "arc_radius:	% \n" arc_radius
+            --format "arc_angle:	% \n" arc_angle
+            --format "arc_points:	% \n" arc_points
 
-			/* GET START AND END COORDINATES */
+			/* GET START AND END COORDINATES - Coordinates are elaborated in CCW */
 			x4 = arc_radius * cos(arc_angle/2);
 			y4 = arc_radius * sin(arc_angle/2);
 			x1 = x4;
@@ -55,45 +55,86 @@
 			y3 = -y2;
 
 			/* GET POINTS */
-			P0 = [ x1, y1, 0]
-			P1 = [ x2, y2, 0]
-			P2 = [ x3, y3, 0]
-			P3 = [ x4, y4, 0]
+			P1 = [ x1, y1, 0]
+			V1 = [ x2, y2, 0]
 
-			local point_1 = Dictionary #( #point,P0) #( #inVec, P0) #( #outVec, P1)
-			local point_2 = Dictionary #( #point,P3) #( #inVec, P2) #( #outVec, P3)
+			P2 = [ x4, y4, 0]
+			V2 = [ x3, y3, 0]
+
+			/* CCW */
+			--local point_1 = Dictionary #( #point,P1) #( #inVec, P1) #( #outVec, V1)
+			--local point_2 = Dictionary #( #point,P2) #( #inVec, V2) #( #outVec, P2)
+
+			/* CW */
+			local point_1 = Dictionary #( #point,P2) #( #inVec, P2) #( #outVec, V2)
+			local point_2 = Dictionary #( #point,P1) #( #inVec, V1) #( #outVec, P1)
 
 
-			/* CHAIN ARCS - merge first point and last point of previous arc */
-			--if arc_points.count > 0 then
-			--	arc_points[arc_points.count][#outVec] = point_1[#outVec]
-			--
-			--else
-				append arc_points point_1 -- first point of first arc
+			#( point_1, point_2 )
+		)
 
-			append arc_points point_2
+		/** Rotate points in space
+		  *
+		  */
+		function rotatePointsInSpace arc_points angle_rot =
+		(
+			local rotation_center = [0,0,0]
+
+			angle_rot *= -1 -- rotate in CW direction
+
+            for arc_point in arc_points do
+                for key in arc_point.keys do
+                (
+                    transform_mat	= TransMatrix rotation_center
+
+                    rot_mat	= (RotateZMatrix angle_rot ) * transform_mat
+
+                    arc_point[key]	= arc_point[key] * rot_mat
+                )
+
+            arc_points --return
+		)
+
+		/** Convert points to dotnet vectors
+		  *
+		  */
+		function convertoDotNetVectors arc_points =
+		(
+			for arc_point in arc_points do
+				for key in arc_point.keys do
+					arc_point[key] = vec3point (arc_point[key])
 
 			arc_points --return
 		)
 
+		arc_used = ceil ( arc_angle / 90.0 ) as integer
+		format "arc_used:	% \n" arc_used
 
-        arc_points = #()
---format "ARC USED:	% \n" (ceil ( arc_angle / 90.0 ))
---
---		/* SPLIT ARC TO MAX 90° SEGMENTS  */
---		for i = 1 to arc_used = ceil ( arc_angle / 90.0 ) do
---			getArcPoints(arc_angle / arc_used)(arc_points)
+		arc_angle /= arc_used -- dive arc to even parts
+		format "arc_angle:	% \n" arc_angle
+		arc_points = getArcPoints(arc_radius)(arc_angle)
 
-		arc_points = getArcPoints(arc_radius)(arc_angle)(arc_points)
+		arc_points = rotatePointsInSpace( arc_points ) ( arc_angle/ -2 ) -- rotate start of arc to "12:00" position
 
-       format "\n-----------\nARRAY:arc_points:\n"; for arc_point in arc_points do format "arc_point:	%\n" arc_point
+		if arc_used > 1 then
+		(
+			arcs_next = for i = 1 to arc_used - 1 collect deepCopy arc_points
 
-		arc_points = this.rotatePointsInSpace ( arc_points ) (angle_rot)
+			for i = 1 to arcs_next.count collect
+		    (
+				arc_points_rotated = rotatePointsInSpace( arcs_next[i] ) ( arc_angle * i )
 
+				/* modify out vector of lst point of previous arc */
+				arc_points[arc_points.count][#outVec] = arc_points_rotated[1][#outVec]
 
+				/* append second vert to all ponts */
+				append arc_points arc_points_rotated[2]
+		   )
+		)
+
+		convertoDotNetVectors(arc_points)
 
 		this.constructArc (arc_points) (AddKnot)
-
 	)
 
 	/* Generate Arc spline on given shape
@@ -123,31 +164,7 @@
 		this.constructArc (arc_points) (AddKnot)
 	)
 
-	/** Rotate points in space
-	  *
-	  */
-	function rotatePointsInSpace arc_points angle_rot =
-	(
-		local rotation_center = [0,0,0]
 
-		angle_rot *= -1 -- -1 makes rotation cw
-
-		--format "\n"; print "buildShape.ms.rotatePointsInSpace()"
-		for arc_point in arc_points do
-		(
-			/* ROTATE POINTS IN SPACE */
-			for key in arc_point.keys do
-            (
-                transform_mat	= TransMatrix rotation_center
-
-                rot_mat	= (RotateZMatrix angle_rot ) * transform_mat
-
-                arc_point[key]	= vec3point (arc_point[key] * rot_mat )
-            )
-		)
-
-		arc_points --return
-	)
 
 	/** Construct arc
 	  *
@@ -177,9 +194,10 @@
 		--this.make3PointArc arc_angle:90 radius:50 angle_rot:180 dir:1 AddKnot:spline.AddKnot
 
 
-		--this.make2PointArc arc_angle:45 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
+		this.make2PointArc arc_angle:45 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
 		--this.make2PointArc arc_angle:90 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
-		this.make2PointArc arc_angle:180 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
+		--this.make2PointArc arc_angle:120 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
+		--this.make2PointArc arc_angle:180 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
 
 
 		--this.make2PointArc 90 50 0 -1 spline.AddKnot
