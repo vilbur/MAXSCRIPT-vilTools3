@@ -1,20 +1,40 @@
-plugin shape techArch -- superclasses: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-B0B9C1BF-168C-47D2-A4BE-12D93116FE79
+plugin SimpleSpline techArch
 name:	"Tech Arch"
-extends:	SplineShape
-category:	"Splines"
+
 classID:	#( 0x3083a88, 0x27add00b ) -- genClassID()
-replaceUI:	true
+category:	"Splines"
 (
-	/* options */
-	/* properties */
-
-	/* properties */
-	local initialized = false
-
-	/* store */
 	local obj
 
 	local circles = #()
+
+	local initialized	= true
+
+
+	/*------------------------------------------------------------------------------
+		SPLINE PROPERTIES
+	--------------------------------------------------------------------------------*/
+	local vector3     = dotNetClass "Autodesk.Max.MaxPlus.Point3"
+	local splineKnot	= dotNetClass "Autodesk.Max.MaxPlus.SplineKnot"
+	local cornerKnot	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").CornerKnot
+	local bezierKnot  = ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").BezierKnot
+	local smoothKnot	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").AutoKnot
+	local curveLine	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+LineType").CurveLineType
+
+	local BezierShapeClass = dotNetClass "Autodesk.Max.MaxPlus.BezierShape"
+
+
+
+	/*------------------------------------------------------------------------------
+		SPLINE FUNCTIONS
+	--------------------------------------------------------------------------------*/
+	fn vec2 x y = dotNetObject vector3 x y 0
+
+	fn vec3 x y z = dotNetObject vector3 x y z
+
+	fn vec3point pos = dotNetObject vector3 pos.x pos.y pos.z
+
+	fn getSplineKnot pos inVec outVec knotType = dotNetObject splineKnot knotType curveLine pos inVec outVec
 
 	/*------------------------------------------------------------------------------
 
@@ -24,16 +44,17 @@ replaceUI:	true
 
 	parameters main rollout:params
 	(
+		--pos_test 	type:#float	default:50
+
 		radius 	ui:SP_radius	type:#float	default:50
 		width	ui:SP_width	type:#float	default:0
 		height	ui:SP_height	type:#float default:0
 		gap_angle	ui:SP_gap_angle	type:#float	default:0
 
-		on radius	set val do this.setRadius()
-		on width	set val do this.setWidth()
-		on height	set val do this.setHeight()
+		--on radius	set val do this.setRadius()
+		--on width	set val do this.setWidth()
+		--on height	set val do this.setHeight()
 		--on gap_angle	set val do this.generate()
-
 	)
 
 	parameters main rollout:params_angle
@@ -138,324 +159,121 @@ replaceUI:	true
 		--on btn_test pressed do this.removeAllLines()
 	)
 
-	/*------------------------------------------------------------------------------
 
-		METHODS
-
-	--------------------------------------------------------------------------------*/
-
-	/** Generate circles
+	/** create 90° arc from bezier curve
+	  * https://spencermortensen.com/articles/bezier-circle/#:~:text=B%C3%A9zier%20curves%20are%20often%20used,with%20a%20cubic%20B%C3%A9zier%20curve.
 	  *
 	  */
-	function generateCircles =
+	function createArcOnX =
 	(
-		print "TechArch.generateCircles()"
-		circles_data = #()
+		format "\n"; print "testPlugin.ms.createArcOnX()"
 
-		angle_counter = 0
 
-		/* GET DATA FOR CIRCLES */
-		while angle_counter < wrap_angle do
+		fn makeArcShape angle radius dir AddKnot =
 		(
-			circle_data	= Dictionary()
+			points = Dictionary()
 
-			arc_index = circles_data.count+1
+			fn adjustBy angle =
+				if angle < 90 then 0 else 0.23 * (angle - 90) / 90.
 
-			angle_used = angle_min
-
-			circle_data[#ROTATION]	= angle_counter
-
-			angle_counter += angle_used
-
-			/* Fit last arc to wrap angle value */
-			if angle_counter > wrap_angle then
-				angle_used = wrap_angle - angle_counter
+			kappa = 4 * ( sqrt 2 - 1) / 3
 
 
-			circle_data[#FROM]	= 0 + gap_angle
-			circle_data[#TO]	= angle_used - gap_angle
-			circle_data[#RADIUS]	= radius
-			--circle_data[#POSITION]	= position
+			local bez = angle * kappa / 90 + adjustBy angle
+			local radVec = x_axis * Quat ( angle - 90) z_axis * [dir, 1, 0]
 
-			append circles_data circle_data
+
+			local radX = radius * radVec.x
+			local radY = radius * radVec.y
+			local radXY = radX - radius * dir * bez * radVec.y
+			local radYX = radY + radius * dir * bez * radVec.x
+
+
+            points[#p1]	= [radX, radY, 0]
+            points[#p1_in]	= [radX, radY, 0]
+            points[#p1_out]	= [radXY, radYX, 0]
+
+
+            points[#p2]	= [0., radius, 0]
+            points[#p2_in]	= [(bez * dir * radius), radius, 0]
+            points[#p2_out]	= [(-bez * dir * radius), radius, 0]
+
+            points[#p3]	= [-radX, radY, 0]
+            points[#p3_in]	= [-radXY, radYX, 0]
+            points[#p3_out]	= [-radX, radY, 0]
+
+
+			for key in points.keys do
+			(
+				angle_rot = -45
+				sel_center = [0,0,0]
+
+				transform_mat = TransMatrix sel_center
+				rot_mat = ( RotateZMatrix angle_rot) * transform_mat
+				points[key] = vec3point (points[key] * rot_mat )
+			)
+
+            AddKnot ( getSplineKnot (points[#p1]) (points[#p1_in]) (points[#p1_out]) bezierKnot )
+            AddKnot ( getSplineKnot (points[#p2]) (points[#p2_in]) (points[#p2_out]) bezierKnot )
+            AddKnot ( getSplineKnot (points[#p3]) (points[#p3_in]) (points[#p3_out]) bezierKnot )
+
 		)
 
-		/* CREATE CIRCLES */
-		for circle_data in circles_data do
-		(
-			--arc_obj = Arc radius:circle_data[#RADIUS] from:circle_data[#FROM] to:circle_data[#TO] pos:circle_data[#POSITION] pie:off reverse:off wirecolor:green name:( this.obj.name + "-arc" )
-			--circle = Arc radius:circle_data[#RADIUS] from:circle_data[#FROM] to:circle_data[#TO] pos:position pie:off reverse:off wirecolor:green
-			circle = Arc radius:0 from:circle_data[#FROM] to:circle_data[#TO] pos:this.obj.pos pie:off reverse:off wirecolor:green
+		shapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
 
-			Rotate circle ( AngleAxis circle_data[#ROTATION] [0,0,1])
+		shapeWrapper.NewShape()
 
-			append circles circle
-		)
+		spline = shapeWrapper.NewSpline()
+
+		makeArcShape 45 50 -1 spline.AddKnot
+
+
+		shapeWrapper.UpdateSels()
+		shapeWrapper.InvalidateGeomCache()
+
+		updateShape
 	)
 
-	/** Set radius
-	  *
-	  */
-	function setRadius =
+
+	fn rebuildShape =
 	(
-		if not initialized then return false
-		--print "TechArch.setRadius()"
-
-		for circle in this.circles do circle.radius = radius
-	)
-
-	/** Set width of circle to create "tube" effect
-	  */
-	function setWidth =
-	(
-		if not initialized then return false
-		--print "TechArch.setWidth()"
-
-		this.circles[circles.count].radius = radius - width
-	)
-
-	/** Set height of circles to create "cylinder" effect
-	  */
-	function setHeight =
-	(
-		if not initialized then return false
-		--print "TechArch.setHeight()"
-
-		this.circles[circles.count].pos.z = this.obj.pos.z + height
-	)
-
-	/** Finish curve
-	  *
-	  */
-	function finishCurve =
-	(
-		format "\n"; print "TechArch.finishCurve()"
-
-		/* CONNECT CIRCLES */
-		if connect_line then
-			this.createConnectLine()
-
-		/* ATTACH TO SINGLE OBJECT */
-		--if attach_to_line then
-			--this.attatchLines (this.obj) (this.circles)
-
-
-		/* WELD */
-		--if weld_line then
-			--this.weldAllVerts()
-
-	)
-
-	/** Create connect line
-	  *
-	  */
-	function createConnectLine =
-	(
-		print "TechArch.createConnectLine()"
-
-		child = SplineShape()
-
-		addNewSpline child
-
-		addKnot child 1 #corner #line [ 0, 0, 50]
-		addKnot child 1 #corner #line [ 0, 100, 50]
-		updateShape child
-
-
-		addAndWeld this.obj child -1
-
-		updateShape this.obj
-
-	)
-
-	/** Remove connect line
-	  *
-	  */
-	function removeConnectLine =
-	(
-		--format "\n"; print "TechArch.removeConnectLine()"
-		for spline_i = arcs_data.count + 1 to numSplines this.obj do
-			deleteSpline this.obj 1
-
-		updateShape this.ob
-	)
-
-	/** Attach to obj
-	  *
-	  */
-	function attachAllToObj =
-	(
-		if not initialized then return false
-		--format "\n"; print "TechArch.attachAllToObj()"
-		all_arcs = this.getCircleNodes()
-
-		this.attatchLines (this.obj) ( all_arcs )
-
-		this.weldAllVerts()
-	)
-
-	/** Attatch lines
-	  *`
-	  */
-	function attatchLines spline splines =
-	(
-		print "TechArch.attatchLines()"
-
-		if classOf splines != Array then
-			splines = #(splines)
-
-		for s in splines where s != spline do addAndWeld spline ( convertToSplineShape s) -1
-
-		updateShape spline
-	)
-
-	/** Remove lines
-	  *
-	  */
-	function removeAllLines =
-	(
-		--format "\n"; print "TechArch.removeAllLines()"
-		--format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
-
-		for obj in this.getCircleNodes() do delete obj
-
-		/* DELETE SPLINE SEGMENTS */
-		for spline_i = 1 to numSplines this.obj do
-			deleteSpline this.obj 1
-			--deleteSpline this.obj 1
-
-		this.circles = #()
-
-		updateShape this.obj
-	)
-
-	/** Get arc nodes
-	  *
-	  */
-	function getCircleNodes =
-	(
-		--format "\n"; print "TechArch.getCircleNodes()"
-		for circle in circles where isValidNode circle collect circle --return
-	)
-
-	/** Weld all verts
-	  *
-	  */
-	function weldAllVerts =
-	(
-		--format "\n"; print "TechArch.weldAllVerts()"
-		if not initialized then return false
-
-		if weld_line  then
-			weldSpline this.obj 0.001
+		this.createArcOnX()
 	)
 
 
-	function isOdd num = ( mod num 2) != 0
-
-	/*------------------------------------------------------------------------------
-
-		PRIVATE
-
-	--------------------------------------------------------------------------------*/
-
-	/** Init
-	  *
-	  */
-	function init obj: =
-	(
-		if this.initialized then return true
-		format "\n"; print "TechArch.init()"
-
-		this.obj = if obj != unsupplied then obj else (for o in refs.dependents this where isValidNode o collect o)[1]
-
-		this.initialized = true
-
-		/* GENERATE OBJECT IF NOT CREATED MANUALY */
-		if circles.count == 0 then
-			this.createdByScript()
-	)
-
-	/*------------------------------------------------------------------------------
-
-		EVENTS
-
-	--------------------------------------------------------------------------------*/
-
-	on load do
-	(
-		print "TechArch.load()"
-	)
-
-	on postLoad  do
-	(
-		print "TechArch.postLoad()"
-		this.init()
-	)
-
-	on create do
-	(
-		print "TechArch.create()"
-	)
-
-	on postCreate do
-	(
-		print "TechArch.postCreate()"
-	)
-
-	on attachedToNode obj  do
+	on attachedToNode _node do
 	(
 		print "TechArch.attachedToNode()"
 
-		obj.name = uniqueName "TechHelix"
-
-		this.init obj:obj
+		this.obj = _node
 	)
 
-	/* CREATE OBJECT BY MOUSE
-	 *
-	 * Mouse events: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-619AF4D3-A347-4155-943B-707D421BC460
-	*/
-	tool create numPoints:4
+	tool create
 	(
 		on mousePoint click do
-		  case click of
-		  (
-			1: (
-				nodeTM.translation = gridPoint
-
-				this.generateCircles()
+		(
+			case click of
+			(
+				1: nodeTM.translation = worldPoint
 			)
-			4: (
-				#stop
-
-				this.finishCurve()
-			)
-		  )
-
+		)
 		on mouseMove click do
-		  case click of
-		  (
-			2: this.radius 	= gridDist.x
-			3: this.width	= gridDist.x
-			4: this.height	= gridDist.z
-		  )
+		(
+			case click of
+			(
+			--	2: radius = (gridDist.y^2+gridDist.x^2)^.5
+				3: #stop
+			)
+		)
 	)
 
+	on create do initialized = false
+	on postCreate do initialized = true
 
-	/** CREATE OBJECT BY SCRIPT
-	  *
-	  */
-	function createdByScript =
+	on buildShape do
 	(
-		format "\n"; print "TechArch.createdByScript()"
-		this.generateCircles()
+		if initialized do
+			rebuildShape()
 
-		this.setRadius()
-		this.setWidth()
-		this.setHeight()
-
-		this.finishCurve()
 	)
-
 )

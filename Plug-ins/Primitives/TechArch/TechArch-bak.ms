@@ -13,8 +13,6 @@ replaceUI:	true
 
 	/* store */
 	local obj
-	local arcs_data = #()
-	local sketch
 
 	local circles = #()
 
@@ -26,6 +24,8 @@ replaceUI:	true
 
 	parameters main rollout:params
 	(
+		--pos_test 	type:#float	default:50
+
 		radius 	ui:SP_radius	type:#float	default:50
 		width	ui:SP_width	type:#float	default:0
 		height	ui:SP_height	type:#float default:0
@@ -56,7 +56,7 @@ replaceUI:	true
 		radius_mode 	ui:RB_radius_mode	type:#integer	default:1
 		angle_mode 	ui:RB_angle_mode	type:#integer	default:1
 
-		--on radius_mode set val do this.generateWholeObject()
+		--on radius_mode set val do this.createdByScript()
 
 	)
 
@@ -112,11 +112,11 @@ replaceUI:	true
 
 		--/* ON RADIUS MODE CHANGED */
 		--on RB_angle_mode changed val do
-		--	this.generateWholeObject()
+		--	this.createdByScript()
 		--
 		--/* ON ANGLE MODE CHANGED */
 		--on RB_angle_mode changed val do
-		--	this.generateWholeObject()
+		--	this.createdByScript()
 	)
 
 	rollout params_extended "Parameters Extends"
@@ -131,13 +131,13 @@ replaceUI:	true
 		button btn_test      "Test"			width:64
 
 
-		on SP_connect_line changed val do
-			SP_close_line.enabled = val
+		--on SP_connect_line changed val do
+			--SP_close_line.enabled = val
 
 
-		on btn_generate pressed do this.generateWholeObject()
-		on btn_attach pressed do this.attachAllToObj()
-		on btn_test pressed do this.removeAllLines()
+		--on btn_generate pressed do this.createdByScript()
+		--on btn_attach pressed do this.attachAllToObj()
+		--on btn_test pressed do this.removeAllLines()
 	)
 
 	/*------------------------------------------------------------------------------
@@ -146,30 +146,14 @@ replaceUI:	true
 
 	--------------------------------------------------------------------------------*/
 
-	/** Generate whole object
-	  *
-	  */
-	function generateWholeObject =
-	(
-		format "\n"; print "TechArch.ms.generateWholeObject()"
-		this.generateCircles(this.obj.pos)
-
-		this.setRadius()
-		this.setWidth()
-		this.setHeight()
-
-		this.finishCurve()
-	)
-
 	/** Generate circles
 	  *
 	  */
-	function generateCircles position =
+	function generateCircles =
 	(
-		if circles.count > 0 or position == undefined then
-			return true
-
-		format "\n"; print "TechArch.ms.generateCircles()"
+		print "TechArch.generateCircles()"
+		format "this.obj:	% \n" this.obj
+		format "this.obj.pos:	% \n" this.obj.pos
 
 		circles_data = #()
 
@@ -180,7 +164,7 @@ replaceUI:	true
 		(
 			circle_data	= Dictionary()
 
-			arc_index = arcs_data.count+1
+			arc_index = circles_data.count+1
 
 			angle_used = angle_min
 
@@ -206,14 +190,14 @@ replaceUI:	true
 		(
 			--arc_obj = Arc radius:circle_data[#RADIUS] from:circle_data[#FROM] to:circle_data[#TO] pos:circle_data[#POSITION] pie:off reverse:off wirecolor:green name:( this.obj.name + "-arc" )
 			--circle = Arc radius:circle_data[#RADIUS] from:circle_data[#FROM] to:circle_data[#TO] pos:position pie:off reverse:off wirecolor:green
-			circle = Arc radius:0 from:circle_data[#FROM] to:circle_data[#TO] pos:position pie:off reverse:off wirecolor:green
+			circle = Arc radius:0 from:circle_data[#FROM] to:circle_data[#TO] pos:this.obj.pos pie:off reverse:off wirecolor:green
 
 			Rotate circle ( AngleAxis circle_data[#ROTATION] [0,0,1])
 
-			append circles circle
+			append this.circles circle
 		)
-		--format "CIRCLES.COUNT:	% \n" CIRCLES.COUNT
-		redrawViews()
+
+		format "RESULT CIRCLES:	% \n" this.circles.count
 	)
 
 	/** Set radius
@@ -221,7 +205,8 @@ replaceUI:	true
 	  */
 	function setRadius =
 	(
-		--format "\n"; print "TechArch.ms.setRadius()"
+		if not initialized then return false
+		print "TechArch.setRadius()"
 
 		for circle in this.circles do circle.radius = radius
 	)
@@ -231,7 +216,7 @@ replaceUI:	true
 	function setWidth =
 	(
 		if not initialized then return false
-		--format "\n"; print "TechArch.ms.setWidth()"
+		print "TechArch.setWidth()"
 
 		this.circles[circles.count].radius = radius - width
 	)
@@ -240,9 +225,8 @@ replaceUI:	true
 	  */
 	function setHeight =
 	(
-		--format "this.obj:	% \n" this.obj
 		if not initialized then return false
-		--format "\n"; print "TechArch.ms.setHeight()"
+		print "TechArch.setHeight()"
 
 		this.circles[circles.count].pos.z = this.obj.pos.z + height
 	)
@@ -252,7 +236,8 @@ replaceUI:	true
 	  */
 	function finishCurve =
 	(
-		format "\n"; print "TechArch.ms.finishCurve()"
+		format "\n"; print "TechArch.finishCurve()"
+		 format "this.obj.pos:	% \n" this.obj.pos
 
 		/* CONNECT CIRCLES */
 		if connect_line then
@@ -274,214 +259,33 @@ replaceUI:	true
 	  */
 	function createConnectLine =
 	(
-		/** Get First And Last Vertext From Each Spline
-		  *
-		  */
-		function getConnectVertsPositions is_attached =
-		(
-			format "\n"; print "TechArch.ms.getConnectVertsPositions()"
-			format "IS_ATTACHED:	% \n" is_attached
+		print "TechArch.createConnectLine()"
 
-			last_knot_i = 1
-			verts_pos_all = #()
+		child = SplineShape()
 
-			obj_temp = this.obj
-			format "obj_temp:	% \n" obj_temp
-			/* CREATE TEMP OBJECT OF ATTACHED SPLINE */
-			if is_attached == false then
-			(
-				maxOps.cloneNodes (this.getCircleNodes()) cloneType:#copy newNodes:&arcs_copy
+		addNewSpline child
 
-				obj_temp = convertToSplineShape arcs_copy[1]
-
-				for s in arcs_copy where s != obj_temp do addAndWeld obj_temp ( convertToSplineShape s) -1
-			)
-			format "obj_temp:	% \n" obj_temp
+		addKnot child 1 #corner #line [ 0, 0, 50]
+		addKnot child 1 #corner #line [ 0, 100, 50]
+		updateShape child
 
 
-			/* GET VERTICES */
-			for spline = 1 to numSplines obj_temp - 1 do
-			(
-				spline_next = spline + 1
-				num_knots	= numKnots obj_temp spline
+		addAndWeld this.obj child -1
 
-				spline_current_last_vert	= getKnotPoint obj_temp (spline) ( numKnots obj_temp spline  )
-				spline_next_first_vert	= getKnotPoint obj_temp (spline_next) 1
+		updateShape this.obj
 
-				append verts_pos_all #( spline_current_last_vert, spline_next_first_vert )
-				--append verts_pos_all #( last_knot_i, last_knot_i + num_knots - 1 )
-
-				last_knot_i += num_knots
-			)
-
-
-			/* CREATE CLOSE SPLINE SEGMENT */
-			if connect_line and close_line and weld_line then
-			(
-				line_start_pos	= getKnotPoint	obj_temp 1 1
-				last_spline	= numSplines	obj_temp
-				line_end_pos	= getKnotPoint	obj_temp last_spline ( numKnots obj_temp last_spline )
-
-				if line_start_pos != line_end_pos then
-					append verts_pos_all #( line_start_pos, line_end_pos )
-			)
-
-			format "\n-----------\nARRAY:verts_pos_all:\n";  for verts in verts_pos_all do format "verts:	%\n" verts
-
-			/* DELETE TEMP OBJECTS */
-			if obj_temp != this.obj then
-				delete obj_temp
-
-			verts_pos_all --return
-		)
-
-		if not initialized then return false
-		--format "\n"; print "TechArch.ms.createConnectLine()"
-
-		verts_pos = getConnectVertsPositions( (this.getCircleNodes()).count == 0 )
-
-
-		/* CREATE CONNECT LINE */
-		--connect_line_shape = SplineShape()
-
-		--for i = 1 to verts_pos.count do
-		--(
-		--	addNewSpline this.obj
-		--
-		--	addKnot this.obj i #corner #line verts_pos[i][1]
-		--	addKnot this.obj i #corner #line verts_pos[i][2]
-		--
-		--	updateShape this.obj
-		--)
-
-		--this.attatchLines (this.obj) (connect_line_shape)
-
-
-		--format "numSplines	this.obj:	% \n" (numSplines	this.obj)
-
-		--/* CLOSE LINE IF ALLOWED */
-		--if close_line then
-		--	this.closeSpline()
 	)
-
-
 
 	/** Remove connect line
 	  *
 	  */
 	function removeConnectLine =
 	(
-		--format "\n"; print "TechArch.ms.removeConnectLine()"
+		--format "\n"; print "TechArch.removeConnectLine()"
 		for spline_i = arcs_data.count + 1 to numSplines this.obj do
 			deleteSpline this.obj 1
 
 		updateShape this.ob
-	)
-
-	/** Generate arch
-	  *
-	  */
-	function generateArches =
-	(
-		format "\n"; print "TechArch.ms.generateArches()"
-		/** Set arches
-		  *
-		  */
-		function setArchesByAngle =
-		(
-			--format "\n"; print "TechArch.ms.setArches()"
-			angle_counter = 0
-
-			while angle_counter < wrap_angle do
-			(
-				arc_data	= Dictionary()
-
-				arc_index = arcs_data.count+1
-
-				angle_used = case angle_mode of
-				(
-					--2:
-					3: if this.isOdd(arc_index) then angle_min else angle_max -- Even arch is min, odd is max
-					default: random angle_min angle_max
-				)
-
-				arc_data[#FROM]	= 0 + gap_angle
-				arc_data[#TO]	= angle_used - gap_angle
-				arc_data[#ROTATION]	= angle_counter
-				arc_data[#RADIUS]	= radius
-
-				angle_counter += angle_used
-
-				append arcs_data arc_data
-			)
-		)
-
-		/** Get radiuse value of arch splines
-		  */
-		function setRadiusVariations =
-		(
-			--format "\n"; print "TechArch.ms.getAngles()"
-			--format "radius_mode:	% \n" radius_mode
-			if width == 0 then return false --return
-
-			for i = 1 to arcs_data.count do
-			(
-				arcs_data[i][#RADIUS] = case radius_mode of
-				(
-					1: random (radius)(radius + width)
-					2: arcs_data[i][#RADIUS] +  (width / ( arcs_data.count -  1 ) * (i - 1) ) --increemanetal radius from lowest to highest
-					3: if this.isOdd(i) then radius else radius + width -- Even arch is min, odd is max
-				)
-			)
-
-			--arcs_data[i][#RADIUS] = radius
-			--arcs_data[1][#RADIUS]	= radius	-- set min radius to FIRST RADIUS
-		)
-
-		/** Get height positions
-		  *
-		  */
-		function setArcPositions =
-		(
-			--format "\n"; print "TechArch.ms.getHeightPositions()"
-			height_increment = height / ( arcs_data.count -  1 ) as float
-
-			for i = 1 to arcs_data.count do arcs_data[i][#POSITION] = this.obj.pos
-
-
-			for i = 1 to arcs_data.count do
-				arcs_data[i][#POSITION].z = this.obj.pos.z + ( height_increment * (i - 1) )
-		)
-
-		/** Create arch obejcts
-		  *
-		  */
-		function createArcsObjects =
-		(
-			format "\n"; print "TechArch.ms.createArcsObjects()"
-
-			for arc_data in arcs_data do
-			(
-				arc_obj = Arc radius:arc_data[#RADIUS] from:arc_data[#FROM] to:arc_data[#TO] pos:arc_data[#POSITION] pie:off reverse:off wirecolor:green name:( this.obj.name + "-arc" )
-
-				Rotate arc_obj ( AngleAxis arc_data[#ROTATION] [0,0,1])
-
-				arc_data[#NODE] = arc_obj
-
-				--arc_obj.parent = this.obj
-			)
-		)
-
-		setArchesByAngle()
-
-		setArcPositions()
-		setRadiusVariations()
-
-		createArcsObjects()
-
-		/* ATTACH TO OBJECT */
-		if attach_to_line then
-			this.attatchLines (this.obj) ( for arc_data in arcs_data collect arc_data[#NODE] )
 	)
 
 	/** Attach to obj
@@ -490,7 +294,7 @@ replaceUI:	true
 	function attachAllToObj =
 	(
 		if not initialized then return false
-		--format "\n"; print "TechArch.ms.attachAllToObj()"
+		--format "\n"; print "TechArch.attachAllToObj()"
 		all_arcs = this.getCircleNodes()
 
 		this.attatchLines (this.obj) ( all_arcs )
@@ -503,10 +307,7 @@ replaceUI:	true
 	  */
 	function attatchLines spline splines =
 	(
-		format "\n"; print "TechArch.ms.attatchLines()"
-		--format "spline:	% \n" spline
-		--format "superclassOf spline:	% \n" (superclassOf spline)
-		--format "superclassOf splines:	% \n" (superclassOf splines)
+		print "TechArch.attatchLines()"
 
 		if classOf splines != Array then
 			splines = #(splines)
@@ -521,7 +322,7 @@ replaceUI:	true
 	  */
 	function removeAllLines =
 	(
-		--format "\n"; print "TechArch.ms.removeAllLines()"
+		--format "\n"; print "TechArch.removeAllLines()"
 		--format "\n-----------\nARRAY:arcs_data:\n";  for _arc in this.arcs_data do format "_arc:	%\n" _arc
 
 		for obj in this.getCircleNodes() do delete obj
@@ -541,7 +342,7 @@ replaceUI:	true
 	  */
 	function getCircleNodes =
 	(
-		--format "\n"; print "TechArch.ms.getCircleNodes()"
+		--format "\n"; print "TechArch.getCircleNodes()"
 		for circle in circles where isValidNode circle collect circle --return
 	)
 
@@ -550,21 +351,13 @@ replaceUI:	true
 	  */
 	function weldAllVerts =
 	(
-		--format "\n"; print "TechArch.ms.weldAllVerts()"
+		--format "\n"; print "TechArch.weldAllVerts()"
 		if not initialized then return false
 
 		if weld_line  then
 			weldSpline this.obj 0.001
 	)
 
-	/** Get this.obj obejct
-	 */
-	function _setNodeObject =
-	(
-		--nodes = for o in refs.dependents this where isValidNode o collect o
-
-		--this.obj = nodes[1] --return
-	)
 
 	function isOdd num = ( mod num 2) != 0
 
@@ -580,15 +373,21 @@ replaceUI:	true
 	function init obj: =
 	(
 		if this.initialized then return true
-		format "\n"; print "TechArch.ms.init()"
+		format "\n"; print "TechArch.init()"
 
-		this.obj = if obj != unsupplied then obj else (for o in refs.dependents this where isValidNode o collect o)[1]
+		this.obj = if obj != unsupplied then obj else refs.dependentNodes this firstOnly:on
+
+
+
+		 --this.obj.pos = [ 30, 30, 0]
+		 format "this.obj.pos:	% \n" this.obj.pos
 
 		this.initialized = true
 
+
 		/* GENERATE OBJECT IF NOT CREATED MANUALY */
-		if circles.count == 0 then
-			this.generateWholeObject()
+		if not isCreatingObject(techArch) then
+			this.createdByScript()
 	)
 
 	/*------------------------------------------------------------------------------
@@ -599,37 +398,51 @@ replaceUI:	true
 
 	on load do
 	(
-		format "\n"; print ".load()"
+		print "TechArch.load()"
 	)
 
 	on postLoad  do
 	(
-		format "\n"; print ".postLoad()"
-		--this.init()
+		print "TechArch.postLoad()"
+		this.init()
 	)
 
-	on attachedToNode obj  do
+	on create do
 	(
-		format "\n"; print ".attachedToNode()"
-
-		obj.name = uniqueName "TechHelix"
-
-		this.init obj:obj
+		print "TechArch.create()"
 	)
 
-	/* Mouse events: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-619AF4D3-A347-4155-943B-707D421BC460
+	on postCreate do
+	(
+		print "TechArch.postCreate()"
+	)
+
+	on attachedToNode _node  do
+	(
+		print "TechArch.attachedToNode()"
+
+		 format "_node.pos:	% \n" _node.pos
+
+		_node.name = uniqueName "TechHelix"
+
+
+
+		this.init obj:_node
+	)
+
+	/* CREATE OBJECT BY MOUSE
+	 *
+	 * Mouse events: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-619AF4D3-A347-4155-943B-707D421BC460
 	*/
 	tool create numPoints:4
 	(
-		local view_point
-
 		on mousePoint click do
 		  case click of
 		  (
 			1: (
 				nodeTM.translation = gridPoint
 
-				this.generateCircles(gridPoint)
+				this.generateCircles()
 			)
 			4: (
 				#stop
@@ -644,20 +457,23 @@ replaceUI:	true
 			2: this.radius 	= gridDist.x
 			3: this.width	= gridDist.x
 			4: this.height	= gridDist.z
-			--4: format "\nmouseMove 4"
 		  )
-
-		 --on mouseAbort click do <expr>
 	)
 
-	on create do
-	(
-		format "\n"; print ".create()"
-	)
 
-	on postCreate do
+	/** CREATE OBJECT BY SCRIPT
+	  *
+	  */
+	function createdByScript =
 	(
-		format "\n"; print ".postCreate()"
+		format "\n"; print "TechArch.createdByScript()"
+		this.generateCircles()
+
+		this.setRadius()
+		this.setWidth()
+		this.setHeight()
+
+		this.finishCurve()
 	)
 
 )

@@ -92,7 +92,7 @@ category:	"Splines"
 
 				transform_mat = TransMatrix sel_center
 				rot_mat = ( RotateZMatrix angle_rot) * transform_mat
-				points[key] = vec3point (vertex_position * rot_mat )
+				points[key] = vec3point (points[key] * rot_mat )
 			)
 
             AddKnot ( getSplineKnot (points[#p1]) (points[#p1_in]) (points[#p1_out]) bezierKnot )

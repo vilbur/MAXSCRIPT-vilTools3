@@ -10,7 +10,10 @@ filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../Tech
 function defaultSetup =
 (
 	--format "\n"; print "TechArchTest.ms.defaultSetup()"
-	tech_arch = techArch()
+	--tech_arch = techArch()
+	tech_arch = techArch pos:[ 30, 30, 0]
+
+	--format "tech_arch.pos:	% \n" tech_arch.pos
 )
 
 
@@ -23,12 +26,12 @@ function mainSetup =
 	radius	= 60
 
 	wrap_angle	= 720
-	wrap_angle	= 360
+	wrap_angle	= 180
 
 	angle_min	= 90
 	angle_max	= 60
 
-	width	= 50
+	width	= 15
 	height	= 30
 	gap_angle	= 0
 	radius_mode	= 2
@@ -69,9 +72,9 @@ delete objects
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
---defaultSetup()
+defaultSetup()
 
-mainSetup()
+--mainSetup()
 
 --lineSetup()
 
@@ -81,16 +84,14 @@ mainSetup()
 --------------------------------------------------------------------------------*/
 
 /* ADD SPLINE OFFSET */
-spline_offset = SplineOffset ()
-
-
-spline_offset.algorithm = 1 -- set 3D model
-
-spline_offset.numberparallels = 4
-spline_offset.offset = 1
+--spline_offset = SplineOffset ()
+--
+--
+--spline_offset.algorithm = 1 -- set 3D model
+--
+--spline_offset.numberparallels = 4
+--spline_offset.offset = 1
 
 --addModifier objects[1] spline_offset
 
-modPanel.setCurrentObject tech_arch.baseObject
-
-max modify mode
+--max modify mode
