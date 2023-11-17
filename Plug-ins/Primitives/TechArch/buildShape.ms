@@ -29,13 +29,13 @@
 	  * https://spencermortensen.com/articles/bezier-circle/#:~:text=B%C3%A9zier%20curves%20are%20often%20used,with%20a%20cubic%20B%C3%A9zier%20curve.
 	  *
 	  */
-	function make2PointArc arc_angle: arc_radius: angle_rot: dir: AddKnot:  =
+	function make2PointArc arc_angle: arc_radius: angle_rot:0 dir: pos_z:0 AddKnot:  =
 	(
-		format "\n"; print "testPlugin.ms.make2PointArc()"
+		--format "\n"; print "testPlugin.ms.make2PointArc()"
 
 		/** Get points up to 90 degrees
 		  */
-		function getArcPoints arc_radius arc_angle =
+		function getArcPoints arc_radius arc_angle pos_z =
 		(
             --format "\n"; print "testPlugin.ms.getArcPoints()"
             --format "arc_radius:	% \n" arc_radius
@@ -55,11 +55,11 @@
 			y3 = -y2;
 
 			/* GET POINTS */
-			P1 = [ x1, y1, 0]
-			V1 = [ x2, y2, 0]
+			P1 = [ x1, y1, pos_z ]
+			V1 = [ x2, y2, pos_z ]
 
-			P2 = [ x4, y4, 0]
-			V2 = [ x3, y3, 0]
+			P2 = [ x4, y4, pos_z ]
+			V2 = [ x3, y3, pos_z ]
 
 			/* CCW */
 			--local point_1 = Dictionary #( #point,P1) #( #inVec, P1) #( #outVec, V1)
@@ -108,13 +108,12 @@
 		)
 
 		arc_used = ceil ( arc_angle / 90.0 ) as integer
-		format "arc_used:	% \n" arc_used
 
 		arc_angle /= arc_used -- dive arc to even parts
-		format "arc_angle:	% \n" arc_angle
-		arc_points = getArcPoints(arc_radius)(arc_angle)
 
-		arc_points = rotatePointsInSpace( arc_points ) ( arc_angle/ -2 ) -- rotate start of arc to "12:00" position
+		arc_points = getArcPoints(arc_radius)(arc_angle)(pos_z)
+
+		arc_points = rotatePointsInSpace( arc_points ) ( -90 + arc_angle/2 + angle_rot ) -- rotate start of arc to "12:00" position
 
 		if arc_used > 1 then
 		(
@@ -174,36 +173,4 @@
 		--format "\n"; print "buildShape.ms.constructArc()"
 		for arc_point in arc_points do
 			AddKnot ( getSplineKnot (arc_point[#point]) (arc_point[#inVec]) (arc_point[#outVec]) bezierKnot )
-	)
-
-	/**
-	  *
-	  */
-	function makeArcShape =
-	(
-		format "\n"; print "testPlugin.ms.makeArcShape()"
-
-		ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
-
-		ShapeWrapper.NewShape()
-
-		spline = ShapeWrapper.NewSpline()
-		--
-		--this.make3PointArc arc_angle:90 radius:50 angle_rot:0 dir:1 AddKnot:spline.AddKnot
-		--this.make3PointArc arc_angle:90 radius:50 angle_rot:90 dir:1 AddKnot:spline.AddKnot
-		--this.make3PointArc arc_angle:90 radius:50 angle_rot:180 dir:1 AddKnot:spline.AddKnot
-
-
-		this.make2PointArc arc_angle:45 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
-		--this.make2PointArc arc_angle:90 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
-		--this.make2PointArc arc_angle:120 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
-		--this.make2PointArc arc_angle:180 arc_radius:this.radius angle_rot:0 dir:1 AddKnot:spline.AddKnot
-
-
-		--this.make2PointArc 90 50 0 -1 spline.AddKnot
-
-		ShapeWrapper.UpdateSels()
-		ShapeWrapper.InvalidateGeomCache()
-
-		updateShape
 	)

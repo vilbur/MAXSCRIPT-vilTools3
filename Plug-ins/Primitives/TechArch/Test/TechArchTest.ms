@@ -10,7 +10,8 @@ filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../Tech
 function defaultSetup =
 (
 	--format "\n"; print "TechArchTest.ms.defaultSetup()"
-	tech_arch = techArch()
+	--tech_arch = techArch()
+	tech_arch = techArch wirecolor:green isSelected:on
 	--tech_arch = techArch pos:[ 30, 30, 0]
 
 	--format "tech_arch.pos:	% \n" tech_arch.pos
@@ -26,7 +27,9 @@ function mainSetup =
 	radius	= 60
 
 	wrap_angle	= 720
-	wrap_angle	= 180
+	--wrap_angle	= 180
+	--wrap_angle	= 360
+	--wrap_angle	= 540
 
 	angle_min	= 90
 	angle_max	= 60
@@ -37,7 +40,7 @@ function mainSetup =
 	radius_mode	= 2
 	angle_mode	= 2
 
-	tech_arch = techArch radius:radius wrap_angle:wrap_angle angle_min:angle_min width:width height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode
+	tech_arch = techArch radius:radius wrap_angle:wrap_angle angle_min:angle_min width:width height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on
 )
 
 
@@ -72,12 +75,13 @@ delete objects
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
-defaultSetup()
+--defaultSetup()
 
---mainSetup()
+mainSetup()
 
 --lineSetup()
 
+max modify mode
 
 /*------------------------------------------------------------------------------
 	ADD MODIFIERS

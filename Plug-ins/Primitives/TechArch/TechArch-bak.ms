@@ -26,7 +26,7 @@ replaceUI:	true
 	(
 		--pos_test 	type:#float	default:50
 
-		radius 	ui:SP_radius	type:#float	default:50
+		radius 	ui:SP_radius	type:#float	default:3
 		width	ui:SP_width	type:#float	default:0
 		height	ui:SP_height	type:#float default:0
 		gap_angle	ui:SP_gap_angle	type:#float	default:0

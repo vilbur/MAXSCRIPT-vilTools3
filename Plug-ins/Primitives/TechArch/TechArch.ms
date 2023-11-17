@@ -8,8 +8,9 @@ category:	"Splines"
 
 	local circles = #()
 
-	local initialized	= true
+	local initialized	= false
 
+	local build = false
 
 	/*------------------------------------------------------------------------------
 		BUILD SHAPE METHODS
@@ -32,7 +33,9 @@ category:	"Splines"
 		height	ui:SP_height	type:#float default:0
 		gap_angle	ui:SP_gap_angle	type:#float	default:0
 
-		--on radius	set val do this.setRadius()
+		on radius	set val do this.rebuildShape()
+		on height	set val do this.rebuildShape()
+		on width	set val do this.rebuildShape()
 		--on width	set val do this.setWidth()
 		--on height	set val do this.setHeight()
 		--on gap_angle	set val do this.generate()
@@ -42,7 +45,7 @@ category:	"Splines"
 	(
 		wrap_angle	ui:SP_wrap	type:#float	default:360
 
-		angle_min	ui:SP_angle_min	type:#integer default:180
+		angle_min	ui:SP_angle_min	type:#integer default:90
 		angle_max	ui:SP_angle_max	type:#integer default:180
 
 		--on wrap_angle	set val do this.generate()
@@ -139,23 +142,110 @@ category:	"Splines"
 		--on btn_test pressed do this.removeAllLines()
 	)
 
-	local builded = false -- DEV
 
+	/*
+	*/
 	fn rebuildShape =
 	(
+		if not initialized then return false
+
 		print "TechArch.rebuildShape()"
+		format "height:	% \n" height
+		--format "this.radius:	% \n" this.radius
+		--format "wrap_angle:	% \n" wrap_angle
+		--format "angle_min:	% \n" angle_min
+		/** Get arch data
+		  *
+		  */
+		function getArchData =
+		(
+			--format "\n"; print "TechArch.ms.getArchData()"
+			arches_data = #()
 
-		this.makeArcShape()
+			angle_counter = 0
 
-		this.builded = true
+			/* GET DATA FOR CIRCLES */
+			while angle_counter < wrap_angle do
+			(
+				arch_data	= Dictionary()
+
+				arch_data[#ANGLE] = angle_min
+
+				arch_data[#ROTATION]	= angle_counter
+
+				arch_data[#POS_Z]	= random 0 this.height
+
+				arch_data[#RADIUS] = this.radius - ( random 0 this.width )
+
+				angle_counter += arch_data[#ANGLE]
+
+				--format "angle_counter:	% \n" angle_counter
+				/* Fit last arc to wrap angle value */
+				if angle_counter > wrap_angle then
+					arch_data[#ANGLE] -= angle_counter - wrap_angle-- remove overlap value
+
+				append arches_data arch_data
+			)
+
+			arches_data --return
+		)
+
+		arches_data = getArchData()
+
+		ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
+
+		ShapeWrapper.NewShape()
+
+		for arch_data in arches_data do
+		(
+			spline = ShapeWrapper.NewSpline()
+
+			this.make2PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:1 pos_z:arch_data[#POS_Z] AddKnot:spline.AddKnot
+		)
+
+		ShapeWrapper.UpdateSels()
+		ShapeWrapper.InvalidateGeomCache()
+
+		updateShape
+
+		--this.initialized = true
+		this.build = true
 	)
 
+	/*------------------------------------------------------------------------------
+
+		EVENTS
+
+	--------------------------------------------------------------------------------*/
+
+	on load do
+	(
+		print "TechArch.load()"
+	)
+
+	on postLoad  do
+	(
+		print "TechArch.postLoad()"
+		this.init()
+	)
+
+	on create do
+	(
+		print "TechArch.create()"
+	)
+
+	on postCreate do
+	(
+		print "TechArch.postCreate()"
+	)
 
 	on attachedToNode _node do
 	(
 		print "TechArch.attachedToNode()"
 
 		this.obj = _node
+
+		this.initialized = true
 	)
 
 	tool create
@@ -177,12 +267,12 @@ category:	"Splines"
 		)
 	)
 
-	on create do initialized = false
-	on postCreate do initialized = true
+	--on create do initialized = false
+	--on postCreate do initialized = true
 
 	on buildShape do
 	(
-		if not builded do
+		if not build then
 			rebuildShape()
 
 	)
