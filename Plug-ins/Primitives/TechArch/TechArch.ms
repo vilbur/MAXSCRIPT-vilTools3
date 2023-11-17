@@ -12,20 +12,6 @@ category:	"Splines"
 
 
 	/*------------------------------------------------------------------------------
-		SPLINE PROPERTIES
-	--------------------------------------------------------------------------------*/
-	local vector3     = dotNetClass "Autodesk.Max.MaxPlus.Point3"
-	local splineKnot	= dotNetClass "Autodesk.Max.MaxPlus.SplineKnot"
-	local cornerKnot	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").CornerKnot
-	local bezierKnot  = ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").BezierKnot
-	local smoothKnot	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").AutoKnot
-	local curveLine	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+LineType").CurveLineType
-
-	local BezierShapeClass = dotNetClass "Autodesk.Max.MaxPlus.BezierShape"
-
-
-
-	/*------------------------------------------------------------------------------
 		BUILD SHAPE METHODS
 	--------------------------------------------------------------------------------*/
 
@@ -156,7 +142,7 @@ category:	"Splines"
 
 	fn rebuildShape =
 	(
-		this.createArcOnX()
+		this.makeArcShape()
 	)
 
 

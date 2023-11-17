@@ -10,8 +10,8 @@ filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../Tech
 function defaultSetup =
 (
 	--format "\n"; print "TechArchTest.ms.defaultSetup()"
-	--tech_arch = techArch()
-	tech_arch = techArch pos:[ 30, 30, 0]
+	tech_arch = techArch()
+	--tech_arch = techArch pos:[ 30, 30, 0]
 
 	--format "tech_arch.pos:	% \n" tech_arch.pos
 )
