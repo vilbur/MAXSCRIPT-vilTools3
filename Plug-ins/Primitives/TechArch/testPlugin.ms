@@ -86,12 +86,18 @@ category:	"Splines"
 
 
 			for key in points.keys do
-				points[key] = vec3point points[key]
+			(
+				angle_rot = -45
+				sel_center = [0,0,0]
+
+				transform_mat = TransMatrix sel_center
+				rot_mat = ( RotateZMatrix angle_rot) * transform_mat
+				points[key] = vec3point (vertex_position * rot_mat )
+			)
 
             AddKnot ( getSplineKnot (points[#p1]) (points[#p1_in]) (points[#p1_out]) bezierKnot )
             AddKnot ( getSplineKnot (points[#p2]) (points[#p2_in]) (points[#p2_out]) bezierKnot )
             AddKnot ( getSplineKnot (points[#p3]) (points[#p3_in]) (points[#p3_out]) bezierKnot )
-
 
 		)
 
@@ -102,7 +108,6 @@ category:	"Splines"
 		spline = shapeWrapper.NewSpline()
 
 		makeArcShape 45 50 -1 spline.AddKnot
-
 
 
 		shapeWrapper.UpdateSels()
@@ -220,4 +225,3 @@ simpleSplineTest()
 select objects
 
 --macros.run "_Modifiers-Spline" "epoly_tools_Edit_Spline"
-
