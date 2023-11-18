@@ -4,89 +4,24 @@ filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../Tech
 
 
 
-/** Default setup
-  *
-  */
-function defaultSetup =
-(
-	--format "\n"; print "TechArchTest.ms.defaultSetup()"
-	--tech_arch = techArch()
-	tech_arch = techArch wirecolor:green isSelected:on
-	--tech_arch = techArch pos:[ 30, 30, 0]
-
-	--format "tech_arch.pos:	% \n" tech_arch.pos
-)
-
-
-/** Main setup
-  *
-  */
-function mainSetup =
-(
-	--format "\n"; print "TechArchTest.ms.mainSetup()"
-	/* RADIUS */
-	radius_min	= 45
-	radius_max	= 90
-	--radius_max	= 100
-
-	radius_mode	= 2
-
-
-	/* ANGLE */
-	--wrap_angle	= 720
-	--wrap_angle	= 180
-	wrap_angle	= 360
-	--wrap_angle	= 540
-
-	angle_min	= 90
-	angle_max	= 90
-
-	angle_mode	= 1
-
-
-	height	= 30
-	gap_angle	= 0
-
-
-	techArch wrap_angle:wrap_angle radius_min:radius_min radius_max:radius_max angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
-)
-
-
-/* CONFIG LINE VALUES */
-
-/** Line setup
-  *
-  */
-function lineSetup =
-(
-	--format "\n"; print "TechArchTest.ms.lineSetup()"
-	attach_to_line	= true
-	--attach_to_line	= false
-
-	weld_line	= true
-	--weld_line	= false
-
-	connect_line	= true
-	--connect_line	= false
-
-	close_line	= true
-	--close_line	= false
-
-	tech_arch = techArch attach_to_line:attach_to_line weld_line:weld_line connect_line:connect_line close_line:close_line height:10
-
-)
-
-
-
 delete objects
 
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
---defaultSetup()
+--TechArch wirecolor:green isSelected:on
 
-mainSetup()
+/* RADIUS TEST */
+--TechArch radius_min:50 radius_max:100 radius_mode:2 isSelected:on steps:24
 
+
+/* EVENT\ODD ANGLE */
+TechArch angle_min:30 angle_max:90 isSelected:on radius_min:50 radius_max:51
+
+/* RANDOM ANGLE */
+--TechArch angle_min:15 angle_max:30 angle_mode:2 isSelected:on radius_min:50 radius_max:51
+
+--TechArch wrap_angle:72 radius_min:45 radius_max:90 angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
 --lineSetup()
 
 max modify mode

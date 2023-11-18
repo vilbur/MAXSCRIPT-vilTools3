@@ -1,4 +1,4 @@
-plugin SimpleSpline techArch
+plugin SimpleSpline TechArch
 name:	"Tech Arch"
 classID:	#( 0x3083a88, 0x27add00b ) -- genClassID()
 category:	"Splines"
@@ -23,7 +23,7 @@ category:	"Splines"
 	--------------------------------------------------------------------------------*/
 	parameters main rollout:params_angle
 	(
-		wrap_angle	ui:SP_wrap	type:#float	default:360
+		wrap_angle	ui:SP_wrap_angle	type:#float	default:360
 
 		angle_min	ui:SP_angle_min	type:#integer default:90
 		angle_max	ui:SP_angle_max	type:#integer default:180
@@ -40,11 +40,11 @@ category:	"Splines"
 
 	rollout params_angle "Angles"
 	(
-		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 1e9, wrap_angle ]  scale:10.0 tooltip:"Total radius of line"
+		spinner	SP_wrap_angle	"Wrap Angle"	range:[ 1, 1e9, wrap_angle ]  scale:10.0 tooltip:"Total radius of line"
 		spinner	SP_angle_min	"Angle Min"	range:[ 1, 1e9, 90 ] tooltip:"Angle of arch segment"
 		spinner	SP_angle_max	"Angle Max"	range:[ 0, 1e9, 0 ]
 
-		radiobuttons RB_angle_mode "Angle Mode"   labels:modes --offset:[-8, 16]
+		radiobuttons RB_angle_mode "Angle Mode" labels:#("Event\Odd", "Random" ) --offset:[-8, 16]
 
 		/* KEEP MIN RADIUS LOWER THEN MAX */
 		on SP_angle_min changed val do
@@ -63,7 +63,7 @@ category:	"Splines"
 	parameters main rollout:params_radius
 	(
 		radius_min 	ui:SP_radius_min	type:#float	default:90
-		radius_max 	ui:SP_radius_max	type:#float	default:180
+		radius_max 	ui:SP_radius_max	type:#float	default:90
 
 		radius_mode 	ui:RB_radius_mode	type:#radiobtnIndex	default:1
 
@@ -152,6 +152,20 @@ category:	"Splines"
 	(
 		--format "\n"; print "TechArch.ms.setArchData()"
 
+		/**
+		  *
+		  */
+		function getAngle index =
+		(
+			--format "\n"; print "TechArch.ms.incrementAngle()"
+			case angle_mode of
+			(
+				1: if ( mod index 2) == 0 then angle_min else angle_max
+				2: random angle_min angle_max
+				default:	angle_min
+			)
+		)
+
 		angle_counter = 0
 
 		/* GET DATA FOR CIRCLES */
@@ -159,7 +173,7 @@ category:	"Splines"
 		(
 			arch_data	= Dictionary()
 
-			arch_data[#ANGLE] = angle_min
+			arch_data[#ANGLE] = getAngle(this.arches_data.count +1)
 
 			arch_data[#ROTATION]	= angle_counter
 
@@ -183,7 +197,7 @@ category:	"Splines"
 	  */
 	function setValues key min_val: max_val: =
 	(
-		print "TechArch.setRadius()"
+		--print "TechArch.setRadius()"
 		key_str = key as string
 
 		if min_val == unsupplied then
@@ -194,10 +208,10 @@ category:	"Splines"
 
 		mode_val = getProperty this ( key_str +"_mode" )
 
-		format "key_str:	% \n" key_str
-		format "min_val:	% \n" min_val
-		format "max_val:	% \n" max_val
-		format "mode_val:	% \n" mode_val
+		--format "key_str:	% \n" key_str
+		--format "min_val:	% \n" min_val
+		--format "max_val:	% \n" max_val
+		--format "mode_val:	% \n" mode_val
 
 		arch_count = this.arches_data.count
 
@@ -215,7 +229,7 @@ category:	"Splines"
 				(
 					1: if ( mod i 2) == 0 then min_val else max_val
 					2: arch_data[key] + val_increment * (i - 1) --increemanetal radius from lowest to highest
-					--3:
+					3: random min_val max_val
 					--:
 					default: arch_data[key] -- fallback
 				)
@@ -236,6 +250,7 @@ category:	"Splines"
 		if not initialized then return false
 
 		print "TechArch.rebuildShape()"
+		format "wrap_angle:	% \n" wrap_angle
 		format "height:	% \n" height
 		--format "this.radius:	% \n" this.radius
 		--format "wrap_angle:	% \n" wrap_angle
@@ -258,7 +273,7 @@ category:	"Splines"
 		(
 			spline = ShapeWrapper.NewSpline()
 
-			this.make2PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:1 pos_z:arch_data[#HEIGHT] AddKnot:spline.AddKnot
+			this.make3PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:-1 pos_z:arch_data[#HEIGHT] AddKnot:spline.AddKnot
 		)
 
 		ShapeWrapper.UpdateSels()
