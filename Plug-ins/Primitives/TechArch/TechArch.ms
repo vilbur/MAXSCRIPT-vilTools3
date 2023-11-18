@@ -1,17 +1,17 @@
 plugin SimpleSpline techArch
 name:	"Tech Arch"
-
 classID:	#( 0x3083a88, 0x27add00b ) -- genClassID()
 category:	"Splines"
 (
 	local obj
 
-	local circles = #()
+	local arches_data = #()
 
 	local initialized	= false
 
 	local build = false
 
+	local modes = #("Event\Odd", "Incremental", "Random" )
 	/*------------------------------------------------------------------------------
 		BUILD SHAPE METHODS
 	--------------------------------------------------------------------------------*/
@@ -19,28 +19,8 @@ category:	"Splines"
 	include "buildShape.ms"
 
 	/*------------------------------------------------------------------------------
-
-		PARAMETERS
-
+		PARAMETERS ANGLE
 	--------------------------------------------------------------------------------*/
-
-	parameters main rollout:params
-	(
-		--pos_test 	type:#float	default:50
-
-		radius 	ui:SP_radius	type:#float	default:100
-		width	ui:SP_width	type:#float	default:0
-		height	ui:SP_height	type:#float default:0
-		gap_angle	ui:SP_gap_angle	type:#float	default:0
-
-		on radius	set val do this.rebuildShape()
-		on height	set val do this.rebuildShape()
-		on width	set val do this.rebuildShape()
-		--on width	set val do this.setWidth()
-		--on height	set val do this.setHeight()
-		--on gap_angle	set val do this.generate()
-	)
-
 	parameters main rollout:params_angle
 	(
 		wrap_angle	ui:SP_wrap	type:#float	default:360
@@ -48,20 +28,84 @@ category:	"Splines"
 		angle_min	ui:SP_angle_min	type:#integer default:90
 		angle_max	ui:SP_angle_max	type:#integer default:180
 
+		angle_mode 	ui:RB_angle_mode	type:#radiobtnIndex	default:1
+
+		on angle_min	set val do if initialized then this.setAngle()
+		on angle_max	set val do if initialized then this.setAngle()
+
 		--on wrap_angle	set val do this.generate()
 		--on random_angle set val do this.generate()
 		--on angle_min    set val do( if val <= 0 then angle_min = 1; this.generate())
-
 	)
 
-	parameters main rollout:params_variation
+	rollout params_angle "Angles"
 	(
-		radius_mode 	ui:RB_radius_mode	type:#integer	default:1
-		angle_mode 	ui:RB_angle_mode	type:#integer	default:1
+		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 1e9, wrap_angle ]  scale:10.0 tooltip:"Total radius of line"
+		spinner	SP_angle_min	"Angle Min"	range:[ 1, 1e9, 90 ] tooltip:"Angle of arch segment"
+		spinner	SP_angle_max	"Angle Max"	range:[ 0, 1e9, 0 ]
 
-		--on radius_mode set val do this.createdByScript()
+		radiobuttons RB_angle_mode "Angle Mode"   labels:modes --offset:[-8, 16]
 
+		/* KEEP MIN RADIUS LOWER THEN MAX */
+		on SP_angle_min changed val do
+			if val > angle_max then angle_max = val
+
+
+		/* KEEP MAX RADIUS HIGHER THEN MIN */
+		on SP_angle_max changed val do
+			if val > angle_min  then angle_min = val
 	)
+
+	/*------------------------------------------------------------------------------
+		PARAMETERS RADIUS
+	--------------------------------------------------------------------------------*/
+
+	parameters main rollout:params_radius
+	(
+		radius_min 	ui:SP_radius_min	type:#float	default:90
+		radius_max 	ui:SP_radius_max	type:#float	default:180
+
+		radius_mode 	ui:RB_radius_mode	type:#radiobtnIndex	default:1
+
+		on radius_min	set val do if initialized then this.setRadius()
+		on radius_max	set val do if initialized then this.setRadius()
+	)
+
+	rollout params_radius "Radius"
+	(
+		spinner	SP_radius_min	"Radius Min"	range:[ 0, 1e9, radius_min ]
+		spinner	SP_radius_max	"Radius Max"	range:[ 0, 1e9, radius_max ]
+
+
+		radiobuttons RB_radius_mode "Radius Mode" labels:modes --offset:[-8, 16]
+
+		/* KEEP MIN RADIUS LOWER THEN MAX */
+		on SP_radius_min changed val do
+			if val > radius_max  then radius_max = val
+
+		/* KEEP MAX RADIUS HIGHER THEN MIN */
+		on SP_radius_max changed val do
+			if val < radius_min  then radius_min = val
+	)
+
+	/*------------------------------------------------------------------------------
+		PARAMETERS HEIGHT
+	--------------------------------------------------------------------------------*/
+	parameters main rollout:params_height
+	(
+		height	ui:SP_height	type:#float default:0
+		height_mode 	ui:RB_height_mode	type:#radiobtnIndex	default:2
+
+		on height	set val do if initialized then this.setPosZ()
+	)
+	rollout params_height "Height"
+	(
+		spinner	 SP_height	"Height"	range:[ 0, 1e9, height ]
+		radiobuttons	RB_height_mode	"Height Mode"	labels:modes --offset:[-8, 16]
+	)
+	/*------------------------------------------------------------------------------
+		PARAMETERS EXTENDS
+	--------------------------------------------------------------------------------*/
 
 	parameters main rollout:params_extended
 	(
@@ -75,53 +119,6 @@ category:	"Splines"
 		--on connect_line		set val do this.createConnectLine()
 	)
 
-	/*------------------------------------------------------------------------------
-
-		ROLLOUTS
-
-	--------------------------------------------------------------------------------*/
-
-	rollout params "Parameters"
-	(
-		spinner	SP_radius	"Radius"	range:[ 0, 9999, radius ]
-		spinner	SP_width	"Width"	range:[ -9999, 9999, width ]
-		spinner	SP_height	"Height"	range:[ 0, 9999, height ]
-		spinner	SP_gap_angle	"Gap Angle"	range:[ 0, 10, 0 ]	type:#float tooltip:"Gap angle between segments"
-	)
-
-	rollout params_angle "Angles"
-	(
-		spinner	SP_wrap	"Wrap Angle"	range:[ 1, 9999, wrap_angle ]  scale:10.0 tooltip:"Total radius of line"
-		spinner	SP_angle_min	"Angle Min"	range:[ 1, 9999, 90 ] tooltip:"Angle of arch segment"
-		spinner	SP_angle_max	"Angle Max"	range:[ 0, 9999, 0 ]
-
-
-		/* ON ANGLE MIN CHANGED -- dont allow angle_min > angle_max */
-		--on SP_angle_min changed val do
-		--	if val > angle_max  then
-		--		angle_max = val
-
-
-		/* ON ANGLE MAX CHANGED -- dont allow angle_max > angle_max */
-		--on SP_angle_max changed val do
-		--	if val > angle_min  then
-		--		angle_min = val
-	)
-
-	rollout params_variation "Variations"
-	(
-		radiobuttons RB_radius_mode "Radius Mode"	labels:#("Event\Odd", "Random", "Incremental" ) --offset:[-8, 16]
-		radiobuttons RB_angle_mode "Angle Mode"		labels:#("Event\Odd", "Random" /*", Incremental"*/ ) --offset:[-8, 16]
-
-		--/* ON RADIUS MODE CHANGED */
-		--on RB_angle_mode changed val do
-		--	this.createdByScript()
-		--
-		--/* ON ANGLE MODE CHANGED */
-		--on RB_angle_mode changed val do
-		--	this.createdByScript()
-	)
-
 	rollout params_extended "Parameters Extends"
 	(
 		checkbox	SP_attach_to_line 	"Attach line"
@@ -129,9 +126,9 @@ category:	"Splines"
 		checkbox	SP_weld_line 	"Weld"
 		checkbox	SP_close_line	"Close line"  enabled:SP_weld_line.state
 
-		button btn_generate "Generate"	width:64
-		button btn_attach   "Attach"		width:64
-		button btn_test      "Test"			width:64
+		button btn_generate "Generate" width:64
+		button btn_attach   "Attach"	width:64
+		button btn_test      "Test"	width:64
 
 
 		--on SP_connect_line changed val do
@@ -142,10 +139,99 @@ category:	"Splines"
 		--on btn_test pressed do this.removeAllLines()
 	)
 
+	/*------------------------------------------------------------------------------
+
+		MODIFY ARCH DATA
+
+	--------------------------------------------------------------------------------*/
+
+	/** Get arch data
+	  *
+	  */
+	function setArchData =
+	(
+		--format "\n"; print "TechArch.ms.setArchData()"
+
+		angle_counter = 0
+
+		/* GET DATA FOR CIRCLES */
+		while angle_counter < wrap_angle do
+		(
+			arch_data	= Dictionary()
+
+			arch_data[#ANGLE] = angle_min
+
+			arch_data[#ROTATION]	= angle_counter
+
+			angle_counter += arch_data[#ANGLE]
+
+			--format "angle_counter:	% \n" angle_counter
+			/* Fit last arc to wrap angle value */
+			if angle_counter > wrap_angle then
+				arch_data[#ANGLE] -= angle_counter - wrap_angle-- remove overlap value
+
+			append arches_data arch_data
+		)
+
+		this.setValues (#RADIUS)
+		this.setValues (#HEIGHT) min_val:0 max_val:this.height
+
+	)
+
+	/** Set radius
+	  *
+	  */
+	function setValues key min_val: max_val: =
+	(
+		print "TechArch.setRadius()"
+		key_str = key as string
+
+		if min_val == unsupplied then
+			min_val  = getProperty this ( key_str +"_min" )
+
+		if max_val == unsupplied then
+			max_val  = getProperty this ( key_str +"_max" )
+
+		mode_val = getProperty this ( key_str +"_mode" )
+
+		format "key_str:	% \n" key_str
+		format "min_val:	% \n" min_val
+		format "max_val:	% \n" max_val
+		format "mode_val:	% \n" mode_val
+
+		arch_count = this.arches_data.count
+
+		val_increment = (max_val - min_val) / ( arch_count -  1 )
+
+		--/* FILL DEFAULT VALUE */
+		for arch_data in this.arches_data do arch_data[key] = min_val
+
+		if min_val != max_val then
+			for i = 1 to arch_count do
+			(
+				arch_data =  this.arches_data[i]
+
+				arch_data[key] = case mode_val of
+				(
+					1: if ( mod i 2) == 0 then min_val else max_val
+					2: arch_data[key] + val_increment * (i - 1) --increemanetal radius from lowest to highest
+					--3:
+					--:
+					default: arch_data[key] -- fallback
+				)
+			)
+	)
+
+
+	/*------------------------------------------------------------------------------
+
+		BUILD SHAPES
+
+	--------------------------------------------------------------------------------*/
 
 	/*
 	*/
-	fn rebuildShape =
+	function rebuildShape =
 	(
 		if not initialized then return false
 
@@ -154,53 +240,25 @@ category:	"Splines"
 		--format "this.radius:	% \n" this.radius
 		--format "wrap_angle:	% \n" wrap_angle
 		--format "angle_min:	% \n" angle_min
-		/** Get arch data
-		  *
-		  */
-		function getArchData =
+
+
+		for arch_data in arches_data do
 		(
-			--format "\n"; print "TechArch.ms.getArchData()"
-			arches_data = #()
-
-			angle_counter = 0
-
-			/* GET DATA FOR CIRCLES */
-			while angle_counter < wrap_angle do
-			(
-				arch_data	= Dictionary()
-
-				arch_data[#ANGLE] = angle_min
-
-				arch_data[#ROTATION]	= angle_counter
-
-				arch_data[#POS_Z]	= random 0 this.height
-
-				arch_data[#RADIUS] = this.radius - ( random 0 this.width )
-
-				angle_counter += arch_data[#ANGLE]
-
-				--format "angle_counter:	% \n" angle_counter
-				/* Fit last arc to wrap angle value */
-				if angle_counter > wrap_angle then
-					arch_data[#ANGLE] -= angle_counter - wrap_angle-- remove overlap value
-
-				append arches_data arch_data
-			)
-
-			arches_data --return
+			format "\n"
+			for key in arch_data.keys do
+				format "%:	% \n" key arch_data[key]
 		)
-
-		arches_data = getArchData()
 
 		ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
 
 		ShapeWrapper.NewShape()
 
+
 		for arch_data in arches_data do
 		(
 			spline = ShapeWrapper.NewSpline()
 
-			this.make2PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:1 pos_z:arch_data[#POS_Z] AddKnot:spline.AddKnot
+			this.make2PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:1 pos_z:arch_data[#HEIGHT] AddKnot:spline.AddKnot
 		)
 
 		ShapeWrapper.UpdateSels()
@@ -208,8 +266,25 @@ category:	"Splines"
 
 		updateShape
 
-		--this.initialized = true
+		this.initialized = true
 		this.build = true
+	)
+
+
+
+	/** Init
+	  *
+	  */
+	function init obj: =
+	(
+		--if this.initialized then return true
+		format "\n"; print "TechArch.init()"
+
+		this.obj = if obj != unsupplied then obj else refs.dependentNodes this firstOnly:on
+
+		setArchData()
+
+		this.initialized = true
 	)
 
 	/*------------------------------------------------------------------------------
@@ -220,32 +295,31 @@ category:	"Splines"
 
 	on load do
 	(
-		print "TechArch.load()"
+		--print "TechArch.load()"
 	)
 
 	on postLoad  do
 	(
-		print "TechArch.postLoad()"
+		--print "TechArch.postLoad()"
 		this.init()
 	)
 
 	on create do
 	(
-		print "TechArch.create()"
+		--print "TechArch.create()"
 	)
 
 	on postCreate do
 	(
-		print "TechArch.postCreate()"
+		--print "TechArch.postCreate()"
 	)
 
 	on attachedToNode _node do
 	(
-		print "TechArch.attachedToNode()"
+		--print "TechArch.attachedToNode()"
 
-		this.obj = _node
+		this.init obj:_node
 
-		this.initialized = true
 	)
 
 	tool create

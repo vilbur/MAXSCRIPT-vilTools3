@@ -24,23 +24,31 @@ function defaultSetup =
 function mainSetup =
 (
 	--format "\n"; print "TechArchTest.ms.mainSetup()"
-	radius	= 60
+	/* RADIUS */
+	radius_min	= 45
+	radius_max	= 90
+	--radius_max	= 100
 
-	wrap_angle	= 720
+	radius_mode	= 2
+
+
+	/* ANGLE */
+	--wrap_angle	= 720
 	--wrap_angle	= 180
-	--wrap_angle	= 360
+	wrap_angle	= 360
 	--wrap_angle	= 540
 
 	angle_min	= 90
-	angle_max	= 60
+	angle_max	= 90
 
-	width	= 15
+	angle_mode	= 1
+
+
 	height	= 30
 	gap_angle	= 0
-	radius_mode	= 2
-	angle_mode	= 2
 
-	tech_arch = techArch radius:radius wrap_angle:wrap_angle angle_min:angle_min width:width height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on
+
+	techArch wrap_angle:wrap_angle radius_min:radius_min radius_max:radius_max angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
 )
 
 
