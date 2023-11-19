@@ -30,12 +30,13 @@ category:	"Splines"
 
 		angle_mode 	ui:RB_angle_mode	type:#radiobtnIndex	default:1
 
-		on angle_min	set val do if initialized then this.setAngle()
-		on angle_max	set val do if initialized then this.setAngle()
+		on wrap_angle	set val do this.rebuildShape()
 
-		--on wrap_angle	set val do this.generate()
-		--on random_angle set val do this.generate()
-		--on angle_min    set val do( if val <= 0 then angle_min = 1; this.generate())
+		on angle_min	set val do if initialized then (this.setArchData(); this.rebuildShape())
+		on angle_max	set val do if initialized then (this.setArchData(); this.rebuildShape())
+
+		on angle_mode	set val do this.rebuildShape()
+
 	)
 
 	rollout params_angle "Angles"
@@ -46,6 +47,7 @@ category:	"Splines"
 
 		radiobuttons RB_angle_mode "Angle Mode" labels:#("Event\Odd", "Random" ) --offset:[-8, 16]
 
+
 		/* KEEP MIN RADIUS LOWER THEN MAX */
 		on SP_angle_min changed val do
 			if val > angle_max then angle_max = val
@@ -53,7 +55,7 @@ category:	"Splines"
 
 		/* KEEP MAX RADIUS HIGHER THEN MIN */
 		on SP_angle_max changed val do
-			if val > angle_min  then angle_min = val
+			if val < angle_min  then angle_min = val
 	)
 
 	/*------------------------------------------------------------------------------
@@ -62,13 +64,15 @@ category:	"Splines"
 
 	parameters main rollout:params_radius
 	(
-		radius_min 	ui:SP_radius_min	type:#float	default:90
-		radius_max 	ui:SP_radius_max	type:#float	default:90
+		radius_min 	ui:SP_radius_min	type:#float	default:100
+		radius_max 	ui:SP_radius_max	type:#float	default:100
 
 		radius_mode 	ui:RB_radius_mode	type:#radiobtnIndex	default:1
 
-		on radius_min	set val do if initialized then this.setRadius()
-		on radius_max	set val do if initialized then this.setRadius()
+		on radius_min	set val do if initialized then this.setValues (#RADIUS)
+		on radius_max	set val do if initialized then this.setValues (#RADIUS)
+
+		on radius_mode	set val do this.rebuildShape()
 	)
 
 	rollout params_radius "Radius"
@@ -86,6 +90,9 @@ category:	"Splines"
 		/* KEEP MAX RADIUS HIGHER THEN MIN */
 		on SP_radius_max changed val do
 			if val < radius_min  then radius_min = val
+
+
+
 	)
 
 	/*------------------------------------------------------------------------------
@@ -94,10 +101,11 @@ category:	"Splines"
 	parameters main rollout:params_height
 	(
 		height	ui:SP_height	type:#float default:0
-		height_mode 	ui:RB_height_mode	type:#radiobtnIndex	default:2
+		height_mode 	ui:RB_height_mode	type:#radiobtnIndex	default:1
 
-		on height	set val do if initialized then this.setPosZ()
+		on height	set val do if initialized then this.setValues (#HEIGHT) min_val:0 max_val:this.height
 	)
+
 	rollout params_height "Height"
 	(
 		spinner	 SP_height	"Height"	range:[ 0, 1e9, height ]
@@ -150,21 +158,26 @@ category:	"Splines"
 	  */
 	function setArchData =
 	(
-		--format "\n"; print "TechArch.ms.setArchData()"
+		format "\n"; print "TechArch.ms.setArchData()"
 
 		/**
 		  *
 		  */
 		function getAngle index =
 		(
-			--format "\n"; print "TechArch.ms.incrementAngle()"
+			print "TechArch.ms.getAngle()"
+			format "index:	% \n" index
+			--format "angle_mode:	% \n" angle_mode
 			case angle_mode of
 			(
-				1: if ( mod index 2) == 0 then angle_min else angle_max
+				1: if ( mod index 2) != 0 then angle_min else angle_max -- odd is min, even is max
 				2: random angle_min angle_max
 				default:	angle_min
 			)
 		)
+
+		this.arches_data = #() -- reset array for new data on rebuild
+
 
 		angle_counter = 0
 
@@ -172,14 +185,16 @@ category:	"Splines"
 		while angle_counter < wrap_angle do
 		(
 			arch_data	= Dictionary()
+			format "\n\n"
 
 			arch_data[#ANGLE] = getAngle(this.arches_data.count +1)
 
+			format "angle_counter:	% \n" angle_counter
+			format "arch_data[#ANGLE]:	% \n" arch_data[#ANGLE]
 			arch_data[#ROTATION]	= angle_counter
 
 			angle_counter += arch_data[#ANGLE]
 
-			--format "angle_counter:	% \n" angle_counter
 			/* Fit last arc to wrap angle value */
 			if angle_counter > wrap_angle then
 				arch_data[#ANGLE] -= angle_counter - wrap_angle-- remove overlap value
@@ -187,15 +202,15 @@ category:	"Splines"
 			append arches_data arch_data
 		)
 
-		this.setValues (#RADIUS)
-		this.setValues (#HEIGHT) min_val:0 max_val:this.height
+		this.setValues (#RADIUS) rebuilt:false
+		this.setValues (#HEIGHT) rebuilt:false min_val:0 max_val:this.height
 
 	)
 
 	/** Set radius
 	  *
 	  */
-	function setValues key min_val: max_val: =
+	function setValues key min_val: max_val: rebuilt:true =
 	(
 		--print "TechArch.setRadius()"
 		key_str = key as string
@@ -227,13 +242,16 @@ category:	"Splines"
 
 				arch_data[key] = case mode_val of
 				(
-					1: if ( mod i 2) == 0 then min_val else max_val
-					2: arch_data[key] + val_increment * (i - 1) --increemanetal radius from lowest to highest
+					1: if ( mod i 2) != 0 then min_val else max_val -- odd is min, even is max
+					2: arch_data[key] + val_increment * (i - 1) --incremanetal radius from lowest to highest
 					3: random min_val max_val
 					--:
 					default: arch_data[key] -- fallback
 				)
 			)
+
+		if rebuilt then
+			this.rebuildShape()
 	)
 
 
@@ -250,11 +268,13 @@ category:	"Splines"
 		if not initialized then return false
 
 		print "TechArch.rebuildShape()"
+
+		format "arch_count:	% \n" this.arches_data.count
 		format "wrap_angle:	% \n" wrap_angle
 		format "height:	% \n" height
-		--format "this.radius:	% \n" this.radius
-		--format "wrap_angle:	% \n" wrap_angle
-		--format "angle_min:	% \n" angle_min
+		format "wrap_angle:	% \n" wrap_angle
+		format "angle_min:	% \n" angle_min
+		format "angle_max:	% \n" angle_max
 
 
 		for arch_data in arches_data do
@@ -274,10 +294,15 @@ category:	"Splines"
 			spline = ShapeWrapper.NewSpline()
 
 			this.make3PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:-1 pos_z:arch_data[#HEIGHT] AddKnot:spline.AddKnot
+
+			--spline.SetClosed()
+
 		)
 
 		ShapeWrapper.UpdateSels()
 		ShapeWrapper.InvalidateGeomCache()
+
+
 
 		updateShape
 
@@ -285,7 +310,16 @@ category:	"Splines"
 		this.build = true
 	)
 
+	/** Remove lines
+	  *
+	  */
+	function removeAllLines =
+	(
+		--format "\n"; print "TechArch.removeAllLines()"
+		ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
+		shapeWrapper.NewShape()
 
+	)
 
 	/** Init
 	  *

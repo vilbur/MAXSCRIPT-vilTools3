@@ -191,11 +191,12 @@
 		    (
 				arc_points_rotated = this.rotatePointsInSpace( arcs_next[i] ) ( arc_angle * i )
 
-				/* modify out vector of lst point of previous arc */
+				/* modify out vector of last point of previous arc */
 				arc_points[arc_points.count][#outVec] = arc_points_rotated[1][#outVec]
 
-				/* append second vert to all ponts */
+				/* append 2. and 3. vert to all ponts */
 				append arc_points arc_points_rotated[2]
+				append arc_points arc_points_rotated[3]
 		   )
 		)
 

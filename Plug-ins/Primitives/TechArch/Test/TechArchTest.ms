@@ -16,13 +16,34 @@ delete objects
 
 
 /* EVENT\ODD ANGLE */
-TechArch angle_min:30 angle_max:90 isSelected:on radius_min:50 radius_max:51
+--TechArch angle_min:30 angle_max:90 isSelected:on radius_min:50 radius_max:51
 
 /* RANDOM ANGLE */
 --TechArch angle_min:15 angle_max:30 angle_mode:2 isSelected:on radius_min:50 radius_max:51
 
+TechArch angle_min:45 angle_max:90 isSelected:on radius_min:50 radius_max:51
+
+
+/* EVENT\ODD HEIGHT */
+--TechArch height:30
+--
+/* RANDOM HEIGHT */
+--TechArch height:50 height_mode:2
+
+
+
+
+--TechArch angle_min:90 angle_max:90 wrap_angle:90
+--TechArch angle_min:180 angle_max:180 wrap_angle:180
+--TechArch angle_min:270 angle_max:270 wrap_angle:270
+
+
+
+
 --TechArch wrap_angle:72 radius_min:45 radius_max:90 angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
 --lineSetup()
+
+
 
 max modify mode
 
