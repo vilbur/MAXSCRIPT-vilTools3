@@ -5,7 +5,8 @@ category:	"Splines"
 (
 	local obj
 
-	local arches_data = #()
+	local arches_data   = #()
+	local spline_points = #() -- array of Dictionary #( #point, Point3) #( #inVec, Point3) #( #outVec, Point3)
 
 	local initialized	= false
 
@@ -32,8 +33,8 @@ category:	"Splines"
 
 		on wrap_angle	set val do this.rebuildShape()
 
-		on angle_min	set val do if initialized then (this.setArchData(); this.rebuildShape())
-		on angle_max	set val do if initialized then (this.setArchData(); this.rebuildShape())
+		on angle_min	set val do if initialized then this.rebuildShape reset_shape:true
+		on angle_max	set val do if initialized then this.rebuildShape reset_shape:true
 
 		on angle_mode	set val do this.rebuildShape()
 
@@ -115,24 +116,24 @@ category:	"Splines"
 		PARAMETERS EXTENDS
 	--------------------------------------------------------------------------------*/
 
-	parameters main rollout:params_extended
+	parameters main rollout:params_line
 	(
-		attach_to_line	ui:SP_attach_to_line	type:#boolean	default:true
-		weld_line	ui:SP_weld_line	type:#boolean	default:true
+		--attach_to_line	ui:SP_attach_to_line	type:#boolean	default:true
 		connect_line	ui:SP_connect_line	type:#boolean	default:true
-		close_line	ui:SP_close_line	type:#boolean	default:true
+		weld_line	ui:SP_weld_line	type:#boolean	default:true
+		--close_line	ui:SP_close_line	type:#boolean	default:true
 
 		--on weld_line			set val do this.weldAllVerts()
 		--on attach_to_line	set val do if val then this.attachAllToObj() else this.generate() -- regenerate unattached if uncheckled
 		--on connect_line		set val do this.createConnectLine()
 	)
 
-	rollout params_extended "Parameters Extends"
+	rollout params_line "Line setup"
 	(
-		checkbox	SP_attach_to_line 	"Attach line"
-		checkbox	SP_connect_line 	"Connect line"
+		--checkbox	SP_attach_to_line 	"Attach line"
+		checkbox	SP_connect_line 	"Connect"
 		checkbox	SP_weld_line 	"Weld"
-		checkbox	SP_close_line	"Close line"  enabled:SP_weld_line.state
+		--checkbox	SP_close_line	"Close"  enabled:SP_weld_line.state
 
 		button btn_generate "Generate" width:64
 		button btn_attach   "Attach"	width:64
@@ -158,15 +159,15 @@ category:	"Splines"
 	  */
 	function setArchData =
 	(
-		format "\n"; print "TechArch.ms.setArchData()"
+		--format "\n"; print "TechArch.ms.setArchData()"
 
 		/**
 		  *
 		  */
 		function getAngle index =
 		(
-			print "TechArch.ms.getAngle()"
-			format "index:	% \n" index
+			--print "TechArch.ms.getAngle()"
+			--format "index:	% \n" index
 			--format "angle_mode:	% \n" angle_mode
 			case angle_mode of
 			(
@@ -185,12 +186,12 @@ category:	"Splines"
 		while angle_counter < wrap_angle do
 		(
 			arch_data	= Dictionary()
-			format "\n\n"
+			--format "\n\n"
 
 			arch_data[#ANGLE] = getAngle(this.arches_data.count +1)
 
-			format "angle_counter:	% \n" angle_counter
-			format "arch_data[#ANGLE]:	% \n" arch_data[#ANGLE]
+			--format "angle_counter:	% \n" angle_counter
+			--format "arch_data[#ANGLE]:	% \n" arch_data[#ANGLE]
 			arch_data[#ROTATION]	= angle_counter
 
 			angle_counter += arch_data[#ANGLE]
@@ -263,63 +264,86 @@ category:	"Splines"
 
 	/*
 	*/
-	function rebuildShape =
+	function rebuildShape reset_shape:false =
 	(
+
+
+
+
 		if not initialized then return false
+		--print "TechArch.rebuildShape()"
+		--format "arch_count:	% \n" this.arches_data.count
+		--format "wrap_angle:	% \n" wrap_angle
+		--format "height:	% \n" height
+		--format "wrap_angle:	% \n" wrap_angle
+		--format "angle_min:	% \n" angle_min
+		--format "angle_max:	% \n" angle_max
+		local spline
 
-		print "TechArch.rebuildShape()"
+		local ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
 
-		format "arch_count:	% \n" this.arches_data.count
-		format "wrap_angle:	% \n" wrap_angle
-		format "height:	% \n" height
-		format "wrap_angle:	% \n" wrap_angle
-		format "angle_min:	% \n" angle_min
-		format "angle_max:	% \n" angle_max
+		if this.arches_data.count == 0 or reset_shape then
+			this.setArchData()
+
+		/* DEBUG PRINT */
+		--for arch_data in arches_data do (format "\n"; for key in arch_data.keys do format "%:	% \n" key arch_data[key])
+
+		/* COVERT ARCH DATA DOTO POINTS */
+		arches_points = for arch_data in arches_data collect
+			this.getArcPoints (arch_data[#ANGLE]) (arch_data[#RADIUS]) (arch_data[#ROTATION]) (arch_data[#HEIGHT])  dir:-1
 
 
-		for arch_data in arches_data do
-		(
-			format "\n"
-			for key in arch_data.keys do
-				format "%:	% \n" key arch_data[key]
-		)
+		/* DEBUG PRINT */
+		--for arc_points in arches_points do format "arc_points:	% \n" arc_points
 
-		ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
+		arches_vectors = for arc_points in arches_points collect this.convertoDotNetVectors(arc_points)
+
+		/* CREATE SHAPE */
 
 		ShapeWrapper.NewShape()
 
-
-		for arch_data in arches_data do
+		for i = 1 to arches_vectors.count do
 		(
-			spline = ShapeWrapper.NewSpline()
+			--format "\n\n"
+			arc_vectors	= arches_vectors[i]
+			arc_vectors_next	= if arches_vectors[i+1] != undefined then arches_vectors[i+1] else arches_vectors[1]
 
-			this.make3PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] dir:-1 pos_z:arch_data[#HEIGHT] AddKnot:spline.AddKnot
+			if i == 1 or not  (connect_line and weld_line) then
+				spline = ShapeWrapper.NewSpline()
 
-			--spline.SetClosed()
+			for arc_vector in arc_vectors do
+				spline.AddKnot ( getSplineKnot (arc_vector[#point]) (arc_vector[#inVec]) (arc_vector[#outVec]) BezierCornerKnot )
 
+
+			if arc_vectors_next != undefined and connect_line and not weld_line then
+			(
+				spline = ShapeWrapper.NewSpline()
+
+				last_knot   = arc_vectors[arc_vectors.count]	-- last knot of current arc
+				first_knot  = arc_vectors_next[1]	-- first knot of next arc
+
+				--format "last_knot[#point]:	% \n" last_knot[#point]
+				--format "first_knot[#point]:	% \n" first_knot[#point]
+
+				if last_knot[#point] != first_knot[#point] then
+				(
+					spline.AddKnot ( getSplineKnot (last_knot[#point])	(last_knot[#inVec])	(last_knot[#outVec]) bezierKnot )
+					spline.AddKnot ( getSplineKnot (first_knot[#point])	(first_knot[#inVec])	(first_knot[#outVec]) bezierKnot )
+				)
+			)
+			--if close_line and connect_line and weld_line then
+				--spline.SetClosed()
 		)
 
 		ShapeWrapper.UpdateSels()
 		ShapeWrapper.InvalidateGeomCache()
 
-
-
 		updateShape
 
-		this.initialized = true
-		this.build = true
+		this.initialized	= true
+		this.build 	= true
 	)
 
-	/** Remove lines
-	  *
-	  */
-	function removeAllLines =
-	(
-		--format "\n"; print "TechArch.removeAllLines()"
-		ShapeWrapper = BezierShapeClass._CreateWrapperFromFPValue BezierShape
-		shapeWrapper.NewShape()
-
-	)
 
 	/** Init
 	  *
@@ -327,11 +351,9 @@ category:	"Splines"
 	function init obj: =
 	(
 		--if this.initialized then return true
-		format "\n"; print "TechArch.init()"
+		--format "\n"; print "TechArch.init()"
 
 		this.obj = if obj != unsupplied then obj else refs.dependentNodes this firstOnly:on
-
-		setArchData()
 
 		this.initialized = true
 	)
@@ -395,7 +417,8 @@ category:	"Splines"
 
 	on buildShape do
 	(
-		if not build then
+		--if not build then
+		if this.arches_data.count == 0 then
 			rebuildShape()
 
 	)

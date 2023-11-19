@@ -21,17 +21,25 @@ delete objects
 /* RANDOM ANGLE */
 --TechArch angle_min:15 angle_max:30 angle_mode:2 isSelected:on radius_min:50 radius_max:51
 
-TechArch angle_min:45 angle_max:90 isSelected:on radius_min:50 radius_max:51
+--TechArch angle_min:45 angle_max:90 isSelected:on radius_min:50 radius_max:51
 
 
 /* EVENT\ODD HEIGHT */
---TechArch height:30
+TechArch height:30
 --
-/* RANDOM HEIGHT */
+--/* RANDOM HEIGHT */
 --TechArch height:50 height_mode:2
 
 
 
+/* CONNECT LINE  */
+--TechArch height:30 connect_line:false
+
+/* WELD LINE  */
+--TechArch weld_line:false height:30
+
+/* CLOSE LINE  */
+--TechArch weld_line:false height:30 angle_min:180
 
 --TechArch angle_min:90 angle_max:90 wrap_angle:90
 --TechArch angle_min:180 angle_max:180 wrap_angle:180

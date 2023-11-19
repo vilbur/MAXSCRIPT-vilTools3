@@ -1,4 +1,9 @@
 
+	/*
+		dotNetClass spline DOCUMENTATION: https://help.autodesk.com/view/MAXDEV/2024/ENU/?guid=Max_Developer_Help_cpp_ref_class_bezier_shape_html
+
+	*/
+
 	local kappa = 4 * ( sqrt 2 - 1) / 3 -- https://hansmuller-flex.blogspot.com/2011/04/approximating-circular-arc-with-cubic.html
 
 	/*------------------------------------------------------------------------------
@@ -10,6 +15,7 @@
 	local bezierKnot  = ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").BezierKnot
 	local smoothKnot	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").AutoKnot
 	local curveLine	= ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+LineType").CurveLineType
+	local BezierCornerKnot  = ( dotNetClass "Autodesk.Max.MaxPlus.SplineKnot+KnotType").BezierCornerKnot
 
 	local BezierShapeClass = dotNetClass "Autodesk.Max.MaxPlus.BezierShape"
 
@@ -35,14 +41,16 @@
 	  *
 	  * https://spencermortensen.com/articles/bezier-circle/#:~:text=B%C3%A9zier%20curves%20are%20often%20used,with%20a%20cubic%20B%C3%A9zier%20curve.
 	  *
+	  *
+	  * @retrun array of Dictionary #( #point, Point3) #( #inVec, Point3) #( #outVec, Point3)
 	  */
-	function make2PointArc arc_angle: arc_radius: angle_rot:0 dir: pos_z:0 AddKnot:  =
+	function getArcPoints arc_angle arc_radius angle_rot pos_z dir: AddKnot:  =
 	(
 		--format "\n"; print "testPlugin.ms.make2PointArc()"
 
 		/** Get points up to 90 degrees
 		  */
-		function getArcPoints arc_radius arc_angle pos_z =
+		function _getArcPoints arc_radius arc_angle pos_z =
 		(
             --format "\n"; print "testPlugin.ms.getArcPoints()"
             --format "arc_radius:	% \n" arc_radius
@@ -85,7 +93,7 @@
 
 		arc_angle /= arc_used -- dive arc to even parts
 
-		arc_points = getArcPoints(arc_radius)(arc_angle)(pos_z)
+		arc_points = _getArcPoints(arc_radius)(arc_angle)(pos_z)
 
 		arc_points = this.rotatePointsInSpace( arc_points ) ( -90 + arc_angle/2 + angle_rot ) -- rotate start of arc to "12:00" position
 
@@ -105,9 +113,11 @@
 		   )
 		)
 
-		this.convertoDotNetVectors(arc_points)
+		arc_points --return
 
-		this.constructArc (arc_points) (AddKnot)
+		--this.convertoDotNetVectors(arc_points)
+
+		--this.constructArc (arc_points) (AddKnot)
 	)
 
 	/* Generate Arc spline on given shape
@@ -115,33 +125,6 @@
 	*/
 	function make3PointArc arc_angle: arc_radius: angle_rot:0 pos_z:0 dir: AddKnot: =
 	(
---		arc_angle /= 2 -- only 1 half of angle is used for construction
---
---		local bez = arc_angle * kappa / 90 + adjustBy arc_angle
---		local radVec = x_axis * Quat ( arc_angle - 90) z_axis * [dir, 1, 0]
---
---
---		local radX = arc_radius * radVec.x
---		local radY = arc_radius * radVec.y
---		local radXY = radX - arc_radius * dir * bez * radVec.y
---		local radYX = radY + arc_radius * dir * bez * radVec.x
---
---
---        local point_1 = Dictionary #( #point,[radX, radY, pos_z])  #( #inVec, [radX, radY, pos_z])	#( #outVec, [radXY, radYX, pos_z] )
---        local point_2 = Dictionary #( #point,[0., arc_radius, pos_z])  #( #inVec, [(bez * dir * arc_radius), arc_radius, pos_z])	#( #outVec, [(-bez * dir * arc_radius), arc_radius, pos_z] )
---        local point_3 = Dictionary #( #point,[-radX, radY, pos_z]) #( #inVec, [-radXY, radYX, pos_z])	#( #outVec, [-radX, radY, pos_z] )
-
-		--
-		--arc_points = this.rotatePointsInSpace #( point_1, point_2, point_3 ) (angle_rot - arc_angle ) -- remove arc_angle from rotation, then arc starts at "12:00 hour"
-		--
-		--this.convertoDotNetVectors(arc_points)
-		--
-		--this.constructArc (arc_points) (AddKnot)
-
-
-
-
-
 		--format "\n"; print "testPlugin.ms.make2PointArc()"
 
 		/** Get points up to 90 degrees
@@ -173,7 +156,6 @@
 			#( point_1, point_2, point_3 )
 		)
 
-
 		arc_used = ceil ( arc_angle / 90.0 ) as integer
 
 		arc_angle /= arc_used -- dive arc to even parts
@@ -203,7 +185,6 @@
 		this.convertoDotNetVectors(arc_points)
 
 		this.constructArc (arc_points) (AddKnot)
-
 
 	)
 
@@ -240,12 +221,34 @@
 
 	  arc_points --return
 	)
-	/** Construct arc
-	  *
-	  */
-	function constructArc arc_points AddKnot =
-	(
-		--format "\n"; print "buildShape.ms.constructArc()"
-		for arc_point in arc_points do
-			AddKnot ( getSplineKnot (arc_point[#point]) (arc_point[#inVec]) (arc_point[#outVec]) bezierKnot )
-	)
+
+
+	--/** createLine arc
+	--  *
+	--  */
+	--function constructArc arc_points AddKnot =
+	--(
+	--	--format "\n"; print "buildShape.ms.constructArc()"
+	--	for arc_point in arc_points do
+	--		AddKnot ( getSplineKnot (arc_point[#point]) (arc_point[#inVec]) (arc_point[#outVec]) bezierKnot )
+	--)
+
+
+	--/** Construct arc
+	--  *
+	--  */
+	--function constructArc arc_points AddKnot =
+	--(
+	--	--format "\n"; print "buildShape.ms.constructArc()"
+	--	for arc_point in arc_points do
+	--		AddKnot ( getSplineKnot (arc_point[#point]) (arc_point[#inVec]) (arc_point[#outVec]) bezierKnot )
+	--)
+
+
+
+
+
+
+
+
+
