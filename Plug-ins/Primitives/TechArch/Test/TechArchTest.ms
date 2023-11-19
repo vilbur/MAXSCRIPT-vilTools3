@@ -11,12 +11,15 @@ delete objects
 --------------------------------------------------------------------------------*/
 --TechArch wirecolor:green isSelected:on
 
+
 /* RADIUS TEST */
+TechArch radius_min:50 radius_max:100 radius_mode:1 isSelected:on steps:24
 --TechArch radius_min:50 radius_max:100 radius_mode:2 isSelected:on steps:24
+--
 
 
 /* EVENT\ODD ANGLE */
---TechArch angle_min:30 angle_max:90 isSelected:on radius_min:50 radius_max:51
+--TechArch angle_min:30 angle_max:90 isSelected:on radius_min:50 radius_max:55
 
 /* RANDOM ANGLE */
 --TechArch angle_min:15 angle_max:30 angle_mode:2 isSelected:on radius_min:50 radius_max:51
@@ -25,7 +28,7 @@ delete objects
 
 
 /* EVENT\ODD HEIGHT */
-TechArch height:30
+--TechArch height:30
 --
 --/* RANDOM HEIGHT */
 --TechArch height:50 height_mode:2

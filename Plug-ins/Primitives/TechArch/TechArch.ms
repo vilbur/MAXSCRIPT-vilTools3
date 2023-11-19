@@ -31,12 +31,12 @@ category:	"Splines"
 
 		angle_mode 	ui:RB_angle_mode	type:#radiobtnIndex	default:1
 
-		on wrap_angle	set val do this.rebuildShape()
+		on wrap_angle	set val do this.rebuildShape reset_shape:true
 
 		on angle_min	set val do if initialized then this.rebuildShape reset_shape:true
 		on angle_max	set val do if initialized then this.rebuildShape reset_shape:true
 
-		on angle_mode	set val do this.rebuildShape()
+		on angle_mode	set val do this.rebuildShape reset_shape:true
 
 	)
 
@@ -73,7 +73,7 @@ category:	"Splines"
 		on radius_min	set val do if initialized then this.setValues (#RADIUS)
 		on radius_max	set val do if initialized then this.setValues (#RADIUS)
 
-		on radius_mode	set val do this.rebuildShape()
+		on radius_mode	set val do this.rebuildShape reset_shape:true
 	)
 
 	rollout params_radius "Radius"
@@ -105,6 +105,8 @@ category:	"Splines"
 		height_mode 	ui:RB_height_mode	type:#radiobtnIndex	default:1
 
 		on height	set val do if initialized then this.setValues (#HEIGHT) min_val:0 max_val:this.height
+
+		on height_mode	set val do this.rebuildShape reset_shape:true
 	)
 
 	rollout params_height "Height"
@@ -122,10 +124,6 @@ category:	"Splines"
 		connect_line	ui:SP_connect_line	type:#boolean	default:true
 		weld_line	ui:SP_weld_line	type:#boolean	default:true
 		--close_line	ui:SP_close_line	type:#boolean	default:true
-
-		--on weld_line			set val do this.weldAllVerts()
-		--on attach_to_line	set val do if val then this.attachAllToObj() else this.generate() -- regenerate unattached if uncheckled
-		--on connect_line		set val do this.createConnectLine()
 	)
 
 	rollout params_line "Line setup"
@@ -138,14 +136,6 @@ category:	"Splines"
 		button btn_generate "Generate" width:64
 		button btn_attach   "Attach"	width:64
 		button btn_test      "Test"	width:64
-
-
-		--on SP_connect_line changed val do
-			--SP_close_line.enabled = val
-
-		--on btn_generate pressed do this.createdByScript()
-		--on btn_attach pressed do this.attachAllToObj()
-		--on btn_test pressed do this.removeAllLines()
 	)
 
 	/*------------------------------------------------------------------------------
@@ -266,12 +256,8 @@ category:	"Splines"
 	*/
 	function rebuildShape reset_shape:false =
 	(
-
-
-
-
 		if not initialized then return false
-		--print "TechArch.rebuildShape()"
+		--print "TchArch.rebuildShape()"
 		--format "arch_count:	% \n" this.arches_data.count
 		--format "wrap_angle:	% \n" wrap_angle
 		--format "height:	% \n" height
@@ -304,9 +290,13 @@ category:	"Splines"
 
 		for i = 1 to arches_vectors.count do
 		(
+			is_line_last	= i == arches_vectors.count
+
 			--format "\n\n"
 			arc_vectors	= arches_vectors[i]
-			arc_vectors_next	= if arches_vectors[i+1] != undefined then arches_vectors[i+1] else arches_vectors[1]
+			arc_vectors_next	= if is_line_last then arches_vectors[i] else arches_vectors[1+1]
+			last_knot	= arc_vectors[arc_vectors.count] -- last knot of current arc
+			first_knot	= arc_vectors_next[1] -- first knot of next arc
 
 			if i == 1 or not  (connect_line and weld_line) then
 				spline = ShapeWrapper.NewSpline()
@@ -314,16 +304,9 @@ category:	"Splines"
 			for arc_vector in arc_vectors do
 				spline.AddKnot ( getSplineKnot (arc_vector[#point]) (arc_vector[#inVec]) (arc_vector[#outVec]) BezierCornerKnot )
 
-
-			if arc_vectors_next != undefined and connect_line and not weld_line then
+			if connect_line and not weld_line then
 			(
 				spline = ShapeWrapper.NewSpline()
-
-				last_knot   = arc_vectors[arc_vectors.count]	-- last knot of current arc
-				first_knot  = arc_vectors_next[1]	-- first knot of next arc
-
-				--format "last_knot[#point]:	% \n" last_knot[#point]
-				--format "first_knot[#point]:	% \n" first_knot[#point]
 
 				if last_knot[#point] != first_knot[#point] then
 				(
@@ -331,8 +314,11 @@ category:	"Splines"
 					spline.AddKnot ( getSplineKnot (first_knot[#point])	(first_knot[#inVec])	(first_knot[#outVec]) bezierKnot )
 				)
 			)
-			--if close_line and connect_line and weld_line then
-				--spline.SetClosed()
+
+			--format "TEST:	% \n" (last_knot[#point] != first_knot[#point])
+
+			if is_line_last and connect_line and weld_line and last_knot[#point] != first_knot[#point] then
+				spline.SetClosed()
 		)
 
 		ShapeWrapper.UpdateSels()
