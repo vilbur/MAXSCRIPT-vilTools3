@@ -20,7 +20,7 @@ category:	"Splines"
 	include "buildShape.ms"
 
 	/*------------------------------------------------------------------------------
-		PARAMETERS ANGLE
+		ANGLE PARAMETERS
 	--------------------------------------------------------------------------------*/
 	parameters main rollout:params_angle
 	(
@@ -60,13 +60,13 @@ category:	"Splines"
 	)
 
 	/*------------------------------------------------------------------------------
-		PARAMETERS RADIUS
+		RADIUS PARAMETERS
 	--------------------------------------------------------------------------------*/
 
 	parameters main rollout:params_radius
 	(
 		radius_min 	ui:SP_radius_min	type:#float	default:50
-		radius_max 	ui:SP_radius_max	type:#float	default:55
+		radius_max 	ui:SP_radius_max	type:#float	default:50
 
 		radius_mode 	ui:RB_radius_mode	type:#radiobtnIndex	default:1
 
@@ -81,7 +81,6 @@ category:	"Splines"
 		spinner	SP_radius_min	"Radius Min"	range:[ 0, 1e9, radius_min ]
 		spinner	SP_radius_max	"Radius Max"	range:[ 0, 1e9, radius_max ]
 
-
 		radiobuttons RB_radius_mode "Radius Mode" labels:modes --offset:[-8, 16]
 
 		/* KEEP MIN RADIUS LOWER THEN MAX */
@@ -91,18 +90,15 @@ category:	"Splines"
 		/* KEEP MAX RADIUS HIGHER THEN MIN */
 		on SP_radius_max changed val do
 			if val < radius_min  then radius_min = val
-
-
-
 	)
 
 	/*------------------------------------------------------------------------------
-		PARAMETERS HEIGHT
+		HEIGHT PARAMETERS
 	--------------------------------------------------------------------------------*/
 	parameters main rollout:params_height
 	(
 		height	ui:SP_height	type:#float default:0
-		height_mode 	ui:RB_height_mode	type:#radiobtnIndex	default:1
+		height_mode 	ui:RB_height_mode	type:#radiobtnIndex	default:2
 
 		on height	set val do if initialized then this.setValues (#HEIGHT) min_val:0 max_val:this.height
 
@@ -115,7 +111,7 @@ category:	"Splines"
 		radiobuttons	RB_height_mode	"Height Mode"	labels:modes --offset:[-8, 16]
 	)
 	/*------------------------------------------------------------------------------
-		PARAMETERS EXTENDS
+		CONNECT PARAMETERS
 	--------------------------------------------------------------------------------*/
 
 	parameters main rollout:params_connect
@@ -126,6 +122,9 @@ category:	"Splines"
 
 		connect_mode 	ui:RB_connect_mode	type:#radiobtnIndex	default:1
 
+		on connect_line	set val do this.rebuildShape reset_shape:true
+		on weld_line 	set val do this.rebuildShape reset_shape:true
+
 		on connect_mode	set val do this.rebuildShape reset_shape:true
 	)
 
@@ -135,11 +134,13 @@ category:	"Splines"
 		checkbox	SP_connect_line 	"Connect"
 		checkbox	SP_weld_line 	"Weld"
 		--checkbox	SP_close_line	"Close"  enabled:SP_weld_line.state
-		radiobuttons RB_connect_mode "Connect mode" labels:#("Straight", "Otrho" ) --offset:[-8, 16]
+		radiobuttons RB_connect_mode "Connect mode" labels:#( "Straight", "Otrho", "Otrho Flip" ) enabled:SP_connect_line.state --offset:[-8, 16]
 
-		button btn_generate "Generate" width:64
-		button btn_attach   "Attach"	width:64
-		button btn_test      "Test"	width:64
+		on SP_connect_line changed val do (RB_connect_mode.enabled = val; SP_weld_line.enabled = val)
+
+		--button btn_generate "Generate" width:64
+		--button btn_attach   "Attach"	width:64
+		--button btn_test      "Test"	width:64
 	)
 
 	/*------------------------------------------------------------------------------
@@ -298,6 +299,8 @@ category:	"Splines"
 				spline.AddKnot (knot)
 		)
 
+		if connect_line and weld_line then
+			spline.SetClosed()
 
 		ShapeWrapper.UpdateSels()
 		ShapeWrapper.InvalidateGeomCache()
@@ -314,7 +317,7 @@ category:	"Splines"
 	  */
 	function prepareLinePoints arches_points =
 	(
-		print "TchArch.prepareLinePoints()"
+		--print "TchArch.prepareLinePoints()"
 
 		/** Get middle connect point
 		  *
@@ -322,15 +325,15 @@ category:	"Splines"
 		function getMiddleConnectPoint point_A point_B =
 		(
 			--format "\n"; print "TechArch.ms.getMiddleConnectPoint()"
+			local middle_point = if connect_mode == 2 then deepCopy point_A else deepCopy point_B
 
-			middle_point = deepCopy point_A
-			middle_point[#point].z = point_B[#point].z
+			middle_point[#point].z = if connect_mode == 2 then point_B[#point].z else point_A[#point].z
 
-			middle_point --return
-
+			if middle_point[#point].z != point_A[#point].z or middle_point[#point].z != point_B[#point].z then -- test if middle point is not overlapin on z axis
+				middle_point --return
 		)
 
-
+		this.splines_knots	= #()
 		spline_knots	= #()
 
 		/* LOOP EACH ARCH */
@@ -342,30 +345,36 @@ category:	"Splines"
 			end_current	= copy arc_points[arc_points.count] -- last knot of current arc
 			start_next	= copy arc_points_next[1] -- first knot of next arc
 
+			points_overlap 	= end_current[#point] == start_next[#point]
+
 			/* CONVERT ARC POINT TO VECTORS */
 			arc_knots = this.getKnots(arc_points) (bezierKnot)
 
 			/* CONNECT or CONNECT and WELD */
 			if connect_line or ( connect_line and weld_line) then
 			(
-				if  end_current[#point] != start_next[#point] then
-				(
-					connect_line_points = #( end_current, start_next )
-
-					middle_point = getMiddleConnectPoint (end_current) (start_next)
-
-					--format "middle_point:	% \n" middle_point
-					insertItem middle_point connect_line_points 2
-
-					connect_line_knots = this.getKnots(connect_line_points) (cornerKnot)
-				)
-
-
 				/* CONNECT AND NOT WELD */
 				if connect_line and not weld_line then
 				(
+					if not points_overlap then
+					(
+						connect_line_points = #( end_current, start_next )
+
+						/* INSERT MIDDLE POINT TO CONNECT LINE */
+						if connect_mode > 1 then
+						(
+							middle_point = getMiddleConnectPoint (end_current) (start_next)
+
+							if middle_point != undefined then
+								insertItem middle_point connect_line_points 2
+						)
+
+						connect_line_knots = this.getKnots(connect_line_points) (cornerKnot)
+					)
+					/* ADD ARC */
 					append this.splines_knots arc_knots
 
+					/* ADD CONNECT LINE */
 					if connect_line_knots != undefined then
 						append this.splines_knots connect_line_knots
 				)
@@ -375,8 +384,15 @@ category:	"Splines"
 				(
 					join spline_knots arc_knots
 
-				)
+					/* INSERT MIDDLE POINT TO CONNECT LINE */
+					if not points_overlap and connect_mode > 1 then
+					(
+						middle_point = getMiddleConnectPoint (end_current) (start_next)
 
+						if middle_point != undefined then
+							join spline_knots ( this.getKnots #(middle_point) (cornerKnot) )
+					)
+				)
 			)
 
 			else /* NOT CONNECT */
@@ -388,6 +404,7 @@ category:	"Splines"
 		if this.splines_knots.count == 0 then
 			append this.splines_knots spline_knots
 
+		--format "this.splines_knots:	% \n" this.splines_knots
 	)
 
 	/** Init
@@ -433,28 +450,28 @@ category:	"Splines"
 	on attachedToNode _node do
 	(
 		--print "TechArch.attachedToNode()"
-
 		this.init obj:_node
-
 	)
 
 	tool create
 	(
 		on mousePoint click do
-		(
-			case click of
-			(
-				1: nodeTM.translation = worldPoint
+		  case click of
+		  (
+			1: (
+				nodeTM.translation = gridPoint
 			)
-		)
+			--3: #stop
+			4: #stop
+		  )
+
 		on mouseMove click do
-		(
-			case click of
-			(
-			--	2: radius = (gridDist.y^2+gridDist.x^2)^.5
-				3: #stop
-			)
-		)
+		  case click of
+		  (
+			2: this.radius_min	= this.radius_max	= abs gridDist.x
+			3: this.radius_max	= abs gridDist.x
+			4: this.height	= abs gridDist.z
+		  )
 	)
 
 	--on create do initialized = false

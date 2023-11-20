@@ -10,7 +10,6 @@ positions = #()
   */
 function getPos =
 (
-	--format "\n"; print "TechArchTest.ms.getPos()"
 	pos = [ positions.count *150, 0, 0 ]
 
 	append positions pos
@@ -21,19 +20,26 @@ function getPos =
 delete objects
 
 
-
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
 
 /* WELD AND CONNECT LINE  */
-TechArch height:10  name:"Connect and weld" pos:(getPos())
+TechArch height:10  name:"Connect and Weld" pos:(getPos())
 
 /* NOT WELD LINE  */
 TechArch  weld_line:false height:10 name:"Connect" pos:(getPos())
 
 /* NOT CONNECT LINE  */
 TechArch connect_line:false name:"Not Connect" pos:(getPos())
+
+
+/* NOT WELD  AND ORTHO  */
+TechArch  weld_line:false connect_mode:2  height:10 name:"Connect Ortho" pos:(getPos())
+
+
+/* WELD AND ORTHO  */
+TechArch height:10 connect_mode:3 name:"Weld Ortho Flip" pos:(getPos())
 
 
 /* RADIUS TEST */
