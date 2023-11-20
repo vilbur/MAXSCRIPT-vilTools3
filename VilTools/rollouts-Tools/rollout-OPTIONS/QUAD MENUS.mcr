@@ -1,3 +1,4 @@
+
 /**  SET CUSTOM QUADS
  */
 macroscript	_options_install_menus
@@ -43,7 +44,7 @@ icon:	"MENU:true"
 		if (hotkey_dialog = (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "Hotkey Editor" collect hwnd)[1]) != undefined then
 			UIAccessor.CloseDialog hotkey_dialog
 
-		print "QUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
+		format "\n\nQUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
 
 	)
 )

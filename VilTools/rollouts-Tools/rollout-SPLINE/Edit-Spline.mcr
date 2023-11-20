@@ -6,7 +6,7 @@ macroscript	_spline_connect_vertices
 category:	"_Edit-Spline"
 buttontext:	"Connect Vertices"
 toolTip:	"Connect 2 vertices"
-icon:	"menu:_Context Spline"
+icon:	"MENU:true"
 (
 	on IsVisible return Filters.Is_EditSpline()
 	--on IsVisible return Filters.CanSwitchTo_Spline()
@@ -27,7 +27,7 @@ macroscript	_spline_weld_vertices
 category:	"_Edit-Spline"
 buttontext:	"Weld Vertices"
 toolTip:	"Weld vertices with 0 treshold"
-icon:	"menu:_Context Spline"
+icon:	"MENU:true"
 (
 	on IsVisible return Filters.Is_EditSpline()
 	--on IsVisible return Filters.CanSwitchTo_Spline()
@@ -52,6 +52,27 @@ icon:	"menu:_Context Spline"
 	)
 )
 
+/**
+ *
+ */
+macroscript	_spline_material_id_by_segment
+category:	"_Edit-Spline"
+buttontext:	"Mat Id by Segment"
+toolTip:	"Mat Id by Segment"
+icon:	"MENU:true"
+(
+	on IsVisible return Filters.Is_EditSpline()
+	--on IsVisible return Filters.CanSwitchTo_Spline()
+
+	on execute do
+	(
+		--macros.run "_Edit-Spline" "_spline_weld_vertices_test"
+		for spline_i = 1 to numSplines (obj = selection[1]) do
+			for segment_i = 1 to numSegments obj spline_i do
+				setMaterialID  obj spline_i segment_i segment_i
+	)
+)
+
 
 /**
  *
@@ -60,7 +81,7 @@ macroscript	_spline_set_interpolation
 category:	"_Edit-Spline"
 buttontext:	"Set Interpolation"
 toolTip:	"Set spline interpolation"
-icon:	"menu:_Context Spline|index:1"
+icon:	"MENU:true|index:1"
 (
 	on IsVisible return Filters.Is_EditSpline()
 	--on IsVisible return Filters.CanSwitchTo_Spline()
@@ -100,7 +121,7 @@ macroscript	_spline_from_intersect
 category:	"_Edit-Spline"
 buttontext:	"Spline Intersect"
 tooltip:	"Create Spline From Intersect Of Geometry"
-icon:	"menu:_Context Spline"
+icon:	"MENU:true"
 (
 	on IsVisible return Filters.Is_EditSpline()
 	--on IsVisible return Filters.CanSwitchTo_Spline()
@@ -116,8 +137,9 @@ macroscript	_spline_explode
 category:	"_Edit-Spline"
 buttontext:	"Explode"
 toolTip:	"Explode shape to splines"
---icon:	""
+icon:	"MENU:true"
 (
+
 	--format "superClassOf $[1]	= % \n" (superClassOf selection[1])
 	--if superClassOf selection[1] == shape then
 	--(
@@ -162,84 +184,118 @@ toolTip:	"Explode shape to splines"
 	--else
 	--	messageBox "Splines Only"
 
-	local compilerParams = dotNetObject "System.CodeDom.Compiler.CompilerParameters" #(
-		getDir #maxRoot + "Autodesk.Max.dll",
-		getDir #maxRoot + "\bin\assemblies\Autodesk.Max.Wrappers.dll")
-	compilerParams.GenerateInMemory = true
-
-	local compilerResults = (dotNetObject "Microsoft.CSharp.CSharpCodeProvider").CompileAssemblyFromSource compilerParams #(
-		"using System;
-		using Autodesk.Max;
-		using Autodesk.Max.Wrappers;
-		using System.Collections.Generic;
-		using System.Runtime.InteropServices;
-
-		public static class Const {
-			public static readonly IGlobal Global = Autodesk.Max.GlobalInterface.Instance;
-		}
-
-		public class ShapeActions {
-			public static readonly IClass_ID spline3DClassID = Const.Global.Class_ID.Create((uint)BuiltInClassIDA.SPLINE3D_CLASS_ID, 0);
-			public static readonly IClass_ID splineShapeClassID = Const.Global.Class_ID.Create((uint)BuiltInClassIDA.SPLINESHAPE_CLASS_ID, 0);
-
-			public static ISplineShape GetSplineShape() {
-				return (ISplineShape)Const.Global.COREInterface14.CreateInstance(SClass_ID.Shape, splineShapeClassID);
-			}
-
-			public static IBezierShape GetBezierShapeFromNode(System.UIntPtr animHandle, int time) {
-				IINode node = (IINode)Const.Global.Animatable.GetAnimByHandle(animHandle);
-				var obj = node.EvalWorldState(time, true).Obj;
-				return GetBezierShapeFromShape(obj, time);
-			}
-
-			public static IBezierShape GetBezierShapeFromShape(Autodesk.Max.IObject shape, int time) {
-				if (shape.CanConvertToType(splineShapeClassID) > 0) {
-					ISplineShape spShape = (ISplineShape)shape.ConvertToType(time, splineShapeClassID);
-					return (IBezierShape)spShape.Shape;
-				}
-				else return null;
-			}
-
-			public static bool DeleteSplines(System.UIntPtr animHandle, int[] splineIndices, int time) {
-				IBezierShape bezShape = GetBezierShapeFromNode(animHandle, time);
-
-				var handle = GCHandle.Alloc(splineIndices, GCHandleType.Pinned);
-				bool success = bezShape.DeleteSplines(handle.AddrOfPinnedObject(), (uint)splineIndices.Length);
-				if (handle.IsAllocated) handle.Free();
-
-				return success;
-			}
-		}"
-	)
-
-	for err = 0 to compilerResults.errors.count - 1 do print (compilerResults.errors.item[err].ToString())
-
-	shapeActions = compilerResults.CompiledAssembly.CreateInstance "ShapeActions"
-	deleteSplines = fn deleteSplines obj splineIndices = with undo off
-		(success = shapeActions.DeleteSplines (getHandleByAnim obj) splineIndices currentTime.ticks; updateShape obj; success)
-
-	if isKindOf $ Line or isKindOf $ SplineShape then with undo on
+	--on execute do
 	(
-		obj = $
-		if isKindOf obj Line do with redraw off (addModifier obj (Edit_Spline()); maxOps.CollapseNode obj on)
 
-		splineCount = numSplines obj
-		detachedSplines = for s = 1 to splineCount collect
-		(
-			newSpline = copy obj isHidden:on
-			otherSplines = for ss = 1 to splineCount where ss != s collect ss - 1
+		local compilerParams = dotNetObject "System.CodeDom.Compiler.CompilerParameters" #(
+			getDir #maxRoot + "Autodesk.Max.dll",
+			getDir #maxRoot + "\bin\assemblies\Autodesk.Max.Wrappers.dll")
+		compilerParams.GenerateInMemory = true
 
-			format "success: %\n" (deleteSplines newSpline otherSplines)
-			newSpline
+		local compilerResults = (dotNetObject "Microsoft.CSharp.CSharpCodeProvider").CompileAssemblyFromSource compilerParams #(
+			"using System;
+			using Autodesk.Max;
+			using Autodesk.Max.Wrappers;
+			using System.Collections.Generic;
+			using System.Runtime.InteropServices;
+
+			public static class Const {
+				public static readonly IGlobal Global = Autodesk.Max.GlobalInterface.Instance;
+			}
+
+			public class ShapeActions {
+				public static readonly IClass_ID spline3DClassID = Const.Global.Class_ID.Create((uint)BuiltInClassIDA.SPLINE3D_CLASS_ID, 0);
+				public static readonly IClass_ID splineShapeClassID = Const.Global.Class_ID.Create((uint)BuiltInClassIDA.SPLINESHAPE_CLASS_ID, 0);
+
+				public static ISplineShape GetSplineShape() {
+					return (ISplineShape)Const.Global.COREInterface14.CreateInstance(SClass_ID.Shape, splineShapeClassID);
+				}
+
+				public static IBezierShape GetBezierShapeFromNode(System.UIntPtr animHandle, int time) {
+					IINode node = (IINode)Const.Global.Animatable.GetAnimByHandle(animHandle);
+					var obj = node.EvalWorldState(time, true).Obj;
+					return GetBezierShapeFromShape(obj, time);
+				}
+
+				public static IBezierShape GetBezierShapeFromShape(Autodesk.Max.IObject shape, int time) {
+					if (shape.CanConvertToType(splineShapeClassID) > 0) {
+						ISplineShape spShape = (ISplineShape)shape.ConvertToType(time, splineShapeClassID);
+						return (IBezierShape)spShape.Shape;
+					}
+					else return null;
+				}
+
+				public static bool DeleteSplines(System.UIntPtr animHandle, int[] splineIndices, int time) {
+					IBezierShape bezShape = GetBezierShapeFromNode(animHandle, time);
+
+					var handle = GCHandle.Alloc(splineIndices, GCHandleType.Pinned);
+					bool success = bezShape.DeleteSplines(handle.AddrOfPinnedObject(), (uint)splineIndices.Length);
+					if (handle.IsAllocated) handle.Free();
+
+					return success;
+				}
+			}"
 		)
-		unhide detachedSplines
-		select detachedSplines
-		gc light:on
+
+		for err = 0 to compilerResults.errors.count - 1 do print (compilerResults.errors.item[err].ToString())
+
+		shapeActions = compilerResults.CompiledAssembly.CreateInstance "ShapeActions"
+		deleteSplines = fn deleteSplines obj splineIndices = with undo off
+			(success = shapeActions.DeleteSplines (getHandleByAnim obj) splineIndices currentTime.ticks; updateShape obj; success)
+
+		if isKindOf $ Line or isKindOf $ SplineShape then with undo on
+		(
+			obj = $
+			if isKindOf obj Line do with redraw off (addModifier obj (Edit_Spline()); maxOps.CollapseNode obj on)
+
+			splineCount = numSplines obj
+			detachedSplines = for s = 1 to splineCount collect
+			(
+				newSpline = copy obj isHidden:on
+				otherSplines = for ss = 1 to splineCount where ss != s collect ss - 1
+
+				format "success: %\n" (deleteSplines newSpline otherSplines)
+				newSpline
+			)
+			unhide detachedSplines
+			select detachedSplines
+			gc light:on
+		)
+
 	)
+
 
 )
 
 
+/**
+ *
+ */
+macroscript	_spline_attach_selected
+category:	"_Edit-Spline"
+buttontext:	"Attach"
+toolTip:	"Attach selected shape to spline"
+icon:	"MENU:true"
+(
+	function AttachSplines sp splines: =
+	(
+		convertToSplineShape sp
+		for s in splines where s != sp do addandweld sp (converttosplineshape s) -1
+		sp
+	)
+
+	on execute do
+	(
+		if selection.count != 0 do
+		(
+			splObjsArr = for o in selection where canConvertTo o SplineShape collect o
+			newSpl = AttachSplines splObjsArr[1] splines:splObjsArr
+			newSpl.pos.z = 0
+		)
+
+	)
+
+)
 /*
 ***  RANDOMIZE SPLINE M,ATERIAL IDS v1.0  ***
 

@@ -44,7 +44,7 @@ function hudMaxInfoCallback =
 		#SCREEN:	( color 115 235 50 )
 		#PARENT: 	red
 		#LOCAL:	orange
-		default:	yellow
+		default:	white
 	)
 
 	axises = sort(for i = 1 to (axist_string = toolMode.axisConstraints as string ).count collect axist_string[i])
@@ -53,21 +53,20 @@ function hudMaxInfoCallback =
 	/*------------------------------------------------------------------------------
 		SET HUD ROWS
 	--------------------------------------------------------------------------------*/
-
-
-	/*------ HUD ------*/
 	HUD = Hud_v pos:#( #CENTER, #TOP ) callback:hudMaxInfoCallback
+
 
 	/* CURRENT LAYER */
 	HUD.row (if ( LayerManager.current).name == "0" then "Default Layer" else ( LayerManager.current).name) color:yellow
 
 
 	/* CURRENT TOOL */
-	RowTool	= HUD.row ( toUpper ( toolMode.commandmode as string ) )
-	RowTool.Columns[1].width = 48
+	RowTool	= HUD.row (  HUD.Column ( toUpper ( toolMode.commandmode as string ) + " in" ) width:( if toolMode.commandmode == #move then 42 else 52  ) )
+
 
 	/* COORD SYS */
-	RowTool.Column ( toUpper ( coord_sys as string ) ) color:coord_sys_color width:36
+	RowTool.Column ( toUpper ( coord_sys as string ) ) color:coord_sys_color width:42
+
 
 	/* AXISES */
 	for i = 1 to axises.count do
@@ -77,6 +76,7 @@ function hudMaxInfoCallback =
 	/* AXIS SNAP */
 	if toolMode.commandmode == #MOVE and snapMode.axisConstraint then
 		RowTool.Column ( "SNAP" )
+
 
 	/* ANGLE SNAP */
 	else if toolMode.commandmode == #ROTATE then
@@ -88,7 +88,7 @@ function hudMaxInfoCallback =
 			--snap_value = if (snap_value = AngleSnapClass.SnapAngle_) as integer == snap_value then  snap_value as integer else  snap_value
 			snap_value = AngleSnapClass.SnapAngle_
 
-			RowTool.Column  ("Snap " + snap_value as string + "°" ) color:white
+			RowTool.Column  ("Snap " + snap_value as string + " °" ) color:white
 		)
 	)
 
@@ -114,9 +114,3 @@ function hudMaxInfoCallback =
 	HUD_DATA[#MAX_INFO] = HUD
 
 )
-
-
-
-
-
-

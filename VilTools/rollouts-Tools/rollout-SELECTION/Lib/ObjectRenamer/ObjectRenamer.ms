@@ -46,7 +46,7 @@ struct ObjectRenamer_v
 	 */
 	function rename _objects  =
 	(
-		format "\n"; print "ObjectRenamer_v.rename()"
+		--format "\n"; print "ObjectRenamer_v.rename()"
 
 		--format "this.prefix:	% \n" this.prefix
 		--format "this.sufix:	% \n" this.sufix
@@ -66,6 +66,30 @@ struct ObjectRenamer_v
 			this._renameObject ( objects_to_rename[i] )( i )
 	),
 
+	/** _get sufix number
+	 */
+	function getSufixNumber index objects_count =
+	(
+		--format "\n"; print "ObjectRenamer_v.getSufixNumber()"
+		--format "objects_count:	% \n" objects_count
+
+		if objects_count > 1 then
+		(
+			digits_prefix	= ""
+			index_length	= ( index as string ).count
+			count_length	= ( objects_count as string ).count
+
+			if (length_diference = count_length - index_length) > 0 then
+				for d = 1 to length_diference do
+					digits_prefix += "0"
+
+			delimentr + digits_prefix + index as string --return
+		)
+		else
+			""
+
+	),
+
 	private
 
 	/** _rename object
@@ -74,7 +98,7 @@ struct ObjectRenamer_v
 	(
 		--format "\n-------------\n"; print "ObjectRenamer_v._renameObject()"
 
-		main_name = (this._getPrefixSufix(obj)(#PREFIX)) + base_name + this._getPrefixSufix(obj)(#SUFIX) + (this._getSufixNumber (index) (objects_to_rename.count) )
+		main_name = (this._getPrefixSufix(obj)(#PREFIX)) + base_name + this._getPrefixSufix(obj)(#SUFIX) + (this.getSufixNumber (index) (objects_to_rename.count) )
 
 		for data in ins_or_ref do
 			if (ins_or_ref_objects = this._getInstancesOrReferences (obj) data.key).count > 1 then
@@ -90,7 +114,7 @@ struct ObjectRenamer_v
 	(
 		--format "\n"; print "NameIncludes_v.renameInstancesAndReferences()"
 			for i = 1 to ins_or_ref_objects.count do
-				ins_or_ref_objects[i].name = main_name + delimentr + ( ins_or_ref as string ) + (this._getSufixNumber i ins_or_ref_objects.count)
+				ins_or_ref_objects[i].name = main_name + delimentr + ( ins_or_ref as string ) + (this.getSufixNumber i ins_or_ref_objects.count)
 	),
 
 	/** _get prefix
@@ -146,29 +170,6 @@ struct ObjectRenamer_v
 		prefix_sifix --return
 	),
 
-	/** _get sufix number
-	 */
-	function _getSufixNumber index objects_count =
-	(
-		format "\n"; print "ObjectRenamer_v._getSufixNumber()"
-		format "objects_count:	% \n" objects_count
-
-		if objects_count > 1 then
-		(
-			digits_prefix	= ""
-			index_length	= ( index as string ).count
-			count_length	= ( objects_count as string ).count
-
-			if (length_diference = count_length - index_length) > 0 then
-				for d = 1 to length_diference do
-					digits_prefix += "0"
-
-			delimentr + digits_prefix + index as string --return
-		)
-		else
-			""
-
-	),
 
 	/** _rename instances
 	 */

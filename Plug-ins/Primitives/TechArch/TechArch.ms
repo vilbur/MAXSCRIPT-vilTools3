@@ -316,6 +316,21 @@ category:	"Splines"
 	(
 		print "TchArch.prepareLinePoints()"
 
+		/** Get middle connect point
+		  *
+		  */
+		function getMiddleConnectPoint point_A point_B =
+		(
+			--format "\n"; print "TechArch.ms.getMiddleConnectPoint()"
+
+			middle_point = deepCopy point_A
+			middle_point[#point].z = point_B[#point].z
+
+			middle_point --return
+
+		)
+
+
 		spline_knots	= #()
 
 		/* LOOP EACH ARCH */
@@ -337,7 +352,12 @@ category:	"Splines"
 				(
 					connect_line_points = #( end_current, start_next )
 
-					connect_line_knots = this.getKnots(connect_line_points) (BezierCornerKnot)
+					middle_point = getMiddleConnectPoint (end_current) (start_next)
+
+					--format "middle_point:	% \n" middle_point
+					insertItem middle_point connect_line_points 2
+
+					connect_line_knots = this.getKnots(connect_line_points) (cornerKnot)
 				)
 
 

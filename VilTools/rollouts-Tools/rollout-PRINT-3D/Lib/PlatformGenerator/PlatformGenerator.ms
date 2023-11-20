@@ -10,6 +10,9 @@ filein( getFilenamePath(getSourceFileName()) + "/PlatformModifiers/PlatformModif
   * 2) Generate from Editable spline
   *
   *
+  * RENAME PLATFORM OBJECT:
+  * 		Remove "[-_]source" from plaftorm object name E.G.: "foo-object-platform-source" >>> "foo-object-platform"
+  *
  */
 struct PlatformGenerator_v
 (
@@ -82,6 +85,8 @@ struct PlatformGenerator_v
 		*/
 
 		this._setParentOfPlatforms()
+
+		this._renamePlatform()
 
 		--for platform in platforms do
 		--	platform.pivot = source_obj.pivot
@@ -199,6 +204,26 @@ struct PlatformGenerator_v
 		format "this.platform.parent:	% \n" this.platform.parent
 	),
 
+	/** Platform name is same as source name
+	  *
+	  * word "source" with prefix is removed
+	  */
+	function _renamePlatform =
+	(
+		--format "\n"; print "PlatformGenerator_v._renamePlatform()"
+		/** Regex replace
+		  */
+		function rxReplace _string _search _replace ignore_case:true =
+		(
+			IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
+
+			RegExReplace = if ignore_case then ( dotNetObject "System.Text.RegularExpressions.Regex" _search IgnoreCase ) else ( dotNetObject "System.Text.RegularExpressions.Regex" _search )
+
+			RegExReplace.Replace _string _replace
+		)
+
+		this.platform.name = rxReplace(this.source_obj.name)("[-_\s]+source")("")
+	),
 
 	/** Toggle command pannel
 	  */

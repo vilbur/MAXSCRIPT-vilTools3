@@ -66,23 +66,6 @@ toolTip:	"Color menu"
 
 
 /*------------------------------------------------------------------------------
-	WIRECOLOR BY LAST OBJECT
---------------------------------------------------------------------------------*/
-
-macroscript	wirecolor_by_last
-category:	"_Wirecolor"
-buttontext:	"Color By Last"
-toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
-icon:	"MENU:true"
-(
-	undo "Wirecolor By Last" on
-	(
-		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
-	)
-)
-
-
-/*------------------------------------------------------------------------------
 	SELECT BY WIRECOLOR
 --------------------------------------------------------------------------------*/
 
@@ -108,4 +91,21 @@ icon:	"MENU:tooltip"
 	--for obj in objects_by_name do format "obj.name:	% \n" obj.name
 	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
 
+)
+
+
+/*------------------------------------------------------------------------------
+	WIRECOLOR BY LAST OBJECT
+--------------------------------------------------------------------------------*/
+
+macroscript	wirecolor_by_last
+category:	"_Wirecolor"
+buttontext:	"Color By Last"
+toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
+icon:	"MENU:true"
+(
+	undo "Wirecolor By Last" on
+	(
+		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
+	)
 )

@@ -98,7 +98,7 @@ macroscript	_scene_relaod
 category:	"_Scene"
 buttontext:	"Reload"
 toolTip:	"Reload current file"
-icon:	"MENU:tooltip"
+icon:	"MENU:RELOAD file"
 (
 	if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
 		loadMaxFile ( maxFilePath + maxFileName ) quiet:true
@@ -114,7 +114,7 @@ macroscript	_scene_reset
 category:	"_Scene"
 buttontext:	"Reset Scene"
 
-icon:	"MENU:true"
+icon:	"MENU:RESET Scene"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
@@ -135,7 +135,7 @@ macroscript	_scene_restart_max
 category:	"_Scene"
 buttontext:	"Restart"
 
-icon:	"MENU:true"
+icon:	"MENU: MAX"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do

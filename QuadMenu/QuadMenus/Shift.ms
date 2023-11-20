@@ -61,7 +61,8 @@ function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("T R A N S F O R M")
 
-	QuadMenu.addMenu("_Transform") separators: #( 3 ) --flat:false --index:1
+	QuadMenu.addMenu("_Transform")	separators: #( 3 ) --flat:false --index:1
+	QuadMenu.addMenu("_Transform-Lock")	separators: #( 1, 4 ) --flat:false --index:1
 
 
 	--QuadMenu.addMenu("MenuName")	--flat:true --index:1

@@ -44,10 +44,11 @@ struct PrintExporter_v
 	 */
 	function export =
 	(
-		--format "\n"; print "PrintExporter_v.export()"
-		--format "params	= % \n" params
+		format "\n"; print "PrintExporter_v.export()"
+		format "\n-----------\nDICTIONARY:params:%\n" params; for data_pair in params do format "%:	%\n" data_pair.key data_pair.value
 
-		this._setExporter()
+
+		this._setExporterOptions()
 
 		this._holdMaxState()
 
@@ -69,10 +70,15 @@ struct PrintExporter_v
 
 		)catch(
 
-			format "*** % ***\n" (getCurrentException())
+			format "\n\n*** EXPORTER ERROR ***\n\n"
+			format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+			format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+			format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
 
 			this._fetchMaxState()
 		)
+
+
 
 	),
 
@@ -87,7 +93,6 @@ struct PrintExporter_v
 
 		( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace export_path "\\\\" -- return
 	),
-
 
 	/** Open in chitubox
 	  *
@@ -124,23 +129,23 @@ struct PrintExporter_v
 		export_path	= this.getExportFilePath(export_node)
 
 		export_objects = export_node.getAllChildren() + this.fix_position_dummy
-		--format "this.fix_position_dummy	= % \n" this.fix_position_dummy
+
 		collapseStack export_objects
 
 		export_result = Exporter.export ( export_objects ) (export_path)
-		format "export_result	= % \n" export_result
+		--format "export_result	= % \n" export_result
 		if export_result != false then
 			append this.exported_paths export_path
 	),
 
 	/** Set exporter
 	 */
-	function _setExporter =
+	function _setExporterOptions =
 	(
-		--format "\n"; print "PrintExporter_v._setExporter()"
+		--format "\n"; prOptionsint "PrintExporter_v._setExporter()"
 		Exporter = case this.params[#EXPORT_FORMAT] of
 		(
-			"obj": ExporterOBJ_v(#Print)
+			"obj":  ExporterOBJ_v(#Print)
 			"stl":	ExporterSTL_v()
 		)
 
@@ -164,6 +169,8 @@ struct PrintExporter_v
 	function _fetchMaxState =
 	(
 		--format "\n"; print "PrintExporter_v._fetchMaxState()"
+		print "PrintExporter: FETCHING SCENE"
+
 		fetchMaxFile quiet:true
 
 		if this.fetch_state[#layer_manager_open] then
@@ -255,7 +262,7 @@ struct PrintExporter_v
 		--format "this.params[#FIX_POSITION]	= % \n" this.params[#FIX_POSITION]
 		--format "this.anim_keys[#position] > 0	= % \n" (this.anim_keys[#position] > 0)
 		this.fix_position_dummy = if this.params[#FIX_POSITION] or this.anim_keys[#position] > 0 then
-			(PrinterVolume_v()).fixPositionionObjects(this.params[#EXPORT_SCALE])
+			(PrinterVolume_v(this.params[#EXPORT_SCALE])).fixPositionionObjects()
 		else
 			#()
 	),
@@ -338,9 +345,10 @@ struct PrintExporter_v
 		if this.exported_paths.count == 0 then
 			return false
 
-		print ("\n\n------------------------- EXPORT SUCCESFULL -------------------------\n\n" + success_message)
+		--print ("\n\n------------------------- EXPORT SUCCESFULL -------------------------\n\n" + success_message)
 
-		messageBox success_message title:"EXPORT SUCCESFULL"  beep:false
+		format "success_message:	% \n" success_message
+		--messageBox success_message title:"EXPORT SUCCESFULL"  beep:false
 	),
 
 	/**

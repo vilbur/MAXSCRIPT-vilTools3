@@ -31,6 +31,8 @@ function importStdScripts =
 
 		( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 
+		"/CallBacks/CallbackManager/CallbackManager.ms", -- "./CallBacks/CallbackManager/CallbackManager.ms"
+
 		"/../../Lib/RegExer/RegExer.ms",
 
 		"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
@@ -52,9 +54,9 @@ function importStdScripts =
 
 		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
-		"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
-		"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
-		"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
+		--"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
+		--"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
+		--"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
 
 		"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",
 		"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
@@ -124,7 +126,7 @@ filein_files = #(
 	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
 
 	"/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" , -- Check if this is necessary to import, it should be imported with framework
-	"/VilTools/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
+	--"/VilTools/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
 
 	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
 

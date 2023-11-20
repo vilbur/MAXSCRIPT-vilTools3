@@ -36,19 +36,24 @@ struct EPolyRingLoop_v
 		--format "\n"; print "EditPolyRingLoop_v.selectLoopRing()"
 		epoly	= modPanel.getCurrentObject()
 
-		this.setProperties (loop_or_ring) (direction) (mode)
+		if (classOf epoly == Edit_Poly or classOf epoly == Editable_Poly) and subObjectLevel == 2 then
+		(
+			this.setProperties (loop_or_ring) (direction) (mode)
 
-		if mode != LOOP_RING_LAST_MODE then
-			this.resetGlobals()
+			if mode != LOOP_RING_LAST_MODE then
+				this.resetGlobals()
 
-		LOOP_RING_LAST_MODE = mode
+			LOOP_RING_LAST_MODE = mode
 
 
-		if classOf epoly == Editable_Poly then
-			this.editablePoly()
+			if classOf epoly == Editable_Poly then
+				this.editablePoly()
 
-		else
-			this.editPoly()
+			else
+				this.editPoly()
+
+		)
+
 	),
 
 	/** Reset

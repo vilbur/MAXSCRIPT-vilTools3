@@ -54,6 +54,34 @@ icon:	"MENU:true"
 		)
 	)
 )
+--/** Copy
+-- */
+--macroscript	modifiers_delete
+--category:	"_Modifiers-Manage"
+--buttontext:	"Delete Modifier"
+--toolTip:	"Delete current modifier"
+--icon:	"MENU:true"
+--(
+--	on execute do
+--	(
+--		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+--		if( GetCommandPanelTaskMode() != #modify ) then
+--			max modify mode
+--
+--		--if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+--		--(
+--		--
+--		--	--modPanel.addModToSelection (copy curr_mod)  ui:on
+--		--
+--		--
+--		--
+--		--	--addModifierWithLocalData selection[1]  curr_mod selection[1] <modifier index in source stack>
+--		--
+--		--
+--		--)
+--	)
+--)
+
 /** TOGGLE
  */
 macroscript	modifiers_toggle_by_prefix

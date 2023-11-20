@@ -34,6 +34,7 @@ struct ModifierRenamer_v
 			Materialmodifier:	"Mat ID " + this.modObject.materialID as string
 			FFDBox:	"FFDBox"
 			FFD_2x2x2:	"FFD2"
+			SplineOffset:	this._SplineOffset()
 			Meshsmooth:	this._Meshsmooth()
 
 			default: this.modObject.name
@@ -309,6 +310,21 @@ struct ModifierRenamer_v
 
 		else
 			"Smooth"
+	),
+
+
+	/**  spline offset
+	  *
+	  */
+	function _SplineOffset =
+	(
+		--format "\n"; print "ModifierRenamer_v._SplineOffset()"
+
+		mod_name = "Offset"
+
+
+		mod_name --return
+
 	),
 
 	/**

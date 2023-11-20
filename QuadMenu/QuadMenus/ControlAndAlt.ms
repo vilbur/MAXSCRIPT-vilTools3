@@ -1,25 +1,32 @@
+
+
+/** Macroscript for Create HoneycombPlane plugin object
+ *
+ */
+macroscript	HoneycombPlane
+category:	"Objects Primitives"
+buttontext:	"Honeycomb"
+toolTip:	"Create Honeycomb Plane"
+--icon:	"Menu:Tooltip"
+--icon:	"Tooltip:" --"#(path, index)"
+(
+	on execute do startObjectCreation HoneycombPlane
+)
+
+
 /*------------------------------------------------------------------------------
 	QUAD 1
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle(" SCENE")
+	QuadMenu.setTitle("A N I M A T I O N")
 
-	_SceneMenu	= Menu_v("_Scene")
-	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
-
-	--_SceneMenu.addSeparator()
-	_SceneMenu.addSeparator index:#( 3, 5, 6, 8 )
-	----_SceneMenu.addSeparator index:#( 3, 6 )
-	----_SceneMenu.addSeparator index:8
-	--
-	QuadMenu.addMenu(_SceneMenu)	--flat:false --index:1
-
-	--QuadMenu.addMenu("")
-
-	--QuadMenu.addSeparator index:1
-	--QuadMenu.addSeparator()
-	--QuadMenu.addSeparators #()
+	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
+	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1
+	QuadMenu.addItem ("_Animation") ("_options_toggle_keyframe_0_1") index:1
+	QuadMenu.addItem ("_Animation") ("_options_trackbar_show") index:2
+	--QuadMenu.addSeparator index:2
+	QuadMenu.addSeparator index:#(2,3)
 )
 
 /*------------------------------------------------------------------------------
@@ -27,8 +34,13 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 2")
+	QuadMenu.setTitle(" C R E A T E 2")
 
+	QuadMenu.addMenu("_Create-Shapes")
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Create-Compounds")
 )
 
 /*------------------------------------------------------------------------------
@@ -36,8 +48,98 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 3")
+	QuadMenu.setTitle(" C R E A T E")
+	--
+	--standard_primitives_plugin = #(
+	--	#hexasphere,
+	--	#quadsphere
+	--)
 
+	primitives = #(
+		#(
+			#Plane,
+			#Box,
+			#Cylinder,
+			#Sphere,
+			#Teapot,
+			#HoneycombPlane
+
+		),
+		#(
+			#hexasphere,
+			#quadsphere,
+			#GeoSphere,
+			#ChamferBox,
+			#Tube,
+			#Torus,
+			#Cone,
+			#Pyramid,
+			#TextPlus
+		),
+		#(
+			#C_Ext,
+			#Capsule,
+			#ChamferCyl,
+			#Gengon,
+			#Hedra,
+			#Hose,
+			#L_Ext,
+			#OilTank,
+			#Prism,
+			#Quadpatch,
+			#RingWave,
+			#Spindle,
+			#Torus_Knot,
+			#Tripatch
+		)
+	)
+
+
+	compound_primitives = #(
+		#Loft,
+		#Boolean,
+		#ProBoolean,
+		#Procutter,
+		#Conform,
+		#Scatter,
+		#ShapeMerge
+	)
+
+	helpers_primitives = #(
+		#point,
+		#tape,
+		#protractor
+	)
+
+	shapes_primitives = #(
+		#lines,
+		#rectangle,
+		#circle,
+		#Arc,
+		#Text,
+		#Ellipse,
+		#ShapeMerge
+	)
+
+	menus = #(
+		/* SUBMENU TITLE */	        /* NAME OF MENU */	             /* CATEGORY O MACROSCRIPTS */	/* MACROSCRIPT`S NAMES */
+		"Standard Primitives",	(Menu_v("_Create Standard Primitives")	flat:true ).addItems("Objects Primitives")	(primitives[1]),
+		"Shapes",	(Menu_v("_Shapes Primitives")	flat:true).addItems("Objects Shapes")	(shapes_primitives),
+		"Helpers",	(Menu_v("_Helpers Primitives")	flat:true).addItems("Objects Helpers")	(helpers_primitives),
+		"Other Primitives",	(Menu_v("_Create Other Primitives")	flat:false).addItems("Objects Primitives")	(primitives[2]),
+		"Extend Primitives",	(Menu_v("_Create Extended Primitives")	flat:false).addItems("Objects Primitives")	(primitives[3]),
+		"Compounds",	(Menu_v("_Compound Primitives")	flat:false).addItems("Objects Compounds")	(compound_primitives)
+	)
+
+
+	--QuadMenu.removeItem #( 1 ) -- Remove Default submenu
+
+
+	QuadMenu.addMenus(menus) separator:true
+
+	QuadMenu.addItem ("Edit") ("Object Properties") group:"Main UI" index:1
+
+	QuadMenu.addSeparators #( 4 ) -- separator after helpers
 )
 
 /*------------------------------------------------------------------------------
@@ -45,9 +147,14 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 4")
+	QuadMenu.setTitle("G R O U P")
+	QuadMenu.clearMenu()
 
-	QuadMenu.addMenu("_Options")	--flat:false --index:1
+	GroupMenu	= Menu_v("_Group")
+	GroupMenu.addSeparator index:#( 3, 5, 7 )
+
+
+	QuadMenu.addMenu(GroupMenu)	--flat:true --index:1
 )
 
 

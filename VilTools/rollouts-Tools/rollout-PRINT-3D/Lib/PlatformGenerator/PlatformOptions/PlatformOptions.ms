@@ -14,7 +14,7 @@ struct PlatformOptions_v
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
 
 	/* options */
-	bar_width 	= 1.0, -- default width is 1mm
+	bar_width 	= 1.5, -- default width is 1mm
 
 	base_height	= 1.0,
 	base_extrude	= 4.0,

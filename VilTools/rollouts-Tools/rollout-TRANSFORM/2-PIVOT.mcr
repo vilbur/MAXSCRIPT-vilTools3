@@ -55,7 +55,7 @@ macroscript _pivot_visual_pivot
 category:	"_Pivot"
 buttonText:	"Visual"
 toolTip:	"Run visual pivot tool"
-icon:		    "menu:true"
+icon:	"menu:true"
 (
 
 	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/i_pivot_v15.mse" ) -- "./../../../Lib/vendor/miauu/i_pivot_v15.mse"

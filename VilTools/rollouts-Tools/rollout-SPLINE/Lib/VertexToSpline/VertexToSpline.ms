@@ -1,4 +1,6 @@
+clearListener(); print("Cleared in:\n"+getSourceFileName())
 
+delete shapes
 
 global vertex_to_spline_rollout
 
@@ -17,7 +19,7 @@ rollout vertex_to_spline_rollout "Line Per Vertex" width:140
 
 	pickbutton pickMesh "Pick Mesh Target" filter:geometryFilter
 
-	checkbox chkVertSel "Use Vert. Selection"
+	checkbox chkVertSel "Use Vert. Selection" checked:true
 
 
 	on pickMesh picked obj do undo "Lines from Vertices" on
@@ -36,9 +38,12 @@ rollout vertex_to_spline_rollout "Line Per Vertex" width:140
 
 			addKnot _shape splines_count #corner #line pos
 
-			normal = (getNormal obj.mesh ind) * obj.transform - obj.pos
+			--normal = (getNormal obj.mesh ind) * obj.transform - obj.pos
 
-			pos += spnLength.value * normalize( normal )
+			--pos += spnLength.value * normalize( normal )
+
+			pos.z = 0
+			format "pos:	% \n" pos
 
 			addKnot _shape splines_count #corner #line pos
 		)

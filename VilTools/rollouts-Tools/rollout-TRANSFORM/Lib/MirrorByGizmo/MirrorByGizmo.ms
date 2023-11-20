@@ -28,7 +28,7 @@ struct MirrorByGizmo_v
 	 */
 	function mirrorObjects objects_to_mirror clone_type =
 	(
-		--format "\n"; print "MirrorByGizmo_v.mirrorObjects()"
+		format "\n"; print "MirrorByGizmo_v.mirrorObjects()"
 		mirrored_objects = #()
 
 		this.objects_to_mirror = objects_to_mirror as Array
@@ -55,7 +55,7 @@ struct MirrorByGizmo_v
 	  */
 	function mirrorObj source_obj =
 	(
-		--format "\n"; print "MirrorByGizmo_v.mirrorObj()"
+		format "\n"; print "MirrorByGizmo_v.mirrorObj()"
 
 		/** Get axis index
 		  */
@@ -113,7 +113,7 @@ struct MirrorByGizmo_v
 	  */
 	function _saveMirrorSetupToObjProps source_obj mirrored_obj =
 	(
-		--format "\n"; print "MirrorByGizmo_v.saveMirrorSetupToObjProps()"
+		format "\n"; print "MirrorByGizmo_v.saveMirrorSetupToObjProps()"
 		mirror_setup = Dictionary()
 
 		mirror_setup[#source]	= getHandleByAnim source_obj
@@ -129,7 +129,7 @@ struct MirrorByGizmo_v
 	  */
 	function _setUserProps obj mirror_setup =
 	(
-		--format "\n"; print "MirrorByGizmo_v.setUserProps()"
+		format "\n"; print "MirrorByGizmo_v.setUserProps()"
 		setUserProp obj user_prop_key ( mirror_setup as string )
 	),
 
@@ -137,10 +137,11 @@ struct MirrorByGizmo_v
 	 */
 	function _replaceName mirrored_obj =
 	(
-		--format "\n"; print "._replaceName()"
-		mirrored_obj.name = this._removeSuffixWihtoutDelimeter(mirrored_obj.name)
+		format "\n"; print "MirrorByGizmo_v._replaceName()"
+		format "mirrored_obj.name:	% \n" mirrored_obj.name
+		--mirrored_obj.name = this._removeSuffixWihtoutDelimeter(mirrored_obj.name)
 
-		orientation_match = this._rxGetMatch (mirrored_obj.name)("(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)")
+		orientation_match = this._rxGetMatch (mirrored_obj.name)("(LEFT|RIGHT|FRONT|BACK|BOTTOM|TOP)\d*$")
 
 		if orientation_match.count > 0 then
 		(
@@ -162,17 +163,18 @@ struct MirrorByGizmo_v
 				child.name = this._rxReplace (this._removeSuffixWihtoutDelimeter(child.name)) (current_side) (other_side)
 	),
 
-	/**  if name match trailing number without delimeter e.g.: object-right001
-	  *		themnremove it e.g.: copied-object-right001 >> copied-object-left
-	  */
-	function _removeSuffixWihtoutDelimeter obj_name =
-	(
-		--format "\n"; print "MirrorByGizmo_v.removeSuffixWihtoutDelimeter()"
-		if (this._rxGetMatch (obj_name)("[A-Z]\d+$")).count > 0 then --
-		  obj_name = this._rxReplace (obj_name) ("\d+$") ("")
-
-		 obj_name --return
-	),
+	--/**  if name match trailing number without delimeter e.g.: object-right001
+	--  *		themnremove it e.g.: copied-object-right001 >> copied-object-left
+	--  */
+	--function _removeSuffixWihtoutDelimeter obj_name =
+	--(
+	--	format "\n"; print "MirrorByGizmo_v.removeSuffixWihtoutDelimeter()"
+	--	format "obj_name:	% \n" obj_name
+	--	if (this._rxGetMatch (obj_name)("[A-Z]\d+$")).count > 0 then
+	--	  obj_name = this._rxReplace (obj_name) ("\d+$") ("")
+	--
+	--	 obj_name --return
+	--),
 
 	/** Get selection without members of closed group
 	 */
@@ -182,33 +184,40 @@ struct MirrorByGizmo_v
 		this.objects_to_mirror = for obj in ( this.objects_to_mirror ) where obj.parent == undefined or ( obj.parent != undefined and findItem this.objects_to_mirror obj.parent == 0 ) collect obj
 	),
 
+
 	/** Get group members
 	  *
 	  */
 	function _getGroupMembers _group =
 	(
-		--format "\n"; print "MirrorByGizmo_v._getGroupMembers()"
-		mapped function getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then getAllChildren _node.children &children )
+		format "\n"; print "MirrorByGizmo_v._getGroupMembers()"
 
-		children = #()
+		children_all = #()
 
-		getAllChildren #( _group ) ( &children )
+		this.getAllChildren #( _group ) ( children_all )
 
-		children --return
+		children_all --return
 	),
+
+	mapped function getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then this.getAllChildren _node.children &children ),
+
 
 	/** Regex get match
 	  */
 	function _rxGetMatch _string pattern ignore_case:true =
 	(
+		--format "\n"; print "MirrorByGizmo_v._rxGetMatch()"
+		--format "pattern:	% \n" pattern
+
 		RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" )
 
 		IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 
 		matches = if ignore_case then RegEx.matches _string pattern IgnoreCase else RegEx.matches _string pattern
-
+		--format "matches:	% \n" matches
+		--format "matches.count:	% \n" matches.count
 		groups = (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
-
+		--format "groups:	% \n" groups
 		if groups.count == 1 then groups[1] else groups
 	),
 
@@ -216,41 +225,43 @@ struct MirrorByGizmo_v
 	  */
 	function _rxReplace _string _search _replace ignore_case:true =
 	(
-		--format "\n"; print "MirrorByGizmo_v._rxReplace()"
-		--format "_string:	% \n" _string
-		--format "_search:	% \n" _search
+		format "\n"; print "MirrorByGizmo_v._rxReplace()"
+		format "_string:	% \n" _string
+		format "_search:	% \n" _search
 
-		match = this._rxGetMatch ( _string )( _search )
-		--format "match:	% \n" match
-
-		if match.count > 0 then
-		(
-			is_uppercase = (this._rxGetMatch (match[1])("[a-z]") ignore_case:false ).count == 0
-			is_lowercase = (this._rxGetMatch (match[1])("[A-Z]") ignore_case:false ).count == 0
-
-			if is_uppercase then
-				_replace = toUpper _replace
-
-			else if is_lowercase then
-				_replace = toLower _replace
-
-
-			--format "is_uppercase:	% \n" is_uppercase
-			--format "_replace:	% \n" _replace
-
+		--match = this._rxGetMatch ( _string )( _search )
+		----format "match:	% \n" match
+		--
+		--if match.count > 0 then
+		--(
+		--
+		--	is_uppercase = (this._rxGetMatch (match[1])("[a-z]") ignore_case:false ).count == 0
+		--	is_lowercase = (this._rxGetMatch (match[1])("[A-Z]") ignore_case:false ).count == 0
+		--
+		--	if is_uppercase then
+		--		_replace = toUpper _replace
+		--
+		--	else if is_lowercase then
+		--		_replace = toLower _replace
+		--
+		--	format "_search:	% \n" _search
+		--	format "_replace:	% \n" _replace
+		--	format "is_uppercase:	% \n" is_uppercase
+		--	format "is_lowercase:	% \n" is_lowercase
+		--
 			RegExReplace = ( dotNetObject "System.Text.RegularExpressions.Regex" _search ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase )
-
+		--
 			RegExReplace.Replace _string _replace
-		)
-		else
-			_string
+		--)
+		--else
+		--	_string
 	),
 
 	/**
 	 */
 	on create do
 	(
-		--format "\n"; print "MirrorByGizmo.onCreate()"
+		format "\n"; print "MirrorByGizmo.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
 

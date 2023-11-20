@@ -22,21 +22,42 @@ struct Hud_v
 
 	/** Shorthand for adding row to HUD
 	  *
-	  * @param string row_text
+	  * @param string|HudColumn_v|array columns text or HudColumn_v or array of them
 	  *
 	  * @retrun HudRow_v
 	  */
-	function row row_text color:undefined height:undefined =
+	function Row columns_param color:undefined height:undefined =
 	(
 		--format "\n"; print "ViewportHud_v.row()"
+		Columns = #()
 
-		Column	= HudColumn_v (row_text)	color:(if color == undefined then default_options[#color] else color) width:(if width == undefined then default_options[#width] else width)
+		if classOf columns_param != Array then
+			columns_param = #(columns_param)
 
-		HudRow	= HudRow_v columns:#( Column )	height:(if height == undefined then default_options[#height] else height)
+		/* CRTEATE COLUMNS */
+		for col in columns_param do
+		(
+			if classOf col == string then
+				col	= HudColumn_v (col)	color:(if color == undefined then default_options[#color] else color) width:(if width == undefined then default_options[#width] else width)
+
+			append Columns col
+		)
+
+		HudRow	= HudRow_v columns:Columns	height:(if height == undefined then default_options[#height] else height)
 
 		append this.Rows HudRow
 
 		HudRow --return
+	),
+
+	/** Shorthand for adding row to HUD
+	  *
+	  * @retrun HudColumn_v
+	  */
+	function Column column_text color:white width:undefined =
+	(
+		--format "\n"; print "ViewportHud_v.row()"
+		HudColumn_v (column_text)	color:color width:width --return
 	),
 
 	/** Set Defaults to row and column

@@ -16,6 +16,8 @@ icon:	"MENU:true"
 
 		undo "Mirror" on
 			select ((MirrorByGizmo_v()).mirrorObjects( selection )(#INSTANCE))
+
+		redrawViews()
 	)
 )
 
@@ -65,8 +67,8 @@ icon:	"MENU:true"
   */
 macroscript	selection_mirror_get_source_objects
 category:	"_Mirror"
-buttontext:	"Get Source Objects"
-toolTip:	"Get source objects of mirrorred objects"
+buttontext:	"Select Source"
+toolTip:	"Select mirror source objects of mirrorred objects"
 icon:	"MENU:true"
 (
 	on execute do

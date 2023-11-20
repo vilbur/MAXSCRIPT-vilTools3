@@ -21,7 +21,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/CircleStack/CircleStack.ms"
 macroscript	modifier_smart_remote_up
 category:	"_Modifiers-Remote-Stack"
 buttontext:	"Smart UP"
-tooltip:	"Select ENABLED modifier up. \n\nCTRL:Select modifier up. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods UP"
+tooltip:	"Select ENABLED modifier up. \n\nALT:Select modifier up. \n\nSHIFT: Select mods. \n\nALT: Deselect mods. \n\nCTRL + SHIFT: Select all mods UP"
 (
 	on execute do
 	(

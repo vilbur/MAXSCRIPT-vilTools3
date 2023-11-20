@@ -3,17 +3,18 @@
 struct PrinterVolume_v
 (
 	/* construct */
+	export_size,
 
 	/* properties */
-
 	dummy_name = "PRINT DUMMY VOLUME",
 
-	/* UNITS of dImension: mm */
+	/* MILIMETERS ARE DEFAULT UNITS OF DIMENSIONS */
 	printer_size	= [ 120,	192, 250 ],	-- size of print plane, real size of creality LD-006 is 124 X	196
 	screw_position	= [ 34,	62 ],	-- position of screws
 	screw_radius	= 2,
 
-	fix_position_object_size = 0,
+	--fix_position_object_size = 0,
+	fix_position_object_size = 10,
 	--fix_position_object_size = 1000,
 	fix_position_object_offset = 1000,
 
@@ -27,35 +28,32 @@ struct PrinterVolume_v
 	  * @parameter integer	export_size export scale value
 
 	 */
-	function createVolume object_type export_size =
+	function createVolume object_type =
 	(
-		--format "\n"; print "PrinterVolume_v.createVolume()"
+		format "\n"; print "PrinterVolume_v.createVolume()"
+		format "export_size:	% \n" export_size
+		format "PRINTER_SIZE:	% \n" printer_size
 
 		if (dummy_object = getNodeByName dummy_name) == undefined then
 		(
-
-			if ( print_volume_size = this._getPrinterSize() ) != undefined then
+			dummy_object = case object_type of
 			(
-
-				print_volume_size = print_volume_size / export_size
-
-				dummy_object = case object_type of
-				(
-					#box:	Box	name:dummy_name  xray:true boxmode:true	wireColor:(color 0 255 0) length:print_volume_size[1] width:print_volume_size[2] height:print_volume_size[3]
-					--#Rectangle:	Plane	name:dummy_name  xray:true boxmode:true	wireColor:(color 0 255 0) length:print_volume_size[1] width:print_volume_size[2] lengthsegs:1 widthsegs:1
-					#Rectangle:	Rectangle	name:dummy_name  wireColor:(color 0 255 0) length:print_volume_size[1] width:print_volume_size[2] cornerRadius:0 showFrozenInGray:false
-				)
-
-				if object_type == #Rectangle then
-					this._addPlateHoles(dummy_object)(export_size)
-
-				dummy_object.render_displayRenderMesh  = false -- disable rendr in viewport
-
-				freeze dummy_object
-
-				this._addToDefaultLayer(dummy_object)
-
+				#BOX:	Box	name:dummy_name  xray:true boxmode:true	wireColor:(color 0 255 0) length:printer_size[1] width:printer_size[2] height:printer_size[3]
+				--#Rectangle:	Plane	name:dummy_name  xray:true boxmode:true	wireColor:(color 0 255 0) length:printer_size[1] width:printer_size[2] lengthsegs:1 widthsegs:1
+				#RECTANGLE:	Rectangle	name:dummy_name  wireColor:(color 0 255 0) length:printer_size[1] width:printer_size[2] cornerRadius:0 showFrozenInGray:false
 			)
+
+			if object_type == #RECTANGLE then
+			(
+				--this._addPlateHoles(dummy_object)(export_size)
+
+				dummy_object.render_displayRenderMesh  = false -- disable render in viewport
+			)
+
+			--freeze dummy_object
+
+			this._addToDefaultLayer(dummy_object)
+
 		)
 		else
 			delete dummy_object
@@ -63,14 +61,12 @@ struct PrinterVolume_v
 
 	/** Volume dimension object
 	 */
-	function fixPositionionObjects export_size =
+	function fixPositionionObjects =
 	(
 		--format "\n"; print "PrinterVolume_v.volumeDimensionObject()"
 		dimension_objects = #()
 
-		volume_size = this._getPrinterSize() / export_size / 2
-
-		dummy_object = Box name:dummy_name length:fix_position_object_size width:fix_position_object_size height:fix_position_object_size pos:[ volume_size[2]+fix_position_object_offset, volume_size[1]+fix_position_object_offset, 0] pivot:[0,0,0] isSelected:on
+		dummy_object = Box name:dummy_name length:fix_position_object_size width:fix_position_object_size height:fix_position_object_size pos:[ printer_size[2]+fix_position_object_offset, printer_size[1]+fix_position_object_offset, 0] pivot:[0,0,0] isSelected:on
 
 		modPanel.addModToSelection ( symmetry PlanarX:true PlanarY:true PlanarZ:false) ui:on
 
@@ -84,10 +80,8 @@ struct PrinterVolume_v
 	function _addPlateHoles dummy_object export_size =
 	(
 		format "\n"; print "PrinterVolume_v._addPlateHoles()"
-		format "dummy_object	= % \n" dummy_object
-		holes_position = this._getHolesPositon() / export_size
 
-		circle_shape = Circle radius:(this.screw_radius / export_size ) pos:[ holes_position[2], holes_position[1], 0] pivot:[0,0,0] isSelected:on
+		circle_shape = Circle radius:( screw_radius ) pos:[ screw_position[2], screw_position[1], 0] pivot:[0,0,0] isSelected:on
 
 		convertToSplineShape dummy_object
 
@@ -110,36 +104,25 @@ struct PrinterVolume_v
 		addAndWeld dummy_object circle_shape 0
 	),
 
-	/** Get printer size
-	 */
-	function _getPrinterSize =
-	(
-		--format "\n"; print "PrinterVolume_v.getPrinterSize()"
-	   this.printer_size * (this._getUnitsDividier()) --return
-	),
-
-	/** Get printer size
-	 */
-	function _getHolesPositon =
-	(
-		--format "\n"; print "PrinterVolume_v.getPrinterSize()"
-		--7x12,5
-	   this.screw_position * (this._getUnitsDividier()) --return
-	),
-
-	/** Get coeficitien to get size from milimeters
+	/** Set dimentsions
 	  *
-	  *
-	 */
-	function _getUnitsDividier =
+	  */
+	function _setDimensions =
 	(
-		--format "\n"; print "PrinterVolume_v._getUnitsDividier()"
-		case units.SystemType of
+		format "\n"; print "PrinterVolume_v._setDimentsions()"
+		display_units = case units.SystemType of
 		(
-		   #Centimeters:	10
-		   #Meters:	1000
-		   default:	1
+		   #Centimeters:	10.0
+		   #Meters:	1000.0
+		   default:	1.0
 		)
+
+		format "this.printer_size:	% \n" this.printer_size
+		format "display_units:	% \n" display_units
+		format "export_size:	% \n" export_size
+		 this.printer_size	=  this.printer_size	/ display_units / export_size
+		 this.screw_radius	=  this.screw_radius	/ display_units / export_size
+		 this.screw_position	=  this.screw_position	/ display_units / export_size
 	),
 
 	/** Add to default layer
@@ -153,7 +136,6 @@ struct PrinterVolume_v
 		layer_default.on = true
 
 		layer_default.addNode dummy_object
-
 	),
 
 	/**
@@ -163,6 +145,7 @@ struct PrinterVolume_v
 		--format "\n"; print "PrinterVolume.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-	)
+		this._setDimensions()
 
+	)
 )

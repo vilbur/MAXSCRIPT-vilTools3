@@ -136,11 +136,9 @@ toolTip:	"Export selected nodes to files"
 icon:	"height:64|across:3"
 (
 	clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\3D-Print-Export.mcr"
-	--format "eventFired	= % \n" eventFired
 
-	--format "ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.triState	= % \n" ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.triState
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\3D-Print-Export.mcr"
+	/* DEV */
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\Lib\PrintExporter\PrintExporter.ms"
 
 	(ExporterSetup_v(#Print)).export()
 	--(PrinterVolume_v()).fixPositionionObjects(ROLLOUT_export.SPIN_export_size.value)
@@ -159,8 +157,12 @@ buttontext:	"Print Dummy"
 toolTip:	"Create\Delete dummy palne of 3D printer plane"
 icon:	"height:64|across:3"
 (
+
 	--format "EventFired	= % \n" EventFired
-	(PrinterVolume_v()).createVolume(#Rectangle)(ROLLOUT_export.SPIN_export_size.value)
+	clearListener(); print("Cleared in:\n"+getSourceFileName())
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\Lib\PrinterVolume\PrinterVolume.ms"
+
+	(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
 )
 
 
@@ -175,7 +177,7 @@ toolTip:	"Create\Delete dummy of 3D printer volume"
 --icon:	"across:3"
 (
 	--format "EventFired	= % \n" EventFired
-	(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
+	(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#box)
 )
 
 /*------------------------------------------------------------------------------

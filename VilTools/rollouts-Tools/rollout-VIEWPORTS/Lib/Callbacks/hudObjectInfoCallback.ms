@@ -14,7 +14,7 @@ function hudObjectInfoCallback =
 	function getLockedTransfroms =
 	(
 		--format "\n"; print "hudObjectInfoCallback.ms.getLockedTransfroms()"
-		state = if selection.count > 0 then "LOCKED" else ""
+		state = if selection.count > 0 then "L O C K E D" else ""
 
 		for obj in selection where ((getTransformLockFlags obj) as Array ).count != 9  do
 			state = ""

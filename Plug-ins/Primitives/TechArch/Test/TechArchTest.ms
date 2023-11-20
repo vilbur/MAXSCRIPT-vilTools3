@@ -3,21 +3,37 @@ clearListener(); print("Cleared in:\n"+getSourceFileName())
 filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../TechArch.ms"
 
 
+positions = #()
+
+/** Get pos
+  *
+  */
+function getPos =
+(
+	--format "\n"; print "TechArchTest.ms.getPos()"
+	pos = [ positions.count *150, 0, 0 ]
+
+	append positions pos
+
+	pos --return
+)
 
 delete objects
+
+
 
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
 
 /* WELD AND CONNECT LINE  */
-TechArch height:10 pos:[ -150, 0 ,0] name:"Connect and weld"
+TechArch height:10  name:"Connect and weld" pos:(getPos())
 
 /* NOT WELD LINE  */
-TechArch  weld_line:false height:10 pos:[ 0 , 0 ,0] name:"Connect"
+TechArch  weld_line:false height:10 name:"Connect" pos:(getPos())
 
 /* NOT CONNECT LINE  */
-TechArch connect_line:false pos:[ 150, 0 ,0] name:"Not Connect"
+TechArch connect_line:false name:"Not Connect" pos:(getPos())
 
 
 /* RADIUS TEST */

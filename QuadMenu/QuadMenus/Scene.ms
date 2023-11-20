@@ -3,20 +3,15 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("T E M P A L T E 1")
+	QuadMenu.setTitle("S A V E")
 
-	--FooMenu	= Menu_v("Selection")
-	--FooMenu.removeItem()
-	--FooMenu.clearSeparators()
+	QuadMenu.addItem "File" "Save File" title:"&Save File" group:"Main UI"
 
+	--QuadMenu.addMenu("")
 
+	--QuadMenu.addSeparator index:1
 	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()
-
-	--QuadMenu.addMenu("Selection")	separators: #( 1 )	--title:"" --index: --flat:false
-	QuadMenu.addItem "Edit" "Mirror"	group:"Main UI" title:"Mirror Dialog"
-	QuadMenu.addItem "Edit" "Align"	group:"Main UI"
-
 )
 
 /*------------------------------------------------------------------------------
@@ -24,9 +19,18 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("M I R R O R")
+	QuadMenu.setTitle(" S C E N E")
 
-	QuadMenu.addMenu("_Mirror")	--separators: #( 1 )	--title:"" --index: --flat:false
+	_SceneMenu	= Menu_v("_Scene")
+	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
+
+	--_SceneMenu.addSeparator()
+	_SceneMenu.addSeparator index:#( 3, 5, 6, 8 )
+	----_SceneMenu.addSeparator index:#( 3, 6 )
+	----_SceneMenu.addSeparator index:8
+	--
+	QuadMenu.addMenu(_SceneMenu)	--flat:false --index:1
+
 )
 
 /*------------------------------------------------------------------------------
@@ -34,7 +38,8 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("T E M P A L T E 3")
+	QuadMenu.setTitle("QUAD 3")
+
 )
 
 /*------------------------------------------------------------------------------
@@ -42,8 +47,11 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("T E M P A L T E 4")
+	QuadMenu.setTitle("O P T I O N S")
+
+	QuadMenu.addMenu("_Options")	--flat:false --index:1
 )
+
 
 
 /** DEFIEN QUAD

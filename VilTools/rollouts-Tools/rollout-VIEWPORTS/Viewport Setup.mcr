@@ -4,10 +4,10 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportChangeCal
 *
 */
 macroscript	viewport_selection_bracets
-category:	"_Viewports"
+category:	"_Viewports-Setup"
 buttontext:	"Sel Brackets"
-tooltip:	"Toogle Selection Brackets "
---icon:	"control:checkbox"
+tooltip:	"Toogle Selection Brackets"
+icon:	"MENU:true"
 (
 	current_state = (NitrousGraphicsManager.GetActiveViewportSetting()).ShowSelectionBracketsEnabled
 
@@ -16,11 +16,12 @@ tooltip:	"Toogle Selection Brackets "
 
 )
 
+
 /**
 *
 */
 macroscript	viewport_rotate_top_view
-category:	"_Viewports"
+category:	"_Viewports-Setup"
 buttontext:	"Rotate Top"
 tooltip:	"Keep top view rotated by 90°"
 icon:	"control:checkbox"
@@ -36,7 +37,7 @@ icon:	"control:checkbox"
 *
 */
 macroscript	viewport_background_color
-category:	"_Viewports"
+category:	"_Viewports-Setup"
 buttontext:	"Background"
 tooltip:	"Set Viewport Background Color"
 icon:	"control:colorpicker|value:[56,56,56]"
@@ -45,9 +46,12 @@ icon:	"control:colorpicker|value:[56,56,56]"
 
 	fn RGBToUIColor clr = [clr.r/255,clr.g/255,clr.b/255]
 
+   --format "RGBToUIColor(background_color):	% \n"( RGBToUIColor(background_color))
+    --format "background_color:	% \n" background_color
+
 	viewport.EnableSolidBackgroundColorMode(true)
 
-	SetUIColor 41 (RGBToUIColor(background_color))
+	SetUIColor 41 ( RGBToUIColor(background_color) )
 
 	CompleteRedraw()
 )
@@ -56,14 +60,19 @@ icon:	"control:colorpicker|value:[56,56,56]"
 *
 */
 macroscript	viewport_background_color_reset
-category:	"_Viewports"
+category:	"_Viewports-Setup"
 buttontext:	"Reset"
 tooltip:	"Reset Viewport Background Color"
 icon:	"width:48"
 (
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Viewport Setup.mcr"
+	--messageBox "Yupiii" title:"Title"  beep:false
+
+    format "ROLLOUT_viewports:	% \n" ROLLOUT_viewports
+
 	ROLLOUT_viewports.cp_background.color = ( color 56 56 56 )
 
-	macros.run "_Viewports" "viewport_background_color"
+	macros.run "_Viewports-Setup" "viewport_background_color"
 )
 
 
@@ -72,7 +81,7 @@ icon:	"width:48"
 /** SET GRID
  */
 macroscript	viewport_set_grid_spacing
-category:	"_Viewports"
+category:	"_Viewports-Setup"
 buttontext:	"Set Grid"
 tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolution of 3D printer`s LCD Creality LD-006"
 icon:	"width:72"
@@ -99,22 +108,23 @@ icon:	"width:72"
 
 
 
---
+
 -- /**
 -- *
 -- */
 --macroscript	viewport_test
---category:	"_Viewports"
+--category:	"_Viewports-Setup"
 --buttontext:	"Test"
 ----tooltip:	"Keep top view rotated by 90°"
 ----icon:	"control:checkbox"
 --(
---	viewport_matrix = viewport.getTM()
+--	format "EventFired:	% \n" EventFired
+--	--viewport_matrix = viewport.getTM()
 --
 --	--format "viewport_matrix = % \n" viewport_matrix
 --
---	is_top = (ViewportSwitcher_v())._isThisRotatedTopView(viewport.getTM())
+--	--is_top = (ViewportSwitcher_v())._isThisRotatedTopView(viewport.getTM())
 --
---	format "is_top = % \n" is_top
---
+--	--format "is_top = % \n" is_top
+
 --)

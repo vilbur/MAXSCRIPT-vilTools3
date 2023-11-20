@@ -11,7 +11,7 @@ icon:	"MENU:true"
 (
 
 	on execute do
-		undo "Remove sufix" on
+		undo "Rename by last" on
 			for obj in selection do
 				obj.name = selection[selection.count].name
 )
@@ -26,7 +26,7 @@ icon:	"MENU:true"
 (
 	on execute do
 	(
-		undo "Remove sufix" on
+		undo "Convert Case" on
 			for obj in selection do
 			(
 				----obj_name = obj.name
@@ -66,7 +66,6 @@ category:	"_Object-Name"
 buttonText:	"Remove sufix"
 tooltip:	"Remove sufix from object name"
 icon:	"MENU:true"
-autoUndoEnabled: true
 (
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 	on execute do
@@ -74,6 +73,35 @@ autoUndoEnabled: true
 		undo "Remove sufix" on
 			for obj in selection do
 				obj.name = (RegExer_v( obj.name )).removeSufix()
+	)
+)
+
+/** RECOUNT object names
+  */
+macroscript selection_recount_name
+category:	"_Object-Name"
+buttonText:	"Recount"
+tooltip:	"Replace number prefix of obejcts in selection"
+icon:	"MENU:true"
+(
+	on execute do
+	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\MANAGE NAME.mcr"
+		ObjectRenamer	= ObjectRenamer_v()
+
+		undo "Recount names" on
+		(
+			objects_count = if selection.count < 10 then 99 else selection.count -- keep two digits at least
+
+			for i = 1 to selection.count do
+			(
+				obj = selection[i]
+
+				obj.name = (RegExer_v( obj.name )).removeSufix()
+
+				obj.name += ObjectRenamer.getSufixNumber (i) ( objects_count )
+			)
+		)
 	)
 )
 

@@ -212,20 +212,22 @@ struct MirrorRestore_v
 			)
 	),
 
+
 	/** Get group members
 	  *
 	  */
 	function _getGroupMembers _group =
 	(
-		--format "\n"; print "MirrorByGizmo_v._getGroupMembers()"
-		mapped function getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then getAllChildren _node.children &children )
+		format "\n"; print "MirrorByGizmo_v._getGroupMembers()"
 
-		children = #()
+		children_all = #()
 
-		getAllChildren #( _group ) ( &children )
-		--format "\n-----------\nARRAY:children:\n";  for obj in children do format "obj:	%\n" obj.name
-		children --return
+		this.getAllChildren #( _group ) ( children_all )
+		--format "\n-----------\nARRAY:children_all:\n";  for obj in children do format "obj:	%\n" obj.name
+		children_all --return
 	),
+
+	mapped function getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then this.getAllChildren _node.children &children ),
 
 	/** Get mirror setup data
 	  *

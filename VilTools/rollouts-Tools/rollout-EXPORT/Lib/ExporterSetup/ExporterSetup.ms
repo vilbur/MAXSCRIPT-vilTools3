@@ -82,6 +82,8 @@ struct ExporterSetup_v
 	function _exportPrint =
 	(
 		format "\n"; print "ExporterSetup_v._exportPrint()"
+		format "ROLLOUT_export.SPIN_export_size.value:	% \n" ROLLOUT_export.SPIN_export_size.value
+
 		PrintExporter =	(PrintExporter_v(this.export_nodes))
 
 		PrintExporter.params[#EXPORT_FORMAT]	= #("obj", "stl")[ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_export_format.state]

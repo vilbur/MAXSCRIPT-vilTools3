@@ -58,7 +58,8 @@ struct PlatformModifiers_v
 
 		redrawViews() -- IMPORTANT TO UPDATE AFTER SETTING SHAPE AND BEFORE EDITING ITS PROPERTIES
 
-		sweep_mod[#Cylinder_Section].radius = this.Options.bar_width / 2
+		sweep_mod[#Cylinder_Section].radius	= this.Options.bar_width / 2
+		sweep_mod[#Cylinder_Section].steps	= 6 -- Interpolation 
 
 		--sweep_mod[#Bar_Section].cornerRadius = 0
 
