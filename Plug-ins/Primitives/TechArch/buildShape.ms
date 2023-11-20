@@ -210,16 +210,55 @@
 		arc_points --return
 	)
 
+	--/** Convert points to dotnet vectors
+	--*
+	--*/
+	--function getArcKnots arc_points =
+	--(
+	--	arc_vectors = this.convertoDotNetVectors(arc_points)
+	--
+	--	arc_knots = for arc_vector in arc_vectors collect
+	--		this.getSplineKnot (arc_vector[#point]) (arc_vector[#inVec]) (arc_vector[#outVec]) bezierKnot
+	--
+	--  arc_knots --return
+	--)
+	--
+	--/** Convert points to dotnet vectors
+	--*
+	--*/
+	--function getLieKnots arc_points =
+	--(
+	--	arc_vectors = this.convertoDotNetVectors(arc_points)
+	--
+	--	arc_knots = for arc_vector in arc_vectors collect
+	--		this.getSplineKnot (arc_vector[#point]) (arc_vector[#inVec]) (arc_vector[#outVec]) bezierKnot
+	--
+	--  arc_knots --return
+	--)
+
 	/** Convert points to dotnet vectors
 	*
 	*/
-	function convertoDotNetVectors arc_points =
+	function getKnots points knot_type =
 	(
-	  for arc_point in arc_points do
-		  for key in arc_point.keys do
-			  arc_point[key] = vec3point (arc_point[key])
+		vectors = this.convertoDotNetVectors(points)
 
-	  arc_points --return
+		knots = for vector in vectors collect
+			this.getSplineKnot (vector[#point]) (vector[#inVec]) (vector[#outVec]) knot_type
+
+	  knots --return
+	)
+
+	/** Convert points to dotnet vectors
+	*
+	*/
+	function convertoDotNetVectors points =
+	(
+	  for point in points do
+		  for key in point.keys do
+			  point[key] = vec3point (point[key])
+
+	  points --return
 	)
 
 

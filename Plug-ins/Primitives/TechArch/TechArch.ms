@@ -6,7 +6,7 @@ category:	"Splines"
 	local obj
 
 	local arches_data   = #()
-	local spline_points = #() -- array of Dictionary #( #point, Point3) #( #inVec, Point3) #( #outVec, Point3)
+	local splines_knots = #() -- array of Dictionary #( #point, Point3) #( #inVec, Point3) #( #outVec, Point3)
 
 	local initialized	= false
 
@@ -65,8 +65,8 @@ category:	"Splines"
 
 	parameters main rollout:params_radius
 	(
-		radius_min 	ui:SP_radius_min	type:#float	default:100
-		radius_max 	ui:SP_radius_max	type:#float	default:100
+		radius_min 	ui:SP_radius_min	type:#float	default:50
+		radius_max 	ui:SP_radius_max	type:#float	default:55
 
 		radius_mode 	ui:RB_radius_mode	type:#radiobtnIndex	default:1
 
@@ -118,20 +118,24 @@ category:	"Splines"
 		PARAMETERS EXTENDS
 	--------------------------------------------------------------------------------*/
 
-	parameters main rollout:params_line
+	parameters main rollout:params_connect
 	(
 		--attach_to_line	ui:SP_attach_to_line	type:#boolean	default:true
 		connect_line	ui:SP_connect_line	type:#boolean	default:true
 		weld_line	ui:SP_weld_line	type:#boolean	default:true
-		--close_line	ui:SP_close_line	type:#boolean	default:true
+
+		connect_mode 	ui:RB_connect_mode	type:#radiobtnIndex	default:1
+
+		on connect_mode	set val do this.rebuildShape reset_shape:true
 	)
 
-	rollout params_line "Line setup"
+	rollout params_connect "Connect"
 	(
 		--checkbox	SP_attach_to_line 	"Attach line"
 		checkbox	SP_connect_line 	"Connect"
 		checkbox	SP_weld_line 	"Weld"
 		--checkbox	SP_close_line	"Close"  enabled:SP_weld_line.state
+		radiobuttons RB_connect_mode "Connect mode" labels:#("Straight", "Otrho" ) --offset:[-8, 16]
 
 		button btn_generate "Generate" width:64
 		button btn_attach   "Attach"	width:64
@@ -253,6 +257,11 @@ category:	"Splines"
 	--------------------------------------------------------------------------------*/
 
 	/*
+	 *	CONVERSION OF POINTS: point > vectror > knot
+	 *
+	 *
+	 *
+
 	*/
 	function rebuildShape reset_shape:false =
 	(
@@ -271,58 +280,28 @@ category:	"Splines"
 		if this.arches_data.count == 0 or reset_shape then
 			this.setArchData()
 
-		/* DEBUG PRINT */
-		--for arch_data in arches_data do (format "\n"; for key in arch_data.keys do format "%:	% \n" key arch_data[key])
 
-		/* COVERT ARCH DATA DOTO POINTS */
+		/* CONVERT ARCH DATA DOTO POINTS */
 		arches_points = for arch_data in arches_data collect
 			this.getArcPoints (arch_data[#ANGLE]) (arch_data[#RADIUS]) (arch_data[#ROTATION]) (arch_data[#HEIGHT])  dir:-1
 
-
-		/* DEBUG PRINT */
-		--for arc_points in arches_points do format "arc_points:	% \n" arc_points
-
-		arches_vectors = for arc_points in arches_points collect this.convertoDotNetVectors(arc_points)
+		this.prepareLinePoints( arches_points )
 
 		/* CREATE SHAPE */
-
 		ShapeWrapper.NewShape()
 
-		for i = 1 to arches_vectors.count do
+		for spline_knots in this.splines_knots do
 		(
-			is_line_last	= i == arches_vectors.count
+			spline = ShapeWrapper.NewSpline()
 
-			--format "\n\n"
-			arc_vectors	= arches_vectors[i]
-			arc_vectors_next	= if is_line_last then arches_vectors[i] else arches_vectors[1+1]
-			last_knot	= arc_vectors[arc_vectors.count] -- last knot of current arc
-			first_knot	= arc_vectors_next[1] -- first knot of next arc
-
-			if i == 1 or not  (connect_line and weld_line) then
-				spline = ShapeWrapper.NewSpline()
-
-			for arc_vector in arc_vectors do
-				spline.AddKnot ( getSplineKnot (arc_vector[#point]) (arc_vector[#inVec]) (arc_vector[#outVec]) BezierCornerKnot )
-
-			if connect_line and not weld_line then
-			(
-				spline = ShapeWrapper.NewSpline()
-
-				if last_knot[#point] != first_knot[#point] then
-				(
-					spline.AddKnot ( getSplineKnot (last_knot[#point])	(last_knot[#inVec])	(last_knot[#outVec]) bezierKnot )
-					spline.AddKnot ( getSplineKnot (first_knot[#point])	(first_knot[#inVec])	(first_knot[#outVec]) bezierKnot )
-				)
-			)
-
-			--format "TEST:	% \n" (last_knot[#point] != first_knot[#point])
-
-			if is_line_last and connect_line and weld_line and last_knot[#point] != first_knot[#point] then
-				spline.SetClosed()
+			for knot in spline_knots do
+				spline.AddKnot (knot)
 		)
+
 
 		ShapeWrapper.UpdateSels()
 		ShapeWrapper.InvalidateGeomCache()
+
 
 		updateShape
 
@@ -330,6 +309,66 @@ category:	"Splines"
 		this.build 	= true
 	)
 
+	/** Prepare line points
+	  *
+	  */
+	function prepareLinePoints arches_points =
+	(
+		print "TchArch.prepareLinePoints()"
+
+		spline_knots	= #()
+
+		/* LOOP EACH ARCH */
+		for i = 1 to arches_points.count do
+		(
+			is_last_arc	= i == arches_points.count
+			arc_points	= arches_points[i]
+			arc_points_next	= if is_last_arc then arches_points[1] else arches_points[i+1] -- get points of next first arc
+			end_current	= copy arc_points[arc_points.count] -- last knot of current arc
+			start_next	= copy arc_points_next[1] -- first knot of next arc
+
+			/* CONVERT ARC POINT TO VECTORS */
+			arc_knots = this.getKnots(arc_points) (bezierKnot)
+
+			/* CONNECT or CONNECT and WELD */
+			if connect_line or ( connect_line and weld_line) then
+			(
+				if  end_current[#point] != start_next[#point] then
+				(
+					connect_line_points = #( end_current, start_next )
+
+					connect_line_knots = this.getKnots(connect_line_points) (BezierCornerKnot)
+				)
+
+
+				/* CONNECT AND NOT WELD */
+				if connect_line and not weld_line then
+				(
+					append this.splines_knots arc_knots
+
+					if connect_line_knots != undefined then
+						append this.splines_knots connect_line_knots
+				)
+
+				/* CONNECT AND WELD */
+				else if connect_line and weld_line then
+				(
+					join spline_knots arc_knots
+
+				)
+
+			)
+
+			else /* NOT CONNECT */
+				append this.splines_knots arc_knots
+
+		)
+
+		/* IF CONNECT AND WELD */
+		if this.splines_knots.count == 0 then
+			append this.splines_knots spline_knots
+
+	)
 
 	/** Init
 	  *

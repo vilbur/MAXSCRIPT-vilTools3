@@ -9,11 +9,19 @@ delete objects
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
---TechArch wirecolor:green isSelected:on
+
+/* WELD AND CONNECT LINE  */
+TechArch height:10 pos:[ -150, 0 ,0] name:"Connect and weld"
+
+/* NOT WELD LINE  */
+TechArch  weld_line:false height:10 pos:[ 0 , 0 ,0] name:"Connect"
+
+/* NOT CONNECT LINE  */
+TechArch connect_line:false pos:[ 150, 0 ,0] name:"Not Connect"
 
 
 /* RADIUS TEST */
-TechArch radius_min:50 radius_max:100 radius_mode:1 isSelected:on steps:24
+--TechArch radius_min:50 radius_max:100 radius_mode:1 isSelected:on steps:64
 --TechArch radius_min:50 radius_max:100 radius_mode:2 isSelected:on steps:24
 --
 
@@ -35,23 +43,17 @@ TechArch radius_min:50 radius_max:100 radius_mode:1 isSelected:on steps:24
 
 
 
-/* CONNECT LINE  */
---TechArch height:30 connect_line:false
-
-/* WELD LINE  */
---TechArch weld_line:false height:30
-
 /* CLOSE LINE  */
 --TechArch weld_line:false height:30 angle_min:180
 
---TechArch angle_min:90 angle_max:90 wrap_angle:90
---TechArch angle_min:180 angle_max:180 wrap_angle:180
---TechArch angle_min:270 angle_max:270 wrap_angle:270
+
+
+/* TEST DIFFERENT SETUPS */
+--TechArch angle_min:30 angle_max:60 radius_min:50 radius_max:60 radius_mode:3 angle_mode:2 height:10 isSelected:on
 
 
 
-
---TechArch wrap_angle:72 radius_min:45 radius_max:90 angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
+----TechArch wrap_angle:72 radius_min:45 radius_max:90 angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
 --lineSetup()
 
 
