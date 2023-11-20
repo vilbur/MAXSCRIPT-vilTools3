@@ -26,8 +26,9 @@ category:	"Splines"
 	(
 		wrap_angle	ui:SP_wrap_angle	type:#float	default:360
 
-		angle_min	ui:SP_angle_min	type:#integer default:90
-		angle_max	ui:SP_angle_max	type:#integer default:180
+		angle_min	ui:SP_angle_min	type:#float default:90
+		angle_max	ui:SP_angle_max	type:#float default:180
+		angle_gap	ui:SP_angle_gap	type:#float default:0
 
 		angle_mode 	ui:RB_angle_mode	type:#radiobtnIndex	default:1
 
@@ -35,6 +36,7 @@ category:	"Splines"
 
 		on angle_min	set val do if initialized then this.rebuildShape reset_shape:true
 		on angle_max	set val do if initialized then this.rebuildShape reset_shape:true
+		on angle_gap	set val do if initialized then this.rebuildShape reset_shape:true
 
 		on angle_mode	set val do this.rebuildShape reset_shape:true
 
@@ -45,6 +47,7 @@ category:	"Splines"
 		spinner	SP_wrap_angle	"Wrap Angle"	range:[ 1, 1e9, wrap_angle ]  scale:10.0 tooltip:"Total radius of line"
 		spinner	SP_angle_min	"Angle Min"	range:[ 1, 1e9, 90 ] tooltip:"Angle of arch segment"
 		spinner	SP_angle_max	"Angle Max"	range:[ 0, 1e9, 0 ]
+		spinner	SP_angle_gap	"Angle Gap"	range:[ 0, 1e9, 0 ]
 
 		radiobuttons RB_angle_mode "Angle Mode" labels:#("Event\Odd", "Random" ) --offset:[-8, 16]
 
@@ -57,6 +60,11 @@ category:	"Splines"
 		/* KEEP MAX RADIUS HIGHER THEN MIN */
 		on SP_angle_max changed val do
 			if val < angle_min  then angle_min = val
+
+		/* KEEP GAP LOWER THEN RADIUS MIN */
+		--on SP_angle_gap changed val do
+			--if val >= angle_min/2  then angle_gap = (angle_min / 2 ) - 1
+
 	)
 
 	/*------------------------------------------------------------------------------
@@ -181,15 +189,18 @@ category:	"Splines"
 		while angle_counter < wrap_angle do
 		(
 			arch_data	= Dictionary()
-			--format "\n\n"
 
-			arch_data[#ANGLE] = getAngle(this.arches_data.count +1)
+			if angle_gap >= angle_min/2  then angle_gap = angle_min / 2 - 1
 
-			--format "angle_counter:	% \n" angle_counter
-			--format "arch_data[#ANGLE]:	% \n" arch_data[#ANGLE]
-			arch_data[#ROTATION]	= angle_counter
 
-			angle_counter += arch_data[#ANGLE]
+			arc_angle_rare = getAngle(this.arches_data.count +1)
+			format "arc_angle_rare:	% \n" arc_angle_rare
+
+			arch_data[#ANGLE] = arc_angle_rare - angle_gap
+
+			arch_data[#ROTATION]	= angle_counter + angle_gap/2
+
+			angle_counter += arc_angle_rare
 
 			/* Fit last arc to wrap angle value */
 			if angle_counter > wrap_angle then
