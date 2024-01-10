@@ -17,7 +17,11 @@ function createTestPlane export_size segments:1 vertex_selection:#{} =
 	--format "\n"; print "PlatformGeneratorTest.ms.createTestPlane()"
 	delete objects
 
-	_Plane = Plane length:( 5 * segments / display_units  / export_size ) width:( 10 * segments ) pos:[0, 0, 30.0 / display_units / export_size ] widthsegs:segments lengthsegs:segments backfacecull:on isSelected:on
+
+	segment_size = 10 / display_units  / export_size
+
+	_Plane = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 30.0 / display_units / export_size ] widthsegs:segments lengthsegs:segments isSelected:on backfacecull: off
+
 
 	Rotate _Plane ( AngleAxis 180 [1,0,0])
 
@@ -52,9 +56,9 @@ function createTestSpline export_size =
 --------------------------------------------------------------------------------*/
 
 /* UNITS MILLIMETERS */
-units.SystemType	= #millimeters
-units.MetricType	= #millimeters
-export_size	= 1
+--units.SystemType	= #millimeters
+--units.MetricType	= #millimeters
+--export_size	= 1
 
 
 /* UNITS MILLIMETERS, DISPLAY CENTIMETERS */
@@ -62,11 +66,13 @@ units.SystemType	= #millimeters
 units.MetricType	= #centimeters
 export_size	= 1
 
+--
+--/* BIG OBJECT RESCALED */
+--units.SystemType	= #centimeters
+--units.MetricType	= #centimeters
+--export_size	= 0.01
 
-/* BIG OBJECT RESCALED */
-units.SystemType	= #centimeters
-units.MetricType	= #centimeters
-export_size	= 0.01
+
 
 
 /*------------------------------------------------------------------------------
@@ -74,18 +80,32 @@ export_size	= 0.01
 --------------------------------------------------------------------------------*/
 
 /* TEST EDIABLE POLY */
-createTestPlane export_size segments:1
+--createTestPlane export_size segments:1
+createTestPlane export_size segments:4
+
 --createTestPlane export_size segments:31
---createTestPlane export_size segments:1 vertex_selection:#{3..4}
+--createTestPlane export_size segments:2 vertex_selection:#{3..4}
 
 /* TEST EDIABLE SPLINE */
 --createTestSpline(export_size)
 
 
+/*------------------------------------------------------------------------------
+	TEST CHANGED POSITION AND PIVOT OF SOURCE OBJECT
+--------------------------------------------------------------------------------*/
 
+$.pos.x = 100
+$.pos.y = 100
+
+$.pivot.x = 100
+$.pivot.y = 100
+
+
+/*------------------------------------------------------------------------------
+	GENERATE PLATFORMS
+--------------------------------------------------------------------------------*/
 
 --PlatformGenerator 	= PlatformGenerator_v bind_to_parent:true
 PlatformGenerator 	= PlatformGenerator_v export_size:export_size
 
 platform_obj = PlatformGenerator.generate( selection[1] )
-

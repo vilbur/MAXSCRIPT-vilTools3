@@ -21,7 +21,7 @@ struct PlatformOptions_v
 
 	extrude_top	= 0.25,
 
-	chamfer_base	= bar_width / 2,
+	chamfer_base	= base_height / 2,
 	chamfer_top	= bar_width / 4,
 
 

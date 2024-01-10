@@ -101,15 +101,19 @@ struct PlatformGenerator_v
 	  */
 	function _getVertexPositionsFromEditablePoly =
 	(
-		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
 		vertext_count	= getNumVerts source_obj.mesh
 		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
 
 		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array
 
-		for i = 1 to verts_to_generate.count do
-			append verts_positions ((getVert source_obj.mesh verts_to_generate[i]) * source_obj.transform)
+		--maxOps.CollapseNodeTo source_obj 1 off
 
+		for i = 1 to verts_to_generate.count do
+			append verts_positions ( polyop.getVert source_obj verts_to_generate[i])
+
+
+		format "\n-----------\nARRAY:verts_positions:\n";  for pos in verts_positions do format "pos:	%\n" pos
 
 			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
 
@@ -153,6 +157,8 @@ struct PlatformGenerator_v
 	  */
 	function _generateLines =
 	(
+		format "\n"; print "PlatformGenerator_v._generateLines()"
+
 		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
 
 		/** Create line for vertex
@@ -182,10 +188,14 @@ struct PlatformGenerator_v
 			_shape --return
 		)
 
-		this.platform = SplineShape pos:source_obj.pos name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
+		--this.platform = SplineShape pos:source_obj.pos name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
+		this.platform = SplineShape name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
+
 
 		for i = 1 to verts_positions.count do
 			_createLineForVertex (platform) (i) (verts_positions[i])
+
+
 
 	),
 
