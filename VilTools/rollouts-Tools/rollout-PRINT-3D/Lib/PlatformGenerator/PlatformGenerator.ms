@@ -24,6 +24,7 @@ struct PlatformGenerator_v
 	bind_to_parent = false, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
 
 	/* options */
+	use_every_nth_vert_of_spline = 1,
 
 	/* properties */
 	verts_positions = #(), -- vertex positions to generate platforms
@@ -51,6 +52,10 @@ struct PlatformGenerator_v
 		format "source_obj:	% \n" source_obj
 
 		this.source_obj = source_obj
+
+		Options.init()
+
+		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
 
 		if superClassOf source_obj == shape then
 			this._getVertexPositionsFromShape()
@@ -142,10 +147,28 @@ struct PlatformGenerator_v
 			nnl[1] --return
 		)
 
+		/** test if vertexx index is nth vertex in spline
+		  *
+		  */
+		function isNthVertex index =
+		(
+			--format "\n"; print "PlatformGenerator_v.isNthVertex"
+			--format "index:	% \n" index
+
+			--use_every_nth_vert_of_spline == 1 or ceil (test = use_every_nth_vert_of_spline/index as float ) == test
+			is_nth_vertex = index == 1 or use_every_nth_vert_of_spline == 1 or ceil (test = (index - 1)/use_every_nth_vert_of_spline as float ) == test
+			--format "is_nth_vertex:	% \n" is_nth_vertex
+
+			is_nth_vertex --return
+			--true --return
+		)
+
+		--format "use_every_nth_vert_of_spline:	% \n" use_every_nth_vert_of_spline
+
 		source_obj_copy = copyAndCollapseSourceObject()
 
 		for spline_i = 1 to numSplines source_obj_copy do
-			for knot_i = 1 to numKnots source_obj_copy spline_i do
+			for knot_i = 1 to numKnots source_obj_copy spline_i where isNthVertex (knot_i) do
 				append verts_positions (getKnotPoint source_obj_copy spline_i knot_i)
 
 		delete source_obj_copy
@@ -157,7 +180,7 @@ struct PlatformGenerator_v
 	  */
 	function _generateLines =
 	(
-		format "\n"; print "PlatformGenerator_v._generateLines()"
+		--format "\n"; print "PlatformGenerator_v._generateLines()"
 
 		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
 
@@ -211,7 +234,7 @@ struct PlatformGenerator_v
 		else
 			this.platform.parent = this.source_obj
 
-		format "this.platform.parent:	% \n" this.platform.parent
+		--format "this.platform.parent:	% \n" this.platform.parent
 	),
 
 	/** Platform name is same as source name
@@ -264,7 +287,6 @@ struct PlatformGenerator_v
 	on create do
 	(
 		Options	= PlatformOptions_v(export_size)
-		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
 
 	)
 )

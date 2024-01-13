@@ -14,18 +14,35 @@ struct PlatformOptions_v
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
 
 	/* options */
-	bar_width 	= 1.5, -- default width is 1mm
+	bar_width 	= 1.5, -- default width is 1.5mm
 
 	base_height	= 1.0,
 	base_extrude	= 4.0,
 
 	extrude_top	= 0.25,
 
-	chamfer_base	= base_height / 2,
-	chamfer_top	= bar_width / 4,
 
+	chamfer_top_divider = 4,
+
+	chamfer_base,
+	chamfer_top,
+
+	/** Init
+	  *
+	  */
+	function init =
+	(
+		--format "\n"; print "PlatformOptions_v.init()"
+
+		this._setUnitsMuliplier()
+
+		this._setDimensions()
+
+		this._setChamferValues()
+	),
 
 	private
+
 
 	/** Set units muliplier
 	  *
@@ -54,19 +71,22 @@ struct PlatformOptions_v
 		format "DISPLAY_UNITS:	% \n" display_units
 		format "EXPORT_SIZE:	% \n" export_size
 
+		for prop in getPropNames this where (classOf (val = getProperty this prop)) != MAXScriptFunction do
 
-		for prop in getPropNames this where prop != #export_size and prop != #display_units do
-		(
-			format "\n"
-			format "prop:	% \n" prop
-			val = getProperty this prop
-			format "val:	% \n" val
+			if val != undefined  and prop != #export_size and prop != #display_units then
 
-			corrected_val = val / display_units	/ export_size
-			format "corrected_val:	% \n" corrected_val
+				setProperty this prop (val / display_units	/ export_size)
+	),
 
-			setProperty this prop corrected_val
-		)
+	/** Set chamfer values
+	  *
+	  */
+	function _setChamferValues =
+	(
+		--format "\n"; print "PlatformOptions_v.setChamferValues()"
+		chamfer_base	= base_height / 2
+
+		chamfer_top	= bar_width / 2 / chamfer_top_divider
 	),
 
 	/**
@@ -74,12 +94,8 @@ struct PlatformOptions_v
 	 */
 	on create do
 	(
-		format "\n"; print "PlatformGenerator_v.create()"
-		format "\nIMPORTANT\n"
-		format "EXPORT_SIZE:	% \n" export_size
-
-		this._setUnitsMuliplier()
-
-		this._setDimensions()
+		--format "\n"; print "PlatformGenerator_v.create()"
+		--format "\nIMPORTANT\n"
+		--format "EXPORT_SIZE:	% \n" export_size
 	)
 )

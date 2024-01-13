@@ -23,6 +23,9 @@ struct PlatformModifiers_v
 	(
 		format "\n"; print "PlatformGenerator_v._addModifiers()"
 
+		this._sanitizeMaxChamferValue()
+
+
 		this._addSweepModifier("Bar Width")
 
 		this._selectFace("Select Base")(mat_ids[#BASE])
@@ -39,6 +42,17 @@ struct PlatformModifiers_v
 	),
 
 	private
+
+	/** Make sure that chamfer value is less then radius
+	  */
+	function _sanitizeMaxChamferValue =
+	(
+		--format "\n"; print "PlatformModifiers_v._sanitizeMaxChamferValue()"
+
+		if this.Options.bar_width / 2 == this.Options.chamfer_top then
+			this.Options.chamfer_top -= 0.05
+
+	),
 
 	/** SWEEP Modifier
 	  *
@@ -59,7 +73,7 @@ struct PlatformModifiers_v
 		redrawViews() -- IMPORTANT TO UPDATE AFTER SETTING SHAPE AND BEFORE EDITING ITS PROPERTIES
 
 		sweep_mod[#Cylinder_Section].radius	= this.Options.bar_width / 2
-		sweep_mod[#Cylinder_Section].steps	= 6 -- Interpolation 
+		sweep_mod[#Cylinder_Section].steps	= 6 -- Interpolation
 
 		--sweep_mod[#Bar_Section].cornerRadius = 0
 
@@ -91,7 +105,8 @@ struct PlatformModifiers_v
 	  */
 	function _chamfer name amount selection_option:#STACK materialoption:#OFF /* minangle:  */ =
 	(
-		--format "\n"; print "PlatformGenerator_v._chamfer()"
+		format "\n"; print "PlatformGenerator_v._chamfer()"
+		format "%:	% \n" name amount
 
 		chamfer_mod = Chamfer name:name
 
