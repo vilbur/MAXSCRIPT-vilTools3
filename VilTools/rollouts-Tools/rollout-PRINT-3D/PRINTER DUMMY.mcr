@@ -14,7 +14,7 @@ function setPrintPlaneElevation layer_index incremental:false =
 (
 	format "\n"; print "PRINTER DUMMY.mcr.setPrintElevation()"
 
-	--PrinterVolume = PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)
+
 	volume_height	= (PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).printer_size.z
 	layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
 	layer_current	= ROLLOUT_print_3d.SLIDER_set_elevation.value
@@ -41,15 +41,18 @@ function setPrintPlaneElevation layer_index incremental:false =
 	if $PRINT_DUMMY_VOLUME == undefined then
 		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
 
-	--print_plane = $PRINT_DUMMY_VOLUME
+	_plane = $PRINT_DUMMY_VOLUME
 
-	if classOf $PRINT_DUMMY_VOLUME.modifiers[1] != Normalmodifier then
-		addModifier $PRINT_DUMMY_VOLUME (Normalmodifier flip:on)
+	freeze _plane
+	_plane.showFrozenInGray	= false
+	_plane.backfacecull	= true
 
-	--$PRINT_DUMMY_VOLUME.backfacecull = true
-	$PRINT_DUMMY_VOLUME.xray = true
 
-	$PRINT_DUMMY_VOLUME.pos.z = layer_index * layer_height
+	if classOf _plane.modifiers[1] != Normalmodifier then
+		addModifier _plane (Normalmodifier flip:on)
+
+
+	_plane.pos.z = layer_index * layer_height
 
 
 	ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
@@ -60,19 +63,21 @@ function setPrintPlaneElevation layer_index incremental:false =
 
 /*------------------------------------------------------------------------------
 
-	 BUTTON +\-
+	 BUTTONS
 
 --------------------------------------------------------------------------------*/
+/** ELEVATION +\-
+ */
 macroscript	_print_plane_set_elevation_plus
 category:	"_3D-Print"
 buttontext:	"+\-"
 toolTip:	"Shift plane UP"
-icon:	"across:3|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#left|offset:[ -4, 0 ]"
+icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#left|offset:[ -4, 0 ]"
 (
 
 	--format "EventFired	= % \n" EventFired
-	clearListener(); print("Cleared in:\n"+getSourceFileName())
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
 
 	val = if keyboard.controlPressed then 10 else 1
 
@@ -80,17 +85,18 @@ icon:	"across:3|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#lef
 
 	setPrintPlaneElevation val incremental:true
 )
-
+/** ELEVATION +\- RIGHTCLICK
+ */
 macroscript	_print_plane_set_elevation_minus
 category:	"_3D-Print"
 buttontext:	"+\-"
 toolTip:	"Shift plane DOWN\n\nCTRL: value is 10"
-icon:	"across:3|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#left|offset:[ -4, 0 ]"
+icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#left|offset:[ -4, 0 ]"
 (
 
 	--format "EventFired	= % \n" EventFired
-	clearListener(); print("Cleared in:\n"+getSourceFileName())
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
 
 	val = if keyboard.controlPressed then -10 else -1
 
@@ -98,6 +104,61 @@ icon:	"across:3|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#lef
 	setPrintPlaneElevation val incremental:true
 
 )
+
+/**
+ */
+macroscript	_print_plane_set_normal
+category:	"_3D-Print"
+buttontext:	"Normal"
+toolTip:	"Toggle Normal\n\nCTRL:	2-Sided\n\nSHIFT:	Xray\n\nALT:	Toggle Grey\Green"
+icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset:[ -16, 0 ]"
+(
+
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+
+	if $PRINT_DUMMY_VOLUME == undefined then
+		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
+
+	_plane = $PRINT_DUMMY_VOLUME
+
+	normal_modifier = _plane.modifiers[#Normal]
+
+	--format "normal_modifier.flip:	% \n" normal_modifier.flip
+
+	if keyboard.controlPressed or keyboard.altPressed or keyboard.shiftPressed then
+	(
+		normal_modifier.enabled = true
+
+		if keyboard.controlPressed then
+			_plane.backfacecull = not ( _plane.backfacecull )
+
+		if keyboard.shiftPressed then
+			_plane.xray = not ( _plane.xray )
+
+		if keyboard.altPressed then
+			_plane.showFrozenInGray = not ( _plane.showFrozenInGray )
+
+
+	)
+	else
+		normal_modifier.flip = not ( normal_modifier.flip )
+
+
+)
+
+/**
+ */
+macroscript	_print_plane_set_normal_rightclick
+category:	"_3D-Print"
+buttontext:	"Normal"
+toolTip:	"Toggle Normnal"
+icon:	"across:4|id:#BTN_print_plane_nomal"
+(
+
+	if $PRINT_DUMMY_VOLUME != undefined then
+		$PRINT_DUMMY_VOLUME.modifiers[#Normal].enabled = not $PRINT_DUMMY_VOLUME.modifiers[#Normal].enabled
+)
+
 
 /*------------------------------------------------------------------------------
 
@@ -110,7 +171,7 @@ macroscript	_print_plane_current_layer
 category:	"_3D-Print"
 buttontext:	"Current Layer"
 tooltip:	""
-icon:	"across:3|control:spinner|type:#integer|range:[ 0, 5000, 0 ]|fieldwidth:48|align:#left|offset:[ -32, 8 ]"
+icon:	"across:4|control:spinner|type:#integer|range:[ 0, 5000, 0 ]|fieldwidth:48|offset:[ -32, 8 ]"
 (
 	--format "EventFired:	% \n" EventFired
 
@@ -126,7 +187,7 @@ macroscript	_print_layer_height
 category:	"_3D-Print"
 buttontext:	"Layer Height"
 tooltip:	"Height of printed layer in mm"
-icon:	"across:3|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.01|offset:[ -16, 8 ]"
+icon:	"across:4|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.01|offset:[ -16, 8 ]"
 (
 	format "EventFired:	% \n" EventFired
 )
