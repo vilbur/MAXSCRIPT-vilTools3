@@ -24,7 +24,7 @@ struct PlatformModifiers_v
 		format "\n"; print "PlatformGenerator_v._addModifiers()"
 
 		this._sanitizeMaxChamferValue()
-
+		--format "this.Options:	% \n" this.Options
 
 		this._addSweepModifier("Bar Width")
 

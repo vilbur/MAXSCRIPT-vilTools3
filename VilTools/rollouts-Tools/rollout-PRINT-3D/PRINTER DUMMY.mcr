@@ -105,7 +105,7 @@ icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset
 	if $PRINT_DUMMY_VOLUME == undefined then
 		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
 
-	if not $PRINT_DUMMY_VOLUME.isHidden
+	if not $PRINT_DUMMY_VOLUME.isHidden then
 	(
 
 		_plane = $PRINT_DUMMY_VOLUME
@@ -136,7 +136,7 @@ icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset
 	)
 	else
 	(
-		$PRINT_DUMMY_VOLUME.layer.on
+		$PRINT_DUMMY_VOLUME.layer.on = true
 		$PRINT_DUMMY_VOLUME.isHidden = false
 	)
 

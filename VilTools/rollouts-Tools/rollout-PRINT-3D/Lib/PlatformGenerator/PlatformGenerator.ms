@@ -18,6 +18,7 @@ struct PlatformGenerator_v
 (
 	/* construct */
 	source_obj, -- object to generate platforms
+	source_objects, -- object to generate platforms
 
 	export_size	= 1,
 
@@ -30,6 +31,8 @@ struct PlatformGenerator_v
 	verts_positions = #(), -- vertex positions to generate platforms
 
 	platform, -- result object
+	platforms = #(), -- vertex positions to generate platforms
+
 	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 
@@ -46,25 +49,32 @@ struct PlatformGenerator_v
 	/** /** Generate
 	  *
 	  */
-	function generate source_obj =
+	function generate source_objects =
 	(
 		format "\n"; print "PlatformGenerator_v.generate()"
-		format "source_obj:	% \n" source_obj
-
-		this.source_obj = source_obj
-
-
+		format "source_objects:	% \n" source_objects
 		Options.init()
 
 		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
 
-		this.getVertexPositions()
+		for _source_obj in source_objects do
+		(
+			this.verts_positions = #()
+			this.source_obj = _source_obj
+			format "this.source_obj:	% \n" this.source_obj
+			this.getVertexPositions()
+			format "\n-----------\nARRAY:verts_positions:\n";  for pos in this.verts_positions do format "pos:	%\n" pos
 
+			this._generatePlatformLines()
 
-		this._generateLines()
+			this._setParentOfPlatforms()
+
+			this._renamePlatform()
+		)
+
+		select this.platforms
 
 		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED
-
 
 		/* BACKUP
 			--if not this._askToContinue() then
@@ -85,14 +95,11 @@ struct PlatformGenerator_v
 			--format "Timer % s\n" ( ((timestamp()) - start_time) / 1000.0 )
 		*/
 
-		this._setParentOfPlatforms()
-
-		this._renamePlatform()
 
 		--for platform in platforms do
 		--	platform.pivot = source_obj.pivot
 
-		this.platform --return
+		this.platforms --return
 	),
 
 	/** Get vertexx positions
@@ -101,16 +108,22 @@ struct PlatformGenerator_v
 	function getVertexPositions =
 	(
 		--format "\n"; print "PlatformGenerator_v.getVertexxPositions()"
+		--if classOf source_obj == shape then
+
+
 		if superClassOf source_obj == shape then
 			this._getVertexPositionsFromShape()
 
 		else
 			this._getVertexPositionsFromEditablePoly()
 
-		verts_positions --return
+		this.verts_positions --return
 	),
 
 	private
+
+
+
 
 	/** Get vertex positions from editable poly
 	  *
@@ -149,13 +162,15 @@ struct PlatformGenerator_v
 	  */
 	function _getVertexPositionsFromShape =
 	(
-		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
+		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
 
 		/** Copy and collapse source spline
 		  */
 		function copyAndCollapseSourceObject =
 		(
 			--format "\n"; print "PlatformGenerator_v.copyAndCollapseSourceObject()"
+			nnl = #()
+
 			maxOps.cloneNodes this.source_obj cloneType:#copy newNodes:&nnl
 
 			--format "nnl[1]:	% \n" nnl[1]
@@ -169,21 +184,23 @@ struct PlatformGenerator_v
 		  */
 		function isNthVertex index =
 		(
-			format "\n"; print "PlatformGenerator_v.isNthVertex"
-			format "index:	% \n" index
+			--format "\n"; print "PlatformGenerator_v.isNthVertex"
+			--format "index:	% \n" index
 
 			--use_every_nth_vert_of_spline == 1 or ceil (test = use_every_nth_vert_of_spline/index as float ) == test
 			is_nth_vertex = index == 1 or use_every_nth_vert_of_spline == 1 or ceil (test = (index - 1)/use_every_nth_vert_of_spline as float ) == test
-			format "is_nth_vertex:	% \n" is_nth_vertex
+			--format "is_nth_vertex:	% \n" is_nth_vertex
 
 			is_nth_vertex --return
 			--true --return
 		)
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
 
-		format "use_every_nth_vert_of_spline:	% \n" use_every_nth_vert_of_spline
+		--format "use_every_nth_vert_of_spline:	% \n" use_every_nth_vert_of_spline
 
 		source_obj_copy = copyAndCollapseSourceObject()
+
+		format "numSplines source_obj_copy:	% \n" (numSplines source_obj_copy)
 
 		for spline_i = 1 to numSplines source_obj_copy do
 			for knot_i = 1 to numKnots source_obj_copy spline_i where isNthVertex (knot_i) do
@@ -196,9 +213,9 @@ struct PlatformGenerator_v
 	/** Generate lines
 	  *
 	  */
-	function _generateLines =
+	function _generatePlatformLines =
 	(
-		format "\n"; print "PlatformGenerator_v._generateLines()"
+		--format "\n"; print "PlatformGenerator_v._generatePlatformLines()"
 
 		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
 
@@ -230,14 +247,12 @@ struct PlatformGenerator_v
 		)
 
 		--this.platform = SplineShape pos:source_obj.pos name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
-		this.platform = SplineShape name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
+		platform = SplineShape name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
 
+		append this.platforms platform
 
 		for i = 1 to verts_positions.count do
 			_createLineForVertex (platform) (i) (verts_positions[i])
-
-
-
 	),
 
 	/** Set parent of platforms
@@ -245,14 +260,14 @@ struct PlatformGenerator_v
 	  */
 	function _setParentOfPlatforms =
 	(
-		format "\n"; print "PlatformGenerator_v._setParentOfPlatforms()"
+		--format "\n"; print "PlatformGenerator_v._setParentOfPlatforms()"
 		if bind_to_parent and this.source_obj.parent != undefined then
 			this.platform.parent = this.source_obj.parent
 
 		else
 			this.platform.parent = this.source_obj
 
-		format "this.platform.parent:	% \n" this.platform.parent
+		--format "this.platform.parent:	% \n" this.platform.parent
 	),
 
 	/** Platform name is same as source name

@@ -29,20 +29,11 @@ icon:	"across:3|height:32|width:128"
 
 			platforms = #()
 
-			--_selection = for obj in selection where superClassOf obj == GeometryClass collect obj
 			_selection = for obj in selection collect obj
-			format "_selection:	% \n" _selection
 
+			PlatformGenerator.generate( _selection as Array )
 
-
-			for obj in _selection do
-			(
-				platform = PlatformGenerator.generate(obj)
-
-				append platforms platform
-			)
-
-			select platforms
+			--selectmore _selection
 		)
 )
 
