@@ -27,32 +27,15 @@ function setPrintPlaneElevation layer_index incremental:false =
 	format "layer_height:	% \n" layer_height
 	format "layers_count:	% \n" layers_count
 
-
 	if layer_index < 0 or layer_index > layers_count then
 		layer_index = 	if layer_index < 0  then 0 else layers_count
 
 
-	--/* Get current value if macroscript fired by macro */
-	--val = if EventFired.get #val then EventFired.val else ROLLOUT_print_3d.SLIDER_set_elevation.value
-	--
-	format "layer_index:	% \n" layer_index
-
-
 	if $PRINT_DUMMY_VOLUME == undefined then
-		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
-
-	_plane = $PRINT_DUMMY_VOLUME
-
-	freeze _plane
-	_plane.showFrozenInGray	= false
-	_plane.backfacecull	= true
+		(PrinterVolume_v( ROLLOUT_export.SPIN_export_size.value ) ( ROLLOUT_print_3d.SPIN_layer_height.value )).createVolume(#RECTANGLE)
 
 
-	if classOf _plane.modifiers[1] != Normalmodifier then
-		addModifier _plane (Normalmodifier flip:on)
-
-
-	_plane.pos.z = layer_index * layer_height
+	$PRINT_DUMMY_VOLUME.pos.z = layer_index * layer_height
 
 
 	ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
@@ -85,6 +68,8 @@ icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#lef
 
 	setPrintPlaneElevation val incremental:true
 )
+
+
 /** ELEVATION +\- RIGHTCLICK
  */
 macroscript	_print_plane_set_elevation_minus
@@ -105,43 +90,55 @@ icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#lef
 
 )
 
-/**
+
+/** NORMAL BUTTON
  */
 macroscript	_print_plane_set_normal
 category:	"_3D-Print"
 buttontext:	"Normal"
-toolTip:	"Toggle Normal\n\nCTRL:	2-Sided\n\nSHIFT:	Xray\n\nALT:	Toggle Grey\Green"
+toolTip:	"Create\Unhide Plane\n\nToggle Normal if plane exists\n\nCTRL:	2-Sided\n\nSHIFT:	Xray\n\nALT:	Toggle Grey\Green"
 icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset:[ -16, 0 ]"
 (
 
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
 
 	if $PRINT_DUMMY_VOLUME == undefined then
-		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
+		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
 
-	_plane = $PRINT_DUMMY_VOLUME
-
-	normal_modifier = _plane.modifiers[#Normal]
-
-	--format "normal_modifier.flip:	% \n" normal_modifier.flip
-
-	if keyboard.controlPressed or keyboard.altPressed or keyboard.shiftPressed then
+	if not $PRINT_DUMMY_VOLUME.isHidden
 	(
-		normal_modifier.enabled = true
 
-		if keyboard.controlPressed then
-			_plane.backfacecull = not ( _plane.backfacecull )
+		_plane = $PRINT_DUMMY_VOLUME
 
-		if keyboard.shiftPressed then
-			_plane.xray = not ( _plane.xray )
+		normal_modifier = _plane.modifiers[#Normal]
 
-		if keyboard.altPressed then
-			_plane.showFrozenInGray = not ( _plane.showFrozenInGray )
+		if not normal_modifier.enabled then
+			normal_modifier.enabled = true
 
+		if keyboard.controlPressed or keyboard.altPressed or keyboard.shiftPressed then
+		(
+			normal_modifier.enabled = true
+
+			if keyboard.controlPressed then
+				_plane.backfacecull = not ( _plane.backfacecull )
+
+			if keyboard.shiftPressed then
+				_plane.xray = not ( _plane.xray )
+
+			if keyboard.altPressed then
+				_plane.showFrozenInGray = not ( _plane.showFrozenInGray )
+
+
+		)
+		else
+			normal_modifier.flip = not ( normal_modifier.flip )
 
 	)
 	else
-		normal_modifier.flip = not ( normal_modifier.flip )
+	(
+		$PRINT_DUMMY_VOLUME.layer.on
+		$PRINT_DUMMY_VOLUME.isHidden = false
+	)
 
 
 )
@@ -169,9 +166,9 @@ icon:	"across:4|id:#BTN_print_plane_nomal"
  */
 macroscript	_print_plane_current_layer
 category:	"_3D-Print"
-buttontext:	"Current Layer"
-tooltip:	""
-icon:	"across:4|control:spinner|type:#integer|range:[ 0, 5000, 0 ]|fieldwidth:48|offset:[ -32, 8 ]"
+buttontext:	"Current"
+tooltip:	"Set Current Layer"
+icon:	"across:4|control:spinner|id:#SPIN_current_layer|type:#integer|range:[ 0, 5000, 0 ]|fieldwidth:32|offset:[ -32, 8 ]|align:#left"
 (
 	--format "EventFired:	% \n" EventFired
 
@@ -218,7 +215,7 @@ icon:	"across:1|control:slider|orient:#horizontal|range:[ 0, 5000, 0 ]|ticks:500
 	--clearListener(); print("Cleared in:\n"+getSourceFileName())
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\rollouts-ExportTo\rollout-3D-PRINT\Lib\PrinterVolume\PrinterVolume.ms"
 	--
-	--(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
+	--(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
 )
 
 /**
@@ -231,24 +228,18 @@ toolTip:	"Reset plane to 0 on z Axis.\n\nDOUBLE RIGHTCLICK:Delete Plane"
 --icon:	"control:slider|orient:#horizontal|across:1|range:[ 0, 5000, 0 ]|ticks:5000|type:#integer"
 icon:	"control:slider"
 (
-	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+	clearListener(); print("Cleared in:\n"+getSourceFileName())
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
 
 	/* SET LAYER 0 */
 	if $PRINT_DUMMY_VOLUME != undefined and $PRINT_DUMMY_VOLUME.pos.z > 0 then
 		setPrintPlaneElevation 0
 
 	/* DELTE PLANE */
-	else
+	else if $PRINT_DUMMY_VOLUME != undefined then
 		delete $PRINT_DUMMY_VOLUME
-	--ROLLOUT_print_3d.SLIDER_set_elevation.value = 0
-
-	--macros.run "_3D-Print" "_print_plane_set_elevation"
-
-	--print "RIGHTCLICK"
-	--(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
-
 )
+
 
 /*------------------------------------------------------------------------------
 	PRINTER DUMMY
@@ -268,7 +259,7 @@ icon:	"control:slider"
 --	clearListener(); print("Cleared in:\n"+getSourceFileName())
 --	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
 --
---	(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#Rectangle)
+--	(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
 --)
 --
 --
@@ -285,7 +276,3 @@ icon:	"control:slider"
 --	--format "EventFired	= % \n" EventFired
 --	(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#box)
 --)
-
-
-
-

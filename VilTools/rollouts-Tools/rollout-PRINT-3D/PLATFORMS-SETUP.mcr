@@ -47,6 +47,8 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/PlatformGenerator/PlatformG
 --		--	select platforms
 --		--)
 --)
+
+
 /*------------------------------------------------------------------------------
 
 	PLATFORM OPTIONS
@@ -113,48 +115,3 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 1, 99,1 ]|width:64"
 	format "EventFired:	% \n" EventFired
 )
 
-
-/*------------------------------------------------------------------------------
-
-	GENERATE BUTTON
-
---------------------------------------------------------------------------------*/
-macroscript	_print_platform_generator
-category:	"_3D-Print"
-buttontext:	"Generate Platforms"
-tooltip:	"Generate Platforms"
-icon:	"across:1|height:32|width:128|offset:[0, 12]"
-(
-	on execute do
-		undo "Generate Platforms" on
-		(
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS.mcr"
-			clearListener(); print("Cleared in:\n"+getSourceFileName())
-
-			PlatformGenerator = PlatformGenerator_v export_size:ROLLOUT_export.SPIN_export_size.value use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
-
-
-			PlatformGenerator.Options.base_extrude	= ROLLOUT_print_3d.SPIN_base_width.value
-			PlatformGenerator.Options.bar_width	= ROLLOUT_print_3d.SPIN_bar_width.value
-			PlatformGenerator.Options.extrude_top	= ROLLOUT_print_3d.SPIN_top_extrude.value
-			PlatformGenerator.Options.chamfer_top_divider	= ROLLOUT_print_3d.SPIN_top_chamfer_multiplier.value
-
-
-			platforms = #()
-
-			--_selection = for obj in selection where superClassOf obj == GeometryClass collect obj
-			_selection = for obj in selection collect obj
-			format "_selection:	% \n" _selection
-
-
-
-			for obj in _selection do
-			(
-				platform = PlatformGenerator.generate(obj)
-
-				append platforms platform
-			)
-
-			select platforms
-		)
-)

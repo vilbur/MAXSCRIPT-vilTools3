@@ -53,16 +53,12 @@ struct PlatformGenerator_v
 
 		this.source_obj = source_obj
 
+
 		Options.init()
 
 		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
 
-		if superClassOf source_obj == shape then
-			this._getVertexPositionsFromShape()
-
-		else
-			this._getVertexPositionsFromEditablePoly()
-
+		this.getVertexPositions()
 
 
 		this._generateLines()
@@ -99,6 +95,21 @@ struct PlatformGenerator_v
 		this.platform --return
 	),
 
+	/** Get vertexx positions
+	  *
+	  */
+	function getVertexPositions =
+	(
+		--format "\n"; print "PlatformGenerator_v.getVertexxPositions()"
+		if superClassOf source_obj == shape then
+			this._getVertexPositionsFromShape()
+
+		else
+			this._getVertexPositionsFromEditablePoly()
+
+		verts_positions --return
+	),
+
 	private
 
 	/** Get vertex positions from editable poly
@@ -110,15 +121,21 @@ struct PlatformGenerator_v
 		vertext_count	= getNumVerts source_obj.mesh
 		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
 
-		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array
+		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array  -- get all verts if nothing selected
 
 		--maxOps.CollapseNodeTo source_obj 1 off
 
-		for i = 1 to verts_to_generate.count do
+		--hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject)
+		hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject)
+		--format "hidden_verts:	% \n" hidden_verts
+
+		--format "findItem hidden_verts 1:	% \n" (findItem hidden_verts 1)
+		--format "findItem hidden_verts 16575:	% \n" (findItem hidden_verts 16575)
+
+		for i = 1 to verts_to_generate.count where findItem hidden_verts verts_to_generate[i] == 0 do
 			append verts_positions ( polyop.getVert source_obj verts_to_generate[i])
 
-
-		format "\n-----------\nARRAY:verts_positions:\n";  for pos in verts_positions do format "pos:	%\n" pos
+		--format "\n-----------\nARRAY:verts_positions:\n";  for pos in verts_positions do format "pos:	%\n" pos
 
 			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
 
@@ -152,18 +169,19 @@ struct PlatformGenerator_v
 		  */
 		function isNthVertex index =
 		(
-			--format "\n"; print "PlatformGenerator_v.isNthVertex"
-			--format "index:	% \n" index
+			format "\n"; print "PlatformGenerator_v.isNthVertex"
+			format "index:	% \n" index
 
 			--use_every_nth_vert_of_spline == 1 or ceil (test = use_every_nth_vert_of_spline/index as float ) == test
 			is_nth_vertex = index == 1 or use_every_nth_vert_of_spline == 1 or ceil (test = (index - 1)/use_every_nth_vert_of_spline as float ) == test
-			--format "is_nth_vertex:	% \n" is_nth_vertex
+			format "is_nth_vertex:	% \n" is_nth_vertex
 
 			is_nth_vertex --return
 			--true --return
 		)
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
 
-		--format "use_every_nth_vert_of_spline:	% \n" use_every_nth_vert_of_spline
+		format "use_every_nth_vert_of_spline:	% \n" use_every_nth_vert_of_spline
 
 		source_obj_copy = copyAndCollapseSourceObject()
 
@@ -180,7 +198,7 @@ struct PlatformGenerator_v
 	  */
 	function _generateLines =
 	(
-		--format "\n"; print "PlatformGenerator_v._generateLines()"
+		format "\n"; print "PlatformGenerator_v._generateLines()"
 
 		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
 
@@ -234,7 +252,7 @@ struct PlatformGenerator_v
 		else
 			this.platform.parent = this.source_obj
 
-		--format "this.platform.parent:	% \n" this.platform.parent
+		format "this.platform.parent:	% \n" this.platform.parent
 	),
 
 	/** Platform name is same as source name
