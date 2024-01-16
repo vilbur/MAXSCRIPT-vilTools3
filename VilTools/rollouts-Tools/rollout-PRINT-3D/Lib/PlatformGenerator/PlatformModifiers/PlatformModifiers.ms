@@ -21,7 +21,7 @@ struct PlatformModifiers_v
 	  */
 	function addModifiers =
 	(
-		format "\n"; print "PlatformGenerator_v._addModifiers()"
+		--format "\n"; print "PlatformGenerator_v._addModifiers()"
 
 		this._sanitizeMaxChamferValue()
 		--format "this.Options:	% \n" this.Options
@@ -60,9 +60,11 @@ struct PlatformModifiers_v
 	function _addSweepModifier name =
 	(
 		--format "\n"; print "PlatformGenerator_v._addSweepModifier()"
-		format "Adding Sweep\n"
-		format "bar_width:	% \n" this.Options.bar_width
-		format "bar_radius:	% \n" (this.Options.bar_width / 2)
+		--format "Adding Sweep\n"
+		--format "bar_width:	% \n" this.Options.bar_width
+		--format "bar_radius:	% \n" (this.Options.bar_width / 2)
+
+		max modify mode
 
 		sweep_mod = sweep name:name
 
@@ -89,7 +91,7 @@ struct PlatformModifiers_v
 	function _selectFace name mat_id  =
 	(
 		--format "\n"; print "PlatformGenerator_v._selectFace()"
-		format "Adding Volume Select\n"
+		--format "Adding Volume Select\n"
 
 		volume_sel_mod = Vol__Select name:name
 
@@ -105,8 +107,8 @@ struct PlatformModifiers_v
 	  */
 	function _chamfer name amount selection_option:#STACK materialoption:#OFF /* minangle:  */ =
 	(
-		format "\n"; print "PlatformGenerator_v._chamfer()"
-		format "%:	% \n" name amount
+		--format "\n"; print "PlatformGenerator_v._chamfer()"
+		--format "%:	% \n" name amount
 
 		chamfer_mod = Chamfer name:name
 

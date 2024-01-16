@@ -33,7 +33,7 @@ struct PlatformGenerator_v
 	platform, -- result object
 	platforms = #(), -- vertex positions to generate platforms
 
-	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #BASE, 4 ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
+	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 
 	estimated_time,
@@ -51,8 +51,12 @@ struct PlatformGenerator_v
 	  */
 	function generate source_objects =
 	(
-		format "\n"; print "PlatformGenerator_v.generate()"
-		format "source_objects:	% \n" source_objects
+		--format "\n"; print "PlatformGenerator_v.generate()"
+		--format "source_objects:	% \n" source_objects
+
+		max create mode
+
+
 		Options.init()
 
 		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
@@ -61,9 +65,9 @@ struct PlatformGenerator_v
 		(
 			this.verts_positions = #()
 			this.source_obj = _source_obj
-			format "this.source_obj:	% \n" this.source_obj
+			--format "this.source_obj:	% \n" this.source_obj
 			this.getVertexPositions()
-			format "\n-----------\nARRAY:verts_positions:\n";  for pos in this.verts_positions do format "pos:	%\n" pos
+			--format "\n-----------\nARRAY:verts_positions:\n";  for pos in this.verts_positions do format "pos:	%\n" pos
 
 			this._generatePlatformLines()
 
@@ -108,10 +112,10 @@ struct PlatformGenerator_v
 	function getVertexPositions =
 	(
 		--format "\n"; print "PlatformGenerator_v.getVertexxPositions()"
-		--if classOf source_obj == shape then
+		if classOf source_obj == Point then
+			append verts_positions source_obj.pos
 
-
-		if superClassOf source_obj == shape then
+		else if superClassOf source_obj == shape then
 			this._getVertexPositionsFromShape()
 
 		else
@@ -162,7 +166,7 @@ struct PlatformGenerator_v
 	  */
 	function _getVertexPositionsFromShape =
 	(
-		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
 
 		/** Copy and collapse source spline
 		  */
@@ -200,7 +204,7 @@ struct PlatformGenerator_v
 
 		source_obj_copy = copyAndCollapseSourceObject()
 
-		format "numSplines source_obj_copy:	% \n" (numSplines source_obj_copy)
+		--format "numSplines source_obj_copy:	% \n" (numSplines source_obj_copy)
 
 		for spline_i = 1 to numSplines source_obj_copy do
 			for knot_i = 1 to numKnots source_obj_copy spline_i where isNthVertex (knot_i) do
@@ -225,21 +229,57 @@ struct PlatformGenerator_v
 		function _createLineForVertex _shape spline_index pos =
 		(
 			--format "\n"; print "PlatformGenerator_v.createLineForVertex()"
+
 			addNewSpline _shape
 
+			/*------------------------------------------------------------------------------
+				TOP POINT
+			--------------------------------------------------------------------------------*/
 			addKnot _shape spline_index #corner #line pos
 
+			/*------------------------------------------------------------------------------
+				OTHER POINTS
+			--------------------------------------------------------------------------------*/
+
+			if classOf source_obj == Point and (child_point = source_obj.children[1]) != undefined then
+				while child_point != undefined do
+				(
+					pos = child_point.pos
+
+					addKnot _shape spline_index #corner #line pos
+
+					child_point = child_point.children[1]
+				)
+
+
+			/*------------------------------------------------------------------------------
+				ABOVE GROUND POINT
+			--------------------------------------------------------------------------------*/
 			pos.z = this.Options.base_height -- set knot above grount to set base height and keep last segment straight for extrude
 
 			addKnot _shape spline_index #corner #line pos
 
-			setMaterialID _shape spline_index 1 mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+			--setMaterialID _shape spline_index 1 mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
 			pos.z = 0 -- set platform to ground
 
+			/*------------------------------------------------------------------------------
+				GROUND POINT
+			--------------------------------------------------------------------------------*/
 			addKnot _shape spline_index #corner #line pos
 
-			setMaterialID _shape spline_index 2 mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID
+			--setMaterialID _shape spline_index 2 mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+
+			/*------ SET MATERIAL TO SEGMENTS ------*/
+			num_of_segments = numSegments _shape ( numSplines _shape)
+
+			for segment_i = 1 to num_of_segments do
+				setMaterialID _shape spline_index segment_i mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+
+			/*------ SET MATERIAL TO BOTTOM SEGMENT ------*/
+
+			setMaterialID _shape spline_index num_of_segments mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+
 
 			updateShape _shape
 
