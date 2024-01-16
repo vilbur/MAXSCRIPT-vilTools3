@@ -16,7 +16,7 @@ icon:	"across:3|height:32|width:128"
 		undo "Generate Platforms" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 
 			PlatformGenerator = PlatformGenerator_v export_size:ROLLOUT_export.SPIN_export_size.value use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
 
@@ -55,7 +55,7 @@ icon:	"across:3|height:32|width:128"
 		undo "Generate Points" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 			--messageBox "Yupiii" title:"Title"  beep:false
 
 			PlatformGenerator = PlatformGenerator_v source_obj: selection[1]

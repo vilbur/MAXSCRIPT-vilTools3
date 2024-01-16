@@ -22,7 +22,7 @@ struct PlatformGenerator_v
 
 	export_size	= 1,
 
-	bind_to_parent = false, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
+	bind_to_parent = true, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
 
 	/* options */
 	use_every_nth_vert_of_spline = 1,
@@ -51,8 +51,8 @@ struct PlatformGenerator_v
 	  */
 	function generate source_objects =
 	(
-		--format "\n"; print "PlatformGenerator_v.generate()"
-		--format "source_objects:	% \n" source_objects
+		format "\n"; print "PlatformGenerator_v.generate()"
+		format "source_objects:	% \n" source_objects
 
 		max create mode
 
@@ -64,12 +64,13 @@ struct PlatformGenerator_v
 		for _source_obj in source_objects do
 		(
 			this.verts_positions = #()
+
 			this.source_obj = _source_obj
-			--format "this.source_obj:	% \n" this.source_obj
+
 			this.getVertexPositions()
 			--format "\n-----------\nARRAY:verts_positions:\n";  for pos in this.verts_positions do format "pos:	%\n" pos
 
-			this._generatePlatformLines()
+			this._generatePlatformsLines()
 
 			this._setParentOfPlatforms()
 
@@ -127,14 +128,12 @@ struct PlatformGenerator_v
 	private
 
 
-
-
 	/** Get vertex positions from editable poly
 	  *
 	  */
 	function _getVertexPositionsFromEditablePoly =
 	(
-		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
 		vertext_count	= getNumVerts source_obj.mesh
 		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
 
@@ -142,14 +141,9 @@ struct PlatformGenerator_v
 
 		--maxOps.CollapseNodeTo source_obj 1 off
 
-		--hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject)
-		hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject)
-		--format "hidden_verts:	% \n" hidden_verts
-
-		--format "findItem hidden_verts 1:	% \n" (findItem hidden_verts 1)
-		--format "findItem hidden_verts 16575:	% \n" (findItem hidden_verts 16575)
-
-		for i = 1 to verts_to_generate.count where findItem hidden_verts verts_to_generate[i] == 0 do
+		--hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject ) -- DOESN'T WORK ON NO EDITABLE POLY
+		--for i = 1 to verts_to_generate.count where findItem hidden_verts verts_to_generate[i] == 0 do
+		for i = 1 to verts_to_generate.count do
 			append verts_positions ( polyop.getVert source_obj verts_to_generate[i])
 
 		--format "\n-----------\nARRAY:verts_positions:\n";  for pos in verts_positions do format "pos:	%\n" pos
@@ -217,19 +211,27 @@ struct PlatformGenerator_v
 	/** Generate lines
 	  *
 	  */
-	function _generatePlatformLines =
+	function _generatePlatformsLines =
 	(
-		--format "\n"; print "PlatformGenerator_v._generatePlatformLines()"
+		format "\n"; print "PlatformGenerator_v._generatePlatformsLines()"
+		format "this.source_obj:	% \n" this.source_obj
 
 		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
+
 
 		/** Create line for vertex
 		  *
 		  */
 		function _createLineForVertex _shape spline_index pos =
 		(
-			--format "\n"; print "PlatformGenerator_v.createLineForVertex()"
+			/** Get first child point of object
+			  */
+			function getChildPoint parent_point = (for i = 1 to parent_point.children.count where classOf parent_point.children[i] == Point collect parent_point.children[i] ) [1]
 
+
+			/*------------------------------------------------------------------------------
+				CREATE SPLINE
+			--------------------------------------------------------------------------------*/
 			addNewSpline _shape
 
 			/*------------------------------------------------------------------------------
@@ -241,15 +243,16 @@ struct PlatformGenerator_v
 				OTHER POINTS
 			--------------------------------------------------------------------------------*/
 
-			if classOf source_obj == Point and (child_point = source_obj.children[1]) != undefined then
-				while child_point != undefined do
-				(
-					pos = child_point.pos
+			parent_point = source_obj
 
-					addKnot _shape spline_index #corner #line pos
+			while (child_point = getChildPoint (parent_point)) != undefined do
+			(
+				pos = child_point.pos
 
-					child_point = child_point.children[1]
-				)
+				addKnot _shape spline_index #corner #line pos
+
+				parent_point = child_point
+			)
 
 
 			/*------------------------------------------------------------------------------
@@ -286,8 +289,7 @@ struct PlatformGenerator_v
 			_shape --return
 		)
 
-		--this.platform = SplineShape pos:source_obj.pos name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
-		platform = SplineShape name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor()) isSelected:on
+		platform = SplineShape name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor())
 
 		append this.platforms platform
 
