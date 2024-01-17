@@ -69,6 +69,18 @@ function createSourceSpline =
 	normalize_mod = Normalize_Spline2 NormalizeType:1 numKnots: 10
 
 	modPanel.addModToSelection (normalize_mod) ui:on
+
+	_Circle_child = copy _Circle
+
+	_Circle_child.parent = _Circle
+
+	--format "_Circle_child:	% \n" _Circle_child
+
+	--format "_Circle_child.radius:	% \n" _Circle_child.radius
+	_Circle_child.pos.z -=  getUnit(10)
+	_Circle_child.radius += getUnit(10)
+
+	select _Circle
 )
 
 /** Create test line
@@ -129,12 +141,12 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:4
 
 --createSourceMesh segments:31
-createSourceMesh segments:2 vertex_selection:#{3..4}
+--createSourceMesh segments:2 vertex_selection:#{3..4}
 
 
 
-/* create SPLINE object as source for platforms */
---createSourceSpline()
+/* create SPLINE object as source for platforms  */
+createSourceSpline()
 
 
 /* create POINTS object as source for platforms */
@@ -158,8 +170,3 @@ PlatformGenerator.generate( selection )
 
 /* REBUILD EXISTING PALTFROMS */
 --PlatformGenerator.rebuild( selection )
-
-
-
-
-

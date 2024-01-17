@@ -32,6 +32,7 @@ struct PlatformGenerator_v
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
+	PlatformObjectInstance,
 	PlatformModifiers,	--PlatformModifiers_v(),
 
 	/* reference */
@@ -54,6 +55,9 @@ struct PlatformGenerator_v
 
 		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
 
+		PlatformObjectInstance = PlatformObject_v layer_height:Options.base_height mat_ids:mat_ids
+
+
 		/* GENERATE PLATFORMS FOR EACH OBJECT */
 		for source_obj in source_objects do
 			this.getVertexPositions( source_obj )
@@ -61,7 +65,7 @@ struct PlatformGenerator_v
 
 		for PlatformObject in PlatformObjects do
 			PlatformObject.generatePlatform()
-			--format "PlatformObject:	% \n" PlatformObject
+
 
 		--	this._setParentOfPlatforms()
 		--
@@ -71,9 +75,9 @@ struct PlatformGenerator_v
 		select (this._getPlatformObjects())
 
 		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
-		--
+
 		--EnableSceneRedraw()
-		--
+
 		--this.platforms --return
 	),
 
@@ -142,18 +146,15 @@ struct PlatformGenerator_v
 
 			wirecolor = if (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
 
+			PlatformObject = this._getPlatformObject(source_obj)(wirecolor)
 			--format "_vertex_color:	% \n" _vertex_color
 			--format "\n\nvertex_index:	% \n" vertex_index
+			append PlatformObjects PlatformObject
 
-			PlatformObject = PlatformObject_v source_obj:source_obj wirecolor:wirecolor layer_height:Options.base_height mat_ids:mat_ids
-
-			append PlatformObject.verts_positions ( polyop.getVert source_obj vertex_index)
 
 			PlatformObject.normal = ( getnormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
 
-
-			append PlatformObjects PlatformObject
-
+			append PlatformObject.verts_positions ( polyop.getVert source_obj vertex_index)
 
 			--append verts_positions ( polyop.getVert source_obj vertex_index)
 		)
@@ -174,15 +175,15 @@ struct PlatformGenerator_v
 		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
 		/** Copy and collapse source spline
 		  */
-		function copyAndCollapseSourceObject source_obj =
+		function copyAndCollapseSourceObject source_objects =
 		(
 			nnl = #()
 
-			maxOps.cloneNodes source_obj cloneType:#copy newNodes:&nnl
+			maxOps.cloneNodes source_objects cloneType:#copy newNodes:&nnl
 
-			convertTo nnl[1] SplineShape
+			convertTo nnl SplineShape
 
-			nnl[1] --return
+			nnl --return
 		)
 
 		/** test if vertexx index is nth vertex in spline
@@ -195,13 +196,20 @@ struct PlatformGenerator_v
 			is_nth_vertex --return
 		)
 
-		source_obj_copy = copyAndCollapseSourceObject(source_obj)
+		source_splines = copyAndCollapseSourceObject( this._getSameChildren (source_obj) )
 
-		for spline_i = 1 to numSplines source_obj_copy do
-			for knot_i = 1 to numKnots source_obj_copy spline_i where isNthVertex (knot_i) do
-				append verts_positions (getKnotPoint source_obj_copy spline_i knot_i)
+		/* Get platform object for each pline vertex */
+		for spline_i = 1 to numSplines source_splines[1] do
+			for knot_i = 1 to numKnots source_splines[1] spline_i where isNthVertex (knot_i) do
+			(
+				PlatformObject = this._getPlatformObject(source_obj)(source_obj.wirecolor)
 
-		delete source_obj_copy
+				for shape_i = 1 to source_splines.count do
+					append PlatformObject.verts_positions (getKnotPoint source_splines[shape_i] spline_i knot_i)
+			)
+
+
+		delete source_splines
 	),
 
 	/** Get vertex positions from editable poly
@@ -226,8 +234,43 @@ struct PlatformGenerator_v
 
 	),
 
+	/** Get children of given object with same class
+	  */
+	function _getSameChildren obj =
+	(
+		format "\n"; print "PlatformGenerator_v.getChildren()"
+
+		fn getChildPoint parent_obj = (for i = 1 to parent_obj.children.count where classOf parent_obj.children[i] == classOf parent_obj collect parent_obj.children[i] ) [1]
+
+		children = #(obj)
 
 
+		if classOf ( parent_obj = obj ) == classOf obj then
+			while (child_obj = getChildPoint (parent_obj)) != undefined do
+			(
+				append children child_obj
+
+				parent_obj = child_obj
+			)
+
+		children --return
+	),
+
+	/** Set platform object
+	  *
+	  */
+	function _getPlatformObject source_obj wirecolor =
+	(
+		--format "\n"; print "PlatformGenerator_v._getPlatformObject()"
+		PlatformObject = deepCopy PlatformObjectInstance
+
+		PlatformObject.source_obj	= source_obj
+		PlatformObject.wirecolor	= wirecolor
+
+		append PlatformObjects PlatformObject
+
+		PlatformObject --return
+	),
 
 	/** Get platform objects
 	  *
