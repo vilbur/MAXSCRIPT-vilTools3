@@ -31,12 +31,23 @@ struct PlatformObject_v
 	function generatePlatform =
 	(
 		format "\n"; print "PlatformObject_v.generatePlatform()"
+		format "this.normal:	% \n" this.normal
+		format "this.wirecolor:	% \n" this.wirecolor
 
 		platform = SplineShape name:( source_obj.name + "-platform" ) wirecolor:wirecolor
 
 		format "verts_positions:	% \n" verts_positions
 
 		this._createLineFromPoints()
+	),
+
+	/** Add vert pos
+	  *
+	  */
+	function addVert pos =
+	(
+		--format "\n"; print "PlatformObject_v.addVertPos()"
+		append this.verts_positions pos
 	),
 
 	private

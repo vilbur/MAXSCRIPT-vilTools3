@@ -74,9 +74,6 @@ function createSourceSpline =
 
 	_Circle_child.parent = _Circle
 
-	--format "_Circle_child:	% \n" _Circle_child
-
-	--format "_Circle_child.radius:	% \n" _Circle_child.radius
 	_Circle_child.pos.z -=  getUnit(10)
 	_Circle_child.radius += getUnit(10)
 
@@ -141,12 +138,12 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:4
 
 --createSourceMesh segments:31
---createSourceMesh segments:2 vertex_selection:#{3..4}
+createSourceMesh segments:2 vertex_selection:#{3..4}
 
 
 
 /* create SPLINE object as source for platforms  */
-createSourceSpline()
+--createSourceSpline()
 
 
 /* create POINTS object as source for platforms */

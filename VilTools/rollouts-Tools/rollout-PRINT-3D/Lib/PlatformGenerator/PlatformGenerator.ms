@@ -72,7 +72,7 @@ struct PlatformGenerator_v
 		--	this._renamePlatform()
 		--)
 		--
-		select (this._getPlatformObjects())
+		select (this._getPlatformObjects()) -- IMPORTANT - must b selected bfore applying modifiers
 
 		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 
@@ -115,7 +115,7 @@ struct PlatformGenerator_v
 		else if superClassOf source_obj == shape then
 			this._getVertexPositionsFromShape(source_obj)
 
-		/* OBJECT */
+		/* EDITABLE POLY OBJECT */
 		else
 			this._getVertexPositionsFromEditablePoly(source_obj)
 
@@ -144,28 +144,19 @@ struct PlatformGenerator_v
 		(
 			vertex_index = verts_to_generate[i]
 
-			wirecolor = if (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
+
+
+			wirecolor = if getNumCPVVerts source_obj.mesh > 0 and  (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
 
 			PlatformObject = this._getPlatformObject(source_obj)(wirecolor)
-			--format "_vertex_color:	% \n" _vertex_color
-			--format "\n\nvertex_index:	% \n" vertex_index
-			append PlatformObjects PlatformObject
 
+			--append PlatformObjects PlatformObject
 
 			PlatformObject.normal = ( getnormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
 
 			append PlatformObject.verts_positions ( polyop.getVert source_obj vertex_index)
-
-			--append verts_positions ( polyop.getVert source_obj vertex_index)
 		)
 
-		--format "\n-----------\nARRAY:verts_positions:\n";  for pos in verts_positions do format "pos:	%\n" pos
-
-			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
-
-
-				--pos += spnLength.value * normalize( normal )
-			*/
 	),
 
 	/** Get vertex positions from spline
@@ -205,7 +196,7 @@ struct PlatformGenerator_v
 				PlatformObject = this._getPlatformObject(source_obj)(source_obj.wirecolor)
 
 				for shape_i = 1 to source_splines.count do
-					append PlatformObject.verts_positions (getKnotPoint source_splines[shape_i] spline_i knot_i)
+					PlatformObject.addVert (getKnotPoint source_splines[shape_i] spline_i knot_i)
 			)
 
 
@@ -217,20 +208,12 @@ struct PlatformGenerator_v
 	  */
 	function _getPointHelperPositions source_obj =
 	(
-		fn getChildPoint parent_point = (for i = 1 to parent_point.children.count where classOf parent_point.children[i] == Point collect parent_point.children[i] ) [1]
+		point_helpers = this._getSameChildren (source_obj)
 
-		--	if classOf ( parent_point = source_obj ) == Point then
-		--		while (child_point = getChildPoint (parent_point)) != undefined do
-		--		(
-		--			pos = child_point.pos
-		--
-		--			addKnot _shape spline_index #corner #line pos
-		--
-		--			parent_point = child_point
-		--		)
+		PlatformObject = this._getPlatformObject(source_obj)(source_obj.wirecolor)
 
-
-		append verts_positions source_obj.pos
+		for point_helper in point_helpers do
+			PlatformObject.addVert (point_helper.pos)
 
 	),
 
