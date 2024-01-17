@@ -1,5 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/PlatformOptions/PlatformOptions.ms" )	-- "./PlatformOptions/PlatformOptions.ms"
 filein( getFilenamePath(getSourceFileName()) + "/PlatformModifiers/PlatformModifiers.ms" )	-- "./PlatformModifiers/PlatformModifiers.ms"
+filein( getFilenamePath(getSourceFileName()) + "/PlatformObject/PlatformObject.ms" )	-- "./PlatformObject/PlatformObject.ms"
 
 /* Generate Platforms for 3D print
   *
@@ -17,27 +18,17 @@ filein( getFilenamePath(getSourceFileName()) + "/PlatformModifiers/PlatformModif
 struct PlatformGenerator_v
 (
 	/* construct */
-	source_obj, -- object to generate platforms
-	source_objects, -- object to generate platforms
-
 	export_size	= 1,
 
-	bind_to_parent = true, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
+	------bind_to_parent = true, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
 
 	/* options */
 	use_every_nth_vert_of_spline = 1,
 
 	/* properties */
-	verts_positions = #(), -- vertex positions to generate platforms
-
-	platform, -- result object
-	platforms = #(), -- vertex positions to generate platforms
+	PlatformObjects = #(),
 
 	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
-
-
-	estimated_time,
-	command_panel_shown = cui.commandPanelOpen,
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
@@ -54,75 +45,77 @@ struct PlatformGenerator_v
 		format "\n"; print "PlatformGenerator_v.generate()"
 		format "source_objects:	% \n" source_objects
 
+		/* SETUP */
 		max create mode
 
+		--DisableSceneRedraw() -- disable for development
 
 		Options.init()
 
 		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
 
-		for _source_obj in source_objects do
-		(
-			this.verts_positions = #()
-
-			this.source_obj = _source_obj
-
-			this.getVertexPositions()
-			--format "\n-----------\nARRAY:verts_positions:\n";  for pos in this.verts_positions do format "pos:	%\n" pos
-
-			this._generatePlatformsLines()
-
-			this._setParentOfPlatforms()
-
-			this._renamePlatform()
-		)
-
-		select this.platforms
-
-		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED
-
-		/* BACKUP
-			--if not this._askToContinue() then
-			--	 return platforms
-
-			--DisableSceneRedraw()
-
-			--this._toggleCommandPannel()
+		/* GENERATE PLATFORMS FOR EACH OBJECT */
+		for source_obj in source_objects do
+			this.getVertexPositions( source_obj )
 
 
-			--EnableSceneRedraw()
-			--redrawViews()
+		for PlatformObject in PlatformObjects do
+			PlatformObject.generatePlatform()
+			--format "PlatformObject:	% \n" PlatformObject
 
-			--format "\n"
-			--format "estimated_time:	% \n" estimated_time
-			--format "% Platforms takes: % s\n" verts_to_generate.count ( ((timestamp()) - start_time) / 1000.0 )
-			--
-			--format "Timer % s\n" ( ((timestamp()) - start_time) / 1000.0 )
-		*/
+		--	this._setParentOfPlatforms()
+		--
+		--	this._renamePlatform()
+		--)
+		--
+		select (this._getPlatformObjects())
 
-
-		--for platform in platforms do
-		--	platform.pivot = source_obj.pivot
-
-		this.platforms --return
+		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
+		--
+		--EnableSceneRedraw()
+		--
+		--this.platforms --return
 	),
 
-	/** Get vertexx positions
+	/** Rebuild Existing platforms
+	  *
+	  * Get "Editable Spline" obejcts with parent
 	  *
 	  */
-	function getVertexPositions =
+	function rebuild platform_objects =
 	(
-		--format "\n"; print "PlatformGenerator_v.getVertexxPositions()"
+		format "\n"; print "PlatformGenerator_v.rebuild()"
+
+		platforms_to_rebuild	=  for obj in platform_objects where superClassOf obj.baseobject == shape and obj.parent != undefined collect obj
+
+		source_objects = for obj in platforms_to_rebuild collect obj.parent
+
+
+		delete platforms_to_rebuild
+
+		this.generate (source_objects)
+	),
+
+	/** Get platform positions from:
+	  * 	A) From point helper
+	  * 	B) From Line
+	  * 	C) From Mesh Object
+	  */
+	function getVertexPositions source_obj =
+	(
+		/* POINT HELPER */
 		if classOf source_obj == Point then
-			append verts_positions source_obj.pos
+			this._getPointHelperPositions(source_obj)
 
+		/* LINE */
 		else if superClassOf source_obj == shape then
-			this._getVertexPositionsFromShape()
+			this._getVertexPositionsFromShape(source_obj)
 
+		/* OBJECT */
 		else
-			this._getVertexPositionsFromEditablePoly()
+			this._getVertexPositionsFromEditablePoly(source_obj)
 
-		this.verts_positions --return
+		--this.verts_positions --return
 	),
 
 	private
@@ -131,26 +124,44 @@ struct PlatformGenerator_v
 	/** Get vertex positions from editable poly
 	  *
 	  */
-	function _getVertexPositionsFromEditablePoly =
+	function _getVertexPositionsFromEditablePoly source_obj =
 	(
-		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		--format "classOf source_obj:	% \n" (classOf source_obj)
+		--format "classOf source_obj:	% \n" (classOf source_obj.mesh)
 		vertext_count	= getNumVerts source_obj.mesh
 		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
 
 		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array  -- get all verts if nothing selected
 
-		--maxOps.CollapseNodeTo source_obj 1 off
-
 		--hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject ) -- DOESN'T WORK ON NO EDITABLE POLY
 		--for i = 1 to verts_to_generate.count where findItem hidden_verts verts_to_generate[i] == 0 do
 		for i = 1 to verts_to_generate.count do
-			append verts_positions ( polyop.getVert source_obj verts_to_generate[i])
+		(
+			vertex_index = verts_to_generate[i]
+
+			wirecolor = if (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
+
+			--format "_vertex_color:	% \n" _vertex_color
+			--format "\n\nvertex_index:	% \n" vertex_index
+
+			PlatformObject = PlatformObject_v source_obj:source_obj wirecolor:wirecolor layer_height:Options.base_height mat_ids:mat_ids
+
+			append PlatformObject.verts_positions ( polyop.getVert source_obj vertex_index)
+
+			PlatformObject.normal = ( getnormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
+
+
+			append PlatformObjects PlatformObject
+
+
+			--append verts_positions ( polyop.getVert source_obj vertex_index)
+		)
 
 		--format "\n-----------\nARRAY:verts_positions:\n";  for pos in verts_positions do format "pos:	%\n" pos
 
 			/* BACKUP FOR FUTURE USE -- generate line from vertex normal
 
-				--normal = (getNormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
 
 				--pos += spnLength.value * normalize( normal )
 			*/
@@ -158,47 +169,33 @@ struct PlatformGenerator_v
 
 	/** Get vertex positions from spline
 	  */
-	function _getVertexPositionsFromShape =
+	function _getVertexPositionsFromShape source_obj =
 	(
 		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
-
 		/** Copy and collapse source spline
 		  */
-		function copyAndCollapseSourceObject =
+		function copyAndCollapseSourceObject source_obj =
 		(
-			--format "\n"; print "PlatformGenerator_v.copyAndCollapseSourceObject()"
 			nnl = #()
 
-			maxOps.cloneNodes this.source_obj cloneType:#copy newNodes:&nnl
+			maxOps.cloneNodes source_obj cloneType:#copy newNodes:&nnl
 
-			--format "nnl[1]:	% \n" nnl[1]
 			convertTo nnl[1] SplineShape
 
 			nnl[1] --return
 		)
 
 		/** test if vertexx index is nth vertex in spline
-		  *
 		  */
 		function isNthVertex index =
 		(
 			--format "\n"; print "PlatformGenerator_v.isNthVertex"
-			--format "index:	% \n" index
-
-			--use_every_nth_vert_of_spline == 1 or ceil (test = use_every_nth_vert_of_spline/index as float ) == test
 			is_nth_vertex = index == 1 or use_every_nth_vert_of_spline == 1 or ceil (test = (index - 1)/use_every_nth_vert_of_spline as float ) == test
-			--format "is_nth_vertex:	% \n" is_nth_vertex
 
 			is_nth_vertex --return
-			--true --return
 		)
-		--clearListener(); print("Cleared in:\n"+getSourceFileName())
 
-		--format "use_every_nth_vert_of_spline:	% \n" use_every_nth_vert_of_spline
-
-		source_obj_copy = copyAndCollapseSourceObject()
-
-		--format "numSplines source_obj_copy:	% \n" (numSplines source_obj_copy)
+		source_obj_copy = copyAndCollapseSourceObject(source_obj)
 
 		for spline_i = 1 to numSplines source_obj_copy do
 			for knot_i = 1 to numKnots source_obj_copy spline_i where isNthVertex (knot_i) do
@@ -207,139 +204,39 @@ struct PlatformGenerator_v
 		delete source_obj_copy
 	),
 
-
-	/** Generate lines
+	/** Get vertex positions from editable poly
 	  *
 	  */
-	function _generatePlatformsLines =
+	function _getPointHelperPositions source_obj =
 	(
-		format "\n"; print "PlatformGenerator_v._generatePlatformsLines()"
-		format "this.source_obj:	% \n" this.source_obj
+		fn getChildPoint parent_point = (for i = 1 to parent_point.children.count where classOf parent_point.children[i] == Point collect parent_point.children[i] ) [1]
 
-		fn wirecolor  = ( _color =  this.source_obj.wirecolor; _color.red += 1; _color ) -- set wirecolor slightly different then source_obj.wirecolor
-
-
-		/** Create line for vertex
-		  *
-		  */
-		function _createLineForVertex _shape spline_index pos =
-		(
-			/** Get first child point of object
-			  */
-			function getChildPoint parent_point = (for i = 1 to parent_point.children.count where classOf parent_point.children[i] == Point collect parent_point.children[i] ) [1]
+		--	if classOf ( parent_point = source_obj ) == Point then
+		--		while (child_point = getChildPoint (parent_point)) != undefined do
+		--		(
+		--			pos = child_point.pos
+		--
+		--			addKnot _shape spline_index #corner #line pos
+		--
+		--			parent_point = child_point
+		--		)
 
 
-			/*------------------------------------------------------------------------------
-				CREATE SPLINE
-			--------------------------------------------------------------------------------*/
-			addNewSpline _shape
+		append verts_positions source_obj.pos
 
-			/*------------------------------------------------------------------------------
-				TOP POINT
-			--------------------------------------------------------------------------------*/
-			addKnot _shape spline_index #corner #line pos
-
-			/*------------------------------------------------------------------------------
-				OTHER POINTS
-			--------------------------------------------------------------------------------*/
-
-			parent_point = source_obj
-
-			while (child_point = getChildPoint (parent_point)) != undefined do
-			(
-				pos = child_point.pos
-
-				addKnot _shape spline_index #corner #line pos
-
-				parent_point = child_point
-			)
-
-
-			/*------------------------------------------------------------------------------
-				ABOVE GROUND POINT
-			--------------------------------------------------------------------------------*/
-			pos.z = this.Options.base_height -- set knot above grount to set base height and keep last segment straight for extrude
-
-			addKnot _shape spline_index #corner #line pos
-
-			--setMaterialID _shape spline_index 1 mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-
-			pos.z = 0 -- set platform to ground
-
-			/*------------------------------------------------------------------------------
-				GROUND POINT
-			--------------------------------------------------------------------------------*/
-			addKnot _shape spline_index #corner #line pos
-
-			--setMaterialID _shape spline_index 2 mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-
-			/*------ SET MATERIAL TO SEGMENTS ------*/
-			num_of_segments = numSegments _shape ( numSplines _shape)
-
-			for segment_i = 1 to num_of_segments do
-				setMaterialID _shape spline_index segment_i mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-
-			/*------ SET MATERIAL TO BOTTOM SEGMENT ------*/
-
-			setMaterialID _shape spline_index num_of_segments mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-
-
-			updateShape _shape
-
-			_shape --return
-		)
-
-		platform = SplineShape name:( source_obj.name + "-platforms" ) wirecolor:(wirecolor())
-
-		append this.platforms platform
-
-		for i = 1 to verts_positions.count do
-			_createLineForVertex (platform) (i) (verts_positions[i])
 	),
 
-	/** Set parent of platforms
+
+
+
+	/** Get platform objects
 	  *
 	  */
-	function _setParentOfPlatforms =
+	function _getPlatformObjects =
 	(
-		--format "\n"; print "PlatformGenerator_v._setParentOfPlatforms()"
-		if bind_to_parent and this.source_obj.parent != undefined then
-			this.platform.parent = this.source_obj.parent
+		--format "\n"; print "PlatformGenerator_v.getPlatformObjects()"
 
-		else
-			this.platform.parent = this.source_obj
-
-		--format "this.platform.parent:	% \n" this.platform.parent
-	),
-
-	/** Platform name is same as source name
-	  *
-	  * word "source" with prefix is removed
-	  */
-	function _renamePlatform =
-	(
-		--format "\n"; print "PlatformGenerator_v._renamePlatform()"
-		/** Regex replace
-		  */
-		function rxReplace _string _search _replace ignore_case:true =
-		(
-			IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
-
-			RegExReplace = if ignore_case then ( dotNetObject "System.Text.RegularExpressions.Regex" _search IgnoreCase ) else ( dotNetObject "System.Text.RegularExpressions.Regex" _search )
-
-			RegExReplace.Replace _string _replace
-		)
-
-		this.platform.name = rxReplace(this.source_obj.name)("[-_\s]+source")("")
-	),
-
-	/** Toggle command pannel
-	  */
-	function _toggleCommandPannel =
-	(
-		--format "\n"; print "PlatformGenerator_v.showCommandPannel()"
-		if command_panel_shown then
-			max hide command panel toggle
+		for PlatformObject in PlatformObjects collect PlatformObject.platform
 	),
 
 	/** Ask to continue

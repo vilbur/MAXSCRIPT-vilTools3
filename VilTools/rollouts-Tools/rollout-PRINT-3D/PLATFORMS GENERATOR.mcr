@@ -1,6 +1,25 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/PlatformGenerator/PlatformGenerator.ms" )	-- "./Lib/PlatformGenerator/PlatformGenerator.ms"
 
 
+/** Get platform generator instance
+  *
+  */
+function getPlatformGeneratorInstance =
+(
+	--format "\n"; print "PLATFORMS GENERATOR.mcr.getPlatformGeneratorInstance()"
+	PlatformGenerator = PlatformGenerator_v export_size:ROLLOUT_export.SPIN_export_size.value use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
+
+
+	PlatformGenerator.Options.base_extrude	= ROLLOUT_print_3d.SPIN_base_width.value
+	PlatformGenerator.Options.bar_width	= ROLLOUT_print_3d.SPIN_bar_width.value
+	PlatformGenerator.Options.extrude_top	= ROLLOUT_print_3d.SPIN_top_extrude.value
+	PlatformGenerator.Options.chamfer_top_divider	= ROLLOUT_print_3d.SPIN_top_chamfer_multiplier.value
+
+
+	PlatformGenerator --return
+)
+
+
 /*------------------------------------------------------------------------------
 
 	GENERATE PLATFORMS
@@ -18,20 +37,13 @@ icon:	"across:3|height:32|width:128"
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 
-			PlatformGenerator = PlatformGenerator_v export_size:ROLLOUT_export.SPIN_export_size.value use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
-
-
-			PlatformGenerator.Options.base_extrude	= ROLLOUT_print_3d.SPIN_base_width.value
-			PlatformGenerator.Options.bar_width	= ROLLOUT_print_3d.SPIN_bar_width.value
-			PlatformGenerator.Options.extrude_top	= ROLLOUT_print_3d.SPIN_top_extrude.value
-			PlatformGenerator.Options.chamfer_top_divider	= ROLLOUT_print_3d.SPIN_top_chamfer_multiplier.value
-
+			PlatformGenerator = getPlatformGeneratorInstance()
 
 			platforms = #()
 
-			_selection = for obj in selection collect obj
+			--_selection = for obj in selection collect obj
 
-			PlatformGenerator.generate( _selection as Array )
+			PlatformGenerator.generate( selection as Array )
 
 			--selectmore _selection
 		)
@@ -97,5 +109,25 @@ icon:	"across:3|height:32|width:128"
 			)
 
 
+		)
+)
+
+/** REBUILD PALTFORMS
+ */
+macroscript	_print_platform_rebuild
+category:	"_3D-Print"
+buttontext:	"Rebuild Platforms"
+tooltip:	"Rebuild selected platforms"
+icon:	"across:3|height:32|width:128"
+(
+	on execute do
+		undo "Rebuild Platforms" on
+		(
+
+			PlatformGenerator = getPlatformGeneratorInstance()
+
+			--platforms = #()
+
+			PlatformGenerator.rebuild( selection as Array )
 		)
 )
