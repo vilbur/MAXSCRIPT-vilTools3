@@ -19,6 +19,7 @@ struct PlatformGenerator_v
 (
 	/* construct */
 	export_size	= 1,
+	normal_length	= 3,
 
 	------bind_to_parent = true, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
 
@@ -43,8 +44,8 @@ struct PlatformGenerator_v
 	  */
 	function generate source_objects =
 	(
-		format "\n"; print "PlatformGenerator_v.generate()"
-		format "source_objects:	% \n" source_objects
+		--format "\n"; print "PlatformGenerator_v.generate()"
+		--format "source_objects:	% \n" source_objects
 
 		/* SETUP */
 		max create mode
@@ -62,19 +63,16 @@ struct PlatformGenerator_v
 		for source_obj in source_objects do
 			this.getVertexPositions( source_obj )
 
+		if PlatformObjects.count > 0 then
+		(
+			for PlatformObject in PlatformObjects do
+				PlatformObject.generatePlatform()
 
-		for PlatformObject in PlatformObjects do
-			PlatformObject.generatePlatform()
+			select (this._getPlatformObjects()) -- IMPORTANT - must b selected bfore applying modifiers
 
+			PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 
-		--	this._setParentOfPlatforms()
-		--
-		--	this._renamePlatform()
-		--)
-		--
-		select (this._getPlatformObjects()) -- IMPORTANT - must b selected bfore applying modifiers
-
-		PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
+		)
 
 		--EnableSceneRedraw()
 
@@ -88,7 +86,7 @@ struct PlatformGenerator_v
 	  */
 	function rebuild platform_objects =
 	(
-		format "\n"; print "PlatformGenerator_v.rebuild()"
+		--format "\n"; print "PlatformGenerator_v.rebuild()"
 
 		platforms_to_rebuild	=  for obj in platform_objects where superClassOf obj.baseobject == shape and obj.parent != undefined collect obj
 
@@ -131,32 +129,45 @@ struct PlatformGenerator_v
 	function _getVertexPositionsFromEditablePoly source_obj =
 	(
 		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		start_time = timestamp()
 		--format "classOf source_obj:	% \n" (classOf source_obj)
 		--format "classOf source_obj:	% \n" (classOf source_obj.mesh)
+
 		vertext_count	= getNumVerts source_obj.mesh
 		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
+		vertext_colored_count	= getNumCPVVerts source_obj.mesh
 
 		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array  -- get all verts if nothing selected
 
-		--hidden_verts = ( polyop.getHiddenVerts source_obj.baseobject ) -- DOESN'T WORK ON NO EDITABLE POLY
-		--for i = 1 to verts_to_generate.count where findItem hidden_verts verts_to_generate[i] == 0 do
+		/* GET WIRECOLOR OF VERTEX, if white, then use object wirecolor - getting vertex color is very slow, it is get only for first vertex */
+		--wirecolor = if getNumCPVVerts source_obj.mesh > 0 and  (_vertex_color = getvertcolor source_obj.mesh verts_to_generate[1]) != white then _vertex_color else source_obj.wirecolor
+
 		for i = 1 to verts_to_generate.count do
 		(
+			format "get vertex i:	% \n" i
 			vertex_index = verts_to_generate[i]
 
+			vert_pos =  polyop.getVert source_obj vertex_index
 
+			normal = ( getnormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
 
-			wirecolor = if getNumCPVVerts source_obj.mesh > 0 and  (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
+			--format "normal:	% \n" ( getnormal source_obj.mesh vertex_index)
 
-			PlatformObject = this._getPlatformObject(source_obj)(wirecolor)
+			wirecolor = if  vertext_colored_count > 0 and  (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
 
-			--append PlatformObjects PlatformObject
+			if normal.z <= 0 then -- use only vertices pointing down
+			(
+				PlatformObject = this._getPlatformObject(source_obj)(wirecolor)
 
-			PlatformObject.normal = ( getnormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
+				PlatformObject.addVert(vert_pos)
 
-			append PlatformObject.verts_positions ( polyop.getVert source_obj vertex_index)
+				if normal.z < 0.9 then -- limit where normal segment of platform is used ( dont use on platforms facing straight down )
+					PlatformObject.addVert(vert_pos + normal_length * normalize( normal ) )
+
+			)
 		)
 
+		format "Timer % ms\n" ((timestamp()) - start_time)
 	),
 
 	/** Get vertex positions from spline
@@ -221,7 +232,7 @@ struct PlatformGenerator_v
 	  */
 	function _getSameChildren obj =
 	(
-		format "\n"; print "PlatformGenerator_v.getChildren()"
+		--format "\n"; print "PlatformGenerator_v.getChildren()"
 
 		fn getChildPoint parent_obj = (for i = 1 to parent_obj.children.count where classOf parent_obj.children[i] == classOf parent_obj collect parent_obj.children[i] ) [1]
 

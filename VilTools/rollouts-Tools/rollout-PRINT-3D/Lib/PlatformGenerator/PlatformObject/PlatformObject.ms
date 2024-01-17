@@ -12,31 +12,30 @@ struct PlatformObject_v
 	/* properties */
 	platform, -- save node of platform
 
-
 	wirecolor, -- wirecolor of platform get from source object or vertex color
 
-	normal,
-
-	verts_positions = #(), -- vertex positions to generate platforms
+	--normal,
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
 
 	/* reference */
 	/* inhered */
+	/* store */
+	verts_positions = #(), -- vertex positions to generate platforms
 
 	/** Generate platform
 	  *
 	  */
 	function generatePlatform =
 	(
-		format "\n"; print "PlatformObject_v.generatePlatform()"
-		format "this.normal:	% \n" this.normal
-		format "this.wirecolor:	% \n" this.wirecolor
+		--format "\n"; print "PlatformObject_v.generatePlatform()"
+		--format "this.normal:	% \n" this.normal
+		--format "this.wirecolor:	% \n" this.wirecolor
 
 		platform = SplineShape name:( source_obj.name + "-platform" ) wirecolor:wirecolor
 
-		format "verts_positions:	% \n" verts_positions
+		--format "verts_positions:	% \n" verts_positions
 
 		this._createLineFromPoints()
 	),
@@ -57,14 +56,14 @@ struct PlatformObject_v
 	  */
 	function _createLineFromPoints =
 	(
-		format "\n"; print "PlatformObject_v._createLineForVertex()"
+		--format "\n"; print "PlatformObject_v._createLineForVertex()"
 		spline_index = 1
 
 		addNewSpline platform
 
 
 		/*------------------------------------------------------------------------------
-			CREATE KNOTS FROM TOP
+			ADD KNOTS FROM TOP TO BOTTOM
 		--------------------------------------------------------------------------------*/
 		for pos in verts_positions do
 			addKnot platform spline_index #corner #line pos
@@ -73,23 +72,20 @@ struct PlatformObject_v
 		/*------------------------------------------------------------------------------
 			ABOVE GROUND POINT
 		--------------------------------------------------------------------------------*/
-
 		pos = verts_positions[verts_positions.count]
 
 		pos.z = layer_height -- set knot above grount to set base height and keep last segment straight for extrude
 
 		addKnot platform spline_index #corner #line pos
 
-		----setMaterialID platform spline_index 1 mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-		--
 		pos.z = 0 -- set platform to ground
+
 
 		/*------------------------------------------------------------------------------
 			GROUND POINT
 		--------------------------------------------------------------------------------*/
 		addKnot platform spline_index #corner #line pos
 
-		--setMaterialID platform spline_index 2 mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
 		/*------ SET MATERIAL TO SEGMENTS ------*/
 		num_of_segments = numSegments platform ( numSplines platform)
@@ -101,10 +97,7 @@ struct PlatformObject_v
 
 		setMaterialID platform spline_index num_of_segments mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
-
 		updateShape platform
-
-		--platform --return
 	),
 
 

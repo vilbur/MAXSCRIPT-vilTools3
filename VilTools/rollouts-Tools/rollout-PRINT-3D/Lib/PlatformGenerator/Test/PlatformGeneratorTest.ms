@@ -23,18 +23,22 @@ function getUnit val  =
 
 /**
   */
-function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:false =
+function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:false obj:#PLANE vertex_color: =
 (
 	format "\n"; print "PlatformGeneratorTest.ms.createSourceMesh()"
 	delete objects
 
 	segment_size = getUnit(10)
 
-	--_obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, getUnit(30.0) ] widthsegs:segments lengthsegs:segments isSelected:on backfacecull: off
-	_obj = Sphere radius:(getUnit(15)) pos:[0,0, getUnit(30.0) ] isSelected:on -- diameter 3 cm
+	_obj = case obj of
+	(
+		#SPHERE:	Sphere radius:(getUnit(15)) pos:[0,0, getUnit(30.0) ] segments:segments -- diameter 3 cm
+		#BOX:	Box  pos:[0,0, getUnit(50) ]  lengthsegs:segments widthsegs:segments heightsegs:segments
 
-	--_obj.showVertexColors = on
+		DEFAULT:	Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, getUnit(30.0) ] widthsegs:segments lengthsegs:segments backfacecull: off
+	)
 
+	select _obj
 
 	macros.run "Modifier Stack" "Convert_to_Poly"
 
@@ -42,15 +46,17 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 	if test_shifted_pivot then
 		$.pos.x = $.pos.y = $.pivot.x = $.pivot.y = 100
 
-	Rotate _obj ( AngleAxis 180 [1,0,0])
+	Rotate _obj ( AngleAxis 180 [1,0,0]) -- rotate object to simulate some real scene state
 
 	--modPanel.addModToSelection (Edit_Poly ()) ui:on
-	--format "vertex_selection.count:	% \n" vertex_selection.count
+	--modPanel.addModToSelection ( meshsmooth ()) ui:on
+
 	if vertex_selection.count > 0 then
 	(
 		subObjectLevel = 1
 
-		polyop.setVertColor _obj 0 vertex_selection green
+		if vertex_color != unsupplied then
+			polyop.setVertColor _obj 0 vertex_selection green
 
 		_obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
@@ -137,8 +143,12 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:1
 --createSourceMesh segments:4
 
---createSourceMesh segments:31
-createSourceMesh segments:2 vertex_selection:#{3..4}
+--createSourceMesh segments:2
+createSourceMesh segments:12 obj:#SPHERE
+--createSourceMesh segments:4 obj:#BOX
+----createSourceMesh segments:2 vertex_selection:#{3..4}
+--createSourceMesh segments:2 vertex_selection:#{1..18} vertex_color:orange
+--createSourceMesh segments:2 vertex_selection:#{2}
 
 
 
