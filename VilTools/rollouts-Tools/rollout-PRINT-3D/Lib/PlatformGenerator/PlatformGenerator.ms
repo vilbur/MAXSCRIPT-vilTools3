@@ -30,7 +30,7 @@ struct PlatformGenerator_v
 	/* properties */
 	PlatformObjects = #(),
 
-	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #CROSS, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
+	--mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #CROSS, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
@@ -56,10 +56,10 @@ struct PlatformGenerator_v
 
 		Options.init()
 
-		PlatformModifiers	= PlatformModifiers_v	Options:Options mat_ids:mat_ids
+		PlatformModifiers	= PlatformModifiers_v	Options:Options
 		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
 
-		PlatformObjectInstance = PlatformObject_v layer_height:Options.base_height mat_ids:mat_ids
+		PlatformObjectInstance = PlatformObject_v Options:Options
 
 
 		/* GENERATE PLATFORMS FOR EACH OBJECT */
@@ -71,7 +71,12 @@ struct PlatformGenerator_v
 			for PlatformObject in PlatformObjects do
 				PlatformObject.generatePlatform()
 
-			select (this.getPlatforms()) -- IMPORTANT - must b selected bfore applying modifiers
+			platforms = this.getPlatforms()
+
+			if this.Options.cross_section then
+				PlatformCrossSection.create(platforms)
+
+			select (platforms) -- IMPORTANT - must b selected bfore applying modifiers
 
 			PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 
@@ -140,7 +145,7 @@ struct PlatformGenerator_v
 	  */
 	function _getVertexPositionsFromEditablePoly source_obj =
 	(
-		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
 		start_time = timestamp()
 		--format "classOf source_obj:	% \n" (classOf source_obj)
 		--format "classOf source_obj:	% \n" (classOf source_obj.mesh)
@@ -173,8 +178,8 @@ struct PlatformGenerator_v
 
 				PlatformObject.addVert(vert_pos)
 
-				--if normal.z < 0.9 then -- limit where normal segment of platform is used ( dont use on platforms facing straight down )
-					--PlatformObject.addVert(vert_pos + this.Options.normal_length * normalize( normal ) )
+				if normal.z < 0.9 then -- limit where normal segment of platform is used ( dont use on platforms facing straight down )
+					PlatformObject.addVert(vert_pos + this.Options.normal_length * normalize( normal ) )
 
 			)
 		)

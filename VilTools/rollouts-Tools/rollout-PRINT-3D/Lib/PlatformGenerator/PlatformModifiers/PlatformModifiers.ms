@@ -2,10 +2,10 @@
  */
 struct PlatformModifiers_v
 (
-	
+
 	/* construct */
 	Options,
-	mat_ids,
+	--mat_ids,
 
 	/* properties */
 
@@ -28,19 +28,19 @@ struct PlatformModifiers_v
 		--format "this.Options:	% \n" this.Options
 		max modify mode
 
-		this._addEditSpline()
+		--this._addEditSpline()
 
 		this._addSweepModifier("Bar Width")
 
-		this._selectFace("Select Base")(mat_ids[#BASE])
+		this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
 
 		this._extrude("Extrude Base") (this.Options.base_extrude)
 
-		this._chamfer("Chamfer Base") ( this.Options.chamfer_base )
+		this._chamfer("Chamfer Base") (this.Options.chamfer_base )
 
-		this._chamfer("Chamfer Bar") ( this.Options.chamfer_top ) selection_option:#ALL materialoption:#DIFFERENT
+		this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:#DIFFERENT
 
-		this._selectFace("Select Top Face")(mat_ids[#TOP])
+		this._selectFace("Select Top Face")(this.Options.mat_ids[#TOP])
 
 		this._extrude("Extrude Top")(this.Options.extrude_top)
 	),

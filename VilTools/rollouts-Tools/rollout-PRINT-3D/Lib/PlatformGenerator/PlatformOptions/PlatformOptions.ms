@@ -10,8 +10,12 @@ struct PlatformOptions_v
 	/* construct */
 	export_size = 1,
 
+
 	/* properties */
-	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
+	layer_height = 0.05,
+
+	bottom_layers_count = 15,
+
 
 	/* options */
 	bar_width 	= 1.5, -- default width is 1.5mm
@@ -30,8 +34,12 @@ struct PlatformOptions_v
 	cross_section	= false, -- connect columns of platform with cross beams
 	cross_section_max	= 10,	-- max distance between platforms
 
-
 	normal_length = 3,
+
+
+	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
+
+	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #CROSS, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	/** Init
 	  *
@@ -41,6 +49,8 @@ struct PlatformOptions_v
 		--format "\n"; print "PlatformOptions_v.init()"
 
 		this._setUnitsMuliplier()
+
+		this._setBaseHeight()
 
 		this._setDimensions()
 
@@ -77,12 +87,22 @@ struct PlatformOptions_v
 		format "DISPLAY_UNITS:	% \n" display_units
 		format "EXPORT_SIZE:	% \n" export_size
 
-		for prop in getPropNames this where (superClassOf (val = getProperty this prop)) == Number do
+		for prop in getPropNames this where ( superClassOf (val = getProperty this prop)) == Number do
 
 			if val != undefined and prop != #export_size  then
 
 				setProperty this prop (val / display_units	/ export_size)
 	),
+
+	/** Set base height
+	  *
+	  */
+	function _setBaseHeight =
+	(
+		--format "\n"; print "PlatformOptions_v._setBaseHeight()"
+		base_height = this.bottom_layers_count * this.layer_height
+	),
+
 
 	/** Set chamfer values
 	  *

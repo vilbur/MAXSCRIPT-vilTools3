@@ -5,16 +5,10 @@ struct PlatformObject_v
 	/* construct */
 	source_obj,
 
-	layer_height,
-
-	mat_ids,
-
 	/* properties */
 	platform, -- save node of platform
 
 	wirecolor, -- wirecolor of platform get from source object or vertex color
-
-	--normal,
 
 	/* dependency */
 
@@ -77,7 +71,7 @@ struct PlatformObject_v
 		--------------------------------------------------------------------------------*/
 		pos = verts_positions[verts_positions.count]
 
-		pos.z = layer_height -- set knot above grount to set base height and keep last segment straight for extrude
+		pos.z = this.Options.base_height -- set knot above ground to set base height and keep last segment straight for extrude
 
 		addKnot platform spline_index #corner #line pos
 
@@ -94,11 +88,11 @@ struct PlatformObject_v
 		num_of_segments = numSegments platform ( numSplines platform)
 
 		for segment_i = 1 to num_of_segments do
-			setMaterialID platform spline_index segment_i mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+			setMaterialID platform spline_index segment_i this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
 		/*------ SET MATERIAL TO BOTTOM SEGMENT ------*/
 
-		setMaterialID platform spline_index num_of_segments mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+		setMaterialID platform spline_index num_of_segments this.Options.mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
 		updateShape platform
 	),

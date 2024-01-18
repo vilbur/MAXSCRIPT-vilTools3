@@ -11,24 +11,27 @@ struct PlatformCrossSection_v
 	/* dependency */
 	/* reference */
 	/* inhered */
-	Options,	--PlatformOptions_v(),
+	Options,	--PlatformOptions_v()
 
-	/** Create
+	/** Create cross section between platforms
+	  *
 	  *
 	  */
-	function create =
+	function create _platforms =
 	(
 		format "\n"; print "PlatformCrossSection_v.create()"
 
+		this.platforms = _platforms
+		
 		this.filterEditSplineObjects()
 
 		if platforms.count < 2 then
 			return false
 
-		format "platforms.count:	% \n" platforms.count
+		--format "platforms.count:	% \n" platforms.count
 		for i = 1 to platforms.count where platforms[i + 1] != undefined do
 		(
-			format "\ni:	% \n" i
+			--format "\ni:	% \n" i
 			--format "platform:	% \n" platforms[i]
 
 			platform	= platforms[i]
@@ -37,16 +40,16 @@ struct PlatformCrossSection_v
 			num_knots	= ( numKnots platform )
 			num_knots_next	= ( numKnots platform_next )
 
-			end_point_index = if num_knots_next > 3 then 2 else 1 --get 1. or 2. point from top
+			end_point_index = if num_knots > 3 then 2 else 1 --get 1. or 2. point from top
 
-			format "num_knots:	% \n" num_knots
-			format "num_knots_next:	% \n" num_knots_next
+			--format "num_knots:	% \n" num_knots
+			--format "num_knots_next:	% \n" num_knots_next
 
-			point_start	= getKnotPoint platform	1 (num_knots - 1)	-- get 2. point from bottom
-			point_end	= getKnotPoint platform_next	1 end_point_index	-- get 1. or 2. point from top
+			point_start	= getKnotPoint platform	1 (end_point_index)	-- get 2. point from bottom
+			point_end	= getKnotPoint platform_next	1 (num_knots_next - 1)	-- get 1. or 2. point from top
 
-			format "point_start:	% \n" point_start
-			format "point_end:	% \n" point_end
+			--format "point_start:	% \n" point_start
+			--format "point_end:	% \n" point_end
 
 			_distance = this.getPointDistance (copy point_start) (copy point_end)
 
@@ -56,78 +59,24 @@ struct PlatformCrossSection_v
 				point_start.z	= (point_start.z / 4 ) * 3
 				point_end.z	= (point_start.z / 4 )
 
-
+				cross_spline = 2
 
 				addNewSpline platform
-				format "point_start:	% \n" point_start
-				format "point_end:	% \n" point_end
+				--format "point_start:	% \n" point_start
+				--format "point_end:	% \n" point_end
 
-				addKnot platform 2 #corner #line point_start
-				addKnot platform 2 #corner #line point_end
+				addKnot platform cross_spline #corner #line point_start
+				addKnot platform cross_spline #corner #line point_end
 
-				setMaterialID platform 2 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+				setMaterialID platform cross_spline 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+				--setMaterialID platform cross_spline 1 6
 
 				updateShape platform
 
 
 			)
-			--format "_distance:	% \n" _distance
-
-			--format "Options.cross_section_max:	% \n" Options.cross_section_max
 
 		)
-
-		--for i = 1 to PlatformObjects.count do
-		--(
-		--	PlatformObject = PlatformObjects[i]
-		--
-		--	platform = PlatformObject.generatePlatform()
-		--
-		--	addNewSpline platform
-		--
-		--	if (PlatformObject_next = PlatformObjects[i + 1]) != undefined then
-		--	(
-		--		pos_next	= copy PlatformObject_next.verts_positions[PlatformObject_next.verts_positions.count]
-		--
-		--		num_knots	= ( numKnots platform ) - 1
-		--
-		--		pos_current	= getKnotPoint platform 1 num_knots
-		--
-		--		format "distance:	% \n" (distance pos_next pos_current)
-		--
-		--		if distance pos_next pos_current < 20  then
-		--
-		--		(
-		--			pos_next.z = (pos_next.z / 4 ) * 3
-		--
-		--			addKnot platform 2 #corner #line pos_current
-		--			addKnot platform 2 #corner #line pos_next
-		--
-		--			setMaterialID platform 2 1 mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-		--
-		--
-		--		)
-		--
-		--	)
-		--
-		--	--platform_next	= platforms[i + 1].baseobject
-		--	--
-		--	--num_knots_next	= numKnots platform_next
-		--	--
-		--	--
-		--	--pos	= getKnotPoint PlatformObject.platform 1 1
-		--	--pos_next	= getKnotPoint platform_next 1 1
-		--	--
-		--	--
-		--	--addKnot platform 1 #corner #line pos
-		--	--addKnot platform 1 #corner #line pos_next
-		--	--
-		--	--updateShape platform
-		--
-		--
-		--
-		--)
-		--)
 
 	),
 
@@ -150,9 +99,17 @@ struct PlatformCrossSection_v
 	  */
 	function filterEditSplineObjects =
 	(
-		format "\n"; print "PlatformCrossSection_v.filterEditSplineObjects()"
+		--format "\n"; print "PlatformCrossSection_v.filterEditSplineObjects()"
 
-		platforms = for platform in platforms where classOf platform.baseobject == SplineShape collect platform
+		--for platform in platforms do
+		--(
+		--	format "classOf platform:	% \n" (classOf platform.baseobject)
+		--	format "superclassOf platform:	% \n" ( superClassOf platform.baseobject)
+
+		--)
+
+
+		platforms = for platform in platforms where superClassOf platform.baseobject == shape collect platform
 
 	),
 
