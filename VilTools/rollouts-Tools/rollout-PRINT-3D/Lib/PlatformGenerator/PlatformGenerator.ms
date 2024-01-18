@@ -22,15 +22,11 @@ struct PlatformGenerator_v
 	/* construct */
 	export_size	= 1,
 
-	------bind_to_parent = true, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
-
 	/* options */
 	use_every_nth_vert_of_spline = 1,
 
 	/* properties */
 	PlatformObjects = #(),
-
-	--mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #CROSS, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
@@ -53,18 +49,8 @@ struct PlatformGenerator_v
 		max create mode
 
 		--DisableSceneRedraw() -- disable for development
-
-		Options.init()
-
-		PlatformModifiers	= PlatformModifiers_v	Options:Options
-		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
-
-		PlatformObjectInstance = PlatformObject_v Options:Options
-
-
-		/* GENERATE PLATFORMS FOR EACH OBJECT */
 		for source_obj in source_objects do
-			this.getVertexPositions( source_obj )
+			this.setVertexPositions( source_obj )
 
 		if PlatformObjects.count > 0 then
 		(
@@ -105,6 +91,51 @@ struct PlatformGenerator_v
 		this.generate (source_objects)
 	),
 
+	/** Generate point helpers from selected verts
+	  *
+	  */
+	function generatePointHelpers source_objects =
+	(
+		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
+
+		/** Shift wirecolor
+		  *
+		  */
+		function shiftWirecolor wirecolor i =
+		(
+			format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
+			format "wirecolor:	% \n" wirecolor
+			if wirecolor.r >= i then wirecolor.r -= i
+			if wirecolor.g >= i then wirecolor.g -= i
+			if wirecolor.b >= i then wirecolor.b -= i
+			format "wirecolor:	% \n" wirecolor
+
+			wirecolor --return
+		)
+
+		points_created = #()
+		--format "source_objects:	% \n" source_objects
+		for source_obj in source_objects do
+			this.setVertexPositions( source_obj )
+
+		for PlatformObject in PlatformObjects do
+
+			for i = 1 to PlatformObject.verts_positions.count do
+			(
+				vert_pos = PlatformObject.verts_positions[i]
+
+				_point = Point pos:vert_pos size:1 wirecolor:(shiftWirecolor(copy PlatformObject.wirecolor)(i)) -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+
+				/* LINK CURRENT POINT TO PREVIOUS */
+				if i > 1 and ( point_last = points_created[points_created.count] ) != undefined then
+					_point.parent = point_last
+
+				append points_created _point
+			)
+
+		points_created --return
+	),
+
 	/** Get platform objects
 	  *
 	  */
@@ -120,7 +151,7 @@ struct PlatformGenerator_v
 	  * 	B) From Line
 	  * 	C) From Mesh Object
 	  */
-	function getVertexPositions source_obj =
+	function setVertexPositions source_obj =
 	(
 		/* POINT HELPER */
 		if classOf source_obj == Point then
@@ -156,6 +187,9 @@ struct PlatformGenerator_v
 
 		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array  -- get all verts if nothing selected
 
+
+		format "\n-----------\nARRAY:vertext_sel:\n";  for sel in vertext_sel do format "sel:	%\n" sel
+
 		/* GET WIRECOLOR OF VERTEX, if white, then use object wirecolor - getting vertex color is very slow, it is get only for first vertex */
 		--wirecolor = if getNumCPVVerts source_obj.mesh > 0 and  (_vertex_color = getvertcolor source_obj.mesh verts_to_generate[1]) != white then _vertex_color else source_obj.wirecolor
 
@@ -178,7 +212,7 @@ struct PlatformGenerator_v
 
 				PlatformObject.addVert(vert_pos)
 
-				if normal.z < 0.9 then -- limit where normal segment of platform is used ( dont use on platforms facing straight down )
+				if normal.z > -0.9 then -- dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up )
 					PlatformObject.addVert(vert_pos + this.Options.normal_length * normalize( normal ) )
 
 			)
@@ -304,6 +338,12 @@ struct PlatformGenerator_v
 	on create do
 	(
 		Options	= PlatformOptions_v(export_size)
+
+		Options.init()
+
+		PlatformModifiers	= PlatformModifiers_v	Options:Options
+		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
+		PlatformObjectInstance 	= PlatformObject_v Options:Options
 
 	)
 )

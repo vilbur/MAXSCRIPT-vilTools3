@@ -1,7 +1,8 @@
 
 /** Platform options
   *
-  * DEFAULT VALUES ARE IN MILIMETERS
+  *
+  * DEFAULT VALUES ARE IN MILIMETERS OF EXPORTED OBJECT
   *
   *
  */
@@ -16,6 +17,7 @@ struct PlatformOptions_v
 
 	bottom_layers_count = 15,
 
+	normal_length = 3,
 
 	/* options */
 	bar_width 	= 1.5, -- default width is 1.5mm
@@ -32,9 +34,9 @@ struct PlatformOptions_v
 	chamfer_top,
 
 	cross_section	= false, -- connect columns of platform with cross beams
-	cross_section_max	= 10,	-- max distance between platforms
+	cross_section_max	= 20,	-- max distance between platforms
+	cross_section_min_height	= 10,	-- generate cross section only if platform is higher than this number
 
-	normal_length = 3,
 
 
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS

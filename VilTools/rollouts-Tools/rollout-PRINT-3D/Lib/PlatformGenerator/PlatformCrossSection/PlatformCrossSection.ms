@@ -22,7 +22,7 @@ struct PlatformCrossSection_v
 		format "\n"; print "PlatformCrossSection_v.create()"
 
 		this.platforms = _platforms
-		
+
 		this.filterEditSplineObjects()
 
 		if platforms.count < 2 then
@@ -31,53 +31,53 @@ struct PlatformCrossSection_v
 		--format "platforms.count:	% \n" platforms.count
 		for i = 1 to platforms.count where platforms[i + 1] != undefined do
 		(
-			--format "\ni:	% \n" i
+			format "\ni:	% \n" i
 			--format "platform:	% \n" platforms[i]
 
-			platform	= platforms[i]
-			platform_next	= platforms[i + 1]
+			platform_A	= platforms[i]
+			num_knots	= ( numKnots platform_A )
 
-			num_knots	= ( numKnots platform )
-			num_knots_next	= ( numKnots platform_next )
+			platform_B	= platforms[i + 1]
+			num_knots_B	= ( numKnots platform_B )
 
-			end_point_index = if num_knots > 3 then 2 else 1 --get 1. or 2. point from top
+			top_point_index = if num_knots_B <= 3 then 1 else 2 --get 1. or 2. point from top
 
 			--format "num_knots:	% \n" num_knots
-			--format "num_knots_next:	% \n" num_knots_next
+			--format "num_knots_B:	% \n" num_knots_B
 
-			point_start	= getKnotPoint platform	1 (end_point_index)	-- get 2. point from bottom
-			point_end	= getKnotPoint platform_next	1 (num_knots_next - 1)	-- get 1. or 2. point from top
+			point_bottom	= getKnotPoint platform_A	1 (num_knots - 1)	-- get 2. point from bottom
+			point_top	= getKnotPoint platform_B	1 (top_point_index)	-- get 1. or 2. point from top
 
-			--format "point_start:	% \n" point_start
-			--format "point_end:	% \n" point_end
+			--format "point_bottom:	% \n" point_bottom
+			--format "point_top.z:	% \n" point_top.z
 
-			_distance = this.getPointDistance (copy point_start) (copy point_end)
+			distance_between_platforms = this.getPointDistance (copy point_bottom) (copy point_top)
+			format "distance_between_platforms:	% \n" distance_between_platforms
+			format "this.Options.cross_section_max:	% \n" this.Options.cross_section_max
 
-			if _distance < this.Options.cross_section_max then
+			--if point_top.z > this.Options.cross_section_min_height and distance_between_platforms < this.Options.cross_section_max then
+			if point_top.z > this.Options.cross_section_min_height and  distance_between_platforms < this.Options.cross_section_max then
 			(
 
-				point_start.z	= (point_start.z / 4 ) * 3
-				point_end.z	= (point_start.z / 4 )
+				point_bottom.z	+= (point_top.z / 4 )
 
-				cross_spline = 2
+				point_top.z	= (point_top.z / 4 ) * 3
 
-				addNewSpline platform
-				--format "point_start:	% \n" point_start
-				--format "point_end:	% \n" point_end
+				cross_spline = 2 -- index of spline
 
-				addKnot platform cross_spline #corner #line point_start
-				addKnot platform cross_spline #corner #line point_end
+				addNewSpline platform_A
+				--format "point_bottom:	% \n" point_bottom
+				--format "point_top:	% \n" point_top
 
-				setMaterialID platform cross_spline 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-				--setMaterialID platform cross_spline 1 6
+				addKnot platform_A cross_spline #corner #line point_bottom
+				addKnot platform_A cross_spline #corner #line point_top
 
-				updateShape platform
+				setMaterialID platform_A cross_spline 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+				--setMaterialID platform_A cross_spline 1 6
 
-
+				updateShape platform_A
 			)
-
 		)
-
 	),
 
 	private

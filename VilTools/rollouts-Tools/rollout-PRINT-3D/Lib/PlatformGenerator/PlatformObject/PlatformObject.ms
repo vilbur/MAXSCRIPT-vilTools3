@@ -34,6 +34,8 @@ struct PlatformObject_v
 
 		this._createLineFromPoints()
 
+		platform.parent = source_obj
+
 		platform --return
 	),
 

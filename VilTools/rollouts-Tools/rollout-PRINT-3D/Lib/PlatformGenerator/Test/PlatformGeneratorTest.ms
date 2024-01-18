@@ -56,7 +56,7 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 		subObjectLevel = 1
 
 		if vertex_color != unsupplied then
-			polyop.setVertColor _obj 0 vertex_selection green
+			polyop.setVertColor _obj 0 vertex_selection vertex_color
 
 		_obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
@@ -144,10 +144,10 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:4
 
 --createSourceMesh segments:2
-createSourceMesh segments:12 obj:#SPHERE
+--createSourceMesh segments:12 obj:#SPHERE
 --createSourceMesh segments:4 obj:#BOX
 --createSourceMesh segments:2 vertex_selection:#{3..4}
---createSourceMesh segments:12 vertex_selection:#{2..17} obj:#SPHERE vertex_color:orange
+createSourceMesh segments:12 vertex_selection:#{2..17} obj:#SPHERE vertex_color:orange
 --createSourceMesh segments:2 vertex_selection:#{2}
 
 
@@ -160,6 +160,10 @@ createSourceMesh segments:12 obj:#SPHERE
 --createSourcePoints()
 
 
+
+/* SELECT SOURCE OBJECTS - IMPORTANT  */
+select objects
+source_objects = for obj in selection collect obj
 
 /*------------------------------------------------------------------------------
 
@@ -177,8 +181,9 @@ PlatformGenerator 	= PlatformGenerator_v EXPORT_SIZE:EXPORT_SIZE
 
 --------------------------------------------------------------------------------*/
 
+
 /* GENERATE NEW PALTFROMS */
-PlatformGenerator.generate( selection )
+--PlatformGenerator.generate( source_objects )
 
 
 /* REBUILD EXISTING PALTFROMS */
@@ -191,17 +196,20 @@ PlatformGenerator.generate( selection )
 
 --------------------------------------------------------------------------------*/
 
-PlatformCrossSection = PlatformCrossSection_v Options:PlatformGenerator.Options
+--PlatformCrossSection = PlatformCrossSection_v Options:PlatformGenerator.Options
+--
+--
+--PlatformCrossSection.create( PlatformGenerator.getPlatforms() )
 
 
-PlatformCrossSection.create( PlatformGenerator.getPlatforms() )
+/*------------------------------------------------------------------------------
+
+	GENERATE POINTS FROM SOURCE OBJECT
+
+--------------------------------------------------------------------------------*/
 
 
-
-
-
-
-
+PlatformGenerator.generatePointHelpers(source_objects)
 
 
 

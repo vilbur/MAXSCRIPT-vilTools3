@@ -77,17 +77,9 @@ icon:	"across:3|height:32|width:128"
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 			--messageBox "Yupiii" title:"Title"  beep:false
 
-			PlatformGenerator = PlatformGenerator_v source_obj: selection[1]
+			--PlatformGenerator = getPlatformGeneratorInstance()
 
-			verts_selected = PlatformGenerator.getVertexPositions()
-			format "\n-----------\nARRAY:verts_selected:\n";  for vert in verts_selected do format "vert:	%\n" vert
-			points_created = #()
-
-			for vert_pos in verts_selected do
-				append points_created ( Point pos:vert_pos size:1 wirecolor:green )
-
-			select points_created
-
+			select ((getPlatformGeneratorInstance()).generatePointHelpers( selection ))
 		)
 )
 
@@ -114,8 +106,6 @@ icon:	"across:3|height:32|width:128"
 				for selected_point in _selected_points do
 					addKnot _shape 1 #corner #line selected_point.pos
 			)
-
-
 		)
 )
 
