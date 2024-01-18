@@ -144,10 +144,10 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:4
 
 --createSourceMesh segments:2
-createSourceMesh segments:12 obj:#SPHERE
+--createSourceMesh segments:12 obj:#SPHERE
 --createSourceMesh segments:4 obj:#BOX
-----createSourceMesh segments:2 vertex_selection:#{3..4}
---createSourceMesh segments:2 vertex_selection:#{1..18} vertex_color:orange
+--createSourceMesh segments:2 vertex_selection:#{3..4}
+createSourceMesh segments:12 vertex_selection:#{2..17} obj:#SPHERE vertex_color:orange
 --createSourceMesh segments:2 vertex_selection:#{2}
 
 
@@ -163,7 +163,7 @@ createSourceMesh segments:12 obj:#SPHERE
 
 /*------------------------------------------------------------------------------
 
-	RUN TEST - GENERATE PLATFORMS
+	CREATE INSTANCE
 
 --------------------------------------------------------------------------------*/
 
@@ -171,9 +171,42 @@ createSourceMesh segments:12 obj:#SPHERE
 PlatformGenerator 	= PlatformGenerator_v EXPORT_SIZE:EXPORT_SIZE
 
 
+/*------------------------------------------------------------------------------
+
+	RUN TEST - GENERATE PLATFORMS
+
+--------------------------------------------------------------------------------*/
+
 /* GENERATE NEW PALTFROMS */
 PlatformGenerator.generate( selection )
 
 
 /* REBUILD EXISTING PALTFROMS */
 --PlatformGenerator.rebuild( selection )
+
+
+/*------------------------------------------------------------------------------
+
+	CROSS SECTION
+
+--------------------------------------------------------------------------------*/
+
+PlatformCrossSection = PlatformCrossSection_v Options:PlatformGenerator.Options platforms:(PlatformGenerator.getPlatforms())
+
+
+PlatformCrossSection.create()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

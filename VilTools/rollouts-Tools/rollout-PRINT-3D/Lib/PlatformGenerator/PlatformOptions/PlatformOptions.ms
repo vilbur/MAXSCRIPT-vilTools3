@@ -27,6 +27,12 @@ struct PlatformOptions_v
 	chamfer_base,
 	chamfer_top,
 
+	cross_section	= false, -- connect columns of platform with cross beams
+	cross_section_max	= 10,	-- max distance between platforms
+
+
+	normal_length = 3,
+
 	/** Init
 	  *
 	  */
@@ -71,9 +77,9 @@ struct PlatformOptions_v
 		format "DISPLAY_UNITS:	% \n" display_units
 		format "EXPORT_SIZE:	% \n" export_size
 
-		for prop in getPropNames this where (classOf (val = getProperty this prop)) != MAXScriptFunction do
+		for prop in getPropNames this where (superClassOf (val = getProperty this prop)) == Number do
 
-			if val != undefined  and prop != #export_size and prop != #display_units then
+			if val != undefined and prop != #export_size  then
 
 				setProperty this prop (val / display_units	/ export_size)
 	),

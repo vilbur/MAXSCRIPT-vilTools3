@@ -1,6 +1,7 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/PlatformGenerator/PlatformGenerator.ms" )	-- "./Lib/PlatformGenerator/PlatformGenerator.ms"
 
 
+
 /** Get platform generator instance
   *
   */
@@ -14,6 +15,8 @@ function getPlatformGeneratorInstance =
 	PlatformGenerator.Options.bar_width	= ROLLOUT_print_3d.SPIN_bar_width.value
 	PlatformGenerator.Options.extrude_top	= ROLLOUT_print_3d.SPIN_top_extrude.value
 	PlatformGenerator.Options.chamfer_top_divider	= ROLLOUT_print_3d.SPIN_top_chamfer_multiplier.value
+	PlatformGenerator.Options.normal_length	= ROLLOUT_print_3d.SPIN_normal_length.value
+	PlatformGenerator.Options.cross_section	= ROLLOUT_print_3d.CBX_cross_section.state
 
 
 	PlatformGenerator --return
@@ -125,8 +128,6 @@ icon:	"across:3|height:32|width:128"
 		(
 
 			PlatformGenerator = getPlatformGeneratorInstance()
-
-			--platforms = #()
 
 			PlatformGenerator.rebuild( selection as Array )
 		)

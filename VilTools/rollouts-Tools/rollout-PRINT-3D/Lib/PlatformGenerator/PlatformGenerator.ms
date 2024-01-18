@@ -1,6 +1,8 @@
 filein( getFilenamePath(getSourceFileName()) + "/PlatformOptions/PlatformOptions.ms" )	-- "./PlatformOptions/PlatformOptions.ms"
 filein( getFilenamePath(getSourceFileName()) + "/PlatformModifiers/PlatformModifiers.ms" )	-- "./PlatformModifiers/PlatformModifiers.ms"
 filein( getFilenamePath(getSourceFileName()) + "/PlatformObject/PlatformObject.ms" )	-- "./PlatformObject/PlatformObject.ms"
+filein( getFilenamePath(getSourceFileName()) + "/PlatformCrossSection/PlatformCrossSection.ms" )	-- "./PlatformCrossSection/PlatformCrossSection.ms"
+
 
 /* Generate Platforms for 3D print
   *
@@ -19,7 +21,6 @@ struct PlatformGenerator_v
 (
 	/* construct */
 	export_size	= 1,
-	normal_length	= 3,
 
 	------bind_to_parent = true, -- if true then platforms are bind to parent of source objects (E.G.: Export Node), otherwise are bind to source_object
 
@@ -29,12 +30,13 @@ struct PlatformGenerator_v
 	/* properties */
 	PlatformObjects = #(),
 
-	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ), -- #top and #bottom are read-only and they are default by Edit Spline
+	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #CROSS, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
 	PlatformObjectInstance,
 	PlatformModifiers,	--PlatformModifiers_v(),
+	PlatformCrossSection,
 
 	/* reference */
 	/* inhered */
@@ -54,7 +56,8 @@ struct PlatformGenerator_v
 
 		Options.init()
 
-		PlatformModifiers	= PlatformModifiers_v(Options)(mat_ids)
+		PlatformModifiers	= PlatformModifiers_v	Options:Options mat_ids:mat_ids
+		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
 
 		PlatformObjectInstance = PlatformObject_v layer_height:Options.base_height mat_ids:mat_ids
 
@@ -68,12 +71,11 @@ struct PlatformGenerator_v
 			for PlatformObject in PlatformObjects do
 				PlatformObject.generatePlatform()
 
-			select (this._getPlatformObjects()) -- IMPORTANT - must b selected bfore applying modifiers
+			select (this.getPlatforms()) -- IMPORTANT - must b selected bfore applying modifiers
 
 			PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 
 		)
-
 		--EnableSceneRedraw()
 
 		--this.platforms --return
@@ -96,6 +98,16 @@ struct PlatformGenerator_v
 		delete platforms_to_rebuild
 
 		this.generate (source_objects)
+	),
+
+	/** Get platform objects
+	  *
+	  */
+	function getPlatforms =
+	(
+		--format "\n"; print "PlatformGenerator_v.getPlatformObjects()"
+
+		for PlatformObject in PlatformObjects collect PlatformObject.platform
 	),
 
 	/** Get platform positions from:
@@ -144,7 +156,7 @@ struct PlatformGenerator_v
 
 		for i = 1 to verts_to_generate.count do
 		(
-			format "get vertex i:	% \n" i
+			format "get vertex: % of % \n" i verts_to_generate.count
 			vertex_index = verts_to_generate[i]
 
 			vert_pos =  polyop.getVert source_obj vertex_index
@@ -161,8 +173,8 @@ struct PlatformGenerator_v
 
 				PlatformObject.addVert(vert_pos)
 
-				if normal.z < 0.9 then -- limit where normal segment of platform is used ( dont use on platforms facing straight down )
-					PlatformObject.addVert(vert_pos + normal_length * normalize( normal ) )
+				--if normal.z < 0.9 then -- limit where normal segment of platform is used ( dont use on platforms facing straight down )
+					--PlatformObject.addVert(vert_pos + this.Options.normal_length * normalize( normal ) )
 
 			)
 		)
@@ -266,15 +278,6 @@ struct PlatformGenerator_v
 		PlatformObject --return
 	),
 
-	/** Get platform objects
-	  *
-	  */
-	function _getPlatformObjects =
-	(
-		--format "\n"; print "PlatformGenerator_v.getPlatformObjects()"
-
-		for PlatformObject in PlatformObjects collect PlatformObject.platform
-	),
 
 	/** Ask to continue
 	  *

@@ -17,10 +17,11 @@ struct PlatformObject_v
 	--normal,
 
 	/* dependency */
-	Options,	--PlatformOptions_v(),
 
 	/* reference */
 	/* inhered */
+	Options,	--PlatformOptions_v(),
+
 	/* store */
 	verts_positions = #(), -- vertex positions to generate platforms
 
@@ -38,6 +39,8 @@ struct PlatformObject_v
 		--format "verts_positions:	% \n" verts_positions
 
 		this._createLineFromPoints()
+
+		platform --return
 	),
 
 	/** Add vert pos
@@ -103,36 +106,3 @@ struct PlatformObject_v
 
 	on create do ()
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
