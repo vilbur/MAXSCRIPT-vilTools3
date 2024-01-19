@@ -51,7 +51,7 @@ struct PlatformGenerator_v
 
 		--DisableSceneRedraw() -- disable for development
 		for source_obj in source_objects do
-			this.setVertexPositions( source_obj )
+			this._setVertexPositions( source_obj )
 
 		if PlatformObjects.count > 0 then
 		(
@@ -118,7 +118,7 @@ struct PlatformGenerator_v
 		points_created = #()
 		--format "source_objects:	% \n" source_objects
 		for source_obj in source_objects do
-			this.setVertexPositions( source_obj )
+			this._setVertexPositions( source_obj )
 
 		for PlatformObject in PlatformObjects do
 
@@ -148,12 +148,15 @@ struct PlatformGenerator_v
 		for PlatformObject in PlatformObjects collect PlatformObject.platform
 	),
 
+
+	private
+
 	/** Get platform positions from:
 	  * 	A) From point helper
 	  * 	B) From Line
 	  * 	C) From Mesh Object
 	  */
-	function setVertexPositions source_obj =
+	function _setVertexPositions source_obj =
 	(
 		/* POINT HELPER */
 		if classOf source_obj == Point then
@@ -165,13 +168,10 @@ struct PlatformGenerator_v
 
 		/* EDITABLE POLY OBJECT */
 		else
-			this._getVertexPositionsFromEditablePoly(source_obj)
+		 join PlatformObjects (EditablePolyVertexGetter.getVertsData(source_obj))
 
 		--this.verts_positions --return
 	),
-
-	private
-
 
 	/** Get vertex positions from spline
 	  */

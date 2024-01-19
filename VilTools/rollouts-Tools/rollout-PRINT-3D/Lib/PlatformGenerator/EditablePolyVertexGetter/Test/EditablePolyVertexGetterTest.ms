@@ -13,15 +13,13 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	segment_size = 10
 
 	--_obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
-	_obj = Sphere radius:15 pos:[0,0, 300 ] segments:segments -- diameter 3 cm
+	_obj = Sphere radius:15 pos:[0,0, 10 ] segments:segments -- diameter 3 cm
 
 	select _obj
 
 	Rotate _obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
 
 	macros.run "Modifier Stack" "Convert_to_Poly"
-
-	modPanel.addModToSelection (Edit_Poly ()) ui:on
 
 	if vertex_selection.count > 0 then
 	(
@@ -32,6 +30,8 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 		_obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
+
+	modPanel.addModToSelection (Edit_Poly ()) ui:on
 )
 
 
@@ -52,9 +52,9 @@ source_objects = for obj in selection collect obj
 	RUN TEST
 --------------------------------------------------------------------------------*/
 
-EditablePolyVertexGetter 	= EditablePolyVertexGetter_v obj_source:source_objects[1] PlatformObjectInstance:(PlatformObject_v()) normal_length:10
+EditablePolyVertexGetter 	= EditablePolyVertexGetter_v PlatformObjectInstance:(PlatformObject_v()) normal_length:10
 
-EditablePolyVertexGetter.getVertsData()
+EditablePolyVertexGetter.getVertsData(source_objects[1])
 
 
 /*------------------------------------------------------------------------------

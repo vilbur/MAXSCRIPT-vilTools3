@@ -48,7 +48,6 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 
 	Rotate _obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
 
-	modPanel.addModToSelection (Edit_Poly ()) ui:on
 	--modPanel.addModToSelection ( meshsmooth ()) ui:on
 
 	if vertex_selection.count > 0 then
@@ -60,6 +59,9 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 
 		_obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
+
+	modPanel.addModToSelection (Edit_Poly ()) ui:on
+
 )
 
 /** Create test line
@@ -182,7 +184,7 @@ PlatformGenerator 	= PlatformGenerator_v EXPORT_SIZE:EXPORT_SIZE
 --------------------------------------------------------------------------------*/
 
 
---/* GENERATE NEW PALTFROMS */
+/* GENERATE NEW PALTFROMS */
 PlatformGenerator.generate( source_objects )
 
 
