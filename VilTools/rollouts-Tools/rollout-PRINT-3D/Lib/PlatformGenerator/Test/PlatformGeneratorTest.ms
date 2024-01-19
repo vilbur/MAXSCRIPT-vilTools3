@@ -46,9 +46,9 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 	if test_shifted_pivot then
 		$.pos.x = $.pos.y = $.pivot.x = $.pivot.y = 100
 
-	Rotate _obj ( AngleAxis 180 [1,0,0]) -- rotate object to simulate some real scene state
+	Rotate _obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
 
-	--modPanel.addModToSelection (Edit_Poly ()) ui:on
+	modPanel.addModToSelection (Edit_Poly ()) ui:on
 	--modPanel.addModToSelection ( meshsmooth ()) ui:on
 
 	if vertex_selection.count > 0 then
@@ -144,11 +144,11 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:4
 
 --createSourceMesh segments:2
---createSourceMesh segments:12 obj:#SPHERE
+createSourceMesh segments:12 obj:#SPHERE
 --createSourceMesh segments:4 obj:#BOX
 --createSourceMesh segments:2 vertex_selection:#{3..4}
-createSourceMesh segments:12 vertex_selection:#{2..17} obj:#SPHERE vertex_color:orange
---createSourceMesh segments:2 vertex_selection:#{2}
+--createSourceMesh segments:2 vertex_selection:#{2..3} vertex_color:orange
+--createSourceMesh segments:12 vertex_selection:#{2..17} obj:#SPHERE vertex_color:orange
 
 
 
@@ -182,12 +182,14 @@ PlatformGenerator 	= PlatformGenerator_v EXPORT_SIZE:EXPORT_SIZE
 --------------------------------------------------------------------------------*/
 
 
-/* GENERATE NEW PALTFROMS */
---PlatformGenerator.generate( source_objects )
+--/* GENERATE NEW PALTFROMS */
+PlatformGenerator.generate( source_objects )
 
 
 /* REBUILD EXISTING PALTFROMS */
 --PlatformGenerator.rebuild( selection )
+
+
 
 
 /*------------------------------------------------------------------------------
@@ -209,7 +211,7 @@ PlatformGenerator 	= PlatformGenerator_v EXPORT_SIZE:EXPORT_SIZE
 --------------------------------------------------------------------------------*/
 
 
-PlatformGenerator.generatePointHelpers(source_objects)
+--PlatformGenerator.generatePointHelpers(source_objects)
 
 
 

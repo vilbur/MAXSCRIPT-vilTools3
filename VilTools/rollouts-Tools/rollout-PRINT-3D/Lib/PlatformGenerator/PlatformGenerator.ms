@@ -2,7 +2,7 @@ filein( getFilenamePath(getSourceFileName()) + "/PlatformOptions/PlatformOptions
 filein( getFilenamePath(getSourceFileName()) + "/PlatformModifiers/PlatformModifiers.ms" )	-- "./PlatformModifiers/PlatformModifiers.ms"
 filein( getFilenamePath(getSourceFileName()) + "/PlatformObject/PlatformObject.ms" )	-- "./PlatformObject/PlatformObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/PlatformCrossSection/PlatformCrossSection.ms" )	-- "./PlatformCrossSection/PlatformCrossSection.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/EditablePolyVertexGetter/EditablePolyVertexGetter.ms" )	-- "./EditablePolyVertexGetter/EditablePolyVertexGetter.ms"
 
 /* Generate Platforms for 3D print
   *
@@ -33,6 +33,7 @@ struct PlatformGenerator_v
 	PlatformObjectInstance,
 	PlatformModifiers,	--PlatformModifiers_v(),
 	PlatformCrossSection,
+	EditablePolyVertexGetter,
 
 	/* reference */
 	/* inhered */
@@ -67,7 +68,8 @@ struct PlatformGenerator_v
 			PlatformModifiers.addModifiers() -- PALTFORM OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 
 		)
-		--EnableSceneRedraw()
+
+		----EnableSceneRedraw()
 
 		--this.platforms --return
 	),
@@ -103,12 +105,12 @@ struct PlatformGenerator_v
 		  */
 		function shiftWirecolor wirecolor i =
 		(
-			format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
-			format "wirecolor:	% \n" wirecolor
+			--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
+			--format "wirecolor:	% \n" wirecolor
 			if wirecolor.r >= i then wirecolor.r -= i
 			if wirecolor.g >= i then wirecolor.g -= i
 			if wirecolor.b >= i then wirecolor.b -= i
-			format "wirecolor:	% \n" wirecolor
+			--format "wirecolor:	% \n" wirecolor
 
 			wirecolor --return
 		)
@@ -170,56 +172,6 @@ struct PlatformGenerator_v
 
 	private
 
-
-	/** Get vertex positions from editable poly
-	  *
-	  */
-	function _getVertexPositionsFromEditablePoly source_obj =
-	(
-		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditablePoly()"
-		start_time = timestamp()
-		--format "classOf source_obj:	% \n" (classOf source_obj)
-		--format "classOf source_obj:	% \n" (classOf source_obj.mesh)
-
-		vertext_count	= getNumVerts source_obj.mesh
-		vertext_sel  	= (getVertSelection source_obj.mesh )	as Array
-		vertext_colored_count	= getNumCPVVerts source_obj.mesh
-
-		verts_to_generate = if vertext_sel.count != 0 then vertext_sel else #{1..vertext_count} as Array  -- get all verts if nothing selected
-
-
-		format "\n-----------\nARRAY:vertext_sel:\n";  for sel in vertext_sel do format "sel:	%\n" sel
-
-		/* GET WIRECOLOR OF VERTEX, if white, then use object wirecolor - getting vertex color is very slow, it is get only for first vertex */
-		--wirecolor = if getNumCPVVerts source_obj.mesh > 0 and  (_vertex_color = getvertcolor source_obj.mesh verts_to_generate[1]) != white then _vertex_color else source_obj.wirecolor
-
-		for i = 1 to verts_to_generate.count do
-		(
-			format "get vertex: % of % \n" i verts_to_generate.count
-			vertex_index = verts_to_generate[i]
-
-			vert_pos =  polyop.getVert source_obj vertex_index
-
-			normal = ( getnormal source_obj.mesh vertex_index) * source_obj.transform - source_obj.pos
-
-			--format "normal:	% \n" ( getnormal source_obj.mesh vertex_index)
-
-			wirecolor = if  vertext_colored_count > 0 and  (_vertex_color = getvertcolor source_obj.mesh vertex_index) != white then _vertex_color else source_obj.wirecolor
-
-			if normal.z <= 0 then -- use only vertices pointing down
-			(
-				PlatformObject = this._getPlatformObject(source_obj)(wirecolor)
-
-				PlatformObject.addVert(vert_pos)
-
-				if normal.z > -0.9 then -- dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up )
-					PlatformObject.addVert(vert_pos + this.Options.normal_length * normalize( normal ) )
-
-			)
-		)
-
-		format "Timer % ms\n" ((timestamp()) - start_time)
-	),
 
 	/** Get vertex positions from spline
 	  */
@@ -343,7 +295,8 @@ struct PlatformGenerator_v
 
 		PlatformModifiers	= PlatformModifiers_v	Options:Options
 		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
-		PlatformObjectInstance 	= PlatformObject_v Options:Options
+		PlatformObjectInstance 	= PlatformObject_v	Options:Options
+		EditablePolyVertexGetter 	= EditablePolyVertexGetter_v	PlatformObjectInstance:PlatformObjectInstance normal_length:this.Options.normal_length
 
 	)
 )

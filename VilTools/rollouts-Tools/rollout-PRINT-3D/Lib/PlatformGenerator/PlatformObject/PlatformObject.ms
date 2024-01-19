@@ -28,7 +28,7 @@ struct PlatformObject_v
 		--format "this.normal:	% \n" this.normal
 		--format "this.wirecolor:	% \n" this.wirecolor
 
-		platform = SplineShape name:( source_obj.name + "-platform" ) wirecolor:wirecolor
+		platform = SplineShape name:( source_obj.name + "-platform" ) wirecolor:(this.shiftWirecolor(1))
 
 		--format "verts_positions:	% \n" verts_positions
 
@@ -99,6 +99,27 @@ struct PlatformObject_v
 		updateShape platform
 	),
 
+	/** Shift wirecolor
+	  *
+	  */
+	function shiftWirecolor i =
+	(
+		--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
+		--format "wirecolor:	% \n" wirecolor
+
+		wirecolor_shifted = copy wirecolor
+
+		for key in #( #R, #G, #B ) do
+		(
+			new_value = if ( val = ( getProperty wirecolor key) + i) <= 255 then val else 255
+
+			setProperty wirecolor_shifted key new_value
+		)
+
+		wirecolor_shifted --return
+	),
 
 	on create do ()
 )
+
+
