@@ -56,7 +56,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/PlatformGenerator/PlatformG
 --------------------------------------------------------------------------------*/
 
 
-/**
+/** BAR WIDTH
  */
 macroscript	_print_platform_generator_bar_width
 category:	"_3D-Print"
@@ -67,13 +67,13 @@ icon:	"across:2|control:spinner|range:[ 1, 99, 1.5 ]|width:64|offset:[ -8, 0]"
 	format "EventFired:	% \n" EventFired
 )
 
-/**
+/** EXTRUDE TOP
  */
 macroscript	_print_platform_generator_extrude_top
 category:	"_3D-Print"
 buttontext:	"Top Extrude"
 tooltip:	"Top Extrude part in mm of printed model.\n\nExported scale is used"
-icon:	"across:2|control:spinner|range:[ 0, 99, 0.25 ]|width:64"
+icon:	"across:2|control:spinner|range:[ 0, 99, 0.5 ]|width:64"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -152,5 +152,3 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 1, 999, 5 ]|width:64"
 (
 	format "EventFired:	% \n" EventFired
 )
-
-

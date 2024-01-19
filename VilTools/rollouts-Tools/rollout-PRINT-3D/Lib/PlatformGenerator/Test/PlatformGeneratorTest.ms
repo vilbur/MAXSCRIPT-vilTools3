@@ -32,7 +32,7 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 
 	_obj = case obj of
 	(
-		#SPHERE:	Sphere radius:(getUnit(15)) pos:[0,0, getUnit(30.0) ] segments:segments -- diameter 3 cm
+		#SPHERE:	Sphere radius:(getUnit(50)) pos:[0,0, getUnit(80) ] segments:segments -- diameter 3 cm
 		#BOX:	Box  pos:[0,0, getUnit(50) ]  lengthsegs:segments widthsegs:segments heightsegs:segments
 
 		DEFAULT:	Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, getUnit(30.0) ] widthsegs:segments lengthsegs:segments backfacecull: off
@@ -145,10 +145,12 @@ EXPORT_SIZE	= 1
 --createSourceMesh segments:1
 --createSourceMesh segments:4
 
---createSourceMesh segments:2
-createSourceMesh segments:12 obj:#SPHERE
---createSourceMesh segments:4 obj:#BOX
---createSourceMesh segments:2 vertex_selection:#{3..4}
+ --createSourceMesh segments:2
+ --createSourceMesh segments:8 obj:#SPHERE
+--createSourceMesh segments:256 obj:#SPHERE vertex_selection:#{1..1000}
+-- createSourceMesh segments:12 obj:#SPHERE vertex_selection:#{32}
+-- createSourceMesh segments:4 obj:#BOX
+--createSourceMesh segments:256 vertex_selection:#{3..4}
 --createSourceMesh segments:2 vertex_selection:#{2..3} vertex_color:orange
 --createSourceMesh segments:12 vertex_selection:#{2..17} obj:#SPHERE vertex_color:orange
 
@@ -169,7 +171,7 @@ source_objects = for obj in selection collect obj
 
 /*------------------------------------------------------------------------------
 
-	CREATE INSTANCE
+	CREATE INSTANCE OF TESTED CLASS
 
 --------------------------------------------------------------------------------*/
 
@@ -185,7 +187,7 @@ PlatformGenerator 	= PlatformGenerator_v EXPORT_SIZE:EXPORT_SIZE
 
 
 /* GENERATE NEW PALTFROMS */
-PlatformGenerator.generate( source_objects )
+-- PlatformGenerator.generate( source_objects )
 
 
 /* REBUILD EXISTING PALTFROMS */
@@ -193,10 +195,19 @@ PlatformGenerator.generate( source_objects )
 
 
 
+/*------------------------------------------------------------------------------
+
+	GENERATE POINTS FROM SOURCE OBJECT
+
+--------------------------------------------------------------------------------*/
+PlatformGenerator.generatePointHelpers(source_objects)
+
+
+
 
 /*------------------------------------------------------------------------------
 
-	CROSS SECTION
+	GENERATE PALFORMS WITH CROSS SECTION
 
 --------------------------------------------------------------------------------*/
 
@@ -204,21 +215,3 @@ PlatformGenerator.generate( source_objects )
 --
 --
 --PlatformCrossSection.create( PlatformGenerator.getPlatforms() )
-
-
-/*------------------------------------------------------------------------------
-
-	GENERATE POINTS FROM SOURCE OBJECT
-
---------------------------------------------------------------------------------*/
-
-
---PlatformGenerator.generatePointHelpers(source_objects)
-
-
-
-
-
-
-
-

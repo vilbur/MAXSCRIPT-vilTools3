@@ -43,7 +43,7 @@ struct PlatformGenerator_v
 	  */
 	function generate source_objects =
 	(
-		--format "\n"; print "PlatformGenerator_v.generate()"
+		format "\n"; print "PlatformGenerator_v.generate()"
 		--format "source_objects:	% \n" source_objects
 
 		/* SETUP */
@@ -93,15 +93,15 @@ struct PlatformGenerator_v
 		this.generate (source_objects)
 	),
 
-	/** Generate point helpers from selected verts
+	/** Generate instanced point helpers from selected verts
 	  *
 	  */
 	function generatePointHelpers source_objects =
 	(
 		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
 
-		/** Shift wirecolor
-		  *
+		/** Shift wirecolor sligtly
+		  * Each level of points has different wirecolor for better selection
 		  */
 		function shiftWirecolor wirecolor i =
 		(
@@ -113,6 +113,22 @@ struct PlatformGenerator_v
 			--format "wirecolor:	% \n" wirecolor
 
 			wirecolor --return
+		)
+
+		/** Reinstance points
+		  */
+		function reinstancePoints points_created =
+		(
+			--format "\n"; print "PlatformGenerator_v.reinstancePoints()"
+			if points_created.count < 2 then
+				return false
+
+			master_object	= points_created[1]
+
+			for_replace = deleteItem points_created 1
+
+			for _point in for_replace do
+				instanceReplace _point master_object
 		)
 
 		points_created = #()
@@ -134,6 +150,8 @@ struct PlatformGenerator_v
 
 				append points_created _point
 			)
+
+		reinstancePoints (points_created)
 
 		points_created --return
 	),
@@ -270,20 +288,20 @@ struct PlatformGenerator_v
 	),
 
 
-	/** Ask to continue
-	  *
-	  */
-	function _askToContinue =
-	(
-		--format "\n"; print "PlatformGenerator_v._askToContinue()"
-		_continue = true
-
-		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
-		if verts_to_generate.count > 100 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\n  CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
-			 _continue =  false
-
-		_continue --return
-	),
+	--/** Ask to continue
+	--  *
+	--  */
+	--function _askToContinue =
+	--(
+	--	--format "\n"; print "PlatformGenerator_v._askToContinue()"
+	--	_continue = true
+	--
+	--	--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+	--	if verts_to_generate.count > 100 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\n  CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+	--		 _continue =  false
+	--
+	--	_continue --return
+	--),
 
 	/**
 	 */

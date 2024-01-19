@@ -25,7 +25,7 @@ struct PlatformOptions_v
 	base_height	= 1.0,
 	base_extrude	= 4.0,
 
-	extrude_top	= 0.25,
+	extrude_top	= 0.5,
 
 
 	chamfer_top_divider = 4,
