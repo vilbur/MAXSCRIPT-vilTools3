@@ -9,7 +9,7 @@ function getPlaneZpozition layer_index =
 
 	volume_height	= (PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).printer_size.z
 	layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
-	layer_current	= ROLLOUT_print_3d.SLIDER_set_elevation.value
+	layer_current	= DIALOG_elevation_slider.SLIDER_elevation.value
 	layers_count	= volume_height / layer_height
 
 	--if incremental then
@@ -57,21 +57,24 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 	obj = selection[1]
 
-	slice_mod = if ( _modifier = obj.modifiers[mod_name as name] ) != undefined  then _modifier else SliceModifier name:mod_name
+	slice_modifier_new = SliceModifier name:mod_name cap:cap_state Faces___Polygons_Toggle:1 Slice_Type:(if mode == #TOP then 3 else 2)
+
+	slice_mod = if ( _modifier = obj.modifiers[mod_name as name] ) != undefined  then _modifier else slice_modifier_new
 
 	/* SLICE MODIFIER SETUP */
 
-	slice_mod.Slice_Type = if mode == #TOP then 3 else 2 -- remove negative else positive
+	--slice_mod.Slice_Type = if mode == #TOP then 3 else 2 -- remove negative else positive
 
-	slice_mod.cap = cap_state
+	--slice_mod.cap = cap_state
 
-	slice_mod.Faces___Polygons_Toggle = 1  -- operate on Poly
+	--slice_mod.Faces___Polygons_Toggle = 1  -- operate on Poly
 
 
 
 	select objects_to_slice
 
 	modPanel.addModToSelection slice_mod
+
 
 
 	/* SET SLICE PLANE POSITION */
@@ -94,6 +97,6 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 	slice_mod.slice_plane.transform = tempMatrix
 
-
+	redrawViews()
 
 )

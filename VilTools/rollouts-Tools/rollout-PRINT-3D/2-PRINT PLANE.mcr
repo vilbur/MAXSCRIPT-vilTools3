@@ -1,63 +1,17 @@
 filein( getFilenamePath(getSourceFileName()) + "/../rollout-EXPORT/rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume/PrinterVolume.ms" )	-- "./../rollout-EXPORT/rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume/PrinterVolume.ms"
---filein( getFilenamePath(getSourceFileName()) + "/Lib/setSlicePlaneModifier.ms" )	-- "./Lib/setSlicePlaneModifier.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/setSlicePlaneModifier.ms" )	-- "./Lib/setSlicePlaneModifier.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/setPrintPlaneElevation.ms" )	-- "./Lib/setPrintPlaneElevation.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/getPlatformGeneratorInstance.ms" )	-- "./Lib/getPlatformGeneratorInstance.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/createElevationSliderDialog.ms" )	-- "./Lib/createElevationSliderDialog.ms"
+
+
 /*------------------------------------------------------------------------------
 
 	EDIT PRINT PLANE
 
 --------------------------------------------------------------------------------*/
 
-/** Set print elevation
-  *
-  */
-function setPrintPlaneElevation layer_index incremental:false =
-(
-	format "\n"; print "PRINTER DUMMY.mcr.setPrintElevation()"
-
-	format "layer_index:	% \n" layer_index
-
-	--volume_height	= (PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).printer_size.z
-	layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
-	layer_current	= ROLLOUT_print_3d.SLIDER_set_elevation.value
-	--layers_count	= volume_height / layer_height
-
-	format "layer_current:	% \n" layer_current
-
-	if incremental then
-		layer_index = layer_current + layer_index
-
-	--format "volume_height:	% \n" volume_height
-	--format "layer_height:	% \n" layer_height
-	--format "layers_count:	% \n" layers_count
-	--
-	--if layer_index < 0 or layer_index > layers_count then
-	--	layer_index = 	if layer_index < 0  then 0 else layers_count
-	--
-	--
-	--if $SELECT_PLANE_HELPER == undefined then
-	--	(PrinterVolume_v( ROLLOUT_export.SPIN_export_size.value ) ( ROLLOUT_print_3d.SPIN_layer_height.value )).createVolume(#RECTANGLE)
-	--
-	--
-	--$SELECT_PLANE_HELPER.pos.z = layer_index * layer_height
-	--
-	--
-	--ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
-	--ROLLOUT_print_3d.SLIDER_set_elevation.value	= layer_index
-
-	cap_slice_plane = ROLLOUT_print_3d.CBX_cap_slice.state
-
-	if ROLLOUT_print_3d.CBX_slice_top.state then
-		setSlicePlaneModifier (#TOP) (#TRUE) (layer_index) (cap_slice_plane)
-
-	if ROLLOUT_print_3d.CBX_slice_bottom.state then
-		setSlicePlaneModifier (#BOTTOM) (#TRUE) (layer_index - 1) (cap_slice_plane)
-
-
-
-	/* UPDATE UI */
-	ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
-	ROLLOUT_print_3d.SLIDER_set_elevation.value	= layer_index
-
-)
 
 
 /*------------------------------------------------------------------------------
@@ -235,27 +189,27 @@ icon:	"across:1|control:slider|orient:#horizontal|range:[ 0, 5000, 0 ]|ticks:500
 	--(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
 )
 
-/**
-  *
-  */
-macroscript	_print_plane_set_elevation_rightclick
-category:	"_3D-Print"
-buttontext:	"Set Elevation"
-toolTip:	"Reset plane to 0 on z Axis.\n\nDOUBLE RIGHTCLICK:Delete Plane"
---icon:	"control:slider|orient:#horizontal|across:1|range:[ 0, 5000, 0 ]|ticks:5000|type:#integer"
-icon:	"control:slider"
-(
-	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
-
-	/* SET LAYER 0 */
-	if $SELECT_PLANE_HELPER != undefined and $SELECT_PLANE_HELPER.pos.z > 0 then
-		setPrintPlaneElevation 0
-
-	/* DELTE PLANE */
-	else if $SELECT_PLANE_HELPER != undefined then
-		delete $SELECT_PLANE_HELPER
-)
+--/**
+--  *
+--  */
+--macroscript	_print_plane_set_elevation_rightclick
+--category:	"_3D-Print"
+--buttontext:	"Set Elevation"
+--toolTip:	"Reset plane to 0 on z Axis.\n\nDOUBLE RIGHTCLICK:Delete Plane"
+----icon:	"control:slider|orient:#horizontal|across:1|range:[ 0, 5000, 0 ]|ticks:5000|type:#integer"
+--icon:	"control:slider"
+--(
+--	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
+--
+--	/* SET LAYER 0 */
+--	if $SELECT_PLANE_HELPER != undefined and $SELECT_PLANE_HELPER.pos.z > 0 then
+--		setPrintPlaneElevation 0
+--
+--	/* DELTE PLANE */
+--	else if $SELECT_PLANE_HELPER != undefined then
+--		delete $SELECT_PLANE_HELPER
+--)
 
 
 /*------------------------------------------------------------------------------

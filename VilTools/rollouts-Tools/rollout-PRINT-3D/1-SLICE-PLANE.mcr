@@ -1,6 +1,23 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/setSlicePlaneModifier.ms" )	-- "./Lib/setSlicePlaneModifier.ms"
 
+filein( getFilenamePath(getSourceFileName()) + "/Lib/createElevationSliderDialog.ms" )	-- "./Lib/createElevationSliderDialog.ms"
 
+/**
+  *
+  */
+macroscript	print_create_slicerdialog
+category:	"_3D-Print"
+buttontext:	"Slice Object"
+tooltip:	"Slice selected object"
+icon:	"across:4|height:32"
+(
+	on execute do
+		(
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\1-SLICE-PLANE.mcr"
+
+			createElevationSliderDialog()
+		)
+)
 
 
 /**
@@ -10,19 +27,19 @@ macroscript	_print_slice_plane_top
 category:	"_3D-Print"
 buttontext:	"Slice Top"
 tooltip:	"Slice plane top"
-icon:	"control:checkbox|across:3|height:32"
+icon:	"control:checkbox|across:4|height:32|autorun:false"
 (
 	on execute do
 		undo "Slice Plane" on
 		(
 			--clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\1-SLICE-PLANE.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMnPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\1-SLICE-PLANE.mcr"
 
-			if EventFired.val then
-				setSlicePlaneModifier (#TOP) (#TRUE) (ROLLOUT_print_3d.SLIDER_set_elevation.value) (ROLLOUT_print_3d.CBX_cap_slice.state)
-
-			else if  ( _modifier = $.modifiers[#SLICE_PLANE_TOP] ) != undefined then
-				deleteModifier $ _modifier
+			--if EventFired.val then
+			--	setSlicePlaneModifier (#TOP) (#TRUE) (ROLLOUT_print_3d.SLIDER_set_elevation.value) (ROLLOUT_print_3d.CBX_cap_slice.state)
+			--
+			--else if  ( _modifier = $.modifiers[#SLICE_PLANE_TOP] ) != undefined then
+			--	deleteModifier $ _modifier
 
 
 
@@ -37,7 +54,7 @@ macroscript	_print_slice_plane_bottom
 category:	"_3D-Print"
 buttontext:	"Slice Bottom"
 tooltip:	"Slice plane bottom"
-icon:	"control:checkbox|across:3|height:32"
+icon:	"control:checkbox|across:4|height:32"
 (
 	on execute do
 		undo "Slice Plane" on
@@ -64,7 +81,7 @@ macroscript	_print_slice_plane_cap
 category:	"_3D-Print"
 buttontext:	"Cap Slice"
 tooltip:	"Cap Slice plane"
-icon:	"control:checkbox|across:3|height:32"
+icon:	"control:checkbox|across:4|height:32"
 (
 	on execute do
 		undo "Slice Plane" on
