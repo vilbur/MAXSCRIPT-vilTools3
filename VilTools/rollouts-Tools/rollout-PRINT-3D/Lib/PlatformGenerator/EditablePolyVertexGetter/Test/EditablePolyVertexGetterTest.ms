@@ -39,7 +39,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 /*--------------------------------------------------------------------
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
-createSourceMesh()
+--createSourceMesh()
 -- createSourceMesh vertex_selection:#{2..3} vertex_color:orange
 
 

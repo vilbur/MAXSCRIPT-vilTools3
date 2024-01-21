@@ -40,36 +40,31 @@ function getPlaneZpozition layer_index =
 function setSlicePlaneModifier mode state layer_index cap_state =
 (
 	format "\n"; print "setSlicePlaneModifier.ms.setSlicePlaneModifier()"
+	--format "state:	% \n" state
+	--format "mode:	% \n" mode
 
+	if selection.count == 0 then
+		return false
 
-	format "mode:	% \n" mode
-	format "layer_index:	% \n" layer_index
 	z_pos = getPlaneZpozition (layer_index)
 
-	format "z_pos:	% \n" z_pos
+	--format "z_pos:	% \n" z_pos
 
 	mod_name = "SLICE PLANE " + toUpper (mode as string )
 
 	objects_to_slice	= for obj in selection where superClassOf obj == GeometryClass collect obj
 
-	--for obj in objects_to_slice where ( _modifier = obj.modifiers[mod_name as name] ) != undefined do
-		--deleteModifier obj _modifier
-
 	obj = selection[1]
 
-	slice_modifier_new = SliceModifier name:mod_name cap:cap_state Faces___Polygons_Toggle:1 Slice_Type:(if mode == #TOP then 3 else 2)
+	if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
+		_poly_select.enabled = false
 
-	slice_mod = if ( _modifier = obj.modifiers[mod_name as name] ) != undefined  then _modifier else slice_modifier_new
+	slice_mod = if ( _modifier = obj.modifiers[ mod_name as name ] ) != undefined then
+		_modifier
+	else
+		 SliceModifier name:mod_name cap:cap_state Faces___Polygons_Toggle:1 Slice_Type:(if mode == #TOP then 3 else 2)
 
 	/* SLICE MODIFIER SETUP */
-
-	--slice_mod.Slice_Type = if mode == #TOP then 3 else 2 -- remove negative else positive
-
-	--slice_mod.cap = cap_state
-
-	--slice_mod.Faces___Polygons_Toggle = 1  -- operate on Poly
-
-
 
 	select objects_to_slice
 
@@ -78,10 +73,9 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 
 	/* SET SLICE PLANE POSITION */
-	pos01 = [ obj.pos.x,	obj.pos.y,	z_pos ]
-	pos02 = [ obj.pos.x+10,	obj.pos.y,	z_pos ]
-	pos03 = [ obj.pos.x,	obj.pos.y+10,	z_pos ]
-
+	pos01 = [ selection.center.x,	selection.center.y,	z_pos ]
+	pos02 = [ selection.center.x+10,	selection.center.y,	z_pos ]
+	pos03 = [ selection.center.x,	selection.center.y+10,	z_pos ]
 
 	local vect1 = normalize (pos02 - pos01)
 	local vect2 = normalize (pos03 - pos02)
@@ -91,12 +85,47 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 
 	objTM = obj.objectTransform
-	modTM = getModContextTM obj slice_mod
 
-	tempMatrix = ((matrix3 vect1 vect2 vect3 ((pos01 + pos02 + pos03) / 3) )) * modTM * (inverse objTM)
+	max modify mode
 
-	slice_mod.slice_plane.transform = tempMatrix
+	if ( modTM = getModContextTM obj slice_mod ) != undefined then
+	(
+		--modTM = getModContextTM obj slice_mod
+	   tempMatrix = ((matrix3 vect1 vect2 vect3 ((pos01 + pos02 + pos03) / 3) )) * modTM * (inverse objTM)
 
-	redrawViews()
+	   slice_mod.slice_plane.transform = tempMatrix
+
+
+	)
+
+
+	(
+
+		if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
+		(
+			_poly_select.enabled = true
+
+
+			subobjectLevel = 1
+		)
+	)
+	   redrawViews()
+
 
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

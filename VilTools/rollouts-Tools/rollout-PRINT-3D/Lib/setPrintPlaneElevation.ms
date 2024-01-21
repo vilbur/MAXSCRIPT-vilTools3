@@ -1,70 +1,38 @@
+
+/** Data callback
+  *
+  */
+function toggleLayerHudCallback =
+(
+	--format "\n"; print "ViewportHudTest.ms.toggleLayerHudCallback()"
+	HUD_DATA[#CALLBACK_DATA].Rows[1].Columns[1].text = ((timestamp() / 1000) as string )
+)
+
+
+
 /** Set print elevation
   *
   */
 function setPrintPlaneElevation layer_index incremental:false =
 (
-	format "\n"; print "PRINTER DUMMY.mcr.setPrintElevation()"
+	--format "\n"; print "PRINTER DUMMY.mcr.setPrintElevation()"
 
-	format "layer_index:	% \n" layer_index
+	--format "layer_index:	% \n" layer_index
 
-	--function showLayerHud layer_index =
-	--(
-	--	HUD = Hud_v()
-	--
-	--	HUD.defaults color:white width:48 height:24 -- Set Defaults to row and column
-	--
-	--	/* DEFINE ROW */
-	--	Row_1 = HUD.row ( layer_index )
-	--
-	--	--Row_1.Column "Column 2" width:96
-	--	--Row_1.Column "Column 3" color:yellow
-	--	--
-	--	--/* OTHER ROWS */
-	--	--HUD.row ( "Row 2" ) color:red height:64
-	--	--HUD.row ( "Row 3" ) color:red height:-32
-	--
-	--	/* ADD TO HUD DATA */
-	--	HUD_DATA[#QUICK_ADD] = HUD
-	--)
-
-	/** Toggle hud callback
-	  */
-	function toggleLayerHudCallback hud_name data: =
+	function showLayerHud layer_index =
 	(
-		--format "\n"; print "HUD.mcr.toggleHudCallbeack()"
+		--format "\n"; print "PRINTER DUMMY.mcr.showLayerHud()"
+		unregisterRedrawViewsCallback viewportHudCallback
 
-		if data != unsupplied then
-		(
-			print ("HudCallback ON: #"+ hud_name as string )
+		HUD = Hud_v pos:#( #RIGHT,	#CENTER ) offset:[ 64, 0 ]
 
+		HUD.row ( layer_index as string )
 
-			unregisterRedrawViewsCallback viewportHudCallback
+		HUD_DATA[#SLICE_LAYER_CURRENT] = HUD
 
-			--HUD = Hud_v pos:#( #RIGHT,	#CENTER )
-			HUD = Hud_v pos:#( #CENTER,	#CENTER )
+		registerRedrawViewsCallback viewportHudCallback
 
-			HUD.defaults color:white width:48 height:24 -- Set Defaults to row and column
-
-			HUD_DATA[hud_name] = data
-
-
-			registerRedrawViewsCallback viewportHudCallback
-		)
-		else
-		(
-			RemoveDictValue HUD_DATA hud_name
-
-			--print ("HudCallback OFF: #"+ hud_name as string )
-
-			if HUD_DATA.count == 0 then
-			(
-				unregisterRedrawViewsCallback viewportHudCallback
-
-				--print "HudCallback DISABLE"
-			)
-		)
 	)
-
 
 
 	volume_height	= (PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).printer_size.z
@@ -72,7 +40,7 @@ function setPrintPlaneElevation layer_index incremental:false =
 	layer_current	= DIALOG_elevation_slider.SLIDER_elevation.value
 	layers_count	= volume_height / layer_height
 
-	format "layer_current:	% \n" layer_current
+	--format "layer_current:	% \n" layer_current
 
 	if incremental then
 		layer_index = layer_current + layer_index
@@ -90,6 +58,8 @@ function setPrintPlaneElevation layer_index incremental:false =
 
 	cap_slice_plane = ROLLOUT_print_3d.CBX_cap_slice.state
 
+
+
 	if ROLLOUT_print_3d.CBX_slice_top.state then
 		setSlicePlaneModifier (#TOP) (#TRUE) (layer_index) (cap_slice_plane)
 
@@ -104,5 +74,7 @@ function setPrintPlaneElevation layer_index incremental:false =
 	DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
 
 	--toggleLayerHudCallback #SLICE_ELEVATION data:"layer_index"
+
+	showLayerHud(layer_index)
 
 )

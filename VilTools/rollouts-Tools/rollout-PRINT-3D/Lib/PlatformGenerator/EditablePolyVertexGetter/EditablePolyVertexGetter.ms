@@ -67,7 +67,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getVertexColors verts_all: colored_verts_num: =
 	(
-		format "\n"; print "PlatformGenerator_v._getVertexColors()"
+		format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
 
 		/*------------------------------------------------------------------------------
 			GET ALL VERTS IF ANY VERTEX COLOR EXISTS
@@ -155,7 +155,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getVertsByColor clr =
 	(
-		--format "\n"; print "PlatformGenerator_v.getVertsByColor()"
+		--format "\n"; print "EditablePolyVertexGetter_v.getVertsByColor()"
 		meshop.getVertsByColor obj_used.mesh clr 0.001 0.001 0.001 --return TRESHOLD FLOAT MUST NOT BE 0.0 - it causeses error in whie loop in this._getVertexColors()
 	),
 
@@ -164,7 +164,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _setObjectUsed obj =
 	(
-		--format "\n"; print "PlatformGenerator_v._setObjectUsed()"
+		--format "\n"; print "EditablePolyVertexGetter_v._setObjectUsed()"
 		this.obj_source = obj
 
 		this.obj_copy = undefined -- reset for next run on another object
@@ -189,7 +189,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getPlatformObject wirecolor =
 	(
-		--format "\n"; print "PlatformGenerator_v._getPlatformObject()"
+		--format "\n"; print "EditablePolyVertexGetter_v._getPlatformObject()"
 		--format "obj_source:	% \n" obj_source
 		--format "wirecolor:	% \n" wirecolor
 
@@ -207,7 +207,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _askToContinue verts_count =
 	(
-		--format "\n"; print "PlatformGenerator_v._askToContinue()"
+		--format "\n"; print "EditablePolyVertexGetter_v._askToContinue()"
 		_continue = true
 
 		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
