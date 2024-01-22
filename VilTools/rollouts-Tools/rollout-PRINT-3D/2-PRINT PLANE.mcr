@@ -1,10 +1,10 @@
 filein( getFilenamePath(getSourceFileName()) + "/../rollout-EXPORT/rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume/PrinterVolume.ms" )	-- "./../rollout-EXPORT/rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume/PrinterVolume.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/setSlicePlaneModifier.ms" )	-- "./Lib/setSlicePlaneModifier.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/setPrintPlaneElevation.ms" )	-- "./Lib/setPrintPlaneElevation.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/updateSlicePlaneSystem.ms" )	-- "./Lib/updateSlicePlaneSystem.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/getPlatformGeneratorInstance.ms" )	-- "./Lib/getPlatformGeneratorInstance.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/createElevationSliderDialog.ms" )	-- "./Lib/createElevationSliderDialog.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/setSelectPlaneModifier.ms" )	-- "./Lib/setSelectPlaneModifier.ms"
 
 /*------------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#lef
 
 	val = if keyboard.controlPressed then 10 else 1
 
-	setPrintPlaneElevation val incremental:true
+	updateSlicePlaneSystem val incremental:true
 )
 
 
@@ -54,7 +54,7 @@ icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#lef
 
 	val = if keyboard.controlPressed then -10 else -1
 
-	setPrintPlaneElevation val incremental:true
+	updateSlicePlaneSystem val incremental:true
 )
 
 
@@ -142,7 +142,7 @@ icon:	"across:4|control:spinner|id:#SPIN_current_layer|type:#integer|range:[ 0, 
 	--ROLLOUT_print_3d.SLIDER_set_elevation.value = EventFired.val
 
 	--macros.run "_3D-Print" "_print_plane_set_elevation"
-	setPrintPlaneElevation (EventFired.val)
+	updateSlicePlaneSystem (EventFired.val)
 )
 
 /**
@@ -180,7 +180,7 @@ icon:	"across:4|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.
 --
 --	--format "EventFired:	% \n" EventFired
 --
---	setPrintPlaneElevation (EventFired.val)
+--	updateSlicePlaneSystem (EventFired.val)
 --
 --
 --	--clearListener(); print("Cleared in:\n"+getSourceFileName())
@@ -204,7 +204,7 @@ icon:	"across:4|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.
 --
 --	/* SET LAYER 0 */
 --	if $SELECT_PLANE_HELPER != undefined and $SELECT_PLANE_HELPER.pos.z > 0 then
---		setPrintPlaneElevation 0
+--		updateSlicePlaneSystem 0
 --
 --	/* DELTE PLANE */
 --	else if $SELECT_PLANE_HELPER != undefined then

@@ -13,7 +13,7 @@ function toggleLayerHudCallback =
 /** Set print elevation
   *
   */
-function setPrintPlaneElevation layer_index incremental:false =
+function updateSlicePlaneSystem layer_index incremental:false =
 (
 	--format "\n"; print "PRINTER DUMMY.mcr.setPrintElevation()"
 
@@ -39,6 +39,10 @@ function setPrintPlaneElevation layer_index incremental:false =
 	layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
 	layer_current	= DIALOG_elevation_slider.SLIDER_elevation.value
 	layers_count	= volume_height / layer_height
+	cap_slice_plane = ROLLOUT_print_3d.CBX_cap_slice.state
+
+	slice_top	= ROLLOUT_print_3d.CBX_slice_top.state
+	slice_bottom	= ROLLOUT_print_3d.CBX_slice_bottom.state
 
 	--format "layer_current:	% \n" layer_current
 
@@ -56,15 +60,20 @@ function setPrintPlaneElevation layer_index incremental:false =
 	------$SELECT_PLANE_HELPER.pos.z = layer_index * layer_height
 
 
-	cap_slice_plane = ROLLOUT_print_3d.CBX_cap_slice.state
+
+	if slice_top and slice_bottom then
+	(
+		if slice_top then
+			setSlicePlaneModifier (#TOP) (#TRUE) (layer_index) (cap_slice_plane)
+
+		if slice_bottom then
+			setSlicePlaneModifier (#BOTTOM) (#TRUE) (layer_index - 1) (cap_slice_plane)
+
+	) else
+		setSelectPlaneModifier()
 
 
 
-	if ROLLOUT_print_3d.CBX_slice_top.state then
-		setSlicePlaneModifier (#TOP) (#TRUE) (layer_index) (cap_slice_plane)
-
-	if ROLLOUT_print_3d.CBX_slice_bottom.state then
-		setSlicePlaneModifier (#BOTTOM) (#TRUE) (layer_index - 1) (cap_slice_plane)
 
 
 
