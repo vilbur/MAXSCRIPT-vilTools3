@@ -40,7 +40,8 @@ function updateSlicePlaneSystem layer_index incremental:false =
 	if layer_index == undefined then
 		layer_index = layer_current
 
-	--format "layer_index:	% \n" layer_index
+	format "slice_top:	% \n" slice_top
+	format "slice_bottom % \n" slice_bottom
 
 	/* GET INCREMENTAL LAYER INDEX */
 	if incremental then
@@ -55,13 +56,13 @@ function updateSlicePlaneSystem layer_index incremental:false =
 
 	--format "select_plane	= % \n" select_plane
 	if select_plane then
-		setSelectPlaneModifier(layer_index)
+		setSelectPlaneModifier(layer_index) slice_top:slice_top slice_bottom:slice_bottom
 
 
 	/* UPDATE UI */
 	--ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
-	--DIALOG_elevation_slider.SPIN_layer_current.value	= layer_index
-	--DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
+	DIALOG_elevation_slider.SPIN_layer_current.value	= layer_index
+	DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
 
 
 	--showLayerHud(layer_index)

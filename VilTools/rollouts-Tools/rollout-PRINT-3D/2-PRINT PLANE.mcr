@@ -25,7 +25,7 @@ icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#lef
 
 	--format "EventFired	= % \n" EventFired
 	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
 
 	val = if keyboard.controlPressed then 10 else 1
 
@@ -44,7 +44,7 @@ icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#lef
 
 	--format "EventFired	= % \n" EventFired
 	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
 
 	val = if keyboard.controlPressed then -10 else -1
 
@@ -61,17 +61,33 @@ toolTip:	"Create\Unhide Plane\n\nToggle Normal if plane exists\n\nCTRL:	2-Sided\
 icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset:[ -16, 0 ]"
 (
 
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
 
-	if $PRINT_DUMMY_VOLUME == undefined then
-		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
+	if $SELECT_PRINT_LAYER == undefined then
+		(PrinterVolume_v dummy_name:"SELECT PRINT LAYER" export_size:ROLLOUT_export.SPIN_export_size.value volume_height:ROLLOUT_print_3d.SPIN_layer_height.value ).createVolume(#RECTANGLE)
 
-	if not $PRINT_DUMMY_VOLUME.isHidden then
+	if not $SELECT_PRINT_LAYER.isHidden then
 	(
 
-		_plane = $PRINT_DUMMY_VOLUME
+		_plane = $SELECT_PRINT_LAYER
+		format "_plane	= % \n" _plane
+		normal_modifier = _plane.modifiers[#NORMAL]
 
-		normal_modifier = _plane.modifiers[#Normal]
+		format "normal_modifier	= % \n" normal_modifier
+		if normal_modifier == undefined then
+		(
+			--format "normal_modifier	= % \n" normal_modifier
+			--
+			--addModifier _plane (Normalmodifier())
+			--
+			--normal_modifier = _plane.modifiers[#NORMAL]
+			--format "normal_modifier	= % \n" normal_modifier
+			--
+			normal_modifier = Normalmodifier()
+
+			addModifier _plane normal_modifier
+
+		)
 
 		if not normal_modifier.enabled then
 			normal_modifier.enabled = true
@@ -97,8 +113,8 @@ icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset
 	)
 	else
 	(
-		$PRINT_DUMMY_VOLUME.layer.on = true
-		$PRINT_DUMMY_VOLUME.isHidden = false
+		$SELECT_PRINT_LAYER.layer.on = true
+		$SELECT_PRINT_LAYER.isHidden = false
 	)
 
 
@@ -110,11 +126,11 @@ macroscript	_print_plane_set_normal_rightclick
 category:	"_3D-Print"
 buttontext:	"Normal"
 toolTip:	"Toggle Normnal"
-icon:	"across:4|id:#BTN_print_plane_nomal"
+icon:	"id:#BTN_print_plane_nomal|across:4|width:42"
 (
 
-	if $PRINT_DUMMY_VOLUME != undefined then
-		$PRINT_DUMMY_VOLUME.modifiers[#Normal].enabled = not $PRINT_DUMMY_VOLUME.modifiers[#Normal].enabled
+	if $SELECT_PRINT_LAYER != undefined then
+		$SELECT_PRINT_LAYER.modifiers[#Normal].enabled = not $SELECT_PRINT_LAYER.modifiers[#Normal].enabled
 )
 
 
@@ -123,21 +139,21 @@ icon:	"across:4|id:#BTN_print_plane_nomal"
 	SPINNERS
 
 --------------------------------------------------------------------------------*/
-/**
- */
-macroscript	_print_plane_current_layer
-category:	"_3D-Print"
-buttontext:	"Current"
-tooltip:	"Set Current Layer"
-icon:	"across:4|control:spinner|id:#SPIN_current_layer|type:#integer|range:[ 0, 5000, 0 ]|fieldwidth:32|offset:[ -32, 8 ]|align:#left"
-(
-	--format "EventFired:	% \n" EventFired
-
-	--ROLLOUT_print_3d.SLIDER_set_elevation.value = EventFired.val
-
-	--macros.run "_3D-Print" "_print_plane_set_elevation"
-	updateSlicePlaneSystem (EventFired.val)
-)
+--/**
+-- */
+--macroscript	_print_plane_current_layer
+--category:	"_3D-Print"
+--buttontext:	"Current"
+--tooltip:	"Set Current Layer"
+--icon:	"across:4|control:spinner|id:#SPIN_current_layer|type:#integer|range:[ 0, 5000, 0 ]|fieldwidth:32|offset:[ -32, 8 ]|align:#left"
+--(
+--	--format "EventFired:	% \n" EventFired
+--
+--	--ROLLOUT_print_3d.SLIDER_set_elevation.value = EventFired.val
+--
+--	--macros.run "_3D-Print" "_print_plane_set_elevation"
+--	updateSlicePlaneSystem (EventFired.val)
+--)
 
 /**
  */
@@ -197,12 +213,12 @@ icon:	"across:4|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.
 --	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
 --
 --	/* SET LAYER 0 */
---	if $PRINT_DUMMY_VOLUME != undefined and $PRINT_DUMMY_VOLUME.pos.z > 0 then
+--	if $SELECT_PRINT_LAYER != undefined and $SELECT_PRINT_LAYER.pos.z > 0 then
 --		updateSlicePlaneSystem 0
 --
 --	/* DELTE PLANE */
---	else if $PRINT_DUMMY_VOLUME != undefined then
---		delete $PRINT_DUMMY_VOLUME
+--	else if $SELECT_PRINT_LAYER != undefined then
+--		delete $SELECT_PRINT_LAYER
 --)
 
 

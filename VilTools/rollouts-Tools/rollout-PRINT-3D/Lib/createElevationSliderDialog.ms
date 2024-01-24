@@ -69,7 +69,7 @@ function createElevationSliderDialog =
 				--mod_names = #(mod_names)
 
 			--for mod_name in mod_names do
-			for mod_name in #( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM, #SELECT_SLICE ) do
+			for mod_name in #( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM, #SELECT_LAYER ) do
 				for obj in _objects where obj.modifiers[mod_name] != undefined do
 					deleteModifier obj obj.modifiers[mod_name]
 		)
@@ -168,15 +168,18 @@ function createElevationSliderDialog =
 
 		on SLIDER_elevation buttondown do
 		(
-			--for obj in selection where obj.modifiers[ #SELECT_SLICE ] != undefined do
-				--deleteModifier obj obj.modifiers[ #SELECT_SLICE ]
+			--for obj in selection where obj.modifiers[ #SELECT_LAYER ] != undefined do
+				 --obj.modifiers[ #SELECT_LAYER ].enabled = false
+
 		)
 
 		on SLIDER_elevation buttonup do
 		(
+			--for obj in selection where obj.modifiers[ #SELECT_LAYER ] != undefined do
+				 --obj.modifiers[ #SELECT_LAYER ].enabled = true
 
 			--if selection.count > 0 then
-			--	if $.modifiers[ #SELECT_SLICE ] == undefined then
+			--	if $.modifiers[ #SELECT_LAYER ] == undefined then
 			--	(
 			--		modPanel.addModToSelection (Poly_Select name:"SELECT SLICE")
 			--
@@ -191,7 +194,7 @@ function createElevationSliderDialog =
 
 
 		on DIALOG_elevation_slider open do
-			updateSlicePlaneSystem (ROLLOUT_print_3d.SPIN_current_layer.value)
+			updateSlicePlaneSystem (DIALOG_elevation_slider.SPIN_layer_current.value)
 
 
 	)

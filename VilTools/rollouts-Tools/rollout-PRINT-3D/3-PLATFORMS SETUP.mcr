@@ -55,7 +55,7 @@
 
 --------------------------------------------------------------------------------*/
 
-
+ 
 /** BAR WIDTH
  */
 macroscript	_print_platform_generator_bar_width

@@ -22,7 +22,7 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 	obj = selection[1]
 
-	--if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
+	--if ( _poly_select = obj.modifiers[ #SELECT_LAYER ] ) != undefined then
 	--	_poly_select.enabled = false
 
 	slice_mod = if ( _modifier = obj.modifiers[ mod_name as name ] ) != undefined then
@@ -67,7 +67,7 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 	--(
 	--
-	--	if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
+	--	if ( _poly_select = obj.modifiers[ #SELECT_LAYER ] ) != undefined then
 	--	(
 	--		_poly_select.enabled = true
 	--
