@@ -1,10 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../rollout-EXPORT/rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume/PrinterVolume.ms" )	-- "./../rollout-EXPORT/rollouts-ExportTo/rollout-3D-PRINT/Lib/PrinterVolume/PrinterVolume.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/setSlicePlaneModifier.ms" )	-- "./Lib/setSlicePlaneModifier.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/updateSlicePlaneSystem.ms" )	-- "./Lib/updateSlicePlaneSystem.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/getPlatformGeneratorInstance.ms" )	-- "./Lib/getPlatformGeneratorInstance.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/createElevationSliderDialog.ms" )	-- "./Lib/createElevationSliderDialog.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/setSelectPlaneModifier.ms" )	-- "./Lib/setSelectPlaneModifier.ms"
 
 /*------------------------------------------------------------------------------
 
@@ -69,13 +63,13 @@ icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset
 
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PRINTER DUMMY.mcr"
 
-	if $SELECT_PLANE_HELPER == undefined then
+	if $PRINT_DUMMY_VOLUME == undefined then
 		(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#RECTANGLE)
 
-	if not $SELECT_PLANE_HELPER.isHidden then
+	if not $PRINT_DUMMY_VOLUME.isHidden then
 	(
 
-		_plane = $SELECT_PLANE_HELPER
+		_plane = $PRINT_DUMMY_VOLUME
 
 		normal_modifier = _plane.modifiers[#Normal]
 
@@ -103,8 +97,8 @@ icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset
 	)
 	else
 	(
-		$SELECT_PLANE_HELPER.layer.on = true
-		$SELECT_PLANE_HELPER.isHidden = false
+		$PRINT_DUMMY_VOLUME.layer.on = true
+		$PRINT_DUMMY_VOLUME.isHidden = false
 	)
 
 
@@ -119,7 +113,7 @@ toolTip:	"Toggle Normnal"
 icon:	"across:4|id:#BTN_print_plane_nomal"
 (
 
-	if $SELECT_PLANE_HELPER != undefined then
+	if $PRINT_DUMMY_VOLUME != undefined then
 		$PRINT_DUMMY_VOLUME.modifiers[#Normal].enabled = not $PRINT_DUMMY_VOLUME.modifiers[#Normal].enabled
 )
 
@@ -203,12 +197,12 @@ icon:	"across:4|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.
 --	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
 --
 --	/* SET LAYER 0 */
---	if $SELECT_PLANE_HELPER != undefined and $SELECT_PLANE_HELPER.pos.z > 0 then
+--	if $PRINT_DUMMY_VOLUME != undefined and $PRINT_DUMMY_VOLUME.pos.z > 0 then
 --		updateSlicePlaneSystem 0
 --
 --	/* DELTE PLANE */
---	else if $SELECT_PLANE_HELPER != undefined then
---		delete $SELECT_PLANE_HELPER
+--	else if $PRINT_DUMMY_VOLUME != undefined then
+--		delete $PRINT_DUMMY_VOLUME
 --)
 
 

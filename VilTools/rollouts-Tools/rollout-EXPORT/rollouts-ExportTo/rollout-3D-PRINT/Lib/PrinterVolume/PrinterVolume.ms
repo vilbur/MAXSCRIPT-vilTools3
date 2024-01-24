@@ -1,9 +1,19 @@
+
+/** Printer volume add
+ */
+function printerVolumeAdd object_type =
+(
+	format "\n"; print "PrinterVolume_v.printerVolumeAdd()"
+	(PrinterVolume_v export_size:ROLLOUT_export.SPIN_export_size.value volume_height:ROLLOUT_print_3d.SPIN_layer_height.value ).createVolume(object_type)
+)
+
 /** Printer volume
  */
 struct PrinterVolume_v
 (
 	/* construct */
 	export_size,
+	volume_height,
 
 	/* properties */
 	dummy_name = "PRINT DUMMY VOLUME",
@@ -30,9 +40,9 @@ struct PrinterVolume_v
 	 */
 	function createVolume object_type =
 	(
-		format "\n"; print "PrinterVolume_v.createVolume()"
-		format "export_size:	% \n" export_size
-		format "PRINTER_SIZE:	% \n" printer_size
+		--format "\n"; print "PrinterVolume_v.createVolume()"
+		--format "export_size:	% \n" export_size
+		--format "PRINTER_SIZE:	% \n" printer_size
 
 		if (dummy_object = getNodeByName dummy_name) == undefined then
 		(
@@ -79,7 +89,7 @@ struct PrinterVolume_v
 	 */
 	function _addPlateHoles dummy_object export_size =
 	(
-		format "\n"; print "PrinterVolume_v._addPlateHoles()"
+		--format "\n"; print "PrinterVolume_v._addPlateHoles()"
 
 		circle_shape = Circle radius:( screw_radius ) pos:[ screw_position[2], screw_position[1], 0] pivot:[0,0,0] isSelected:on
 
@@ -109,7 +119,7 @@ struct PrinterVolume_v
 	  */
 	function _setDimensions =
 	(
-		format "\n"; print "PrinterVolume_v._setDimentsions()"
+		--format "\n"; print "PrinterVolume_v._setDimentsions()"
 		display_units = case units.SystemType of
 		(
 		   #Centimeters:	10.0
@@ -117,9 +127,9 @@ struct PrinterVolume_v
 		   default:	1.0
 		)
 
-		format "this.printer_size:	% \n" this.printer_size
-		format "display_units:	% \n" display_units
-		format "export_size:	% \n" export_size
+		--format "this.printer_size:	% \n" this.printer_size
+		--format "display_units:	% \n" display_units
+		--format "export_size:	% \n" export_size
 		 this.printer_size	=  this.printer_size	/ display_units / export_size
 		 this.screw_radius	=  this.screw_radius	/ display_units / export_size
 		 this.screw_position	=  this.screw_position	/ display_units / export_size

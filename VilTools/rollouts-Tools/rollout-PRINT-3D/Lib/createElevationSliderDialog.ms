@@ -111,7 +111,7 @@ function createElevationSliderDialog =
 			SLIDER EVENTS
 		--------------------------------------------------------------------------------*/
 		on SLIDER_elevation changed val do
-			setPrintPlaneElevation (val)
+			updateSlicePlaneSystem (val)
 
 
 		on SLIDER_elevation rightClick do
@@ -152,13 +152,13 @@ function createElevationSliderDialog =
 
 				$.modifiers[#SLICE_PLANE_TOP].enabled = true
 
-				setPrintPlaneElevation (layer_index)
+				updateSlicePlaneSystem (layer_index)
 			)
 
 
 			--/* SET LAYER 0 *
 			--if $SELECT_PLANE_HELPER != undefined and $SELECT_PLANE_HELPER.pos.z > 0 then
-			--	setPrintPlaneElevation 0
+			--	updateSlicePlaneSystem 0
 			--
 			--/* DELTE PLANE */
 			--else if $SELECT_PLANE_HELPER != undefined then
@@ -168,26 +168,32 @@ function createElevationSliderDialog =
 
 		on SLIDER_elevation buttondown do
 		(
-			for obj in selection where obj.modifiers[ #SELECT_SLICE ] != undefined do
-				deleteModifier obj obj.modifiers[ #SELECT_SLICE ]
+			--for obj in selection where obj.modifiers[ #SELECT_SLICE ] != undefined do
+				--deleteModifier obj obj.modifiers[ #SELECT_SLICE ]
 		)
 
 		on SLIDER_elevation buttonup do
 		(
 
-			if selection.count > 0 then
-				if $.modifiers[ #SELECT_SLICE ] == undefined then
-				(
-					modPanel.addModToSelection (Poly_Select name:"SELECT SLICE")
-
-					subobjectLevel = 1
-				)
+			--if selection.count > 0 then
+			--	if $.modifiers[ #SELECT_SLICE ] == undefined then
+			--	(
+			--		modPanel.addModToSelection (Poly_Select name:"SELECT SLICE")
+			--
+			--		subobjectLevel = 1
+			--	)
 
 		)
 
 
 		on SPIN_layer_current changed val do
-			setPrintPlaneElevation (val)
+			updateSlicePlaneSystem (val)
+
+
+		on DIALOG_elevation_slider open do
+			updateSlicePlaneSystem (ROLLOUT_print_3d.SPIN_current_layer.value)
+
+
 	)
 
 	--CreateDialog DIALOG_elevation_slider pos:[100,100] style:#(#cui_max_sized,#style_toolwindow, #style_toolwindow, #style_sysmenu, #style_minimizebox) width:48  --if state then print "Rolled Down!" else print "Rolled Up!"
