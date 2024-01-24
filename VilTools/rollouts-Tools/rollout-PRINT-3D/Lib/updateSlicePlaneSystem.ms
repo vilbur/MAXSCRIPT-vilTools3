@@ -6,6 +6,7 @@ function updateSlicePlaneSystem layer_index incremental:false =
 	format "\n"; print "PRINTER DUMMY.mcr.updateSlicePlaneSystem()"
 	--format "layer_index:	% \n" layer_index
 
+
 	function showLayerHud layer_index =
 	(
 		--format "\n"; print "PRINTER DUMMY.mcr.showLayerHud()"
@@ -20,6 +21,7 @@ function updateSlicePlaneSystem layer_index incremental:false =
 		registerRedrawViewsCallback viewportHudCallback
 
 	)
+
 
 	/* OPEN SLIDER IF NOT OPENED */
 	if DIALOG_elevation_slider == undefined or GetDialogPos DIALOG_elevation_slider == [0,0] then
@@ -47,22 +49,30 @@ function updateSlicePlaneSystem layer_index incremental:false =
 	if incremental then
 		layer_index = layer_current + layer_index
 
-	/* ADD MODIFIERS */
-	if slice_top then
-		setSlicePlaneModifier (#TOP) (#TRUE) (layer_index) (cap_slice)
+	try(
+		DisableSceneRedraw()
 
-	if slice_bottom then
-		setSlicePlaneModifier (#BOTTOM) (#TRUE) (layer_index - 1) (cap_slice)
+		/* ADD MODIFIERS */
+		if slice_top then
+			setSlicePlaneModifier (#TOP) (#TRUE) (layer_index) (cap_slice)
 
-	--format "select_plane	= % \n" select_plane
-	if select_plane then
-		setSelectPlaneModifier(layer_index) slice_top:slice_top slice_bottom:slice_bottom
+		if slice_bottom then
+			setSlicePlaneModifier (#BOTTOM) (#TRUE) (layer_index - 1) (cap_slice)
 
+		--format "select_plane	= % \n" select_plane
+		if select_plane then
+			setSelectPlaneModifier(layer_index) slice_top:slice_top slice_bottom:slice_bottom
 
-	/* UPDATE UI */
-	--ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
-	DIALOG_elevation_slider.SPIN_layer_current.value	= layer_index
-	DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
+		/* UPDATE UI */
+		--ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index
+		DIALOG_elevation_slider.SPIN_layer_current.value	= layer_index
+		DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
+
+	)catch(
+		EnableSceneRedraw()
+	)
+
+	EnableSceneRedraw()
 
 
 	--showLayerHud(layer_index)

@@ -66,27 +66,18 @@ icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset
 	if $SELECT_PRINT_LAYER == undefined then
 		(PrinterVolume_v dummy_name:"SELECT PRINT LAYER" export_size:ROLLOUT_export.SPIN_export_size.value volume_height:ROLLOUT_print_3d.SPIN_layer_height.value ).createVolume(#RECTANGLE)
 
+
 	if not $SELECT_PRINT_LAYER.isHidden then
 	(
-
 		_plane = $SELECT_PRINT_LAYER
-		format "_plane	= % \n" _plane
+
 		normal_modifier = _plane.modifiers[#NORMAL]
 
-		format "normal_modifier	= % \n" normal_modifier
 		if normal_modifier == undefined then
 		(
-			--format "normal_modifier	= % \n" normal_modifier
-			--
-			--addModifier _plane (Normalmodifier())
-			--
-			--normal_modifier = _plane.modifiers[#NORMAL]
-			--format "normal_modifier	= % \n" normal_modifier
-			--
 			normal_modifier = Normalmodifier()
 
 			addModifier _plane normal_modifier
-
 		)
 
 		if not normal_modifier.enabled then
@@ -163,7 +154,8 @@ buttontext:	"Layer Height"
 tooltip:	"Height of printed layer in mm"
 icon:	"across:4|control:spinner|fieldwidth:32|range:[ 0.03, 0.1, 0.05 ]|scale:0.01|offset:[ -16, 8 ]"
 (
-	format "EventFired:	% \n" EventFired
+	--format "EventFired:	% \n" EventFired
+	updateSlicePlaneSystem(undefined)
 )
 
 

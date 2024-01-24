@@ -43,7 +43,7 @@ function setSelectPlaneModifier layer_index slice_top:false slice_bottom:false =
 	function createSelecPrintLayertObject slice_top slice_bottom export_size: volume_height: =
 	(
 		--format "\n"; print ".createSelecPrintLayertObject()"
-		/* CREATE PRINT PLANE OBJECT HELPER - used as node for Volume Select modifier */
+
 		if $SELECT_PRINT_LAYER == undefined then
 			(PrinterVolume_v dummy_name:"SELECT PRINT LAYER" export_size:export_size volume_height:volume_height ).createVolume(#RECTANGLE)
 
@@ -114,12 +114,11 @@ function setSelectPlaneModifier layer_index slice_top:false slice_bottom:false =
 		obj.modifiers[#SELECT_LAYER].method = if slice_top or slice_bottom then 1 else 0 -- method: "Add" if only select mode else "Replace"
 
 		obj.modifiers[#SELECT_LAYER].node = $SELECT_PRINT_LAYER -- adding node on modifier init causes error
+
+
 	)
 
-
-
-
-
+	max modify mode -- show selected verts
 
 	/* SET Z POSITION OF PRINT PLANE */
 	$SELECT_PRINT_LAYER.pos.z = getPlaneZpozition(layer_index)
