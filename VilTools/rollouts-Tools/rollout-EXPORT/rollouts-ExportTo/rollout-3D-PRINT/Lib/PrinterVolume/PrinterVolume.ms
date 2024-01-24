@@ -1,12 +1,3 @@
-
-/** Printer volume add
- */
-function printerVolumeAdd object_type =
-(
-	format "\n"; print "PrinterVolume_v.printerVolumeAdd()"
-	(PrinterVolume_v export_size:ROLLOUT_export.SPIN_export_size.value volume_height:ROLLOUT_print_3d.SPIN_layer_height.value ).createVolume(object_type)
-)
-
 /** Printer volume
  */
 struct PrinterVolume_v

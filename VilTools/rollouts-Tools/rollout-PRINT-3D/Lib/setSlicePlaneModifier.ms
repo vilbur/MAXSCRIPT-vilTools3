@@ -5,7 +5,7 @@
   */
 function setSlicePlaneModifier mode state layer_index cap_state =
 (
-	format "\n"; print "setSlicePlaneModifier.ms.setSlicePlaneModifier()"
+	--format "\n"; print ("setSlicePlaneModifier.ms.setSlicePlaneModifier( #"+mode as string +" )")
 	--format "state:	% \n" state
 	--format "mode:	% \n" mode
 
@@ -22,8 +22,8 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 
 	obj = selection[1]
 
-	if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
-		_poly_select.enabled = false
+	--if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
+	--	_poly_select.enabled = false
 
 	slice_mod = if ( _modifier = obj.modifiers[ mod_name as name ] ) != undefined then
 		_modifier
@@ -65,16 +65,16 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 	)
 
 
-	(
-
-		if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
-		(
-			_poly_select.enabled = true
-
-
-			subobjectLevel = 1
-		)
-	)
+	--(
+	--
+	--	if ( _poly_select = obj.modifiers[ #SELECT_SLICE ] ) != undefined then
+	--	(
+	--		_poly_select.enabled = true
+	--
+	--
+	--		subobjectLevel = 1
+	--	)
+	--)
 	   redrawViews()
 
 
