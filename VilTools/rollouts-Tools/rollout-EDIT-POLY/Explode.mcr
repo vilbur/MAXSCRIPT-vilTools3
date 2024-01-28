@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/EditPolyExplode/EditPolyExplode.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/EditPolyExplode/EditPolyExplode.ms" )	--"./Lib/EditPolyExplode/EditPolyExplode.ms"
 
 macroscript	epoly_explode_by_element
 category:	"_Epoly-Explode"

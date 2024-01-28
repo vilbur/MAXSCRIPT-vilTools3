@@ -1,4 +1,35 @@
 filein( getFilenamePath(getSourceFileName()) + "/RecentFile/RecentFile.ms" ) -- "./RecentFile/RecentFile.ms"
+
+/** OPEN FILE DIALOG
+ *
+ */
+macroscript	_scene_open_file
+category:	"_Scene"
+buttontext:	"Open File"
+toolTip:	"Open File Dialog"
+--icon:	"control:checkButton|MENU:_Scene"
+icon:	"across:5|width:72|MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\1-Scene.mcr"
+
+		init_dir = if (last_file = (RecentFile_v()).getRecentFileNotMatching #( "temp", "autoback" )) != undefined then getFilenamePath( last_file ) else unsupplied
+
+		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:(init_dir) historyCategory:"MAXScriptFileOpenSave"
+
+		if file_path != undefined then
+		(
+			start_time = timestamp()
+
+			loadMaxFile file_path quiet:true
+
+			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+		)
+
+	)
+)
 /**
  *
  */
@@ -13,17 +44,17 @@ icon:	"across:5|width:72|MENU:true"
 
 	on execute do
 	(
-		recent_document = (RecentFile_v()).getRecentFileNotIn #( "autoback", "temp" )
+		recent_document = (RecentFile_v()).getRecentFileNotMatching #( "autoback", "temp" )
 
+		if recent_document != undefined then
+			if  maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
+			(
+				start_time = timestamp()
 
-		if maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
-		(
-			start_time = timestamp()
+				loadMaxFile recent_document quiet:true
 
-			loadMaxFile recent_document quiet:true
-
-			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
-		)
+				format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+			)
 
 	)
 
@@ -67,38 +98,6 @@ icon:	"across:5|width:72|MENU:true"
 	--startObjectCreation
 	--)
 	--	--messageBox "Open Recent"
-)
-
-/** OPEN FILE DIALOG
- *
- */
-macroscript	_scene_open_file
-category:	"_Scene"
-buttontext:	"Open File"
-toolTip:	"Open File Dialog"
---icon:	"control:checkButton|MENU:_Scene"
-icon:	"across:5|width:72|MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
-	on execute do
-	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\1-Scene.mcr"
-
-		init_dir = if (last_file = (RecentFile_v()).getRecentFileNotIn #( "temp", "autoback" )) != undefined then getFilenamePath( last_file ) else unsupplied
-
-
-		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:(init_dir) historyCategory:"MAXScriptFileOpenSave"
-
-		if file_path != undefined then
-		(
-			start_time = timestamp()
-
-			loadMaxFile file_path quiet:true
-
-			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
-		)
-
-	)
 )
 
 /*------------------------------------------------------------------------------
@@ -198,7 +197,7 @@ icon:	"offset:[14, 0]|width:96|MENU:tooltip"
 (
 	on execute do
 	(
-		if maxFilePath == "" or queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+		if maxFilePath == "" or queryBox "Open Temp File ?" title:"Open Temp File"  beep:false then
 
 		--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
 			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
@@ -217,9 +216,10 @@ icon:	"MENU:tooltip"
 	on isVisible return objects.count > 0
 
 	on execute do
-		if queryBox "Save Temp File ?" title:"Fetch scene"  beep:false then
-			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-				saveMaxFile max_file quiet:true
+		if queryBox "Save Temp File ?" title:"Save Temp File"  beep:false then
+			--if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+				--saveMaxFile max_file quiet:true
+				saveMaxFile ((getDir #temp) + "\\temp.max") quiet:true
 
 )
 

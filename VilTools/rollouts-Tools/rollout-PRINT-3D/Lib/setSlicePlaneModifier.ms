@@ -60,10 +60,11 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 	   tempMatrix = ((matrix3 vect1 vect2 vect3 ((pos01 + pos02 + pos03) / 3) )) * modTM * (inverse objTM)
 
 	   slice_mod.slice_plane.transform = tempMatrix
-
-
 	)
 
+
+	/* SET CAP STATE */
+	slice_mod.cap = cap_state
 
 	--(
 	--
@@ -75,7 +76,7 @@ function setSlicePlaneModifier mode state layer_index cap_state =
 	--		subobjectLevel = 1
 	--	)
 	--)
-	   redrawViews()
+	   --redrawViews()
 
 
 )

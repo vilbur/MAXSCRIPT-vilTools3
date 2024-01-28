@@ -7,7 +7,9 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addItem "File" "Save File" title:"&Save File" group:"Main UI"
 
-	--QuadMenu.addMenu("")
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Scene")	separators:#( 3, 5 ) --flat:false --index:1
 
 	--QuadMenu.addSeparator index:1
 	--QuadMenu.addSeparator()
@@ -21,16 +23,6 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle(" S C E N E")
 
-	_SceneMenu	= Menu_v("_Scene")
-	--DefaulQuadtMenu 	= (QuadMenuv("Title")).Quads[1]
-
-	--_SceneMenu.addSeparator()
-	_SceneMenu.addSeparator index:#( 3, 5, 6, 8 )
-	----_SceneMenu.addSeparator index:#( 3, 6 )
-	----_SceneMenu.addSeparator index:8
-	--
-	QuadMenu.addMenu(_SceneMenu)	--flat:false --index:1
-
 )
 
 /*------------------------------------------------------------------------------
@@ -39,6 +31,9 @@ function addQuad2 QuadMenu =
 function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("QUAD 3")
+
+
+	QuadMenu.addMenu("_Scene-Reset")	--flat:false --index:1
 
 )
 

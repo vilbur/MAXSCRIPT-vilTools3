@@ -13,43 +13,43 @@
 	 BUTTONS
 
 --------------------------------------------------------------------------------*/
-
-/** ELEVATION +\-
- */
-macroscript	_print_plane_set_elevation_plus
-category:	"_3D-Print"
-buttontext:	"+\-"
-toolTip:	"Shift plane UP"
-icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#left|offset:[ -4, 0 ]"
-(
-
-	--format "EventFired	= % \n" EventFired
-	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
-
-	val = if keyboard.controlPressed then 10 else 1
-
-	updateSlicePlaneSystem val incremental:true
-)
-
-
-/** ELEVATION +\- RIGHTCLICK
- */
-macroscript	_print_plane_set_elevation_minus
-category:	"_3D-Print"
-buttontext:	"+\-"
-toolTip:	"Shift plane DOWN\n\nCTRL: value is 10"
-icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#left|offset:[ -4, 0 ]"
-(
-
-	--format "EventFired	= % \n" EventFired
-	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
-
-	val = if keyboard.controlPressed then -10 else -1
-
-	updateSlicePlaneSystem val incremental:true
-)
+--
+--/** ELEVATION +\-
+-- */
+--macroscript	_print_plane_set_elevation_plus
+--category:	"_3D-Print"
+--buttontext:	"+\-"
+--toolTip:	"Shift plane UP"
+--icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:64|align:#left|offset:[ -4, 0 ]"
+--(
+--
+--	--format "EventFired	= % \n" EventFired
+--	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
+--
+--	val = if keyboard.controlPressed then 10 else 1
+--
+--	updateSlicePlaneSystem val incremental:true
+--)
+--
+--
+--/** ELEVATION +\- RIGHTCLICK
+-- */
+--macroscript	_print_plane_set_elevation_minus
+--category:	"_3D-Print"
+--buttontext:	"+\-"
+--toolTip:	"Shift plane DOWN\n\nCTRL: value is 10"
+--icon:	"across:4|id:#BTN_print_plane_pos_increment|#height:32|width:32|align:#left|offset:[ -4, 0 ]"
+--(
+--
+--	--format "EventFired	= % \n" EventFired
+--	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"
+--
+--	val = if keyboard.controlPressed then -10 else -1
+--
+--	updateSlicePlaneSystem val incremental:true
+--)
 
 
 /** NORMAL BUTTON
@@ -58,7 +58,7 @@ macroscript	_print_plane_set_normal
 category:	"_3D-Print"
 buttontext:	"Normal"
 toolTip:	"Create\Unhide Plane\n\nToggle Normal if plane exists\n\nCTRL:	2-Sided\n\nSHIFT:	Xray\n\nALT:	Toggle Grey\Green"
-icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:42|align:#left|offset:[ -16, 0 ]"
+icon:	"across:4|id:#BTN_print_plane_nomal|#height:32|width:48|align:#left|offset:[ -16, 0 ]"
 (
 
 	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\2-PRINT PLANE.mcr"

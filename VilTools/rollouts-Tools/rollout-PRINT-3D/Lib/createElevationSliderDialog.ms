@@ -68,7 +68,7 @@ function createElevationSliderDialog =
 
 			--for mod_name in mod_names do
 			for mod_name in #( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM, #SELECT_LAYER ) do
-				for obj in _objects where obj.modifiers[mod_name] != undefined do
+				for obj in geometry where obj.modifiers[mod_name] != undefined do
 					deleteModifier obj obj.modifiers[mod_name]
 		)
 
@@ -184,10 +184,10 @@ function createElevationSliderDialog =
 
 		/* ON BUTTON INCREMENT */
 		on BTN_move_layer_increment pressed do
-			updateSlicePlaneSystem ( keyboard.controlPressed then 10 else 1) incremental:true
+			updateSlicePlaneSystem ( if keyboard.controlPressed then 10 else 1) incremental:true
 
 		on BTN_move_layer_increment rightclick do
-			updateSlicePlaneSystem ( keyboard.controlPressed then -10 else -1) incremental:true
+			updateSlicePlaneSystem ( if keyboard.controlPressed then -10 else -1) incremental:true
 
 		/* ON SLIDER CHANGE */
 		on SPIN_layer_current changed val do

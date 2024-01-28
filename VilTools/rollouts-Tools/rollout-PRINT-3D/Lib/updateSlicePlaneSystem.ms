@@ -3,7 +3,7 @@
   */
 function updateSlicePlaneSystem layer_index incremental:false =
 (
-	format "\n"; print "PRINTER DUMMY.mcr.updateSlicePlaneSystem()"
+	--format "\n"; print "PRINTER DUMMY.mcr.updateSlicePlaneSystem()"
 	--format "layer_index:	% \n" layer_index
 
 
@@ -14,7 +14,7 @@ function updateSlicePlaneSystem layer_index incremental:false =
 
 		HUD = Hud_v pos:#( #RIGHT,	#CENTER ) offset:[ 64, 0 ]
 
-		HUD.row ( layer_index as string )
+		HUD.row #( "Layer Index:", layer_index as string )
 
 		HUD_DATA[#SLICE_LAYER_CURRENT] = HUD
 
@@ -42,15 +42,15 @@ function updateSlicePlaneSystem layer_index incremental:false =
 	if layer_index == undefined then
 		layer_index = layer_current
 
-	format "slice_top:	% \n" slice_top
-	format "slice_bottom % \n" slice_bottom
+	--format "slice_top:	% \n" slice_top
+	--format "slice_bottom % \n" slice_bottom
 
 	/* GET INCREMENTAL LAYER INDEX */
 	if incremental then
 		layer_index = layer_current + layer_index
 
 	try(
-		DisableSceneRedraw()
+		--DisableSceneRedraw()
 
 		/* ADD MODIFIERS */
 		if slice_top then
@@ -69,12 +69,13 @@ function updateSlicePlaneSystem layer_index incremental:false =
 		DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
 
 	)catch(
-		EnableSceneRedraw()
+		--EnableSceneRedraw()
 	)
 
-	EnableSceneRedraw()
+	--EnableSceneRedraw()
 
+	--redrawViews()
 
-	--showLayerHud(layer_index)
+	showLayerHud(layer_index)
 
 )

@@ -29,9 +29,10 @@ struct RecentFile_v
 	/** Get recent file not matching mask in blacklist
 	  * @param Array dir_blacklist aray of directories which not should be opened
 	  */
-	function getRecentFileNotIn dir_blacklist =
+	function getRecentFileNotMatching dir_blacklist =
 	(
 		--format "\n"; print "RecentFile_v.getRecentFileNotBackup()"
+
 		xml_doc.load recent_file
 
 		file_paths = xml_doc.GetElementsByTagName "FilePath"
@@ -48,6 +49,8 @@ struct RecentFile_v
 			if not find_in_blacklist then
 				return file_path
 		)
+
+		undefined --return
 	),
 
 	private

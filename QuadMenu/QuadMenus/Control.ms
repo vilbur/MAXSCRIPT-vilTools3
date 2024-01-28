@@ -24,7 +24,7 @@ function addQuad1 QuadMenu =
 	QuadMenu.addSeparator()
 
 	QuadMenu.addMenu("_Visibility-Hide")	--flat:false --index:1
-	
+
 	QuadMenu.addSeparator()
 
 	QuadMenu.addMenu("_Selection-Visibility")	--flat:false --index:1
@@ -55,6 +55,10 @@ function addQuad2 QuadMenu =
 	QuadMenu.addSeparator()
 
 	QuadMenu.addMenu("_Selection-Instance")	--flat:false --index:1
+
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Selection-Edit")	--flat:false --index:1
 )
 
 /*------------------------------------------------------------------------------

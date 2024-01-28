@@ -38,7 +38,7 @@ function getPlatformGeneratorInstance =
 macroscript	_print_platform_generator
 category:	"_3D-Print"
 buttontext:	"Generate Platforms"
-tooltip:	"Generate Platforms"
+tooltip:	"GENERATE Platforms"
 icon:	"across:3|height:32|width:128"
 (
 	on execute do
@@ -58,6 +58,26 @@ icon:	"across:3|height:32|width:128"
 			--selectmore _selection
 		)
 )
+
+
+/** REBUILD PALTFORMS
+ */
+macroscript	_print_platform_rebuild
+category:	"_3D-Print"
+buttontext:	"Generate Platforms"
+tooltip:	"REBUILD selected platforms"
+icon:	"across:3|height:32|width:128"
+(
+	on execute do
+		undo "Rebuild Platforms" on
+		(
+
+			PlatformGenerator = getPlatformGeneratorInstance()
+
+			PlatformGenerator.rebuild( selection as Array )
+		)
+)
+
 
 /*------------------------------------------------------------------------------
 
@@ -112,20 +132,32 @@ icon:	"across:3|height:32|width:128"
 		)
 )
 
-/** REBUILD PALTFORMS
+
+
+
+/** GENERATE CROSS SECTIONS
  */
-macroscript	_print_platform_rebuild
+macroscript	_print_platform_generate_cross_sections
 category:	"_3D-Print"
-buttontext:	"Rebuild Platforms"
-tooltip:	"Rebuild selected platforms"
+buttontext:	"Generate Crossing"
+tooltip:	"Generate cross sections between selected platforms"
 icon:	"across:3|height:32|width:128"
 (
 	on execute do
-		undo "Rebuild Platforms" on
+		undo "Generate Points" on
 		(
+			clearListener(); print("Cleared in:\n"+getSourceFileName())
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
+			--messageBox "Yupiii" title:"Title"  beep:false
 
 			PlatformGenerator = getPlatformGeneratorInstance()
 
-			PlatformGenerator.rebuild( selection as Array )
+			PlatformCrossSection = PlatformCrossSection_v Options:PlatformGenerator.Options
+
+			platforms = for obj in selection where superClassOf obj.baseobject == shape collect obj
+
+
+			format "platforms.count	= % \n" platforms.count
+			PlatformCrossSection.create( platforms )
 		)
 )

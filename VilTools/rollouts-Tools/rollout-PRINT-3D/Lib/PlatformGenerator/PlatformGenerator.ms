@@ -26,6 +26,7 @@ struct PlatformGenerator_v
 	use_every_nth_vert_of_spline = 1,
 
 	/* properties */
+	--source_objects	 = #(),
 	PlatformObjects = #(),
 
 	/* dependency */
@@ -45,6 +46,8 @@ struct PlatformGenerator_v
 	(
 		format "\n"; print "PlatformGenerator_v.generate()"
 		--format "source_objects:	% \n" source_objects
+
+		--this._setSourceObjects(source_objects)
 
 		/* SETUP */
 		max create mode
@@ -169,6 +172,18 @@ struct PlatformGenerator_v
 
 	private
 
+	--/** Set source objects
+	-- */
+	--function _setSourceObjects source_objects =
+	--(
+	--	--format "\n"; print "PlatformGenerator_v._setSourceObjects()"
+	--
+	--
+	--	this.source_objects = for obj in source_objects where superClassOf obj == GeometryClass or classOf source_obj == Point do
+	--
+	--),
+
+
 	/** Get platform positions from:
 	  * 	A) From point helper
 	  * 	B) From Line
@@ -240,12 +255,21 @@ struct PlatformGenerator_v
 	  */
 	function _getPointHelperPositions source_obj =
 	(
+
+		if source_obj.parent != undefined and classOf source_obj.parent == Point then -- do not ge child points as platform source
+			return false
+
 		point_helpers = this._getSameChildren (source_obj)
 
 		PlatformObject = this._getPlatformObject(source_obj)(source_obj.wirecolor)
 
+
 		for point_helper in point_helpers do
+		(
+			point_helper.showLinks = true
+
 			PlatformObject.addVert (point_helper.pos)
+		)
 
 	),
 

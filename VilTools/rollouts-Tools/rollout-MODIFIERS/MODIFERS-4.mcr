@@ -24,6 +24,32 @@ icon:	"MENU:true"
 	)
 )
 
+/** Relax
+ */
+macroscript epoly_tools_Relax
+category:	"_Modifiers-4"
+buttonText:	"Relax"
+icon:	"MENU:true"
+(
+
+	on execute do (
+		macros.run "Modifiers" "Relax"
+	)
+)
+
+/** Push
+ */
+macroscript epoly_tools_Push
+category:	"_Modifiers-4"
+buttonText:	"Push"
+icon:	"MENU:true"
+(
+
+	on execute do (
+		macros.run "Modifiers" "Push"
+	)
+)
+
 /** Tessellate
  */
 macroscript epoly_tools_Tessellate

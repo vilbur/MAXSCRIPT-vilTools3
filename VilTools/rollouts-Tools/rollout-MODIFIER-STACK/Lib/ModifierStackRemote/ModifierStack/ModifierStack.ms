@@ -1,4 +1,4 @@
-clearListener(); print("Cleared in:"+getSourceFileName())
+--clearListener(); print("Cleared in:"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../../InstancedModifierFinder/InstancedModifierFinder.ms" )	-- "./../../InstancedModifierFinder/InstancedModifierFinder.ms"
 
@@ -99,7 +99,7 @@ struct ModifierStack_v
 					else
 						max next mod
 			)
-			
+
 			if saveLastModifierStart != undefined then
 				saveLastModifierStart()
 
