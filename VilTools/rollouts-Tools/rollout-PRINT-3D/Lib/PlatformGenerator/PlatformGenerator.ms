@@ -16,6 +16,11 @@ filein( getFilenamePath(getSourceFileName()) + "/EditablePolyVertexGetter/Editab
   * RENAME PLATFORM OBJECT:
   * 		Remove "[-_]source" from plaftorm object name E.G.: "foo-object-platform-source" >>> "foo-object-platform"
   *
+  *
+  * PLATFORM HIERARCHY:
+  * 	1) Print object
+  * 		2) Point Helper ( Top of platform )
+  * 			3) Cross section between plafroms
  */
 struct PlatformGenerator_v
 (
@@ -147,14 +152,24 @@ struct PlatformGenerator_v
 
 				_point = Point pos:vert_pos size:1 wirecolor:(shiftWirecolor(copy PlatformObject.wirecolor)(i)) -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
+				_point.showLinks = true
+
 				/* LINK CURRENT POINT TO PREVIOUS */
-				if i > 1 and ( point_last = points_created[points_created.count] ) != undefined then
-					_point.parent = point_last
+				if i == 1 then
+					/*------------------------------------------------------------------------------
+						!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
+
+						Should be improved to respect EACH source object
+					--------------------------------------------------------------------------------*/
+					_point.parent = source_objects[1]
+				else
+				--( point_last = points_created[points_created.count] ) != undefined then
+					_point.parent =  points_created[points_created.count]
 
 				append points_created _point
 			)
 
-		reinstancePoints (points_created)
+		--reinstancePoints (points_created)
 
 		points_created --return
 	),

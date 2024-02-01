@@ -32,7 +32,7 @@ struct PlatformCrossSection_v
 		for i = 1 to platforms.count where platforms[i + 1] != undefined do
 		(
 			format "\ni:	% \n" i
-			--format "platform:	% \n" platforms[i]
+
 
 			platform_A	= platforms[i]
 			num_knots	= ( numKnots platform_A )
@@ -40,13 +40,13 @@ struct PlatformCrossSection_v
 			platform_B	= platforms[i + 1]
 			num_knots_B	= ( numKnots platform_B )
 
-			top_point_index = if num_knots_B <= 3 then 1 else 2 --get 1. or 2. point from top
+			--top_point_index = if num_knots_B <= 3 then 1 else 2 --get 1. or 2. point from top
 
 			--format "num_knots:	% \n" num_knots
 			--format "num_knots_B:	% \n" num_knots_B
 
 			point_bottom	= getKnotPoint platform_A	1 (num_knots - 1)	-- get 2. point from bottom
-			point_top	= getKnotPoint platform_B	1 (top_point_index)	-- get 1. or 2. point from top
+			point_top	= getKnotPoint platform_B	1 (num_knots_B - 2)	-- get 1. or 2. point from top
 
 			--format "point_bottom:	% \n" point_bottom
 			--format "point_top.z:	% \n" point_top.z
@@ -63,19 +63,33 @@ struct PlatformCrossSection_v
 
 				point_top.z	= (point_top.z / 4 ) * 3
 
-				cross_spline = 2 -- index of spline
+				cross_spline_id = 1 -- index of spline
 
-				addNewSpline platform_A
+				cross_shape = SplineShape name:(platform_A.name + "-cross")
+
+
+				setUserPropVal cross_shape "source_platforms" #( getHandleByAnim platform_A, getHandleByAnim platform_B )
+
+				cross_shape.parent	= platform_A
+				cross_shape.wirecolor	= platform_A.wirecolor
+
+
+				addNewSpline cross_shape
 				--format "point_bottom:	% \n" point_bottom
 				--format "point_top:	% \n" point_top
 
-				addKnot platform_A cross_spline #corner #line point_bottom
-				addKnot platform_A cross_spline #corner #line point_top
+				addKnot cross_shape cross_spline_id #corner #line point_bottom
+				addKnot cross_shape cross_spline_id #corner #line point_top
 
-				setMaterialID platform_A cross_spline 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-				--setMaterialID platform_A cross_spline 1 6
+				setMaterialID cross_shape cross_spline_id 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+				--setMaterialID cross_shape cross_spline_id 1 6
 
-				updateShape platform_A
+				updateShape cross_shape
+
+				cross_shape.pivot = cross_shape.center
+
+				for i = platform_A.modifiers.count to 1 by -1 do
+					addModifier cross_shape platform_A.modifiers[i]
 			)
 		)
 	),

@@ -84,6 +84,7 @@ icon:	"control:checkbox|id:#CBX_slice_select_plane|autorun:false|across:5|height
 (
 	on execute do
 		(
+			format "EventFired	= % \n" EventFired
 			if EventFired.val then
 				updateSlicePlaneSystem(undefined)
 
@@ -103,12 +104,16 @@ tooltip:	"Slice plane top"
 icon:	"control:checkbox|autorun:false|across:5|height:32|offset:[ 10, 0 ]"
 (
 	on execute do
+	(
+		format "EventFired	= % \n" EventFired
+
 		if EventFired.val then
-			updateSlicePlaneSystem(undefined)
+		updateSlicePlaneSystem(undefined)
 
 		else
 			for obj in objects where ( _modifier = obj.modifiers[#SLICE_PLANE_TOP] ) != undefined do
 				deleteModifier obj _modifier
+	)
 )
 
 
@@ -122,12 +127,16 @@ tooltip:	"Slice plane bottom"
 icon:	"control:checkbox|autorun:false|across:5|height:32|offset:[ 4, 0 ]"
 (
 	on execute do
+	(
+		format "EventFired	= % \n" EventFired
+
 		if EventFired.val then
-			updateSlicePlaneSystem(undefined)
+		updateSlicePlaneSystem(undefined)
 
 		else
 			for obj in objects where ( _modifier = obj.modifiers[#SLICE_PLANE_BOTTOM] ) != undefined do
 				deleteModifier obj _modifier
+	)
 )
 
 /**

@@ -18,17 +18,17 @@ global DIALOG_elevation_slider
 function createElevationSliderDialog =
 (
 	--format "\n"; print "test.ms.createSlicerDialog()"
-	--try(
-	--	cui.UnRegisterDialogBar DIALOG_elevation_slider
-	--
-	--	destroyDialog DIALOG_elevation_slider
-	--
-	--)catch()
+	try(
+		cui.UnRegisterDialogBar DIALOG_elevation_slider
+
+		destroyDialog DIALOG_elevation_slider
+
+	)catch()
 
 
 	--getViewportHeight()
-	format "DIALOG_elevation_slider == undefined	= % \n" (DIALOG_elevation_slider == undefined)
-	if DIALOG_elevation_slider == undefined then
+	--format "DIALOG_elevation_slider == undefined	= % \n" (DIALOG_elevation_slider == undefined)
+	--if DIALOG_elevation_slider == undefined then
 	rollout DIALOG_elevation_slider "Parent" --define a rollout and create a dialog
 	(
 		/** Get height of maximized viewport to find out height of docked dialog
@@ -73,6 +73,36 @@ function createElevationSliderDialog =
 		)
 
 
+
+		/** Get Layer index by position in world
+		 */
+		function posToLayerIndex pos =
+		(
+			--format "\n"; print ".posToLayerIndex()"
+
+			/*  Round float to iteger
+			*/
+			fn roundToInteger val = floor (val  + 0.5)  as integer
+
+			display_units = case units.SystemType of -- convert to milimeters
+			(
+				#millimeters:	1
+				#centimeters:	10
+				#meters:	1000
+				#kilometers:	1000000
+				default:	1 -- non metric units
+			)
+
+			export_size = ROLLOUT_export.SPIN_export_size.value
+			layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
+			current_layer = DIALOG_elevation_slider.SPIN_layer_current.value
+
+			/* MOVE SLICE PLANE TO SELCTION BOTTOM */
+			layer_index = roundToInteger ((pos * display_units) / layer_height	/ export_size)
+
+			layer_index --return
+		)
+
 		local viewport_height = (getViewportHeight())
 
 		/*------------------------------------------------------------------------------
@@ -107,67 +137,64 @@ function createElevationSliderDialog =
 			updateSlicePlaneSystem (val)
 
 
-		on SLIDER_elevation rightClick do
+		on SLIDER_elevation RIGHTCLICK do
 		(
-			/*  round 123.456 -2 >>> 100.0
-				round 123.456  0 >>> 123.0
-				round 123.456  2 >>> 123.46
-			*/
-			fn round val = ((floor ((val * (mult = 10.0 ^ 0)) + 0.5)) / mult ) as integer -- n=0|1|2 number of tens after decimal point
+			--print "createElevationSliderDialog SLIDER_elevation rightClick"
 
-			display_units = case units.SystemType of -- convert to milimeters
+			/** Toggle slice modifiers
+			 */
+			function toggleSliceModifiers state mod_names:#( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM ) =
 			(
-				#millimeters:	1
-				#centimeters:	10
-				#meters:	1000
-				#kilometers:	1000000
-				default:	1 -- non metric units
+				for obj in selection do
+					for mod_name in mod_names where ( _mod = obj.modifiers[mod_name] ) != undefined do
+						_mod.enabled = state
 			)
+
+			/** Get values of wolrd aligned bbox
+			  * @return float
+			 */
+			function getBbox obj minmax axis = getProperty (( nodeGetBoundingBox obj (matrix3 1) )[if minmax == #min then 1 else 2 ]) axis
+
 
 			if selection.count > 0 then
 			(
-				layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
+				toggleSliceModifiers (false)
 
-				export_size = ROLLOUT_export.SPIN_export_size.value
+				current_layer	= DIALOG_elevation_slider.SPIN_layer_current.value
+				selection_min	= amin(for obj in selection collect getBbox (obj) (#min) (#z) )
+				selection_max	= amax(for obj in selection collect getBbox (obj) (#max) (#z) )
+				selection_center	= (selection_min + selection_max ) / 2
 
-				layer_multiplier = display_units / layer_height	/ export_size
+				layer_index_min = posToLayerIndex( selection_min )
+				layer_index_max = posToLayerIndex( selection_max )
+				layer_index_center = posToLayerIndex( selection_center )
 
-				--toggleSliceModifiers (false)
+				layer_indexes = #( layer_index_min, layer_index_center, layer_index_max )
 
-				/* MOVE SLICE PLANE TO SELCTION BOTTOM */
-				layer_index = round ($.min.z ) * layer_multiplier
+				layer_index =  if ( current_layer_index = findItem layer_indexes current_layer ) > 0  then
+				(
+					if layer_indexes[current_layer_index + 1] != undefined then
+						layer_indexes[current_layer_index + 1] -- GET NEXT ITEM
+					else
+						layer_indexes[1] -- GET FIRST ITEM
+				)
+				else
+					layer_index_center -- SET CENTER LAYER AS FIRST
 
-				current_layer = DIALOG_elevation_slider.SPIN_layer_current.value
+				toggleSliceModifiers (true)
 
-				/* MOVE SLICE PLANE TO SELCTION TOP */
-				if current_layer == layer_index then
-					layer_index = round ($.max.z ) * layer_multiplier
-
-
-				--toggleSliceModifiers (true)
-
-				updateSlicePlaneSystem (layer_index)
+				updateSlicePlaneSystem ( layer_index )
 			)
-
-
-			--/* SET LAYER 0 *
-			--if $SELECT_PLANE_HELPER != undefined and $SELECT_PLANE_HELPER.pos.z > 0 then
-			--	updateSlicePlaneSystem 0
-			--
-			--/* DELTE PLANE */
-			--else if $SELECT_PLANE_HELPER != undefined then
-			--	delete $SELECT_PLANE_HELPER
-
 		)
 
-		on SLIDER_elevation buttondown do
+		on SLIDER_elevation BUTTONDOWN do
 		(
 			--for obj in selection where obj.modifiers[ #SELECT_LAYER ] != undefined do
 				 --obj.modifiers[ #SELECT_LAYER ].enabled = false
 
 		)
 
-		on SLIDER_elevation buttonup do
+		on SLIDER_elevation BUTTONUP do
 		(
 			--for obj in selection where obj.modifiers[ #SELECT_LAYER ] != undefined do
 				 --obj.modifiers[ #SELECT_LAYER ].enabled = true
@@ -183,28 +210,24 @@ function createElevationSliderDialog =
 		)
 
 		/* ON BUTTON INCREMENT */
-		on BTN_move_layer_increment pressed do
+		on BTN_move_layer_increment PRESSED do
 			updateSlicePlaneSystem ( if keyboard.controlPressed then 10 else 1) incremental:true
 
-		on BTN_move_layer_increment rightclick do
+		on BTN_move_layer_increment RIGHTCLICK do
 			updateSlicePlaneSystem ( if keyboard.controlPressed then -10 else -1) incremental:true
 
 		/* ON SLIDER CHANGE */
-		on SPIN_layer_current changed val do
+		on SPIN_layer_current CHANGED val do
 			updateSlicePlaneSystem (val)
 
 
-
-
 		/* ON DIALOG OOPEN */
-		on DIALOG_elevation_slider open do
+		on DIALOG_elevation_slider OPEN do
 			updateSlicePlaneSystem (DIALOG_elevation_slider.SPIN_layer_current.value)
-
 
 	)
 
-
-	format "GetDialogPos DIALOG_elevation_slider	= % \n" (GetDialogPos DIALOG_elevation_slider == [0,0])
+	--format "GetDialogPos DIALOG_elevation_slider	= % \n" (GetDialogPos DIALOG_elevation_slider == [0,0])
 	if GetDialogPos DIALOG_elevation_slider == [0,0] then
 	(
 		CreateDialog DIALOG_elevation_slider pos:[100,100] style:#(#cui_max_sized,#style_border, #style_sysmenu, #style_minimizebox) width:32  --if state then print "Rolled Down!" else print "Rolled Up!"
