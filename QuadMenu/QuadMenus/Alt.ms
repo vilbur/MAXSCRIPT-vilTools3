@@ -29,8 +29,11 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("E D I T 3")
 
-	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1 )	--flat:false
+	QuadMenu.addMenu("_Epoly-Vertex-Color") --title:"" flat:false
 
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1 )	--flat:false
 
 )
 

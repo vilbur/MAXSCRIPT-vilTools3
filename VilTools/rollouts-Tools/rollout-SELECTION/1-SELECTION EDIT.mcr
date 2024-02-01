@@ -54,7 +54,7 @@ macroscript	_scene_copy_objects_between_max_unlinked
 category:	"_Selection-Edit"
 buttontext:	"Copy Selection"
 toolTip:	"Copy objects in selection"
---icon:	"across:5|width:72|MENU:_Scene"
+icon:	"across:5|width:72|MENU:true"
 (
 
 	objects_with_unselected_parent = for o in selection where o.parent != undefined and findItem ( selection as Array ) o.parent == 0 collect o -- get obejcts which parent is not selected

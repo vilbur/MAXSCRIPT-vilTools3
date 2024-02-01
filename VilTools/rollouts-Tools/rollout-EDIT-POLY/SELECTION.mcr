@@ -1,3 +1,5 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/passVertexSelectionToEditablePoly.ms" )	--"./Lib/passVertexSelectionToEditablePoly.ms"
+
 
 macroscript	epoly_selection_select_single_vert_of_edges
 category:	"_Epoly-Selection"
@@ -37,42 +39,17 @@ icon:	"MENU:false"
 		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-EDIT-POLY\SELECTION.mcr"
 
-		obj = selection[1]
+		verts_baseobjects = passVertexSelectionToEditablePoly()
 
-		vertex_sel = (getVertSelection obj.mesh) as Array
-
-		verts_all	= #{1..( getNumVerts obj.mesh)} as Array
-		verts_all_base	= #{1..( polyop.getNumVerts obj.baseobject)} as Array
-
-		verts_sel_pos = #()
-
-		verts_baseobjects = #()
-
-		verts_pos_baseobjects = polyop.getVerts obj.baseobject verts_all_base node:obj
-
-		if vertex_sel.count > 0 then
+		if not verts_baseobjects.isEmpty then
 		(
-			verts_sel_pos  = polyop.getVerts obj vertex_sel node:obj
+			modPanel.setCurrentObject obj.baseObject
 
-			for vert_pos in verts_sel_pos where (index = findItem verts_pos_baseobjects (vert_pos)) > 0 do
-				append verts_baseobjects index
+			subObjectLevel = 1
 
-			if verts_baseobjects.count > 0 then
-			(
+			$.EditablePoly.SetSelection #Vertex (verts_baseobjects as BitArray )
 
-				if not keyboard.controlPressed then
-				(
-					modPanel.setCurrentObject obj.baseObject
-
-					subObjectLevel = 1
-
-					obj.EditablePoly.SetSelection #Vertex (verts_baseobjects as BitArray )
-				)
-				else
-					polyop.setVertColor obj 0 (verts_baseobjects as BitArray ) orange
-
-			)
-
+		
 			redrawViews()
 		)
 	)

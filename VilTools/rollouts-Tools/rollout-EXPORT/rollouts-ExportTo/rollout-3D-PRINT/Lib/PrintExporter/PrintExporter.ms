@@ -77,9 +77,6 @@ struct PrintExporter_v
 
 			this._fetchMaxState()
 		)
-
-
-
 	),
 
 	/** Get export file path
@@ -124,19 +121,34 @@ struct PrintExporter_v
 	function _exportNode export_node =
 	(
 		format "\n"; print "PrintExporter_v._exportNode()"
+
 		max create mode
 
-		export_path	= this.getExportFilePath(export_node)
+		export_path 	= this.getExportFilePath(export_node)
+		node_children	= export_node.getAllChildren()
+		export_objects	= node_children + this.fix_position_dummy
 
-		export_objects = export_node.getAllChildren() + this.fix_position_dummy
 
+		/* ENABLE MODIFIERS */
+		if this.params[#MESHSMOOTH] then
+            for obj in node_children where ( _mod = obj.modifiers[ meshsmooth ]) != undefined do
+                _mod.enabled = true
+
+		/* COLLAPSE NODE */
 		collapseStack export_objects
 
+		/*------------------------------------------------------------------------------
+			EXPORT
+		--------------------------------------------------------------------------------*/
 		export_result = Exporter.export ( export_objects ) (export_path)
-		--format "export_result	= % \n" export_result
+
+
+		/* APPEND EXPORT PATH TO OTHER PATHS */
 		if export_result != false then
 			append this.exported_paths export_path
 	),
+
+
 
 	/** Set exporter
 	 */
@@ -347,8 +359,10 @@ struct PrintExporter_v
 
 		--print ("\n\n------------------------- EXPORT SUCCESFULL -------------------------\n\n" + success_message)
 
-		format "success_message:	% \n" success_message
+		format "\n\n----- EXPORTED FILES: -----	% \n" success_message
 		--messageBox success_message title:"EXPORT SUCCESFULL"  beep:false
+		format "\nEXPORT SUCCESFULL"
+
 	),
 
 	/**

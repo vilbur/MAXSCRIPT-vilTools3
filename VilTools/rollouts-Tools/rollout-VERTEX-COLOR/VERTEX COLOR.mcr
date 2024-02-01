@@ -2,6 +2,35 @@
 /**
   *
   */
+macroscript	epoly_vertex_color_set_to_baseobject
+category:	"_Epoly-Vertex-Color"
+buttonText:	"Set Vertex Color"
+toolTip:	"Set vertex color to selected vertex.\n\nVertex can be selected in modifiers like:\nEdit Poly|Poly Select"
+icon:	"MENU:true"
+(
+	on execute do
+	undo "Set Vertex Color" on
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-EDIT-POLY\VERTEX COLOR.mcr"
+
+		obj = selection[1]
+
+		verts_baseobjects = passVertexSelectionToEditablePoly()
+
+		if not verts_baseobjects.isEmpty then
+			polyop.setVertColor obj 0 (verts_baseobjects as BitArray ) orange
+
+		$.showVertexColors	= true
+		$.vertexColorsShaded	= true
+
+		redrawViews()
+	)
+)
+
+/**
+  *
+  */
 macroscript	epoly_vertex_color_select_by
 category:	"_Epoly-Vertex-Color"
 buttonText:	"Select Vertex Color"
@@ -100,8 +129,4 @@ icon:	"across:4|MENU:true"
 			messageBox ("There is not any vertex color on object:\n\n"+obj.name) title:"NO VERTEX COLOR"
 	)
 )
-
-
-
-
 

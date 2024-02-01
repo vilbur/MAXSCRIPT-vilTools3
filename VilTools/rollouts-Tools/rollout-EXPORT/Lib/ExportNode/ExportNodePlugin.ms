@@ -40,14 +40,19 @@ replaceUI:	true
 		anim_keys --return
 	)
 
+
 	/** Get all nested node children
 	 */
 	function getAllChildren =
 	(
+		--mapped function _getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then _getAllChildren _node.children &children )
+
 		--format "\n"; print "NodeList_v.selectChildNodes()"
 		all_children	= #()
 
-		all_children += this._getAllChildren(this._getNodeObejct())
+		this._getAllChildren #( this._getNodeObejct() ) ( all_children )
+
+		--all_children += this._getAllChildren(this._getNodeObejct())
 
 		all_children --return
 	)
@@ -138,15 +143,6 @@ replaceUI:	true
 
 	/**  Get all nested children
 	  */
-	function _getAllChildren obj &arr:#() =
-	(
-		for child in obj.children do
-		(
-			append arr child
-
-			this._getAllChildren child arr:arr
-		)
-		arr --return
-	)
+	mapped function _getAllChildren _node &children = ( join children _node.children;	if _node.children.count > 0 then this._getAllChildren _node.children &children )
 
 )

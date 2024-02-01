@@ -83,6 +83,18 @@ icon:	"control:checkbox|across:2|offset:[ 16, 8 ]"
 
 )
 
+/**
+  *
+  */
+macroscript	_export_turn_on_meshmooth
+category:	"_Export"
+buttontext:	"Meshsmooth"
+toolTip:	"Auto turn on first Meshmooth modifier on exported object.\n\nMeshmooth is ONLY ENABLED, NOT ADDED."
+icon:	"control:checkbox|across:2|offset:[ 16, 8 ]"
+(
+	format "EventFired	= % \n" EventFired
+	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
+)
 
 
 /**
@@ -92,7 +104,7 @@ macroscript	_export_open_in_final_file
 category:	"_Export"
 buttontext:	"Project File Open"
 --toolTip:	"For objects to keep position on export\n\n(Create boxes in corners of print plane to keep exported position)"
-icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
+icon:	"control:checkbox|across:2|offset:[ 16, 0 ]"
 (
 	--format "EventFired	= % \n" EventFired
 	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
@@ -106,7 +118,7 @@ macroscript	_export_open_in_close_instances
 category:	"_Export"
 buttontext:	"Single Instance"
 toolTip:	"Close other instances of open in program"
-icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
+icon:	"control:checkbox|across:2|offset:[ 16, 0 ]"
 (
 	format "EventFired	= % \n" EventFired
 
@@ -121,12 +133,7 @@ icon:	"control:checkbox|across:1|offset:[ 16, 0 ]"
 ================================================================================*/
 
 
-/*------------------------------------------------------------------------------
-
-	EXPORT BUTTON
-
---------------------------------------------------------------------------------*/
-/**
+/** EXPORT BUTTON
   *
   */
 macroscript	_export_print
@@ -144,11 +151,8 @@ icon:	"height:64|across:3"
 	--(PrinterVolume_v()).fixPositionionObjects(ROLLOUT_export.SPIN_export_size.value)
 )
 
-/*------------------------------------------------------------------------------
-	PRINTER DUMMY
---------------------------------------------------------------------------------*/
 
-/**
+/** PRINTER DUMMY
   *
   */
 macroscript	_export_print_create_plane
@@ -167,7 +171,7 @@ icon:	"height:64|across:3"
 
 
 
-/**
+/** PRINTER DUMMY RIGHTCLICK
   *
   */
 macroscript	_export_print_create_volume

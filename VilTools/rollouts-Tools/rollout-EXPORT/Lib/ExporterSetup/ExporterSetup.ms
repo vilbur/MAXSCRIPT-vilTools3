@@ -2,7 +2,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../ExporterOBJ/ExporterOBJ.ms" 
 filein( getFilenamePath(getSourceFileName()) + "/../ExporterSTL/ExporterSTL.ms" )	-- "./../ExporterSTL/ExporterSTL.ms"
 
 
-filein( getFilenamePath(getSourceFileName()) + "/../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrintExporter/PrintExporter.ms" )	-- "./../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrintExporter/PrintExporter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrintExporter/PrintExporter.ms" )	--"./../../rollouts-ExportTo/rollout-3D-PRINT/Lib/PrintExporter/PrintExporter.ms"
 
 /** Manage export to different formats
   *
@@ -84,17 +84,20 @@ struct ExporterSetup_v
 		format "\n"; print "ExporterSetup_v._exportPrint()"
 		format "ROLLOUT_export.SPIN_export_size.value:	% \n" ROLLOUT_export.SPIN_export_size.value
 
-		PrintExporter =	(PrintExporter_v(this.export_nodes))
+		Exporter =	(PrintExporter_v(this.export_nodes))
 
-		PrintExporter.params[#EXPORT_FORMAT]	= #("obj", "stl")[ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_export_format.state]
-		PrintExporter.params[#EXPORT_SCALE]	= ROLLOUT_export.SPIN_export_size.value
-		PrintExporter.params[#SUBDIR_BY_NODE]	= ROLLOUT_export.CBX_sub_directory_by_node_name.checked
-		PrintExporter.params[#FIX_POSITION]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_fix_position.state
-		PrintExporter.params[#PROJECT_FILE_OPEN]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_project_file_open.state
-		PrintExporter.params[#CLOSE_INSTANCES]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.CBX_single_instance.state
-		PrintExporter.params[#OPEN_IN]	= ROLLOUT_export.ExportTo.ROLLOUT_3d_print.RB_open_in_program.state
+		print_rollout = ROLLOUT_export.ExportTo.ROLLOUT_3d_print
 
-		PrintExporter.export()
+		Exporter.params[#EXPORT_FORMAT]	= #("obj", "stl")[print_rollout.RB_export_format.state]
+		Exporter.params[#EXPORT_SCALE]	= ROLLOUT_export.SPIN_export_size.value
+		Exporter.params[#SUBDIR_BY_NODE]	= ROLLOUT_export.CBX_sub_directory_by_node_name.checked
+		Exporter.params[#FIX_POSITION]	= print_rollout.CBX_fix_position.state
+		Exporter.params[#PROJECT_FILE_OPEN]	= print_rollout.CBX_project_file_open.state
+		Exporter.params[#CLOSE_INSTANCES]	= print_rollout.CBX_single_instance.state
+		Exporter.params[#OPEN_IN]	= print_rollout.RB_open_in_program.state
+		Exporter.params[#MESHSMOOTH]	= print_rollout.CBX_meshsmooth.state
+
+		Exporter.export()
 
 		return true
 	),
