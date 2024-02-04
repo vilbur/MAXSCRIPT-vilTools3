@@ -62,9 +62,9 @@ function updateSlicePlaneSystem layer_index incremental:false =
 		if slice_bottom then
 			setSlicePlaneModifier (#BOTTOM) (#TRUE) (layer_index - 1) (cap_slice)
 
-		--format "select_plane	= % \n" select_plane
-		if select_plane then
-			setSelectPlaneModifier(layer_index) slice_top:slice_top slice_bottom:slice_bottom
+		----format "select_plane	= % \n" select_plane
+		--if select_plane then
+		--	setSelectPlaneModifier(layer_index) slice_top:slice_top slice_bottom:slice_bottom
 
 		/* UPDATE UI */
 		--ROLLOUT_print_3d.SPIN_current_layer.value	= layer_index

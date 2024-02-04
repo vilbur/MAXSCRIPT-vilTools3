@@ -6,12 +6,12 @@ global SET_ELEVATION
 /*------------------------------------------------------------------------------
 	DEV DESTROY
 --------------------------------------------------------------------------------*/
-	try(
-		cui.UnRegisterDialogBar DIALOG_elevation_slider
-
-		destroyDialog DIALOG_elevation_slider
-
-	)catch()
+	--try(
+	--	cui.UnRegisterDialogBar DIALOG_elevation_slider
+	--
+	--	destroyDialog DIALOG_elevation_slider
+	--
+	--)catch()
 
 /** Create slicer dialog
   *
@@ -24,6 +24,10 @@ function createElevationSliderDialog =
 	--getViewportHeight()
 	--format "DIALOG_elevation_slider == undefined	= % \n" (DIALOG_elevation_slider == undefined)
 	--if DIALOG_elevation_slider == undefined then
+
+
+	if DIALOG_elevation_slider == undefined then
+
 	rollout DIALOG_elevation_slider "Parent" --define a rollout and create a dialog
 	(
 		/** Get height of maximized viewport to find out height of docked dialog
@@ -58,10 +62,6 @@ function createElevationSliderDialog =
 		  */
 		function removeSlicePlaneModifier _objects  =
 		(
-			--if classOf mod_names != Array then
-				--mod_names = #(mod_names)
-
-			--for mod_name in mod_names do
 			for mod_name in #( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM, #SELECT_LAYER ) do
 				for obj in geometry where obj.modifiers[mod_name] != undefined do
 					deleteModifier obj obj.modifiers[mod_name]
@@ -248,13 +248,15 @@ function createElevationSliderDialog =
 			updateSlicePlaneSystem (val)
 
 
-		/* ON DIALOG OOPEN */
+		--/* ON DIALOG OOPEN */
 		--on DIALOG_elevation_slider OPEN do
-			--updateSlicePlaneSystem (DIALOG_elevation_slider.SPIN_layer_current.value)
+		--	updateSlicePlaneSystem (DIALOG_elevation_slider.SPIN_layer_current.value)
 
 	)
 
 	--format "GetDialogPos DIALOG_elevation_slider	= % \n" (GetDialogPos DIALOG_elevation_slider == [0,0])
+
+
 	if GetDialogPos DIALOG_elevation_slider == [0,0] then
 	(
 		CreateDialog DIALOG_elevation_slider pos:[100,100] style:#(#cui_max_sized,#style_border, #style_sysmenu, #style_minimizebox) width:32  --if state then print "Rolled Down!" else print "Rolled Up!"
@@ -262,8 +264,6 @@ function createElevationSliderDialog =
 		cui.RegisterDialogBar DIALOG_elevation_slider minSize:[ 16, -1] maxSize:[ 16, -1] style:#(#cui_dock_right)
 
 		cui.DockDialogBar DIALOG_elevation_slider #cui_dock_right
-
-
 	)
 
 )

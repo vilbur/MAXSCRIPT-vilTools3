@@ -1,6 +1,6 @@
 global ROLLOUT_print_3d
 global DIALOG_elevation_slider
-global PRINT_SLICE_MODIFIERS
+
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/getPlaneZpozition.ms" )	--"./Lib/getPlaneZpozition.ms"
 
@@ -28,33 +28,50 @@ icon:	"across:5|height:32|tooltip:\n\n----------------------\n\nFIX IF NOT WORK 
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\1-SLICE PLANE.mcr"
 
 			/* DEVELOP: KILL SLICE DIALOG */
-			try(
-				cui.UnRegisterDialogBar DIALOG_elevation_slider
+			--try(
+			--	cui.UnRegisterDialogBar DIALOG_elevation_slider
+			--
+			--	destroyDialog DIALOG_elevation_slider
+			--
+			--)catch()
 
-				destroyDialog DIALOG_elevation_slider
-
-			)catch()
-
-
-			mod_name = "SLICE_PLANE_" + "TOP"
-
-			if PRINT_SLICE_MODIFIERS == undefined then
+			/** Add slice mod
+			 */
+			function addSliceMod obj slice_mod =
 			(
-				PRINT_SLICE_MODIFIERS = Dictionary()
+				--format "\n"; print ".addSliceMod()"
+				addModifier obj slice_mod
 
-				slice_mod = SliceModifier name:mod_name cap:true Faces___Polygons_Toggle:1 Slice_Type:3 -- Slice_Type:(if mode == #TOP then 3 else 2)
-
-				PRINT_SLICE_MODIFIERS[ mod_name as name ] = slice_mod
+				--mod_TM =	(getModContextTM obj slice_mod)	* (  obj.transform )
+				mod_TM =	(getModContextTM obj slice_mod)	* (  obj.transform )
+				--format "mod_TM	= % \n" mod_TM
+				setModContextTM obj slice_mod mod_TM
 			)
 
+			mod_name = #SLICE_PLANE_TOP
 
-			objects_to_slice = for obj in selection where superClassOf obj == GeometryClass collect obj
+			for obj in selection where (_mod = obj.modifiers[mod_name]) != undefined do
+				deleteModifier obj _mod
 
-			modPanel.addModToSelection PRINT_SLICE_MODIFIERS[ mod_name as name ]
+				
+			mods_in_scene = for mod_in_scene in getClassInstances ( SliceModifier ) where mod_in_scene.name as name == mod_name collect mod_in_scene
+
+			if ( slice_mod = mods_in_scene[1] ) == undefined then
+				slice_mod = SliceModifier name:( mod_name as string ) Faces___Polygons_Toggle:1
+
+			objects_with_modifier = refs.dependentNodes slice_mod
+
+
+			for obj in selection where superClassOf obj == GeometryClass and findItem objects_with_modifier obj == 0 do
+				addSliceMod (obj)	(slice_mod)
+
 
 
 			/* CREATE SLICE DIALOG */
 			createElevationSliderDialog()
+
+
+			updateSlicePlaneSystem (DIALOG_elevation_slider.SPIN_layer_current.value)
 
 		)
 )
@@ -71,18 +88,33 @@ icon:	"across:5|height:32"
 	on execute do
 		(
 			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\1-SLICE PLANE.mcr"
-			try(
-				cui.UnRegisterDialogBar DIALOG_elevation_slider
-
-				destroyDialog DIALOG_elevation_slider
-			)catch()
+			--try(
+			--	cui.UnRegisterDialogBar DIALOG_elevation_slider
+			--
+			--	destroyDialog DIALOG_elevation_slider
+			--)catch()
 
 			_selection = if selection.count == 0 then selection else geometry
 
 			for mod_name in #( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM, #SELECT_BY_PRINT_LAYER ) do
-				for obj in objects where obj.modifiers[mod_name] != undefined do
-					deleteModifier obj obj.modifiers[mod_name]
+			(
 
+				/*  */
+				 if selection.count == 0 then
+				 (
+					mods_in_scene = for mod_in_scene in getClassInstances ( SliceModifier ) where mod_in_scene.name as name == mod_name collect mod_in_scene
+
+					for mod_in_scene in mods_in_scene do
+						for obj in refs.dependentNodes mod_in_scene do
+							deleteModifier obj mod_in_scene
+
+				 )
+				 else
+					for obj in selection where (_mod = obj.modifiers[mod_name]) != undefined do
+						deleteModifier obj _mod
+
+
+			)
 		)
 )
 
