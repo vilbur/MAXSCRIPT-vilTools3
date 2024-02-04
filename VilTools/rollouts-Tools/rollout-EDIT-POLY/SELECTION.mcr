@@ -5,13 +5,13 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/passVertexSelectionToEditab
   */
 macroscript	epoly_selection_select_single_vert_of_edges
 category:	"_Epoly-Selection"
-buttonText:	"Edge to Vert"
-toolTip:	"Convert edge selection\n\nQUICK SCRIPT, TESTED ONLY ON EDITABLE POLY"
+buttonText:	"Filter 1 edge vert"
+toolTip:	"Get only signge vertex per edge"
 icon:	"MENU:false"
 (
 
 	on execute do
-	undo "Explode By Element" on
+	undo "Filter 1 edge vert" on
 	(
 		obj = selection[1]
 
@@ -22,7 +22,7 @@ icon:	"MENU:false"
 
 		obj.EditablePoly.SetSelection #Vertex (verts as BitArray )
 
-		subobjectLevel = 1
+		subObjectLevel = 1
 
 	)
 
@@ -47,6 +47,8 @@ icon:	"MENU:false"
 
 		if not verts_baseobjects.isEmpty then
 		(
+			obj = selection[1]
+
 			modPanel.setCurrentObject obj.baseObject
 
 			subObjectLevel = 1
@@ -83,15 +85,3 @@ icon:	"MENU:false"
 
 	)
 )
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,7 +7,7 @@
   */
 function setSlicePlaneModifier mode state layer_index_or_z_pos cap_state =
 (
-	format "\n"; print ("setSlicePlaneModifier.ms.setSlicePlaneModifier( #"+mode as string +" )")
+	--format "\n"; print ("setSlicePlaneModifier.ms.setSlicePlaneModifier( #"+mode as string +" )")
 	--format "state:	% \n" state
 	--format "mode:	% \n" mode
 
@@ -25,29 +25,30 @@ function setSlicePlaneModifier mode state layer_index_or_z_pos cap_state =
 
 
 	z_pos = if classOf layer_index_or_z_pos == integer then getPlaneZpozition (layer_index_or_z_pos) else layer_index_or_z_pos
-	format "Z_POS:	% \n" z_pos
+	--format "Z_POS:	% \n" z_pos
 
 	/* SET SLICE PLANE POSITION */
+		final_TM = Matrix3 1
 
+		final_TM.position.z = z_pos
 	--z_pos = 20 -- DEV
 
-	pos01 = [ 0,	0,	z_pos ]
-	pos02 = [ 10,	0,	z_pos ]
-	pos03 = [ 0,	10,	z_pos ]
+	--pos01 = [ 0,	0,	z_pos ]
+	--pos02 = [ 10,	0,	z_pos ]
+	--pos03 = [ 0,	10,	z_pos ]
+	--
+	--vect1 = normalize (pos02 - pos01)
+	--vect2 = normalize (pos03 - pos02)
+	--vect3 = normalize (cross vect2 vect1)
+	--
+	--vect2 = cross vect3 vect1
 
-	vect1 = normalize (pos02 - pos01)
-	vect2 = normalize (pos03 - pos02)
-	vect3 = normalize (cross vect2 vect1)
-
-	vect2 = cross vect3 vect1
-
-	final_TM =  (( Matrix3 vect1 vect2 vect3 ((pos01 + pos02 + pos03) / 3) ))
-
+	--final_TM =  (( Matrix3 vect1 vect2 vect3 ((pos01 + pos02 + pos03) / 3) ))
 
 	/*  UPDATE MODIFIER PROPERTIES */
 	slice_mod.slice_plane.transform = final_TM
 
-	slice_mod.Slice_Type = (if mode == #TOP then 3 else 2)
+	slice_mod.Slice_Type = (if mode == #TOP then 2 else 3 )
 
 	slice_mod.cap = cap_state
 

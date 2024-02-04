@@ -20,17 +20,39 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 		_mod = modPanel.getCurrentObject()
 		--format "_mod	= % \n" _mod
 		--format "_mod == Editable_Poly	= % \n" (_mod == Editable_Poly)
-		verts_baseobjects = if classof _mod == Editable_Poly then
-								polyop.getVertSelection _mod
-							else
-								passVertexSelectionToEditablePoly()
+		verts_baseobjects = passVertexSelectionToEditablePoly()
 
-		format "VERTS_BASEOBJECTS	= % \n" verts_baseobjects
+		--format "VERTS_BASEOBJECTS	= % \n" verts_baseobjects
 
 
 		if not verts_baseobjects.isEmpty then
+		(
+
+			/* SELECT VERTEX IN BASEOBJECT MANNUALY - Direct assigment without swithching to */
+			if classof _mod != Editable_Poly then
+				modPanel.setCurrentObject(obj.baseobject)
+
+			obj.EditablePoly.SetSelection #Vertex verts_baseobjects
+
+			subObjectLevel = 1
+
 			polyop.setVertColor obj 0 verts_baseobjects (if keyboard.controlPressed then red else green )
-			--polyop.setVertColor obj.baseobject 0 verts_baseobjects (if keyboard.controlPressed then red else green )
+
+			obj.EditablePoly.SetSelection #Vertex #{}
+
+			subObjectLevel = 0
+
+			if _mod != ( modPanel.getCurrentObject()) then
+				 modPanel.setCurrentObject(_mod)
+		)
+
+
+		/* CODE BELLOW OFTEN ASSIGN COLORS TO MANY OTHER VERTS */
+		--
+		--if not verts_baseobjects.isEmpty then
+		--	polyop.setVertColor obj.baseobject 0 (verts_baseobjects) (if keyboard.controlPressed then red else green )
+		--
+
 
 		$.showVertexColors	= true
 		$.vertexColorsShaded	= true
@@ -38,6 +60,7 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 		redrawViews()
 	)
 )
+
 
 /**
   *
@@ -174,26 +197,38 @@ icon:	"across:4|MENU:true"
 
 		if getNumCPVVerts obj.mesh > 0 then
 		(
-			vertex_sel = getVertSelection obj.mesh
+			--vertex_sel = getVertSelection obj.mesh
 
-			/* GET SELECTED OR ALL VERTS */
-			verts = if vertex_sel.isEmpty then
-			(
-				all_verts =  #{1..(getNumVerts obj.mesh)}
-				white_verts = meshop.getVertsByColor obj.mesh white 0.001 0.001 0.001
+			verts = passVertexSelectionToEditablePoly()
 
-				all_verts - white_verts
-			)
-			else
-				vertex_sel
+			if verts.isEmpty then
+				verts = #ALL
 
 
-			polyop.setVertColor obj 0 verts white
+			--/* GET SELECTED OR ALL VERTS */
+			--verts = if vertex_sel.isEmpty then
+			--(
+			--	all_verts =  #{1..(getNumVerts obj.mesh)}
+			--	white_verts = meshop.getVertsByColor obj.mesh white 0.001 0.001 0.001
+			--
+			--	all_verts - white_verts
+			--)
+			--else
+			--	vertex_sel
 
-			print ("VERTEX COLOR OF "+ (if vertex_sel.isEmpty then "ALL"else "SELECTED") +" SET TO WHITE")
+
+			polyop.setVertColor  obj.baseobject 0 verts white
+
+			--print ("VERTEX COLOR OF "+ (if vertex_sel.isEmpty then "ALL"else "SELECTED") +" SET TO WHITE")
 
 		)
 		else
 			messageBox ("There is not any vertex color on object:\n\n"+obj.name) title:"NO VERTEX COLOR"
 	)
 )
+
+
+
+
+
+

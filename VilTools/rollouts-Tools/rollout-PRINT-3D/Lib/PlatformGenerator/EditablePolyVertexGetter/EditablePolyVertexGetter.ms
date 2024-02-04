@@ -11,7 +11,7 @@ struct EditablePolyVertexGetter_v
 	PlatformObjects = #(),
 
 	normal_length,
-	vertex_colors,
+	vertex_colors = Dictionary #string,
 
 	/* dependency */
 	PlatformObjectInstance,
@@ -26,13 +26,16 @@ struct EditablePolyVertexGetter_v
 	(
 		format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
 		--format "obj:	% \n" obj
+
 		this._setObjectUsed(obj)
 
 		vertex_sel = getVertSelection obj_used.mesh
 
+		format "vertex_sel	= % \n" vertex_sel
+
 		verts_all = #{1..(getNumVerts obj_used.mesh)}
 
-		vertex_colors	= this._getVertexColors verts_all:verts_all colored_verts_num:(getNumCPVVerts obj_used.mesh)
+		this._setVertexColors verts_to_get:verts_all colored_verts_num:(getNumCPVVerts obj_used.mesh)
 
 		verts_to_generate = if vertex_sel.isEmpty then verts_all else vertex_sel   -- get all verts if nothing selected
 
@@ -49,7 +52,6 @@ struct EditablePolyVertexGetter_v
 
 				this._getVertexData(verts_to_generate_arr[i])
 			)
-			--for i in verts_to_generate as Array do
 
 		--format "PlatformObjects.count:	% \n" PlatformObjects.count
 		if obj_copy != undefined then
@@ -65,42 +67,29 @@ struct EditablePolyVertexGetter_v
 	  *
 	  * return Dictionary #( "Color 128 128 128", #{1..n} ) KEY: color VALUE: verts of that color
 	  */
-	function _getVertexColors verts_all: colored_verts_num: =
+	function _setVertexColors verts_to_get: colored_verts_num: =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
+		format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
 
-		/*------------------------------------------------------------------------------
-			GET ALL VERTS IF ANY VERTEX COLOR EXISTS
-		--------------------------------------------------------------------------------*/
-		vertex_colors	= Dictionary #( "white", verts_all  )
-		--format "1 vertex_colors:	% \n" vertex_colors.keys
+		if verts_count != colored_verts_num then
+			polyop.defaultMapFaces obj_used.baseobject 0 --true
+
 		/*------------------------------------------------------------------------------
 			GET OTEH VERTEX COLORS
 		--------------------------------------------------------------------------------*/
 
-		if colored_verts_num > 0 then
+		while not verts_to_get.isEmpty do
 		(
-			--( modPanel.getCurrentObject()).unhideAll #Vertex
+			first_vert = (verts_to_get as Array )[1]
 
-			verts_white = this._getVertsByColor(white)
+			vert_color = getvertcolor obj_used.mesh  first_vert
 
-			vertex_colors["white"] = verts_white
+			verts_by_color = this._getVertsByColor (vert_color)
 
-			colored_verts = verts_all - verts_white
+			vertex_colors[ vert_color as string ] = verts_by_color
 
-			while not colored_verts.isEmpty do
-			(
-				vert_color = getvertcolor obj_used.mesh (colored_verts as Array )[1]
-
-				verts_by_color = this._getVertsByColor (vert_color)
-
-				vertex_colors[ vert_color as string ] = verts_by_color
-
-				colored_verts = colored_verts - verts_by_color
-			)
+			verts_to_get = verts_to_get - verts_by_color
 		)
-
-		vertex_colors --return
 	),
 
 	/** Get vertex positions, color and normals from Editable Poly obejct
@@ -115,7 +104,7 @@ struct EditablePolyVertexGetter_v
 
 		normal = ( getnormal obj_used.mesh i) * obj_used.transform - obj_used.pos
 		--format "normal:	% \n" normal
-		wirecolor = if vertex_colors["white"][i] then obj_used.wirecolor else this._getColorByVertex (vertex_colors) (i)
+		wirecolor = this._getColorByVertex (i)
 
 		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
 		if normal.z <= 0 then
@@ -147,7 +136,7 @@ struct EditablePolyVertexGetter_v
 	/** Get color by vertex
 	  *
 	  */
-	function _getColorByVertex vertex_colors i =
+	function _getColorByVertex i =
 	(
 		for key in vertex_colors.keys where vertex_colors[key][i] do return execute key
 	),
@@ -157,7 +146,7 @@ struct EditablePolyVertexGetter_v
 	function _getVertsByColor clr =
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v.getVertsByColor()"
-		meshop.getVertsByColor obj_used.mesh clr 0.001 0.001 0.001 --return TRESHOLD FLOAT MUST NOT BE 0.0 - it causeses error in whie loop in this._getVertexColors()
+		meshop.getVertsByColor obj_used.mesh clr 0.001 0.001 0.001 --return TRESHOLD FLOAT MUST NOT BE 0.0 - it causeses error in whie loop in this._setVertexColors()
 	),
 
 	/** Set object used for getting data
