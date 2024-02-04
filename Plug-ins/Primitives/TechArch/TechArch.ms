@@ -12,7 +12,7 @@ category:	"Splines"
 
 	local build = false
 
-	local modes = #("Event\Odd", "Incremental", "Random" )
+	local modes = #("Even\Odd", "Incremental", "Random" )
 	/*------------------------------------------------------------------------------
 		BUILD SHAPE METHODS
 	--------------------------------------------------------------------------------*/
@@ -49,7 +49,7 @@ category:	"Splines"
 		spinner	SP_angle_max	"Angle Max"	range:[ 0, 1e9, 0 ]
 		spinner	SP_angle_gap	"Angle Gap"	range:[ 0, 1e9, 0 ]
 
-		radiobuttons RB_angle_mode "Angle Mode" labels:#("Event\Odd", "Random" ) --offset:[-8, 16]
+		radiobuttons RB_angle_mode "Angle Mode" labels:#("Even\Odd", "Random" ) tooltip:"EVEN\ODD: Use Min\Max angle for Even\Odd segment\n\nRANDOM: Set random angle between min\max angle for each segment" --offset:[-8, 16]
 
 
 		/* KEEP MIN RADIUS LOWER THEN MAX */
@@ -293,9 +293,9 @@ category:	"Splines"
 			this.setArchData()
 
 
-		/* CONVERT ARCH DATA DOTO POINTS */
+		/* CONVERT ARCH DATA TO POINTS */
 		arches_points = for arch_data in arches_data collect
-			this.getArcPoints (arch_data[#ANGLE]) (arch_data[#RADIUS]) (arch_data[#ROTATION]) (arch_data[#HEIGHT])  dir:-1
+			this.make3PointArc arc_angle:arch_data[#ANGLE] arc_radius:arch_data[#RADIUS] angle_rot:arch_data[#ROTATION] pos_z:arch_data[#HEIGHT] dir:-1
 
 		this.prepareLinePoints( arches_points )
 

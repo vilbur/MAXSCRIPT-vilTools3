@@ -1,3 +1,6 @@
+
+
+
 /** Set print elevation
   *
   */
@@ -7,20 +10,20 @@ function updateSlicePlaneSystem layer_index incremental:false =
 	--format "layer_index:	% \n" layer_index
 
 
-	function showLayerHud layer_index =
-	(
-		--format "\n"; print "PRINTER DUMMY.mcr.showLayerHud()"
-		unregisterRedrawViewsCallback viewportHudCallback
-
-		HUD = Hud_v pos:#( #RIGHT,	#CENTER ) offset:[ 64, 0 ]
-
-		HUD.row #( "Layer Index:", layer_index as string )
-
-		HUD_DATA[#SLICE_LAYER_CURRENT] = HUD
-
-		registerRedrawViewsCallback viewportHudCallback
-
-	)
+	--function showLayerHud layer_index =
+	--(
+	--	--format "\n"; print "PRINTER DUMMY.mcr.showLayerHud()"
+	--	unregisterRedrawViewsCallback viewportHudCallback
+	--
+	--	HUD = Hud_v pos:#( #RIGHT,	#CENTER ) offset:[ 64, 0 ]
+	--
+	--	HUD.row #( "Layer Index:", layer_index as string )
+	--
+	--	HUD_DATA[#SLICE_LAYER_CURRENT] = HUD
+	--
+	--	registerRedrawViewsCallback viewportHudCallback
+	--
+	--)
 
 
 	/* OPEN SLIDER IF NOT OPENED */
@@ -49,7 +52,7 @@ function updateSlicePlaneSystem layer_index incremental:false =
 	if incremental then
 		layer_index = layer_current + layer_index
 
-	try(
+	--try(
 		--DisableSceneRedraw()
 
 		/* ADD MODIFIERS */
@@ -68,14 +71,14 @@ function updateSlicePlaneSystem layer_index incremental:false =
 		DIALOG_elevation_slider.SPIN_layer_current.value	= layer_index
 		DIALOG_elevation_slider.SLIDER_elevation.value	= layer_index
 
-	)catch(
-		--EnableSceneRedraw()
-	)
+	--)catch(
+	--	--EnableSceneRedraw()
+	--)
 
 	--EnableSceneRedraw()
 
 	--redrawViews()
 
-	showLayerHud(layer_index)
+	--showLayerHud(layer_index)
 
 )

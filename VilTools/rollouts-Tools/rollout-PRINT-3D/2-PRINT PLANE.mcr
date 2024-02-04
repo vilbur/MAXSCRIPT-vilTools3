@@ -117,7 +117,7 @@ macroscript	_print_plane_set_normal_rightclick
 category:	"_3D-Print"
 buttontext:	"Normal"
 toolTip:	"Toggle Normnal"
-icon:	"id:#BTN_print_plane_nomal|across:4|width:42"
+icon:	"id:#BTN_print_plane_nomal|across:4|width:42|offset:[8,0]"
 (
 
 	if $SELECT_PRINT_LAYER != undefined then

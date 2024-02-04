@@ -16,8 +16,9 @@ struct ModifierRenamer_v
 	  */
 	function generateName =
 	(
+		format "\n%" (getSourceFileName())
 		--format "\n"; print "ModifierRenamer_v.generateName()"
-		format "classOf modObject:	% \n" (classOf this.modObject)
+		--format "classOf modObject:	% \n" (classOf this.modObject)
 
 		this._printModProperties()
 
@@ -248,6 +249,7 @@ struct ModifierRenamer_v
 			)
 		)
 
+		/* DEVELOP LOG */
 		format "\n-----------\nDICTIONARY:preset_values:%\n" mod_values; for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		mod_values --return
@@ -281,10 +283,7 @@ struct ModifierRenamer_v
 	function _Meshsmooth =
 	(
 		--format "\n"; print "ModifierRenamer_v._Meshsmooth()"
-		mod_name = "Meshsmooth"
-
-		if this.modObject.iterations >= 2 then
-			mod_name += " " + this.modObject.iterations  as string
+		mod_name = "Meshsmooth " + this.modObject.iterations  as string
 
 		mod_name --return
 	),

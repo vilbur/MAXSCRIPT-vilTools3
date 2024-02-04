@@ -32,9 +32,12 @@ struct PlatformObject_v
 
 		--format "verts_positions:	% \n" verts_positions
 
+		platform_parent = this._getPlatformParent()
+		--format "PLATFORM_PARENT	= % \n" PLATFORM_PARENT
+
 		this._createLineFromPoints()
 
-		platform.parent = source_obj
+		platform.parent = platform_parent
 
 		platform --return
 	),
@@ -49,6 +52,41 @@ struct PlatformObject_v
 	),
 
 	private
+
+	/** Get last children of point
+	  *
+	  * @retrun node of last nested child point or source object, if chldren does not eists
+	  *
+	 */
+	function _getPlatformParent =
+	(
+		--format "\n"; print "PlatformObject_v._getLastChildrenOfIn()"
+		parent = source_obj
+
+		if classOf source_obj == Point  then
+		(
+			--local child_point
+
+			child_point = child = source_obj.children[1]
+			--format "child	= % \n" child
+
+			while child != undefined do
+			(
+				child = child.children[1]
+				--format "child	= % \n" child
+
+				if child != undefined then
+					child_point = child
+			)
+
+			--format "CHILD_POINT	= % \n" child_point
+
+			if child_point != undefined then
+				parent = child_point
+		)
+
+		parent --return
+	),
 
 	/** Create line for vertex
 	  *
@@ -121,5 +159,3 @@ struct PlatformObject_v
 
 	on create do ()
 )
-
-

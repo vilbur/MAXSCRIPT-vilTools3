@@ -85,12 +85,13 @@ icon:	"across:3|height:32|width:128"
 
 --------------------------------------------------------------------------------*/
 
+
 /** GENERATE POINTS
  */
 macroscript	_print_platform_generate_points
 category:	"_3D-Print"
 buttontext:	"Generate Points"
-tooltip:	"Generate Points From selected mesh"
+tooltip:	"Generate Points From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
 icon:	"across:3|height:32|width:128"
 (
 	on execute do
@@ -117,6 +118,8 @@ icon:	"across:3|height:32|width:128"
 	on execute do
 		undo "Generate Line From Points" on
 		(
+			clearListener(); print("Cleared in:\n"+getSourceFileName())
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 			_selected_points = for obj in selection where classOf obj == Point collect obj
 
 

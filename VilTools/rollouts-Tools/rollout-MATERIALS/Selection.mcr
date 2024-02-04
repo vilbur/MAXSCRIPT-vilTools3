@@ -23,7 +23,7 @@ icon:	"MENU:true"
 				for obj in target_objects do
 					obj.material =  source_object.material
 
-				redrawViews() 
+				redrawViews()
 			)
 			else
 				messageBox "Last selected objects has not material" title:"SET MATERIAL"
@@ -43,8 +43,8 @@ buttonText:	"Select By Mat"
 tooltip:	"Select objects by current material in material editor"
 icon:	"MENU:true"
 (
-	-- <array>SelectObjectByMaterial - returns array of objects a material is assigned to
-	function SelectObjectByMaterial reqMatEditOpen materialIndex = (
+	-- <array>getObjectByMaterial - returns array of objects a material is assigned to
+	function getObjectByMaterial reqMatEditOpen materialIndex = (
 		objarr = #()
 
 		-- Select ALL objects with this material
@@ -52,7 +52,7 @@ icon:	"MENU:true"
 			if materialIndex > 0 and materialIndex < 25 then (-- start index check
 				objarr = for o in objects where o.material == meditMaterials[materialIndex] collect o
 				-- Check if the obj is part of a group
-				for obj in objarr where isGroupMember obj AND (NOT isOpenGroupMember obj) do
+				for obj in objarr where isGroupMember obj and ( not isOpenGroupMember obj) do
 				(
 				  	par = obj.parent
 				  	while par != undefined do
@@ -74,18 +74,22 @@ icon:	"MENU:true"
 
 	on execute do
 	(
-		clearSelection()
+		if not MatEditor.isOpen() then
+		(
+			materials_selection =  makeUniqueArray (for obj in selection where obj.material != undefined collect obj.material)
 
-		max create mode
+			objects_with_mat =  for obj in objects where findItem materials_selection obj.material > 1 collect obj
 
-		if (objs = SelectObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
+			select objects_with_mat
+		)
+		else if (objs = getObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
 			select objs
 	)
 
 	--on altexecute type do (
 	--	clearSelection()
 	--	max create mode
-	--	if (objs = SelectObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
+	--	if (objs = getObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
 	--		select objs
 	--
 	--	for o in objs where not(o.layer.on) do o.layer.on = true

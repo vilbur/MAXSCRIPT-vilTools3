@@ -1,5 +1,6 @@
 global ROLLOUT_print_3d
 global DIALOG_elevation_slider
+global PRINT_SLICE_MODIFIERS
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/getPlaneZpozition.ms" )	--"./Lib/getPlaneZpozition.ms"
 
@@ -18,23 +19,42 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/createElevationSliderDialog
 macroscript	print_create_slicerdialog
 category:	"_3D-Print"
 buttontext:	"Slice Object"
-tooltip:	"Slice selected object"
-icon:	"across:5|height:32"
+tooltip:	"Slice selected object."
+icon:	"across:5|height:32|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY: RESET OBJECT XFORM\n\nIF Z POZITION OF SLICE PLANE DOES NOT WORK PROPERLY"
 (
 	on execute do
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\1-SLICE PLANE.mcr"
 
+			/* DEVELOP: KILL SLICE DIALOG */
+			try(
+				cui.UnRegisterDialogBar DIALOG_elevation_slider
+
+				destroyDialog DIALOG_elevation_slider
+
+			)catch()
+
+
+			mod_name = "SLICE_PLANE_" + "TOP"
+
+			if PRINT_SLICE_MODIFIERS == undefined then
+			(
+				PRINT_SLICE_MODIFIERS = Dictionary()
+
+				slice_mod = SliceModifier name:mod_name cap:true Faces___Polygons_Toggle:1 Slice_Type:3 -- Slice_Type:(if mode == #TOP then 3 else 2)
+
+				PRINT_SLICE_MODIFIERS[ mod_name as name ] = slice_mod
+			)
+
+
+			objects_to_slice = for obj in selection where superClassOf obj == GeometryClass collect obj
+
+			modPanel.addModToSelection PRINT_SLICE_MODIFIERS[ mod_name as name ]
+
+
+			/* CREATE SLICE DIALOG */
 			createElevationSliderDialog()
-
-
-			--if  ROLLOUT_print_3d.CBX_slice_top.state then
-			--	setSlicePlaneModifier (#TOP) (#TRUE) (DIALOG_elevation_slider.SLIDER_elevation.value) (ROLLOUT_print_3d.CBX_cap_slice.state)
-			--
-			--if  ROLLOUT_print_3d.CBX_slice_bottom.state then
-			--	setSlicePlaneModifier (#BOTTOM) (#TRUE) (DIALOG_elevation_slider.SLIDER_elevation.value) (ROLLOUT_print_3d.CBX_cap_slice.state)
-
 
 		)
 )

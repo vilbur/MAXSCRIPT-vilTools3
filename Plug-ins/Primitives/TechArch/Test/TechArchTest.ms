@@ -1,88 +1,81 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
-filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../TechArch.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../TechArch.ms" )	-- "./../TechArch.ms" pos:[ pos_x+=x_add, 0, 0 ]
 
-
-positions = #()
-
-/** Get pos
-  *
-  */
-function getPos =
-(
-	pos = [ positions.count *150, 0, 0 ]
-
-	append positions pos
-
-	pos --return
-)
 
 delete objects
 
+pos_x = 0
+x_add = 120
+pos_x-= x_add
 
 /*------------------------------------------------------------------------------
 	RUN TESST
 --------------------------------------------------------------------------------*/
 
---/* WELD AND CONNECT LINE  */
---TechArch height:10  name:"Connect and Weld" pos:(getPos())
+/* DEFAULT */
+TechArch name:"DEFAULT" pos:[ pos_x+=x_add, 0, 0 ]
+
+
+/* CONNECT AND WELD LINE  */
+--TechArch height:10  name:"CONNECT AND WELD" pos:[ pos_x+=x_add, 0, 0 ]
 --
 --/* NOT WELD LINE  */
---TechArch  weld_line:false height:10 name:"Connect" pos:(getPos())
+--TechArch  weld_line:false height:10 name:"NOT WELD" pos:[ pos_x+=x_add, 0, 0 ]
 --
 --/* NOT CONNECT LINE  */
---TechArch connect_line:false name:"Not Connect" pos:(getPos())
+--TechArch connect_line:false name:" NOT CONNECT" pos:[ pos_x+=x_add, 0, 0 ]
 --
 --
 --/* NOT WELD  AND ORTHO  */
---TechArch  weld_line:false connect_mode:2  height:10 name:"Connect Ortho" pos:(getPos())
+--TechArch  weld_line:false connect_mode:2  height:10 name:"NOT WELD  AND ORTHO" pos:[ pos_x+=x_add, 0, 0 ]
 --
 --
 --/* WELD AND ORTHO  */
---TechArch height:10 connect_mode:3 name:"Weld Ortho Flip" pos:(getPos())
-
-
-/* ANGLE GAP */
---TechArch angle_gap:10 radius_min:50 radius_max:55 name:"Angle Gap" pos:(getPos())
-
-
-/* RADIUS TEST */
---TechArch radius_min:50 radius_max:100 radius_mode:1 isSelected:on steps:64
---TechArch radius_min:50 radius_max:100 radius_mode:2 isSelected:on steps:24
+--TechArch height:10 connect_mode:3 name:"WELD AND ORTHO" pos:[ pos_x+=x_add, 0, 0 ]
 --
-
-
-/* EVENT\ODD ANGLE */
-TechArch angle_min:30 angle_max:90 angle_mode:1 radius_min:50 radius_max:55 radius_mode:1 isSelected:on
-
-/* RANDOM ANGLE */
---TechArch angle_min:15 angle_max:45 angle_mode:2 radius_min:50 radius_max:55 isSelected:on
-
-
---TechArch angle_min:45 angle_max:90 isSelected:on radius_min:50 radius_max:51
-
-
-/* EVENT\ODD HEIGHT */
---TechArch height:30
+--
+--/* ANGLE GAP */
+--TechArch angle_gap:10 radius_min:50 radius_max:55 name:"ANGLE GAP" pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--/* RADIUS TEST */
+--TechArch radius_min:50 radius_max:100 radius_mode:1 name:"RADIUS TEST A" steps:64 pos:[ pos_x+=x_add, 0, 0 ]
+--TechArch radius_min:50 radius_max:100 radius_mode:2 name:"RADIUS TEST B" steps:24 pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--
+--/* EVENT\ODD ANGLE */
+--TechArch angle_min:30 angle_max:90 angle_mode:1 radius_min:50 radius_max:55 radius_mode:1 name:"Event\Odd Angle"  pos:[ pos_x+=x_add, 0, 0 ]
+--
+--/* RANDOM ANGLE */
+--TechArch angle_min:15 angle_max:45 angle_mode:2 radius_min:50 radius_max:55  name:"RANDOM ANGLE A" pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--TechArch angle_min:45 angle_max:90 isSelected:on radius_min:50 radius_max:51 name:"RANDOM ANGLE B" pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--/* EVENT\ODD HEIGHT */
+--TechArch height:30 name:"EVENT\ODD HEIGHT" pos:[ pos_x+=x_add, 0, 0 ]
 --
 --/* RANDOM HEIGHT */
---TechArch height:50 height_mode:2
-
-
-
-/* CLOSE LINE  */
---TechArch weld_line:false height:30 angle_min:180
-
-
-
-/* TEST DIFFERENT SETUPS */
---TechArch angle_min:30 angle_max:60 radius_min:50 radius_max:60 radius_mode:3 angle_mode:2 height:10 isSelected:on
-
-
-
-----TechArch wrap_angle:72 radius_min:45 radius_max:90 angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24
---lineSetup()
-
+--TechArch height:50 height_mode:2 name:"RANDOM HEIGHT" pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--
+--/* CLOSE LINE  */
+--TechArch weld_line:false height:30 angle_min:180 name:"CLOSE LINE" pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--
+--/* TEST DIFFERENT CONFIGURATIONS */
+--TechArch angle_min:30 angle_max:60 radius_min:50 radius_max:60 radius_mode:3 angle_mode:2 height:10 name:"CUSTOM 1" pos:[ pos_x+=x_add, 0, 0 ]
+--
+--
+--
+------TechArch wrap_angle:72 radius_min:45 radius_max:90 angle_min:angle_min height:height gap_angle:gap_angle radius_mode:radius_mode angle_mode:angle_mode isSelected:on steps:24 pos:[ pos_x+=x_add, 0, 0 ]
+----lineSetup()
+--
 
 
 max modify mode

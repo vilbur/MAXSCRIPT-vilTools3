@@ -59,7 +59,7 @@ struct PlatformGenerator_v
 
 		--DisableSceneRedraw() -- disable for development
 		for source_obj in source_objects do
-			this._setVertexPositions( source_obj )
+			this._setPlatformObjects( source_obj )
 
 		if PlatformObjects.count > 0 then
 		(
@@ -127,7 +127,7 @@ struct PlatformGenerator_v
 		  */
 		function reinstancePoints points_created =
 		(
-			--format "\n"; print "PlatformGenerator_v.reinstancePoints()"
+			format "\n"; print "PlatformGenerator_v.reinstancePoints()"
 			if points_created.count < 2 then
 				return false
 
@@ -140,36 +140,50 @@ struct PlatformGenerator_v
 		)
 
 		points_created = #()
+		points_first = #()
 		--format "source_objects:	% \n" source_objects
 		for source_obj in source_objects do
-			this._setVertexPositions( source_obj )
+			this._setPlatformObjects( source_obj )
+
+		max create mode
+
+		--max modify mode
 
 		for PlatformObject in PlatformObjects do
 
 			for i = 1 to PlatformObject.verts_positions.count do
 			(
+				--i=1
 				vert_pos = PlatformObject.verts_positions[i]
 
-				_point = Point pos:vert_pos size:1 wirecolor:(shiftWirecolor(copy PlatformObject.wirecolor)(i)) -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+				_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy PlatformObject.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
-				_point.showLinks = true
+				--_point.showLinks = true
 
-				/* LINK CURRENT POINT TO PREVIOUS */
+				/* IF TOP POINT OF PLATFORM */
 				if i == 1 then
+				(
 					/*------------------------------------------------------------------------------
 						!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
 
 						Should be improved to respect EACH source object
 					--------------------------------------------------------------------------------*/
 					_point.parent = source_objects[1]
+
+					append points_first _point
+
+				)
 				else
 				--( point_last = points_created[points_created.count] ) != undefined then
 					_point.parent =  points_created[points_created.count]
 
+
+				this._addToLayer (PlatformObject.source_obj) (_point)
+
 				append points_created _point
 			)
 
-		--reinstancePoints (points_created)
+		reinstancePoints (points_first)
 
 		points_created --return
 	),
@@ -187,6 +201,28 @@ struct PlatformGenerator_v
 
 	private
 
+	/** Add to layer
+	 */
+	function _addToLayer source_obj obj =
+	(
+		--format "\n"; print "PlatformGenerator_v.addToLayer()"
+		--
+		--if source_obj.layer != obj.layer then
+		--(
+		layer_name = source_obj.name + "-platforms"
+
+		if ( layer = LayerManager.getLayerFromName (layer_name) ) == undefined then
+			layer = LayerManager.newLayerFromName (layer_name)
+
+
+		layer.setParent (source_obj.layer)
+
+
+		layer.addNode obj
+		--)
+
+	),
+
 	--/** Set source objects
 	-- */
 	--function _setSourceObjects source_objects =
@@ -199,12 +235,12 @@ struct PlatformGenerator_v
 	--),
 
 
-	/** Get platform positions from:
+	/** Get vertex positions from:
 	  * 	A) From point helper
 	  * 	B) From Line
 	  * 	C) From Mesh Object
 	  */
-	function _setVertexPositions source_obj =
+	function _setPlatformObjects source_obj =
 	(
 		/* POINT HELPER */
 		if classOf source_obj == Point then

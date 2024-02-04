@@ -7,10 +7,11 @@
  */
 function passVertexSelectionToEditablePoly =
 (
-	--format "\n"; print ".passVertexSelectionToEditablePoly()"
+	format "\n"; print ".passVertexSelectionToEditablePoly()"
 	obj = selection[1]
 
 	vertex_sel = (getVertSelection obj.mesh) as Array
+	format "VERTEX_SEL	= % \n" vertex_sel
 
 	verts_all	= #{1..( getNumVerts obj.mesh)} as Array
 	verts_all_base	= #{1..( polyop.getNumVerts obj.baseobject)} as Array
@@ -24,9 +25,11 @@ function passVertexSelectionToEditablePoly =
 	if vertex_sel.count > 0 then
 	(
 		verts_sel_pos  = polyop.getVerts obj vertex_sel node:obj
+		format "VERTS_SEL_POS	= % \n" VERTS_SEL_POS
 
 		for vert_pos in verts_sel_pos where (index = findItem verts_pos_baseobjects (vert_pos)) > 0 do
 			append verts_baseobjects index
 	)
 	verts_baseobjects as BitArray --return
+
 )

@@ -4,7 +4,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Gizmo.ms" )
   *
   */
 macroscript	_Transform_align
-category:	"_Transform"
+category:	"_Transform-Align"
 buttontext:	"Quick Align"
 --toolTip:	"Align by current active tool."
 icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (\"THIS & THIS TO HERE\")\n  \nMove Tool:   Align position \nRotate Tool: Align rotation \nSelect Tool: Align all transform."
@@ -67,7 +67,7 @@ icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (
 
 macroscript ThreePointAlign
 ButtonText:"3Pt Align"
-Category:"_Transform"
+Category:"_Transform-Align"
 Tooltip:"3Pt Align"
 
 -- ThreePointAlign v 1.31 - 04.09.17 - (c) M. Breidt (martin@breidt.net)
@@ -315,10 +315,36 @@ Tooltip:"3Pt Align"
 
 macroscript ThreePointAlign_help
 ButtonText:"3Pt Align"
-Category:"_Transform"
+category:	"_Transform-Align"
 Tooltip:"3Pt Align"
 (
      image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
 
 	DOSCommand ("start \"\" \""+image_path+"\"")
 )
+
+
+/**
+  *
+  */
+macroscript	_Transform_move_objects_to_selection_center
+category:	"_Transform-Align"
+buttontext:	"Move To Center"
+toolTip:	"Move selected objects to selection center"
+icon:	"MENU:true"
+
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Align.mcr"
+
+	if( selection.count < 2 ) then
+		return messageBox "Select 2 obejcts at least" title:"Move To Center"  beep:false
+
+
+	selection_center = selection.center
+
+
+	for obj in selection do
+		obj.pos = selection_center
+)
+

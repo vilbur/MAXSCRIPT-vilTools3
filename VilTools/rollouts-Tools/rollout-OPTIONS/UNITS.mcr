@@ -1,12 +1,10 @@
-
 /**
  */
 macroscript	_options_units
 category:	"Units"
-buttontext:	"Scale Units"
-tooltip:	"Scale Custom Display Units\n\n1|10|100|1000 millimeters"
+buttontext:	"Set Custom Units"
+tooltip:	"Set Custom Display Units\n\n1|10 millimeters"
 (
-
 	on execute do
 	(
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\UNITS.mcr"
@@ -31,32 +29,6 @@ tooltip:	"Scale Custom Display Units\n\n1|10|100|1000 millimeters"
 				default:	units.CustomValue as string + " " +  units.CustomUnit as string
 			)
 
-
-
-		format "1 UNIT == % \n" ( unit_name )
+		format "1 CUSTOM UNIT == % \n" ( unit_name )
 	)
-
-	--/** Convert to display units
-	--  */
-	--function convertToDisplayUnits val  =
-	--(
-	--	val = case units.SystemType of -- convert to milimeters
-	--	(
-	--		#centimeters:	val * 10
-	--		#meters:	val * 1000
-	--		#kilometers:	val * 1000000
-	--		default:	val -- millimeters or non metric units
-	--	)
-	--
-	--	val = case units.MetricType of -- convert to dispaly units
-	--	(
-	--		#centimeters:	val / 10
-	--		#meters:	val / 1000
-	--		#kilometers:	val / 1000000
-	--		default:	val -- millimeters or non metric units
-	--	)
-	--	val --return
-	--)
-
 )
-

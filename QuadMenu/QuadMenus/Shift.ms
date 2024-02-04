@@ -64,6 +64,9 @@ function addQuad4 QuadMenu =
 	QuadMenu.addMenu("_Transform")	separators: #( 3 ) --flat:false --index:1
 	QuadMenu.addMenu("_Transform-Lock")	separators: #( 1, 4 ) --flat:false --index:1
 
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu("_Transform-Align")	--separators: #( 1, 4 ) --flat:false --index:1
 
 	--QuadMenu.addMenu("MenuName")	--flat:true --index:1
 	--QuadMenu.addMenu(DefaulQuadMenu.menu)	--flat:true --index:1

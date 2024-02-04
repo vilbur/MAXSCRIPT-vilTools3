@@ -24,7 +24,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function getVertsData obj quiet:false =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
+		format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
 		--format "obj:	% \n" obj
 		this._setObjectUsed(obj)
 
@@ -67,7 +67,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getVertexColors verts_all: colored_verts_num: =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
+		--format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
 
 		/*------------------------------------------------------------------------------
 			GET ALL VERTS IF ANY VERTEX COLOR EXISTS
@@ -80,7 +80,6 @@ struct EditablePolyVertexGetter_v
 
 		if colored_verts_num > 0 then
 		(
-			max modify mode
 			--( modPanel.getCurrentObject()).unhideAll #Vertex
 
 			verts_white = this._getVertsByColor(white)
@@ -109,9 +108,10 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getVertexData i =
 	(
-		----format "\n"; print "EditablePolyVertexGetter_v.getVertexData()"
+		--format "\n"; print "EditablePolyVertexGetter_v.getVertexData()"
 
 		vert_pos =  polyop.getVert obj_used i
+		------vert_pos =  getVert obj_used.mesh
 
 		normal = ( getnormal obj_used.mesh i) * obj_used.transform - obj_used.pos
 		--format "normal:	% \n" normal
@@ -125,7 +125,8 @@ struct EditablePolyVertexGetter_v
 			PlatformObject.addVert(vert_pos)
 
 			/* ADD ADDITIONAL VERT TO KEEP NORMAL */
-			if normal.z > -0.95 and vert_pos.z > normal_length * 1.5 then -- if vert is little rotated horizontaly AND platform has enough space verticaly
+			--if normal.z > -0.95 and vert_pos.z > normal_length * 1.5 then -- if vert is little rotated horizontaly AND platform has enough space verticaly
+			if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
 			(
 				--vert_pos = vert_pos + normal_length * normalize( normal )
 				vert_pos += normal_length * normalize( normal )

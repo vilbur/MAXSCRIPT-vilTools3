@@ -44,17 +44,21 @@ icon:	"across:5|width:72|MENU:true"
 
 	on execute do
 	(
-		recent_document = (RecentFile_v()).getRecentFileNotMatching #( "autoback", "temp" )
+		recent_file = (RecentFile_v()).getRecentFileNotMatching #( "autoback", "temp" )
 
-		if recent_document != undefined then
-			if  maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_document))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
+		if recent_file != undefined and doesFileExist recent_file then
+		(
+			if  maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_file))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
 			(
 				start_time = timestamp()
 
-				loadMaxFile recent_document quiet:true
+				loadMaxFile recent_file quiet:true
 
 				format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
 			)
+		)
+		else if recent_file != undefined then
+			print ("FILE DOES NOT EXISTS:\n\n"+recent_file)
 
 	)
 
