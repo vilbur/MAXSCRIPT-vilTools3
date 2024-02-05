@@ -18,17 +18,7 @@ icon:	"MENU:true"
 /*------------------------------------------------------------------------------
 	SAVE \ RESET LAYOUT
 --------------------------------------------------------------------------------*/
-/**
-*/
-macroscript	viewport_layout_reset
-category:	"_Viewports-Manage"
-buttontext:	"Reset Layout"
-tooltip:	"Reset Current Layout"
-icon:	"MENU:true"
-(
-	--clearListener()
-	ViewportLayoutManager.resetCurrent()
-)
+
 
 /**
 */
@@ -40,4 +30,16 @@ icon:	"MENU:true"
 (
 	--clearListener()
 	ViewportLayoutManager.saveCurrentLayout()
+)
+
+/**
+*/
+macroscript	viewport_layout_reset
+category:	"_Viewports-Manage"
+buttontext:	"Reset Layout"
+tooltip:	"Reset Current Layout"
+icon:	"MENU:true"
+(
+	--clearListener()
+	ViewportLayoutManager.resetCurrent()
 )

@@ -31,9 +31,9 @@ function addQuad3 QuadMenu =
 
 	QuadMenu.addMenu("_Epoly-Vertex-Color") --title:"" flat:false
 
-	QuadMenu.addSeparator()
+	--QuadMenu.addSeparator()
 
-	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1 )	--flat:false
+	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1, 3 )	--flat:false
 
 )
 
@@ -43,6 +43,10 @@ function addQuad3 QuadMenu =
 function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("E D I T 4")
+
+	QuadMenu.addMenu("_Epoly-Selection") --separators: #( 1, 2 )
+
+	--QuadMenu.addSeparator()
 
 	QuadMenu.addMenu("_Epoly-Loop-Tools") separators: #( 1, 2 )
 

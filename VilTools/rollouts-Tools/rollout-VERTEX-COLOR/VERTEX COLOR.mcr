@@ -12,52 +12,72 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 	on execute do
 	undo "Set Vertex Color" on
 	(
-		--clearListener(); print("Cleared in:\n"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
 
 		obj = selection[1]
 
-		_mod = modPanel.getCurrentObject()
+		--_mod = modPanel.getCurrentObject()
 		--format "_mod	= % \n" _mod
 		--format "_mod == Editable_Poly	= % \n" (_mod == Editable_Poly)
-		verts_baseobjects = passVertexSelectionToEditablePoly()
 
 		--format "VERTS_BASEOBJECTS	= % \n" verts_baseobjects
 
+		--verts_count	= getNumVerts obj.mesh
+		--verts_count_CPV	= getNumCPVVerts obj.mesh
 
-		if not verts_baseobjects.isEmpty then
+		verts_count	= getNumVerts obj.baseObject.mesh
+
+		verts_count_CPV	= getNumCPVVerts obj.baseObject.mesh
+
+
+		format "verts_count	= % \n" verts_count
+		format "verts_count_CPV	= % \n" (verts_count_CPV)
+
+		if verts_count == verts_count_CPV then
 		(
+			verts_baseobjects = passVertexSelectionToEditablePoly()
 
-			/* SELECT VERTEX IN BASEOBJECT MANNUALY - Direct assigment without swithching to */
-			if classof _mod != Editable_Poly then
-				modPanel.setCurrentObject(obj.baseobject)
+			format "VERTS_BASEOBJECTS	= % \n" verts_baseobjects
+			--if not verts_baseobjects.isEmpty then
+			--(
+			--
+			--	/* SELECT VERTEX IN BASEOBJECT MANNUALY - Direct assigment without swithching to */
+			--	if classof _mod != Editable_Poly then
+			--		modPanel.setCurrentObject(obj.baseobject)
+			--
+			--	obj.EditablePoly.SetSelection #Vertex verts_baseobjects
+			--
+			--	subObjectLevel = 1
+			--
+			--	polyop.setVertColor obj 0 verts_baseobjects (if keyboard.controlPressed then red else green )
+			--
+			--	obj.EditablePoly.SetSelection #Vertex #{}
+			--
+			--	subObjectLevel = 0
+			--
+			--	if _mod != ( modPanel.getCurrentObject()) then
+			--		 modPanel.setCurrentObject(_mod)
+			--)
 
-			obj.EditablePoly.SetSelection #Vertex verts_baseobjects
 
-			subObjectLevel = 1
+			/* CODE BELLOW OFTEN ASSIGN COLORS TO MANY OTHER VERTS */
 
-			polyop.setVertColor obj 0 verts_baseobjects (if keyboard.controlPressed then red else green )
+			if not verts_baseobjects.isEmpty then
+				polyop.setVertColor obj.baseobject 0 (verts_baseobjects) (if keyboard.controlPressed then red else green )
 
-			obj.EditablePoly.SetSelection #Vertex #{}
+			$.showVertexColors	= true
+			$.vertexColorsShaded	= true
 
-			subObjectLevel = 0
+			redrawViews()
 
-			if _mod != ( modPanel.getCurrentObject()) then
-				 modPanel.setCurrentObject(_mod)
 		)
+		else if queryBox "RESET OF VERTEX COLORS IS NEEDED.\n\nCONTINUE ?" title:"RESET VERTEX COLORS"  beep:true then
+		(
+			polyop.defaultMapFaces obj.baseobject 0
 
-
-		/* CODE BELLOW OFTEN ASSIGN COLORS TO MANY OTHER VERTS */
-		--
-		--if not verts_baseobjects.isEmpty then
-		--	polyop.setVertColor obj.baseobject 0 (verts_baseobjects) (if keyboard.controlPressed then red else green )
-		--
-
-
-		$.showVertexColors	= true
-		$.vertexColorsShaded	= true
-
-		redrawViews()
+			messageBox "RESET VERTEX COLORS FINISHED" title:"SUCCESS"
+		)
 	)
 )
 
@@ -80,21 +100,21 @@ icon:	"across:4|MENU:true"
 
 		if getNumCPVVerts obj.mesh > 0 then
 		(
-			vertex_colors	= #()
+			verts_by_colors	= #()
 			verts_by_colors	= #{}
 
 			vertex_sel = (getVertSelection obj.mesh) as Array
 
 			/* GET COLROS OF SELECTED VERTS */
 			if vertex_sel.count == 0 then
-				vertex_colors = #(white)
+				verts_by_colors = #(white)
 			else
 				/* USE WHITE COLOR IF NOTHING SELECTED -- get vertex color of each selected vert */
 				for i = 1 to vertex_sel.count do
-					appendIfUnique vertex_colors (getvertcolor obj.mesh vertex_sel[i] )
+					appendIfUnique verts_by_colors (getvertcolor obj.mesh vertex_sel[i] )
 
 			/* GET VERTS USED BY COLORS */
-			for clr in vertex_colors do
+			for clr in verts_by_colors do
 				verts_by_colors += meshop.getVertsByColor obj.mesh clr 0.001 0.001 0.001
 
 			if not verts_by_colors.isEmpty then
@@ -133,42 +153,47 @@ icon:	"across:4|MENU:true"
 	undo "Hide Colored Verts" on
 	(
 		--clearListener(); print("Cleared in:\n"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
 
-		obj = selection[1]
+		obj 	= selection[1]
+		new_sel	= #{}
+		verts_by_colors	= Dictionary #string
 
-		if getNumCPVVerts obj.mesh > 0 then
+		if (colored_verts_num = getNumCPVVerts obj.mesh) > 0 then
 		(
-			vertex_colors	= #()
-			verts_by_colors	= #{}
+			verts_to_get = getVertSelection obj.mesh
 
-			vertex_sel = (getVertSelection obj.mesh) as Array
+ 			while not verts_to_get.isEmpty do
+ 			(
+				first_vert = (verts_to_get as Array )[1]
 
-			--white_verts = meshop.getVertsByColor obj.mesh white 0.001 0.001 0.001
+				vert_color = getvertcolor obj.mesh  first_vert
 
+				verts_by_color = meshop.getVertsByColor obj.mesh  (vert_color) 0.001 0.001 0.001 --return TRESHOLD FLOAT MUST NOT BE 0.0 - it causeses error in whie loop in this._setVertexColors()
+
+				verts_by_colors[ vert_color as string ] = verts_by_color
+
+				verts_to_get = verts_to_get - verts_by_color
+			)
 
 			/* GET COLROS OF SELECTED VERTS */
-			if vertex_sel.count == 0 then
-				vertex_colors = #(white)
+			if verts_to_get.count > 0 then
+				for key in verts_by_colors.keys do
+					new_sel += verts_by_colors[key]
+
 			else
-				/* USE WHITE COLOR IF NOTHING SELECTED -- get vertex color of each selected vert */
-				for i = 1 to vertex_sel.count do
-					appendIfUnique vertex_colors (getvertcolor obj.mesh vertex_sel[i] )
+				new_sel = meshop.getVertsByColor obj.mesh white 0.001 0.001 0.001
 
-			/* GET VERTS USED BY COLORS */
-			for clr in vertex_colors do
-				verts_by_colors += meshop.getVertsByColor obj.mesh clr 0.001 0.001 0.001
-
-
+			format "NEW_SEL	= % \n" new_sel
 			if keyboard.controlPressed then
 			(
+				/* ISOLATE ONLY VERTS OF GIVEN COLOR */
 				polyop.unHideAllVerts obj
 
-
-				polyop.setHiddenVerts obj  (#{1..(getNumVerts obj.mesh)} - verts_by_colors)
+				polyop.setHiddenVerts obj  (#{1..(getNumVerts obj.mesh)} - new_sel)
 			)
-			else
-				polyop.setHiddenVerts obj verts_by_colors
+			else /* ONLY HIDE VERTS OF GIVEN COLOR */
+				polyop.setHiddenVerts obj new_sel
 
 			subObjectLevel = 1
 		)
@@ -226,9 +251,3 @@ icon:	"across:4|MENU:true"
 			messageBox ("There is not any vertex color on object:\n\n"+obj.name) title:"NO VERTEX COLOR"
 	)
 )
-
-
-
-
-
-

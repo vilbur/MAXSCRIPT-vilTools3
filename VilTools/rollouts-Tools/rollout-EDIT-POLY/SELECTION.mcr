@@ -35,7 +35,7 @@ macroscript	epoly_selection_pass_vert_selection_to_editable_poly
 category:	"_Epoly-Selection"
 buttonText:	"Pass Vert Sel"
 toolTip:	"Pass vetex selection from modifiers to EditablePoly baseobject.\n\nIMPORTANT: Verts are selected in baseobject by position in modifier.\n\nWorks with polyop types of modifiers like:\n    Edit Poly|Poly Select"
-icon:	"MENU:false"
+icon:	"MENU:true"
 (
 	on execute do
 	undo "Pass Vert Sel" on
@@ -61,27 +61,27 @@ icon:	"MENU:false"
 	)
 )
 
-global SAVE_LOAD_SELECTION
+--global SAVE_LOAD_SELECTION
 
-/**
-  *
-  */
-macroscript	epoly_selection_save_load
-category:	"_Epoly-Selection"
-buttonText:	"Save\Load Selection"
-toolTip:	"SAVE current node selection.\n\nLOAD if nothing selected"
-icon:	"MENU:false"
-(
-	on execute do
-	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-EDIT-POLY\SELECTION.mcr"
-
-		if selection.count == 0 and SAVE_LOAD_SELECTION != undefined then
-				select (for obj in SAVE_LOAD_SELECTION where isValidNode obj collect obj )
-
-		else
-			SAVE_LOAD_SELECTION	= for obj in selection collect obj
-
-	)
-)
+--/**
+--  *
+--  */
+--macroscript	epoly_selection_save_load
+--category:	"_Epoly-Selection"
+--buttonText:	"Save\Load Selection"
+--toolTip:	"SAVE current node selection.\n\nLOAD if nothing selected"
+--icon:	"MENU:false"
+--(
+--	on execute do
+--	(
+--		clearListener(); print("Cleared in:\n"+getSourceFileName())
+--		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-EDIT-POLY\SELECTION.mcr"
+--
+--		if selection.count == 0 and SAVE_LOAD_SELECTION != undefined then
+--				select (for obj in SAVE_LOAD_SELECTION where isValidNode obj collect obj )
+--
+--		else
+--			SAVE_LOAD_SELECTION	= for obj in selection collect obj
+--
+--	)
+--)

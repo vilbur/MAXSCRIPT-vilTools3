@@ -77,6 +77,11 @@ struct PlatformGenerator_v
 
 		)
 
+
+		/* ADD TO LAYERS */
+		for PlatformObject in PlatformObjects do
+			this._addToLayer (PlatformObject.source_obj) (PlatformObject.platform)
+
 		----EnableSceneRedraw()
 
 		--this.platforms --return
@@ -205,22 +210,14 @@ struct PlatformGenerator_v
 	 */
 	function _addToLayer source_obj obj =
 	(
-		--format "\n"; print "PlatformGenerator_v.addToLayer()"
-		--
-		--if source_obj.layer != obj.layer then
-		--(
 		layer_name = source_obj.name + "-platforms"
 
 		if ( layer = LayerManager.getLayerFromName (layer_name) ) == undefined then
 			layer = LayerManager.newLayerFromName (layer_name)
 
-
 		layer.setParent (source_obj.layer)
 
-
 		layer.addNode obj
-		--)
-
 	),
 
 	--/** Set source objects

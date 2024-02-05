@@ -67,8 +67,6 @@ function createElevationSliderDialog =
 					deleteModifier obj obj.modifiers[mod_name]
 		)
 
-
-
 		/** Get Layer index by position in world
 		 */
 		function posToLayerIndex pos =
@@ -98,6 +96,29 @@ function createElevationSliderDialog =
 			layer_index --return
 		)
 
+		/** Get layer number to move
+		 */
+		function getLayerNumberToMove direction =
+		(
+			--format "\n"; print ".getLayerNumberToMove()"
+			ctrl	= keyboard.controlPressed
+			shift 	= keyboard.shiftPressed
+			alt 	= keyboard.altPressed
+
+			increment_val = case of
+			(
+				(ctrl and shift):	100
+				(shift):	10
+				(ctrl):	5
+				default: 1
+			)
+
+			if direction == #MINUS then
+				increment_val *= -1
+
+			increment_val --return
+		)
+
 		local viewport_height = (getViewportHeight())
 
 		/*------------------------------------------------------------------------------
@@ -108,7 +129,7 @@ function createElevationSliderDialog =
 
 		slider SLIDER_elevation "" range:[0,5000,0] type:#integer ticks:5000 orient:#vertical width:32 height:(viewport_height - 40) pos:[ 10, 16 ] tooltip:"Set positioon of slice plane.\n\nRMB: Circle slice plane on obejct min, center and maximum.\n\nRMB+CTRL: SET SLICE PLANE TO BOTTOM OF OBJECT"
 
-		button BTN_move_layer_increment "+ \ -" width:48 height:28  pos:[ -10, viewport_height - 24 ] tooltip:"LMB: Shift layer UP\n\nRMB: Shift layer DOWN\n\nCTRL: value is 10"
+		button BTN_move_layer_increment "+ \ -" width:48 height:28  pos:[ -10, viewport_height - 24 ] tooltip:"LMB: Shift layer UP\n\nRMB: Shift layer DOWN\n\n   ————————————————————   \n\nCTRL:	value is 5\nSHIFT:	value is 10\nCTRL & SHIFT:	value is 100"
 
 		spinner SPIN_layer_current "" range:[0,5000,0] fieldWidth:32 pos:[ -8, viewport_height + 6 ] type:#integer
 
@@ -238,10 +259,10 @@ function createElevationSliderDialog =
 
 		/* ON BUTTON INCREMENT */
 		on BTN_move_layer_increment PRESSED do
-			updateSlicePlaneSystem ( if keyboard.controlPressed then 10 else 1) incremental:true
+			updateSlicePlaneSystem ( getLayerNumberToMove( #PLUS ) ) incremental:true
 
 		on BTN_move_layer_increment RIGHTCLICK do
-			updateSlicePlaneSystem ( if keyboard.controlPressed then -10 else -1) incremental:true
+			updateSlicePlaneSystem ( getLayerNumberToMove( #MINUS ) ) incremental:true
 
 		/* ON SLIDER CHANGE */
 		on SPIN_layer_current CHANGED val do

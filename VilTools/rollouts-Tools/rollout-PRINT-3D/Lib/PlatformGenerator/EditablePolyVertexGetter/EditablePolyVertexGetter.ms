@@ -11,7 +11,7 @@ struct EditablePolyVertexGetter_v
 	PlatformObjects = #(),
 
 	normal_length,
-	vertex_colors = Dictionary #string,
+	verts_by_colors = Dictionary #string,
 
 	/* dependency */
 	PlatformObjectInstance,
@@ -71,8 +71,15 @@ struct EditablePolyVertexGetter_v
 	(
 		format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
 
-		if verts_count != colored_verts_num then
-			polyop.defaultMapFaces obj_used.baseobject 0 --true
+		/* GET VERTEX COLORS CRASH IF GET VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL
+
+			CODE BELLOW FIX PROBLEM< BUT IT RESET VERTEX COLORS TOO
+
+
+			if verts_count != colored_verts_num then
+				polyop.defaultMapFaces obj_used.baseobject 0 --true
+
+		*/
 
 		/*------------------------------------------------------------------------------
 			GET OTEH VERTEX COLORS
@@ -86,7 +93,7 @@ struct EditablePolyVertexGetter_v
 
 			verts_by_color = this._getVertsByColor (vert_color)
 
-			vertex_colors[ vert_color as string ] = verts_by_color
+			verts_by_colors[ vert_color as string ] = verts_by_color
 
 			verts_to_get = verts_to_get - verts_by_color
 		)
@@ -101,8 +108,11 @@ struct EditablePolyVertexGetter_v
 
 		vert_pos =  polyop.getVert obj_used i
 		------vert_pos =  getVert obj_used.mesh
+		timer_start = timeStamp()
 
 		normal = ( getnormal obj_used.mesh i) * obj_used.transform - obj_used.pos
+
+		format "Processing took % ms\n" (( timeStamp()) - timer_start)
 		--format "normal:	% \n" normal
 		wirecolor = this._getColorByVertex (i)
 
@@ -138,7 +148,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getColorByVertex i =
 	(
-		for key in vertex_colors.keys where vertex_colors[key][i] do return execute key
+		for key in verts_by_colors.keys where verts_by_colors[key][i] do return execute key
 	),
 
 	/** Get verts by color

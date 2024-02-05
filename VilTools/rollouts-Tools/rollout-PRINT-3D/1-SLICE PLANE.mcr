@@ -50,10 +50,11 @@ icon:	"across:5|height:32|tooltip:\n\n----------------------\n\nFIX IF NOT WORK 
 
 			mod_name = #SLICE_PLANE_TOP
 
-			for obj in selection where (_mod = obj.modifiers[mod_name]) != undefined do
-				deleteModifier obj _mod
+			
+			--for obj in selection where (_mod = obj.modifiers[mod_name]) != undefined do
+			--	deleteModifier obj _mod
 
-				
+
 			mods_in_scene = for mod_in_scene in getClassInstances ( SliceModifier ) where mod_in_scene.name as name == mod_name collect mod_in_scene
 
 			if ( slice_mod = mods_in_scene[1] ) == undefined then
