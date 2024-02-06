@@ -55,7 +55,6 @@ struct PlatformModifiers_v
 
 		if this.Options.bar_width / 2 == this.Options.chamfer_top then
 			this.Options.chamfer_top -= 0.05
-
 	),
 
 	/** Add edit spline
@@ -143,10 +142,10 @@ struct PlatformModifiers_v
 		chamfer_mod.smooththreshold = 0
 
 		chamfer_mod.materialoption = case materialoption of -- CHAMFER MATERIAL
-			(
-				#OFF:	0 -- mat_ids off
-				#DIFFERENT:	1 -- different mat_ids
-			)
+									(
+										#OFF:	0 -- mat_ids off
+										#DIFFERENT:	1 -- different mat_ids
+									)
 
 
 		/* BACKUP MAYBE IT WILL BE NEEDE NEEDED

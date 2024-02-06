@@ -55,7 +55,7 @@
 
 --------------------------------------------------------------------------------*/
 
- 
+
 /** BAR WIDTH
  */
 macroscript	_print_platform_generator_bar_width
@@ -93,9 +93,9 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 0, 99, 4 ]|width:64|offset
  */
 macroscript	_print_platform_generator_bar_chamfer
 category:	"_3D-Print"
-buttontext:	"Top Chamfer Multiplier"
-tooltip:	"Chamfer Multiplier of top section of support.\n\nHigher value makes lower chamfer.\n\nMAX CHAMFER = 1"
-icon:	"across:2|control:spinner|type:#integer|range:[ 1, 99, 4 ]|width:64|offset:[ 64, 0]"
+buttontext:	"Chamfer Top"
+tooltip:	"Chamfer Multiplier of top section of support.\n\n\nCHAMFER MIN: 0\nCHAMFER MAX: 10"
+icon:	"across:2|control:spinner|type:#integer|range:[ 0, 10, 5 ]|width:64|offset:[ 0, 0]"
 (
 	format "EventFired:	% \n" EventFired
 )

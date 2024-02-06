@@ -19,7 +19,7 @@ function getPlatformGeneratorInstance =
 
 	PlatformGenerator.Options.layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
 	PlatformGenerator.Options.bar_width	= ROLLOUT_print_3d.SPIN_bar_width.value
-	PlatformGenerator.Options.chamfer_top_divider	= ROLLOUT_print_3d.SPIN_top_chamfer_multiplier.value
+	PlatformGenerator.Options.chamfer_top	= ROLLOUT_print_3d.SPIN_chamfer_top.value
 	PlatformGenerator.Options.normal_length	= ROLLOUT_print_3d.SPIN_normal_length.value
 
 	PlatformGenerator.Options.cross_section	= ROLLOUT_print_3d.CBX_cross_section.state
@@ -99,9 +99,6 @@ icon:	"across:3|height:32|width:128"
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
-			--messageBox "Yupiii" title:"Title"  beep:false
-
-			--PlatformGenerator = getPlatformGeneratorInstance()
 
 			select ((getPlatformGeneratorInstance()).generatePointHelpers( selection ))
 		)
@@ -165,13 +162,3 @@ icon:	"across:3|height:32|width:128"
 				PlatformCrossSection.create( platforms )
 		)
 )
-
-
-
-
-
-
-
-
-
-

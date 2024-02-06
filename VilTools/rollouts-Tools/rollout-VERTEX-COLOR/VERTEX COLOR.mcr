@@ -15,7 +15,6 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
 
-		obj = selection[1]
 
 		--_mod = modPanel.getCurrentObject()
 		--format "_mod	= % \n" _mod
@@ -24,18 +23,31 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 		--format "VERTS_BASEOBJECTS	= % \n" verts_baseobjects
 
 		--verts_count	= getNumVerts obj.mesh
-		--verts_count_CPV	= getNumCPVVerts obj.mesh
-
-		verts_count	= getNumVerts obj.baseObject.mesh
-
-		verts_count_CPV	= getNumCPVVerts obj.baseObject.mesh
+		--verts_count_VC	= getNumCPVVerts obj.mesh
+		obj = selection[1]
 
 
-		format "verts_count	= % \n" verts_count
-		format "verts_count_CPV	= % \n" (verts_count_CPV)
+		verts_count	= polyop.getNumVerts obj.baseObject
 
-		if verts_count == verts_count_CPV then
+		verts_count_VC	= polyop.getNumMapVerts obj.baseObject 0
+
+		--format "verts_count_VC	= % \n" (getNumCPVVerts obj.baseObject.mesh)
+		--setNumCPVVerts obj.baseObject.mesh (getNumVerts obj.baseObject.mesh) true
+
+		--format "verts_count	= % \n" verts_count
+
+		if verts_count == verts_count_VC then
 		(
+
+				--setNumCPVVerts obj.baseObject.mesh (verts_count) true -- WORKS BUT IT RESET VERTEX COLORS
+				--setNumCPVVerts obj.baseObject.mesh (verts_count)		 -- SEEM TO WORKING, RESULT IS
+
+
+
+			--format "verts_count_VC	= % \n" (getNumCPVVerts obj.baseObject.mesh)
+
+			--if verts_count == verts_count_VC then
+			--(
 			verts_baseobjects = passVertexSelectionToEditablePoly()
 
 			format "VERTS_BASEOBJECTS	= % \n" verts_baseobjects
@@ -71,13 +83,27 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 
 			redrawViews()
 
-		)
-		else if queryBox "RESET OF VERTEX COLORS IS NEEDED.\n\nCONTINUE ?" title:"RESET VERTEX COLORS"  beep:true then
-		(
-			polyop.defaultMapFaces obj.baseobject 0
 
-			messageBox "RESET VERTEX COLORS FINISHED" title:"SUCCESS"
 		)
+		else
+		(
+			format "getNumVerts	= % \n" verts_count
+			format "getNumMapVerts	= % \n" verts_count_VC
+
+			messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
+			--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
+		)
+
+
+
+
+		--)
+		--else if queryBox "RESET OF VERTEX COLORS IS NEEDED.\n\nCONTINUE ?" title:"RESET VERTEX COLORS"  beep:true then
+		--(
+		--	polyop.defaultMapFaces obj.baseobject 0
+		--
+		--	messageBox "RESET VERTEX COLORS FINISHED" title:"SUCCESS"
+		--)
 	)
 )
 
@@ -98,7 +124,8 @@ icon:	"across:4|MENU:true"
 
 		obj = selection[1]
 
-		if getNumCPVVerts obj.mesh > 0 then
+		--if getNumCPVVerts obj.mesh > 0 then
+		if polyop.getNumMapVerts obj.baseObject 0 > 0 then
 		(
 			verts_by_colors	= #()
 			verts_by_colors	= #{}
@@ -159,7 +186,7 @@ icon:	"across:4|MENU:true"
 		new_sel	= #{}
 		verts_by_colors	= Dictionary #string
 
-		if (colored_verts_num = getNumCPVVerts obj.mesh) > 0 then
+		if (colored_verts_num = polyop.getNumMapVerts obj.baseObject 0  ) > 0 then
 		(
 			verts_to_get = getVertSelection obj.mesh
 
@@ -220,7 +247,8 @@ icon:	"across:4|MENU:true"
 
 		obj = selection[1]
 
-		if getNumCPVVerts obj.mesh > 0 then
+		--if getNumCPVVerts obj.mesh > 0 then
+		if polyop.getNumMapVerts obj.baseObject 0 > 0 then
 		(
 			--vertex_sel = getVertSelection obj.mesh
 

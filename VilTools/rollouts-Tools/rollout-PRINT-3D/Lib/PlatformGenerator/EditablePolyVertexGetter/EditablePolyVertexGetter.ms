@@ -3,14 +3,18 @@
 struct EditablePolyVertexGetter_v
 (
 	/* construct */
-	obj_source,
-	obj_copy,	-- copy of object if obj_source must be collapsed
-	obj_used, -- object used for getting data
+	obj,	-- object used for getting data ( collapsed copy of obj_source  OR obj_source if it is Edit_Poly )
+
+	obj_source,	-- source object used for getting data
+	obj_copy,	-- collapsed object used for getting data
 
 	/* properties */
+	normal_length,
+
 	PlatformObjects = #(),
 
-	normal_length,
+	verts_to_generate_arr = #(),
+	verts_positions	= #{},
 	verts_by_colors = Dictionary #string,
 
 	/* dependency */
@@ -22,40 +26,64 @@ struct EditablePolyVertexGetter_v
 	/** Get vertex positions, color and normals from Editable Poly obejct
 	  *
 	  */
-	function getVertsData obj quiet:false =
+	function getVertsData _obj quiet:false =
 	(
 		format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
 		--format "obj:	% \n" obj
 
-		this._setObjectUsed(obj)
+		this._setObjectUsed(_obj)
 
-		vertex_sel = getVertSelection obj_used.mesh
-
-		format "vertex_sel	= % \n" vertex_sel
-
-		verts_all = #{1..(getNumVerts obj_used.mesh)}
-
-		this._setVertexColors verts_to_get:verts_all colored_verts_num:(getNumCPVVerts obj_used.mesh)
+		verts_count	= getNumVerts obj.baseobject.mesh
+		verts_all	= #{1..(verts_count)}
+		vertex_sel	= getVertSelection obj.baseobject.mesh
+		verts_count_VC	= polyop.getNumMapVerts obj.baseobject 0
 
 		verts_to_generate = if vertex_sel.isEmpty then verts_all else vertex_sel   -- get all verts if nothing selected
+		--
+		--format "verts_count	= % \n" verts_count
+		--format "verts_all	= % \n" verts_all
+		--format "verts_count_VC	= % \n" (polyop.getNumMapVerts obj.baseobject 0)
 
-		/*------------------------------------------------------------------------------
-			GET VERTEX POSITIONS FROM EDITABLE POLY
-		--------------------------------------------------------------------------------*/
+		/* FIX CPV vertex count -- getVErtColor doesn not work if verts_count and verts_count_VC is not equal  */
+		if verts_count == verts_count_VC then
+		(
 
-		verts_to_generate_arr = verts_to_generate as Array
+			format "verts_count	= % \n" verts_count
+			format "verts_count_VC	= % \n" (polyop.getNumMapVerts obj.baseobject 0)
 
-		if not quiet and this._askToContinue (verts_to_generate_arr.count) then
-			for i = 1 to verts_to_generate_arr.count do
-			(
-				format "\nGet Vert: % of %" i verts_to_generate_arr.count
 
-				this._getVertexData(verts_to_generate_arr[i])
-			)
+			this._setVertexColors verts_to_get:verts_all colored_verts_num:( polyop.getNumMapVerts obj.baseobject 0)
 
-		--format "PlatformObjects.count:	% \n" PlatformObjects.count
-		if obj_copy != undefined then
-			delete obj_copy
+			/*------------------------------------------------------------------------------
+				GET VERTEX POSITIONS FROM EDITABLE POLY
+			--------------------------------------------------------------------------------*/
+
+			verts_to_generate_arr = verts_to_generate as Array
+
+			verts_positions = polyop.getVerts obj.baseobject verts_all node:obj
+
+
+			if not quiet and this._askToContinue (verts_to_generate_arr.count) then
+				for i = 1 to verts_to_generate_arr.count do
+					this._getVertexData(i)
+
+			--format "PlatformObjects.count:	% \n" PlatformObjects.count
+			if obj_copy != undefined then
+				delete obj_copy
+
+
+		)
+		else
+		(
+			format "getNumVerts	= % \n" verts_count
+			format "getNumMapVerts	= % \n" verts_count_VC
+
+			messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
+			--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
+		)
+
+
+
 
 		PlatformObjects --return
 	),
@@ -77,25 +105,75 @@ struct EditablePolyVertexGetter_v
 
 
 			if verts_count != colored_verts_num then
-				polyop.defaultMapFaces obj_used.baseobject 0 --true
+				polyop.defaultMapFaces obj.baseobject 0 --true
 
 		*/
 
 		/*------------------------------------------------------------------------------
 			GET OTEH VERTEX COLORS
 		--------------------------------------------------------------------------------*/
+			format "verts_to_get.count START	= % \n" (verts_to_get as Array ).count
+
+
+		processed_verts = #{}
+
+		last_count = 0
 
 		while not verts_to_get.isEmpty do
 		(
-			first_vert = (verts_to_get as Array )[1]
+			format "\n\n\n"
+			vertex_index = (verts_to_get as Array )[1]
+			format "vertex_index	= % \n" vertex_index
 
-			vert_color = getvertcolor obj_used.mesh  first_vert
+			format "processed_verts[vertex_index]	= % \n" processed_verts[vertex_index]
 
-			verts_by_color = this._getVertsByColor (vert_color)
+			if not  processed_verts[vertex_index]  then
+			(
+				color_of_vert = getvertcolor obj.baseobject.mesh  vertex_index
+				format "color_of_vert	= % \n" color_of_vert
 
-			verts_by_colors[ vert_color as string ] = verts_by_color
+				verts_by_color = this._getVertsByColor (color_of_vert)
 
-			verts_to_get = verts_to_get - verts_by_color
+				format "verts_by_color[511443]	= % \n" verts_by_color[511443]
+
+
+				processed_verts += verts_by_color
+
+				format "verts_by_color	= % \n" verts_by_color
+				format "verts_by_color.count	= % \n" (verts_by_color as Array ).count
+
+				verts_by_colors[ color_of_vert as string ] = verts_by_color
+				format "verts_by_colors.keys	= % \n" verts_by_colors.keys
+
+
+				--verts_to_get = verts_to_get - verts_by_color
+				verts_to_get -= verts_by_color
+				format "VERTS_TO_GET	= % \n" verts_to_get
+
+				if last_count == (verts_to_get as Array ).count then
+				(
+					print "------------- EXIT ----------"
+
+					$.EditablePoly.SetSelection #Vertex verts_to_get
+
+					subObjectLevel = 1
+					exit
+				)
+
+				last_count = (verts_to_get as Array ).count
+				format "verts_to_get.count	= % \n" (verts_to_get as Array ).count
+
+			) else
+			(
+
+				print "------------- SHIT ----------"
+
+
+
+				exit
+			)
+
+			--i +=1
 		)
 	),
 
@@ -105,16 +183,21 @@ struct EditablePolyVertexGetter_v
 	function _getVertexData i =
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v.getVertexData()"
+		format "\nGet Vert: % of %" i verts_to_generate_arr.count
 
-		vert_pos =  polyop.getVert obj_used i
-		------vert_pos =  getVert obj_used.mesh
+		vi = verts_to_generate_arr[i] -- vertex index
+
+		--vert_pos =  polyop.getVert obj vi
+		vert_pos =  verts_positions[vi]
+		------vert_pos =  getVert obj.mesh
 		timer_start = timeStamp()
 
-		normal = ( getnormal obj_used.mesh i) * obj_used.transform - obj_used.pos
+		normal = ( getnormal obj.mesh vi) * obj.transform - obj.pos
 
-		format "Processing took % ms\n" (( timeStamp()) - timer_start)
+		--format "Processing took % ms\n" (( timeStamp()) - timer_start)
 		--format "normal:	% \n" normal
-		wirecolor = this._getColorByVertex (i)
+		wirecolor = this._getColorByVertex (vi)
+
 
 		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
 		if normal.z <= 0 then
@@ -156,7 +239,7 @@ struct EditablePolyVertexGetter_v
 	function _getVertsByColor clr =
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v.getVertsByColor()"
-		meshop.getVertsByColor obj_used.mesh clr 0.001 0.001 0.001 --return TRESHOLD FLOAT MUST NOT BE 0.0 - it causeses error in whie loop in this._setVertexColors()
+		meshop.getVertsByColor obj.baseobject.mesh clr 0.0001 0.0001 0.0001 --return TRESHOLD FLOAT MUST NOT BE 0.0 - it causeses error in whie loop in this._setVertexColors()
 	),
 
 	/** Set object used for getting data
@@ -169,7 +252,7 @@ struct EditablePolyVertexGetter_v
 
 		this.obj_copy = undefined -- reset for next run on another object
 
-		this.obj_used =	if classOf obj != Editable_Poly then
+		this.obj =	if classOf obj != Editable_Poly then
 		(
 			nnl = #()
 
@@ -211,7 +294,7 @@ struct EditablePolyVertexGetter_v
 		_continue = true
 
 		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
-		if verts_count > 100 and not queryBox ( "Object " + obj_used.name + " has " + verts_count as string +" verts selected.\n\nIt may take some time.\n\nCONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+		if verts_count > 100 and not queryBox ( "Object " + obj.name + " has " + verts_count as string +" verts selected.\n\nIt may take some time.\n\nCONTINUE ?" ) title:"PLATFORMS GENERATION"  then
 			 _continue =  false
 
 		_continue --return

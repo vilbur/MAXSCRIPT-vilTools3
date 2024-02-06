@@ -27,11 +27,8 @@ struct PlatformOptions_v
 
 	extrude_top	= 0.5,
 
-
-	chamfer_top_divider = 4,
-
 	chamfer_base,
-	chamfer_top,
+	chamfer_top,	-- 0-10
 
 	cross_section	= false, -- connect columns of platform with cross beams
 	cross_section_max	= 20,	-- max distance between platforms
@@ -48,8 +45,8 @@ struct PlatformOptions_v
 	  */
 	function init =
 	(
-		--format "\n"; print "PlatformOptions_v.init()"
-
+		format "\n"; print "PlatformOptions_v.init()"
+		--format "chamfer_top_divider	= % \n" chamfer_top_divider
 		this._setUnitsMuliplier()
 
 		this._setBaseHeight()
@@ -57,6 +54,7 @@ struct PlatformOptions_v
 		this._setDimensions()
 
 		this._setChamferValues()
+		--format "chamfer_top_divider	= % \n" chamfer_top_divider
 	),
 
 	private
@@ -85,13 +83,13 @@ struct PlatformOptions_v
 	  */
 	function _setDimensions =
 	(
-		format "\n"; print "PlatformOptions_v._setDimensions()"
-		format "DISPLAY_UNITS:	% \n" display_units
-		format "EXPORT_SIZE:	% \n" export_size
+		--format "\n"; print "PlatformOptions_v._setDimensions()"
+		--format "DISPLAY_UNITS:	% \n" display_units
+		--format "EXPORT_SIZE:	% \n" export_size
 
 		for prop in getPropNames this where ( superClassOf (val = getProperty this prop)) == Number do
 
-			if val != undefined and prop != #export_size  then
+			if val != undefined and findItem #(#export_size, #chamfer_top_divider) prop == 0  then
 
 				setProperty this prop (val / display_units	/ export_size)
 	),
@@ -106,15 +104,14 @@ struct PlatformOptions_v
 	),
 
 
-	/** Set chamfer values
+	/** Set chamfer values, derivated from bar width
 	  *
 	  */
 	function _setChamferValues =
 	(
-		--format "\n"; print "PlatformOptions_v.setChamferValues()"
 		chamfer_base	= base_height / 2
 
-		chamfer_top	= bar_width / 2 / chamfer_top_divider
+		chamfer_top	= bar_width / 2 / 10 * chamfer_top -- chamfer in steps between 0-10
 	),
 
 	/**

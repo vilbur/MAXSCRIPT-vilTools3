@@ -53,6 +53,7 @@ struct PlatformGenerator_v
 		--format "source_objects:	% \n" source_objects
 
 		--this._setSourceObjects(source_objects)
+		Options.init()
 
 		/* SETUP */
 		max create mode
@@ -79,8 +80,8 @@ struct PlatformGenerator_v
 
 
 		/* ADD TO LAYERS */
-		for PlatformObject in PlatformObjects do
-			this._addToLayer (PlatformObject.source_obj) (PlatformObject.platform)
+		for PlatformObject in PlatformObjects where PlatformObject.source_obj.parent != undefined do
+			this._addToLayer (PlatformObject.source_obj.parent) (PlatformObject.platform)
 
 		----EnableSceneRedraw()
 
@@ -150,9 +151,11 @@ struct PlatformGenerator_v
 		for source_obj in source_objects do
 			this._setPlatformObjects( source_obj )
 
-		max create mode
+		timer_start = timeStamp()
 
-		--max modify mode
+		Options.init()
+
+		max create mode
 
 		for PlatformObject in PlatformObjects do
 
@@ -183,7 +186,7 @@ struct PlatformGenerator_v
 					_point.parent =  points_created[points_created.count]
 
 
-				this._addToLayer (PlatformObject.source_obj) (_point)
+				this._addToLayer (PlatformObject.source_obj.parent) (_point)
 
 				append points_created _point
 			)
@@ -381,12 +384,9 @@ struct PlatformGenerator_v
 	(
 		Options	= PlatformOptions_v(export_size)
 
-		Options.init()
-
 		PlatformModifiers	= PlatformModifiers_v	Options:Options
 		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
 		PlatformObjectInstance 	= PlatformObject_v	Options:Options
 		EditablePolyVertexGetter 	= EditablePolyVertexGetter_v	PlatformObjectInstance:PlatformObjectInstance normal_length:this.Options.normal_length
-
 	)
 )
