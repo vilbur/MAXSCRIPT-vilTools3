@@ -9,16 +9,20 @@ struct EditablePolyVertexGetter_v
 	obj_copy,	-- collapsed object used for getting data
 
 	/* properties */
-	normal_length,
+	--normal_length,
 
-	PlatformObjects = #(),
+	--PlatformVerts = #(),
 
 	verts_to_generate_arr = #(),
 	verts_positions	= #{},
 	verts_by_colors = Dictionary #string,
+	verts_data		= Dictionary #integer, -- 	  KEY:vert_index,  VALUE: #( vert pos, vert normal, vertex color, pointer to point helper or platform object )
+
+
+	platform_vertex_data_key = "platform_vertex_data",
 
 	/* dependency */
-	PlatformObjectInstance,
+	--PlatformVertInstance,
 
 	/* reference */
 	/* inhered */
@@ -28,8 +32,9 @@ struct EditablePolyVertexGetter_v
 	  */
 	function getVertsData _obj quiet:false =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
-		--format "obj:	% \n" obj
+		--format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
+		----format "obj:	% \n" obj
+		--format "this.verts_data	= % \n" this.verts_data
 
 		this._setObjectUsed(_obj)
 
@@ -40,56 +45,86 @@ struct EditablePolyVertexGetter_v
 
 		verts_to_generate = if vertex_sel.isEmpty then verts_all else vertex_sel   -- get all verts if nothing selected
 		--
-		--format "verts_count	= % \n" verts_count
-		--format "verts_all	= % \n" verts_all
-		--format "verts_count_VC	= % \n" (polyop.getNumMapVerts obj.baseobject 0)
+		----format "verts_count	= % \n" verts_count
+		----format "verts_all	= % \n" verts_all
+		----format "verts_count_VC	= % \n" (polyop.getNumMapVerts obj.baseobject 0)
 
 		/* FIX CPV vertex count -- getVErtColor doesn not work if verts_count and verts_count_VC is not equal  */
 		if verts_count == verts_count_VC then
 		(
 
-			format "verts_count	= % \n" verts_count
-			format "verts_count_VC	= % \n" (polyop.getNumMapVerts obj.baseobject 0)
-
+			--format "verts_count	= % \n" verts_count
+			--format "verts_count_VC	= % \n" (polyop.getNumMapVerts obj.baseobject 0)
 
 			this._setVertexColors verts_to_get:verts_all colored_verts_num:( polyop.getNumMapVerts obj.baseobject 0)
-
-			/*------------------------------------------------------------------------------
-				GET VERTEX POSITIONS FROM EDITABLE POLY
-			--------------------------------------------------------------------------------*/
 
 			verts_to_generate_arr = verts_to_generate as Array
 
 			verts_positions = polyop.getVerts obj.baseobject verts_all node:obj
 
+			this._setUserPropData()
 
 			if not quiet and this._askToContinue (verts_to_generate_arr.count) then
 				for i = 1 to verts_to_generate_arr.count do
 					this._getVertexData(i)
 
-			--format "PlatformObjects.count:	% \n" PlatformObjects.count
+			----format "PlatformVerts.count:	% \n" PlatformVerts.count
 			if obj_copy != undefined then
 				delete obj_copy
 
-
+			setUserPropVal obj_source platform_vertex_data_key verts_data
 		)
 		else
 		(
-			format "getNumVerts	= % \n" verts_count
-			format "getNumMapVerts	= % \n" verts_count_VC
+			--format "getNumVerts	= % \n" verts_count
+			--format "getNumMapVerts	= % \n" verts_count_VC
 
 			messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
 			--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
 		)
 
+		verts_data --return
+	),
 
+	/** Add point helper
+	 */
+	function addPointHelper PlatformObject =
+	(
+		--format "\n"; print "EditablePolyVertexGetter_v.addPointHelper()"
 
+		verts_data[PlatformObject.vertex_index][4] = PlatformObject.point_helper
 
-		PlatformObjects --return
+		setUserPropVal obj_source platform_vertex_data_key verts_data
 	),
 
 	private
 
+	/** Set user prop data
+	 */
+	function _setUserPropData =
+	(
+		--format "\n"; print "EditablePolyVertexGetter_v.setUserPropData()"
+		_user_prop_data = getUserPropVal obj_source platform_vertex_data_key
+
+		if _user_prop_data  == undefined then
+			for vert in verts_to_generate_arr do
+				this._setVertData (vert)
+		else
+			this.verts_data = _user_prop_data
+
+	),
+
+	/** Set vert data
+
+	  *  #( vert pos, vert normal, vertex color  )
+	  *
+	 */
+	function _setVertData vert =
+	(
+		--format "\n"; print "EditablePolyVertexGetter_v._setVertData()"
+		--format "this.verts_data	= % \n" this.verts_data
+		this.verts_data[vert] = #( verts_positions[vert], getnormal obj.mesh vert, this._getColorByVertex (vert) )
+	),
 
 	/** Get vertex colors
 	  *
@@ -185,45 +220,12 @@ struct EditablePolyVertexGetter_v
 		--format "\n"; print "EditablePolyVertexGetter_v.getVertexData()"
 		format "\nGet Vert: % of %" i verts_to_generate_arr.count
 
-		vi = verts_to_generate_arr[i] -- vertex index
+		vert = verts_to_generate_arr[i] -- vertex index
 
-		--vert_pos =  polyop.getVert obj vi
-		vert_pos =  verts_positions[vi]
-		------vert_pos =  getVert obj.mesh
-		timer_start = timeStamp()
+		vert_pos =  verts_positions[vert]
 
-		normal = ( getnormal obj.mesh vi) * obj.transform - obj.pos
-
-		--format "Processing took % ms\n" (( timeStamp()) - timer_start)
-		--format "normal:	% \n" normal
-		wirecolor = this._getColorByVertex (vi)
-
-
-		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
-		if normal.z <= 0 then
-		(
-			PlatformObject = this._getPlatformObject(wirecolor)
-
-			PlatformObject.addVert(vert_pos)
-
-			/* ADD ADDITIONAL VERT TO KEEP NORMAL */
-			--if normal.z > -0.95 and vert_pos.z > normal_length * 1.5 then -- if vert is little rotated horizontaly AND platform has enough space verticaly
-			if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
-			(
-				--vert_pos = vert_pos + normal_length * normalize( normal )
-				vert_pos += normal_length * normalize( normal )
-				--format "normal:	% \n" normal
-
-				/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
-				if normal.z > -0.25 then
-					vert_pos.z -= normal_length
-
-				PlatformObject.addVert( vert_pos )
-			)
-
-		)
-		else
-			format " NOT USED - VERTEX NORMAL IS FACING UP:  %" normal.z
+		if verts_data[vert] == undefined or vert_pos != verts_data[vert][1]  then
+			this._setVertData (vert)
 	),
 
 	/** Get color by vertex
@@ -267,24 +269,24 @@ struct EditablePolyVertexGetter_v
 
 	),
 
-	/** Set platform object
-	  *
-	  */
-	function _getPlatformObject wirecolor =
-	(
-		--format "\n"; print "EditablePolyVertexGetter_v._getPlatformObject()"
-		--format "obj_source:	% \n" obj_source
-		--format "wirecolor:	% \n" wirecolor
-
-		PlatformObject = deepCopy PlatformObjectInstance
-
-		PlatformObject.source_obj	= obj_source
-		PlatformObject.wirecolor	= wirecolor
-
-		append PlatformObjects PlatformObject
-
-		PlatformObject --return
-	),
+	--/** Set platform object
+	--  *
+	--  */
+	--function _getPlatformVert wirecolor =
+	--(
+	--	--format "\n"; print "EditablePolyVertexGetter_v._getPlatformVert()"
+	--	--format "obj_source:	% \n" obj_source
+	--	--format "wirecolor:	% \n" wirecolor
+	--
+	--	PlatformVert = deepCopy PlatformVertInstance
+	--
+	--	PlatformVert.source_obj	= obj_source
+	--	PlatformVert.wirecolor	= wirecolor
+	--
+	--	append PlatformVerts PlatformVert
+	--
+	--	PlatformVert --return
+	--),
 	/** Ask to continue
 	  *
 	  */

@@ -36,10 +36,10 @@ struct PlatformGenerator_v
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
-	PlatformObjectInstance,
+	PlatformVertInstance,
 	PlatformModifiers,	--PlatformModifiers_v(),
 	PlatformCrossSection,
-	EditablePolyVertexGetter,
+	EditablePolyVertexGetter = EditablePolyVertexGetter_v(),
 
 	/* reference */
 	/* inhered */
@@ -114,86 +114,28 @@ struct PlatformGenerator_v
 	(
 		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
 
-		/** Shift wirecolor sligtly
-		  * Each level of points has different wirecolor for better selection
-		  */
-		function shiftWirecolor wirecolor i =
-		(
-			--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
-			--format "wirecolor:	% \n" wirecolor
-			if wirecolor.r >= i then wirecolor.r -= i
-			if wirecolor.g >= i then wirecolor.g -= i
-			if wirecolor.b >= i then wirecolor.b -= i
-			--format "wirecolor:	% \n" wirecolor
 
-			wirecolor --return
-		)
-
-		/** Reinstance points
-		  */
-		function reinstancePoints points_created =
-		(
-			format "\n"; print "PlatformGenerator_v.reinstancePoints()"
-			if points_created.count < 2 then
-				return false
-
-			master_object	= points_created[1]
-
-			for_replace = deleteItem points_created 1
-
-			for _point in for_replace do
-				instanceReplace _point master_object
-		)
-
-		points_created = #()
-		points_first = #()
 		--format "source_objects:	% \n" source_objects
 		for source_obj in source_objects do
 			this._setPlatformObjects( source_obj )
 
-		timer_start = timeStamp()
-
 		Options.init()
 
-		max create mode
+		points_created	= #()
 
-		for PlatformObject in PlatformObjects do
+		--max create mode
 
-			for i = 1 to PlatformObject.verts_positions.count do
-			(
-				--i=1
-				vert_pos = PlatformObject.verts_positions[i]
+		for PlatformObject in PlatformObjects collect
+		(
+			PlatformObject.generatePointHelper()
 
-				_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy PlatformObject.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+			EditablePolyVertexGetter.addPointHelper(PlatformObject)
 
-				--_point.showLinks = true
+			--EditablePolyVertexGetter.verts_data[PlatformObject.vertex_index][4] = PlatformObject.point_helper
 
-				/* IF TOP POINT OF PLATFORM */
-				if i == 1 then
-				(
-					/*------------------------------------------------------------------------------
-						!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
+			PlatformObject.point_helper
+		)
 
-						Should be improved to respect EACH source object
-					--------------------------------------------------------------------------------*/
-					_point.parent = source_objects[1]
-
-					append points_first _point
-
-				)
-				else
-				--( point_last = points_created[points_created.count] ) != undefined then
-					_point.parent =  points_created[points_created.count]
-
-
-				this._addToLayer (PlatformObject.source_obj.parent) (_point)
-
-				append points_created _point
-			)
-
-		reinstancePoints (points_first)
-
-		points_created --return
 	),
 
 	/** Get platform objects
@@ -252,9 +194,19 @@ struct PlatformGenerator_v
 
 		/* EDITABLE POLY OBJECT */
 		else
-		 join PlatformObjects (EditablePolyVertexGetter.getVertsData(source_obj))
+			this._getVertexPositionsFromEditblePolyObject(source_obj)
+
 
 		--this.verts_positions --return
+	),
+
+	/** Get vertex positions from editble poly object
+	 */
+	function _getVertexPositionsFromEditblePolyObject source_obj =
+	(
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditblePolyObject()"
+		for vert_data in (verts_data = EditablePolyVertexGetter.getVertsData(source_obj)) do
+			append PlatformObjects ((PlatformObject_v	Options:Options source_obj:source_obj).fillVertData(vert_data))
 	),
 
 	/** Get vertex positions from spline
@@ -352,7 +304,7 @@ struct PlatformGenerator_v
 	function _getPlatformObject source_obj wirecolor =
 	(
 		--format "\n"; print "PlatformGenerator_v._getPlatformObject()"
-		PlatformObject = deepCopy PlatformObjectInstance
+		PlatformObject = deepCopy PlatformVertInstance
 
 		PlatformObject.source_obj	= source_obj
 		PlatformObject.wirecolor	= wirecolor
@@ -386,7 +338,7 @@ struct PlatformGenerator_v
 
 		PlatformModifiers	= PlatformModifiers_v	Options:Options
 		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
-		PlatformObjectInstance 	= PlatformObject_v	Options:Options
-		EditablePolyVertexGetter 	= EditablePolyVertexGetter_v	PlatformObjectInstance:PlatformObjectInstance normal_length:this.Options.normal_length
+		--PlatformVertInstance 	= PlatformObject_v	Options:Options
+		--EditablePolyVertexGetter 	= EditablePolyVertexGetter_v	normal_length:this.Options.normal_length
 	)
 )

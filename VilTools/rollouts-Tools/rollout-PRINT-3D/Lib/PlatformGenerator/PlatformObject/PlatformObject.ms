@@ -4,11 +4,17 @@ struct PlatformObject_v
 (
 	/* construct */
 	source_obj,
+	vertex_index,
 
 	/* properties */
 	platform, -- save node of platform
 
-	wirecolor, -- wirecolor of platform get from source object or vertex color
+
+	/* vert_data */
+	verts_positions = #(), -- vertex positions to generate platforms
+	normal,
+	wirecolor,	-- wirecolor of platform get from source object or vertex color
+	point_helper,	-- IntegerPtr to point helper
 
 	/* dependency */
 
@@ -16,11 +22,28 @@ struct PlatformObject_v
 	/* inhered */
 	Options,	--PlatformOptions_v(),
 
-	/* store */
-	verts_positions = #(), -- vertex positions to generate platforms
+
+	/** Fill vert data
+
+	  * return this
+	 */
+	function fillVertData vert_data =
+	(
+		format "\n"; print "PlatformObject_v.fillVertData()"
+		format "VERT_DATA	= % \n" vert_data
+
+		this.vertex_index = vert_data.key
+
+		normal	= vert_data.value[2]
+		wirecolor	= vert_data.value[3]
+
+		this._addVert (vert_data.value[1])
+
+		this --return
+	),
 
 	/** Generate platform
-	  *
+	  *l
 	  */
 	function generatePlatform =
 	(
@@ -42,16 +65,141 @@ struct PlatformObject_v
 		platform --return
 	),
 
-	/** Add vert pos
-	  *
-	  */
-	function addVert pos =
+	/** Generate point helper
+	 */
+	function generatePointHelper =
 	(
-		--format "\n"; print "PlatformObject_v.addVertPos()"
-		append this.verts_positions pos
+		--format "\n"; print "PlatformObject_v.generatePointHelper()"
+		/** Shift wirecolor sligtly
+		  * Each level of points has different wirecolor for better selection
+		  */
+		function shiftWirecolor wirecolor i =
+		(
+			--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
+			--format "wirecolor:	% \n" wirecolor
+			if wirecolor.r >= i then wirecolor.r -= i
+			if wirecolor.g >= i then wirecolor.g -= i
+			if wirecolor.b >= i then wirecolor.b -= i
+			--format "wirecolor:	% \n" wirecolor
+
+			wirecolor --return
+		)
+
+		/** Reinstance points
+		  */
+		function reinstancePoints points_created =
+		(
+			format "\n"; print "PlatformGenerator_v.reinstancePoints()"
+			if points_created.count < 2 then
+				return false
+
+			master_object	= points_created[1]
+
+			for_replace = deleteItem points_created 1
+
+			for _point in for_replace do
+				instanceReplace _point master_object
+		)
+
+		local point_helper
+		points_created	= #()
+		--points_first	= #()
+
+		/*------------------------------------------------------------------------------
+			GENERATE POINTS
+		--------------------------------------------------------------------------------*/
+
+		for i = 1 to this.verts_positions.count do
+		(
+			--i=1
+			vert_pos = this.verts_positions[i]
+
+			_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+
+			--_point.showLinks = true
+
+			/* IF FIRST TOP POINT OF PLATFORM */
+			if i == 1 then
+			(
+				/*------------------------------------------------------------------------------
+					!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
+
+					Should be improved to respect EACH source object
+				--------------------------------------------------------------------------------*/
+				--this.point_helper = getHandleByAnim  _point
+				this.point_helper = _point
+
+				_point.parent = source_object
+
+				--append points_first _point
+			)
+			else
+				_point.parent =  points_created[points_created.count]
+
+
+			this._addToLayer (this.source_obj) (_point)
+
+			append points_created _point
+		)
+
+		--reinstancePoints (points_first) --return
+
+		point_helper --return
 	),
 
 	private
+
+	/** Add vert pos
+	  *
+	  */
+	function _addVert vert_pos =
+	(
+		format "\n"; print "PlatformObject_v.addVertPos()"
+
+		local normal = this.normal * source_obj.transform - source_obj.pos
+
+
+		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
+		if normal.z <= 0 then
+		(
+			append this.verts_positions vert_pos
+
+			normal_length = this.Options.normal_length
+
+			/* ADD ADDITIONAL VERT TO KEEP NORMAL */
+			--if normal.z > -0.95 and vert_pos.z > normal_length * 1.5 then -- if vert is little rotated horizontaly AND platform has enough space verticaly
+			if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
+			(
+				--vert_pos = vert_pos + normal_length * normalize( normal )
+				vert_pos += normal_length * normalize( normal )
+				--format "normal:	% \n" normal
+
+				/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
+				if normal.z > -0.25 then
+					vert_pos.z -= normal_length
+
+				append this.verts_positions vert_pos
+			)
+		)
+		else
+			format " NOT USED - VERTEX NORMAL IS FACING UP:  %" normal.z
+
+		format "THIS.VERTS_POSITIONS	= % \n" this.verts_positions
+	),
+
+	/** Add to layer
+	 */
+	function _addToLayer source_obj obj =
+	(
+		layer_name = source_obj.name + "-platforms"
+
+		if ( layer = LayerManager.getLayerFromName (layer_name) ) == undefined then
+			layer = LayerManager.newLayerFromName (layer_name)
+
+		layer.setParent (source_obj.layer)
+
+		layer.addNode obj
+	),
 
 	/** Get last children of point
 	  *
