@@ -14,7 +14,7 @@ struct PlatformObject_v
 	verts_positions = #(), -- vertex positions to generate platforms
 	normal,
 	wirecolor,	-- wirecolor of platform get from source object or vertex color
-	point_helper,	-- IntegerPtr to point helper
+	point_helper,	-- generated point helper node
 
 	/* dependency */
 
@@ -27,17 +27,21 @@ struct PlatformObject_v
 
 	  * return this
 	 */
-	function fillVertData vert_data =
+	function fillVertData vertex_index vert_data =
 	(
 		format "\n"; print "PlatformObject_v.fillVertData()"
+		format "vertex_index	= % \n" vertex_index
 		format "VERT_DATA	= % \n" vert_data
 
-		this.vertex_index = vert_data.key
+		this.vertex_index = vertex_index
 
-		normal	= vert_data.value[2]
-		wirecolor	= vert_data.value[3]
+		normal	= vert_data[2]
+		wirecolor	= vert_data[3]
 
-		this._addVert (vert_data.value[1])
+		this._addVert (vert_data[1])
+
+		if ( point_helper_pointer = vert_data[4] ) != undefined and isValidNode ( point_helper_node = getAnimByHandle point_helper_pointer ) then
+			this.point_helper = point_helper_node
 
 		this --return
 	),
@@ -69,7 +73,7 @@ struct PlatformObject_v
 	 */
 	function generatePointHelper =
 	(
-		--format "\n"; print "PlatformObject_v.generatePointHelper()"
+		format "\n"; print "PlatformObject_v.generatePointHelper()"
 		/** Shift wirecolor sligtly
 		  * Each level of points has different wirecolor for better selection
 		  */
@@ -101,46 +105,48 @@ struct PlatformObject_v
 				instanceReplace _point master_object
 		)
 
-		local point_helper
 		points_created	= #()
 		--points_first	= #()
-
+		format "POINT_HELPER	= % \n" point_helper
 		/*------------------------------------------------------------------------------
 			GENERATE POINTS
 		--------------------------------------------------------------------------------*/
 
-		for i = 1 to this.verts_positions.count do
-		(
-			--i=1
-			vert_pos = this.verts_positions[i]
-
-			_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
-
-			--_point.showLinks = true
-
-			/* IF FIRST TOP POINT OF PLATFORM */
-			if i == 1 then
+		if point_helper == undefined then
+			for i = 1 to this.verts_positions.count do
 			(
-				/*------------------------------------------------------------------------------
-					!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
+				--i=1
+				vert_pos = this.verts_positions[i]
 
-					Should be improved to respect EACH source object
-				--------------------------------------------------------------------------------*/
-				--this.point_helper = getHandleByAnim  _point
-				this.point_helper = _point
+				_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
-				_point.parent = source_object
+				--_point.showLinks = true
 
-				--append points_first _point
+				/* IF FIRST TOP POINT OF PLATFORM */
+				if i == 1 then
+				(
+					/*------------------------------------------------------------------------------
+						!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
+
+						Should be improved to respect EACH source object
+					--------------------------------------------------------------------------------*/
+					--this.point_helper = getHandleByAnim  _point
+					this.point_helper = _point
+
+					_point.parent = source_object
+
+					--append points_first _point
+				)
+				else
+					_point.parent =  points_created[points_created.count]
+
+
+				this._addToLayer (this.source_obj) (_point)
+
+				append points_created _point
 			)
-			else
-				_point.parent =  points_created[points_created.count]
 
-
-			this._addToLayer (this.source_obj) (_point)
-
-			append points_created _point
-		)
+		format "POINT_HELPER	= % \n" point_helper
 
 		--reinstancePoints (points_first) --return
 

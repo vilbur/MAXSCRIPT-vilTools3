@@ -121,18 +121,18 @@ struct PlatformGenerator_v
 
 		Options.init()
 
-		points_created	= #()
-
+		--points_created	= #()
+		format "PLATFORMOBJECTS	= % \n" PlatformObjects
 		--max create mode
 
 		for PlatformObject in PlatformObjects collect
 		(
 			PlatformObject.generatePointHelper()
 
-			EditablePolyVertexGetter.addPointHelper(PlatformObject)
+			EditablePolyVertexGetter.addPointHelper(PlatformObject.vertex_index)(PlatformObject.point_helper)
 
 			--EditablePolyVertexGetter.verts_data[PlatformObject.vertex_index][4] = PlatformObject.point_helper
-
+			format "PlatformObject.point_helper	= % \n" PlatformObject.point_helper
 			PlatformObject.point_helper
 		)
 
@@ -195,18 +195,29 @@ struct PlatformGenerator_v
 		/* EDITABLE POLY OBJECT */
 		else
 			this._getVertexPositionsFromEditblePolyObject(source_obj)
-
-
-		--this.verts_positions --return
 	),
 
 	/** Get vertex positions from editble poly object
 	 */
 	function _getVertexPositionsFromEditblePolyObject source_obj =
 	(
-		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditblePolyObject()"
-		for vert_data in (verts_data = EditablePolyVertexGetter.getVertsData(source_obj)) do
-			append PlatformObjects ((PlatformObject_v	Options:Options source_obj:source_obj).fillVertData(vert_data))
+		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditblePolyObject()"
+		EditablePolyVertexGetter.setVertsData(source_obj)
+		--format "EditablePolyVertexGetter.verts_data	= % \n" EditablePolyVertexGetter.verts_data
+		--format "verts_data	= % \n" verts_data
+		--format "(classOf verts_data)	= % \n" (classOf verts_data)
+		--format "verts_data.keys	= % \n" EditablePolyVertexGetter.verts_data.keys
+		format "verts_data	= % \n" EditablePolyVertexGetter.verts_data
+
+		--for vert_data in EditablePolyVertexGetter.setVertsData(source_obj) do
+		for vert in EditablePolyVertexGetter.verts_to_generate do
+		(
+			PlatformObject = PlatformObject_v	Options:Options source_obj:source_obj
+
+			PlatformObject.fillVertData(vert)( EditablePolyVertexGetter.verts_data[vert] )
+
+			append PlatformObjects PlatformObject
+		)
 	),
 
 	/** Get vertex positions from spline
