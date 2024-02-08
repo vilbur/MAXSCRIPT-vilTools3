@@ -112,30 +112,27 @@ struct PlatformGenerator_v
 	  */
 	function generatePointHelpers source_objects =
 	(
-		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
+		--format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
 
-
-		--format "source_objects:	% \n" source_objects
 		for source_obj in source_objects do
 			this._setPlatformObjects( source_obj )
 
 		Options.init()
 
-		--points_created	= #()
-		format "PLATFORMOBJECTS	= % \n" PlatformObjects
 		--max create mode
 
-		for PlatformObject in PlatformObjects collect
+		points_created	= for PlatformObject in PlatformObjects collect
 		(
 			PlatformObject.generatePointHelper()
 
 			EditablePolyVertexGetter.addPointHelper(PlatformObject.vertex_index)(PlatformObject.point_helper)
 
-			--EditablePolyVertexGetter.verts_data[PlatformObject.vertex_index][4] = PlatformObject.point_helper
-			format "PlatformObject.point_helper	= % \n" PlatformObject.point_helper
 			PlatformObject.point_helper
 		)
 
+		this._reinstancePoints()
+
+		points_created --return
 	),
 
 	/** Get platform objects
@@ -165,17 +162,6 @@ struct PlatformGenerator_v
 		layer.addNode obj
 	),
 
-	--/** Set source objects
-	-- */
-	--function _setSourceObjects source_objects =
-	--(
-	--	--format "\n"; print "PlatformGenerator_v._setSourceObjects()"
-	--
-	--
-	--	this.source_objects = for obj in source_objects where superClassOf obj == GeometryClass or classOf source_obj == Point do
-	--
-	--),
-
 
 	/** Get vertex positions from:
 	  * 	A) From point helper
@@ -203,13 +189,7 @@ struct PlatformGenerator_v
 	(
 		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditblePolyObject()"
 		EditablePolyVertexGetter.setVertsData(source_obj)
-		--format "EditablePolyVertexGetter.verts_data	= % \n" EditablePolyVertexGetter.verts_data
-		--format "verts_data	= % \n" verts_data
-		--format "(classOf verts_data)	= % \n" (classOf verts_data)
-		--format "verts_data.keys	= % \n" EditablePolyVertexGetter.verts_data.keys
-		format "verts_data	= % \n" EditablePolyVertexGetter.verts_data
 
-		--for vert_data in EditablePolyVertexGetter.setVertsData(source_obj) do
 		for vert in EditablePolyVertexGetter.verts_to_generate do
 		(
 			PlatformObject = PlatformObject_v	Options:Options source_obj:source_obj
@@ -326,6 +306,72 @@ struct PlatformGenerator_v
 	),
 
 
+
+	/** Reinstance points
+	  */
+	function _reinstancePoints =
+	(
+		format "\n"; print "PlatformGenerator_v.reinstancePoints()"
+
+		/** Reinstance points
+		  */
+		function reinstancePoints points_created =
+		(
+			--format "\n"; print "PlatformGenerator_v.reinstancePoints()"
+			if points_created.count < 2 then
+				return false
+
+			master_object	= points_created[1]
+
+			for_replace = deleteItem points_created 1
+
+			for _point in for_replace do
+				instanceReplace _point master_object
+		)
+
+
+		/** Get point trees
+		 */
+		function getPointTree point_helper =
+		(
+			--format "\n"; print "PlatformGenerator_v.getPointTrees()"
+
+			if isValidNode point_helper then
+			(
+				children = #(point_helper)
+
+				this.getAllChildren(point_helper) (children)
+
+				children --return
+			)
+			else
+				#() --return
+		)
+
+		--point_helpers = for verts_data in EditablePolyVertexGetter.verts_data where isValidNode ( point_helper = getAnimByHandle verts_data.value[4] ) collect point_helper
+		point_helpers = for verts_data in EditablePolyVertexGetter.verts_data collect getAnimByHandle verts_data.value[4]
+
+		point_trees = for point_helper in point_helpers collect getPointTree(point_helper)
+
+		max_count = amax (for point_tree in point_trees collect point_tree.count)
+
+		max create mode
+
+		for i = 1 to max_count do
+		(
+			points_in_same_level = for point_level in point_trees where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
+
+			reinstancePoints(points_in_same_level)
+		)
+
+
+		format "point_helpers	= % \n" point_helpers
+		format "point_trees	= % \n" point_trees
+		format "max_count	= % \n" max_count
+	),
+
+	mapped function getAllChildren _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildren _node.children &children ),
+
 	--/** Ask to continue
 	--  *
 	--  */
@@ -349,7 +395,7 @@ struct PlatformGenerator_v
 
 		PlatformModifiers	= PlatformModifiers_v	Options:Options
 		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
-		--PlatformVertInstance 	= PlatformObject_v	Options:Options
+		PlatformVertInstance 	= PlatformObject_v	Options:Options
 		--EditablePolyVertexGetter 	= EditablePolyVertexGetter_v	normal_length:this.Options.normal_length
 	)
 )

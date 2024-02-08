@@ -50,8 +50,6 @@ struct EditablePolyVertexGetter_v
 		(
 			this._setVertexColors verts_to_get:verts_all colored_verts_num:( polyop.getNumMapVerts obj.baseobject 0)
 
-			--verts_to_generate = verts_to_generate as Array
-
 			verts_positions = polyop.getVerts obj.baseobject verts_all node:obj
 
 			this._loadVertsData()
@@ -78,10 +76,8 @@ struct EditablePolyVertexGetter_v
 	 */
 	function addPointHelper vertex_index point_helper =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v.addPointHelper()"
-		format "vertex_index	= % \n" vertex_index
-		format "point_helper	= % \n" point_helper
-
+		--format "\n"; print "EditablePolyVertexGetter_v.addPointHelper()"
+		--format "POINT_HELPER	= % \n" point_helper
 		verts_data[vertex_index][4] = getHandleByAnim point_helper
 
 		this._saveVertsData()
@@ -94,12 +90,8 @@ struct EditablePolyVertexGetter_v
 	function _loadVertsData =
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v._loadVertsData()"
-
 		if ( user_prop_data_loaded = getUserPropVal obj_source platform_vertex_data_key asString:false ) != undefined then
 			this.verts_data = user_prop_data_loaded
-
-		format "LOAD VERTS_DATA.keys	= % \n" this.verts_data.keys
-		format "LOAD VERTS_DATA	= % \n" this.verts_data
 	),
 
 	/** Set user prop data
@@ -114,27 +106,29 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _updateVertexData i =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v._updateVertexData()"
+		--format "\n"; print "EditablePolyVertexGetter_v._updateVertexData()"
+
+		fn positionChanged p1 p2 eps:1e-3 = distance p1 p2 > eps
 
 		vert = verts_to_generate[i] -- vertex index
 
 		vert_pos =  verts_positions[vert]
 
-		verts_data_old = deepCopy this.verts_data[vert]
+		verts_data_loaded = deepCopy this.verts_data[vert]
 
-		position_changed = verts_data_old == undefined or (verts_data_old != undefined and vert_pos != verts_data_old[1])
+		position_changed = verts_data_loaded == undefined or (verts_data_loaded != undefined and positionChanged (vert_pos) (verts_data_loaded[1]) )
 
 		/* UPDATE VERTEX DATA */
 		if position_changed then
+		(
+			format "\nGet Vert: % of %" i verts_to_generate.count
+
 			this.verts_data[vert] = this._getVertData (vert)
+		)
 
-
-		--format "verts_data_old[4]	= % \n" verts_data_old[4]
 		/* RESTORE POINT HELPER from loaded data */
-		 if verts_data_old != undefined and isValidNode (getAnimByHandle verts_data_old[4]) then
-			this.verts_data[vert][4] = verts_data_old[4]
-
-		format "THIS.VERTS_DATA	= % \n" this.verts_data
+		 if verts_data_loaded != undefined and isValidNode (getAnimByHandle verts_data_loaded[4]) then
+			this.verts_data[vert][4] = verts_data_loaded[4]
 	),
 
 	/** Set vert data

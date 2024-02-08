@@ -29,9 +29,9 @@ struct PlatformObject_v
 	 */
 	function fillVertData vertex_index vert_data =
 	(
-		format "\n"; print "PlatformObject_v.fillVertData()"
-		format "vertex_index	= % \n" vertex_index
-		format "VERT_DATA	= % \n" vert_data
+		--format "\n"; print "PlatformObject_v.fillVertData()"
+		--format "vertex_index	= % \n" vertex_index
+		--format "VERT_DATA	= % \n" vert_data
 
 		this.vertex_index = vertex_index
 
@@ -44,6 +44,15 @@ struct PlatformObject_v
 			this.point_helper = point_helper_node
 
 		this --return
+	),
+
+	/** Add vert pos
+	  *
+	  */
+	function addVert pos =
+	(
+		--format "\n"; print "PlatformObject_v.addVertPos()"
+		append this.verts_positions pos
 	),
 
 	/** Generate platform
@@ -73,7 +82,7 @@ struct PlatformObject_v
 	 */
 	function generatePointHelper =
 	(
-		format "\n"; print "PlatformObject_v.generatePointHelper()"
+		--format "\n"; print "PlatformObject_v.generatePointHelper()"
 		/** Shift wirecolor sligtly
 		  * Each level of points has different wirecolor for better selection
 		  */
@@ -89,68 +98,59 @@ struct PlatformObject_v
 			wirecolor --return
 		)
 
-		/** Reinstance points
-		  */
-		function reinstancePoints points_created =
-		(
-			format "\n"; print "PlatformGenerator_v.reinstancePoints()"
-			if points_created.count < 2 then
-				return false
-
-			master_object	= points_created[1]
-
-			for_replace = deleteItem points_created 1
-
-			for _point in for_replace do
-				instanceReplace _point master_object
-		)
 
 		points_created	= #()
-		--points_first	= #()
-		format "POINT_HELPER	= % \n" point_helper
+
 		/*------------------------------------------------------------------------------
 			GENERATE POINTS
 		--------------------------------------------------------------------------------*/
-
 		if point_helper == undefined then
 			for i = 1 to this.verts_positions.count do
 			(
-				--i=1
 				vert_pos = this.verts_positions[i]
 
 				_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
-				--_point.showLinks = true
+				/*------------------------------------------------------------------------------
+					!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
 
+					Should be improved to respect EACH source object
+				--------------------------------------------------------------------------------*/
 				/* IF FIRST TOP POINT OF PLATFORM */
 				if i == 1 then
-				(
-					/*------------------------------------------------------------------------------
-						!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
-
-						Should be improved to respect EACH source object
-					--------------------------------------------------------------------------------*/
-					--this.point_helper = getHandleByAnim  _point
 					this.point_helper = _point
 
-					_point.parent = source_object
-
-					--append points_first _point
-				)
-				else
-					_point.parent =  points_created[points_created.count]
-
+				_point.parent = if i == 1 then source_obj else points_created[points_created.count]
 
 				this._addToLayer (this.source_obj) (_point)
 
 				append points_created _point
 			)
 
-		format "POINT_HELPER	= % \n" point_helper
+		point_helper --return first point
+	),
 
-		--reinstancePoints (points_first) --return
+	mapped function getAllChildren _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildren _node.children &children ),
 
-		point_helper --return
+	/** Get points hierarchy
+	  *
+	  * @param Boolean pop_last retrun only last point of hierarchy
+	  * @return Array|Point array of  point hierarchy
+	 */
+	function getPointsTree _point pop_last:false =
+	(
+		--format "\n"; print "PlatformObject_v.getPointsTree()"
+
+			if isValidNode _point then
+			(
+				children = #(_point)
+
+				this.getAllChildren(_point) (children)
+
+				if pop_last then children[children.count] else children --return
+			)
+			else
+				#() --return
 	),
 
 	private
@@ -160,10 +160,9 @@ struct PlatformObject_v
 	  */
 	function _addVert vert_pos =
 	(
-		format "\n"; print "PlatformObject_v.addVertPos()"
+		--format "\n"; print "PlatformObject_v.addVertPos()"
 
-		local normal = this.normal * source_obj.transform - source_obj.pos
-
+		local normal = this.normal	 * source_obj.transform - source_obj.pos
 
 		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
 		if normal.z <= 0 then
@@ -173,7 +172,6 @@ struct PlatformObject_v
 			normal_length = this.Options.normal_length
 
 			/* ADD ADDITIONAL VERT TO KEEP NORMAL */
-			--if normal.z > -0.95 and vert_pos.z > normal_length * 1.5 then -- if vert is little rotated horizontaly AND platform has enough space verticaly
 			if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
 			(
 				--vert_pos = vert_pos + normal_length * normalize( normal )
@@ -190,7 +188,7 @@ struct PlatformObject_v
 		else
 			format " NOT USED - VERTEX NORMAL IS FACING UP:  %" normal.z
 
-		format "THIS.VERTS_POSITIONS	= % \n" this.verts_positions
+		--format "THIS.VERTS_POSITIONS	= % \n" this.verts_positions
 	),
 
 	/** Add to layer
@@ -207,9 +205,12 @@ struct PlatformObject_v
 		layer.addNode obj
 	),
 
-	/** Get last children of point
+	/** Get parent of platform
 	  *
-	  * @retrun node of last nested child point or source object, if chldren does not eists
+	  * 1) RETURN LAST POINT OF HIERARCHY
+	  * 2) RETURN SOURCE OBJECT IF POINTS DOES NOT EXITS
+	  *
+	  * @retrun node of last nested child point or source object
 	  *
 	 */
 	function _getPlatformParent =
@@ -218,28 +219,25 @@ struct PlatformObject_v
 		parent = source_obj
 
 		if classOf source_obj == Point  then
-		(
-			--local child_point
-
-			child_point = child = source_obj.children[1]
-			--format "child	= % \n" child
-
-			while child != undefined do
-			(
-				child = child.children[1]
-				--format "child	= % \n" child
-
-				if child != undefined then
-					child_point = child
-			)
-
-			--format "CHILD_POINT	= % \n" child_point
-
-			if child_point != undefined then
-				parent = child_point
-		)
-
-		parent --return
+			this.getPointsTree (source_obj) pop_last:true
+		--(
+		--	child_point = child = source_obj.children[1]
+		--
+		--	while child != undefined do
+		--	(
+		--		child = child.children[1]
+		--
+		--		if child != undefined then
+		--			child_point = child
+		--	)
+		--
+		--	--format "CHILD_POINT	= % \n" child_point
+		--
+		--	if child_point != undefined then
+		--		parent = child_point
+		--)
+		else
+			source_obj --return
 	),
 
 	/** Create line for vertex
