@@ -30,17 +30,14 @@ struct PlatformObject_v
 	function fillVertData vertex_index vert_data =
 	(
 		--format "\n"; print "PlatformObject_v.fillVertData()"
-		--format "vertex_index	= % \n" vertex_index
-		--format "VERT_DATA	= % \n" vert_data
-
 		this.vertex_index = vertex_index
 
 		normal	= vert_data[2]
-		wirecolor	= vert_data[3]
+		wirecolor	= if vert_data[3] != undefined then vert_data[3] else source_obj.wirecolor
 
 		this._addVert (vert_data[1])
 
-		if ( point_helper_pointer = vert_data[4] ) != undefined and isValidNode ( point_helper_node = getAnimByHandle point_helper_pointer ) then
+		if ( helper_pointer = vert_data[4] ) != undefined and isValidNode ( point_helper_node = getAnimByHandle helper_pointer ) then
 			this.point_helper = point_helper_node
 
 		this --return
@@ -104,12 +101,12 @@ struct PlatformObject_v
 		/*------------------------------------------------------------------------------
 			GENERATE POINTS
 		--------------------------------------------------------------------------------*/
-		if point_helper == undefined then
+		if not isValidNode point_helper then
 			for i = 1 to this.verts_positions.count do
 			(
 				vert_pos = this.verts_positions[i]
 
-				_point = Point pos:vert_pos size:(this.Options.bar_width / 2 ) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+				_point = Point pos:vert_pos size:(this.Options.bar_width) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
 				/*------------------------------------------------------------------------------
 					!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
@@ -130,7 +127,22 @@ struct PlatformObject_v
 		point_helper --return first point
 	),
 
-	mapped function getAllChildren _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildren _node.children &children ),
+	/** Delete old points and platforms
+	 */
+	function deleteOldPointsAndPlatforms =
+	(
+		--format "\n"; print "PlatformObject_v.deleteOldPointsAndPlatforms()"
+		--format "point_helper	= % \n" point_helper
+
+		if isValidNode point_helper then
+		(
+			children = #(point_helper)
+
+			this.getAllChildren(point_helper) (children)
+
+			delete children
+		)
+	),
 
 	/** Get points hierarchy
 	  *
@@ -140,20 +152,25 @@ struct PlatformObject_v
 	function getPointsTree _point pop_last:false =
 	(
 		--format "\n"; print "PlatformObject_v.getPointsTree()"
+		--mapped function getAllChildPoints _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildPoints _node.children &children )
 
-			if isValidNode _point then
-			(
-				children = #(_point)
+		if isValidNode _point then
+		(
+			children = #(_point)
 
-				this.getAllChildren(_point) (children)
+			this.getAllChildPoints(_point) (children)
 
-				if pop_last then children[children.count] else children --return
-			)
-			else
-				#() --return
+			if pop_last then children[children.count] else children --return
+		)
+		else
+			#() --return
 	),
 
 	private
+
+	mapped function getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this.getAllChildPoints _node.children &children ),
+
+	mapped function getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this.getAllChildren _node.children &children ),
 
 	/** Add vert pos
 	  *

@@ -100,7 +100,9 @@ icon:	"across:3|height:32|width:128"
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 
-			select ((getPlatformGeneratorInstance()).generatePointHelpers( selection ))
+			if ( points_created = (getPlatformGeneratorInstance()).generatePointHelpers( selection ) ).count > 0 then
+				select points_created
+				--format "POINTS_CREATED	= % \n" POINTS_CREATED
 		)
 )
 
@@ -149,6 +151,7 @@ icon:	"across:3|height:32|width:128"
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-PRINT-3D\PLATFORMS GENERATOR.mcr"
 			--messageBox "Yupiii" title:"Title"  beep:false
+			beam_objs = #()
 
 			PlatformGenerator = getPlatformGeneratorInstance()
 
@@ -159,6 +162,10 @@ icon:	"across:3|height:32|width:128"
 
 			format "platforms.count	= % \n" platforms.count
 			if platforms.count >= 2 then
-				PlatformCrossSection.create( platforms )
+				join beam_objs (PlatformCrossSection.create( platforms ))
+
+
+			if beam_objs.count > 0 then
+				select beam_objs
 		)
 )

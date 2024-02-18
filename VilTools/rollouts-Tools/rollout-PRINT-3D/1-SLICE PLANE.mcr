@@ -18,7 +18,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/createElevationSliderDialog
   */
 macroscript	print_create_slicerdialog
 category:	"_3D-Print"
-buttontext:	"Slice Object"
+buttontext:	"SLICE OBJECT"
 tooltip:	"Slice selected object."
 icon:	"across:5|height:32|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY: RESET OBJECT XFORM\n\nIF Z POZITION OF SLICE PLANE DOES NOT WORK PROPERLY"
 (
@@ -48,29 +48,33 @@ icon:	"across:5|height:32|tooltip:\n\n----------------------\n\nFIX IF NOT WORK 
 				setModContextTM obj slice_mod mod_TM
 			)
 
-			mod_name = #SLICE_PLANE_TOP
 
-			
+			for data in Dictionary #( #SLICE_PLANE_TOP, ROLLOUT_print_3d.CBX_slice_top.state ) #( #SLICE_PLANE_BOTTOM, ROLLOUT_print_3d.CBX_slice_bottom.state ) where data.value do
+			(
+				format "data	= % \n" data
+				mod_name = data.key
+
+				mods_in_scene = for mod_in_scene in getClassInstances ( SliceModifier ) where mod_in_scene.name as name == mod_name collect mod_in_scene
+
+				if ( slice_mod = mods_in_scene[1] ) == undefined then
+					slice_mod = SliceModifier name:( mod_name as string ) Faces___Polygons_Toggle:1
+
+				objects_with_modifier = refs.dependentNodes slice_mod
+
+
+				for obj in selection where superClassOf obj == GeometryClass and findItem objects_with_modifier obj == 0 do
+					addSliceMod (obj)	(slice_mod)
+			)
+
 			--for obj in selection where (_mod = obj.modifiers[mod_name]) != undefined do
 			--	deleteModifier obj _mod
 
 
-			mods_in_scene = for mod_in_scene in getClassInstances ( SliceModifier ) where mod_in_scene.name as name == mod_name collect mod_in_scene
-
-			if ( slice_mod = mods_in_scene[1] ) == undefined then
-				slice_mod = SliceModifier name:( mod_name as string ) Faces___Polygons_Toggle:1
-
-			objects_with_modifier = refs.dependentNodes slice_mod
-
-
-			for obj in selection where superClassOf obj == GeometryClass and findItem objects_with_modifier obj == 0 do
-				addSliceMod (obj)	(slice_mod)
 
 
 
 			/* CREATE SLICE DIALOG */
 			createElevationSliderDialog()
-
 
 			updateSlicePlaneSystem (DIALOG_elevation_slider.SPIN_layer_current.value)
 
@@ -96,6 +100,8 @@ icon:	"across:5|height:32"
 			--)catch()
 
 			_selection = if selection.count == 0 then selection else geometry
+
+
 
 			for mod_name in #( #SLICE_PLANE_TOP, #SLICE_PLANE_BOTTOM, #SELECT_BY_PRINT_LAYER ) do
 			(
@@ -161,7 +167,7 @@ icon:	"control:checkbox|autorun:false|across:5|height:32|offset:[ 10, 0 ]"
 		format "EventFired	= % \n" EventFired
 
 		if EventFired.val then
-		updateSlicePlaneSystem(undefined)
+			updateSlicePlaneSystem(undefined)
 
 		else
 			for obj in objects where ( _modifier = obj.modifiers[#SLICE_PLANE_TOP] ) != undefined do

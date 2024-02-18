@@ -123,6 +123,8 @@ struct PlatformGenerator_v
 
 		points_created	= for PlatformObject in PlatformObjects collect
 		(
+			PlatformObject.deleteOldPointsAndPlatforms()
+
 			PlatformObject.generatePointHelper()
 
 			EditablePolyVertexGetter.addPointHelper(PlatformObject.vertex_index)(PlatformObject.point_helper)
@@ -132,7 +134,12 @@ struct PlatformGenerator_v
 
 		this._reinstancePoints()
 
-		points_created --return
+		redrawViews()
+		format "POINTS_CREATED	= % \n" points_created
+		--if points_created.count > 0 then  points_created else #() --return
+
+		for point_created in points_created where point_created != undefined collect point_created
+
 	),
 
 	/** Get platform objects
@@ -181,13 +188,15 @@ struct PlatformGenerator_v
 		/* EDITABLE POLY OBJECT */
 		else
 			this._getVertexPositionsFromEditblePolyObject(source_obj)
+
+		--else
 	),
 
 	/** Get vertex positions from editble poly object
 	 */
 	function _getVertexPositionsFromEditblePolyObject source_obj =
 	(
-		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditblePolyObject()"
+		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromEditblePolyObject()"
 		EditablePolyVertexGetter.setVertsData(source_obj)
 
 		for vert in EditablePolyVertexGetter.verts_to_generate do
@@ -253,12 +262,12 @@ struct PlatformGenerator_v
 		if source_obj.parent != undefined and classOf source_obj.parent == Point then -- do not ge child points as platform source
 			return false
 
-		point_helpers = this._getSameChildren (source_obj)
+		point_helpers_all = this._getSameChildren (source_obj)
 
 		PlatformObject = this._getPlatformObject(source_obj)(source_obj.wirecolor)
 
 
-		for point_helper in point_helpers do
+		for point_helper in point_helpers_all do
 		(
 			point_helper.showLinks = true
 
@@ -305,13 +314,14 @@ struct PlatformGenerator_v
 		PlatformObject --return
 	),
 
-
-
-	/** Reinstance points
+	/** Reinstance helper points
+	  *
+	  * Each level of points is different instance
+	  *
 	  */
 	function _reinstancePoints =
 	(
-		format "\n"; print "PlatformGenerator_v.reinstancePoints()"
+		--format "\n"; print "PlatformGenerator_v.reinstancePoints()"
 
 		/** Reinstance points
 		  */
@@ -335,57 +345,52 @@ struct PlatformGenerator_v
 		function getPointTree point_helper =
 		(
 			--format "\n"; print "PlatformGenerator_v.getPointTrees()"
+			children = #()
 
 			if isValidNode point_helper then
 			(
 				children = #(point_helper)
 
-				this.getAllChildren(point_helper) (children)
-
-				children --return
+				this.getAllChildPoints(point_helper) (children)
 			)
-			else
-				#() --return
+
+			children --return
 		)
 
-		--point_helpers = for verts_data in EditablePolyVertexGetter.verts_data where isValidNode ( point_helper = getAnimByHandle verts_data.value[4] ) collect point_helper
-		point_helpers = for verts_data in EditablePolyVertexGetter.verts_data collect getAnimByHandle verts_data.value[4]
+		point_helpers_all = for verts_data in EditablePolyVertexGetter.verts_data where verts_data.value[4] != undefined collect getAnimByHandle verts_data.value[4]
 
-		point_trees = for point_helper in point_helpers collect getPointTree(point_helper)
+		point_trees = for point_helper in point_helpers_all collect getPointTree(point_helper)
 
 		max_count = amax (for point_tree in point_trees collect point_tree.count)
 
 		max create mode
 
-		for i = 1 to max_count do
-		(
-			points_in_same_level = for point_level in point_trees where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
+		if max_count != undefined then
+			for i = 1 to max_count do
+			(
+				points_in_same_level = for point_level in point_trees where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
 
-			reinstancePoints(points_in_same_level)
-		)
-
-
-		format "point_helpers	= % \n" point_helpers
-		format "point_trees	= % \n" point_trees
-		format "max_count	= % \n" max_count
+				reinstancePoints(points_in_same_level)
+			)
 	),
 
-	mapped function getAllChildren _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildren _node.children &children ),
+	mapped function getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this.getAllChildPoints _node.children &children ),
 
-	--/** Ask to continue
-	--  *
-	--  */
-	--function _askToContinue =
-	--(
-	--	--format "\n"; print "PlatformGenerator_v._askToContinue()"
-	--	_continue = true
-	--
-	--	--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
-	--	if verts_to_generate.count > 100 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\n  CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
-	--		 _continue =  false
-	--
-	--	_continue --return
-	--),
+
+	/** Ask to continue
+	  *
+	  */
+	function _askToContinue =
+	(
+		--format "\n"; print "PlatformGenerator_v._askToContinue()"
+		_continue = true
+
+		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+		if verts_to_generate.count > 300 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\n  CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+			 _continue =  false
+
+		_continue --return
+	),
 
 	/**
 	 */

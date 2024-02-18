@@ -23,10 +23,14 @@ struct PlatformCrossSection_v
 
 		this.platforms = _platforms
 
+		beam_objs = #()
+
 		this.filterEditSplineObjects()
 
 		if platforms.count < 2 then
 			return false
+
+		max create mode
 
 		--format "platforms.count:	% \n" platforms.count
 		for i = 1 to platforms.count where platforms[i + 1] != undefined do
@@ -65,33 +69,38 @@ struct PlatformCrossSection_v
 
 				cross_spline_id = 1 -- index of spline
 
-				cross_shape = SplineShape name:(platform_A.name + "-cross")
+				beam_obj = SplineShape name:(platform_A.name + "-cross")
 
 
-				setUserPropVal cross_shape "source_platforms" #( getHandleByAnim platform_A, getHandleByAnim platform_B )
+				setUserPropVal beam_obj "source_platforms" #( getHandleByAnim platform_A, getHandleByAnim platform_B )
 
-				cross_shape.parent	= platform_A
-				cross_shape.wirecolor	= platform_A.wirecolor
+				beam_obj.parent	= platform_A
+				beam_obj.wirecolor	= platform_A.wirecolor
 
 
-				addNewSpline cross_shape
+				addNewSpline beam_obj
 				--format "point_bottom:	% \n" point_bottom
 				--format "point_top:	% \n" point_top
 
-				addKnot cross_shape cross_spline_id #corner #line point_bottom
-				addKnot cross_shape cross_spline_id #corner #line point_top
+				addKnot beam_obj cross_spline_id #corner #line point_bottom
+				addKnot beam_obj cross_spline_id #corner #line point_top
 
-				setMaterialID cross_shape cross_spline_id 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-				--setMaterialID cross_shape cross_spline_id 1 6
+				setMaterialID beam_obj cross_spline_id 1 this.Options.mat_ids[#CROSS] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+				--setMaterialID beam_obj cross_spline_id 1 6
 
-				updateShape cross_shape
+				updateShape beam_obj
 
-				cross_shape.pivot = cross_shape.center
+				beam_obj.pivot = beam_obj.center
 
 				for i = platform_A.modifiers.count to 1 by -1 do
-					addModifier cross_shape platform_A.modifiers[i]
+					addModifier beam_obj platform_A.modifiers[i]
+
+				append beam_objs beam_obj
 			)
+
 		)
+
+		beam_objs --return
 	),
 
 	private

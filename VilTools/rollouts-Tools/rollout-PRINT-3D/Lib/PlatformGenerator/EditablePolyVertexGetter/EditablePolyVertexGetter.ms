@@ -9,21 +9,16 @@ struct EditablePolyVertexGetter_v
 	obj_copy,	-- collapsed object used for getting data
 
 	/* properties */
-	--normal_length,
-
-	--PlatformVerts = #(),
 
 	verts_to_generate = #(),
 	verts_positions	= #{},
-	verts_by_colors = Dictionary #string,
-	verts_data		= Dictionary #integer, -- 	  KEY:vert_index,  VALUE: #( vert pos, vert normal, vertex color, pointer to point helper or platform object )
+	verts_by_colors	= Dictionary #string,
+	verts_data      = Dictionary #integer, -- KEY:vert_index,  VALUE: #( vert pos, vert normal, vertex color, pointer to point helper or platform object )
 
 
 	platform_vertex_data_key = "platform_vertex_data",
 
 	/* dependency */
-	--PlatformVertInstance,
-
 	/* reference */
 	/* inhered */
 
@@ -33,23 +28,33 @@ struct EditablePolyVertexGetter_v
 	function setVertsData _obj quiet:false =
 	(
 		format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
-		------format "obj:	% \n" obj
-		----format "this.verts_data	= % \n" this.verts_data
 
 		this._setObjectUsed(_obj)
 
 		verts_count	= getNumVerts obj.baseobject.mesh
 		verts_all	= #{1..(verts_count)}
-		vertex_sel	= getVertSelection obj.baseobject.mesh
-		verts_count_VC	= polyop.getNumMapVerts obj.baseobject 0
+		vertex_sel	= getVertSelection obj.baseobject.mesh --else #{} -- ignore vertex selection if not suobject level active
+		verts_count_VC	= if polyop.getMapSupport obj.baseobject 0 then polyop.getNumMapVerts obj.baseobject 0
 
-		verts_to_generate = (if vertex_sel.isEmpty then verts_all else vertex_sel ) as Array   -- get all verts if nothing selected
+		if verts_count_VC != undefined then
+			this._setVertexColors verts_to_get:verts_all colored_verts_num:verts_count_VC
 
-		/* FIX CPV vertex count -- getVErtColor doesn not work if verts_count and verts_count_VC is not equal  */
-		if verts_count == verts_count_VC then
+		case of
 		(
-			this._setVertexColors verts_to_get:verts_all colored_verts_num:( polyop.getNumMapVerts obj.baseobject 0)
+			/* GET SELECTED VERTS */
+			(not vertex_sel.isEmpty):	verts_to_generate = vertex_sel as Array
 
+			/* GET COLORED VERTS - NOT WHITE COLOR */
+			(verts_by_colors.keys.count > 1): for vert_color in verts_by_colors.keys where vert_color != white as string do
+													join verts_to_generate (verts_by_colors[vert_color] as Array )
+
+			/* VERTEX COLORS NOT EXISTS */
+			default: verts_to_generate = verts_all as Array
+		)
+
+		/* WARN BEFORE USING ALL VERTS */
+		if verts_count != verts_to_generate.count or queryBox ("USE ALL "+ verts_count +" VERTS ?") title:"SET VERTS DATA"  then
+		(
 			verts_positions = polyop.getVerts obj.baseobject verts_all node:obj
 
 			this._loadVertsData()
@@ -63,11 +68,11 @@ struct EditablePolyVertexGetter_v
 			if obj_copy != undefined then
 				delete obj_copy
 		)
-		else
-		(
-			messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
-			--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
-		)
+		--else
+		--(
+		--	messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
+		--	--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
+		--)
 
 		this.verts_data --return
 	),
@@ -78,6 +83,10 @@ struct EditablePolyVertexGetter_v
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v.addPointHelper()"
 		--format "POINT_HELPER	= % \n" point_helper
+
+		if not isValidNode point_helper then
+			return false
+
 		verts_data[vertex_index][4] = getHandleByAnim point_helper
 
 		this._saveVertsData()
@@ -110,25 +119,19 @@ struct EditablePolyVertexGetter_v
 
 		fn positionChanged p1 p2 eps:1e-3 = distance p1 p2 > eps
 
-		vert = verts_to_generate[i] -- vertex index
+		vert	= verts_to_generate[i] -- vertex index
+		vert_pos	=  verts_positions[vert]
+		vert_data	= this.verts_data[vert]
+		point_helper	= if vert_data != undefined and vert_data[4] != undefined and isValidNode (getAnimByHandle vert_data[4]) then vert_data[4]
 
-		vert_pos =  verts_positions[vert]
-
-		verts_data_loaded = deepCopy this.verts_data[vert]
-
-		position_changed = verts_data_loaded == undefined or (verts_data_loaded != undefined and positionChanged (vert_pos) (verts_data_loaded[1]) )
+		position_changed = vert_data == undefined or positionChanged (vert_pos) (vert_data[1])
 
 		/* UPDATE VERTEX DATA */
 		if position_changed then
-		(
-			format "\nGet Vert: % of %" i verts_to_generate.count
-
-			this.verts_data[vert] = this._getVertData (vert)
-		)
+			this.verts_data[vert] = this._getVertData (vert)(i)
 
 		/* RESTORE POINT HELPER from loaded data */
-		 if verts_data_loaded != undefined and isValidNode (getAnimByHandle verts_data_loaded[4]) then
-			this.verts_data[vert][4] = verts_data_loaded[4]
+		this.verts_data[vert][4] = point_helper
 	),
 
 	/** Set vert data
@@ -136,9 +139,11 @@ struct EditablePolyVertexGetter_v
 	  *  #( vert pos, vert normal, vertex color  )
 	  *
 	 */
-	function _getVertData vert =
+	function _getVertData vert i =
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v._getVertData()"
+		format "\nGet Vert: % of %" i verts_to_generate.count
+
 		#(
 			verts_positions[vert],	-- vertext pos
 			getnormal obj.mesh vert,	-- vertex normal
@@ -152,7 +157,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _setVertexColors verts_to_get: colored_verts_num: =
 	(
-		----format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
+		--format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
 
 		/* GET VERTEX COLORS CRASH IF GET VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL
 
@@ -169,67 +174,34 @@ struct EditablePolyVertexGetter_v
 		--------------------------------------------------------------------------------*/
 			----format "verts_to_get.count START	= % \n" (verts_to_get as Array ).count
 
-
-		processed_verts = #{}
-
-		last_count = 0
-
-		while not verts_to_get.isEmpty do
+		if colored_verts_num != undefined then
 		(
-			----format "\n\n\n"
-			vertex_index = (verts_to_get as Array )[1]
-			----format "vertex_index	= % \n" vertex_index
+			processed_verts = #{}
 
-			----format "processed_verts[vertex_index]	= % \n" processed_verts[vertex_index]
+			--last_count = 0
 
-			if not  processed_verts[vertex_index]  then
+			while not verts_to_get.isEmpty do
 			(
-				color_of_vert = getvertcolor obj.baseobject.mesh  vertex_index
-				----format "color_of_vert	= % \n" color_of_vert
+				vertex_index = (verts_to_get as Array )[1]
 
-				verts_by_color = this._getVertsByColor (color_of_vert)
-
-				----format "verts_by_color[511443]	= % \n" verts_by_color[511443]
-
-
-				processed_verts += verts_by_color
-
-				----format "verts_by_color	= % \n" verts_by_color
-				----format "verts_by_color.count	= % \n" (verts_by_color as Array ).count
-
-				verts_by_colors[ color_of_vert as string ] = verts_by_color
-				----format "verts_by_colors.keys	= % \n" verts_by_colors.keys
-
-
-				--verts_to_get = verts_to_get - verts_by_color
-				verts_to_get -= verts_by_color
-				----format "VERTS_TO_GET	= % \n" verts_to_get
-
-				if last_count == (verts_to_get as Array ).count then
+				if not  processed_verts[vertex_index]  then
 				(
-					print "------------- EXIT ----------"
+					color_of_vert = getvertcolor obj.baseobject.mesh vertex_index -- get color of vertex
 
-					$.EditablePoly.SetSelection #Vertex verts_to_get
+					verts_by_color = this._getVertsByColor (color_of_vert)	-- get all verts by thath color
 
-					subObjectLevel = 1
-					exit
+					processed_verts += verts_by_color
+
+					verts_by_colors[ color_of_vert as string ] = verts_by_color
+
+					verts_to_get -= verts_by_color
+
+					--last_count = (verts_to_get as Array ).count
 				)
-
-				last_count = (verts_to_get as Array ).count
-				----format "verts_to_get.count	= % \n" (verts_to_get as Array ).count
-
-			) else
-			(
-
-				print "------------- SHIT ----------"
-
-
-
-				exit
 			)
-
-			--i +=1
 		)
+		else
+			verts_by_colors[ obj_source.wirecolor as string ] = verts_to_get
 	),
 
 
@@ -238,6 +210,11 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getColorByVertex i =
 	(
+		format "\n"; print "EditablePolyVertexGetter_v._getColorByVertex()"
+
+
+		format "verts_by_colors.keys	= % \n" verts_by_colors.keys
+		format "verts_by_colors	= % \n" verts_by_colors
 		for key in verts_by_colors.keys where verts_by_colors[key][i] do return execute key
 	),
 
@@ -274,24 +251,6 @@ struct EditablePolyVertexGetter_v
 
 	),
 
-	--/** Set platform object
-	--  *
-	--  */
-	--function _getPlatformVert wirecolor =
-	--(
-	--	----format "\n"; print "EditablePolyVertexGetter_v._getPlatformVert()"
-	--	----format "obj_source:	% \n" obj_source
-	--	----format "wirecolor:	% \n" wirecolor
-	--
-	--	PlatformVert = deepCopy PlatformVertInstance
-	--
-	--	PlatformVert.source_obj	= obj_source
-	--	PlatformVert.wirecolor	= wirecolor
-	--
-	--	append PlatformVerts PlatformVert
-	--
-	--	PlatformVert --return
-	--),
 	/** Ask to continue
 	  *
 	  */
