@@ -25,10 +25,10 @@ struct RegExer_v
 	  */
 	function removeSufix delimiters:"_-" pattern:".*" =
 	(
-		format "\n"; print "RegExer_v.removeSufix()"
+		--format "\n"; print "RegExer_v.removeSufix()"
 
 		if (split = filterString this._string delimiters).count > 1 then
-			stripped_string = this.replaceInString( "["+delimiters+ "]"+ split[split.count] + "*$") ""
+			stripped_string = this.replaceInString( "["+delimiters+ "]"+ split[split.count] + "*$") "" -- /[-_]foo*$/
 
 
 		/* TEST IF SUFFIX MATCH PATTERN  */

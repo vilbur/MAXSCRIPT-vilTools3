@@ -64,15 +64,26 @@ icon:	"MENU:true"
 macroscript selection_remove_suffix
 category:	"_Object-Name"
 buttonText:	"Remove sufix"
-tooltip:	"Remove sufix from object name"
+tooltip:	"Remove sufix from object name.\n\n1) Try remove traling number 'foo002' > 'foo'\n\n2) Remove suffix after delinmeter 'foo-bar-sufix' > 'foo-bar'"
 icon:	"MENU:true"
 (
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 	on execute do
 	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\MANAGE NAME.mcr"
+		trailing_number = "[^\s]*\d+$" -- match suffix number without delimeter E.G.: "trailing-number002"
+
 		undo "Remove sufix" on
 			for obj in selection do
-				obj.name = (RegExer_v( obj.name )).removeSufix()
+			(
+				RegEx = RegExer_v( obj.name )
+
+				obj.name =  if RegEx.isMatch("[^\s]*\d+$") then  -- match suffix number without delimeter E.G.: "trailing-number002"
+								RegEx.replaceInString ("\d+$")("")
+
+							else
+								RegEx.removeSufix()
+			)
 	)
 )
 
@@ -86,7 +97,7 @@ icon:	"MENU:true"
 (
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\MANAGE NAME.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\MANAGE NAME.mcr"
 		ObjectRenamer	= ObjectRenamer_v()
 
 		undo "Recount names" on

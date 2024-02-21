@@ -10,13 +10,14 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 (
 
 	on execute do
-	undo "Set Vertex Color" on
+
+	if selection.count > 0 then undo "Set Vertex Color" on
 	(
 		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
 
 
-		--_mod = modPanel.getCurrentObject()
+		--_mod = modPanel.getCurrentObject()f
 		--format "_mod	= % \n" _mod
 		--format "_mod == Editable_Poly	= % \n" (_mod == Editable_Poly)
 
@@ -26,15 +27,14 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 		--verts_count_VC	= getNumCPVVerts obj.mesh
 		obj = selection[1]
 
+		if not polyop.getMapSupport obj 0 then
+			polyop.setMapSupport obj 0 true
+
 
 		verts_count	= polyop.getNumVerts obj.baseObject
 
 		verts_count_VC	= polyop.getNumMapVerts obj.baseObject 0
 
-		--format "verts_count_VC	= % \n" (getNumCPVVerts obj.baseObject.mesh)
-		--setNumCPVVerts obj.baseObject.mesh (getNumVerts obj.baseObject.mesh) true
-
-		--format "verts_count	= % \n" verts_count
 
 		if verts_count == verts_count_VC then
 		(
@@ -90,12 +90,10 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 			format "getNumVerts	= % \n" verts_count
 			format "getNumMapVerts	= % \n" verts_count_VC
 
-			messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
-			--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
+			addModifier obj (UVW_Mapping_Clear mapID:0) before:obj.modifiers.count
+
+			messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL\n\nPLEASE RESET UV CHANNEL.\n\nModifier has been added" title:"ERROR"
 		)
-
-
-
 
 		--)
 		--else if queryBox "RESET OF VERTEX COLORS IS NEEDED.\n\nCONTINUE ?" title:"RESET VERTEX COLORS"  beep:true then
@@ -277,5 +275,29 @@ icon:	"across:4|MENU:true"
 		)
 		else
 			messageBox ("There is not any vertex color on object:\n\n"+obj.name) title:"NO VERTEX COLOR"
+	)
+)
+
+/**
+  *
+  */
+macroscript	epoly_vertex_color_property_toggle
+category:	"_Epoly-Vertex-Color"
+buttonText:	"SHOW-Colors"
+toolTip:	"Toggle show\hide"
+icon:	"across:4|MENU:true"
+(
+	on execute do
+	undo "Show Vertex Colors" on
+	(
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
+
+		if selection.count > 0 then
+		(
+			$.showVertexColors = not selection[1].showVertexColors
+			$.vertexColorsShaded = on
+			$.vertexColorType = 0
+		)
 	)
 )

@@ -89,11 +89,20 @@ icon:	"width:72"
 
 	spacings = #( 0.05, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
 
-	unit_divider = case units.SystemType of
+	--unit_divider = case units.SystemType of
+	--(
+	--	#Centimeters:10
+	--	#Meters: 1000
+	--	default: 1
+	--)
+	display_units = case units.SystemType of -- convert to milimeters
+	--this.display_units = case units.MetricType of -- convert to dispaly units
 	(
-		#Centimeters:10
-		#Meters: 1000
-		default: 1
+		#millimeters:	1
+		#centimeters:	10
+		#meters:	1000
+		#kilometers:	1000000
+		default:	1 -- non metric units
 	)
 
 	next_index = if ( index = findItem spacings (GetGridSpacing()) ) > 0 and index < spacings.count then index + 1 else 1

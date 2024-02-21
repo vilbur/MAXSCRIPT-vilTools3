@@ -306,6 +306,7 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 (
 	--format "EventFired	= % \n" EventFired
 
+	clearListener(); print("Cleared in:\n"+getSourceFileName())
 	filein @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
 
 	print "DOUBLECLICKED"

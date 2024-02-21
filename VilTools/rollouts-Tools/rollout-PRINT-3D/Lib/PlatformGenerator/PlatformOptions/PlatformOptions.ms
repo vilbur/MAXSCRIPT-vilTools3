@@ -49,7 +49,6 @@ struct PlatformOptions_v
 		--format "chamfer_top_divider	= % \n" chamfer_top_divider
 		this._setUnitsMuliplier()
 
-		this._setBaseHeight()
 
 		this._setDimensions()
 
@@ -83,14 +82,13 @@ struct PlatformOptions_v
 	  */
 	function _setDimensions =
 	(
-		--format "\n"; print "PlatformOptions_v._setDimensions()"
-		--format "DISPLAY_UNITS:	% \n" display_units
-		--format "EXPORT_SIZE:	% \n" export_size
+		format "\n"; print "PlatformOptions_v._setDimensions()"
+		format "DISPLAY_UNITS:	% \n" display_units
+		format "EXPORT_SIZE:	% \n" export_size
 
 		for prop in getPropNames this where ( superClassOf (val = getProperty this prop)) == Number do
 
-			if val != undefined and findItem #(#export_size, #chamfer_top_divider) prop == 0  then
-
+			if val != undefined and findItem #( #display_units, #export_size, #chamfer_top ) prop == 0  then
 				setProperty this prop (val / display_units	/ export_size)
 	),
 
@@ -99,8 +97,8 @@ struct PlatformOptions_v
 	  */
 	function _setBaseHeight =
 	(
-		--format "\n"; print "PlatformOptions_v._setBaseHeight()"
-		base_height = this.bottom_layers_count * this.layer_height
+		format "\n"; print "PlatformOptions_v._setBaseHeight()"
+		base_height = this.bottom_layers_count * this.layer_height / export_size
 	),
 
 
@@ -109,9 +107,15 @@ struct PlatformOptions_v
 	  */
 	function _setChamferValues =
 	(
-		chamfer_base	= base_height / 2
+		format "\n"; print "PlatformOptions_v._setChamferValues()"
+		format "base_height	= % \n" base_height
+		format "chamfer_top	= % \n" chamfer_top
 
-		chamfer_top	= bar_width / 2 / 10 * chamfer_top -- chamfer in steps between 0-10
+
+		chamfer_base	= base_height / 2
+		format "CHAMFER_BASE	= % \n" chamfer_base
+		chamfer_top	= (bar_width / 2 / 10) * chamfer_top -- chamfer in steps between 0-10
+		format "CHAMFER_TOP	= % \n" chamfer_top
 	),
 
 	/**

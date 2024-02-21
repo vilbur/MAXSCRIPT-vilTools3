@@ -129,7 +129,9 @@ struct MaxToZbrushSync_v
 	 */
 	function _replaceImportedObjects objects_before_import imported_object imported_object_name =
 	(
-		--format "\n"; print "MaxToZbrushSync_v._replaceImportedObjects()"
+		format "\n"; print "MaxToZbrushSync_v._replaceImportedObjects()"
+		format "imported_object.name	= % \n" imported_object.name
+		format "imported_object_name	= % \n" imported_object_name
 		--delete_imported = false
 
 		for obj in objects_before_import where obj.name == imported_object_name do

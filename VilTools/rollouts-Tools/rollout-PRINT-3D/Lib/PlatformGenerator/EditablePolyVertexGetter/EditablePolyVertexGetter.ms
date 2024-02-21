@@ -42,7 +42,7 @@ struct EditablePolyVertexGetter_v
 		case of
 		(
 			/* GET SELECTED VERTS */
-			(not vertex_sel.isEmpty):	verts_to_generate = vertex_sel as Array
+			(not vertex_sel.isEmpty): verts_to_generate = vertex_sel as Array
 
 			/* GET COLORED VERTS - NOT WHITE COLOR */
 			(verts_by_colors.keys.count > 1): for vert_color in verts_by_colors.keys where vert_color != white as string do
@@ -73,6 +73,7 @@ struct EditablePolyVertexGetter_v
 		--	messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"ERROR"
 		--	--polyop.setNumMapVerts obj.baseObject 0 verts_count keep:true
 		--)
+		format "verts_to_generate.count	= % \n" verts_to_generate.count
 
 		this.verts_data --return
 	),
@@ -210,11 +211,9 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _getColorByVertex i =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v._getColorByVertex()"
-
-
-		format "verts_by_colors.keys	= % \n" verts_by_colors.keys
-		format "verts_by_colors	= % \n" verts_by_colors
+		--format "\n"; print "EditablePolyVertexGetter_v._getColorByVertex()"
+		--format "verts_by_colors.keys	= % \n" verts_by_colors.keys
+		--format "verts_by_colors	= % \n" verts_by_colors
 		for key in verts_by_colors.keys where verts_by_colors[key][i] do return execute key
 	),
 

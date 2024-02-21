@@ -22,11 +22,14 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("M O D - S T A C K  2")
 
-	NameMenu 	= Menu_v("_Modifiers-Name")
+	--NameMenu 	= Menu_v("_Modifiers-Name")
 
-	NameMenu.addSeparators #( 4 )
+	--NameMenu.addSeparators #( 4 )
 
-	QuadMenu.addMenu(NameMenu)	--flat:false --index:1
+	--QuadMenu.addMenu(NameMenu)	--flat:false --index:1
+
+	QuadMenu.addMenu("_Modifiers-Name")	separators: #( 3, 4 ) --flat:false --index:1
+
 
 )
 

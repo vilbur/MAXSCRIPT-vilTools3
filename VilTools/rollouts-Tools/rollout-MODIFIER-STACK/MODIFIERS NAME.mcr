@@ -7,8 +7,27 @@
 
 
 /*------------------------------------------------------------------------------
-	RENAME MODIFIER
+	RENAME MODIFIERS
 --------------------------------------------------------------------------------*/
+
+/**
+  */
+macroscript	modifiers_rename_current_dialog
+category:	"_Modifiers-Name"
+buttontext:	"Rename"
+--tooltip:	"Rename current modifier dialog. \n\nOption in menu: Open Dialog"
+tooltip:	"Rename current modifier dialog."
+icon:	"MENU:Rename • CTRL: Reset name"
+autoUndoEnabled: true
+(
+	on execute do
+	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MODIFIERS NAME.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
+			(ModifierRenamer_v(curr_mod)).renameDialog generate: (if keyboard.controlPressed then true )
+	)
+)
 
 /**
   */
@@ -21,24 +40,10 @@ autoUndoEnabled: true
 (
 	on execute do
 	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MODIFIERS NAME.mcr"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
 		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
 			curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
-	)
-)
-
-/**
-  */
-macroscript	modifiers_rename_current_dialog
-category:	"_Modifiers-Name"
-buttontext:	"Rename"
-tooltip:	"Rename current modifier dialog. \n\nOption in menu: Open Dialog"
-icon:	"MENU:true"
-autoUndoEnabled: true
-(
-	on execute do
-	(
-		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-			(ModifierRenamer_v(curr_mod)).renameDialog generate:false
 	)
 )
 
@@ -83,7 +88,7 @@ autoUndoEnabled: true
 macroscript	modifiers_paste_name
 category:	"_Modifiers-Name"
 buttontext:	"Paste Name"
-tooltip:	"Paste Modifier name."-- \n\nOption in menu: Open Dialog"
+tooltip:	"Paste Modifier name."
 icon:	"MENU:true"
 autoUndoEnabled: true
 (
@@ -98,4 +103,3 @@ autoUndoEnabled: true
 	)
 
 )
-

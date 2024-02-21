@@ -1,3 +1,6 @@
+
+global THIS_MODIFIER_RENAMER
+
 /** Rename modifiers based on their values
  */
 struct ModifierRenamer_v
@@ -17,40 +20,45 @@ struct ModifierRenamer_v
 	function generateName =
 	(
 		format "\n%" (getSourceFileName())
-		--format "\n"; print "ModifierRenamer_v.generateName()"
+		format "\n"; print "ModifierRenamer_v.generateName()"
 		--format "classOf modObject:	% \n" (classOf this.modObject)
+		this._DevPrintModProperties()
 
-		this._printModProperties()
+		method_name = "_" + (classOf this.modObject) as string
 
-		case classOf this.modObject of
-		(
-			Edit_Poly:	"EPoly"
-			SliceModifier:	this._SliceModifier()
-			Poly_Select:	this._PolySelect()
-			Vol__Select:	this._VolSelect()
-			Chamfer:	this._Chamfer()
-			Smooth:	this._Smooth()
-			Face_Extrude:	"Extrude"
-			DeleteMesh:	"Delete"
-			Materialmodifier:	"Mat ID " + this.modObject.materialID as string
-			FFDBox:	"FFDBox"
-			FFD_2x2x2:	"FFD2"
-			SplineOffset:	this._SplineOffset()
-			Meshsmooth:	this._Meshsmooth()
+		/* EXECUTE METHOD BY MODIIFER CLASS NAME  */
+		if hasProperty this method_name then
+			execute ("THIS_MODIFIER_RENAMER."+method_name+"()")  --return
 
-			default: this.modObject.name
-		)
+		else
+			case classOf this.modObject of
+			(
+				Edit_Poly:	"EPoly"
+				Edit_Spline:	"Spline"
+				Face_Extrude:	"Extrude"
+				DeleteMesh:	"Delete"
+				Materialmodifier:	"Mat ID " + this.modObject.materialID as string
+				FFDBox:	"FFDBox"
+				FFD_2x2x2:	"FFD2"
+
+				default: this.modObject.name
+			)
 	),
 
 	/** Rename dialog
 	  *
 	  * @param boolean generate modifier name, current name is used if false or default name
 	  */
-	function renameDialog generate:true =
+	function renameDialog generate:undefined =
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		default_text = if generate then this.generateName() else modObject.name
 
+
+		format "THIS.MODOBJECT.NAME	= % \n" this.modObject.name
+		default_mod = execute ((classOf this.modObject) as string + "()")
+
+						/* IF GENERATE NAME IS FORCED TRUE              OR  GENERATE NAME IF NAME IS DEFAULKT AND PARAMENTER UNDEFINED */
+		default_text = if (generate != undefined and generate == true ) or  (generate == undefined and default_mod.name == modObject.name ) then this.generateName() else modObject.name
 
 		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" default_text
 		_dialog_result	= dotNetClass "System.Windows.Forms.DialogResult"
@@ -138,9 +146,9 @@ struct ModifierRenamer_v
 	/** Name based on subobject level selected and material if not ID 1
 	  * @return E.g.: "Select Face Mat 1"
 	  */
-	function _PolySelect =
+	function _Poly_Select =
 	(
-		--format "\n"; print "ModifierRenamer_v._PolySelect()"
+		--format "\n"; print "ModifierRenamer_v._Poly_Select()"
 
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._printModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
@@ -167,9 +175,9 @@ struct ModifierRenamer_v
 	/** Name based on subobject level selected and material if not ID 1
 	  * @return E.g.: "Select Face Mat 1"
 	  */
-	function _VolSelect =
+	function _Vol__Select =
 	(
-		--format "\n"; print "ModifierRenamer_v._VolSelect()"
+		--format "\n"; print "ModifierRenamer_v._Vol__Select()"
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._getModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		--format "subObjectLevel:	% \n" subObjectLevel
@@ -232,9 +240,9 @@ struct ModifierRenamer_v
 	  *
 	  * For development
 	  */
-	function _printModProperties =
+	function _DevPrintModProperties =
 	(
-		--format "\n"; print "ModifierRenamer_v._printModProperties()"
+		--format "\n"; print "ModifierRenamer_v._DevPrintModProperties()"
 		mod_values	= Dictionary()
 
 		for prop in getPropNames modObject do
@@ -334,6 +342,7 @@ struct ModifierRenamer_v
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
 
+		THIS_MODIFIER_RENAMER = this
 	)
 
 )
