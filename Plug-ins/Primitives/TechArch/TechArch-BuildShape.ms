@@ -118,7 +118,7 @@
 
 		/** Get points up to 90 degrees
 		  */
-		function _getArcPoints arc_radius arc_angle pos2z =
+		function _getArcPoints arc_radius arc_angle pos_z =
 		(
             --format "\n"; print "testPlugin.ms.make3PointArc()"
             --format "arc_radius:	% \n" arc_radius

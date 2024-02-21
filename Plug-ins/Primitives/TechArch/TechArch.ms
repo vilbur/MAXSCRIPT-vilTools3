@@ -17,7 +17,7 @@ category:	"Splines"
 		BUILD SHAPE METHODS
 	--------------------------------------------------------------------------------*/
 
-	include "buildShape.ms"
+	include "TechArch-BuildShape.ms"
 
 	/*------------------------------------------------------------------------------
 		ANGLE PARAMETERS
