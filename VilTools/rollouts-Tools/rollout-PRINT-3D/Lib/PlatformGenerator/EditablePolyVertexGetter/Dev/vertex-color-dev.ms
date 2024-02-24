@@ -12,9 +12,11 @@ _vertex_color = color 0 80 200
 
 --obj = Box showVertexColors:true	vertexColorsShaded:true alledges:true -- isSelected:on
 --obj = Plane showVertexColors:true vertexColorsShaded:true alledges:true widthsegs:2 lengthsegs:2
+
+--obj = Sphere radius:50  isSelected:on segs:4 showVertexColors:true	vertexColorsShaded:true
+--obj = Sphere radius:50  isSelected:on segs:16 showVertexColors:true	vertexColorsShaded:true
 obj = Sphere radius:50  isSelected:on segs:64 showVertexColors:true	vertexColorsShaded:true
 --obj = Sphere radius:50  isSelected:on segs:32 showVertexColors:true	vertexColorsShaded:true
---obj = Sphere radius:50  isSelected:on segs:4 showVertexColors:true	vertexColorsShaded:true
 
 
 convertTo obj Editable_Poly
@@ -42,22 +44,55 @@ format "NumCPVVerts = % \n" (getNumCPVVerts obj.mesh )
 function getCPVvertsByGeoVert obj verts =
 (
 	--format "\n"; print ".getVvertsByGeoVert()"
-
-	/** Get faces using vert
+	/** Get faces using by giveen vert
+	  *
+	  * Each face is defined by map verts
 	 */
 	function getFacesUsingVert obj vert =
 	(
-		--format "\n"; print ".getFacesUsingVert()"
-		faces_using_vertex =  meshop.getFacesUsingVert obj.mesh vert
+		/* GET ALL FACES USED BY VERTEX */
+		faces_of_vertex =  meshop.getFacesUsingVert obj.mesh vert
 
-		for face_of_vertex in faces_using_vertex collect meshop.getVertsUsingFace obj.mesh face_of_vertex
+		/* GET ALL VERTS USED BY FACES in faces_of_vertex */
+		all_verts_of_faces = for face_id in faces_of_vertex collect meshop.getVertsUsingFace obj.mesh face_id
+
+		all_verts_of_faces --return
 	)
 
+	/**
+	 */
+	function getMapVertsOface obj map_face_index =
+	(
+		--format "\n"; print ".verts_of_face()"
+		map_verts_of_face_p3 = getVCFace obj.mesh map_face_index -- map_verts_of_face is defined by its 3 vertext indexes E.G.: [1,3,4]
+
+		sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
+	)
+
+	--/**
+	-- */
+	--function getMeshVertsOface obj map_face_index =
+	--(
+	--	--format "\n"; print ".verts_of_face()"
+	--	map_verts_of_face_p3 = getVCFace obj.mesh map_face_index -- map_verts_of_face is defined by its 3 vertext indexes E.G.: [1,3,4]
+	--
+	--	map_verts_of_face = sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
+	--	--format "map_verts_of_face	= % \n" map_verts_of_face
+	--
+	--	verts_of_face = ( meshop.getVertsUsingFace obj.mesh map_face_index) as Array
+	--	--format "verts_of_face	= % \n" verts_of_face
+	--)
+
+
 	local CPV_verts_all	= #()
-	local faces_by_verts	= Dictionary (#integer)
+
+	local faces_of_vert_cache  	= Dictionary (#integer)
+	local map_verts_of_face_cache	= Dictionary (#integer)
 
 	for vert in verts do
 	(
+		--timer_vert = timeStamp()
+
 		CPV_verts = #()
 
 		faces_of_vertex_pattern =  getFacesUsingVert obj vert
@@ -66,22 +101,20 @@ function getCPVvertsByGeoVert obj verts =
 		faces_using_vertex =  ( meshop.getFacesUsingVert obj.mesh vert) as Array
 		--format "faces_using_vertex	= % \n" (faces_using_vertex as Array )
 
-		f = 1
-
 		--map_face_index = (faces_using_vertex as Array)[1]
 		for map_face_index in faces_using_vertex do
 		(
-
 			--format "\n--------------------------\n\nMAP_FACE_INDEX = % \n" map_face_index
-			--format "faces_by_verts  = % \n" faces_by_verts[map_face_index]
 
-			map_verts_of_face_p3 = getVCFace obj.mesh map_face_index -- map_verts_of_face is defined by its 3 vertext indexes E.G.: [1,3,4]
 
-			map_verts_of_face = sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
-			--format "map_verts_of_face	= % \n" map_verts_of_face
+			if map_verts_of_face_cache[map_face_index] == undefined then
+				map_verts_of_face_cache[map_face_index] =  getMapVertsOface obj map_face_index
+
+			map_verts_of_face = map_verts_of_face_cache[map_face_index]
+
+			--map_verts_of_face = getMapVertsOface obj map_face_index
 
 			mesh_verts_of_face = ( meshop.getVertsUsingFace obj.mesh map_face_index) as Array
-			--format "mesh_verts_of_face	= % \n" mesh_verts_of_face
 
 			found = false
 			v = 1
@@ -91,19 +124,20 @@ function getCPVvertsByGeoVert obj verts =
 			/* LOOP EACH GEOMETRY VERTEX OF FACE and find which vert share same faces as faces_of_vertex_pattern ( it means that it is the same geometry vert ) */
 			while v <= mesh_verts_of_face.count and not found do
 			(
-
 				vert_mesh = mesh_verts_of_face[v]
 
-				if faces_by_verts[vert_mesh] == undefined then
-					faces_by_verts[vert_mesh] =  getFacesUsingVert obj vert_mesh
+				/* SAVE TO CACHE */
+				if faces_of_vert_cache[vert_mesh] == undefined then
+					faces_of_vert_cache[vert_mesh] =  getFacesUsingVert obj vert_mesh
 
-				faces_of_vertex = faces_by_verts[vert_mesh]
+				faces_of_vert = faces_of_vert_cache[vert_mesh]
 
-				--faces_of_vertex = getFacesUsingVert obj vert_mesh
+				--faces_of_vert = getFacesUsingVert obj vert_mesh
+				--format "faces_of_vert	= % \nces_of_vert"faces_of_ve
 
-				if faces_of_vertex_pattern.count == faces_of_vertex.count and (with PrintAllElements on faces_of_vertex_pattern as string == faces_of_vertex as string) then
+				if faces_of_vertex_pattern.count == faces_of_vert.count and (with PrintAllElements on faces_of_vertex_pattern as string == faces_of_vert as string) then
 				(
-					--format "faces_of_vertex	= % \n" faces_of_vertex
+					--format "faces_of_vert	= % \n" map_verts_of_face[v]
 					append CPV_verts  map_verts_of_face[v]
 
 					found = true
@@ -117,9 +151,12 @@ function getCPVvertsByGeoVert obj verts =
 
 
 		append CPV_verts_all CPV_verts
+
+		--format "\nTimer_vert % ms" (( timeStamp()) - timer_vert)
+
 	)
 
-	--format "faces_by_verts	= % \n" faces_by_verts
+	--format "faces_of_vert_cache	= % \n" faces_of_vert_cache
 
 	CPV_verts_all --return
 )
@@ -150,7 +187,7 @@ format "CPV_verts_all	= % \n" CPV_verts
 
 format "\n--------------------------\n\nTEST ALL MESH VERTS:\n\n"
 
-format "\nProcessing took % ms" (( timeStamp()) - timer_start)
+format "\nGet % takes % ms\n" vertex_count (( timeStamp()) - timer_start)
 
 for CPV_verts in CPV_verts_all do
 (
