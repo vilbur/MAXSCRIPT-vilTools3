@@ -3,7 +3,6 @@ clearListener(); print("Cleared in:\n"+getSourceFileName())
 filein( getFilenamePath(getSourceFileName()) + "/../MeshVertToColorVertexConvertor.ms" )	--"./../MeshVertToColorVertexConvertor.ms"
 
 
-
 /** Prepare scene
  */
 function prepareScene verts _vertex_color break_map_faces:true =
@@ -67,9 +66,13 @@ obj = objects[1]
 --get_single_vert = false
 get_single_vert = true
 
+break_map_faces = true
+break_map_faces = false
+
 --verts	= 1
 --verts	= 2
-verts	= #{1..(vertex_count)}
+verts	= 6
+--verts	= #{1..(vertex_count)}
 
 
 _vertex_color = color 0 80 200
@@ -80,8 +83,7 @@ _vertex_color = color 0 80 200
 
 ================================================================================*/
 
---prepareScene verts break_map_faces:true
-prepareScene verts _vertex_color break_map_faces:false
+prepareScene verts _vertex_color break_map_faces:break_map_faces
 
 
 

@@ -36,7 +36,7 @@ struct PlatformGenerator_v
 
 	/* dependency */
 	Options,	--PlatformOptions_v(),
-	PlatformVertInstance,
+	PlatformObjectInstance,
 	PlatformModifiers,	--PlatformModifiers_v(),
 	PlatformCrossSection,
 	EditablePolyVertexGetter = EditablePolyVertexGetter_v(),
@@ -304,7 +304,7 @@ struct PlatformGenerator_v
 	function _getPlatformObject source_obj wirecolor =
 	(
 		--format "\n"; print "PlatformGenerator_v._getPlatformObject()"
-		PlatformObject = deepCopy PlatformVertInstance
+		PlatformObject = deepCopy PlatformObjectInstance
 
 		PlatformObject.source_obj	= source_obj
 		PlatformObject.wirecolor	= wirecolor
@@ -400,7 +400,7 @@ struct PlatformGenerator_v
 
 		PlatformModifiers	= PlatformModifiers_v	Options:Options
 		PlatformCrossSection	= PlatformCrossSection_v	Options:Options
-		PlatformVertInstance 	= PlatformObject_v	Options:Options
+		PlatformObjectInstance 	= PlatformObject_v	Options:Options
 		--EditablePolyVertexGetter 	= EditablePolyVertexGetter_v	normal_length:this.Options.normal_length
 	)
 )

@@ -5,9 +5,12 @@ struct MeshVertToColorVertexConvertor_v
 	/* construct */
 	obj,
 
-	get_single_vert,
+	get_single_vert = true,
 
 	/* properties */
+	faces_of_vert_cache   	= Dictionary (#integer),
+	map_verts_of_face_cache = Dictionary (#integer),
+	mesh_verts_of_face_cache = Dictionary (#integer),
 
 	/* dependency */
 	/* reference */
@@ -47,9 +50,6 @@ struct MeshVertToColorVertexConvertor_v
 
 		local CPV_verts_all	= #()
 
-		local faces_of_vert_cache   	= Dictionary (#integer)
-		local map_verts_of_face_cache = Dictionary (#integer)
-		local mesh_verts_of_face_cache = Dictionary (#integer)
 
 		for vert in verts do
 		(
@@ -60,10 +60,9 @@ struct MeshVertToColorVertexConvertor_v
 			--format "FACES_OF_VERTEX_PATTERN	= % \n" faces_of_vertex_pattern
 
 			map_faces = faces_using_vertex =  ( meshop.getFacesUsingVert obj.mesh vert) as Array
-			--format "faces_using_vertex	= % \n" (faces_using_vertex as Array )
 
 			 if get_single_vert then
-				map_faces = #((faces_using_vertex as Array )[1])
+				map_faces = #((faces_using_vertex as Array )[1]) -- use only one map face
 
 
 			--map_face_index = (faces_using_vertex as Array)[1]
@@ -128,9 +127,9 @@ struct MeshVertToColorVertexConvertor_v
 
 		)
 
-		free	faces_of_vert_cache
-		free	map_verts_of_face_cache
-		free	mesh_verts_of_face_cache
+		--free	faces_of_vert_cache
+		--free	map_verts_of_face_cache
+		--free	mesh_verts_of_face_cache
 
 		gc()	--Garbage Collection.
 
@@ -143,8 +142,11 @@ struct MeshVertToColorVertexConvertor_v
 	(
 		--format "\n"; print "MeshVertToColorVertexConvertor_v.mapVertsToMeshVerts()"
 
-		mesh_verts = #{}
-		map_faces_all = #()
+		local mesh_verts = #{}
+		local map_faces_all = #()
+
+		local map_verts_of_face_cache  = Dictionary (#integer)
+		local mesh_verts_of_face_cache = Dictionary (#integer)
 
 		for map_face_index = 1 to getNumFaces obj.mesh do
 			append map_faces_all  ( getVCFace obj.mesh map_face_index )
@@ -159,20 +161,21 @@ struct MeshVertToColorVertexConvertor_v
 
 			face_id = (map_faces_of_vert as Array )[1]
 
+
 			map_verts_of_face = getVCFace obj.mesh face_id
-			geo_verts_of_face = (meshop.getVertsUsingFace obj.mesh face_id) as Array
+			geo_verts_of_face = ( meshop.getVertsUsingFace obj.mesh face_id) as Array
+
+
+
 			--format "\n--------------------------\n\nFACE_ID = % \n" face_id
 			--format "map_verts_of_face	= % \n" map_verts_of_face
 			--format "geo_verts_of_face	= % \n" geo_verts_of_face
 
 			for i = 1 to 3 where map_verts_of_face[i] == map_vert do
 				mesh_verts[ geo_verts_of_face[i] ] = true
-			--	--geovertex_index = i
-
-
 
 		)
-		
+
 		gc()	--Garbage Collection.
 
 		mesh_verts --return

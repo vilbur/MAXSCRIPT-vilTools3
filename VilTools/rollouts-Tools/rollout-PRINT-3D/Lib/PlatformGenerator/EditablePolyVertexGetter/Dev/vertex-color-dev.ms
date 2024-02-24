@@ -45,7 +45,7 @@ function prepareScene =
 
 /** Get Color per vertex indexes verts by geo vert
  */
-function getCPVvertsByGeoVert obj verts get_single_vert:true =
+function meshVertsToMapVerts obj verts get_single_vert:true =
 (
 	--format "\n"; print ".getVvertsByGeoVert()"
 	/** Get faces using by giveen vert
@@ -169,6 +169,9 @@ function getCPVvertsByGeoVert obj verts get_single_vert:true =
 
 
 
+
+
+
 	/*------------------------------------------------------------------------------
 
 		TEST ALL VERTS
@@ -185,7 +188,7 @@ function getCPVvertsByGeoVert obj verts get_single_vert:true =
 	get_single_vert = true
 	verts	= 1
 	--verts	= #{1..(vertex_count)}
-	verts	= #{1..10}
+	--verts	= #{1..10}
 
 
 	/*------------------------------------------------------------------------------
@@ -193,7 +196,8 @@ function getCPVvertsByGeoVert obj verts get_single_vert:true =
 	--------------------------------------------------------------------------------*/
 	timer_start = timeStamp()
 
-	CPV_verts_all = getCPVvertsByGeoVert obj verts get_single_vert:get_single_vert
+
+	CPV_verts_all = meshVertsToMapVerts obj verts get_single_vert:get_single_vert
 
 
 	/*------------------------------------------------------------------------------
@@ -209,15 +213,10 @@ function getCPVvertsByGeoVert obj verts get_single_vert:true =
 
 	format "\nGet % takes % ms\n" vertex_count (( timeStamp()) - timer_start)
 
-	for CPV_verts in CPV_verts_all do
+	for CPV_verts in CPV_verts_all as Array do
 	(
 		--format "CPV_verts	= % \n" CPV_verts
 		--vertex_color_get = getvertcolor obj.mesh CPV_verts[1]
 
 		--format "TEST PASSED: %  >>> vert: %	color:%	CPV_verts:%\n" (vertex_color_get as string ==_vertex_color as string ) vert vertex_color_get CPV_verts
 	)
-
-
-
-
-
