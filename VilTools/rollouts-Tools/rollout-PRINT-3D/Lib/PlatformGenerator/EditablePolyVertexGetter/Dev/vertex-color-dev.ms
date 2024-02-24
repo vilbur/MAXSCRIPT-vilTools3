@@ -10,10 +10,10 @@ vert = 1
 
 _vertex_color = color 0 80 200
 
-obj = Box showVertexColors:true	vertexColorsShaded:true alledges:true -- isSelected:on
+--obj = Box showVertexColors:true	vertexColorsShaded:true alledges:true -- isSelected:on
 --obj = Plane showVertexColors:true	vertexColorsShaded:true alledges:true widthsegs:2 lengthsegs:2
+obj = Sphere radius:50  isSelected:on segs:32
 
-obj = objects[1]
 
 convertTo obj Editable_Poly
 
@@ -37,10 +37,9 @@ format "NumCPVVerts = % \n" (getNumCPVVerts obj.mesh )
 
 /** Get Color per vertex indexes verts by geo vert
  */
-function getCPVvertsByGeoVert vert =
+function getCPVvertsByGeoVert obj verts =
 (
 	--format "\n"; print ".getVvertsByGeoVert()"
-		CPV_verts = #{}
 
 	/** Get faces using vert
 	 */
@@ -52,63 +51,59 @@ function getCPVvertsByGeoVert vert =
 		for face_of_vertex in faces_using_vertex collect meshop.getVertsUsingFace obj.mesh face_of_vertex
 	)
 
+	local CPV_verts_all = #()
 
-	faces_using_vertex =  meshop.getFacesUsingVert obj.mesh vert
-	format "faces_using_vertex	= % \n" (faces_using_vertex as Array)
-
-	faces_of_vertex_pattern =  getFacesUsingVert obj vert
-
-	format "FACES_OF_VERTEX_PATTERN	= % \n" faces_of_vertex_pattern
-
-
-	--map_face_index = (faces_using_vertex as Array)[1]
-	for map_face_index in faces_using_vertex as Array do
+	for vert in verts do
 	(
-		format "\n--------------------------\n\nMAP_FACE_INDEX	= % \n" map_face_index
+		CPV_verts = #()
 
-		map_verts_of_face_p3 = getVCFace obj.mesh map_face_index -- map_verts_of_face is defined by its 3 vertext indexes E.G.: [1,3,4]
+		faces_of_vertex_pattern =  getFacesUsingVert obj vert
+		--format "FACES_OF_VERTEX_PATTERN	= % \n" faces_of_vertex_pattern
 
-		map_verts_of_face = sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
-		format "map_verts_of_face	= % \n" map_verts_of_face
+		faces_using_vertex =  ( meshop.getFacesUsingVert obj.mesh vert) as Array
+		--format "faces_using_vertex	= % \n" (faces_using_vertex as Array )
 
-		geo_verts_of_face = ( meshop.getVertsUsingFace obj.mesh map_face_index) as Array
-		format "geo_verts_of_face	= % \n" geo_verts_of_face
+		f = 1
 
-		for i = 1 to geo_verts_of_face.count do
+		--map_face_index = (faces_using_vertex as Array)[1]
+		for map_face_index in faces_using_vertex do
 		(
-			faces_of_vertex =  getFacesUsingVert obj geo_verts_of_face[i]
 
-			format "\n\tfaces_of_vertex %	= % \n" geo_verts_of_face[i] faces_of_vertex
+			--format "\n--------------------------\n\nMAP_FACE_INDEX	= % \n" map_face_index
+			map_verts_of_face_p3 = getVCFace obj.mesh map_face_index -- map_verts_of_face is defined by its 3 vertext indexes E.G.: [1,3,4]
 
-			if faces_of_vertex_pattern.count == faces_of_vertex.count and (with PrintAllElements on faces_of_vertex_pattern as string == faces_of_vertex as string) then
-				CPV_verts[ map_verts_of_face[i]] = true
+			map_verts_of_face = sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
+			--format "map_verts_of_face	= % \n" map_verts_of_face
+
+			geo_verts_of_face = ( meshop.getVertsUsingFace obj.mesh map_face_index) as Array
+			--format "geo_verts_of_face	= % \n" geo_verts_of_face
+
+			found = false
+			v = 1
+			--for v = 1 to geo_verts_of_face.count do
+			while v <= geo_verts_of_face.count and not found do
+			(
+				faces_of_vertex =  getFacesUsingVert obj geo_verts_of_face[v]
+				--format "\n\tfaces_of_vertex %	= % \n" geo_verts_of_face[v] faces_of_vertex
+
+				if faces_of_vertex_pattern.count == faces_of_vertex.count and (with PrintAllElements on faces_of_vertex_pattern as string == faces_of_vertex as string) then
+				(
+					append CPV_verts  map_verts_of_face[v]
+
+					found = true
+					--format "FOUND	= % \n" found
+				)
+
+				v += 1
+			)
+
 		)
 
+
+		append CPV_verts_all CPV_verts
 	)
-
-	CPV_verts as Array --return
+	CPV_verts_all --return
 )
-
-/*------------------------------------------------------------------------------
-
-	TEST SINGLE VERTEX
-
-	colors of map vertex must be equal to color of poly vertex
-
---------------------------------------------------------------------------------*/
-
---CPV_verts = getCPVvertsByGeoVert (1)
---format "\n--------------------------\n\nTEST SINGLE VERTEX: CPV_verts	= % \n\n" CPV_verts
---
---for CPV_vert in CPV_verts as Array do
---(
---	vertex_color_get = getvertcolor obj.mesh CPV_vert
---
---	format "vert:% CPV_vert:%	color:% TEST PASSED: % \n" vert CPV_vert vertex_color_get (vertex_color_get as string == _vertex_color as string )
---)
-
-
-
 
 
 
@@ -119,28 +114,33 @@ function getCPVvertsByGeoVert vert =
 	colors of map vertex must be equal to color of poly vertex
 
 --------------------------------------------------------------------------------*/
---
 
-format "polyop.getNumVerts obj.baseobject	= % \n" (polyop.getNumVerts obj.baseobject)
-CPV_verts_all = for vert = 1 to polyop.getNumVerts obj.baseobject collect getCPVvertsByGeoVert vert
+timer_start = timeStamp()
 
-format "\n--------------------------\n\nTEST ALL VERTS: CPV_verts_all	= % \n\n" CPV_verts_all
+obj = objects[1]
 
-for vert = 1 to polyop.getNumVerts obj.baseobject do
+vertex_count = getNumVerts obj.mesh
+
+CPV_verts_all = getCPVvertsByGeoVert obj #{1..(vertex_count)}
+
+format "\n**************************\n\nTEST ALL MESH VERTS:\n\n"
+
+format "Vertex Count	Test = % \n" (CPV_verts_all.count == vertex_count)
+
+format "CPV_verts_all	= % \n" CPV_verts
+
+format "\n--------------------------\n\nTEST ALL MESH VERTS:\n\n"
+
+for CPV_verts in CPV_verts_all do
 (
-	--CPV_vert = CPV_verts_all[vert]
+	vertex_color_get = getvertcolor obj.mesh CPV_verts[1]
 
-	vertex_color_get = getvertcolor obj.mesh CPV_verts_all[vert][1]
-
-	format "vert:% CPV_vert:%	TEST PASSED: % \n" vert CPV_verts_all[vert] (vertex_color_get as string == _vertex_color as string )
+	--format "TEST PASSED: %  >>> vert: %	color:%	CPV_verts:%\n" (vertex_color_get as string ==_vertex_color as string ) vert vertex_color_get CPV_verts
 )
 
+format "\nProcessing took % ms" (( timeStamp()) - timer_start)
 
---for CPV_vert in CPV_verts as Array do
---(
---	vertex_color_get = getvertcolor obj.mesh CPV_vert
---	format "vert: % CPV_vert:%	color:% TEST PASSED: % \n" vert CPV_vert vertex_color_get (vertex_color_get as string ==_vertex_color as string )
---)
+
 
 
 
