@@ -11,8 +11,10 @@ vert = 1
 _vertex_color = color 0 80 200
 
 --obj = Box showVertexColors:true	vertexColorsShaded:true alledges:true -- isSelected:on
---obj = Plane showVertexColors:true	vertexColorsShaded:true alledges:true widthsegs:2 lengthsegs:2
-obj = Sphere radius:50  isSelected:on segs:32
+--obj = Plane showVertexColors:true vertexColorsShaded:true alledges:true widthsegs:2 lengthsegs:2
+obj = Sphere radius:50  isSelected:on segs:64 showVertexColors:true	vertexColorsShaded:true
+--obj = Sphere radius:50  isSelected:on segs:32 showVertexColors:true	vertexColorsShaded:true
+--obj = Sphere radius:50  isSelected:on segs:4 showVertexColors:true	vertexColorsShaded:true
 
 
 convertTo obj Editable_Poly
@@ -51,7 +53,8 @@ function getCPVvertsByGeoVert obj verts =
 		for face_of_vertex in faces_using_vertex collect meshop.getVertsUsingFace obj.mesh face_of_vertex
 	)
 
-	local CPV_verts_all = #()
+	local CPV_verts_all	= #()
+	local faces_by_verts	= Dictionary (#integer)
 
 	for vert in verts do
 	(
@@ -69,25 +72,38 @@ function getCPVvertsByGeoVert obj verts =
 		for map_face_index in faces_using_vertex do
 		(
 
-			--format "\n--------------------------\n\nMAP_FACE_INDEX	= % \n" map_face_index
+			--format "\n--------------------------\n\nMAP_FACE_INDEX = % \n" map_face_index
+			--format "faces_by_verts  = % \n" faces_by_verts[map_face_index]
+
 			map_verts_of_face_p3 = getVCFace obj.mesh map_face_index -- map_verts_of_face is defined by its 3 vertext indexes E.G.: [1,3,4]
 
 			map_verts_of_face = sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
 			--format "map_verts_of_face	= % \n" map_verts_of_face
 
-			geo_verts_of_face = ( meshop.getVertsUsingFace obj.mesh map_face_index) as Array
-			--format "geo_verts_of_face	= % \n" geo_verts_of_face
+			mesh_verts_of_face = ( meshop.getVertsUsingFace obj.mesh map_face_index) as Array
+			--format "mesh_verts_of_face	= % \n" mesh_verts_of_face
 
 			found = false
 			v = 1
-			--for v = 1 to geo_verts_of_face.count do
-			while v <= geo_verts_of_face.count and not found do
+
+			--for v = 1 to mesh_verts_of_face.count do
+
+			/* LOOP EACH GEOMETRY VERTEX OF FACE and find which vert share same faces as faces_of_vertex_pattern ( it means that it is the same geometry vert ) */
+			while v <= mesh_verts_of_face.count and not found do
 			(
-				faces_of_vertex =  getFacesUsingVert obj geo_verts_of_face[v]
-				--format "\n\tfaces_of_vertex %	= % \n" geo_verts_of_face[v] faces_of_vertex
+
+				vert_mesh = mesh_verts_of_face[v]
+
+				if faces_by_verts[vert_mesh] == undefined then
+					faces_by_verts[vert_mesh] =  getFacesUsingVert obj vert_mesh
+
+				faces_of_vertex = faces_by_verts[vert_mesh]
+
+				--faces_of_vertex = getFacesUsingVert obj vert_mesh
 
 				if faces_of_vertex_pattern.count == faces_of_vertex.count and (with PrintAllElements on faces_of_vertex_pattern as string == faces_of_vertex as string) then
 				(
+					--format "faces_of_vertex	= % \n" faces_of_vertex
 					append CPV_verts  map_verts_of_face[v]
 
 					found = true
@@ -102,6 +118,9 @@ function getCPVvertsByGeoVert obj verts =
 
 		append CPV_verts_all CPV_verts
 	)
+
+	--format "faces_by_verts	= % \n" faces_by_verts
+
 	CPV_verts_all --return
 )
 
@@ -131,14 +150,16 @@ format "CPV_verts_all	= % \n" CPV_verts
 
 format "\n--------------------------\n\nTEST ALL MESH VERTS:\n\n"
 
+format "\nProcessing took % ms" (( timeStamp()) - timer_start)
+
 for CPV_verts in CPV_verts_all do
 (
-	vertex_color_get = getvertcolor obj.mesh CPV_verts[1]
+	--format "CPV_verts	= % \n" CPV_verts
+	--vertex_color_get = getvertcolor obj.mesh CPV_verts[1]
 
 	--format "TEST PASSED: %  >>> vert: %	color:%	CPV_verts:%\n" (vertex_color_get as string ==_vertex_color as string ) vert vertex_color_get CPV_verts
 )
 
-format "\nProcessing took % ms" (( timeStamp()) - timer_start)
 
 
 
