@@ -29,7 +29,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 			polyop.setVertColor _obj 0 vertex_selection vertex_color
 
 
-		polyop.setVertColor _obj 0 {vertex_selection.count} red
+		polyop.setVertColor _obj 0 vertex_selection.count red -- color last vertex in red color
 
 		--_obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
@@ -43,8 +43,8 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
 --createSourceMesh()
- --createSourceMesh vertex_selection:#{2..3} vertex_color:green
- createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
+ createSourceMesh vertex_selection:#{2..3} vertex_color:green
+ -- createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
 
 
 /* SELECT SOURCE OBJECTS - IMPORTANT  */

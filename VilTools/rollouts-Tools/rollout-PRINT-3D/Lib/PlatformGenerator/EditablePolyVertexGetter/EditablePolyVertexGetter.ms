@@ -33,23 +33,23 @@ struct EditablePolyVertexGetter_v
 	  */
 	function setVertsData obj quiet:false =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
+		--format "\n"; print "EditablePolyVertexGetter_v.getVertsData()"
 
 		/** Get all verts where color is not white
 		 */
 		function getAllColoredVerts verts_VC =
 		(
 
-			format "\n"; print "EditablePolyVertexGetter_v.getAllColoredVerts()"
-			format "verts_VC	= % \n" verts_VC
+			--format "\n"; print "EditablePolyVertexGetter_v.getAllColoredVerts()"
+			--format "verts_VC	= % \n" verts_VC
 
 			colored_verts =  verts_VC - vertex_colors[white as string ]
-			format "colored_verts	= % \n" colored_verts
+			--format "colored_verts	= % \n" colored_verts
 
 			--for vert_color in vertex_colors.keys where vert_color != "(color 255 255 255)" do
 			this.verts_to_generate = (MeshVertToColorVertexConvertor.mapVertsToMeshVerts (colored_verts)) as Array
 
-			format "this.verts_to_generate = % \n" this.verts_to_generate
+			--format "this.verts_to_generate = % \n" this.verts_to_generate
 		)
 
 		this.obj_source = obj
@@ -65,14 +65,14 @@ struct EditablePolyVertexGetter_v
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 		verts_count_VC	= getNumCPVVerts obj.mesh
 
-		format "verts_count	= % \n" verts_count
-		format "verts_count_VC	= % \n" verts_count_VC
+		--format "verts_count	= % \n" verts_count
+		--format "verts_count_VC	= % \n" verts_count_VC
 
 
 		this._setVertexColors verts_to_get:verts_all verts_count_VC:verts_count_VC verts_count:verts_count
 
-		 for vert_color in vertex_colors.keys do
-			format "%	= % \n" vert_color vertex_colors[vert_color]
+		 --for vert_color in vertex_colors.keys do
+			--format "%	= % \n" vert_color vertex_colors[vert_color]
 
 		--format "vert_color	= % \n" vert_color
 		--format "vertex_colors.keys	= % \n" vertex_colors.keys
@@ -95,7 +95,8 @@ struct EditablePolyVertexGetter_v
 		/* WARN BEFORE USING ALL VERTS */
 		if verts_count != verts_to_generate.count or queryBox ("USE ALL "+ verts_count +" VERTS ?") title:"SET VERTS DATA"  then
 		(
-			verts_positions = polyop.getVerts obj.baseobject verts_all node:obj
+			verts_positions = for v = 1 to verts_count collect (( getVert obj.mesh v ) * obj.transform )
+			--format "VERTS_POSITIONS	= % \n" verts_positions
 
 			this._loadVertsData()
 
@@ -160,7 +161,7 @@ struct EditablePolyVertexGetter_v
 		fn positionChanged p1 p2 eps:1e-3 = distance p1 p2 > eps
 
 		vert	= verts_to_generate[i] -- vertex index
-		vert_pos	=  verts_positions[vert]
+		vert_pos	= verts_positions[vert]
 		vert_data	= this.verts_data[vert]
 		point_helper	= if vert_data != undefined and vert_data[4] != undefined and isValidNode (getAnimByHandle vert_data[4]) then vert_data[4]
 
@@ -197,23 +198,7 @@ struct EditablePolyVertexGetter_v
 	  */
 	function _setVertexColors verts_to_get: verts_count_VC: =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
-		format "verts_to_get	= % \n" verts_to_get
-
-		/* GET VERTEX COLORS CRASH IF GET VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL
-
-			CODE BELLOW FIX PROBLEM< BUT IT RESET VERTEX COLORS TOO
-
-
-			if verts_count != verts_count_VC then
-				polyop.defaultMapFaces obj.baseobject 0 --true
-
-		*/
-
-		/*------------------------------------------------------------------------------
-			GET OTEH VERTEX COLORS
-		--------------------------------------------------------------------------------*/
-			----format "verts_to_get.count START	= % \n" (verts_to_get as Array ).count
+		--format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
 
 		if verts_count_VC != undefined then
 		(
@@ -224,13 +209,13 @@ struct EditablePolyVertexGetter_v
 			while not map_verts.isEmpty or counter > 30 do
 			(
 				vertex_index = (map_verts as Array )[1]
-				format "vertex_index	= % \n" vertex_index
+				--format "vertex_index	= % \n" vertex_index
 				if not  processed_verts[vertex_index]  then
 				(
 
 					color_of_vert = getvertcolor obj.mesh vertex_index -- get color of vertex
 
-					format "color_of_vert	= % \n" color_of_vert
+					--format "color_of_vert	= % \n" color_of_vert
 					verts_by_color = this._getVertsByColor (color_of_vert)	-- get all verts by thath color
 					--format "verts_by_color	= % \n" verts_by_color
 					processed_verts += verts_by_color
