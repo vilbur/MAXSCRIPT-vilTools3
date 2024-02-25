@@ -11,7 +11,7 @@ struct PlatformObject_v
 
 
 	/* vert_data */
-	verts_positions = #(), -- vertex positions to generate platforms
+	points_positions = #(), -- vertex positions to generate platforms
 	normal,
 	wirecolor,	-- wirecolor of platform get from source object or vertex color
 	point_helper,	-- generated point helper node
@@ -27,30 +27,33 @@ struct PlatformObject_v
 
 	  * return this
 	 */
-	function fillVertData vertex_index vert_data =
+	--function fillVertData vertex_index vert_data =
+	function fillVertData vertex_index: pos: normal: wirecolor: =
 	(
 		--format "\n"; print "PlatformObject_v.fillVertData()"
-		this.vertex_index = vertex_index
+		this.vertex_index	= vertex_index
+		this.normal	= normal
+		this.wirecolor	= wirecolor
 
-		normal	= vert_data[2]
-		wirecolor	= if vert_data[3] != undefined then vert_data[3] else source_obj.wirecolor
+		--append this.points_positions pos
+		--wirecolor	= if vert_data[3] != undefined then vert_data[3] else source_obj.wirecolor
 
-		this._addVert (vert_data[1])
+		this._setPointPositions (pos)
 
-		if ( helper_pointer = vert_data[4] ) != undefined and isValidNode ( point_helper_node = getAnimByHandle helper_pointer ) then
-			this.point_helper = point_helper_node
-
-		this --return
+		--if ( helper_pointer = vert_data[4] ) != undefined and isValidNode ( point_helper_node = getAnimByHandle helper_pointer ) then
+		--	this.point_helper = point_helper_node
+		--
+		--this --return
 	),
 
-	/** Add vert pos
-	  *
-	  */
-	function addVert pos =
-	(
-		--format "\n"; print "PlatformObject_v.addVertPos()"
-		append this.verts_positions pos
-	),
+	--/** Add vert pos
+	--  *
+	--  */
+	--function addVert pos =
+	--(
+	--	--format "\n"; print "PlatformObject_v.addVertPos()"
+	--	append this.points_positions pos
+	--),
 
 	/** Generate platform
 	  *l
@@ -63,7 +66,7 @@ struct PlatformObject_v
 
 		platform = SplineShape name:( source_obj.name + "-platform" ) wirecolor:(this.shiftWirecolor(1))
 
-		--format "verts_positions:	% \n" verts_positions
+		--format "points_positions:	% \n" points_positions
 
 		platform_parent = this._getPlatformParent()
 		--format "PLATFORM_PARENT	= % \n" PLATFORM_PARENT
@@ -102,9 +105,9 @@ struct PlatformObject_v
 			GENERATE POINTS
 		--------------------------------------------------------------------------------*/
 		if not isValidNode point_helper then
-			for i = 1 to this.verts_positions.count do
+			for i = 1 to this.points_positions.count do
 			(
-				vert_pos = this.verts_positions[i]
+				vert_pos = this.points_positions[i]
 
 				_point = Point pos:vert_pos size:(this.Options.bar_width) wirecolor:(shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
@@ -175,16 +178,17 @@ struct PlatformObject_v
 	/** Add vert pos
 	  *
 	  */
-	function _addVert vert_pos =
+	function _setPointPositions vert_pos =
 	(
-		--format "\n"; print "PlatformObject_v.addVertPos()"
+		format "\n"; print "PlatformObject_v.addVertPos()"
 
-		local normal = this.normal	 * source_obj.transform - source_obj.pos
+
+		local normal = this.normal * source_obj.transform - source_obj.pos
 
 		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
 		if normal.z <= 0 then
 		(
-			append this.verts_positions vert_pos
+			append this.points_positions vert_pos
 
 			normal_length = this.Options.normal_length
 
@@ -199,13 +203,13 @@ struct PlatformObject_v
 				if normal.z > -0.25 then
 					vert_pos.z -= normal_length
 
-				append this.verts_positions vert_pos
+				append this.points_positions vert_pos
 			)
 		)
 		else
 			format " NOT USED - VERTEX NORMAL IS FACING UP:  %" normal.z
 
-		--format "THIS.VERTS_POSITIONS	= % \n" this.verts_positions
+		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),
 
 	/** Add to layer
@@ -271,14 +275,14 @@ struct PlatformObject_v
 		/*------------------------------------------------------------------------------
 			ADD KNOTS FROM TOP TO BOTTOM
 		--------------------------------------------------------------------------------*/
-		for pos in verts_positions do
+		for pos in points_positions do
 			addKnot platform spline_index #corner #line pos
 
 
 		/*------------------------------------------------------------------------------
 			ABOVE GROUND POINT
 		--------------------------------------------------------------------------------*/
-		pos = verts_positions[verts_positions.count]
+		pos = points_positions[points_positions.count]
 
 		pos.z = this.Options.base_height -- set knot above ground to set base height and keep last segment straight for extrude
 
