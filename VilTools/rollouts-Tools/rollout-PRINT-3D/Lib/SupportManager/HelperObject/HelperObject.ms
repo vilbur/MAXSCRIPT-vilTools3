@@ -19,39 +19,38 @@ struct HelperObject_v
 	/* inhered */
 	Options,
 
-	/** Create or update helper
+	/** Create helper
 	 */
-	function createOrUpdateHelper  =
+	function createHelper =
 	(
 		format "\n"; print "HelperObject_v.createOrUpdateHelper()"
-		--format "\n"; print "PlatformObject_v.generatePointHelper()"
+		format "point_helper	= % \n" this.point_helper
+
 		points_created	= #()
 
 		/*------------------------------------------------------------------------------
 			GENERATE POINTS
 		--------------------------------------------------------------------------------*/
-		if not isValidNode point_helper then
-			for i = 1 to this.points_positions.count do
-			(
-				vert_pos = this.points_positions[i]
+		this._deleteOldPointHelper()
 
-				_point = Point pos:vert_pos size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
-				/*------------------------------------------------------------------------------
-					!!!!!!! ALL POINTS ARE LINKED TO FIRST OF SOURCEOBEJCT
+		for i = 1 to this.points_positions.count do
+		(
+			_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
-					Should be improved to respect EACH source object
-				--------------------------------------------------------------------------------*/
-				/* IF FIRST TOP POINT OF PLATFORM */
-				if i == 1 then
-					this.point_helper = _point
+			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
+			if i == 1 then
+				this.point_helper = _point
 
-				_point.parent = if i == 1 then source_obj else points_created[points_created.count]
+			/* LINK FIRST POINT TO SOURCE OBJECT, OTHER POINTS ARE LINKED IN CHAIN  */
+			_point.parent = if i == 1 then source_obj else points_created[points_created.count]
 
-				this._addToLayer (this.source_obj) (_point)
+			this._addToLayer (this.source_obj) (_point)
 
-				append points_created _point
-			)
+			this._saveUserDataToPointHelper()
+
+			append points_created _point
+		)
 
 		point_helper --return first point
 
@@ -65,7 +64,7 @@ struct HelperObject_v
 	  */
 	function _setPointPositions vert_pos =
 	(
-		--format "\n"; print "PlatformObject_v._setPointPositions()"
+		--format "\n"; print "HelperObject_v._setPointPositions()"
 
 		local normal = this.normal * source_obj.transform - source_obj.pos
 		--local normal = this.normal
@@ -126,14 +125,43 @@ struct HelperObject_v
 		layer.addNode obj
 	),
 
+
+	/**
+	 */
+	function _saveUserDataToPointHelper =
+	(
+		--format "\n"; print "HelperObject_v.saveUserData()"
+		setUserPropVal point_helper "helper_source" ( getHandleByAnim source_obj )
+		setUserPropVal point_helper "this_pointer"	  ( getHandleByAnim point_helper )
+		setUserPropVal point_helper "source_vert"	  ( vertex_index )
+
+	),
+
+	/** Delete old points and platforms
+	 */
+	function _deleteOldPointHelper =
+	(
+		--format "\n"; print "HelperObject_v.deleteOldPointsAndPlatforms()"
+		--format "point_helper	= % \n" point_helper
+
+		if isValidNode point_helper then
+		(
+			children = #(point_helper)
+
+			this.getAllChildren(point_helper) (children)
+
+			delete children
+		)
+	),
+
+	mapped function getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this.getAllChildPoints _node.children &children ),
+
+	mapped function getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this.getAllChildren _node.children &children ),
+
 	/**
 	 */
 	on create do
 	(
 		this._setPointPositions (pos)
-
-
-
 	)
-
 )

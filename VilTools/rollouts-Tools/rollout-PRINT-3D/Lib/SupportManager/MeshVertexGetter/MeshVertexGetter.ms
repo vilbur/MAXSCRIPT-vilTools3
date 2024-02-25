@@ -25,7 +25,7 @@ struct MeshVertexGetter_v
 	  */
 	function getVetexData quiet:false =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v.setVertsData()"
+		--format "\n"; print "EditablePolyVertexGetter_v.setVertsData()"
 
 		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
 		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_generate ).isEmpty == false
@@ -73,10 +73,10 @@ struct MeshVertexGetter_v
 
 			this.verts_data = #( verts_to_generate, verts_positions, verts_normals, this._getVertexColors()  )
 
-			format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
-			format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
-			format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
-			format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
+			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
+			--format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
+			--format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
+			--format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
 
 			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_generate, verts_positions, verts_normals ) --return
 		)
@@ -125,14 +125,14 @@ struct MeshVertexGetter_v
 	 */
 	function _getVertexColors =
 	(
-		format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
+		--format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
 
 		--for key in vertex_colors.keys where vertex_colors[key][vert] do return execute key
 		--verts_arr = verts_to_generate as Array
 
 		colors = for key in vertex_colors.keys collect execute key
 
-		format "colors	= % \n" colors
+		--format "colors	= % \n" colors
 		/* FIND VERTEX IN 2D matrix */
 
 		--for v = 1 to verts_arr.numberSet collect

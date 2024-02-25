@@ -8,12 +8,11 @@ struct SupportManager_v
 	export_size,
 
 	/* properties */
-
+	point_helpers_all,
 
 	/* dependency */
-	Options = SupportOptions_v(),
-
-
+	Options,
+	HelperGenerator,
 
 	/* reference */
 	/* inhered */
@@ -25,57 +24,74 @@ struct SupportManager_v
 	(
 		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
 
-		for source_obj in source_objects do
+		this._setPointHelpers()
+
+		format "this.point_helpers_all	= % \n" this.point_helpers_all
+
+		point_helpers = for source_obj in source_objects collect
 		(
-			verts_data = (MeshVertexGetter_v(source_obj)).getVetexData()
+			obj_point_helpers = this._getPointHelpersByObject(source_obj)
 
-			points_helpers = for i = 1 to (verts_to_generate = verts_data[1] as Array ).count collect
-				(HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:verts_data[4][i] ).createOrUpdateHelper()
-
-
-			format "POINTS_HELPERS	= % \n" points_helpers
+			HelperGenerator.generatePointHelpers(source_obj)( obj_point_helpers )
 		)
-			--this._setPlatformObjects( source_obj )
-
-		--Options.init()
-
-		--max create mode
-		--
-		--points_created	= for PlatformObject in PlatformObjects collect
-		--(
-		--	--format "PlatformObject	= % \n" PlatformObject
-		--	--PlatformObject.deleteOldPointsAndPlatforms()
-		--
-		--	PlatformObject.generatePointHelper()
-		--
-		--	--EditablePolyVertexGetter.addPointHelper(PlatformObject.vertex_index)(PlatformObject.point_helper)
-		--
-		--	--PlatformObject.point_helper
-		--)
-		----
-		--this._reinstancePoints()
-		--
-		--redrawViews()
-		--format "POINTS_CREATED	= % \n" points_created
-		----if points_created.count > 0 then  points_created else #() --return
-		--
-		gc()
 
 		#()--dev
 		--for point_created in points_created where point_created != undefined collect point_created  -- return created points
 	),
 
 
+	/** Create supports
+	 */
+	function createSupports source_objects =
+	(
+		format "\n"; print "SupportManager_v.createSupports()"
+		format "this.point_helpers_all	= % \n" this.point_helpers_all
+
+		for source_obj in source_objects do
+			(SupportGenerator_v( this._getPointHelpersByObject(source_obj) )).createSupports()
+	),
+
+
 	private
 
+	/** Find point helpers
+	 */
+	function _setPointHelpers =
+	(
+		format "\n"; print "SupportManager_v.findPointHelpers()"
+		--_objects = if selection > 0 then selection as Array else helpers
+
+		this.point_helpers_all = for _helper in helpers where classOf _helper == Point and getUserPropVal _helper "helper_source" != undefined collect _helper
+	),
+
+
+	/** Get point helper
+	 */
+	function _getPointHelpersByObject source_obj =
+	(
+		format "\n"; print "SupportManager_v.getPointHelper()"
+
+		point_helpers	= Dictionary #integer
+
+		for _helper in point_helpers_all
+			where getUserPropVal _helper "helper_source" == getHandleByAnim source_obj \
+			and  getUserPropVal _helper "this_pointer"  == getHandleByAnim _helper \
+			do
+				point_helpers[getUserPropVal _helper "source_vert"] = _helper
+
+		point_helpers --return
+	),
 
 	/**
 	 */
 	on create do
 	(
-		--format "\n"; print "SupportManager.onCreate()"
-		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
-		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
+		Options	= SupportOptions_v(export_size)
+
+		HelperGenerator	= HelperGenerator_v	Options:Options
+		--SupportModifiers	= SupportModifiers_v	Options:Options
+		--SupportCrossSection	= SupportCrossSection_v	Options:Options
+		--SupportObjectInstance 	= SupportObject_v	Options:Options
 	)
 
 )
