@@ -3,15 +3,28 @@
 struct SupportGenerator_v
 (
 	/* construct */
+	--point_helpers,
 
 
 	/* properties */
-
+	support_objects = #(),
 
 	/* dependency */
 	/* reference */
 	/* inhered */
+	Options,
+	SupportObject,
 
+	/** Create supports
+	 */
+	function generateSupports source_obj point_helpers =
+	(
+		format "\n"; print "SupportGenerator_v.createSupports()"
+		format "point_helpers	= % \n" point_helpers
+
+		support_objects = for vertex_index in point_helpers.keys collect
+			append support_objects ( SupportObject.generateSupport( point_helpers[vertex_index] ) )
+	),
 
 
 	private
@@ -21,9 +34,9 @@ struct SupportGenerator_v
 	 */
 	on create do
 	(
-		--format "\n"; print "SupportGenerator.onCreate()"
-		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
-		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
+		format "\n"; print "SupportGenerator_v.onCreate()"
+		format "Options	= % \n" Options
+		SupportObject = SupportObject_v Options:Options
 	)
 
 )

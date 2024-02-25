@@ -36,7 +36,8 @@ struct HelperObject_v
 
 		for i = 1 to this.points_positions.count do
 		(
-			_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+			--_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+			_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
@@ -56,6 +57,27 @@ struct HelperObject_v
 
 	),
 
+	/** Get points hierarchy
+	  *
+	  * @param Boolean pop_last retrun only last point of hierarchy
+	  * @return Array|Point array of  point hierarchy
+	 */
+	function getPointsTree pop_last:false =
+	(
+		--format "\n"; print "PlatformObject_v.getPointsTree()"
+		--mapped function getAllChildPoints _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildPoints _node.children &children )
+
+		if isValidNode point_helper then
+		(
+			children = #(point_helper)
+
+			this.getAllChildPoints(point_helper) (children)
+
+			if pop_last then children[children.count] else children --return
+		)
+		else
+			#() --return
+	),
 
 	private
 
@@ -96,20 +118,20 @@ struct HelperObject_v
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),
 
-	/** Shift wirecolor sligtly
-	  * Each level of points has different wirecolor for better selection
-	  */
-	function _shiftWirecolor wirecolor i =
-	(
-		--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
-		--format "wirecolor:	% \n" wirecolor
-		if wirecolor.r >= i then wirecolor.r -= i
-		if wirecolor.g >= i then wirecolor.g -= i
-		if wirecolor.b >= i then wirecolor.b -= i
-		--format "wirecolor:	% \n" wirecolor
-
-		wirecolor --return
-	),
+	--/** Shift wirecolor sligtly
+	--  * Each level of points has different wirecolor for better selection
+	--  */
+	--function _shiftWirecolor wirecolor i =
+	--(
+	--	--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
+	--	--format "wirecolor:	% \n" wirecolor
+	--	if wirecolor.r >= i then wirecolor.r -= i
+	--	if wirecolor.g >= i then wirecolor.g -= i
+	--	if wirecolor.b >= i then wirecolor.b -= i
+	--	--format "wirecolor:	% \n" wirecolor
+	--
+	--	wirecolor --return
+	--),
 
 	/** Add to layer
 	 */
@@ -153,6 +175,7 @@ struct HelperObject_v
 			delete children
 		)
 	),
+
 
 	mapped function getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this.getAllChildPoints _node.children &children ),
 

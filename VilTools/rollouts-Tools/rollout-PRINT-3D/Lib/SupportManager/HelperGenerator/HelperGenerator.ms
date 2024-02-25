@@ -5,7 +5,7 @@ struct HelperGenerator_v
 	/* construct */
 
 	/* properties */
-	point_helpers, -- DIctionary #( vert_number, point_helper )
+	point_helpers = Dictionary #integer,	-- Dictionary #( vert_number, point_helper )
 
 
 	/* dependency */
@@ -19,12 +19,16 @@ struct HelperGenerator_v
 	function generatePointHelpers source_obj point_helpers =
 	(
 		format "\n"; print "HelperGenerator_v.generatePointHelpers()"
+		format "POINT_HELPERS	= % \n" point_helpers
+		fn helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
-		this.point_helpers = point_helpers
+		if point_helpers != undefined then
+			this.point_helpers = point_helpers
 
 		verts_data = (MeshVertexGetter_v(source_obj)).getVetexData()
+		format "verts_data	= % \n" verts_data[1]
 
-		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where point_helpers[verts_to_generate[i]] == undefined do -- where point helper does not exists
+		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
 		(
 			HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:verts_data[4][i] --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
