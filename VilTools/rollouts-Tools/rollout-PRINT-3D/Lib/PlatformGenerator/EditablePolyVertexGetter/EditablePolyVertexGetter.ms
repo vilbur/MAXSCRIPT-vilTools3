@@ -13,7 +13,6 @@ struct EditablePolyVertexGetter_v
 	obj,	-- object used for getting data ( collapsed copy of obj  OR obj if it is Edit_Poly )
 
 	/* properties */
-
 	verts_to_generate	= #{},	-- selected or colored verts of  object
 	verts_positions	= #(),	-- positions only of verts_to_generate
 	verts_normals	= #(),	-- normals only of verts_to_generate
@@ -39,8 +38,6 @@ struct EditablePolyVertexGetter_v
 		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_generate ).isEmpty == false
 		fn positionChanged	verts_cache = verts_cache != undefined and( with PrintAllElements on verts_cache[3] as string == this.verts_positions as string )
 
-		--timer_setVertsData = timeStamp()
-
 		this.obj = _obj
 
 		object_pointer = (getHandleByAnim obj) as string
@@ -49,15 +46,8 @@ struct EditablePolyVertexGetter_v
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 		verts_count_VC	= getNumCPVVerts obj.mesh
 
-		--format "verts_count	= % \n" verts_count
-		--format "verts_count_VC	= % \n" verts_count_VC
-
 		/* SET COLORS FIRST - needed for getting verts_to_generate by color  */
 		this._setVertexColors verts_to_get:verts_all vertex_colors_exists:(verts_count_VC != 0)
-
-
-		 --for vert_color in vertex_colors.keys do
-			--format "%	= % \n" vert_color vertex_colors[vert_color]
 
 		verts_to_generate = case of
 		(
@@ -71,16 +61,13 @@ struct EditablePolyVertexGetter_v
 			default: verts_all
 		)
 
-
 		/* SET VERTS POSITIONS WHEN verts_to_generate is known  */
 		this._setVertexPositions()
-
 
 		/* WARNING IF ALL VERTS ARE USED */
 		if verts_count != verts_to_generate.numberSet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
 		(
 			verts_cache 	= VERTEX_DATA_CACHE[ object_pointer ]
-
 
 			this.verts_normals =	if verts_cache == undefined \
 				or transformChanged(verts_cache)\
@@ -91,16 +78,12 @@ struct EditablePolyVertexGetter_v
 				else
 					verts_cache[4]
 
-			--this.verts_normals = this._getVertNormals()
---
-
 			this.verts_data = #( verts_to_generate, verts_positions, verts_normals, this._getVertexColors()  )
 
-			--format "\n setVertsData: % ms\n" (( timeStamp()) - timer_setVertsData)
-			format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
-			format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
-			format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
-			format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
+			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
+			--format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
+			--format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
+			--format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
 
 			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_generate, verts_positions, verts_normals ) --return
 		)

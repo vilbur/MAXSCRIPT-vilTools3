@@ -35,25 +35,8 @@ struct PlatformObject_v
 		this.normal	= normal
 		this.wirecolor	= wirecolor
 
-		--append this.points_positions pos
-		--wirecolor	= if vert_data[3] != undefined then vert_data[3] else source_obj.wirecolor
-
 		this._setPointPositions (pos)
-
-		--if ( helper_pointer = vert_data[4] ) != undefined and isValidNode ( point_helper_node = getAnimByHandle helper_pointer ) then
-		--	this.point_helper = point_helper_node
-		--
-		--this --return
 	),
-
-	--/** Add vert pos
-	--  *
-	--  */
-	--function addVert pos =
-	--(
-	--	--format "\n"; print "PlatformObject_v.addVertPos()"
-	--	append this.points_positions pos
-	--),
 
 	/** Generate platform
 	  *l
@@ -97,7 +80,6 @@ struct PlatformObject_v
 
 			wirecolor --return
 		)
-
 
 		points_created	= #()
 
