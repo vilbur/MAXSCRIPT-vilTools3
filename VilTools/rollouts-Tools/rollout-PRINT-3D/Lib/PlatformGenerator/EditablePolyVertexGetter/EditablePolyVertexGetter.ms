@@ -1,7 +1,7 @@
 
 
-if VERTEX_POS_AND_NORMALS == undefined then
-	global VERTEX_POS_AND_NORMALS = Dictionary #string
+if VERTEX_DATA_CACHE == undefined then
+	global VERTEX_DATA_CACHE = Dictionary #string
 
 
 
@@ -34,9 +34,12 @@ struct EditablePolyVertexGetter_v
 	function setVertsData _obj quiet:false =
 	(
 		format "\n"; print "EditablePolyVertexGetter_v.setVertsData()"
-		--format "_obj	= % \n" _obj
 
-		timer_setVertsData = timeStamp()
+		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
+		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_generate ).isEmpty == false
+		fn positionChanged	verts_cache = verts_cache != undefined and( with PrintAllElements on verts_cache[3] as string == this.verts_positions as string )
+
+		--timer_setVertsData = timeStamp()
 
 		this.obj = _obj
 
@@ -49,9 +52,9 @@ struct EditablePolyVertexGetter_v
 		--format "verts_count	= % \n" verts_count
 		--format "verts_count_VC	= % \n" verts_count_VC
 
-
+		/* SET COLORS FIRST - needed for getting verts_to_generate by color  */
 		this._setVertexColors verts_to_get:verts_all vertex_colors_exists:(verts_count_VC != 0)
-		--format "\n _setVertexColors: % ms\n" (( timeStamp()) - timer_setVertsData)
+
 
 		 --for vert_color in vertex_colors.keys do
 			--format "%	= % \n" vert_color vertex_colors[vert_color]
@@ -68,27 +71,28 @@ struct EditablePolyVertexGetter_v
 			default: verts_all
 		)
 
+
+		/* SET VERTS POSITIONS WHEN verts_to_generate is known  */
+		this._setVertexPositions()
+
+
 		/* WARNING IF ALL VERTS ARE USED */
 		if verts_count != verts_to_generate.numberSet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
 		(
-			verts_data 	= VERTEX_POS_AND_NORMALS[ object_pointer ]
-			verts_changed	= verts_data != undefined and ( verts_data[1] - verts_to_generate ).isEmpty == false
+			verts_cache 	= VERTEX_DATA_CACHE[ object_pointer ]
 
-			if verts_data == undefined or verts_changed then
-			(
-				this._setVertexPositions()
-				--format "\n\n getVerts: % ms\n" (( timeStamp()) - timer_setVertsData)
-				--format "VERTS_POSITIONS	= % \n" VERTS_POSITIONS
-				--format "verts_positions.count	= % \n" verts_positions.count
 
-				this._setVertNormals()
+			this.verts_normals =	if verts_cache == undefined \
+				or transformChanged(verts_cache)\
+				or vertsSelChanged(verts_cache)\
+				or positionChanged(verts_cache)
+				then
+					this._getVertNormals()
+				else
+					verts_cache[4]
 
-				--format "\n\n getnormals: % ms\n" (( timeStamp()) - timer_setVertsData)
-				--format "VERTS_NORMALS	= % \n" verts_normals
-				--format "verts_normals.count	= % \n" verts_normals.count
-			)
-			else
-				this._loadVertexData(verts_data)
+			--this.verts_normals = this._getVertNormals()
+--
 
 			this.verts_data = #( verts_to_generate, verts_positions, verts_normals, this._getVertexColors()  )
 
@@ -98,9 +102,7 @@ struct EditablePolyVertexGetter_v
 			format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
 			format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
 
-
-			--gc()
-			VERTEX_POS_AND_NORMALS[ object_pointer ] = verts_data --return
+			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_generate, verts_positions, verts_normals ) --return
 		)
 
 		this.verts_data --return
@@ -108,14 +110,14 @@ struct EditablePolyVertexGetter_v
 
 	private
 
-	/** Load vertex data
-	 */
-	function _loadVertexData verts_data =
-	(
-		--format "\n"; print "EditablePolyVertexGetter_v._laodVertexData()"
-		this.verts_positions 	= verts_data[2]
-		this.verts_normals	= verts_data[3]
-	),
+	--/** Load vertex data
+	-- */
+	--function _loadVertexNormals verts_data =
+	--(
+	--	--format "\n"; print "EditablePolyVertexGetter_v._laodVertexData()"
+	--	--this.verts_positions 	= verts_data[2]
+	--	this.verts_normals	= verts_data[4]
+	--),
 
 	/** Set vertex positions only of verts_to_generate
 	 */
@@ -127,15 +129,20 @@ struct EditablePolyVertexGetter_v
 
 	/** Set vert normals only of verts_to_generate
 	 */
-	function _setVertNormals =
+	function _getVertNormals =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._setVertNormals()"
-		--this.verts_normals = for vert in verts_to_generate_arr collect ( getnormal obj.mesh vert )
+		--format "\n"; print "EditablePolyVertexGetter_v._getVertNormals()"
+		--this.verts_normals = for vert in verts_to_generate collect ( getnormal obj.mesh vert )
+		max modify mode
+
 		addModifier obj (_mod = Edit_Normals())
 
-		this.verts_normals = for vert in verts_to_generate collect _mod.getNormal(vert)
+		verts_normals = for vert in verts_to_generate collect _mod.getNormal(vert)
+		--verts_normals = for vert in verts_to_generate collect (_mod.getNormal(vert)) * obj.transform
 
 		deleteModifier obj _mod
+
+		verts_normals --return
 	),
 
 	/** Get vertex colors

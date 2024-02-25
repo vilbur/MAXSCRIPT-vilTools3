@@ -180,12 +180,12 @@ struct PlatformObject_v
 	  */
 	function _setPointPositions vert_pos =
 	(
-		format "\n"; print "PlatformObject_v.addVertPos()"
-
+		--format "\n"; print "PlatformObject_v._setPointPositions()"
 
 		local normal = this.normal * source_obj.transform - source_obj.pos
+		--local normal = this.normal
 
-		/* USE ONLY VERTICES FACING DOWN - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
+		/* USE ONLY VERTICES FACING DOWN OR SIDE - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
 		if normal.z <= 0 then
 		(
 			append this.points_positions vert_pos
@@ -207,7 +207,7 @@ struct PlatformObject_v
 			)
 		)
 		else
-			format " NOT USED - VERTEX NORMAL IS FACING UP:  %" normal.z
+			format "VERTEX: % NOT USED - VERTEX NORMAL IS FACING UP:  %" vertex_index normal.z
 
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),

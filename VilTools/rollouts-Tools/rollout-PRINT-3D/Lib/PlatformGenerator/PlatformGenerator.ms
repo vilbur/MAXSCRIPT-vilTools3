@@ -139,11 +139,10 @@ struct PlatformGenerator_v
 		--format "POINTS_CREATED	= % \n" points_created
 		----if points_created.count > 0 then  points_created else #() --return
 		--
-		--for point_created in points_created where point_created != undefined collect point_created
-
 		gc()
 
-		#()--dev
+		------#()--dev
+		for point_created in points_created where point_created != undefined collect point_created  -- return created points
 	),
 
 	/** Get platform objects
