@@ -1,4 +1,9 @@
-global VERTEX_POS_AND_NORMALS = Dictionary #string
+
+
+if VERTEX_POS_AND_NORMALS == undefined then
+	global VERTEX_POS_AND_NORMALS = Dictionary #string
+
+
 
 /** Editable poly vertex getter
  */
@@ -36,7 +41,7 @@ struct EditablePolyVertexGetter_v
 		this.obj = _obj
 
 
-		object_ponter = (getHandleByAnim obj) as string
+		object_pointer = (getHandleByAnim obj) as string
 		verts_count	= getNumVerts obj.mesh
 		verts_all	= #{1..(verts_count)}
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
@@ -70,36 +75,53 @@ struct EditablePolyVertexGetter_v
 		/* WARNING IF ALL VERTS ARE USED */
 		if verts_count != verts_to_generate.numberSet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
 		(
-			verts_to_generate_arr = verts_to_generate as Array
+			format "object_pointer	= % \n" object_pointer
+			format "VERTEX_POS_AND_NORMALS	= % \n" VERTEX_POS_AND_NORMALS
+			verts_data 	= VERTEX_POS_AND_NORMALS[ object_pointer ]
+			format "VERTS_DATA	= % \n" verts_data
+			verts_changed	= verts_data != undefined and ( verts_data[1] - verts_to_generate ).isEmpty == false
 
-			this._setVertexPositions()
-			this._setVertNormals()
-
-			format "verts_to_generate_arr.count	= % \n" verts_to_generate_arr.count
-
-			format "\n\n getVerts: % ms\n" (( timeStamp()) - timer_setVertsData)
-
-			format "VERTS_POSITIONS	= % \n" VERTS_POSITIONS
-			format "verts_positions.count	= % \n" verts_positions.count
-
-			format "\n\ngetnormals: % ms\n" (( timeStamp()) - timer_setVertsData)
-
-			format "VERTS_NORMALS	= % \n" verts_normals
-			format "verts_normals.count	= % \n" verts_normals.count
+			format "verts_data[1]	= % \n" verts_data[1]
+			format "verts_data[2]	= % \n" verts_data[2]
+			format "verts_data[3]	= % \n" verts_data[3]
 
 
-			for i = 1 to verts_to_generate_arr.count do
-				this._getVertData(verts_to_generate_arr[i]) i
+			if verts_data == undefined or verts_changed then
+			(
 
-		--	--this._saveVertsData()
-		--
-		--	if obj_copy != undefined then
-		--		delete obj_copy
+				this._setVertexPositions()
+				format "\n\n getVerts: % ms\n" (( timeStamp()) - timer_setVertsData)
+
+				format "VERTS_POSITIONS	= % \n" VERTS_POSITIONS
+				format "verts_positions.count	= % \n" verts_positions.count
+
+
+				this._setVertNormals()
+
+				format "\n\n getnormals: % ms\n" (( timeStamp()) - timer_setVertsData)
+
+				format "VERTS_NORMALS	= % \n" verts_normals
+				format "verts_normals.count	= % \n" verts_normals.count
+
+
+			)
+			else
+				this._loadVertexData(verts_data)
+
+
+			format "\n"; print "EditablePolyVertexGetter_v._getVertData()"
+
+			for i = 1 to ( _verts_array = verts_to_generate as Array ).count do
+				this._getVertData(_verts_array[i]) (i)
+
+			VERTEX_POS_AND_NORMALS[ object_pointer ] = #( verts_to_generate, verts_positions, verts_normals )
+
+			--this._loadVertexData(verts_data)
+
 		)
 
-		VERTEX_POS_AND_NORMALS[ object_ponter ] = #( verts_to_generate, verts_positions, verts_normals )
 
-		format "VERTEX_POS_AND_NORMALS	= % \n" VERTEX_POS_AND_NORMALS
+		--format "VERTEX_POS_AND_NORMALS	= % \n" VERTEX_POS_AND_NORMALS
 		--else
 		--(
 		--	messageBox "VERTEX COUNT AND COUNT OF COLORED VERTS IS NOT EQUAL" title:"EditablePolyVertexGetter.ms"
@@ -116,15 +138,24 @@ struct EditablePolyVertexGetter_v
 
 	private
 
-	/** Set vertex positions
+	/** Load vertex data
+	 */
+	function _loadVertexData verts_data =
+	(
+		format "\n"; print "EditablePolyVertexGetter_v._laodVertexData()"
+		this.verts_positions 	= verts_data[2]
+		this.verts_normals	= verts_data[3]
+	),
+
+	/** Set vertex positions only of verts_to_generate
 	 */
 	function _setVertexPositions =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._setVertexPositions()"
+		format "\n"; print "EditablePolyVertexGetter_v._setVertexPositions()"
 		this.verts_positions = meshop.getVerts obj.mesh verts_to_generate node:obj
 	),
 
-	/** Set vert normals
+	/** Set vert normals only of verts_to_generate
 	 */
 	function _setVertNormals =
 	(
@@ -132,11 +163,9 @@ struct EditablePolyVertexGetter_v
 		--this.verts_normals = for vert in verts_to_generate_arr collect ( getnormal obj.mesh vert )
 		addModifier obj (_mod = Edit_Normals())
 
-		this.verts_normals = for i = 1 to (_mod.GetNumNormals()) collect
-			_mod.getNormal(i)
+		this.verts_normals = for vert in verts_to_generate collect _mod.getNormal(vert)
 
 		deleteModifier obj _mod
-
 	),
 
 
@@ -157,39 +186,22 @@ struct EditablePolyVertexGetter_v
 	(
 		--format "\n"; print "EditablePolyVertexGetter_v._getVertData()"
 
-		if ( i / 10.0  ) == ceil ( i / 10.0 ) then
-			format "Get Vert: % of %\n" i verts_to_generate.numberSet
-
+		--if ( i / 100.0  ) == ceil ( i / 100.0 ) then
+			--format "Get Vert: % of %\n" i verts_to_generate.numberSet
 
 		--fn positionChanged p1 p2 eps:1e-3 = distance p1 p2 > eps
-
 		function _getColorByVertex vert =  for key in vertex_colors.keys where vertex_colors[key][vert] do return execute key
-		--function _getColorByVertex vert =  red
-
-
-		----vert	= verts_to_generate[i] -- vertex index
-		----vert_pos	= verts_positions[vert]
-		----vert_data	= this.verts_data[vert]
-		----point_helper	= if vert_data != undefined and vert_data[4] != undefined and isValidNode (getAnimByHandle vert_data[4]) then vert_data[4]
-		--
-		----position_changed = vert_data == undefined or positionChanged (vert_pos) (vert_data[1])
 
 		vert_data = #(
-			verts_positions[vert],
-			verts_normals[vert],
-			_getColorByVertex (vert)
+			verts_positions[i],	-- get vert only from verts_to_generate
+			verts_normals[i],	-- get vert only from verts_to_generate
+			--_getColorByVertex (vert) -- get vert from all verts
+			red
 		)
 
-		--if ( i / 10.0  ) == ceil ( i / 10.0 ) then
-		--	format "vert_data	= % \n" vert_data
-		--/* UPDATE VERTEX DATA */
-		----if position_changed then
 		this.verts_data[vert] = vert_data
 
 		gc() -- IMPORTANT RUN AFTER EVERY ERTEX< OTHERWISE getnormal function CONSUME ALL MEMORY on objects with large vertex count > 500 000
-
-		/* RESTORE POINT HELPER from loaded data */
-		--this.verts_data[vert][4] = point_helper
 	),
 
 
