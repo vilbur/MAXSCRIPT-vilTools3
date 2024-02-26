@@ -27,7 +27,7 @@ struct SupportObject_v
 
 		support.parent = helpers_tree[helpers_tree.count]
 
-		support --return
+		this --return
 	),
 
 
@@ -109,8 +109,7 @@ struct SupportObject_v
 	 */
 	on create do
 	(
-		format "\n"; print "SupportObject_v.onCreate()"
-		format "Options	= % \n" Options
-
+		--format "\n"; print "SupportObject_v.onCreate()"
+		--format "Options	= % \n" Options
 	)
 )

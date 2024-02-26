@@ -1,3 +1,8 @@
+
+if VERTEX_DATA_CACHE == undefined then
+	global VERTEX_DATA_CACHE = Dictionary #string
+
+
 /** Mesh vertex getter
  */
 struct MeshVertexGetter_v

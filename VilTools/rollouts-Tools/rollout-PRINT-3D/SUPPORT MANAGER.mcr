@@ -37,7 +37,7 @@ function getSupportManagerInstance =
  */
 macroscript	_print_support_generate_points
 category:	"_3D-Print"
-buttontext:	"Generate Points"
+buttontext:	"POINTS Gen"
 tooltip:	"Generate Points From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
 icon:	"across:3|height:32|width:128"
 (
@@ -48,7 +48,7 @@ icon:	"across:3|height:32|width:128"
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT MANAGER.mcr"
 
-			if ( points_created = (getSupportManagerInstance()).generatePointHelpers( selection ) ).count > 0 then
+			if ( points_created = (getSupportManagerInstance()).generatePointHelpers( selection ) reset_helpers: keyboard.controlPressed ).count > 0 then
 				select points_created
 			--	--format "POINTS_CREATED	= % \n" POINTS_CREATED
 		)
@@ -58,8 +58,8 @@ icon:	"across:3|height:32|width:128"
 */
 macroscript	_print_support_generator
 category:	"_3D-Print"
-buttontext:	"Generate Platforms"
-tooltip:	"GENERATE Platforms"
+buttontext:	"SUPPORTS Gen"
+tooltip:	"GEnerate supports for selected object or point helepers"
 icon:	"across:3|height:32|width:128"
 (
 	on execute do

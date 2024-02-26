@@ -15,18 +15,25 @@ struct HelperGenerator_v
 
 	/** Generate instanced point helpers from selected verts
 	  *
+	  * @param node	source_obj to generate from
+	  * @param Dictionary	point_helpers which allready exists
+	  *
 	  */
-	function generatePointHelpers source_obj point_helpers =
+	function generatePointHelpers source_obj point_helpers reset_helpers:true =
 	(
 		format "\n"; print "HelperGenerator_v.generatePointHelpers()"
 		format "POINT_HELPERS	= % \n" point_helpers
+		format "keyboard.controlPressed	= % \n" keyboard.controlPressed
 		fn helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
 		if point_helpers != undefined then
 			this.point_helpers = point_helpers
 
 		verts_data = (MeshVertexGetter_v(source_obj)).getVetexData()
-		format "verts_data	= % \n" verts_data[1]
+
+		if reset_helpers then
+			this._deleteOldPointHelpers(source_obj)(verts_data[1])
+
 
 		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
 		(
@@ -55,7 +62,7 @@ struct HelperGenerator_v
 		--format "\n"; print "HelperGenerator_v._reinstancePoints()"
 		fn helpersInSameLevel point_trees i = for point_level in point_trees where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
 
-		point_trees = for vertex_index in point_helpers.keys collect this._getPointTree( point_helpers[vertex_index] )
+		point_trees = for vertex_index in point_helpers.keys collect this._getPointsChain( point_helpers[vertex_index] )
 
 		max_count = amax (for point_tree in point_trees collect point_tree.count)
 
@@ -82,9 +89,26 @@ struct HelperGenerator_v
 			instanceReplace _point master_object
 	),
 
+
+	/** Delete old points and platforms
+	 */
+	function _deleteOldPointHelpers source_obj verts_to_generate =
+	(
+		--format "\n"; print "HelperGenerator_v._deleteOldPointHelpers()"
+
+		for vertex_index in point_helpers.keys where verts_to_generate[vertex_index] do
+		(
+			point_helper_cahin = this._getPointsChain(point_helpers[vertex_index])
+
+			delete (this._getPointsChain(point_helpers[vertex_index]))
+
+			this.point_helpers[vertex_index] = undefined
+		)
+	),
+
 	/** Get point trees
 	 */
-	function _getPointTree point_helper =
+	function _getPointsChain point_helper =
 	(
 		--format "\n"; print "HelperGenerator_v.getPointTrees()"
 		children = #()
@@ -100,6 +124,8 @@ struct HelperGenerator_v
 	),
 
 	mapped function _getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this._getAllChildPoints _node.children &children ),
+
+	--mapped function _getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this._getAllChildren _node.children &children ),
 
 	/**
 	 */

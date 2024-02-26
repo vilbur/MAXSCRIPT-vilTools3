@@ -1,6 +1,6 @@
-/** Platform modifiers
+/** Support modifiers
  */
-struct PlatformModifiers_v
+struct SupportModifiers_v
 (
 
 	/* construct */
@@ -22,10 +22,10 @@ struct PlatformModifiers_v
 	  */
 	function addModifiers =
 	(
-		--format "\n"; print "PlatformGenerator_v._addModifiers()"
+		format "\n"; print "SupportModifiers_v._addModifiers()"
 
 		this._sanitizeMaxChamferValue()
-		--format "this.Options:	% \n" this.Options
+		format "this.Options:	% \n" this.Options
 		max modify mode
 
 		--this._addEditSpline()
@@ -71,7 +71,7 @@ struct PlatformModifiers_v
 	  */
 	function _addSweepModifier name =
 	(
-		format "\n"; print "PlatformGenerator_v._addSweepModifier()"
+		format "\n"; print "SupportModifiers_v._addSweepModifier()"
 
 		--format "Adding Sweep\n"
 		--format "bar_width:	% \n" this.Options.bar_width
@@ -101,7 +101,7 @@ struct PlatformModifiers_v
 	  */
 	function _selectFace name mat_id  =
 	(
-		format "\n"; print "PlatformGenerator_v._selectFace()"
+		format "\n"; print "SupportModifiers_v._selectFace()"
 		--format "Adding Volume Select\n"
 
 		volume_sel_mod = Vol__Select name:name
@@ -118,7 +118,7 @@ struct PlatformModifiers_v
 	  */
 	function _chamfer name amount selection_option:#STACK materialoption:#OFF /* minangle:  */ =
 	(
-		format "\n"; print "PlatformGenerator_v._chamfer()"
+		format "\n"; print "SupportModifiers_v._chamfer()"
 		--format "%:	% \n" name amount
 
 		chamfer_mod = Chamfer name:name
@@ -166,7 +166,7 @@ struct PlatformModifiers_v
 	  */
 	function _extrude name amount scale: =
 	(
-		format "\n"; print "PlatformGenerator_v._extrudeBase()"
+		format "\n"; print "SupportModifiers_v._extrudeBase()"
 		extrude_mod = Face_Extrude name:name
 
 		extrude_mod.amount	= amount

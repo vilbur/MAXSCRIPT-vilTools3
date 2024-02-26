@@ -21,15 +21,16 @@ struct SupportManager_v
 	/** Generate instanced point helpers from selected verts
 	  *
 	  */
-	function generatePointHelpers source_objects =
+	function generatePointHelpers source_objects reset_helpers:true =
 	(
 		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
+		Options.init()
 
 		for point_helpers_per_obj in point_helpers_by_object do
 			format "point_helpers_per_obj	= % \n" point_helpers_per_obj
 
 		point_helpers_by_object = for source_obj in source_objects collect
-			HelperGenerator.generatePointHelpers(source_obj)(this._getHelperByObject source_obj)
+			HelperGenerator.generatePointHelpers(source_obj)(this._getHelperByObject source_obj) reset_helpers:reset_helpers
 
 		#()--dev
 		--for point_created in points_created where point_created != undefined collect point_created  -- return created points
@@ -42,6 +43,7 @@ struct SupportManager_v
 	(
 		format "\n"; print "SupportManager_v.createSupports()"
 		format "this.point_helpers_by_object	= % \n" this.point_helpers_by_object
+		Options.init()
 
 		for source_obj in source_objects do
 			SupportGenerator.generateSupports (source_obj) (this._getHelperByObject(source_obj))
