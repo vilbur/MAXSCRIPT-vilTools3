@@ -26,8 +26,11 @@ struct SupportManager_v
 		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
 		Options.init()
 
+		/* DEBUG */
 		for point_helpers_per_obj in point_helpers_by_object do
-			format "point_helpers_per_obj	= % \n" point_helpers_per_obj
+			for point_helper_per_obj in point_helpers_per_obj.value do
+			format "point_helper_per_obj	= % \n" point_helper_per_obj
+			--format "point_helpers_by_object	= % \n" point_helpers_by_object
 
 		point_helpers_by_object = for source_obj in source_objects collect
 			HelperGenerator.generatePointHelpers(source_obj)(this._getHelperByObject source_obj) reset_helpers:reset_helpers

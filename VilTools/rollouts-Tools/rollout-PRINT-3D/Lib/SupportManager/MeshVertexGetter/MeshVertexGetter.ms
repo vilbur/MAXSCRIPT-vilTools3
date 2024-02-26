@@ -30,7 +30,8 @@ struct MeshVertexGetter_v
 	  */
 	function getVetexData quiet:false =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v.setVertsData()"
+		--format "\n"; print "MeshVertexGetter_v.getVetexData()"
+		max modify mode
 
 		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
 		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_generate ).isEmpty == false
@@ -95,52 +96,61 @@ struct MeshVertexGetter_v
 	-- */
 	--function _loadVertexNormals verts_data =
 	--(
-	--	--format "\n"; print "EditablePolyVertexGetter_v._laodVertexData()"
+	--	--format "\n"; print "MeshVertexGetter_v._laodVertexData()"
 	--	--this.verts_positions 	= verts_data[2]
 	--	this.verts_normals	= verts_data[4]
 	--),
 
-	/** Set vertex positions only of verts_to_generate
+	/** SET VERTEX POSITIONS only of verts_to_generate
 	 */
 	function _setVertexPositions =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._setVertexPositions()"
+		format "\n"; print "MeshVertexGetter_v._setVertexPositions()"
 		this.verts_positions = meshop.getVerts obj.mesh verts_to_generate node:obj
 	),
 
-	/** Set vert normals only of verts_to_generate
+
+	/** SET VERT NORMALS only of verts_to_generate
 	 */
 	function _getVertNormals =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._getVertNormals()"
+		format "\n"; print "MeshVertexGetter_v._getVertNormals()"
 		--this.verts_normals = for vert in verts_to_generate collect ( getnormal obj.mesh vert )
-		max modify mode
 
-		addModifier obj (_mod = Edit_Normals())
+		EditNormalsMod = Edit_Normals()
 
-		verts_normals = for vert in verts_to_generate collect _mod.getNormal(vert)
-		--verts_normals = for vert in verts_to_generate collect (_mod.getNormal(vert)) * obj.transform
+		addModifier obj EditNormalsMod
 
-		deleteModifier obj _mod
+		verts_normals = for i = 1 to (verts_to_generate_arr = verts_to_generate as Array ).count collect
+		(
+			normal_averaged	= [0,0,0]
+			normals_per_vertex	= #{}
+
+			vert = verts_to_generate_arr[i]
+
+			EditNormalsMod.ConvertVertexSelection #{vert} (normals_per_vertex)
+
+			for normal in normals_per_vertex as Array do normal_averaged += EditNormalsMod.getNormal(normal) node:obj
+
+			normalize normal_averaged
+		)
+
+		--verts_normals = for vert in verts_to_generate collect (EditNormalsMod.getNormal(vert)) * obj.transform
+
+		deleteModifier obj EditNormalsMod
 
 		verts_normals --return
 	),
 
-	/** Get vertex colors
+	/** GET VERTEX COLORS
 	 */
 	function _getVertexColors =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._getVertexColors()"
-
-		--for key in vertex_colors.keys where vertex_colors[key][vert] do return execute key
-		--verts_arr = verts_to_generate as Array
+		format "\n"; print "MeshVertexGetter_v._getVertexColors()"
 
 		colors = for key in vertex_colors.keys collect execute key
 
-		--format "colors	= % \n" colors
 		/* FIND VERTEX IN 2D matrix */
-
-		--for v = 1 to verts_arr.numberSet collect
 		for vert in verts_to_generate collect
 		(
 			colors_per_vert = for c = 1 to vertex_colors.count where this.vertex_colors[vertex_colors.keys[c]][vert] collect colors[c]
@@ -157,13 +167,13 @@ struct MeshVertexGetter_v
 	  */
 	function _setVertexColors verts_to_get: vertex_colors_exists: =
 	(
-		--format "\n"; print "EditablePolyVertexGetter_v._setVertexColors()"
+		format "\n"; print "MeshVertexGetter_v._setVertexColors()"
 
 		local map_verts = copy verts_to_get
 
 		if vertex_colors_exists then
 		(
-			counter = 1
+			--counter = 1 -- DEV
 
 			while not map_verts.isEmpty do
 			--while counter < 10 do
@@ -193,7 +203,7 @@ struct MeshVertexGetter_v
 	  */
 	function _askToContinue verts_count =
 	(
-		----format "\n"; print "EditablePolyVertexGetter_v._askToContinue()"
+		----format "\n"; print "MeshVertexGetter_v._askToContinue()"
 		_continue = true
 
 		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then

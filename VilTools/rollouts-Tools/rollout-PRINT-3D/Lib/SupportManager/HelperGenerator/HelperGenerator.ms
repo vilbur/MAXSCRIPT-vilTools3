@@ -22,28 +22,37 @@ struct HelperGenerator_v
 	function generatePointHelpers source_obj point_helpers reset_helpers:true =
 	(
 		format "\n"; print "HelperGenerator_v.generatePointHelpers()"
-		format "POINT_HELPERS	= % \n" point_helpers
-		format "keyboard.controlPressed	= % \n" keyboard.controlPressed
+		--format "POINT_HELPERS	= % \n" point_helpers
+
 		fn helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
-		if point_helpers != undefined then
-			this.point_helpers = point_helpers
+		/* USE OBJECT WIRE COLOR IF VERTEX COLOR IS WHITE */
+		fn getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
 
+		/* SET EXISTING POINT HELPERS */
+		if point_helpers != undefined then this.point_helpers = point_helpers
+
+		/* GET VERTEX DATA */
 		verts_data = (MeshVertexGetter_v(source_obj)).getVetexData()
 
+		/* DELETE OLD POINTS */
 		if reset_helpers then
 			this._deleteOldPointHelpers(source_obj)(verts_data[1])
 
 
+
+			
+		/* GENERATE POINTS FOR EACH VERTEX */
 		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
 		(
-			HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:verts_data[4][i] --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
+			HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:(getWireColor(source_obj)(verts_data[4][i])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
 			HelperObject.createHelper()
 
 			this.point_helpers[HelperObject.vertex_index] = HelperObject.point_helper
 		)
 
+		/* REINSTANCE ALL POINTS PER OBEJCT */
 		this._reinstanceAllPoints()
 
 		point_helpers --return

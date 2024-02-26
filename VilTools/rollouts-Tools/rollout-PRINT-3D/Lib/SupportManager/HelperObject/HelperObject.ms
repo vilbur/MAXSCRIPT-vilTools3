@@ -23,8 +23,8 @@ struct HelperObject_v
 	 */
 	function createHelper =
 	(
-		format "\n"; print "HelperObject_v.createOrUpdateHelper()"
-		format "point_helper	= % \n" this.point_helper
+		--format "\n"; print "HelperObject_v.createOrUpdateHelper()"
+		--format "point_helper	= % \n" this.point_helper
 
 		points_created	= #()
 
@@ -36,7 +36,8 @@ struct HelperObject_v
 		for i = 1 to this.points_positions.count do
 		(
 			--_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
-			_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
+
+			_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
@@ -80,57 +81,52 @@ struct HelperObject_v
 
 	private
 
+
 	/** Add vert pos
 	  *
 	  */
-	function _setPointPositions vert_pos =
+	function _setPointsPositions vert_pos =
 	(
-		--format "\n"; print "HelperObject_v._setPointPositions()"
+		--format "\n"; print "HelperObject_v._setPointsPositions()"
 
-		local normal = this.normal * source_obj.transform - source_obj.pos
-		--local normal = this.normal
-
-		/* USE ONLY VERTICES FACING DOWN OR SIDE - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
-		if normal.z <= 0 then
+		if this.normal != undefined then
 		(
-			append this.points_positions vert_pos
+			local _normal = this.normal * source_obj.transform - source_obj.pos
+			--format "\nVERTEX: % NORMAL:  %" vertex_index normal.z
 
-			normal_length = this.Options.normal_length
 
-			/* ADD ADDITIONAL VERT TO KEEP NORMAL */
-			if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
+			/* USE ONLY VERTICES FACING DOWN OR SIDE - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
+			if _normal.z <= 0 then
 			(
-				--vert_pos = vert_pos + normal_length * normalize( normal )
-				vert_pos += normal_length * normalize( normal )
-				--format "normal:	% \n" normal
-
-				/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
-				if normal.z > -0.25 then
-					vert_pos.z -= normal_length
-
 				append this.points_positions vert_pos
+
+				normal_length = this.Options.normal_length
+
+				/* ADD SECOND VERT TO KEEP NORMAL */
+				if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
+				(
+					--vert_pos = vert_pos + normal_length * normalize( _normal )
+					vert_pos += normal_length * normalize( _normal )
+					--format "_normal:	% \n" _normal
+
+					/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
+					if _normal.z > -0.25 then
+						vert_pos.z -= normal_length
+
+					append this.points_positions vert_pos
+				)
 			)
+			else
+				format "\nVERTEX: % NOT USED - VERTEX NORMAL IS FACING UP:  %" vertex_index _normal.z
 		)
 		else
-			format "VERTEX: % NOT USED - VERTEX NORMAL IS FACING UP:  %" vertex_index normal.z
+			format "ERROR: % \n" this
+
 
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),
 
-	--/** Shift wirecolor sligtly
-	--  * Each level of points has different wirecolor for better selection
-	--  */
-	--function _shiftWirecolor wirecolor i =
-	--(
-	--	--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
-	--	--format "wirecolor:	% \n" wirecolor
-	--	if wirecolor.r >= i then wirecolor.r -= i
-	--	if wirecolor.g >= i then wirecolor.g -= i
-	--	if wirecolor.b >= i then wirecolor.b -= i
-	--	--format "wirecolor:	% \n" wirecolor
-	--
-	--	wirecolor --return
-	--),
+
 
 	/** Add to layer
 	 */
@@ -162,6 +158,6 @@ struct HelperObject_v
 	 */
 	on create do
 	(
-		this._setPointPositions (pos)
+		this._setPointsPositions (pos)
 	)
 )
