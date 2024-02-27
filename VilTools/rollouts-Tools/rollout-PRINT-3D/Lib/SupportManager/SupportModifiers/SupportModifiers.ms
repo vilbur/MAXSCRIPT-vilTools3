@@ -8,6 +8,7 @@ struct SupportModifiers_v
 	--mat_ids,
 
 	/* properties */
+	supports,
 	raft_mode = false,
 
 
@@ -21,36 +22,99 @@ struct SupportModifiers_v
 	/** Add modifiers
 	  *
 	  */
-	function addModifiers =
+	function addModifiers supports =
 	(
 		format "\n"; print "SupportModifiers_v._addModifiers()"
+		format "supports	= % \n" supports
+		format "supports.count	= % \n" supports.count
+		this.supports = supports
 
-		this._sanitizeMaxChamferValue()
-		format "this.Options:	% \n" this.Options
-		max modify mode
 
-		this._addEditSpline()
-
-		this._addSweepModifier("Bar Width")
-
-		if not raft_mode then
+		if not this._modifiersExists() then
 		(
-			this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
+			select supports
 
-			this._extrude("Extrude Base") (this.Options.base_extrude)
+			this._sanitizeMaxChamferValue()
 
-			this._chamfer("Chamfer Base") (this.Options.chamfer_base )
+			max modify mode
+
+			this._addEditSpline()
+
+			this._addSweepModifier("Bar Width")
+
+			if not raft_mode then
+			(
+				this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
+
+				this._extrude("Extrude Base") (this.Options.base_extrude)
+
+				this._chamfer("Chamfer Base") (this.Options.chamfer_base )
+			)
+
+
+			this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:#DIFFERENT
+
+			this._selectFace("Select Top Face")(this.Options.mat_ids[#TOP])
+
+			this._extrude("Extrude Top")(this.Options.extrude_top)
+
 		)
-		
+		else
+			this._copyModifiers()
 
-		this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:#DIFFERENT
 
-		this._selectFace("Select Top Face")(this.Options.mat_ids[#TOP])
-
-		this._extrude("Extrude Top")(this.Options.extrude_top)
 	),
 
 	private
+
+	/** Modifiers exists
+	 */
+	function _modifiersExists =
+	(
+		--format "\n"; print "SupportModifiers_v._modifiersExists()"
+		(this._getSupportsWithModfiers()).count > 0
+	),
+
+	/** Copy modifiers
+	 */
+	function _copyModifiers =
+	(
+		--format "\n"; print "SupportModifiers_v._copyModifiers()"
+
+		/* DIRTY CODE - TIME RPOEASSURE */
+
+		support_with_modifiers	= (this._getSupportsWithModfiers())[1]
+		support_modifiers	= support_with_modifiers.modifiers
+		supports_no_modifiers	= this._getSupportsWithoutModfiers()
+
+
+
+		for support_no_modifiers in supports_no_modifiers do
+			for i = support_modifiers.count to 1 by -1 do
+				addModifierWithLocalData support_no_modifiers support_modifiers[i] support_with_modifiers support_modifiers[i] -- instance the modifier
+
+
+		--for i = support_modifiers.count to 1 by -1 do
+		--	try(
+		--			addModifier supports_no_modifiers support_modifiers[i]
+		--	)catch()
+
+	),
+
+
+	/** Get obejcts with modfiers
+	 */
+	function _getSupportsWithModfiers =
+	(
+		for obj in supports where obj.modifiers.count > 0 collect obj
+	),
+
+	/** Get obejcts with modfiers
+	 */
+	function _getSupportsWithoutModfiers =
+	(
+		for obj in supports where obj.modifiers.count == 0 collect obj
+	),
 
 	/** Make sure that chamfer value is less then radius
 	  */

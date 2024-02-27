@@ -39,6 +39,7 @@ struct SupportManager_v
 			HelperGenerator.generatePointHelpers(source_obj)(this._getHelperByObject source_obj) reset_helpers:reset_helpers
 
 		for point_created in points_created where point_created != undefined collect point_created  -- return created points
+		--#() -- dev
 	),
 
 
@@ -49,22 +50,27 @@ struct SupportManager_v
 		--format "\n"; print "SupportManager_v.createSupports()"
 		--format "this.point_helpers_by_objects	= % \n" this.point_helpers_by_objects
 		Options.init()
-		--format "\n\n----------------------------\n\n"
-		supports_by_objects = #()
 
 		SupportModifiers.raft_mode = raft_mode
 
 		this._setPointHelpersByObject()
 
-		for source_helpers in this._getSourceHelpers(source_objects) do
-			append supports_by_objects (SupportGenerator.generateSupports(source_helpers))
+		new_supports_by_obj = for source_helpers in this._getSourceHelpers(source_objects) collect
+			(SupportGenerator.generateSupports(source_helpers))
 
-		/* IMPORTANT - SUPPORTS OBJECT MUST BE SELECTED TO APPLY MODIFIERS */
-		clearSelection()
-		for supports_by_object in supports_by_objects do
-			selectmore (supports_by_object)
+		supports_per_objects = this._getSupportsBySyncPointer (getUserPropVal new_supports_by_obj[1][1] "pointer_sync" asString:true)
 
-		SupportModifiers.addModifiers() -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
+		for new_supports in new_supports_by_obj do
+		(
+			--format "new_supports	= % \n" new_supports
+
+			supports_per_objects = this._getSupportsBySyncPointer (getUserPropVal new_supports[1] "pointer_sync" asString:true)
+
+			/* BUG IN _getSupportsBySyncPointer() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
+			join supports_per_objects new_supports
+
+			SupportModifiers.addModifiers(supports_per_objects) -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
+		)
 	),
 
 
@@ -97,9 +103,6 @@ struct SupportManager_v
 
 				point_helpers_by_objects[source_obj_pointer][vertex_index] = _helper
 			)
-
-		--for POINT_HELPERS_BY_OBJECT in POINT_HELPERS_BY_OBJECTS do
-			--format "POINT_HELPERS_BY_OBJECT	= % \n" point_helpers_by_objects
 	),
 
 	/** Get source objects
@@ -119,13 +122,6 @@ struct SupportManager_v
 		/* GET OBEJCTS WITH POINT HELPERS FROM SOURCE OBJECTS */
 		source_objs	= for obj in source_objects where classOf obj != Point and this._getOriginPoiter(obj) != undefined collect obj
 
-
-		--format "source_points	= % \n" source_points
-		--format "source_objs	= % \n" source_objs
-
-		--for point_helpers_by_object in point_helpers_by_objects do
-			--format "point_helpers_by_object	= % \n" point_helpers_by_object
-
 		/* GET HELEPRS BY OBJECT */
 		for obj in source_objs do
 		(
@@ -136,20 +132,13 @@ struct SupportManager_v
 			for helper_data in helpers_by_obj do
 				if (index = findItem source_points helper_data.value ) > 0 then
 					deleteItem source_points index
-				--else
-					--RemoveDictValue helpers_by_obj helper_data.key
 
 			append source_helpers helpers_by_obj
 		)
 
-		--format "SOURCE_HELPERS	= % \n" SOURCE_HELPERS
-
-		--format "SOURCE_POINTS	= % \n" source_points
-
 		/* SORT SELECTED POINT BY SOURCE OBJECT */
 		for source_point in source_points do
 		(
-			--format "SOURCE_POINT	= % \n" source_point
 			if ( sync_pointer = getUserPropVal source_point "pointer_sync" asString:true ) != undefined then
 			(
 				source_vert = getUserPropVal source_point "source_vert"
@@ -160,10 +149,8 @@ struct SupportManager_v
 				source_points_used[sync_pointer][source_vert] = source_point
 
 			)else
-				--format "\nWARNING: Point object# % IS NOT SYNCED	= % \n" source_point.name
-
+				format "\nWARNING: Point object# % IS NOT SYNCED	= % \n" source_point.name
 		)
-
 		/* ADD VALID POINTS TO HELEPRS */
 		for key in source_points_used.keys do
 			append source_helpers source_points_used[key]
@@ -171,12 +158,22 @@ struct SupportManager_v
 		source_helpers --return
 	),
 
+
+	/** Get supports by sync inter
+	 */
+	function _getSupportsBySyncPointer pointer_sync =
+	(
+		--format "\n"; print "SupportManager_v.getSupportsBySyncInter()"
+		--for _shape in shapes where getUserPropVal _shape "pointer_sync" asString:true == pointer_sync as string collect _shape
+		for _shape in geometry where superClassOf _shape.baseobject == shape and getUserPropVal _shape "pointer_sync" asString:true == pointer_sync collect _shape
+	),
+
 	/** Get origin poiter
 	 */
 	function _getOriginPoiter source_obj =
 	(
 		--format "\n"; print "SupportManager_v._getOriginPoiter()"
-		 getUserPropVal source_obj "pointer_sync" asString:true --return
+		 getUserPropVal source_obj "pointer_sync_source" asString:true --return
 	),
 
 	/**

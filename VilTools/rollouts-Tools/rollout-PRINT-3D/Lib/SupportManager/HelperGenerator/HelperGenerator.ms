@@ -43,7 +43,7 @@ struct HelperGenerator_v
 		--if reset_helpers then
 			--this._deleteOldPointHelpers(source_obj)(verts_data[1])
 
-		this._saveSourcePointerToProps(source_obj)
+		this._setUserDataToSourceObject(source_obj)
 
 
 		/* GENERATE POINTS FOR EACH VERTEX */
@@ -69,11 +69,11 @@ struct HelperGenerator_v
 	  *
 	  * BECAUSE POINTER IS CHANGI EACH TIME IS CENE LOADED
 	 */
-	function _saveSourcePointerToProps source_obj =
+	function _setUserDataToSourceObject source_obj =
 	(
-		--format "\n"; print "HelperGenerator_v._saveSourcePointerToProps()"
-		if (getUserPropVal source_obj "pointer_sync") == undefined then
-			 setUserPropVal source_obj "pointer_sync" (getHandleByAnim source_obj ) asString:true
+		--format "\n"; print "HelperGenerator_v._setUserDataToSourceObject()"
+		if (getUserPropVal source_obj "pointer_sync_source") == undefined then
+			 setUserPropVal source_obj "pointer_sync_source" (getHandleByAnim source_obj ) asString:true
 	),
 
 	/** Reinstance helper points

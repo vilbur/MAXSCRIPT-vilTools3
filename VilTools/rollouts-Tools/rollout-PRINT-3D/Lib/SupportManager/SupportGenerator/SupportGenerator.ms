@@ -27,17 +27,24 @@ struct SupportGenerator_v
 		format "\n"; print "SupportGenerator_v.createSupports()"
 		format "point_helpers	= % \n" point_helpers
 
-		supportObjects = for vertex_index in point_helpers.keys collect
+
+		supports_created = for vertex_index in point_helpers.keys collect
 		(
 			this._deleteSupportByHelper( point_helpers[vertex_index] )
 
-			SupportObject.generateSupport( point_helpers[vertex_index] )
+			support = SupportObject.generateSupport( point_helpers[vertex_index] )
+
+			this._saveUserData (point_helpers[vertex_index]) (support)
+
+			support --return
 		)
 
-		/* GET ALL SUPPORTS GENERATED FOR OBJECT */
-		supports_by_object = for helper_data in point_helpers where ( support = this._getSupportByHelper(helper_data.value) ) != undefined collect support
+		--for SupportObject in supportObjects collect SupportObject.support
 
-		supports_by_object --return
+		/* GET ALL SUPPORTS GENERATED FOR OBJECT */
+		--supports_by_object = for helper_data in point_helpers where ( support = this._getSupportByHelper(helper_data.value) ) != undefined collect support
+
+		supports_created --return
 	),
 
 
@@ -50,6 +57,14 @@ struct SupportGenerator_v
 		--format "\n"; print "SupportGenerator_v._deleteSupportByHelper()"
 		if ( support = this._getSupportByHelper(point_helper) ) != undefined then
 			delete support
+	),
+
+	/**
+	 */
+	function _saveUserData point_helper support =
+	(
+		--format "\n"; print "HelperObject_v.saveUserData()"
+		setUserPropVal support "pointer_sync" ( getUserPropVal point_helper "pointer_sync" ) asString:true
 	),
 
 	/** Get support by helper
