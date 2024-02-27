@@ -3,6 +3,8 @@ filein( getFilenamePath(getSourceFileName()) + "/../rollout-VERTEX-COLOR/Lib/mes
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/MeshVertexGetter/MeshVertexGetter.ms" )	--"./Lib/SupportManager/MeshVertexGetter/MeshVertexGetter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportModifiers/SupportModifiers.ms" )	--"./Lib/SupportManager/SupportModifiers/SupportModifiers.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportOptions/SupportOptions.ms" )	--"./Lib/SupportManager/SupportOptions/SupportOptions.ms"
+
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SourceObject/SourceObject.ms" )	--"./Lib/SupportManager/SourceObject/SourceObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperObject/HelperObject.ms" )	--"./Lib/SupportManager/HelperObject/HelperObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportObject/SupportObject.ms" )	--"./Lib/SupportManager/SupportObject/SupportObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamGenerator/BeamGenerator.ms" )	--"./Lib/SupportManager/BeamGenerator/BeamGenerator.ms"
@@ -48,7 +50,7 @@ icon:	"across:3|height:32|width:128"
 		--undo off
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT MANAGER.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 
 			if ( points_created = (getSupportManagerInstance()).generatePointHelpers( selection ) reset_helpers: keyboard.controlPressed ).count > 0 then
 				select points_created
@@ -65,10 +67,10 @@ tooltip:	"GEnerate supports for selected object or point helepers"
 icon:	"across:3|height:32|width:128"
 (
 	on execute do
-		undo "Generate Platforms" on
+		undo "Generate Supports" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT MANAGER.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 
 			SupportManager = getSupportManagerInstance()
 
@@ -77,6 +79,32 @@ icon:	"across:3|height:32|width:128"
 			--_selection = for obj in selection collect obj
 
 			SupportManager.createSupports( selection as Array )
+
+			--selectmore _selection
+		)
+)
+
+/*
+*/
+macroscript	_print_support_generator_raft
+category:	"_3D-Print"
+buttontext:	"RAFT Gen"
+tooltip:	"GeEnerate rafts for selected object or point helepers"
+icon:	"across:3|height:32|width:128"
+(
+	on execute do
+		undo "Generate Rafts" on
+		(
+			clearListener(); print("Cleared in:\n"+getSourceFileName())
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
+
+			SupportManager = getSupportManagerInstance()
+
+			--supports = #()
+
+			--_selection = for obj in selection collect obj
+
+			SupportManager.createSupports( selection as Array ) raft_mode:true
 
 			--selectmore _selection
 		)

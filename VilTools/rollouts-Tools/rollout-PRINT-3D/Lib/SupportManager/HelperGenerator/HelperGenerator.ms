@@ -40,22 +40,24 @@ struct HelperGenerator_v
 			return #()
 
 		/* DELETE OLD POINTS */
-		if reset_helpers then
-			this._deleteOldPointHelpers(source_obj)(verts_data[1])
+		--if reset_helpers then
+			--this._deleteOldPointHelpers(source_obj)(verts_data[1])
+
+		this._saveSourcePointerToProps(source_obj)
 
 
 		/* GENERATE POINTS FOR EACH VERTEX */
 		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
 		(
-			HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:(getWireColor(source_obj)(verts_data[4][i])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
+			HelperObject = HelperObject_v Options:Options source_obj:source_obj source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:(getWireColor(source_obj)(verts_data[4][i])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
 			HelperObject.createHelper()
 
 			this.point_helpers[HelperObject.vertex_index] = HelperObject.point_helper
 		)
 
-		/* REINSTANCE ALL POINTS PER OBEJCT */
-		this._reinstanceAllPoints()
+		--/* REINSTANCE ALL POINTS PER OBEJCT */
+		--this._reinstanceAllPoints()
 
 		point_helpers --return
 	),
@@ -63,8 +65,19 @@ struct HelperGenerator_v
 
 	private
 
-	/** Reinstance helper points
+	/** set current pointer to source object
 	  *
+	  * BECAUSE POINTER IS CHANGI EACH TIME IS CENE LOADED
+	 */
+	function _saveSourcePointerToProps source_obj =
+	(
+		--format "\n"; print "HelperGenerator_v._saveSourcePointerToProps()"
+		if (getUserPropVal source_obj "pointer_sync") == undefined then
+			 setUserPropVal source_obj "pointer_sync" (getHandleByAnim source_obj ) asString:true
+	),
+
+	/** Reinstance helper points
+	  *S
 	  * Each level of points is different instance
 	  *
 	  */

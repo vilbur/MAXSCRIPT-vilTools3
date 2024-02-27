@@ -5,12 +5,10 @@ struct SupportGenerator_v
 	/* construct */
 	--point_helpers,
 
-
 	/* properties */
 	--support_objects = #(),
 
 	/* dependency */
-	SupportModifiers,
 	--SupportModifiers	= SupportModifiers_v	Options:Options,
 
 	/* reference */
@@ -20,12 +18,14 @@ struct SupportGenerator_v
 	--SupportObject = SupportObject_v Options:Options,
 
 	/** Create supports
+	  *
+	  *
+	  *
 	 */
-	function generateSupports source_obj point_helpers =
+	function generateSupports point_helpers =
 	(
 		format "\n"; print "SupportGenerator_v.createSupports()"
 		format "point_helpers	= % \n" point_helpers
-
 
 		supportObjects = for vertex_index in point_helpers.keys collect
 		(
@@ -34,15 +34,10 @@ struct SupportGenerator_v
 			SupportObject.generateSupport( point_helpers[vertex_index] )
 		)
 
-		--for SupportObject in supportObjects collect SupportObject.support
-
 		/* GET ALL SUPPORTS GENERATED FOR OBJECT */
 		supports_by_object = for helper_data in point_helpers where ( support = this._getSupportByHelper(helper_data.value) ) != undefined collect support
 
-
-		select (supports_by_object) -- IMPORTANT - SUPPORTS OBJECT MUST BE SELECTED TO APPLY MODIFIERS
-		
-		SupportModifiers.addModifiers() -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
+		supports_by_object --return
 	),
 
 
@@ -82,6 +77,5 @@ struct SupportGenerator_v
 		--format "\n"; print "SupportGenerator_v.onCreate()"
 		--format "Options	= % \n" Options
 		SupportObject = SupportObject_v Options:Options
-		SupportModifiers = SupportModifiers_v Options:Options
 	)
 )

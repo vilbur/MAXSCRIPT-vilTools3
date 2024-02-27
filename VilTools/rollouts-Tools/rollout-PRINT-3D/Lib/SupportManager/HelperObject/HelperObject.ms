@@ -36,7 +36,7 @@ struct HelperObject_v
 		(
 			--_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
 
-			_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true
+			_point = Point name:(this._getName(i)) pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
@@ -125,7 +125,13 @@ struct HelperObject_v
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),
 
-
+	/** Get name
+	 */
+	function _getName index =
+	(
+		--format "\n"; print "HelperObject_v._getName()"
+		source_obj.name + "-point-" + vertex_index as string + "-" + index as string
+	),
 
 	/** Add to layer
 	 */
@@ -147,7 +153,7 @@ struct HelperObject_v
 	function _saveUserDataToPointHelper =
 	(
 		--format "\n"; print "HelperObject_v.saveUserData()"
-		setUserPropVal point_helper "helper_source" ( getHandleByAnim source_obj )
+		setUserPropVal point_helper "pointer_sync" ( getUserPropVal source_obj "pointer_sync" ) asString:true
 		setUserPropVal point_helper "this_pointer"	  ( getHandleByAnim point_helper )
 		setUserPropVal point_helper "source_vert"	  ( vertex_index )
 

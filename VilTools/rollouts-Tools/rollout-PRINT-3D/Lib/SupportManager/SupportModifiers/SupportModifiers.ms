@@ -8,6 +8,7 @@ struct SupportModifiers_v
 	--mat_ids,
 
 	/* properties */
+	raft_mode = false,
 
 
 	/* options */
@@ -28,15 +29,19 @@ struct SupportModifiers_v
 		format "this.Options:	% \n" this.Options
 		max modify mode
 
-		--this._addEditSpline()
+		this._addEditSpline()
 
 		this._addSweepModifier("Bar Width")
 
-		this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
+		if not raft_mode then
+		(
+			this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
 
-		this._extrude("Extrude Base") (this.Options.base_extrude)
+			this._extrude("Extrude Base") (this.Options.base_extrude)
 
-		this._chamfer("Chamfer Base") (this.Options.chamfer_base )
+			this._chamfer("Chamfer Base") (this.Options.chamfer_base )
+		)
+		
 
 		this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:#DIFFERENT
 
