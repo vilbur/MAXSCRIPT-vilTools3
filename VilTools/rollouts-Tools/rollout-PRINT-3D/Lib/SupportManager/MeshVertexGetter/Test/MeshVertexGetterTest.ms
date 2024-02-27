@@ -1,13 +1,14 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
-filein( getFilenamePath(getSourceFileName()) + "/../../PlatformObject/PlatformObject.ms" )	-- "./../../PlatformObject/PlatformObject.ms"
-filein( getFilenamePath(getSourceFileName()) + "/../EditablePolyVertexGetter.ms" )	-- "./../EditablePolyVertexGetter.ms"
+filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\Lib\meshVertToColorVertexConvertor\MeshVertToColorVertexConvertor.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/../MeshVertexGetter.ms" )	--"./../MeshVertexGetter.ms"
 
 /**
   */
 function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:false obj:#PLANE vertex_color: =
 (
-	format "\n"; print "PlatformGeneratorTest.ms.createSourceMesh()"
+	format "\n"; print "MeshVertexGetterTest.ms.createSourceMesh()"
 	delete objects
 
 	segment_size = 10
@@ -48,21 +49,26 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 
 /* SELECT SOURCE OBJECTS - IMPORTANT  */
-select objects
-source_objects = for obj in selection collect obj
+select objects[1]
+--source_objects = for obj in selection collect obj
 
 
 /*------------------------------------------------------------------------------
-	RUN TEST
+	SET INSTANCE
 --------------------------------------------------------------------------------*/
 
-EditablePolyVertexGetter 	= EditablePolyVertexGetter_v() --PlatformObjectInstance:(PlatformObject_v()) normal_length:10
-
-EditablePolyVertexGetter.setVertsData(source_objects[1])
+MeshVertexGetter 	= MeshVertexGetter_v(selection[1])
 
 
---/*------------------------------------------------------------------------------
---	PRINT RESULT
-----------------------------------------------------------------------------------*/
---for PlatformObject in EditablePolyVertexGetter.PlatformObjects do
---	format "PlatformObject:	% \n" PlatformObject
+/*------------------------------------------------------------------------------
+	RUN TESTS
+--------------------------------------------------------------------------------*/
+all_colored_verts = MeshVertexGetter.getVetexData quiet:true
+
+
+
+/*------------------------------------------------------------------------------
+	PRINT RESULT
+--------------------------------------------------------------------------------*/
+for vert_data in all_colored_verts do
+	format "vert_data	= % \n" vert_data

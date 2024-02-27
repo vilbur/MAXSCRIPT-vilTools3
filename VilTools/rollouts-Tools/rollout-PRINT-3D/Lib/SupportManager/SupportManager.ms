@@ -26,11 +26,13 @@ struct SupportManager_v
 		format "\n"; print "PlatformGenerator_v.generatePointHelpers()"
 		Options.init()
 
-		/* DEBUG */
-		for point_helpers_per_obj in point_helpers_by_object do
-			for point_helper_per_obj in point_helpers_per_obj.value do
-			format "point_helper_per_obj	= % \n" point_helper_per_obj
-			--format "point_helpers_by_object	= % \n" point_helpers_by_object
+		this._setPointHelpers()
+
+		--/* DEBUG */
+		--for point_helpers_per_obj in point_helpers_by_object do
+		--	for point_helper_per_obj in point_helpers_per_obj.value do
+		--	format "point_helper_per_obj	= % \n" point_helper_per_obj
+		--	--format "point_helpers_by_object	= % \n" point_helpers_by_object
 
 		point_helpers_by_object = for source_obj in source_objects collect
 			HelperGenerator.generatePointHelpers(source_obj)(this._getHelperByObject source_obj) reset_helpers:reset_helpers
@@ -48,8 +50,12 @@ struct SupportManager_v
 		format "this.point_helpers_by_object	= % \n" this.point_helpers_by_object
 		Options.init()
 
+		this._setPointHelpers()
+
 		for source_obj in source_objects do
 			SupportGenerator.generateSupports (source_obj) (this._getHelperByObject(source_obj))
+			--format "this._getHelperByObject source_obj	= % \n" (this._getHelperByObject source_obj)
+
 	),
 
 
@@ -59,7 +65,9 @@ struct SupportManager_v
 	 */
 	function _getHelperByObject source_obj =
 	(
-		--format "\n"; print "SupportManager_v._getHelperByObject()"
+		format "\n"; print "SupportManager_v._getHelperByObject()"
+
+		format "point_helpers_by_object	= % \n" point_helpers_by_object
 		point_helpers_by_object[(getHandleByAnim source_obj) as string ]
 	),
 
@@ -67,7 +75,7 @@ struct SupportManager_v
 	 */
 	function _setPointHelpers =
 	(
-		format "\n"; print "SupportManager_v.getPointHelper()"
+		format "\n"; print "SupportManager_v._setPointHelpers()"
 		this.point_helpers_by_object	= Dictionary #string
 
 		--for _helper in point_helpers_by_object
@@ -96,7 +104,6 @@ struct SupportManager_v
 		--SupportCrossSection	= SupportCrossSection_v	Options:Options
 		--SupportObjectInstance 	= SupportObject_v	Options:Options
 
-		this._setPointHelpers()
 	)
 
 )

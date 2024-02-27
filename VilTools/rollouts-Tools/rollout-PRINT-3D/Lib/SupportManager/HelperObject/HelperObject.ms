@@ -32,7 +32,6 @@ struct HelperObject_v
 			GENERATE POINTS
 		--------------------------------------------------------------------------------*/
 
-
 		for i = 1 to this.points_positions.count do
 		(
 			--_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
@@ -106,7 +105,7 @@ struct HelperObject_v
 				if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
 				(
 					--vert_pos = vert_pos + normal_length * normalize( _normal )
-					vert_pos += normal_length * normalize( _normal )
+					vert_pos += normal_length * normalize( _normal ) -- MOVE POSITION ALONG NORMAL
 					--format "_normal:	% \n" _normal
 
 					/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
@@ -132,7 +131,7 @@ struct HelperObject_v
 	 */
 	function _addToLayer source_obj obj =
 	(
-		layer_name = source_obj.name + "-platforms"
+		layer_name = source_obj.name + "-support"
 
 		if ( layer = LayerManager.getLayerFromName (layer_name) ) == undefined then
 			layer = LayerManager.newLayerFromName (layer_name)

@@ -23,8 +23,8 @@ struct SupportGenerator_v
 	 */
 	function generateSupports source_obj point_helpers =
 	(
-		--format "\n"; print "SupportGenerator_v.createSupports()"
-		--format "point_helpers	= % \n" point_helpers
+		format "\n"; print "SupportGenerator_v.createSupports()"
+		format "point_helpers	= % \n" point_helpers
 
 
 		supportObjects = for vertex_index in point_helpers.keys collect
@@ -41,7 +41,7 @@ struct SupportGenerator_v
 
 
 		select (supports_by_object) -- IMPORTANT - SUPPORTS OBJECT MUST BE SELECTED TO APPLY MODIFIERS
-
+		
 		SupportModifiers.addModifiers() -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 	),
 

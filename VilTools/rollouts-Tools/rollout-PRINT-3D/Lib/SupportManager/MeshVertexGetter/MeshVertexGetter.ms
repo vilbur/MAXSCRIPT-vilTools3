@@ -1,5 +1,5 @@
 
-if VERTEX_DATA_CACHE == undefined then
+if VERTEX_DATA_CACHE == undefined then -- DEV
 	global VERTEX_DATA_CACHE = Dictionary #string
 
 
@@ -11,22 +11,31 @@ struct MeshVertexGetter_v
 	obj,	-- object used for getting data ( collapsed copy of obj  OR obj if it is Edit_Poly )
 
 	/* properties */
-	verts_to_generate	= #{},	-- selected or colored verts of  object
-	verts_positions	= #(),	-- positions only of verts_to_generate
-	verts_normals	= #(),	-- normals only of verts_to_generate
+	verts_to_get	= #{},	-- selected or colored verts of  object
+	verts_positions	= #(),	-- positions only of verts_to_get
+	verts_normals	= #(),	-- normals only of verts_to_get
 	vertex_colors	= Dictionary #string,	 -- vertex colors of all verts
 
-	verts_data      = #(), -- 2d matrix #( #{verts_to_generate}, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
+	verts_data      = #(), -- 2d matrix #( #{verts_to_get}, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
 
 	--platform_vertex_data_key = "platform_vertex_data",
 
 	/* dependency */
+	MeshVertToColorVertexConvert,
 
 	/* reference */
 	/* inhered */
 
-	/** Get vertex positions, color and normals from Editable Poly obejct
+	/** Get vertex positions, color and normals from Editable Poly object
 	  *
+	  * Verts used are stored in this.verts_to_get
+	  *
+	  * 	USED VERTEX BY
+	  * 		1) Get selected verts if subobejctlevel is 1 and any vertex is selected
+	  * 		2) Get all colored verts if nothing selected
+	  * 		3) Get all verts in nothing is selected and vertex colors does not exists
+	  *
+	  * @return 2Dmatrix  #( #{verts_to_get}, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
 	  */
 	function getVetexData quiet:false =
 	(
@@ -34,7 +43,7 @@ struct MeshVertexGetter_v
 		max modify mode
 
 		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
-		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_generate ).isEmpty == false
+		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_get ).isEmpty == false
 		fn positionChanged	verts_cache = verts_cache != undefined and( with PrintAllElements on verts_cache[3] as string == this.verts_positions as string )
 
 		--this.obj = _obj
@@ -45,10 +54,14 @@ struct MeshVertexGetter_v
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 		verts_count_VC	= getNumCPVVerts obj.mesh
 
-		/* SET COLORS FIRST - needed for getting verts_to_generate by color  */
-		this._setVertexColors verts_to_get:verts_all vertex_colors_exists:(verts_count_VC != 0)
+		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
+		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0)
 
-		verts_to_generate = case of
+		format "VERTEX_COLORS.COUNT	= % \n" vertex_colors.count
+		for vertex_color in vertex_colors do
+			format "VERTEX_COLOR	= % \n" vertex_color
+
+		verts_to_get = case of
 		(
 			/* GET SELECTED VERTS */
 			(not vertex_sel.isEmpty and subObjectLevel == 1 ): vertex_sel
@@ -60,11 +73,11 @@ struct MeshVertexGetter_v
 			default: verts_all
 		)
 
-		/* SET VERTS POSITIONS WHEN verts_to_generate is known  */
+		/* SET VERTS POSITIONS WHEN verts_to_get is known  */
 		this._setVertexPositions()
 
 		/* WARNING IF ALL VERTS ARE USED */
-		if verts_count != verts_to_generate.numberSet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
+		if verts_count != verts_to_get.numberSet or quiet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
 		(
 			verts_cache 	= VERTEX_DATA_CACHE[ object_pointer ]
 
@@ -77,17 +90,21 @@ struct MeshVertexGetter_v
 				else
 					verts_cache[4]
 
-			this.verts_data = #( verts_to_generate, verts_positions, verts_normals, this._getVertexColors()  )
+			this.verts_data = #( verts_to_get, verts_positions, verts_normals, this._getVertexColors()  )
 
 			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
 			--format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
 			--format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
 			--format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
 
-			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_generate, verts_positions, verts_normals ) --return
-		)
+			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_get, verts_positions, verts_normals ) --return
 
-		this.verts_data --return
+
+			this.verts_data --return
+		)
+		else
+			false -- return
+
 	),
 
 	private
@@ -101,27 +118,27 @@ struct MeshVertexGetter_v
 	--	this.verts_normals	= verts_data[4]
 	--),
 
-	/** SET VERTEX POSITIONS only of verts_to_generate
+	/** SET VERTEX POSITIONS only of verts_to_get
 	 */
 	function _setVertexPositions =
 	(
 		format "\n"; print "MeshVertexGetter_v._setVertexPositions()"
-		this.verts_positions = meshop.getVerts obj.mesh verts_to_generate node:obj
+		this.verts_positions = meshop.getVerts obj.mesh verts_to_get node:obj
 	),
 
 
-	/** SET VERT NORMALS only of verts_to_generate
+	/** SET VERT NORMALS only of verts_to_get
 	 */
 	function _getVertNormals =
 	(
 		format "\n"; print "MeshVertexGetter_v._getVertNormals()"
-		--this.verts_normals = for vert in verts_to_generate collect ( getnormal obj.mesh vert )
+		--this.verts_normals = for vert in verts_to_get collect ( getnormal obj.mesh vert )
 
 		EditNormalsMod = Edit_Normals()
 
 		addModifier obj EditNormalsMod
 
-		verts_normals = for i = 1 to (verts_to_generate_arr = verts_to_generate as Array ).count collect
+		verts_normals = for i = 1 to (verts_to_generate_arr = verts_to_get as Array ).count collect
 		(
 			normal_averaged	= [0,0,0]
 			normals_per_vertex	= #{}
@@ -135,7 +152,7 @@ struct MeshVertexGetter_v
 			normalize normal_averaged
 		)
 
-		--verts_normals = for vert in verts_to_generate collect (EditNormalsMod.getNormal(vert)) * obj.transform
+		--verts_normals = for vert in verts_to_get collect (EditNormalsMod.getNormal(vert)) * obj.transform
 
 		deleteModifier obj EditNormalsMod
 
@@ -151,7 +168,7 @@ struct MeshVertexGetter_v
 		colors = for key in vertex_colors.keys collect execute key
 
 		/* FIND VERTEX IN 2D matrix */
-		for vert in verts_to_generate collect
+		for vert in verts_to_get collect
 		(
 			colors_per_vert = for c = 1 to vertex_colors.count where this.vertex_colors[vertex_colors.keys[c]][vert] collect colors[c]
 
@@ -161,40 +178,58 @@ struct MeshVertexGetter_v
 
 	/** Set vertex colors Ditionary
 	  *
-	  * IMPORTAANT: OLORS ARE GET FRO MESH VERTS - NOT CVP VERTS !
+	  * IMPORTANT:
+	  *		1) getvertcolor()	IS USING CPV vertex
+	  *		2) getVertsByColor()	RETURN MESH VERTEX
+	  *
 	  *
 	  * return Dictionary #( "Color 128 128 128", #{1..n} ) KEY: color VALUE: verts of that color
 	  */
-	function _setVertexColors verts_to_get: vertex_colors_exists: =
+	function _setVertexColors verts_to_get_colors: vertex_colors_exists: =
 	(
 		format "\n"; print "MeshVertexGetter_v._setVertexColors()"
 
-		local map_verts = copy verts_to_get
+		local color_of_vert
 
 		if vertex_colors_exists then
 		(
+			--format "START verts_to_get_colors	= % \n" verts_to_get_colors
+			--format "verts_to_get_colors.numberSet	= % \n" verts_to_get_colors.numberSet
+
+			MeshVertToColorVertexConvert.get_single_vert = false
+
 			--counter = 1 -- DEV
-
-			while not map_verts.isEmpty do
-			--while counter < 10 do
+			--while counter < 5 do  -- DEV
+			while not verts_to_get_colors.isEmpty do
 			(
-				--format "\n\n"
-				vertex_index = (map_verts as Array )[1]
-				--format "MAP_VERTS	= % \n" map_verts
+				--format "\n\n\n"
 
-				color_of_vert = getvertcolor obj.mesh vertex_index -- get color of vertex
-				--format "color_of_vert	= % \n" color_of_vert
+				mesh_vert = (verts_to_get_colors as Array )[1]
+				--format "mesh_vert	= % \n" mesh_vert
 
-				verts_by_color = meshop.getVertsByColor obj.mesh color_of_vert 0.01 0.01 0.01 	-- get all verts by thath color
-				--format "verts_by_color	= % \n" verts_by_color
-				vertex_colors[ color_of_vert as string ] = verts_by_color
+				map_verts = makeUniqueArray (MeshVertToColorVertexConvert.meshVertsToMapVerts (mesh_vert) flat:true )
+				--format "map_verts	= % \n" map_verts
 
-				map_verts -= verts_by_color
-				--counter = 1
+
+				i = 1
+				/* LOOP EACH GEOMETRY VERTEX OF FACE and find which vert share same faces as faces_of_vertex_pattern ( it means that it is the same geometry vert ) */
+				while HasDictValue vertex_colors ( (color_of_vert = getvertcolor obj.mesh map_verts[i]) as string )  do
+					i += 1
+
+				mesh_verts_by_color = meshop.getVertsByColor obj.mesh color_of_vert 0.01 0.01 0.01 	-- get all verts by thath color
+				--format "\nmesh_verts_by_color = % \n" mesh_verts_by_color
+				--format "mesh_verts_by_color.numberSet	= % \n" verts_to_get_colors.numberSet
+
+				vertex_colors[ color_of_vert as string ] = mesh_verts_by_color
+
+				verts_to_get_colors -= mesh_verts_by_color
+				--format "\nverts_to_get_colors	= % \n" verts_to_get_colors
+				--format "verts_to_get_colors.numberSet	= % \n" verts_to_get_colors.numberSet
+				--counter += 1  -- DEV
 			)
 		)
 		else
-			vertex_colors[ obj.wirecolor as string ] = verts_to_get
+			vertex_colors[ obj.wirecolor as string ] = verts_to_get_colors
 	),
 
 
@@ -206,7 +241,7 @@ struct MeshVertexGetter_v
 		----format "\n"; print "MeshVertexGetter_v._askToContinue()"
 		_continue = true
 
-		--if verts_to_generate.count > 500 and not queryBox ( verts_to_generate.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
+		--if verts_to_get.count > 500 and not queryBox ( verts_to_get.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
 		if verts_count > 100 and not queryBox ( "Object " + obj.name + " has " + verts_count as string +" verts selected.\n\nIt may take some time.\n\nCONTINUE ?" ) title:"PLATFORMS GENERATION"  then
 			 _continue =  false
 
@@ -216,6 +251,9 @@ struct MeshVertexGetter_v
 	 */
 	on create do
 	(
+		MeshVertToColorVertexConvert = MeshVertToColorVertexConvertor_v(obj)
+
+
 	)
 
 )

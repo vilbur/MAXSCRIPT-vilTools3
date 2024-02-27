@@ -1,8 +1,8 @@
 
-
-if VERTEX_DATA_CACHE == undefined then
-	global VERTEX_DATA_CACHE = Dictionary #string
-
+--
+--if VERTEX_DATA_CACHE == undefined then
+--	global VERTEX_DATA_CACHE = Dictionary #string
+--
 
 
 /** Editable poly vertex getter

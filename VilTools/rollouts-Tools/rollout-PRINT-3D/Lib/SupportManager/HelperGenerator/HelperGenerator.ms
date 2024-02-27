@@ -35,13 +35,15 @@ struct HelperGenerator_v
 		/* GET VERTEX DATA */
 		verts_data = (MeshVertexGetter_v(source_obj)).getVetexData()
 
+		/* IF USER CANCEL GETTIN DATA */
+		if verts_data == false then
+			return #()
+
 		/* DELETE OLD POINTS */
 		if reset_helpers then
 			this._deleteOldPointHelpers(source_obj)(verts_data[1])
 
 
-
-			
 		/* GENERATE POINTS FOR EACH VERTEX */
 		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
 		(
