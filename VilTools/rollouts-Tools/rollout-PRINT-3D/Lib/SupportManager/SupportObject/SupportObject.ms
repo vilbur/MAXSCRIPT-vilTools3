@@ -6,6 +6,7 @@ struct SupportObject_v
 
 	/* properties */
 	support,
+	raft_mode = false,
 
 	/* dependency */
 	/* reference */
@@ -48,33 +49,39 @@ struct SupportObject_v
 		for point_helper in helpers_tree do
 			addKnot support spline_index #corner #line point_helper.pos
 
-		/*------------------------------------------------------------------------------
-			ABOVE GROUND POINT
-		--------------------------------------------------------------------------------*/
-		pos =  helpers_tree[helpers_tree.count].pos -- get pos of last point above ground
-
-		pos.z = this.Options.base_height -- set knot above ground to set base height and keep last segment straight for extrude
-
-		addKnot support spline_index #corner #line pos
-
-		pos.z = 0 -- set support to ground
-
+		if raft_mode then
+			setMaterialID support spline_index 1 this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
 		/*------------------------------------------------------------------------------
-			GROUND POINT
+			ABOVE POINT ABOVE GROUND - NOT IF RAFT MODE
 		--------------------------------------------------------------------------------*/
-		addKnot support spline_index #corner #line pos
+		if not raft_mode then
+		(
+			pos =  helpers_tree[helpers_tree.count].pos -- get pos of last point above ground
+
+			pos.z = this.Options.base_height -- set knot above ground to set base height and keep last segment straight for extrude
+
+			addKnot support spline_index #corner #line pos
+
+			pos.z = 0 -- set support to ground
 
 
-		/*------ SET MATERIAL TO SEGMENTS ------*/
-		num_of_segments = numSegments support ( numSplines support)
+			/*------------------------------------------------------------------------------
+				GROUND POINT
+			--------------------------------------------------------------------------------*/
+			addKnot support spline_index #corner #line pos
 
-		for segment_i = 1 to num_of_segments do
-			setMaterialID support spline_index segment_i this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
-		/*------ SET MATERIAL TO BOTTOM SEGMENT ------*/
+			/*------ SET MATERIAL TO SEGMENTS ------*/
+			num_of_segments = numSegments support ( numSplines support)
 
-		setMaterialID support spline_index num_of_segments this.Options.mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+			for segment_i = 1 to num_of_segments do
+				setMaterialID support spline_index segment_i this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+
+			/*------ SET MATERIAL TO BOTTOM SEGMENT ------*/
+
+			setMaterialID support spline_index num_of_segments this.Options.mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+		)
 
 		updateShape support
 	),

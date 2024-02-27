@@ -74,13 +74,7 @@ icon:	"across:3|height:32|width:128"
 
 			SupportManager = getSupportManagerInstance()
 
-			--supports = #()
-
-			--_selection = for obj in selection collect obj
-
 			SupportManager.createSupports( selection as Array )
-
-			--selectmore _selection
 		)
 )
 
@@ -100,12 +94,6 @@ icon:	"across:3|height:32|width:128"
 
 			SupportManager = getSupportManagerInstance()
 
-			--supports = #()
-
-			--_selection = for obj in selection collect obj
-
 			SupportManager.createSupports( selection as Array ) raft_mode:true
-
-			--selectmore _selection
 		)
 )

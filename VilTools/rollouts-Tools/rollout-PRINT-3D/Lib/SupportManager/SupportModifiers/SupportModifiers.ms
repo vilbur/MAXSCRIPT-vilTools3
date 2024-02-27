@@ -41,7 +41,8 @@ struct SupportModifiers_v
 			this._addEditSpline()
 
 			this._addSweepModifier("Bar Width")
-
+			--format "RAFT_MODE	= % \n" raft_mode
+			--format "not raft_mode	= % \n" (not raft_mode)
 			if not raft_mode then
 			(
 				this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
@@ -52,9 +53,9 @@ struct SupportModifiers_v
 			)
 
 
-			this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:#DIFFERENT
+			this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:( if raft_mode then #OFF else #DIFFERENT )  material_ID:( if raft_mode then this.Options.mat_ids[#MIDDLE] )
 
-			this._selectFace("Select Top Face")(this.Options.mat_ids[#TOP])
+			this._selectFace("Select Top Face")(this.Options.mat_ids[ if raft_mode then #MIDDLE else #TOP ]) invert_sel:raft_mode
 
 			this._extrude("Extrude Top")(this.Options.extrude_top)
 
@@ -168,7 +169,7 @@ struct SupportModifiers_v
 	/** Add SELECT modifier
 	  *
 	  */
-	function _selectFace name mat_id  =
+	function _selectFace name mat_id invert_sel:false =
 	(
 		format "\n"; print "SupportModifiers_v._selectFace()"
 		--format "Adding Volume Select\n"
@@ -178,14 +179,17 @@ struct SupportModifiers_v
 		volume_sel_mod.level	= 2	-- select face
 		volume_sel_mod.volume	= 5	-- select by material ID
 		volume_sel_mod.matID	= mat_id	-- select face by mat ID
+		volume_sel_mod.invert	= invert_sel	-- select face by mat ID
 
 		modPanel.addModToSelection ( volume_sel_mod ) --ui:on
 	),
 
 	/** Chamfer
 	  *
+	  *
+	  * @param #DIFFERENT|#OFF materialoption
 	  */
-	function _chamfer name amount selection_option:#STACK materialoption:#OFF /* minangle:  */ =
+	function _chamfer name amount selection_option:#STACK materialoption:#OFF material_ID: /* minangle:  */ =
 	(
 		format "\n"; print "SupportModifiers_v._chamfer()"
 		--format "%:	% \n" name amount
@@ -215,15 +219,17 @@ struct SupportModifiers_v
 										#OFF:	0 -- mat_ids off
 										#DIFFERENT:	1 -- different mat_ids
 									)
+		/* ALLOW MATERIAL */
+		chamfer_mod.setmaterial	= classOf material_ID == integer
 
+
+		/* ASSIGN CHAMFER MATERIAL */
+		if classOf material_ID == integer then
+			chamfer_mod.materialID	= material_ID
 
 		/* BACKUP MAYBE IT WILL BE NEEDE NEEDED
 
 			--chamfer_mod.minangle = minangle
-
-
-			--chamfer_mod.setmaterial	= true
-			--chamfer_mod.materialID	= mat_ids[#CHMAFER]
 
 		*/
 

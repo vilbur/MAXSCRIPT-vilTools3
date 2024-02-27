@@ -28,19 +28,16 @@ struct HelperObject_v
 
 		points_created	= #()
 
-		/*------------------------------------------------------------------------------
-			GENERATE POINTS
-		--------------------------------------------------------------------------------*/
-
 		for i = 1 to this.points_positions.count do
 		(
-			--_point = Point pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:(this._shiftWirecolor(copy this.wirecolor)(i)) Box:(i==1) showLinks:true -- shift wirecolor slightly , to group each level of point selectabel by wirecolor
-
 			_point = Point name:(this._getName(i)) pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
 				this.point_helper = _point
+			else
+				this._alignToVector (_point) (points_created[i - 1].pos) (_point.pos)
+
 
 			/* LINK FIRST POINT TO SOURCE OBJECT, OTHER POINTS ARE LINKED IN CHAIN  */
 			_point.parent = if i == 1 then source_obj else points_created[points_created.count]
@@ -105,6 +102,7 @@ struct HelperObject_v
 				if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
 				(
 					--vert_pos = vert_pos + normal_length * normalize( _normal )
+					--format "VECTOR	= % \n" (normalize( _normal ))
 					vert_pos += normal_length * normalize( _normal ) -- MOVE POSITION ALONG NORMAL
 					--format "_normal:	% \n" _normal
 
@@ -147,6 +145,35 @@ struct HelperObject_v
 		layer.addNode obj
 	),
 
+	/** Align to ctor
+	 */
+	function _alignToVector obj p1 p2 =
+	(
+		format "\n"; print "HelperObject_v._alignToCtor()"
+		format "obj	= % \n" obj
+		format "% %\n" p1 p2
+
+		dir = normalize (p2 - p1)
+
+		axis = #z
+
+		vec = case axis of
+		(
+			#x: obj.transform[1]
+			#y: obj.transform[2]
+			#z: obj.transform[3]
+		)
+
+		tm  = obj.transform
+		vec = normalize vec
+		dir = normalize dir
+		rtm = angleaxis (acos (dot vec dir)) (normalize (cross dir vec))
+
+		obj.transform = translate (rotate (scalematrix tm.scale) (tm.rotation*rtm)) tm.pos
+
+		if pos == true then
+			obj.pos = p1
+	),
 
 	/**
 	 */
