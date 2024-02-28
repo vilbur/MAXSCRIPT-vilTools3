@@ -7,7 +7,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportOptio
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SourceObject/SourceObject.ms" )	--"./Lib/SupportManager/SourceObject/SourceObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperObject/HelperObject.ms" )	--"./Lib/SupportManager/HelperObject/HelperObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportObject/SupportObject.ms" )	--"./Lib/SupportManager/SupportObject/SupportObject.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamObject/BeamObject.ms" )	--"./Lib/SupportManager/BeamObject/BeamObject.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamObject/BeamObject.ms" )	--"./Lib/SupportManager/BeamObject/BeamObject.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperGenerator/HelperGenerator.ms" )	--"./Lib/SupportManager/HelperGenerator/HelperGenerator.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportGenerator/SupportGenerator.ms" )	--"./Lib/SupportManager/SupportGenerator/SupportGenerator.ms"
@@ -38,6 +38,7 @@ function getSupportManagerInstance =
 	SupportManager.Options.beams_max_distance	= ROLLOUT_print_3d.SPIN_max_distance.value
 	SupportManager.Options.beams_min_height	= ROLLOUT_print_3d.SPIN_min_height.value
 
+	SupportManager.Options.init()
 
 	SupportManager --return
 )
@@ -120,6 +121,6 @@ icon:	"across:4|height:32|tooltip:GEENERATE BEAMS between supports.\n\nWORKS ON 
 
 			--SupportManager = getSupportManagerInstance()
 
-			(getSupportManagerInstance()).createBeams( selection as Array ) raft_mode:true
+			(getSupportManagerInstance()).createBeams( selection as Array )
 		)
 )

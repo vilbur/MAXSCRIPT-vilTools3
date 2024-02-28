@@ -12,9 +12,13 @@ struct SupportManager_v
 
 	/* dependency */
 	Options,
+
 	HelperGenerator,
 	SupportGenerator,
+	BeamGenerator,
+
 	SupportModifiers,
+
 	SupportObject = SupportObject_v(),
 
 	/* reference */
@@ -26,7 +30,7 @@ struct SupportManager_v
 	function generatePointHelpers source_objects reset_helpers:true =
 	(
 		format "\n"; print "SupportManager_v.generatePointHelpers()"
-		Options.init()
+		--Options.init()
 
 		--this._setPointHelpersByObject()
 
@@ -70,7 +74,7 @@ struct SupportManager_v
 	(
 		--format "\n"; print "SupportManager_v.createSupports()"
 		--format "this.point_helpers_by_objects	= % \n" this.point_helpers_by_objects
-		Options.init()
+		--Options.init()
 
 		SupportGenerator.SupportObject.raft_mode = raft_mode
 		SupportModifiers.raft_mode = raft_mode
@@ -107,15 +111,12 @@ struct SupportManager_v
 	 */
 	function createBeams source_objects =
 	(
-		--format "\n"; print "SupportManager_v.rebuildSupports()"
+		format "\n"; print "SupportManager_v.rebuildSupports()"
 		if ( supports_valid = this._getSupports source_objects:source_objects ).count > 0 then
-		(
-			--format "SOURCE_OBJECTS_VALID	= % \n" source_objects_valid
+			BeamGenerator.create (supports_valid)
 
-			(BeamGenerator_v()).create (supports_valid)
-		)
 		else
-			messageBox "ERROR REBUKLID SUPPORTS \n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
+			messageBox "ERROR CREATE BEAMS\n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
 
 	),
 
@@ -223,13 +224,13 @@ struct SupportManager_v
 	 */
 	on create do
 	(
-
 		Options	= SupportOptions_v(export_size)
 
 		HelperGenerator	= HelperGenerator_v	Options:Options
 		SupportGenerator	= SupportGenerator_v	Options:Options
-		SupportModifiers = SupportModifiers_v Options:Options
-		--SupportCrossSection	= SupportCrossSection_v	Options:Options
+		SupportModifiers	= SupportModifiers_v	Options:Options
+		BeamGenerator	= BeamGenerator_v	Options:Options
+
 		--SupportObjectInstance 	= SupportObject_v	Options:Options
 
 	)

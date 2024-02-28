@@ -19,6 +19,7 @@ struct BeamGenerator_v
 	function create _supports =
 	(
 		format "\n"; print "BeamGenerator_v.create()"
+		format "Options	= % \n" Options
 
 		this.supports = _supports
 
@@ -56,10 +57,10 @@ struct BeamGenerator_v
 
 			distance_between_platforms = this.getPointDistance (copy point_bottom) (copy point_top)
 			format "distance_between_platforms:	% \n" distance_between_platforms
-			format "this.Options.beams_max_distance:	% \n" this.Options.beams_max_distance
 
-			--if point_top.z > this.Options.cross_section_min_height and distance_between_platforms < this.Options.beams_max_distance then
-			if point_top.z > this.Options.cross_section_min_height and  distance_between_platforms < this.Options.beams_max_distance then
+
+			--if point_top.z > this.Options.beams_min_height and distance_between_platforms < this.Options.beams_max_distance then
+			if point_top.z > this.Options.beams_min_height and  distance_between_platforms < this.Options.beams_max_distance then
 			(
 
 				point_bottom.z	+= (point_top.z / 4 )
