@@ -26,10 +26,12 @@ struct SupportGenerator_v
 	(
 		format "\n"; print "SupportGenerator_v.createSupports()"
 		--format "point_helpers	= % \n" point_helpers
+		format "point_helpers	= % \n" point_helpers
+		format "(classOf point_helpers)	= % \n" (classOf point_helpers)
 
-
-		supports_created = for vertex_index in point_helpers.keys collect
+		supports_created = for vertex_index in sort point_helpers.keys collect
 		(
+			format "vertex_index	= % \n" vertex_index
 			this._deleteSupportByHelper( point_helpers[vertex_index] )
 
 			support = SupportObject.generateSupport( point_helpers[vertex_index] )
@@ -64,7 +66,7 @@ struct SupportGenerator_v
 	function _saveUserData point_helper support =
 	(
 		--format "\n"; print "HelperObject_v.saveUserData()"
-		setUserPropVal support "pointer_sync" ( getUserPropVal point_helper "pointer_sync" ) asString:true
+		Options.setProp support #pointer_sync ( Options.getProp point_helper #pointer_sync )
 	),
 
 	/** Get support by helper

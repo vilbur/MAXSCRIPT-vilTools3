@@ -86,8 +86,8 @@ struct HelperGenerator_v
 	function _setUserDataToSourceObject source_obj =
 	(
 		--format "\n"; print "HelperGenerator_v._setUserDataToSourceObject()"
-		if (getUserPropVal source_obj "pointer_sync_source") == undefined then
-			 setUserPropVal source_obj "pointer_sync_source" (getHandleByAnim source_obj ) asString:true
+		if (Options.getProp source_obj #source_object ) == undefined then
+			 Options.setProp source_obj #source_object (getHandleByAnim source_obj )
 	),
 
 	/** Reinstance helper points

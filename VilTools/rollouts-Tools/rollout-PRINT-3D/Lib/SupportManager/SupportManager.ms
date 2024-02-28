@@ -1,6 +1,34 @@
-
-
 /** Support manager
+  *
+  *  DESCRIPTION OF SUPPORT SYSTEM:
+  *			• Objects are linked for easy manipulation. LINK IS NOT REQUIRED
+  *
+  *			• Objects are linked via user data. Data are saved on: Source object, Master Point, Support|Raft,
+  *					Master Point know source object
+  *					Support|Raft know source object
+  *					Beams knows his 2 supports
+  *
+  *
+  *  HIERARCHY OF OBJECTS:
+  *
+  *		1) SOURCE OBJECT: Mesh object from which are support points generated. Parent of all obejcts:
+  *					// Used vertices  1) SELECTED verts 2) ALL vertex with colors if nothing selected 3) ALL vertices if selection and colors not exists
+  *
+  * 			2) MASTER POINT ON TOP OF PLAFTORM - Dispalyed as: #BOX and #CROSS - Main point synced with source object by user prop data.
+  *					//  Master poin knows which source object and vert has been used.
+  *
+  * 				3) NORMAL POINT - Dispalyed as: #BOX : Point aligned with source vertex normal
+  *
+  * 					3) OTHER POINTS - Dispalyed as: #CROSS - Points defining shape of support linked in chain to each other
+  *						//  Support points straight to the ground from last point in chain
+  *
+  * 					4a) RAFT     Same as support obejct, but ends on last point in chain
+  * 					4b) SUPPORT: Line connecting all points in chain.
+  *
+  *		 					5) BEAM: Cross lines connectnig supports
+  *
+  *
+  *
  */
 struct SupportManager_v
 (
@@ -85,14 +113,14 @@ struct SupportManager_v
 			new_supports_by_obj = for source_helpers in source_objects_valid collect
 				(SupportGenerator.generateSupports(source_helpers))
 
-			supports_per_objects = this._getSupports pointer_sync:(getUserPropVal new_supports_by_obj[1][1] "pointer_sync" asString:true)
+			supports_per_objects = this._getSupports pointer_sync:(Options.getProp new_supports_by_obj[1][1] #pointer_sync)
 
 
 			for new_supports in new_supports_by_obj do
 			(
 				--format "new_supports	= % \n" new_supports
 
-				supports_per_objects = this._getSupports pointer_sync:(getUserPropVal new_supports[1] "pointer_sync" asString:true)
+				supports_per_objects = this._getSupports pointer_sync:(Options.getProp new_supports[1] #pointer_sync)
 
 				/* BUG IN _getSupports() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
 				join supports_per_objects new_supports
@@ -151,10 +179,10 @@ struct SupportManager_v
 	(
 		--format "\n"; print "SupportManager_v._setPointHelpersByObject()"
 		--for _helper in point_helpers_by_objects
-		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = getUserPropVal _helper "pointer_sync"  asString:true ) != undefined do
-			if getUserPropVal _helper "this_pointer"  == getHandleByAnim _helper then -- test if helper is original node, prevent duplicated helpers
+		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = Options.getProp _helper #pointer_sync  ) != undefined do
+			if Options.getProp _helper #this  == getHandleByAnim _helper then -- test if helper is original node, prevent duplicated helpers
 			(
-				vertex_index = getUserPropVal _helper "source_vert"
+				vertex_index = Options.getProp _helper #source_vert
 
 				if point_helpers_by_objects[source_obj_pointer] == undefined then
 					point_helpers_by_objects[source_obj_pointer] = Dictionary #integer
@@ -206,12 +234,12 @@ struct SupportManager_v
 		/* GET HELPERS FROM SELECTED OBJECTS */
 		for obj in objects_array where (master_point = HelperGenerator.getMasterPointByObj(obj)) != undefined do
 		(
-			sync_pointer = getUserPropVal master_point "pointer_sync" asString:true
+			sync_pointer = Options.getProp master_point #pointer_sync
 
 			if not HasDictValue source_helpers sync_pointer then
 				source_helpers[sync_pointer] = Dictionary #integer
 
-			source_helpers[sync_pointer][getUserPropVal master_point "source_vert"] = master_point
+			source_helpers[sync_pointer][Options.getProp master_point #source_vert as integer ] = master_point
 		)
 
 		for key in source_helpers.keys collect source_helpers[key]  --return
@@ -223,15 +251,15 @@ struct SupportManager_v
 	function _getSupports source_objects: pointer_sync: =
 	(
 		--format "\n"; print "SupportManager_v.getSupportsBySyncInter()"
-		--for _shape in shapes where getUserPropVal _shape "pointer_sync" asString:true == pointer_sync as string collect _shape
+		--for _shape in shapes where Options.getProp _shape "pointer_sync" == pointer_sync as string collect _shape
 		if source_objects == unsupplied then
 			source_objects = geometry
 
 		if pointer_sync == unsupplied then
-			for _shape in source_objects where superClassOf _shape.baseobject == shape and getUserPropVal _shape "pointer_sync" asString:true != undefined collect _shape
+			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync != undefined collect _shape
 
 		else
-			for _shape in source_objects where superClassOf _shape.baseobject == shape and getUserPropVal _shape "pointer_sync" asString:true == pointer_sync collect _shape
+			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync == pointer_sync collect _shape
 
 	),
 
@@ -240,7 +268,7 @@ struct SupportManager_v
 	function _getOriginPoiter source_obj =
 	(
 		--format "\n"; print "SupportManager_v._getOriginPoiter()"
-		 getUserPropVal source_obj "pointer_sync_source" asString:true --return
+		 Options.getProp source_obj #source_object --return
 	),
 
 	/**

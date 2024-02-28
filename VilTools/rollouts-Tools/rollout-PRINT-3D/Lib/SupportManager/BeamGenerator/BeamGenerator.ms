@@ -23,9 +23,9 @@ struct BeamGenerator_v
 	  */
 	function create _supports cross_instance:cross_instance =
 	(
-		format "\n"; print "BeamGenerator_v.create()"
-		format "_supports	= % \n" _supports
-		format "_supports.count	= % \n" _supports.count
+		--format "\n"; print "BeamGenerator_v.create()"
+		--format "_supports	= % \n" _supports
+		--format "_supports.count	= % \n" _supports.count
 
 		this.supports = _supports
 
@@ -61,8 +61,6 @@ struct BeamGenerator_v
 			if i == 2 then -- reverse array
 				supports_order = for i = supports_order.count to 1 by -1 collect supports_order[i]
 
-			format "supports_order	= % \n" supports_order
-
 			new_beam = this._createBeam (supports_order[1])(supports_order[2])
 
 			if new_beam != undefined then
@@ -73,7 +71,7 @@ struct BeamGenerator_v
 
 				append beams_created (new_beam)
 
-				setUserPropVal new_beam "BeamGenerator" #( getHandleByAnim supports_order[1], getHandleByAnim supports_order[2] )
+				Options.setProp new_beam #beam_supports #( getHandleByAnim supports_order[1], getHandleByAnim supports_order[2] )
 			)
 		)
 	),

@@ -160,9 +160,9 @@ struct HelperObject_v
 	function _saveUserDataToPointHelper =
 	(
 		--format "\n"; print "HelperObject_v.saveUserData()"
-		setUserPropVal point_helper "pointer_sync" ( getUserPropVal source_obj "pointer_sync_source" ) asString:true
-		setUserPropVal point_helper "this_pointer"	  ( getHandleByAnim point_helper )
-		setUserPropVal point_helper "source_vert"	  ( vertex_index )
+		Options.setProp point_helper #pointer_sync ( Options.getProp source_obj #source_object )
+		Options.setProp point_helper #this	  ( getHandleByAnim point_helper )
+		Options.setProp point_helper #source_vert	  ( vertex_index )
 
 	),
 
