@@ -22,21 +22,28 @@ function getSupportManagerInstance =
 	--format "\n"; print "PLATFORMS GENERATOR.mcr.getSupportManagerInstance()"
 	SupportManager = SupportManager_v export_size:ROLLOUT_export.SPIN_export_size.value --use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
 
+	Options	= SupportManager.Options
+	roll	= ROLLOUT_print_3d
 
-	SupportManager.Options.base_extrude	= ROLLOUT_print_3d.SPIN_base_width.value
-	SupportManager.Options.extrude_top	= ROLLOUT_print_3d.SPIN_top_extrude.value
+	Options.base_extrude	= roll.SPIN_base_width.value
+	Options.extrude_top	= roll.SPIN_top_extrude.value
 
-	SupportManager.Options.layer_height	= ROLLOUT_print_3d.SPIN_layer_height.value
-	SupportManager.Options.bar_width	= ROLLOUT_print_3d.SPIN_bar_width.value
-	SupportManager.Options.chamfer_top	= ROLLOUT_print_3d.SPIN_chamfer_top.value
-	SupportManager.Options.normal_length	= ROLLOUT_print_3d.SPIN_normal_length.value
+	Options.layer_height	= roll.SPIN_layer_height.value
+	Options.bar_width	= roll.SPIN_bar_width.value
+	Options.chamfer_top	= roll.SPIN_chamfer_top.value
+	Options.normal_length	= roll.SPIN_normal_length.value
 
-	--SupportManager.Options.cross_section	= ROLLOUT_print_3d.CBX_cross_section.state
-	--SupportManager.Options.cross_section_max	= ROLLOUT_print_3d.SPIN_max_distance.value
+	--Options.cross_section	= roll.CBX_cross_section.state
+	--Options.cross_section_max	= roll.SPIN_max_distance.value
 
 
-	SupportManager.Options.beams_max_distance	= ROLLOUT_print_3d.SPIN_max_distance.value
-	SupportManager.Options.beams_min_height	= ROLLOUT_print_3d.SPIN_min_height.value
+	Options.beams_max_distance	= roll.SPIN_max_distance.value
+	Options.beams_min_height	= roll.SPIN_min_height.value
+
+
+	SupportManager.BeamGenerator.same_height	= roll.CBX_same_height.state
+
+
 
 	SupportManager.Options.init()
 

@@ -35,3 +35,15 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 1, 999, 5 ]|width:64"
 (
 	format "EventFired:	% \n" EventFired
 )
+
+/**
+  *
+  */
+macroscript	_print_generator_beams_max_length
+category:	"_3D-Print"
+buttontext:	"Same Height"
+tooltip:	"Set height of beams on each support"
+icon:	"across:2|control:checkbox"
+(
+	format "EventFired:	% \n" EventFired
+)

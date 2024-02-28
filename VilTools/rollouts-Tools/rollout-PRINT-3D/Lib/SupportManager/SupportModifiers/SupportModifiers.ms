@@ -25,8 +25,8 @@ struct SupportModifiers_v
 	function addModifiers supports =
 	(
 		format "\n"; print "SupportModifiers_v._addModifiers()"
-		format "supports	= % \n" supports
-		format "supports.count	= % \n" supports.count
+		--format "supports	= % \n" supports
+		--format "supports.count	= % \n" supports.count
 		this.supports = supports
 
 
@@ -62,8 +62,6 @@ struct SupportModifiers_v
 		)
 		else
 			this._copyModifiers()
-
-
 	),
 
 	private
