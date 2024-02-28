@@ -41,7 +41,7 @@ function getSupportManagerInstance =
 	Options.beams_min_height	= roll.SPIN_min_height.value
 
 
-	SupportManager.BeamGenerator.same_height	= roll.CBX_same_height.state
+	--SupportManager.BeamGenerator.same_height	= roll.CBX_same_height.state
 
 
 
@@ -57,8 +57,7 @@ function getSupportManagerInstance =
 macroscript	_print_support_generate_points
 category:	"_3D-Print"
 buttontext:	"POINTS"
-tooltip:	"GENERATE POINTS From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
-icon:	"across:4|height:32"
+icon:	"across:4|height:32|tooltip:GENERATE POINTS From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
 (
 	on execute do
 		undo "Generate Points" on
@@ -95,7 +94,7 @@ icon:	"across:4|height:32|tooltip:GEENERATE SUPPORTS.\n\nWORKS ON SELECTION OF:\
 
 /*
 */
-macroscript	_print_support_generator_raft
+macroscript	_print_support_generator_rafts
 category:	"_3D-Print"
 buttontext:	"RAFTS"
 icon:	"across:4|height:32|tooltip:GEENERATE RAFTS.\n\nWORKS ON SELECTION OF:\n\t1) SOURCE OBJECT\n\t2) POINTS\n\t3) SUPPORTS - Turn support into raft"
@@ -115,13 +114,13 @@ icon:	"across:4|height:32|tooltip:GEENERATE RAFTS.\n\nWORKS ON SELECTION OF:\n\t
 
 /*
 */
-macroscript	_print_support_generator_raft
+macroscript	_print_support_generator_beams
 category:	"_3D-Print"
 buttontext:	"BEAMS"
 icon:	"across:4|height:32|tooltip:GEENERATE BEAMS between supports.\n\nWORKS ON SELECTION OF:\n\t1) SOURCE OBJECT\n\t2) POINTS\n\t3) SUPPORTS"
 (
 	on execute do
-		undo "Generate Rafts" on
+		undo "Generate Beams" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"

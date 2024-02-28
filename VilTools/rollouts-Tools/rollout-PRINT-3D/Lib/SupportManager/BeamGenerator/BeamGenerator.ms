@@ -24,7 +24,8 @@ struct BeamGenerator_v
 	function create _supports cross_instance:cross_instance =
 	(
 		format "\n"; print "BeamGenerator_v.create()"
-		format "Options	= % \n" Options
+		format "_supports	= % \n" _supports
+		format "_supports.count	= % \n" _supports.count
 
 		this.supports = _supports
 
@@ -60,37 +61,53 @@ struct BeamGenerator_v
 			if i == 2 then -- reverse array
 				supports_order = for i = supports_order.count to 1 by -1 collect supports_order[i]
 
+			format "supports_order	= % \n" supports_order
+
 			new_beam = this._createBeam (supports_order[1])(supports_order[2])
 
-			append beams_created (new_beam)
+			if new_beam != undefined then
+			(
+				for i = support_A.modifiers.count to 1 by -1 do
+					addModifier new_beam support_A.modifiers[i]
 
-			setUserPropVal new_beam "BeamGenerator" #( getHandleByAnim supports_order[1], getHandleByAnim supports_order[2] )
+				append beams_created (new_beam)
+
+				setUserPropVal new_beam "BeamGenerator" #( getHandleByAnim supports_order[1], getHandleByAnim supports_order[2] )
+			)
 		)
-
-
 	),
 
 	/** Create beam
 	 */
-	function _createBeam support_A support_B =
+	function _createBeam support_1 support_2 =
 	(
 		--format "\n"; print "BeamGenerator_v._createBeam()"
-		num_knots	= ( numKnots support_A )
-		num_knots_B	= ( numKnots support_B )
 
-		point_bottom	= getKnotPoint support_A	1 (num_knots - 1)	-- get 2. point from bottom
-		point_top	= getKnotPoint support_B	1 (num_knots_B - 2)	-- get 1. or 2. point from top
+		/** Get top sition
+		 */
+		function getPositionTop    pos = (pos.z *= 3 / 4.0; pos) --return
+		function getPositionBottom pos = (pos.z *= 2.0;    pos) --return
 
-		distance_between_points = this.getPointDistance (copy point_bottom) (copy point_top)
 
-		if point_top.z > this.Options.beams_min_height and  distance_between_points < this.Options.beams_max_distance then
-		(
-			point_bottom.z	+= (point_top.z / 4 )
+		num_knots_1	= ( numKnots support_1 )
+		num_knots_2	= ( numKnots support_2 )
 
-			point_top.z	= (point_top.z / 4 ) * 3
+		point_bottom	= getKnotPoint support_1	1 (num_knots_1 - 1)	-- get 2. point from bottom
+		point_top_1	= getKnotPoint support_1	1 (num_knots_1 - 2)	-- get 1. or 2. point from top
+		point_top_2	= getKnotPoint support_2	1 (num_knots_2 - 2)	-- get 1. or 2. point from top
 
-			beam_obj = this._drawLine support_A point_bottom point_top
-		)
+
+		beam_start	= getPositionBottom(point_bottom)
+
+		beam_end_top	= getPositionTop(point_top_2)
+
+		if same_height and ( point_top_second_support = getPositionTop(point_top_1)).z < beam_end_top.z then
+			beam_end_top.z = point_top_second_support.z
+
+		distance_between_points = this.getPointDistance (copy beam_start) (copy beam_end_top )
+
+		--if beam_start.z > this.Options.beams_min_height and  distance_between_points < this.Options.beams_max_distance then
+			beam_obj = this._drawLine (support_1) (beam_start) (beam_end_top)
 
 		beam_obj --return
 	),
@@ -130,13 +147,12 @@ struct BeamGenerator_v
 	),
 
 
-	/** Get distance between points in 2D from top view
+	/** Get distance between points in 2D FROM TOP VIEW
 	  */
 	function getPointDistance point_1 point_2 =
 	(
 		--format "\n"; print "BeamGenerator_v.getPointDistance()"
-		point_1.z = 0
-		point_2.z = 0
+		point_1.z = point_2.z = 0
 
 		distance point_1 point_2 --return
 	),

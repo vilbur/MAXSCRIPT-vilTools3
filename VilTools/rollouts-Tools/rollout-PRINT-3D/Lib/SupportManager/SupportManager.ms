@@ -117,16 +117,8 @@ struct SupportManager_v
 		if ( supports_valid = this._getSupports source_objects:source_objects ).count > 0 then
 		(
 			beams_created = BeamGenerator.create (supports_valid)
-
-			SupportModifiers.raft_mode = true
-
-			SupportModifiers.addModifiers(beams_created)
-
-
 		)else
 			messageBox "ERROR CREATE BEAMS\n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
-
-		--redrawViews()
 
 	),
 
