@@ -4,12 +4,14 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/MeshVertexGe
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportModifiers/SupportModifiers.ms" )	--"./Lib/SupportManager/SupportModifiers/SupportModifiers.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportOptions/SupportOptions.ms" )	--"./Lib/SupportManager/SupportOptions/SupportOptions.ms"
 
---filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SourceObject/SourceObject.ms" )	--"./Lib/SupportManager/SourceObject/SourceObject.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SourceObject/SourceObject.ms" )	--"./Lib/SupportManager/SourceObject/SourceObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperObject/HelperObject.ms" )	--"./Lib/SupportManager/HelperObject/HelperObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportObject/SupportObject.ms" )	--"./Lib/SupportManager/SupportObject/SupportObject.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamGenerator/BeamGenerator.ms" )	--"./Lib/SupportManager/BeamGenerator/BeamGenerator.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamObject/BeamObject.ms" )	--"./Lib/SupportManager/BeamObject/BeamObject.ms"
+
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperGenerator/HelperGenerator.ms" )	--"./Lib/SupportManager/HelperGenerator/HelperGenerator.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportGenerator/SupportGenerator.ms" )	--"./Lib/SupportManager/SupportGenerator/SupportGenerator.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamGenerator/BeamGenerator.ms" )	--"./Lib/SupportManager/BeamGenerator/BeamGenerator.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportManager.ms" )	--"./Lib/SupportManager/SupportManager.ms"
 
 /** Get support generator instance
@@ -29,21 +31,26 @@ function getSupportManagerInstance =
 	SupportManager.Options.chamfer_top	= ROLLOUT_print_3d.SPIN_chamfer_top.value
 	SupportManager.Options.normal_length	= ROLLOUT_print_3d.SPIN_normal_length.value
 
-	SupportManager.Options.cross_section	= ROLLOUT_print_3d.CBX_cross_section.state
-	SupportManager.Options.cross_section_max	= ROLLOUT_print_3d.SPIN_max_distance.value
+	--SupportManager.Options.cross_section	= ROLLOUT_print_3d.CBX_cross_section.state
+	--SupportManager.Options.cross_section_max	= ROLLOUT_print_3d.SPIN_max_distance.value
+
+
+	SupportManager.Options.beams_max_distance	= ROLLOUT_print_3d.SPIN_max_distance.value
+	SupportManager.Options.beams_min_height	= ROLLOUT_print_3d.SPIN_min_height.value
 
 
 	SupportManager --return
 )
 
 
+
 /** GENERATE POINTS
  */
 macroscript	_print_support_generate_points
 category:	"_3D-Print"
-buttontext:	"POINTS Gen"
-tooltip:	"Generate Points From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
-icon:	"across:3|height:32|width:128"
+buttontext:	"POINTS"
+tooltip:	"GENERATE POINTS From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
+icon:	"across:4|height:32"
 (
 	on execute do
 		undo "Generate Points" on
@@ -58,13 +65,13 @@ icon:	"across:3|height:32|width:128"
 		)
 )
 
+
 /*
 */
 macroscript	_print_support_generator
 category:	"_3D-Print"
-buttontext:	"SUPPORTS Gen"
-tooltip:	"GEnerate supports for selected object or point helepers"
-icon:	"across:3|height:32|width:128"
+buttontext:	"SUPPORTS"
+icon:	"across:4|height:32|tooltip:GEENERATE SUPPORTS.\n\nWORKS ON SELECTION OF:\n\t1) SOURCE OBJECT - All supports of object\n\t2) POINTS\n\t3) SUPPORTS - Rebuild selected supports"
 (
 	on execute do
 		undo "Generate Supports" on
@@ -72,9 +79,9 @@ icon:	"across:3|height:32|width:128"
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 
-			SupportManager = getSupportManagerInstance()
+			--SupportManager = getSupportManagerInstance()
 
-			SupportManager.createSupports( selection as Array )
+			(getSupportManagerInstance()).createSupports( selection as Array )
 		)
 )
 
@@ -82,9 +89,8 @@ icon:	"across:3|height:32|width:128"
 */
 macroscript	_print_support_generator_raft
 category:	"_3D-Print"
-buttontext:	"RAFT Gen"
-tooltip:	"GeEnerate rafts for selected object or point helepers"
-icon:	"across:3|height:32|width:128"
+buttontext:	"RAFTS"
+icon:	"across:4|height:32|tooltip:GEENERATE RAFTS.\n\nWORKS ON SELECTION OF:\n\t1) SOURCE OBJECT\n\t2) POINTS\n\t3) SUPPORTS - Turn support into raft"
 (
 	on execute do
 		undo "Generate Rafts" on
@@ -92,8 +98,28 @@ icon:	"across:3|height:32|width:128"
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 
-			SupportManager = getSupportManagerInstance()
+			--SupportManager = getSupportManagerInstance()
 
-			SupportManager.createSupports( selection as Array ) raft_mode:true
+			(getSupportManagerInstance()).createSupports( selection as Array ) raft_mode:true
+		)
+)
+
+
+/*
+*/
+macroscript	_print_support_generator_raft
+category:	"_3D-Print"
+buttontext:	"BEAMS"
+icon:	"across:4|height:32|tooltip:GEENERATE BEAMS between supports.\n\nWORKS ON SELECTION OF:\n\t1) SOURCE OBJECT\n\t2) POINTS\n\t3) SUPPORTS"
+(
+	on execute do
+		undo "Generate Rafts" on
+		(
+			clearListener(); print("Cleared in:\n"+getSourceFileName())
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
+
+			--SupportManager = getSupportManagerInstance()
+
+			(getSupportManagerInstance()).createBeams( selection as Array ) raft_mode:true
 		)
 )

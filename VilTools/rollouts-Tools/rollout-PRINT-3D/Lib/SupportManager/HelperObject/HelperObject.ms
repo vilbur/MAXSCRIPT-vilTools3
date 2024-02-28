@@ -30,7 +30,7 @@ struct HelperObject_v
 
 		for i = 1 to this.points_positions.count do
 		(
-			_point = Point name:(this._getName(i)) pos:this.points_positions[i] size:(this.Options.bar_width) wirecolor:wirecolor Box:(i==1) showLinks:true
+			_point = Point name:(this._getName(i)) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:wirecolor Box:(i==1) showLinks:true
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
@@ -53,30 +53,7 @@ struct HelperObject_v
 
 	),
 
-	--/** Get points hierarchy
-	--  *
-	--  * @param Boolean pop_last retrun only last point of hierarchy
-	--  * @return Array|Point array of  point hierarchy
-	-- */
-	--function getPointsTree pop_last:false =
-	--(
-	--	--format "\n"; print "PlatformObject_v.getPointsTree()"
-	--	--mapped function getAllChildPoints _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildPoints _node.children &children )
-	--
-	--	if isValidNode point_helper then
-	--	(
-	--		children = #(point_helper)
-	--
-	--		this.getAllChildPoints(point_helper) (children)
-	--
-	--		if pop_last then children[children.count] else children --return
-	--	)
-	--	else
-	--		#() --return
-	--),
-
 	private
-
 
 	/** Add vert pos
 	  *
@@ -175,7 +152,10 @@ struct HelperObject_v
 			obj.pos = p1
 	),
 
-	/**
+	/** Set data about source object to first  point
+	  *
+	  * IMPORTANT: Other point in chain are without user data for easy editation, copy, linking etc.
+	  *
 	 */
 	function _saveUserDataToPointHelper =
 	(

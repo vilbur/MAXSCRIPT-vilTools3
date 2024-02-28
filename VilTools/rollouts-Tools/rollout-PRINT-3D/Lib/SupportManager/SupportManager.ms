@@ -8,13 +8,14 @@ struct SupportManager_v
 	export_size,
 
 	/* properties */
-	point_helpers_by_objects, -- 2DMATRIX of Dictionary #( "source_object_pionter", Dictionary #( integer:vertex_index, node:PointHelper   )   )
+	point_helpers_by_objects	= Dictionary #string, -- 2DMATRIX of Dictionary #( "source_object_pionter", Dictionary #( integer:vertex_index, node:PointHelper   )   )
 
 	/* dependency */
 	Options,
 	HelperGenerator,
 	SupportGenerator,
 	SupportModifiers,
+	SupportObject = SupportObject_v(),
 
 	/* reference */
 	/* inhered */
@@ -27,9 +28,9 @@ struct SupportManager_v
 		format "\n"; print "SupportManager_v.generatePointHelpers()"
 		Options.init()
 
-		this._setPointHelpersByObject()
+		--this._setPointHelpersByObject()
 
-		point_helpers_by_objects = #()
+		--new_points_by_objects = #()
 
 		--/* DEBUG */
 		--for point_helpers_per_obj in point_helpers_by_objects do
@@ -40,15 +41,26 @@ struct SupportManager_v
 		source_objects_valid = this._getSourceObjects(source_objects)
 
 		if ( source_objects_valid = this._getSourceObjects(source_objects) ) != undefined then
-			point_helpers_by_objects = for source_obj in source_objects_valid collect
-				HelperGenerator.generatePointHelpers(source_obj)(this._getHelperByObject source_obj) reset_helpers:reset_helpers
+			new_points_by_objects = for source_obj in source_objects_valid collect
+				HelperGenerator.generatePointHelpers(source_obj)(this._getHelpersByObject source_obj) reset_helpers:reset_helpers
 
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
 			--format "\nERROR CREATE SUPPORTS - Not any valid source object is selected\n"
 
 		--for point_created in points_created where point_created != undefined collect point_created  -- return created points
-		point_helpers_by_objects --return
+
+		if new_points_by_objects != undefined then
+		(
+			new_ponts_arr = #()
+
+			for dict in new_points_by_objects do
+				for key in dict.keys do append new_ponts_arr dict[key]
+
+			new_ponts_arr --return
+		)
+		else
+			#()
 	),
 
 
@@ -63,7 +75,7 @@ struct SupportManager_v
 		SupportGenerator.SupportObject.raft_mode = raft_mode
 		SupportModifiers.raft_mode = raft_mode
 
-		this._setPointHelpersByObject()
+		--this._setPointHelpersByObject()
 
 		if ( source_objects_valid = this._getSourceHelpers(source_objects) ).count > 0 then
 		(
@@ -71,34 +83,55 @@ struct SupportManager_v
 			new_supports_by_obj = for source_helpers in source_objects_valid collect
 				(SupportGenerator.generateSupports(source_helpers))
 
-			supports_per_objects = this._getSupportsBySyncPointer (getUserPropVal new_supports_by_obj[1][1] "pointer_sync" asString:true)
+			supports_per_objects = this._getSupports pointer_sync:(getUserPropVal new_supports_by_obj[1][1] "pointer_sync" asString:true)
 
 
 			for new_supports in new_supports_by_obj do
 			(
 				--format "new_supports	= % \n" new_supports
 
-				supports_per_objects = this._getSupportsBySyncPointer (getUserPropVal new_supports[1] "pointer_sync" asString:true)
+				supports_per_objects = this._getSupports pointer_sync:(getUserPropVal new_supports[1] "pointer_sync" asString:true)
 
-				/* BUG IN _getSupportsBySyncPointer() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
+				/* BUG IN _getSupports() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
 				join supports_per_objects new_supports
 
 				SupportModifiers.addModifiers(supports_per_objects) -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 			)
 		)
 		else
-			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object selected" title:"Title"  beep:false
-			--format "\nERROR CREATE SUPPORTS - Not any valid source object is selected\n"
+			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
+			--format "\nERROR CREATE SUPPORTS - Not any valid source object is selected\n"[]
 	),
 
+	/** Create Beams
+	 */
+	function createBeams source_objects =
+	(
+		--format "\n"; print "SupportManager_v.rebuildSupports()"
+		if ( supports_valid = this._getSupports source_objects:source_objects ).count > 0 then
+		(
+			--format "SOURCE_OBJECTS_VALID	= % \n" source_objects_valid
+
+			(BeamGenerator_v()).create (supports_valid)
+		)
+		else
+			messageBox "ERROR REBUKLID SUPPORTS \n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
+
+	),
 
 	private
 
 	/** Get helper by object
 	 */
-	function _getHelperByObject source_obj =
+	function _getHelpersByObject source_obj =
 	(
-		--format "\n"; print "SupportManager_v._getHelperByObject()"
+		format "\n"; print "SupportManager_v._getHelpersByObject()"
+
+		if point_helpers_by_objects.keys.count == 0 then
+			this._setPointHelpersByObject()
+
+		format "POINT_HELPERS_BY_OBJECTS	= % \n" POINT_HELPERS_BY_OBJECTS
+
 		if ( pointer_sync = this._getOriginPoiter(source_obj) ) != undefined then
 			point_helpers_by_objects[pointer_sync]
 	),
@@ -108,8 +141,6 @@ struct SupportManager_v
 	function _setPointHelpersByObject =
 	(
 		--format "\n"; print "SupportManager_v._setPointHelpersByObject()"
-		this.point_helpers_by_objects	= Dictionary #string
-
 		--for _helper in point_helpers_by_objects
 		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = getUserPropVal _helper "pointer_sync"  asString:true ) != undefined do
 			if getUserPropVal _helper "this_pointer"  == getHandleByAnim _helper then -- test if helper is original node, prevent duplicated helpers
@@ -135,63 +166,49 @@ struct SupportManager_v
 	  *
 	  * @return 2Dmatrix #( Dictionary )
 	 */
-	function _getSourceHelpers source_objects =
+	function _getSourceHelpers objects_array =
 	(
-		--format "\n"; print "SupportManager_v._getSourceObjects()"
+		format "\n"; print "SupportManager_v._getSourceObjects()"
+		format "objects_array	= % \n" objects_array
+		--source_helpers	= #()
+		SupportObject	= SupportObject_v()
+		source_helpers	= Dictionary #string
 
-		source_helpers	= #()
-		source_points_used	= Dictionary #string
+		/* GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
+		for source_obj in source_objs = this._getSourceObjects(objects_array) do
+			source_helpers[this._getOriginPoiter(source_obj)] = this._getHelpersByObject(source_obj)
 
-		/* GET POINT HELPERS FROM SOURCE OBJECTS */
-		source_points	= for obj in source_objects where classOf obj == Point collect obj
 
-		/* GET OBEJCTS WITH POINT HELPERS FROM SOURCE OBJECTS */
-		source_objs	= for obj in source_objects where classOf obj != Point and this._getOriginPoiter(obj) != undefined collect obj
-
-		/* GET HELEPRS BY OBJECT */
-		for obj in source_objs do
+		/* GET HELPERS FROM SELECTED OBJECTS */
+		for obj in objects_array where (master_point = HelperGenerator.getMasterPointByObj(obj)) != undefined do
 		(
-			--format "OBJ	= % \n" obj
-			helpers_by_obj = this._getHelperByObject(obj)
-			--format "HELPERS_BY_OBJ	= % \n" helpers_by_obj.keys.count
-			/* GET SELECTED HELEPRS OF SELECTED SOURCE OBEJCT IF BOTH IS SELECTED */
-			for helper_data in helpers_by_obj do
-				if (index = findItem source_points helper_data.value ) > 0 then
-					deleteItem source_points index
+			sync_pointer = getUserPropVal master_point "pointer_sync" asString:true
 
-			append source_helpers helpers_by_obj
+			if not HasDictValue source_helpers sync_pointer then
+				source_helpers[sync_pointer] = Dictionary #integer
+
+			source_helpers[sync_pointer][getUserPropVal master_point "source_vert"] = master_point
 		)
 
-		/* SORT SELECTED POINT BY SOURCE OBJECT */
-		for source_point in source_points do
-		(
-			if ( sync_pointer = getUserPropVal source_point "pointer_sync" asString:true ) != undefined then
-			(
-				source_vert = getUserPropVal source_point "source_vert"
-				--format "SOURCE_VERT	= % \n" source_vert
-				if not HasDictValue source_points_used sync_pointer then
-					source_points_used[sync_pointer] = Dictionary #integer
-
-				source_points_used[sync_pointer][source_vert] = source_point
-
-			)else
-				format "\nWARNING: Point object IS NOT SYNCED	= % \n" source_point.name
-		)
-		/* ADD VALID POINTS TO HELEPRS */
-		for key in source_points_used.keys do
-			append source_helpers source_points_used[key]
-
-		source_helpers --return
+		for key in source_helpers.keys collect source_helpers[key]  --return
 	),
 
 
 	/** Get supports by sync inter
 	 */
-	function _getSupportsBySyncPointer pointer_sync =
+	function _getSupports source_objects: pointer_sync: =
 	(
 		--format "\n"; print "SupportManager_v.getSupportsBySyncInter()"
 		--for _shape in shapes where getUserPropVal _shape "pointer_sync" asString:true == pointer_sync as string collect _shape
-		for _shape in geometry where superClassOf _shape.baseobject == shape and getUserPropVal _shape "pointer_sync" asString:true == pointer_sync collect _shape
+		if source_objects == unsupplied then
+			source_objects = geometry
+
+		if pointer_sync == unsupplied then
+			for _shape in source_objects where superClassOf _shape.baseobject == shape and getUserPropVal _shape "pointer_sync" asString:true != undefined collect _shape
+
+		else
+			for _shape in source_objects where superClassOf _shape.baseobject == shape and getUserPropVal _shape "pointer_sync" asString:true == pointer_sync collect _shape
+
 	),
 
 	/** Get origin poiter

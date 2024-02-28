@@ -28,6 +28,8 @@ struct SupportOptions_v
 	cross_section_max	= 20,	-- max distance between platforms
 	cross_section_min_height	= 10,	-- generate cross section only if platform is higher than this number
 
+	beams_max_distance	= 20,	-- max distance between platforms
+	beams_min_height	= 10,	-- generate cross section only if platform is higher than this number
 
 
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS

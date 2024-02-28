@@ -31,6 +31,19 @@ struct SupportObject_v
 		support --return
 	),
 
+	--/** Update master point
+	-- */
+	--function updateMasterPoint master_point =
+	--(
+	--	--format "\n"; print "SupportObject_v.updateMasterPoint()"
+	--
+	--	setKnotPoint $ 1 1 [ 0, 0, 0 ]
+	--	updateShape $
+	--
+	--
+	--
+	--),
+
 
 	private
 
@@ -91,16 +104,19 @@ struct SupportObject_v
 	  * @param Boolean pop_last retrun only last point of hierarchy
 	  * @return Array|Point array of  point hierarchy
 	 */
-	function _getPointsTree point_helper pop_last:false =
+	function _getPointsTree master_point pop_last:false =
 	(
-		--format "\n"; print "SupportObject_v.getPointsTree()"
-		--mapped function getAllChildPoints _node &children = ( join children _node.children; if isValidNode _node and _node.children.count > 0 and classOf _node.children[1] == Point then getAllChildPoints _node.children &children )
+		format "\n"; print "SupportObject_v.getPointsTree()"
+		format "MASTER_POINT	= % \n" master_point
 
-		if isValidNode point_helper then
+		if isValidNode master_point then
 		(
-			children = #(point_helper)
+			children = #(master_point)
 
-			this.getAllChildPoints(point_helper) (children)
+			this.getAllChildPoints(master_point) (children)
+
+			--for child in children do
+			--format "child	= % \n" child
 
 			if pop_last then children[children.count] else children --return
 		)
