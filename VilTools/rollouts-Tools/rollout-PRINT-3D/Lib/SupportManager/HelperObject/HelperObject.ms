@@ -126,9 +126,9 @@ struct HelperObject_v
 	 */
 	function _alignToVector obj p1 p2 =
 	(
-		format "\n"; print "HelperObject_v._alignToCtor()"
-		format "obj	= % \n" obj
-		format "% %\n" p1 p2
+		--format "\n"; print "HelperObject_v._alignToCtor()"
+		--format "obj	= % \n" obj
+		--format "% %\n" p1 p2
 
 		dir = normalize (p2 - p1)
 

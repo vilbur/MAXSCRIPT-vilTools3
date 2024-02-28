@@ -19,11 +19,11 @@ struct HelperGenerator_v
 	  * @param Dictionary	point_helpers which allready exists
 	  *
 	  */
-	function generatePointHelpers source_obj point_helpers_to_generaet reset_helpers:true =
+	function generatePointHelpers source_obj point_helpers_to_generate reset_helpers:true =
 	(
-		format "\n"; print "HelperGenerator_v.generatePointHelpers()"
-		format "source_obj	= % \n" source_obj
-		format "point_helpers_to_generaet	= % \n" point_helpers_to_generaet
+		--format "\n"; print "HelperGenerator_v.generatePointHelpers()"
+		--format "source_obj	= % \n" source_obj
+		--format "point_helpers_to_generate	= % \n" point_helpers_to_generate
 
 		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
@@ -31,7 +31,7 @@ struct HelperGenerator_v
 		function getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
 
 		/* SET EXISTING POINT HELPERS */
-		if point_helpers_to_generaet != undefined then this.point_helpers = point_helpers_to_generaet
+		if point_helpers_to_generate != undefined then this.point_helpers = point_helpers_to_generate
 
 		/* GET VERTEX DATA */
 		verts_data = (MeshVertexGetter_v(source_obj)).getVetexData()
@@ -54,7 +54,7 @@ struct HelperGenerator_v
 
 			HelperObject.createHelper()
 
-			this.point_helpers[HelperObject.vertex_index] = HelperObject.point_helper
+			this.point_helpers[HelperObject.vertex_index] = HelperObject.point_helper -- IF POINT IS NOT CREATED, THEN VALUE IS undefined, so failed ponts can be managed too
 		)
 
 		--/* REINSTANCE ALL POINTS PER OBEJCT */

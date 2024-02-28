@@ -30,21 +30,21 @@ struct SupportManager_v
 	function generatePointHelpers source_objects reset_helpers:true =
 	(
 		format "\n"; print "SupportManager_v.generatePointHelpers()"
-		--Options.init()
 
-		--this._setPointHelpersByObject()
+		new_ponts_arr = #()
+		source_objects_valid = #()
 
-		--new_points_by_objects = #()
-
+		format "source_objects	= % \n" source_objects
 		--/* DEBUG */
 		--for point_helpers_per_obj in point_helpers_by_objects do
 		--	for point_helper_per_obj in point_helpers_per_obj.value do
 		--	--format "point_helper_per_obj	= % \n" point_helper_per_obj
 		--	--format "point_helpers_by_objects	= % \n" point_helpers_by_objects
+		if (source_objects_valid = this._getSourceObjects(source_objects)).count == 0 then
+				 source_objects_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
 
-		source_objects_valid = this._getSourceObjects(source_objects)
 
-		if ( source_objects_valid = this._getSourceObjects(source_objects) ) != undefined then
+		if source_objects_valid.count > 0 then
 			new_points_by_objects = for source_obj in source_objects_valid collect
 				HelperGenerator.generatePointHelpers(source_obj)(this._getHelpersByObject source_obj) reset_helpers:reset_helpers
 
@@ -52,19 +52,17 @@ struct SupportManager_v
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
 			--format "\nERROR CREATE SUPPORTS - Not any valid source object is selected\n"
 
+		format "SOURCE_OBJECTS_VALID	= % \n" source_objects_valid
 		--for point_created in points_created where point_created != undefined collect point_created  -- return created points
+		format "NEW_POINTS_BY_OBJECTS	= % \n" new_points_by_objects
 
+		/* FLATTERN ARRAY OF DISTIONARY VALUES */
 		if new_points_by_objects != undefined then
-		(
-			new_ponts_arr = #()
-
 			for dict in new_points_by_objects do
-				for key in dict.keys do append new_ponts_arr dict[key]
+				for key in dict.keys where dict[key] != undefined do append new_ponts_arr dict[key] -- if helper creation faild, then point is undefined  #( vertex_number, undefined  )
 
-			new_ponts_arr --return
-		)
-		else
-			#()
+
+		new_ponts_arr --return
 	),
 
 
@@ -122,22 +120,30 @@ struct SupportManager_v
 
 	),
 
-	private
-
-	/** Get helper by object
+	/** Toggle visibility
+	  *
+	  *  @param #POINT|#SUPPORT|##RAFT|#BEAM type
+	  *
 	 */
-	function _getHelpersByObject source_obj =
+	function toggleVisibility type state =
 	(
-		format "\n"; print "SupportManager_v._getHelpersByObject()"
+		--format "\n"; print "SupportManager_v.toggleVisibility()"
 
-		if point_helpers_by_objects.keys.count == 0 then
-			this._setPointHelpersByObject()
+		source_objects = if selection.count > 0 then selection as Array else for obj in objects where not obj.isHidden collect obj
 
-		format "POINT_HELPERS_BY_OBJECTS	= % \n" POINT_HELPERS_BY_OBJECTS
 
-		if ( pointer_sync = this._getOriginPoiter(source_obj) ) != undefined then
-			point_helpers_by_objects[pointer_sync]
+		source_objects_valid = this._getSourceObjects(source_objects)
+
+		for source_obj in source_objects_valid do
+			format "this._getHelpersByObject source_ob	= % \n" (this._getHelpersByObject source_ob)
+
+				--HelperGenerator.generatePointHelpers(source_obj)(this._getHelpersByObject source_obj) reset_helpers:reset_helpers
+
+		--else
+
 	),
+
+	private
 
 	/** Get point helper
 	 */
@@ -155,6 +161,21 @@ struct SupportManager_v
 
 				point_helpers_by_objects[source_obj_pointer][vertex_index] = _helper
 			)
+	),
+
+	/** Get all master points used by object
+	 */
+	function _getHelpersByObject source_obj =
+	(
+		format "\n"; print "SupportManager_v._getHelpersByObject()"
+
+		/* INIT SET POINTS IF NOT SET */
+		if point_helpers_by_objects.keys.count == 0 then
+			this._setPointHelpersByObject()
+
+
+		if ( pointer_sync = this._getOriginPoiter(source_obj) ) != undefined then
+			point_helpers_by_objects[pointer_sync]
 	),
 
 	/** Get source objects

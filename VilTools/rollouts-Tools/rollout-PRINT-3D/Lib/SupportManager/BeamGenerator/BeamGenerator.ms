@@ -67,7 +67,8 @@ struct BeamGenerator_v
 
 			if new_beam != undefined then
 			(
-				for i = support_A.modifiers.count to 1 by -1 do
+				/* COPY MODIFIERS OF PARENT SUPPORT NAME WHICH NAME IS MATCHING: "*BAR*" */
+				for i = support_A.modifiers.count to 1 by -1 where matchPattern support_A.modifiers[i].name pattern:"*BAR*" do
 					addModifier new_beam support_A.modifiers[i]
 
 				append beams_created (new_beam)

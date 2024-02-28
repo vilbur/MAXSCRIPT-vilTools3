@@ -54,6 +54,10 @@ function addQuad2 QuadMenu =
 
 	QuadMenu.addSeparator()
 
+	QuadMenu.addMenu("_Selection-Copy")	--flat:false --index:1
+
+	QuadMenu.addSeparator()
+
 	QuadMenu.addMenu("_Selection-Instance")	--flat:false --index:1
 
 	QuadMenu.addSeparator()

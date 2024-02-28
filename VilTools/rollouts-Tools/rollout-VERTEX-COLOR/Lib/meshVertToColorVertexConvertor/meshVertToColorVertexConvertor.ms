@@ -5,7 +5,7 @@ struct MeshVertToColorVertexConvertor_v
 	/* construct */
 	obj,
 
-	get_single_vert = true,
+	get_single_vert = false,
 
 	/* properties */
 	faces_of_vert_cache   	= Dictionary (#integer),
@@ -15,11 +15,18 @@ struct MeshVertToColorVertexConvertor_v
 	/* dependency */
 	/* reference */
 	/* inhered */
+
+
 	/** Get Color per vertex indexes verts by geo vert
+	  *
+	  * @param boolean flat if true then ARRAY is returned not 2D MATRIX - handy if getting sinlge vertex
+	  *
+	  * @return array|2Dmatrix
 	 */
-	function meshVertsToMapVerts verts =
+	function meshVertsToMapVerts verts flat:false =
 	(
 		--format "\n"; print "MeshVertToColorVertexConvertor_v.meshVertsToMapVerts()"
+
 		/** Get faces using by given vert
 		  *
 		  * Each face is defined by map verts
@@ -45,14 +52,17 @@ struct MeshVertToColorVertexConvertor_v
 			sort #( map_verts_of_face_p3.x as integer , map_verts_of_face_p3.y as integer , map_verts_of_face_p3.z as integer )
 		)
 
-		if superClassOf verts == Number then
-			verts = #{verts}
+
+		/* SET CORRENT DATATYPE - BitArray */
+		if superClassOf verts == Number then verts = #{verts}
+		--format "verts.numberSet	= % \n" verts.numberSet
 
 		local CPV_verts_all	= #()
 
 
 		for vert in verts do
 		(
+			--format "VERT	= % \n" vert
 			CPV_verts = #()
 
 			--faces_of_vertex_pattern =  this._getFacesUsingVert (vert)
@@ -115,16 +125,20 @@ struct MeshVertToColorVertexConvertor_v
 
 					/* APPEND map verts to sinlge array or to 2D matrix by its face  */
 					if found then
-						append ( if get_single_vert then CPV_verts_all else CPV_verts )  map_verts_of_face[v]
+						append ( if get_single_vert then CPV_verts_all else CPV_verts ) map_verts_of_face[v]
 
 					v += 1
 				)
 
 			)
 
-			if CPV_verts.count > 0 then
-				append CPV_verts_all CPV_verts
-
+			if not get_single_vert then
+			(
+				if flat then
+					join CPV_verts_all CPV_verts
+				else
+					append CPV_verts_all (CPV_verts as BitArray )
+			)
 		)
 
 		--free	faces_of_vert_cache
@@ -132,7 +146,7 @@ struct MeshVertToColorVertexConvertor_v
 		--free	mesh_verts_of_face_cache
 
 		gc()	--Garbage Collection.
-
+		--format "CPV_verts_all	= % \n" CPV_verts_all
 		CPV_verts_all --return
 	),
 
@@ -142,38 +156,22 @@ struct MeshVertToColorVertexConvertor_v
 	(
 		--format "\n"; print "MeshVertToColorVertexConvertor_v.mapVertsToMeshVerts()"
 
+		if classOf map_verts == Array then map_verts = map_verts as BitArray
+
 		local mesh_verts = #{}
-		local map_faces_all = #()
 
-		local map_verts_of_face_cache  = Dictionary (#integer)
-		local mesh_verts_of_face_cache = Dictionary (#integer)
+		v = 1
 
-		for map_face_index = 1 to getNumFaces obj.mesh do
-			append map_faces_all  ( getVCFace obj.mesh map_face_index )
-
-		--format "map_faces_all	= % \n" map_faces_all
-
-		for map_vert in map_verts do
+		while mesh_verts.numberSet < map_verts.numberSet do
 		(
-			map_faces_of_vert = meshop.getMapFacesUsingMapVert obj.mesh 0 map_vert
+			map_verts_of_vert = (this.meshVertsToMapVerts(v) flat:true) as BitArray
 
-			verts_of_faces = meshop.getVertsUsingFace obj.mesh map_faces_of_vert
+			intersection = map_verts * map_verts_of_vert -- test if arrays contains same indexes
 
-			face_id = (map_faces_of_vert as Array )[1]
+			if not intersection.isEmpty then
+				mesh_verts[v] = true
 
-
-			map_verts_of_face = getVCFace obj.mesh face_id
-			geo_verts_of_face = ( meshop.getVertsUsingFace obj.mesh face_id) as Array
-
-
-
-			--format "\n--------------------------\n\nFACE_ID = % \n" face_id
-			--format "map_verts_of_face	= % \n" map_verts_of_face
-			--format "geo_verts_of_face	= % \n" geo_verts_of_face
-
-			for i = 1 to 3 where map_verts_of_face[i] == map_vert do
-				mesh_verts[ geo_verts_of_face[i] ] = true
-
+			v += 1
 		)
 
 		gc()	--Garbage Collection.

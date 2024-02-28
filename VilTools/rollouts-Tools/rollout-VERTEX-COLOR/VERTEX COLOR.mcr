@@ -112,56 +112,46 @@ icon:	"MENU:true|tooltip:\n\n----------------------\n\nFIX IF NOT WORK PROPERLY:
 macroscript	epoly_vertex_color_select_by
 category:	"_Epoly-Vertex-Color"
 buttonText:	"SELECT Color"
-toolTip:	"Select all verts with same vertex color as selcted verts.\n\nSELCT WHITE VERTS IF ANY VERTEX IS NOT SELECTED"
-icon:	"across:4|MENU:true"
+icon:	"across:4|MENU:true|tooltip:Select all verts with same vertex color as selected verts.\n\nSELECT ALLCOLORED VERTS IF NT ANY VERTEX SELECTED"
 (
-	on execute do
-	undo "Select Vertex Color" on
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
-
-		obj = selection[1]
-
-		--if getNumCPVVerts obj.mesh > 0 then
-		if polyop.getNumMapVerts obj.baseObject 0 > 0 then
+	on execute do if ( obj = selection[1] ) != undefined then
+		undo "Select Vertex Color" on
 		(
-			verts_by_colors	= #()
-			verts_by_colors	= #{}
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\VERTEX COLOR.mcr"
 
-			vertex_sel = (getVertSelection obj.mesh) as Array
+			verts_all	= #{1..(getNumVerts obj.mesh)}
+			vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 
-			/* GET COLROS OF SELECTED VERTS */
-			if vertex_sel.count == 0 then
-				verts_by_colors = #(white)
+			--all_colored_verts	= #{}
+			new_selection	= #{}
+
+			MeshVertexGetter 	= MeshVertexGetter_v(obj)
+
+			colored_verts = MeshVertexGetter.getColoredVerts quiet:true
+			format "COLORED_VERTS	= % \n" colored_verts
+			format "classOF colored_verts	= % \n" (classOF colored_verts)
+
+			white_verts = if ( verts = colored_verts[white as string] ) != undefined then verts else #{}
+
+			if not vertex_sel.isEmpty then
+				for clr in colored_verts.keys do new_selection += colored_verts[clr]
+
 			else
-				/* USE WHITE COLOR IF NOTHING SELECTED -- get vertex color of each selected vert */
-				for i = 1 to vertex_sel.count do
-					appendIfUnique verts_by_colors (getvertcolor obj.mesh vertex_sel[i] )
+				new_selection = verts_all - white_verts -- get all colored verts
 
-			/* GET VERTS USED BY COLORS */
-			for clr in verts_by_colors do
-				verts_by_colors += meshop.getVertsByColor obj.mesh clr 0.001 0.001 0.001
-
-			if not verts_by_colors.isEmpty then
+			if classOf (_mod = modPanel.getCurrentObject() ) == Edit_Poly then
 			(
-				subObjectLevel = 1
+				_mod.SetSelection #Vertex #{}
 
-				if classOf (_mod = modPanel.getCurrentObject() ) == Edit_Poly then
-				(
-					_mod.SetSelection #Vertex #{}
-
-					_mod.Select #Vertex verts_by_colors
-				)
-
-				if classOf _mod == Editable_Poly then
-					_mod.SetSelection #Vertex verts_by_colors
+				_mod.Select #Vertex new_selection
 			)
+			else
+				if classOf _mod == Editable_Poly then
+					_mod.SetSelection #Vertex new_selection
 
+			subObjectLevel = 1
 
 		)
-		else
-			messageBox ("There is not any vertex color on object:\n\n"+obj.name) title:"NO VERTEX COLOR"
-	)
 )
 
 

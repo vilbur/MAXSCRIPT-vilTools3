@@ -205,7 +205,7 @@ icon:	"offset:[14, 0]|width:96|MENU:tooltip"
 
 		--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
 			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-				loadMaxFile max_file quiet:true
+				loadMaxFile max_file quiet:false
 
 	)
 )

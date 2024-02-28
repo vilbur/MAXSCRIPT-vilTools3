@@ -1,76 +1,99 @@
 clearListener(); print("Cleared in:"+getSourceFileName())
 
-fn averageColor colors =
-(
-	local sum = Point3 0 0 0
-	for c in colors do sum += c
-	sum / colors.count
-)
-
-fn unifyVC obj =
-(
-	local meshCopy = copy obj.mesh
-	local vertexColors = for v = 1 to meshCopy.numVerts collect #()
-	for f = 1 to meshCopy.numFaces do
-	(
-		local vertIndices = getFace meshCopy f
-		local vertColorIndices = getVCFace meshCopy f
-		for v = 1 to 3 do append vertexColors[vertIndices[v]] (getVertColor meshCopy vertColorIndices[v])
-	)
-	setNumCPVVerts meshCopy meshCopy.numVerts
-	defaultVCFaces meshCopy
-	for v = 1 to vertexColors.count do setVertColor meshCopy v (averageColor vertexColors[v])
-	local objCopy = convertTo (copy obj isSelected:true showVertexColors:on) Mesh
-	objCopy.mesh = meshCopy
-	delete meshCopy
-	return objCopy
-)
-
-if selection.count > 0 and canConvertTo selection[1] Mesh do unifyVC selection[1]
+--vec = normalize [-0.969054,-0.139916,-0.203365]
 
 
+ --macros.run "_3D-Print" "_print_support_generate_points"
+
+--macros.run "_3D-Print" "_print_support_generator"
+
+--props_data = Dictionary()
+--
+--
+--
+--for prop in getPropNames (_mod = modPanel.getCurrentObject()) where findItem properties prop > 0 do
+--	if ( val = getProperty _mod prop ) != undefined then
+--		props_data[prop] = val
+--
+--
+--format "props_data	= % \n" props_data
+--
+--
+
+
+-- With a mesh object with the Unwrap UVW modifier...
+--
+--obj = selection[1]
+--
+---- Not sure if the following is required, I imagine it is.
+--
+--max modify mode
+--modPanel.setCurrentObject obj.Unwrap_UVW
+--
+---- Take the index of the first selected map (UV) vertex.
+--
+--selectedMapVertices = ( unwrap.getSelectedVertices obj ) as array
+--mapVertexIndex = selectedMapVertices[1]
+--
+---- Identify the first of all the map faces using this map vertex.
+--
+--mapFacesUsingVertex = ( meshop.getMapFacesUsingMapVert obj 1 #( mapVertexIndex ) ) as array
+--mapFaceIndex = mapFacesUsingVertex[1] -- This map face index is the same as the corresponding mesh face index.
+--
+---- Get the corresponding mesh vertex from the face.
+--
+--mapFaceMapVertices = meshop.getMapFace obj 1 mapFaceIndex
+--
+--local triangleVertexOrder = -1
+--if ( mapFaceMapVertices[1] == mapVertexIndex ) do triangleVertexOrder = 1
+--if ( mapFaceMapVertices[2] == mapVertexIndex ) do triangleVertexOrder = 2
+--if ( mapFaceMapVertices[3] == mapVertexIndex ) do triangleVertexOrder = 3
+--
+---- Finally, get the real mesh vertex that corresponds to the map vertex.
+--
+--meshVertexIndex = ( getFace obj mapFaceIndex )[triangleVertexOrder]
+--
+---- The world position of the vertex is the following.
+--
+--in coordsys world
+--(
+--	position = getVert obj meshVertexIndex
+--)
+--
 
 
 
-	--if colored_verts_num > 0 then
-	--(
-		--( modPanel.getCurrentObject()).unhideAll #Vertex
 
-		--verts_white = _getVertsByColor(white)
-		--format "VERTS_WHITE	= % \n" verts_white
-		--all_colors["white"] = verts_white
 
-	--	colored_verts = verts_all - verts_white
-	--
-	--	format "COLORED_VERTS	= % \n" COLORED_VERTS
-	--
-	--	i = 1
-	--
-	--	while not colored_verts.isEmpty do
-	--	(
-	--		format "\n\n\n"
-	--		format "i	= % \n" i
-	--
-	--		vert_color = getvertcolor obj.mesh (colored_verts as Array )[1]
-	--		format "vert_color	= % \n" vert_color
-	--		verts_by_color = this._getVertsByColor (vert_color)
-	--		format "verts_by_color	= % \n" verts_by_color
-	--
-	--
-	--		all_colors[ vert_color as string ] = verts_by_color
-	--
-	--		colored_verts = colored_verts - verts_by_color
-	--		format "colored_verts	= % \n" colored_verts
-	--
-	--		i += 1
-	--
-	--		if i > 5 then
-	--			return all_colors
-	--
-	--	)
-	--)
-
-	--all_colors --return
+--fn averageColor colors =
+--(
+--	local sum = Point3 0 0 0
+--	for c in colors do sum += c
+--	sum / colors.count
+--)
+--
+--fn unifyVC obj =
+--(
+--	local meshCopy = copy obj.mesh
+--	local vertexColors = for v = 1 to meshCopy.numVerts collect #()
+--	for f = 1 to meshCopy.numFaces do
+--	(
+--		local vertIndices = getFace meshCopy f
+--		local vertColorIndices = getVCFace meshCopy f
+--		for v = 1 to 3 do append vertexColors[vertIndices[v]] (getVertColor meshCopy vertColorIndices[v])
+--	)
+--	setNumCPVVerts meshCopy meshCopy.numVerts
+--	defaultVCFaces meshCopy
+--	for v = 1 to vertexColors.count do setVertColor meshCopy v (averageColor vertexColors[v])
+--	local objCopy = convertTo (copy obj isSelected:true showVertexColors:on) Mesh
+--	objCopy.mesh = meshCopy
+--	delete meshCopy
+--	return objCopy
+--)
+--
+--if selection.count > 0 and canConvertTo selection[1] Mesh do unifyVC selection[1]
+--
+--
 
 
 

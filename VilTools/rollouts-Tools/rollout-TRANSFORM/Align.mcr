@@ -62,13 +62,9 @@ icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (
 
 
 /** Screen: http://www.breidt.net/scripts/pics/3pt_align.gif
-  *
-  */
 
-macroscript ThreePointAlign
-ButtonText:"3Pt Align"
-Category:"_Transform-Align"
-Tooltip:"3Pt Align"
+
+
 
 -- ThreePointAlign v 1.31 - 04.09.17 - (c) M. Breidt (martin@breidt.net)
 --
@@ -101,6 +97,14 @@ Tooltip:"3Pt Align"
 -- Known limitations:
 -- If you invert the alignment, the aligned object will have negative scaling
 -- which might cause problems at a later stage.
+
+
+  */
+
+macroscript ThreePointAlign
+ButtonText:	"3Pt Align"
+Category:	"_Transform-Align"
+Tooltip:	"3Pt Align"
 
 (
 	struct pointdata (pos, txt, col)		-- Data structure for storing viewport marker data
@@ -313,10 +317,21 @@ Tooltip:"3Pt Align"
 	) -- on execute
 ) -- macroscript
 
-macroscript ThreePointAlign_help
-ButtonText:"3Pt Align"
+
+macroscript miauuAlignObjsToVector
+ButtonText:	"Align to vector"
 category:	"_Transform-Align"
-Tooltip:"3Pt Align"
+icon:	"MENU:true|Tooltip:Align choosen axis of selected object to a vector defined by the two picked points"
+(
+     filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms" )	--"./../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms"
+	 macros.run "miauu" "miauuAlignObjsToVector"
+)
+/**
+*/
+macroscript ThreePointAlign_help
+ButtonText:	"3Pt Align"
+category:	"_Transform-Align"
+Tooltip:	"3Pt Align"
 (
      image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
 
@@ -347,4 +362,3 @@ icon:	"MENU:true"
 	for obj in selection do
 		obj.pos = selection_center
 )
-

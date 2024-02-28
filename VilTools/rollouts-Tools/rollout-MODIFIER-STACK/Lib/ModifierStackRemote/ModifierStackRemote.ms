@@ -1,4 +1,4 @@
-clearListener(); print("Cleared in:"+getSourceFileName())
+--clearListener(); print("Cleared in:"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/ListBoxStack/ListBoxStack.ms" )	-- "./ListBoxStack/ListBoxStack.ms"
 filein( getFilenamePath(getSourceFileName()) + "/ModifierStack/ModifierStack.ms" )	-- "./ModifierStack/ModifierStack.ms"

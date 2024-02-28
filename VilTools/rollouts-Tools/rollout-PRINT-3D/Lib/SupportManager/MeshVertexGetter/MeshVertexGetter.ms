@@ -57,9 +57,9 @@ struct MeshVertexGetter_v
 		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
 		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0)
 
-		format "VERTEX_COLORS.COUNT	= % \n" vertex_colors.count
-		for vertex_color in vertex_colors do
-			format "VERTEX_COLOR	= % \n" vertex_color
+		--format "VERTEX_COLORS.COUNT	= % \n" vertex_colors.count
+		--for vertex_color in vertex_colors do
+		--	format "VERTEX_COLOR	= % \n" vertex_color
 
 		verts_to_get = case of
 		(
@@ -90,7 +90,7 @@ struct MeshVertexGetter_v
 				else
 					verts_cache[4]
 
-			this.verts_data = #( verts_to_get, verts_positions, verts_normals, this._getVertexColors()  )
+			this.verts_data = #( verts_to_get, verts_positions, verts_normals, this._getVertexColorsByVerts()  )
 
 			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
 			--format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
@@ -105,6 +105,24 @@ struct MeshVertexGetter_v
 		else
 			false -- return
 
+	),
+
+
+	/** Get colored verts
+	 */
+	function getColoredVerts  =
+	(
+		--format "\n"; print "MeshVertexGetter_v._getColoredVerts()"
+		--object_pointer = (getHandleByAnim obj) as string
+		verts_count	= getNumVerts obj.mesh
+		verts_all	= #{1..(verts_count)}
+		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
+		verts_count_VC	= getNumCPVVerts obj.mesh
+
+		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
+		this._setVertexColors verts_to_get_colors:( if not vertex_sel.isEmpty then vertex_sel else verts_all) vertex_colors_exists:(verts_count_VC != 0)
+
+		this.vertex_colors --return
 	),
 
 	private
@@ -133,6 +151,7 @@ struct MeshVertexGetter_v
 	(
 		format "\n"; print "MeshVertexGetter_v._getVertNormals()"
 		--this.verts_normals = for vert in verts_to_get collect ( getnormal obj.mesh vert )
+		sub_object_level = subObjectLevel
 
 		EditNormalsMod = Edit_Normals()
 
@@ -156,14 +175,16 @@ struct MeshVertexGetter_v
 
 		deleteModifier obj EditNormalsMod
 
+		subObjectLevel = sub_object_level
+
 		verts_normals --return
 	),
 
 	/** GET VERTEX COLORS
 	 */
-	function _getVertexColors =
+	function _getVertexColorsByVerts =
 	(
-		format "\n"; print "MeshVertexGetter_v._getVertexColors()"
+		format "\n"; print "MeshVertexGetter_v._getVertexColorsByVerts()"
 
 		colors = for key in vertex_colors.keys collect execute key
 

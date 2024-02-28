@@ -25,7 +25,7 @@ struct SupportGenerator_v
 	function generateSupports point_helpers =
 	(
 		format "\n"; print "SupportGenerator_v.createSupports()"
-		format "point_helpers	= % \n" point_helpers
+		--format "point_helpers	= % \n" point_helpers
 
 
 		supports_created = for vertex_index in point_helpers.keys collect

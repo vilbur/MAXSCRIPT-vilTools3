@@ -5,7 +5,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Edit Spline"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod Edit_Spline
 
 	on execute do (
 		macros.run "Modifiers" "Edit_Spline"
@@ -19,7 +18,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Normalize Spline"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod Normalize_Spline
 
 	on execute do (
 		macros.run "Modifiers" "Normalize_Spline"
@@ -33,7 +31,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Sweep"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod SweepMod
 
 	on execute do (
 		macros.run "Modifiers" "SweepMod"
@@ -47,7 +44,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Lathe"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod Lathe
 
 	on execute do (
 		macros.run "Modifiers" "Lathe"
@@ -61,7 +57,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Extrude"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod Extrude
 
 	on execute do (
 		macros.run "Modifiers" "Extrude"
@@ -75,7 +70,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Bevel"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod Bevel
 
 	on execute do (
 		macros.run "Modifiers" "Bevel"
@@ -89,7 +83,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"CrossSection"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod CrossSection
 
 	on execute do (
 		macros.run "Modifiers" "CrossSection"
@@ -103,7 +96,6 @@ category:	"_Modifiers-Spline"
 buttonText:	"Surface"
 icon:	"MENU:true"
 (
-	on isVisible	do mcrUtils.ValidMod Surface
 
 	on execute do (
 		macros.run "Modifiers" "Surface"
