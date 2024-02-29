@@ -66,7 +66,8 @@ struct SupportGenerator_v
 	function _saveUserData point_helper support =
 	(
 		--format "\n"; print "HelperObject_v.saveUserData()"
-		Options.setProp support #pointer_sync ( Options.getProp point_helper #pointer_sync )
+		--Options.setProp support #pointer_sync (( Options.getProp point_helper #pointer_sync ) as IntegerPtr )
+		Options.syncProp point_helper support #pointer_sync
 	),
 
 	/** Get support by helper

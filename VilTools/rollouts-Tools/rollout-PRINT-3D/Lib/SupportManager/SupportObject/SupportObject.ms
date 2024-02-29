@@ -17,7 +17,7 @@ struct SupportObject_v
 	 */
 	function generateSupport point_helper =
 	(
-		format "\n"; print "SupportObject_v.generateSupport()"
+		--format "\n"; print "SupportObject_v.generateSupport()"
 		--format "point_helper	= % \n" point_helper
 
 		support = SplineShape name:( point_helper.name + "-support" ) wirecolor:point_helper.wirecolor

@@ -1,45 +1,42 @@
-filein( getFilenamePath(getSourceFileName()) + "/../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
+--
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/MeshVertexGetter/MeshVertexGetter.ms" )	--"./Lib/SupportManager/MeshVertexGetter/MeshVertexGetter.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportModifiers/SupportModifiers.ms" )	--"./Lib/SupportManager/SupportModifiers/SupportModifiers.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportOptions/SupportOptions.ms" )	--"./Lib/SupportManager/SupportOptions/SupportOptions.ms"
+--
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SourceObject/SourceObject.ms" )	--"./Lib/SupportManager/SourceObject/SourceObject.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperObject/HelperObject.ms" )	--"./Lib/SupportManager/HelperObject/HelperObject.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportObject/SupportObject.ms" )	--"./Lib/SupportManager/SupportObject/SupportObject.ms"
+----filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamObject/BeamObject.ms" )	--"./Lib/SupportManager/BeamObject/BeamObject.ms"
+--
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperGenerator/HelperGenerator.ms" )	--"./Lib/SupportManager/HelperGenerator/HelperGenerator.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportGenerator/SupportGenerator.ms" )	--"./Lib/SupportManager/SupportGenerator/SupportGenerator.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamGenerator/BeamGenerator.ms" )	--"./Lib/SupportManager/BeamGenerator/BeamGenerator.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/MeshVertexGetter/MeshVertexGetter.ms" )	--"./Lib/SupportManager/MeshVertexGetter/MeshVertexGetter.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportModifiers/SupportModifiers.ms" )	--"./Lib/SupportManager/SupportModifiers/SupportModifiers.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportOptions/SupportOptions.ms" )	--"./Lib/SupportManager/SupportOptions/SupportOptions.ms"
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SourceObject/SourceObject.ms" )	--"./Lib/SupportManager/SourceObject/SourceObject.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperObject/HelperObject.ms" )	--"./Lib/SupportManager/HelperObject/HelperObject.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportObject/SupportObject.ms" )	--"./Lib/SupportManager/SupportObject/SupportObject.ms"
---filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamObject/BeamObject.ms" )	--"./Lib/SupportManager/BeamObject/BeamObject.ms"
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/HelperGenerator/HelperGenerator.ms" )	--"./Lib/SupportManager/HelperGenerator/HelperGenerator.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportGenerator/SupportGenerator.ms" )	--"./Lib/SupportManager/SupportGenerator/SupportGenerator.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/BeamGenerator/BeamGenerator.ms" )	--"./Lib/SupportManager/BeamGenerator/BeamGenerator.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportManager.ms" )	--"./Lib/SupportManager/SupportManager.ms"
 
-/** Get support generator instance
+/** GET INSTANCE OF SUPPORT GENERATOR
   *
   */
 function getSupportManagerInstance =
 (
-	--format "\n"; print "PLATFORMS GENERATOR.mcr.getSupportManagerInstance()"
+	/** Reg ex replace
+	 */
+	function regExReplace _string search _replace = ( dotNetObject "System.Text.RegularExpressions.Regex" search ).Replace ( _string as string ) _replace
+
 	SupportManager = SupportManager_v export_size:ROLLOUT_export.SPIN_export_size.value --use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
 
 	Options	= SupportManager.Options
-	roll	= ROLLOUT_print_3d
 
-	Options.base_extrude	= roll.SPIN_base_width.value
-	Options.extrude_top	= roll.SPIN_top_extrude.value
+	/** FILL SupportManager PROPERTIES WITH DATA FROM UI
+	  *
+	  * Perform kind of this in loop:
+	  *   Options.base_extrude	= roll.SPIN_base_width.value
+	  */
+	for ctrl in ROLLOUT_print_3d.controls where (prop_key = regExReplace ctrl.name "^(SPIN|BTN|CBX)_" "") != undefined and hasProperty Options prop_key do
+		setProperty Options prop_key ctrl.value
 
-	Options.layer_height	= roll.SPIN_layer_height.value
-	Options.bar_width	= roll.SPIN_bar_width.value
-	Options.chamfer_top	= roll.SPIN_chamfer_top.value
-	Options.normal_length	= roll.SPIN_normal_length.value
-
-
-	Options.beams_max_distance	= roll.SPIN_max_distance.value
-	Options.beams_min_height	= roll.SPIN_min_height.value
-
-
-	SupportManager.BeamGenerator.same_height	= roll.CBX_same_height.state
-
+	SupportManager.BeamGenerator.same_height	= ROLLOUT_print_3d.CBX_same_height.state
 
 	SupportManager.Options.init()
 
@@ -47,12 +44,11 @@ function getSupportManagerInstance =
 )
 
 
-
 /** GENERATE POINTS
  */
 macroscript	_print_support_generate_points
 category:	"_3D-Print"
-buttontext:	"POINT"
+buttontext:	"POINTx"
 icon:	"across:4|height:32|tooltip:GENERATE POINTS From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
 (
 	on execute do
@@ -61,10 +57,12 @@ icon:	"across:4|height:32|tooltip:GENERATE POINTS From selected object.\n\nLAST 
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-SUPPORT GENERATOR.mcr"
+			points_created = (getSupportManagerInstance()).generatePointHelpers( selection ) reset_helpers: keyboard.controlPressed
 
-			if ( points_created = (getSupportManagerInstance()).generatePointHelpers( selection ) reset_helpers: keyboard.controlPressed ).count > 0 then
-				select points_created
-			--	--format "POINTS_CREATED	= % \n" POINTS_CREATED
+			select points_created
+
+			if points_created.count == 0 then
+				format "NO POINTS HAS BEEN GEERATED"
 		)
 )
 

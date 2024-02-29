@@ -1,3 +1,19 @@
+filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/MeshVertexGetter/MeshVertexGetter.ms" )	--"./MeshVertexGetter/MeshVertexGetter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/SupportModifiers/SupportModifiers.ms" )	--"./SupportModifiers/SupportModifiers.ms"
+filein( getFilenamePath(getSourceFileName()) + "/SupportOptions/SupportOptions.ms" )	--"./SupportOptions/SupportOptions.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/SourceObject/SourceObject.ms" )	--"./SourceObject/SourceObject.ms"
+filein( getFilenamePath(getSourceFileName()) + "/HelperObject/HelperObject.ms" )	--"./HelperObject/HelperObject.ms"
+filein( getFilenamePath(getSourceFileName()) + "/SupportObject/SupportObject.ms" )	--"./SupportObject/SupportObject.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/BeamObject/BeamObject.ms" )	--"./BeamObject/BeamObject.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/HelperGenerator/HelperGenerator.ms" )	--"./HelperGenerator/HelperGenerator.ms"
+filein( getFilenamePath(getSourceFileName()) + "/SupportGenerator/SupportGenerator.ms" )	--"./SupportGenerator/SupportGenerator.ms"
+filein( getFilenamePath(getSourceFileName()) + "/BeamGenerator/BeamGenerator.ms" )	--"./BeamGenerator/BeamGenerator.ms"
+
+
 /** Support manager
   *
   *  DESCRIPTION OF SUPPORT SYSTEM:
@@ -11,7 +27,7 @@
   *
   *  HIERARCHY OF OBJECTS:
   *
-  *		1) SOURCE OBJECT: Mesh object from which are support points generated. Parent of all obejcts:
+  *		1) SOURCE OBJECT: Mesh object from which are support points generated. Parent of all objects:
   *					// Used vertices  1) SELECTED verts 2) ALL vertex with colors if nothing selected 3) ALL vertices if selection and colors not exists
   *
   * 			2) MASTER POINT ON TOP OF PLAFTORM - Dispalyed as: #BOX and #CROSS - Main point synced with source object by user prop data.
@@ -26,9 +42,6 @@
   * 					4b) SUPPORT: Line connecting all points in chain.
   *
   *		 					5) BEAM: Cross lines connectnig supports
-  *
-  *
-  *
  */
 struct SupportManager_v
 (
@@ -36,7 +49,7 @@ struct SupportManager_v
 	export_size,
 
 	/* properties */
-	point_helpers_by_objects	= Dictionary #string, -- 2DMATRIX of Dictionary #( "source_object_pionter", Dictionary #( integer:vertex_index, node:PointHelper   )   )
+	point_helpers_by_objects = Dictionary #string, -- 2DMATRIX - Array of Dictionary #( "source_object_pionter", Dictionary #( integer:vertex_index, node:PointHelper   )   )
 
 	/* dependency */
 	Options,
@@ -59,38 +72,38 @@ struct SupportManager_v
 	(
 		format "\n"; print "SupportManager_v.generatePointHelpers()"
 
-		new_ponts_arr = #()
-		source_objects_valid = #()
+		local new_points_by_objects
 
-		format "source_objects	= % \n" source_objects
+		source_objects_valid = #()
+		new_points = #()
+
 		--/* DEBUG */
 		--for point_helpers_per_obj in point_helpers_by_objects do
 		--	for point_helper_per_obj in point_helpers_per_obj.value do
 		--	--format "point_helper_per_obj	= % \n" point_helper_per_obj
 		--	--format "point_helpers_by_objects	= % \n" point_helpers_by_objects
-		if (source_objects_valid = this._getSourceObjects(source_objects)).count == 0 then
-				 source_objects_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
+
+		/* IF NEW SOURCE OBJECT ISUSED */
+		if (source_objects_valid = this.getSourceObjects(source_objects)).count == 0 then
+			 source_objects_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
 
 
+		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
 		if source_objects_valid.count > 0 then
 			new_points_by_objects = for source_obj in source_objects_valid collect
-				HelperGenerator.generatePointHelpers(source_obj)(this._getHelpersByObject source_obj) reset_helpers:reset_helpers
+				HelperGenerator.generatePointHelpers(source_obj)(this.getAllPointsByObject source_obj) reset_helpers:reset_helpers
 
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
-			--format "\nERROR CREATE SUPPORTS - Not any valid source object is selected\n"
-
-		format "SOURCE_OBJECTS_VALID	= % \n" source_objects_valid
-		--for point_created in points_created where point_created != undefined collect point_created  -- return created points
-		format "NEW_POINTS_BY_OBJECTS	= % \n" new_points_by_objects
-
+		format "NEW_POINTS_BY_OBJECTS: %\n" new_points_by_objects
 		/* FLATTERN ARRAY OF DISTIONARY VALUES */
 		if new_points_by_objects != undefined then
-			for dict in new_points_by_objects do
-				for key in dict.keys where dict[key] != undefined do append new_ponts_arr dict[key] -- if helper creation faild, then point is undefined  #( vertex_number, undefined  )
+			for point_helpers in new_points_by_objects where point_helpers.count > 0 do join new_points point_helpers
 
-
-		new_ponts_arr --return
+				--for key in dict.keys where dict[key] != undefined do append new_points dict[key] -- if helper creation faild, then point is undefined  #( vertex_number, undefined  )
+		format "NEW_POINTS: %\n" new_points
+		format "new_points.count: %\n" new_points.count
+		new_points --return
 	),
 
 
@@ -99,30 +112,28 @@ struct SupportManager_v
 	function createSupports source_objects raft_mode:false =
 	(
 		--format "\n"; print "SupportManager_v.createSupports()"
-		--format "this.point_helpers_by_objects	= % \n" this.point_helpers_by_objects
-		--Options.init()
 
 		SupportGenerator.SupportObject.raft_mode = raft_mode
 		SupportModifiers.raft_mode = raft_mode
 
 		--this._setPointHelpersByObject()
 
-		if ( source_objects_valid = this._getSourceHelpers(source_objects) ).count > 0 then
+		if ( source_objects_valid = this.getSourceHelpers(source_objects) ).count > 0 then
 		(
 			--format "SOURCE_OBJECTS_VALID	= % \n" source_objects_valid
 			new_supports_by_obj = for source_helpers in source_objects_valid collect
 				(SupportGenerator.generateSupports(source_helpers))
 
-			supports_per_objects = this._getSupports pointer_sync:(Options.getProp new_supports_by_obj[1][1] #pointer_sync)
+			supports_per_objects = this.getSupports pointer_sync:(Options.getProp new_supports_by_obj[1][1] #pointer_sync)
 
 
 			for new_supports in new_supports_by_obj do
 			(
 				--format "new_supports	= % \n" new_supports
 
-				supports_per_objects = this._getSupports pointer_sync:(Options.getProp new_supports[1] #pointer_sync)
+				supports_per_objects = this.getSupports pointer_sync:(Options.getProp new_supports[1] #pointer_sync)
 
-				/* BUG IN _getSupports() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
+				/* BUG IN getSupports() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
 				join supports_per_objects new_supports
 
 				SupportModifiers.addModifiers(supports_per_objects) -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
@@ -140,7 +151,7 @@ struct SupportManager_v
 		format "\n"; print "SupportManager_v.rebuildSupports()"
 
 
-		if ( supports_valid = this._getSupports source_objects:source_objects ).count > 0 then
+		if ( supports_valid = this.getSupports source_objects:source_objects ).count > 0 then
 		(
 			beams_created = BeamGenerator.create (supports_valid)
 		)else
@@ -148,87 +159,54 @@ struct SupportManager_v
 
 	),
 
-	/** Toggle visibility
-	  *
-	  *  @param #POINT|#SUPPORT|##RAFT|#BEAM type
-	  *
+
+	/*------------------------------------------------------------------------------
+
+		FIND OBEJCTS BY OBEJCTS OR IN SCENE
+
+	--------------------------------------------------------------------------------*/
+
+	/** GET SOURCE OBJECTS by objects
 	 */
-	function toggleVisibility type state =
+	function getSourceObjects source_objects =
 	(
-		--format "\n"; print "SupportManager_v.toggleVisibility()"
-
-		source_objects = if selection.count > 0 then selection as Array else for obj in objects where not obj.isHidden collect obj
-
-
-		source_objects_valid = this._getSourceObjects(source_objects)
-
-		for source_obj in source_objects_valid do
-			format "this._getHelpersByObject source_ob	= % \n" (this._getHelpersByObject source_ob)
-
-				--HelperGenerator.generatePointHelpers(source_obj)(this._getHelpersByObject source_obj) reset_helpers:reset_helpers
-
-		--else
-
+		--format "\n"; print "SupportManager_v.getSourceObjects()"
+		for obj in source_objects where this._getSourceObjectPointer(obj) != undefined collect obj
 	),
 
-	private
-
-	/** Get point helper
+	/** GET ALL MASTER POINTS USED BY OBJECT
+	  *
+	  * @return 2DMATRIX - Array of Dictionares or undefined if source object has no points
 	 */
-	function _setPointHelpersByObject =
+	function getAllPointsByObject source_obj =
 	(
-		--format "\n"; print "SupportManager_v._setPointHelpersByObject()"
-		--for _helper in point_helpers_by_objects
-		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = Options.getProp _helper #pointer_sync  ) != undefined do
-			if Options.getProp _helper #this  == getHandleByAnim _helper then -- test if helper is original node, prevent duplicated helpers
-			(
-				vertex_index = Options.getProp _helper #source_vert
+		format "\n"; print "SupportManager_v.getAllPointsByObject()"
+		if classOf source_obj == Array then source_obj = source_obj[1]
 
-				if point_helpers_by_objects[source_obj_pointer] == undefined then
-					point_helpers_by_objects[source_obj_pointer] = Dictionary #integer
-
-				point_helpers_by_objects[source_obj_pointer][vertex_index] = _helper
-			)
-	),
-
-	/** Get all master points used by object
-	 */
-	function _getHelpersByObject source_obj =
-	(
-		format "\n"; print "SupportManager_v._getHelpersByObject()"
-
+		format "source_obj	= % \n" source_obj
 		/* INIT SET POINTS IF NOT SET */
 		if point_helpers_by_objects.keys.count == 0 then
 			this._setPointHelpersByObject()
 
-
-		if ( pointer_sync = this._getOriginPoiter(source_obj) ) != undefined then
+		if ( pointer_sync = this._getSourceObjectPointer(source_obj) ) != undefined then
 			point_helpers_by_objects[pointer_sync]
 	),
 
-	/** Get source objects
-	 */
-	function _getSourceObjects source_objects =
-	(
-		--format "\n"; print "SupportManager_v._getSourceObjects()"
-		for obj in source_objects where this._getOriginPoiter(obj) != undefined collect obj
-	),
 
-	/** Get source objects
+	/** GET MASTER POINTS in scene by objects
 	  *
 	  * @return 2Dmatrix #( Dictionary )
 	 */
-	function _getSourceHelpers objects_array =
+	function getSourceHelpers objects_array =
 	(
-		format "\n"; print "SupportManager_v._getSourceObjects()"
-		format "objects_array	= % \n" objects_array
-		--source_helpers	= #()
-		SupportObject	= SupportObject_v()
-		source_helpers	= Dictionary #string
+		format "\n"; print "SupportManager_v.getSourceObjects()"
+
+        SupportObject	= SupportObject_v()
+        source_helpers	= Dictionary #string
 
 		/* GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
-		for source_obj in source_objs = this._getSourceObjects(objects_array) do
-			source_helpers[this._getOriginPoiter(source_obj)] = this._getHelpersByObject(source_obj)
+		for source_obj in source_objs = this.getSourceObjects(objects_array) do
+			source_helpers[this._getSourceObjectPointer(source_obj)] = this.getAllPointsByObject(source_obj)
 
 
 		/* GET HELPERS FROM SELECTED OBJECTS */
@@ -246,9 +224,9 @@ struct SupportManager_v
 	),
 
 
-	/** Get supports by sync inter
+	/** GET SUPPORTS by objects or scene if source_objects:unsupplied
 	 */
-	function _getSupports source_objects: pointer_sync: =
+	function getSupports source_objects: pointer_sync: =
 	(
 		--format "\n"; print "SupportManager_v.getSupportsBySyncInter()"
 		--for _shape in shapes where Options.getProp _shape "pointer_sync" == pointer_sync as string collect _shape
@@ -260,30 +238,71 @@ struct SupportManager_v
 
 		else
 			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync == pointer_sync collect _shape
+	),
 
+	/*------------------------------------------------------------------------------
+
+		VISIBILITY
+
+	--------------------------------------------------------------------------------*/
+	/** Toggle visibility
+	  *
+	  *  @param #POINT|#SUPPORT|##RAFT|#BEAM type
+	  *
+	 */
+	function toggleVisibility type state =
+	(
+		--format "\n"; print "SupportManager_v.toggleVisibility()"
+
+		source_objects = if selection.count > 0 then selection as Array else for obj in objects where not obj.isHidden collect obj
+
+
+		source_objects_valid = this.getSourceObjects(source_objects)
+
+		for source_obj in source_objects_valid do
+	format "this.getAllPointsByObject source_ob	= % \n" (this.getAllPointsByObject source_ob)
+
+	),
+
+
+	private
+
+	/** FIND MASTER POINTS IN SCENE AND SAVE THEM BY OBJECT POINTER TO DICTIONARY
+	 */
+	function _setPointHelpersByObject =
+	(
+		format "\n"; print "SupportManager_v._setPointHelpersByObject()"
+
+		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = Options.getProp _helper #pointer_sync  ) != undefined do
+			--if Options.getProp _helper #this  == getHandleByAnim _helper then -- test if helper is original node, prevent duplicated helpers
+		(
+
+			if point_helpers_by_objects[source_obj_pointer] == undefined then
+				point_helpers_by_objects[source_obj_pointer] = Dictionary #integer
+
+			if ( vertex_index = Options.getProp _helper #source_vert ) != undefined then
+				point_helpers_by_objects[source_obj_pointer][ vertex_index as integer ] = _helper
+		)
 	),
 
 	/** Get origin poiter
 	 */
-	function _getOriginPoiter source_obj =
+	function _getSourceObjectPointer source_obj =
 	(
-		--format "\n"; print "SupportManager_v._getOriginPoiter()"
+		--format "\n"; print "SupportManager_v._getSourceObjectPointer()"
 		 Options.getProp source_obj #source_object --return
 	),
 
 	/**
-	 */
+	*/
 	on create do
 	(
-		Options	= SupportOptions_v(export_size)
+		Options = SupportOptions_v(export_size)
 
-		HelperGenerator	= HelperGenerator_v	Options:Options
-		SupportGenerator	= SupportGenerator_v	Options:Options
-		SupportModifiers	= SupportModifiers_v	Options:Options
-		BeamGenerator	= BeamGenerator_v	Options:Options
-
-		--SupportObjectInstance 	= SupportObject_v	Options:Options
+        HelperGenerator  = HelperGenerator_v Options:Options
+        SupportGenerator = SupportGenerator_v Options:Options
+        SupportModifiers = SupportModifiers_v Options:Options
+        BeamGenerator    = BeamGenerator_v Options:Options
 
 	)
-
 )

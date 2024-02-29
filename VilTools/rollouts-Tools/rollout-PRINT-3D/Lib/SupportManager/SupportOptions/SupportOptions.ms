@@ -21,15 +21,15 @@ struct SupportOptions_v
 
 	extrude_top	= 0.5,
 
-	chamfer_base,
-	chamfer_top,	-- 0-10
+	chamfer_base = 2,
+	chamfer_top	= 5,	-- CHAMFER MIN: 0 - CHAMFER MAX: 10
 
 	cross_section	= false, -- connect columns of platform with cross beams
 	cross_section_max	= 20,	-- max distance between platforms
 	cross_section_min_height	= 10,	-- generate cross section only if platform is higher than this number
 
-	beams_max_distance	= 20,	-- max distance between platforms
-	beams_min_height	= 10,	-- generate cross section only if platform is higher than this number
+	max_distance	= 20,	-- max distance between platforms
+	min_height	= 10,	-- generate cross section only if platform is higher than this number
 
 
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
@@ -44,9 +44,7 @@ struct SupportOptions_v
 	function init =
 	(
 		--format "\n"; print "SupportOptions_v.init()"
-		--format "chamfer_top_divider	= % \n" chamfer_top_divider
 		this._setUnitsMuliplier()
-
 
 		this._setDimensions()
 
@@ -66,8 +64,19 @@ struct SupportOptions_v
 	 */
 	function setProp obj key_of_key val =
 	(
-		--format "\n"; print "SupportOptions_v.getProp()"
-		setUserPropVal obj propkeys[key_of_key] val asString:true --return
+		--format "\n"; print "SupportOptions_v.setProp()"
+		setUserPropVal obj propkeys[key_of_key] val --return
+	),
+
+	/** Set node prop data from node to node
+	 */
+	function syncProp from_object to_object from_key destination_key: =
+	(
+		--format "\n"; print "SupportOptions_v.setProp()"
+		if destination_key == unsupplied then
+			destination_key = from_key
+
+		setUserPropVal to_object propkeys[from_key] ( getUserPropVal from_object propkeys[destination_key] )
 	),
 
 	private
