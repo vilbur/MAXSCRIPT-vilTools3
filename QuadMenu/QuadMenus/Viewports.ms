@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 1")
+	QuadMenu.setTitle("SWITCH VIEWPORT")
 
 	--Fooo	= Menu_v("")
 
@@ -44,7 +44,7 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 4")
+	QuadMenu.setTitle("VISIBILITY BY TYPEv")
 
 )
 

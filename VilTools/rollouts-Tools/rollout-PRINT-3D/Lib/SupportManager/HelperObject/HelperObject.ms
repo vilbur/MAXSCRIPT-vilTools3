@@ -65,18 +65,20 @@ struct HelperObject_v
 		if this.normal != undefined then
 		(
 			local _normal = this.normal * source_obj.transform - source_obj.pos
+			--local _normal = this.normal
 			--format "\nVERTEX: % NORMAL:  %" vertex_index normal.z
-
-
+			normal_limit = this.Options.normal_limit
+			--format "NORMAL_LIMIT: %\n" NORMAL_LIMIT
 			/* USE ONLY VERTICES FACING DOWN OR SIDE - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
-			if _normal.z <= 0 then
+
+			if not normal_limit or ( normal_limit and _normal.z <= 0 ) then
 			(
 				append this.points_positions vert_pos
 
 				normal_length = this.Options.normal_length
 
 				/* ADD SECOND VERT TO KEEP NORMAL */
-				if vert_pos.z > normal_length * 1.5 then -- if platform has enough space verticaly
+				if not normal_limit or ( normal_limit and vert_pos.z > normal_length * 1.5 ) then -- if platform has enough space verticaly
 				(
 					--vert_pos = vert_pos + normal_length * normalize( _normal )
 					--format "VECTOR	= % \n" (normalize( _normal ))
@@ -84,17 +86,18 @@ struct HelperObject_v
 					--format "_normal:	% \n" _normal
 
 					/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
-					if _normal.z > -0.25 then
+					if normal_limit and _normal.z > -0.25   then
 						vert_pos.z -= normal_length
 
 					append this.points_positions vert_pos
 				)
 			)
-			else
+			else if normal_limit then
 				format "\nVERTEX: % NOT USED - VERTEX NORMAL IS FACING UP:  %" vertex_index _normal.z
 		)
 		else
 			format "ERROR: % \n" this
+
 
 
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions

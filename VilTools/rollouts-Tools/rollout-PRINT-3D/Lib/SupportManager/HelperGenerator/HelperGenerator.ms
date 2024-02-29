@@ -55,11 +55,13 @@ struct HelperGenerator_v
 		(
 			HelperObject = HelperObject_v Options:Options source_obj:source_obj source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:(getWireColor(source_obj)(verts_data[4][i])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
-			point_new = HelperObject.createHelper()
+			if ( point_new = HelperObject.createHelper() ) != undefined then
+			(
+				this.point_helpers[HelperObject.vertex_index] = point_new -- IF POINT IS NOT CREATED, THEN VALUE IS undefined, so failed ponts can be managed too
 
-			this.point_helpers[HelperObject.vertex_index] = point_new -- IF POINT IS NOT CREATED, THEN VALUE IS undefined, so failed ponts can be managed too
+				append point_helpers_new point_new
+			)
 
-			append point_helpers_new point_new
 		)
 
 		--/* REINSTANCE ALL POINTS PER OBEJCT */

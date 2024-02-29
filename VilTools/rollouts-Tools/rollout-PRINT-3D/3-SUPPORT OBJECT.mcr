@@ -50,19 +50,3 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 0, 10, 5 ]|width:64|offset
 	format "EventFired:	% \n" EventFired
 )
 
-
-/*------------------------------------------------------------------------------
-
-	GENERATOR CONFIG
-
---------------------------------------------------------------------------------*/
-/**
- */
-macroscript	_print_platform_generator_normals_up
-category:	"_3D-Print"
-buttontext:	"Normals Up"
-icon:	"across:1|control:checkbox|height:32|tooltip:TRUE: Use all verts\n\nFALSE: Use only verts which normal is pointing down or side"
-
-(
-	format "EventFired:	% \n" EventFired
-)

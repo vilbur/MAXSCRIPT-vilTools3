@@ -77,35 +77,32 @@ struct SupportManager_v
 		source_objects_valid = #()
 		new_points = #()
 
-		--/* DEBUG */
-		--for point_helpers_per_obj in point_helpers_by_objects do
-		--	for point_helper_per_obj in point_helpers_per_obj.value do
-		--	--format "point_helper_per_obj	= % \n" point_helper_per_obj
-		--	--format "point_helpers_by_objects	= % \n" point_helpers_by_objects
 
 		/* IF NEW SOURCE OBJECT ISUSED */
 		if (source_objects_valid = this.getSourceObjects(source_objects)).count == 0 then
 			 source_objects_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
 
 
+
 		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
 		if source_objects_valid.count > 0 then
 			new_points_by_objects = for source_obj in source_objects_valid collect
+			(
+				select source_obj -- QUICK WORKAROUND: craeted Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
+
 				HelperGenerator.generatePointHelpers(source_obj)(this.getAllPointsByObject source_obj) reset_helpers:reset_helpers
+			)
 
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
-		format "NEW_POINTS_BY_OBJECTS: %\n" new_points_by_objects
+
+
 		/* FLATTERN ARRAY OF DISTIONARY VALUES */
 		if new_points_by_objects != undefined then
 			for point_helpers in new_points_by_objects where point_helpers.count > 0 do join new_points point_helpers
 
-				--for key in dict.keys where dict[key] != undefined do append new_points dict[key] -- if helper creation faild, then point is undefined  #( vertex_number, undefined  )
-		format "NEW_POINTS: %\n" new_points
-		format "new_points.count: %\n" new_points.count
 		new_points --return
 	),
-
 
 	/** Create supports
 	 */
@@ -305,4 +302,33 @@ struct SupportManager_v
         BeamGenerator    = BeamGenerator_v Options:Options
 
 	)
+)
+
+
+/** GET INSTANCE OF SUPPORT GENERATOR
+  *
+  */
+function getSupportManagerInstance =
+(
+	/** Reg ex replace
+	 */
+	function regExReplace _string search _replace = ( dotNetObject "System.Text.RegularExpressions.Regex" search ).Replace ( _string as string ) _replace
+
+	SupportManager = SupportManager_v export_size:ROLLOUT_export.SPIN_export_size.value --use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
+
+	--Options	= SupportManager.Options
+
+	/** FILL SupportManager PROPERTIES WITH DATA FROM UI
+	  *
+	  * Perform kind of this in loop:
+	  *   Options.base_extrude	= roll.SPIN_base_width.value
+	  */
+	for ctrl in ROLLOUT_print_3d.controls where (prop_key = regExReplace ctrl.name "^(SPIN|CBX)_" "") != undefined and hasProperty SupportManager.Options prop_key do
+		setProperty SupportManager.Options prop_key ( if classOf ctrl == CheckBoxControl then ctrl.state else ctrl.value )
+
+    SupportManager.BeamGenerator.same_height	= ROLLOUT_print_3d.CBX_same_height.state
+
+	SupportManager.Options.init()
+
+	SupportManager --return
 )

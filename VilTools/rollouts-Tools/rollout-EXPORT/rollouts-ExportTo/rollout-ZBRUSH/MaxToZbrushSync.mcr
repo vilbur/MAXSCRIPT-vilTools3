@@ -8,7 +8,7 @@ macroscript	_3DsMaxSync_to_zbrush
 category:	"_3DsMaxSync"
 buttontext:	"Max > ZBrush"
 toolTip:	""
-icon:	"Across:2|width:196|height:48"
+icon:	"Across:2|width:190|height:48"
 --icon:	"Groupbox:Nodes"
 --icon:	"control:checkbutton"
 (
