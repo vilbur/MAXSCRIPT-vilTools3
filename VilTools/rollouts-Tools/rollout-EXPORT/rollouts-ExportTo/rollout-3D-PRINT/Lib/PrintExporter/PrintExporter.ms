@@ -269,9 +269,9 @@ struct PrintExporter_v
 			0 --return
 	),
 
-	/** create boxes in corners of print plane to keep exported position
-	 */
-	function _fixExportPosition =
+    /** create boxes in corners of print plane to keep exported position
+     */
+    function _fixExportPosition =
 	(
 		--format "\n"; print "PrintExporter_v._fixExportPosition()"
 		--format "this.params[#FIX_POSITION]	= % \n" this.params[#FIX_POSITION]

@@ -1,7 +1,6 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../SupportManager.ms" )	-- "./../SupportManager.ms"
-filein( getFilenamePath(getSourceFileName()) + "/inlcudes/create-test-objects.ms" )	--"./inlcudes/create-test-objects.ms"
 
 
 /*------------------------------------------------------------------------------
@@ -28,12 +27,17 @@ EXPORT_SIZE	= 1
 --units.MetricType	= #centimeters
 --EXPORT_SIZE	= 0.01
 
+/* maust be after EXPORT_SIZE definition */
+filein( getFilenamePath(getSourceFileName()) + "/inlcudes/create-test-objects.ms" )	--"./inlcudes/create-test-objects.ms"
+
+/*==============================================================================
+
+		PREPARE SCENE
+
+================================================================================*/
 
 /*------------------------------------------------------------------------------
-
-	PREPARE TEST OBJECTS
-
-
+	CREATE MESH SOURCE OBJECT
 --------------------------------------------------------------------------------*/
 
 /* ALL VERTS - NO SELECTION OR VERTEX COLOR */
@@ -51,6 +55,7 @@ EXPORT_SIZE	= 1
 /* VERTEX COLOR */
 --createSourceMesh segments:2 vertex_color:orange vertex_selection:#{2..3}
 --createSourceMesh segments:12 vertex_color:orange vertex_selection:#{2..17} obj:#SPHERE
+createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
 
 
 /* TEST ON TRANSFORMED OBJECT - test  of vertex postion */
@@ -63,6 +68,14 @@ EXPORT_SIZE	= 1
 
 /* POINTS object as source for supports */
 --createSourcePoints()
+
+
+/*------------------------------------------------------------------------------
+	CREATE SPLINE SOURCE OBJECT
+--------------------------------------------------------------------------------*/
+--createSourceSpline()
+
+
 
 
 

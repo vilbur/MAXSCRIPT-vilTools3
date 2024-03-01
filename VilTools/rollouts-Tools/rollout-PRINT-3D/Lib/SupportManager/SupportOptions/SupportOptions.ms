@@ -11,7 +11,6 @@ struct SupportOptions_v
 
 	bottom_layers_count = 15,
 
-	normal_length = 3,
 
 	/* options */
 	bar_width 	= 1.5, -- default width is 1.5mm
@@ -35,8 +34,12 @@ struct SupportOptions_v
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
 
 
-	/* GENERATOR OPTIONS */
-	normal_limit = true,
+	/* POINT GENERATOR OPTIONS */
+	normal_length	= 3,
+	use_normals	= true,
+	normal_limit	= true,
+
+
 
 	/* PRIVATE PROPERTIES */
 	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #BEAM, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline

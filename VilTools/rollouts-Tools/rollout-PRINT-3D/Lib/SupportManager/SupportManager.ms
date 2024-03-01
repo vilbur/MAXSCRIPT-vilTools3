@@ -1,6 +1,8 @@
 filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/MeshVertexGetter/MeshVertexGetter.ms" )	--"./MeshVertexGetter/MeshVertexGetter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/ShapeKnotGetter/ShapeKnotGetter.ms" )	--"./ShapeKnotGetter/ShapeKnotGetter.ms"
+
 filein( getFilenamePath(getSourceFileName()) + "/SupportModifiers/SupportModifiers.ms" )	--"./SupportModifiers/SupportModifiers.ms"
 filein( getFilenamePath(getSourceFileName()) + "/SupportOptions/SupportOptions.ms" )	--"./SupportOptions/SupportOptions.ms"
 
@@ -74,19 +76,23 @@ struct SupportManager_v
 
 		local new_points_by_objects
 
-		source_objects_valid = #()
+		source_object_valid = #()
 		new_points = #()
 
 
 		/* IF NEW SOURCE OBJECT ISUSED */
-		if (source_objects_valid = this.getSourceObjects(source_objects)).count == 0 then
-			 source_objects_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
+		if (source_object_valid = this.getSourceObjects(source_objects)).count == 0 then
+			 source_object_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
 
+        /* TRY GET SOURCE LINE  */
+		if source_object_valid.count == 0 then
+			source_object_valid = this._getSourceLines(source_objects)
 
+		--format "SOURCE_OBJECT_VALID: %\n" source_object_valid
 
 		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
-		if source_objects_valid.count > 0 then
-			new_points_by_objects = for source_obj in source_objects_valid collect
+		if source_object_valid.count > 0 then
+			new_points_by_objects = for source_obj in source_object_valid collect
 			(
 				select source_obj -- QUICK WORKAROUND: craeted Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
 
@@ -113,21 +119,15 @@ struct SupportManager_v
 		SupportGenerator.SupportObject.raft_mode = raft_mode
 		SupportModifiers.raft_mode = raft_mode
 
-		--this._setPointHelpersByObject()
-
-		if ( source_objects_valid = this.getSourceHelpers(source_objects) ).count > 0 then
+		if ( source_points_valid = this.getSourceHelpers(source_objects) ).count > 0 then
 		(
-			--format "SOURCE_OBJECTS_VALID	= % \n" source_objects_valid
-			new_supports_by_obj = for source_helpers in source_objects_valid collect
+			new_supports_by_obj = for source_helpers in source_points_valid collect
 				(SupportGenerator.generateSupports(source_helpers))
 
 			supports_per_objects = this.getSupports pointer_sync:(Options.getProp new_supports_by_obj[1][1] #pointer_sync)
 
-
 			for new_supports in new_supports_by_obj do
 			(
-				--format "new_supports	= % \n" new_supports
-
 				supports_per_objects = this.getSupports pointer_sync:(Options.getProp new_supports[1] #pointer_sync)
 
 				/* BUG IN getSupports() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
@@ -138,7 +138,6 @@ struct SupportManager_v
 		)
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
-			--format "\nERROR CREATE SUPPORTS - Not any valid source object is selected\n"[]
 	),
 
 	/** Create Beams
@@ -171,6 +170,14 @@ struct SupportManager_v
 		for obj in source_objects where this._getSourceObjectPointer(obj) != undefined collect obj
 	),
 
+	/** Get source line
+	 */
+	function _getSourceLines source_objects =
+	(
+		--format "\n"; print "SupportManager_v._getSourceLine()"
+		for obj in source_objects where superClassOf obj == shape collect obj
+	),
+
 	/** GET ALL MASTER POINTS USED BY OBJECT
 	  *
 	  * @return 2DMATRIX - Array of Dictionares or undefined if source object has no points
@@ -180,7 +187,6 @@ struct SupportManager_v
 		format "\n"; print "SupportManager_v.getAllPointsByObject()"
 		if classOf source_obj == Array then source_obj = source_obj[1]
 
-		format "source_obj	= % \n" source_obj
 		/* INIT SET POINTS IF NOT SET */
 		if point_helpers_by_objects.keys.count == 0 then
 			this._setPointHelpersByObject()

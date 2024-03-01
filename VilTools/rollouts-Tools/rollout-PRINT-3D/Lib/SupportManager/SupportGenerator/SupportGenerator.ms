@@ -26,8 +26,11 @@ struct SupportGenerator_v
 	(
 		format "\n"; print "SupportGenerator_v.createSupports()"
 		--format "point_helpers	= % \n" point_helpers
-		format "point_helpers	= % \n" point_helpers
+		format "POINT_HELPERS	= % \n" point_helpers
 		format "(classOf point_helpers)	= % \n" (classOf point_helpers)
+
+		for point_helper in point_helpers do
+			format "POINT_HELPER: %\n" point_helper
 
 		supports_created = for vertex_index in sort point_helpers.keys collect
 		(

@@ -35,7 +35,7 @@ struct MeshVertexGetter_v
 	  * 		2) Get all colored verts if nothing selected
 	  * 		3) Get all verts in nothing is selected and vertex colors does not exists
 	  *
-	  * @return 2Dmatrix  #( #{verts_to_get}, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
+	  * @return 2Dmatrix  #( #{ verts_to_get_bitarray }, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
 	  */
 	function getVetexData quiet:false =
 	(
