@@ -21,8 +21,8 @@ icon:	"across:2|control:spinner|range:[ 0.1, 99, 1.5 ]|width:64|offset:[ -8, 0]"
  */
 macroscript	_print_platform_generator_extrude_top
 category:	"_3D-Print"
-buttontext:	"Top Extrude"
-tooltip:	"Top Extrude part in mm of printed model.\n\nExported scale is used"
+buttontext:	"Extrude Top"
+tooltip:	"Extrude Top part in mm of printed model.\n\nExported scale is used"
 icon:	"across:2|control:spinner|range:[ 0, 99, 0.5 ]|width:64"
 (
 	format "EventFired:	% \n" EventFired

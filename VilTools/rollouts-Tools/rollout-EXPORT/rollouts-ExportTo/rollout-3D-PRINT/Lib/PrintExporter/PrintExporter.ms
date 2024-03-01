@@ -19,7 +19,7 @@ struct PrintExporter_v
 
 
 	/* properties */
-	params	= Dictionary #( #EXPORT_FORMAT, "obj" ) #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) #( #CLOSE_INSTANCES, false )  ,
+	params	= Dictionary #( #EXPORT_FORMAT, "obj" ) #( #EXPORT_SCALE, 1 ) #( #SUBDIR_BY_NODE, false ) #( #FIX_POSITION, false ) #( #OPEN_IN, 0 ) #( #PROJECT_FILE_OPEN, false ) #( #EXCLUDE, "" )  ,
 
 	open_in_programs = #( #("C:/Program Files/CHITUBOX  V1.9.4/Chitubox.exe", "chitubox"), #("C:/Program Files/LycheeSlicer/LycheeSlicer.exe", "lys")),
 
@@ -127,7 +127,10 @@ struct PrintExporter_v
 		export_path 	= this.getExportFilePath(export_node)
 		node_children	= export_node.getAllChildren()
 		export_objects	= node_children + this.fix_position_dummy
+		format "export_objects.count: %\n" export_objects.count
 
+		this._excludeObjects(export_objects)
+		format "export_objects.count: %\n" export_objects.count
 
 		/* ENABLE MODIFIERS */
 		if this.params[#MESHSMOOTH] then
@@ -135,7 +138,8 @@ struct PrintExporter_v
                 _mod.enabled = true
 
 		/* COLLAPSE NODE */
-		collapseStack export_objects
+		collapseStack
+
 
 		/*------------------------------------------------------------------------------
 			EXPORT
@@ -147,7 +151,6 @@ struct PrintExporter_v
 		if export_result != false then
 			append this.exported_paths export_path
 	),
-
 
 
 	/** Set exporter
@@ -340,6 +343,29 @@ struct PrintExporter_v
 
 		DOSCommand ("taskkill /IM "+ filenameFromPath( this._getOpenInProgramPath()))
 	),
+
+
+	/** Exclude obejcts matching name
+	 */
+	function _excludeObjects &export_objects =
+	(
+		--format "\n"; print "PrintExporter_v.excludeObejcts()"
+
+		/** Matching name
+		 */
+		function matchingName _string pattern = (( dotNetClass "System.Text.RegularExpressions.RegEx" ).match _string pattern ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase ).success
+
+		if ( params[#EXCLUDE] ) != "" then
+		(
+			pattern = ".*("+params[#EXCLUDE]+").*"
+
+			for i = export_objects.count to 1 by -1 where matchingName export_objects[i].name pattern do
+				deleteItem export_objects (findItem export_objects export_objects[i])
+		)
+
+		export_objects --return
+	),
+
 
 	/** set Success message
 	 */

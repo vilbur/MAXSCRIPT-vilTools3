@@ -96,6 +96,7 @@ struct ExporterSetup_v
 		Exporter.params[#CLOSE_INSTANCES]	= print_rollout.CBX_single_instance.state
 		Exporter.params[#OPEN_IN]	= print_rollout.RB_open_in_program.state
 		Exporter.params[#MESHSMOOTH]	= print_rollout.CBX_meshsmooth.state
+		Exporter.params[#EXCLUDE]	= print_rollout.ET_exclude.text
 
 		Exporter.export()
 
