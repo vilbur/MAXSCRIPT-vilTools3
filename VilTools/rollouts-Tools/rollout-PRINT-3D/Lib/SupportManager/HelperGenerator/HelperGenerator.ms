@@ -41,7 +41,7 @@ struct HelperGenerator_v
 		verts_data = if superClassOf source_obj != shape then
 			(MeshVertexGetter_v(source_obj)).getVetexData()
 		else
-			(ShapeKnotGetter_v(source_obj)).getVetexData()
+			(ShapeKnotGetter_v(source_obj)(Options.use_nth_vertex)).getVetexData()
 
 		/* IF USER CANCEL GETTIN DATA */
 		if verts_data == false then
@@ -78,7 +78,7 @@ struct HelperGenerator_v
 	 */
 	function getMasterPointByObj obj =
 	(
-		format "\n"; print "HelperGenerator_v.getMasterPointByObj()"
+		--format "\n"; print "HelperGenerator_v.getMasterPointByObj()"
 
 		while obj.parent != undefined and classOf obj.parent == Point do
 			obj = obj.parent

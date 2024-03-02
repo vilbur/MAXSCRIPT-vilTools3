@@ -5,8 +5,9 @@ struct ShapeKnotGetter_v
 	/* construct */
 	source_obj,
 
+	use_nth_vertex = 1,
+
 	/* properties */
-	use_every_nth_vert_of_spline = 1,
 
 	/* dependency */
 	/* reference */
@@ -19,7 +20,7 @@ struct ShapeKnotGetter_v
 			DOES NOT SUPPORT KNOTS NORMALS YET
 
 
-	  */
+	*/
 	function getVetexData =
 	(
 		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
@@ -53,7 +54,7 @@ struct ShapeKnotGetter_v
 
 		delete source_shapes
 
-		knots_data --return	use_every_nth_vert_of_spline = 1,
+		knots_data --return	use_nth_vertex = 1,
 	),
 
 
@@ -100,7 +101,7 @@ struct ShapeKnotGetter_v
 	function _isNthVertex index =
 	(
 		--format "\n"; print "PlatformGenerator_v.isNthVertex"
-		is_nth_vertex = index == 1 or use_every_nth_vert_of_spline == 1 or ceil (test = (index - 1)/use_every_nth_vert_of_spline as float ) == test
+		is_nth_vertex = index == 1 or use_nth_vertex == 1 or ceil (test = (index - 1)/use_nth_vertex as float ) == test
 
 		is_nth_vertex --return
 	),

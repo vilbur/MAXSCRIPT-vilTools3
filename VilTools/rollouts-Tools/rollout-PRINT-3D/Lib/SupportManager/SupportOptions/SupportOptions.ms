@@ -6,6 +6,13 @@ struct SupportOptions_v
 	export_size = 1,
 
 
+	/* POINT GENERATOR OPTIONS */
+	use_normals	= true,
+	normal_limit	= true,
+	normal_length	= 3,
+	use_nth_vertex	= 1,
+
+
 	/* SUPPORT OBJECT OPTIONS */
 	layer_height = 0.05,
 
@@ -34,10 +41,6 @@ struct SupportOptions_v
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
 
 
-	/* POINT GENERATOR OPTIONS */
-	normal_length	= 3,
-	use_normals	= true,
-	normal_limit	= true,
 
 
 

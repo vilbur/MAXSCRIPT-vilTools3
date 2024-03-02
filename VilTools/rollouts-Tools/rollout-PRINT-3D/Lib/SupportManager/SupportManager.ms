@@ -205,25 +205,25 @@ struct SupportManager_v
 		format "\n"; print "SupportManager_v.getSourceObjects()"
 
         SupportObject	= SupportObject_v()
-        source_helpers	= Dictionary #string
+        helpers_of_source_obj	= Dictionary #string
 
-		/* GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
+		/* 1)  GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
 		for source_obj in source_objs = this.getSourceObjects(objects_array) do
-			source_helpers[this._getSourceObjectPointer(source_obj)] = this.getAllPointsByObject(source_obj)
+			helpers_of_source_obj[this._getSourceObjectPointer(source_obj)] = this.getAllPointsByObject(source_obj)
 
 
-		/* GET HELPERS FROM SELECTED OBJECTS */
+		/* 2) GET HELPERS FROM SELECTED OBJECTS */
 		for obj in objects_array where (master_point = HelperGenerator.getMasterPointByObj(obj)) != undefined do
 		(
 			sync_pointer = Options.getProp master_point #pointer_sync
 
-			if not HasDictValue source_helpers sync_pointer then
-				source_helpers[sync_pointer] = Dictionary #integer
+			if not HasDictValue helpers_of_source_obj sync_pointer then
+				helpers_of_source_obj[sync_pointer] = Dictionary #integer
 
-			source_helpers[sync_pointer][Options.getProp master_point #source_vert as integer ] = master_point
+			helpers_of_source_obj[sync_pointer][Options.getProp master_point #source_vert as integer ] = master_point
 		)
 
-		for key in source_helpers.keys collect source_helpers[key]  --return
+		for key in helpers_of_source_obj.keys collect helpers_of_source_obj[key]  --return
 	),
 
 

@@ -141,11 +141,26 @@ struct SupportModifiers_v
 	(
 		format "\n"; print "SupportModifiers_v._addSweepModifier()"
 
-		--format "Adding Sweep\n"
-		--format "bar_width:	% \n" this.Options.bar_width
-		--format "bar_radius:	% \n" (this.Options.bar_width / 2)
+		/** Reset mod prpertis
+
+			QUICK SOLUTION - FOR MORE MODIFIERS OR PROPERTIES SHOULD COMPLEX SOLUTUION EXISTS
+
+		 */
+		function resetSeepModPrpertis sweep_mod =
+		(
+			sweep_mod.MirrorXZPlane = off
+			sweep_mod.MirrorXYPlane = off
+			sweep_mod.XOffset = 0
+			sweep_mod.yOffset = 0
+			sweep_mod.angle = 0
+			sweep_mod.SmoothSection = off
+			sweep_mod.SmoothPath = off
+			sweep_mod.PivotAlignment = 4
+		)
 
 		sweep_mod = sweep name:name
+
+		resetSeepModPrpertis (sweep_mod)
 
 		modPanel.addModToSelection ( sweep_mod ) --ui:on
 

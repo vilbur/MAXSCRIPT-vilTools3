@@ -1,4 +1,28 @@
 
+/*==============================================================================
+
+		EXCLUDE EDITTEXT
+
+================================================================================*/
+
+/**
+  *
+  */
+macroscript	_export_export_exclude
+category:	"_Export"
+buttontext:	"Exclude"
+toolTip:	"Do not export objects matching name.\n\nE.G.: 'do-no-export-this|or-this-object-name'"
+icon:	"control:editText|across:1|offset:[ 0, 4 ]|value:support-source"
+(
+	format "EventFired	= % \n" EventFired
+	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
+)
+
+/*==============================================================================
+
+		BUTTONS
+
+================================================================================*/
 
 /** EXPORT BUTTON
   *
@@ -7,7 +31,7 @@ macroscript	_export_print
 category:	"_Export"
 buttontext:	"Export"
 toolTip:	"Export selected nodes to files"
-icon:	"height:64|across:3"
+icon:	"height:64|across:3|offset:[ 0, 6 ]"
 (
 	clearListener(); print("Cleared in:\n"+getSourceFileName())
 
@@ -26,7 +50,7 @@ macroscript	_export_print_create_plane
 category:	"_Export"
 buttontext:	"Print Dummy"
 toolTip:	"Create\Delete dummy palne of 3D printer plane"
-icon:	"height:64|across:3"
+icon:	"height:64|across:3|offset:[ 0, 6 ]"
 (
 
 	--format "EventFired	= % \n" EventFired
@@ -45,7 +69,7 @@ macroscript	_export_print_create_volume
 category:	"_Export"
 buttontext:	"Print Dummy"
 toolTip:	"Create\Delete dummy of 3D printer volume"
---icon:	"across:3"
+icon:	"across:3|offset:[ 0, 6 ]"
 (
 	--format "EventFired	= % \n" EventFired
 	(PrinterVolume_v(ROLLOUT_export.SPIN_export_size.value)).createVolume(#box)
@@ -62,7 +86,7 @@ macroscript	_export_print_open_exported_files
 category:	"_Export"
 buttontext:	"Open Files"
 toolTip:	"Open exported files of selected nodes"
-icon:	"height:64|across:3"
+icon:	"height:64|across:3|offset:[ 0, 6 ]"
 (
 	--format "EventFired	= % \n" EventFired
 	--(PrinterVolume_v()).createVolume(#Rectangle)(ROLLOUT_export.SPIN_export_size.value)

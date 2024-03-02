@@ -28,6 +28,8 @@ struct HelperObject_v
 
 		points_created	= #()
 
+		this._setPointsPositions (pos)
+
 		for i = 1 to this.points_positions.count do
 		(
 			_point = Point name:(this._getName(i)) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:wirecolor Box:(i==1) showLinks:true
@@ -62,7 +64,8 @@ struct HelperObject_v
 	(
 		--format "\n"; print "HelperObject_v._setPointsPositions()"
 
-		if this.normal != undefined then
+		/* GET POINT CHAIN BY NORMALS */
+		if this.Options.use_normals and this.normal != undefined then
 		(
 			local _normal = this.normal * source_obj.transform - source_obj.pos
 			--local _normal = this.normal
@@ -95,10 +98,13 @@ struct HelperObject_v
 			else if normal_limit then
 				format "\nVERTEX: % NOT USED - VERTEX NORMAL IS FACING UP:  %" vertex_index _normal.z
 		)
+
+		/* DO NOT USE NORMALS */
+		else if not this.Options.use_normals and this.normal != undefined then
+			append this.points_positions vert_pos
+
 		else
-			format "ERROR: % \n" this
-
-
+			format "ERROR IN: this._setPointsPositions()\n\ GETTING NORMAL OF POINT: %\n\nOBJECT: % \n" source_obj vertex_index
 
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),
@@ -174,6 +180,5 @@ struct HelperObject_v
 	 */
 	on create do
 	(
-		this._setPointsPositions (pos)
 	)
 )

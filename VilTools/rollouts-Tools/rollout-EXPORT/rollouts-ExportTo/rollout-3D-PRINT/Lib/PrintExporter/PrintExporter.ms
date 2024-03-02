@@ -203,16 +203,17 @@ struct PrintExporter_v
 
 		if this.params[#OPEN_IN] > 0 and this.exported_paths.count > 0 then
 		(
+			this._addProjectFileToOpenPaths()
+
+			--if this.params[#OPEN_IN] > 0 then
+			--(
 			if this.params[#CLOSE_INSTANCES] then
 				this._killInstances()
 
-			this._addProjectFileToOpenPaths()
-
-			if this.params[#OPEN_IN] > 0 then
 				this.openInProgram(this.exported_paths)
+			--)
 		)
 	),
-
 
 	/** Get path to final file where exported files will be merged
 	  *
@@ -328,11 +329,18 @@ struct PrintExporter_v
 	 */
 	function _getOpenInProgramPath =
 	(
-		format "\n"; print "PrintExporter_v.getEnInProgramPath()"
+		--format "\n"; print "PrintExporter_v.getEnInProgramPath()"
+		--format "this.params[#OPEN_IN]	= % \n" this.params[#OPEN_IN]
 
-		format "this.params[#OPEN_IN]	= % \n" this.params[#OPEN_IN]
+		if this.params[#OPEN_IN] == 0 then
+		(
+			format "\n"; print ("PrintExporter_v.getEnInProgramPath()\n\nWARNING: No open file has been chosen.\n\nFIRST IS USED: " + this.open_in_programs[1][1] )
 
-		this.open_in_programs[this.params[#OPEN_IN]][1] --return
+
+			this.open_in_programs[1]
+		)
+		else
+			this.open_in_programs[this.params[#OPEN_IN]][1] --return
 	),
 
 	/** Kill instances of open in program

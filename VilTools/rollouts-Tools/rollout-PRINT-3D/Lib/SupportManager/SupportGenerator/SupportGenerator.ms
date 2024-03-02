@@ -24,17 +24,17 @@ struct SupportGenerator_v
 	 */
 	function generateSupports point_helpers =
 	(
-		format "\n"; print "SupportGenerator_v.createSupports()"
+		--format "\n"; print "SupportGenerator_v.createSupports()"
 		--format "point_helpers	= % \n" point_helpers
-		format "POINT_HELPERS	= % \n" point_helpers
-		format "(classOf point_helpers)	= % \n" (classOf point_helpers)
+		--format "POINT_HELPERS	= % \n" point_helpers
+		--format "(classOf point_helpers)	= % \n" (classOf point_helpers)
 
-		for point_helper in point_helpers do
-			format "POINT_HELPER: %\n" point_helper
+		--for point_helper in point_helpers do
+			--format "POINT_HELPER: %\n" point_helper
 
 		supports_created = for vertex_index in sort point_helpers.keys collect
 		(
-			format "vertex_index	= % \n" vertex_index
+			--format "vertex_index	= % \n" vertex_index
 			this._deleteSupportByHelper( point_helpers[vertex_index] )
 
 			support = SupportObject.generateSupport( point_helpers[vertex_index] )

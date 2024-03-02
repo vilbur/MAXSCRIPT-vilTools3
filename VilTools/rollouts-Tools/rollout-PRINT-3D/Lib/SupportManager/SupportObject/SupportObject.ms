@@ -20,38 +20,26 @@ struct SupportObject_v
 		--format "\n"; print "SupportObject_v.generateSupport()"
 		--format "point_helper	= % \n" point_helper
 
-		support = SplineShape name:( point_helper.name + "-support" ) wirecolor:point_helper.wirecolor
+		support = SplineShape name:( point_helper.name + "-support" ) wirecolor:point_helper.wirecolor pos:point_helper.pos
 
-		helpers_tree =  this._getPointsTree (point_helper)
+		helpers_chain =  this._getPointsChain (point_helper)
 
-		this._createLineFromPoints(helpers_tree)
+		this._createLineFromPoints(helpers_chain)
 
-		support.parent = helpers_tree[helpers_tree.count]
+		support.parent = helpers_chain[helpers_chain.count]
 
 		support --return
 	),
-
-	--/** Update master point
-	-- */
-	--function updateMasterPoint master_point =
-	--(
-	--	--format "\n"; print "SupportObject_v.updateMasterPoint()"
-	--
-	--	setKnotPoint $ 1 1 [ 0, 0, 0 ]
-	--	updateShape $
-	--
-	--
-	--
-	--),
-
 
 	private
 
 	/** Create line netween point helpers
 	  */
-	function _createLineFromPoints helpers_tree =
+	function _createLineFromPoints helpers_chain =
 	(
 		--format "\n"; print "SupportObject_v._createLineForVertex()"
+		--format "HELPERS_TREE: %\n" helpers_chain
+
 		spline_index = 1
 
 		addNewSpline support
@@ -59,7 +47,7 @@ struct SupportObject_v
 		/*------------------------------------------------------------------------------
 			ADD KNOTS FROM TOP TO BOTTOM
 		--------------------------------------------------------------------------------*/
-		for point_helper in helpers_tree do
+		for point_helper in helpers_chain do
 			addKnot support spline_index #corner #line point_helper.pos
 
 		if raft_mode then
@@ -70,7 +58,7 @@ struct SupportObject_v
 		--------------------------------------------------------------------------------*/
 		if not raft_mode then
 		(
-			pos =  helpers_tree[helpers_tree.count].pos -- get pos of last point above ground
+			pos =  helpers_chain[helpers_chain.count].pos -- get pos of last point above ground
 
 			pos.z = this.Options.base_height -- set knot above ground to set base height and keep last segment straight for extrude
 
@@ -104,7 +92,7 @@ struct SupportObject_v
 	  * @param Boolean pop_last retrun only last point of hierarchy
 	  * @return Array|Point array of  point hierarchy
 	 */
-	function _getPointsTree master_point pop_last:false =
+	function _getPointsChain master_point pop_last:false =
 	(
 		--format "\n"; print "SupportObject_v.getPointsTree()"
 		--format "MASTER_POINT	= % \n" master_point

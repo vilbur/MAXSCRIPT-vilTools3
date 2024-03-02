@@ -123,7 +123,7 @@ icon:		"MENU:true"
   */
 macroscript layers_name_case_toggle
 category:	"_Layers-Name"
-buttonText:	"Toggle case"
+buttonText:	"Upper\Lower Case"
 tooltip:	"Toggle selected layers name upprcase\lowercase"
 icon:		"MENU:true"
 (

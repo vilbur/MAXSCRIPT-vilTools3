@@ -26,6 +26,8 @@ struct ModifierRenamer_v
 
 		method_name = "_" + (classOf this.modObject) as string
 
+		format "\nMETHOD_NAME: %\n" method_name
+
 		/* EXECUTE METHOD BY MODIIFER CLASS NAME  */
 		if hasProperty this method_name then
 			execute ("THIS_MODIFIER_RENAMER."+method_name+"()")  --return
@@ -319,6 +321,26 @@ struct ModifierRenamer_v
 			"Smooth"
 	),
 
+
+
+	/** Tessellate
+	 */
+	function _tessellate =
+	(
+		--format "\n"; print "ModifierRenamer_v._tessellate()"
+		mod_name = "Tessellate " + (this.modObject.iterations +1) as string
+
+
+		mod_name --return
+	),
+
+	/**  uvwmap
+	 */
+	function _Uvwmap =
+	(
+		--format "\n"; print "ModifierRenamer_v._Uvwmap()"
+		"UV"
+	),
 
 	/**  spline offset
 	  *
