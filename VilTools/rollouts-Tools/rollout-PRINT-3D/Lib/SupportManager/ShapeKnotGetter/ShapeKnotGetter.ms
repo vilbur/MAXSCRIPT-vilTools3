@@ -54,7 +54,7 @@ struct ShapeKnotGetter_v
 
 		delete source_shapes
 
-		knots_data --return	use_nth_vertex = 1,
+		knots_data --return
 	),
 
 

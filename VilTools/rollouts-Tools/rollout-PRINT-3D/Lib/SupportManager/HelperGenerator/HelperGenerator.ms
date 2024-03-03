@@ -5,7 +5,9 @@ struct HelperGenerator_v
 	/* construct */
 
 	/* properties */
+	source_obj,
 	point_helpers,
+	verts_data,
 
 
 	/* dependency */
@@ -17,69 +19,45 @@ struct HelperGenerator_v
 	  *
 	  * @param node	source_obj to generate from
 	  * @param Dictionary	point_helpers which allready exists
+	  * @param BitArray	of vertex indexes to generate
 	  *
 	  * @return Array of new created helpers
 	  */
-	function generatePointHelpers source_obj point_helpers_of_object reset_helpers:true =
+	function generatePointHelpers source_obj point_helpers_of_object verts_to_generate: reset_helpers:true =
 	(
 		--format "\n"; print "HelperGenerator_v.generatePointHelpers()"
-		--format "source_obj	= % \n" source_obj
-		--format "point_helpers_of_object	= % \n" point_helpers_of_object
+		format "source_obj	= % \n" source_obj
+		format "point_helpers_of_object	= % \n" point_helpers_of_object
+		format "verts_to_generate: %\n" verts_to_generate
 
-		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
-
-		/* USE OBJECT WIRE COLOR IF VERTEX COLOR IS WHITE */
 		--function getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
-		function getWireColor source_obj wirecolor = (
+		point_helpers_new = #()
 
-			if classOf wirecolor == Array then wirecolor = wirecolor[1]
+		this.source_obj = source_obj
 
-			 if wirecolor != white then wirecolor else source_obj.wirecolor --return
-		)
-
-
-		local point_helpers_new = #()
-
-
-
-		/* SET EXISTING POINT HELPERS */
+		/* IF ANY POINT HELEPER NOT EXIST YET */
 		this.point_helpers = if point_helpers_of_object != undefined then point_helpers_of_object else Dictionary #integer -- Dictionary #( vert_number, point_helper ) -- all point  helpers of of source obejct
 
-
-
-		/* GET VERTEX DATA */
-		verts_data = if superClassOf source_obj != shape then
-			(MeshVertexGetter_v(source_obj)).getVetexData remove_multi_colored_verts_from_white:true -- MESH OBEJCT
-		else
-			(ShapeKnotGetter_v(source_obj)(Options.use_nth_vertex)).getVetexData() -- SHAPE OBJECT
-
-
-
 		/* IF USER CANCEL GETTIN DATA */
-		if verts_data == false then
+		if ( this.verts_data = this._getVertsData() ) == undefined then
 			return point_helpers_new
 
 
-		/* FILTER EXISTING VERTS */
-		verts_to_generate = if not reset_helpers then
-								--for vertex_index in verts_data[1] where not helperExists(vertex_index) collect vertex_index
-								(for vertex_index in verts_data[1] where not helperExists(vertex_index) collect vertex_index) as BitArray
-							else
-								verts_data[1]
+		/* FIND VERTS if not defined */
+		if verts_to_generate.numberSet == 0 then
+			verts_to_generate = this._getVertsToGenerateFromObjects (reset_helpers)
 
-		format "VERTS_TO_GENERATE: %\n" verts_to_generate
-		format "verts_to_generate.numberSet: %\n" verts_to_generate.numberSet
+
+
 		if verts_to_generate.numberSet > 0 then
 		(
 			/* SET USER PROP DATA - MUST BE SET BEFORE HELEPRS CREATION*/
 			if verts_to_generate.count > 0 then
 				this._setUserDataToSourceObject(source_obj)
 
-
 			/* DELETE OLD POINTS */
 			--if verts_to_generate then
-			--this._deleteOldPointHelpers(source_obj)(verts_to_generate)
-
+			this._deleteOldPointHelpersAndSupports(verts_to_generate)
 
 
 			/* GENERATE POINTS FOR EACH VERTEX */ -- TODO: loop should has its own method
@@ -87,7 +65,7 @@ struct HelperGenerator_v
 			(
 				data_index	= findItem ( verts_data[1] as Array ) vertex_index -- find vertex in all verts data
 
-				HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:vertex_index pos:verts_data[2][data_index] normal:verts_data[3][data_index] wirecolor:(getWireColor(source_obj)(verts_data[4][data_index])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
+				HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:vertex_index pos:verts_data[2][data_index] normal:verts_data[3][data_index] wirecolor:(this._getWireColor(verts_data[4][data_index])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
 				if ( point_new = HelperObject.createHelper() ) != undefined then
 				(
@@ -97,20 +75,17 @@ struct HelperGenerator_v
 				)
 			)
 
-
 			/* REINSTANCE ALL POINTS PER OBEJCT */
 			if point_helpers_new.count > 0 then
 				this._reinstancePointByLevel(point_helpers_new)
 		)
-		--else
-			--messageBox "NO POINT HELPER HAS BEEN GENERATED" title:"HelperGenerator"
-
-
+		else
+			messageBox "NO POINT HELPER HAS BEEN GENERATED" title:"HelperGenerator"
 
 		point_helpers_new --return
 	),
 
-	/** Get points
+	/** Find masterpoin by any object in chain
 	 */
 	function getMasterPointByObj obj =
 	(
@@ -124,6 +99,35 @@ struct HelperGenerator_v
 	),
 
 	private
+
+	/** Set vers data
+	 */
+	function _getVertsData =
+	(
+		--format "\n"; print "HelperGenerator_v.setVersData()"
+		if superClassOf source_obj != shape then
+			/* GET DATA FROM MESH */
+			(MeshVertexGetter_v(source_obj)).getVetexData remove_multi_colored_verts_from_white:true -- MESH OBEJCT
+		else
+			/* GET DATA FROM SHAPE */
+			(ShapeKnotGetter_v(source_obj)(Options.use_nth_vertex)).getVetexData() -- SHAPE OBJECT
+	),
+
+	/** Get verts to generate from objects
+	 */
+	function _getVertsToGenerateFromObjects reset_helpers =
+	(
+		--format "\n"; print "HelperGenerator_v._getVertsToGenerateFromObjects()"
+
+		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
+
+		/* FILTER EXISTING VERTS */
+		if not reset_helpers then
+			(for vertex_index in verts_data[1] where not helperExists(vertex_index) collect vertex_index) as BitArray  --return
+		else
+			verts_data[1]  --return
+	),
+
 	/** Get vertex positions from spline
 	  */
 	function _getVertexPositionsFromShape source_shape =
@@ -237,7 +241,7 @@ struct HelperGenerator_v
 	(
 		--format "\n"; print "HelperGenerator_v._reinstancePoint()"
 		if for_replace.count < 2 then
-			return false-point
+			return false
 
 		max create mode
 
@@ -249,9 +253,9 @@ struct HelperGenerator_v
 
 	/** Delete old points and platforms
 	 */
-	function _deleteOldPointHelpers source_obj verts_to_generate =
+	function _deleteOldPointHelpersAndSupports verts_to_generate =
 	(
-		format "\n"; print "HelperGenerator_v._deleteOldPointHelpers()"
+		--format "\n"; print "HelperGenerator_v._deleteOldPointHelpersAndSupports()"
 
 		verts_to_generate = verts_to_generate as BitArray
 
@@ -259,13 +263,25 @@ struct HelperGenerator_v
 		for vertex_index in point_helpers.keys where verts_to_generate[vertex_index] do
 		(
 			--vertex_index = point_helpers.keys[i]
+			point_helper = point_helpers[vertex_index]
 
-			point_helper_cahin = this._getPointsChain(point_helpers[vertex_index])
+			children = #(point_helper)
 
-			delete (this._getPointsChain(point_helpers[vertex_index]))
+			this._getAllChildren (point_helper) (children)
+
+			 delete children
 
 			this.point_helpers[vertex_index] = undefined
 		)
+	),
+
+	/* USE OBJECT WIRE COLOR IF VERTEX COLOR IS WHITE
+	*/
+	function _getWireColor wirecolor = (
+
+		if classOf wirecolor == Array then wirecolor = wirecolor[1]
+
+		 if wirecolor != white then wirecolor else this.source_obj.wirecolor --return
 	),
 
 	/** Get point chains
@@ -288,6 +304,7 @@ struct HelperGenerator_v
 	mapped function _getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this._getAllChildPoints _node.children &children ),
 
 	--mapped function _getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this._getAllChildren _node.children &children ),
+	mapped function _getAllChildren _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 then this._getAllChildren _node.children &children ),
 
 	/**
 	 */

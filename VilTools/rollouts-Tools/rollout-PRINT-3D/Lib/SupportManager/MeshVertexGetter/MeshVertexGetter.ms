@@ -108,7 +108,7 @@ struct MeshVertexGetter_v
 			this.verts_data --return
 		)
 		else
-			false -- return
+			undefined -- return
 
 	),
 

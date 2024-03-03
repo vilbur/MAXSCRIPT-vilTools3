@@ -69,34 +69,53 @@ struct SupportManager_v
 
 	/** Generate instanced point helpers from selected verts
 	  *
+	  *  I LOVE spagetti
+	  *
 	  */
 	function generatePointHelpers source_objects reset_helpers:true =
 	(
-		format "\n"; print "SupportManager_v.generatePointHelpers()"
+		--format "\n"; print "SupportManager_v.generatePointHelpers()"
 
 		local new_points_by_objects
+		--local selected_helpers_by_objects
 
-		source_object_valid = #()
-		new_points = #()
+        local new_points = #()
+        local source_object_valid	= #()
+        local verts_to_generate	= #{}
 
+		local source_object_valid = this.getSourceObjects(source_objects)
 
-		/* IF NEW SOURCE OBJECT ISUSED */
-		if (source_object_valid = this.getSourceObjects(source_objects)).count == 0 then
+		/* IF NEW SOURCE OBJECT IS USED */
+		if source_object_valid.count == 0 then
 			 source_object_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
 
         /* TRY GET SOURCE LINE  */
 		if source_object_valid.count == 0 then
 			source_object_valid = this._getSourceLines(source_objects)
 
-		--format "SOURCE_OBJECT_VALID: %\n" source_object_valid
+
+		/* GET SELECTED POINT HELPERS and their source obejcts */
+		selected_helpers_by_objects =  this.getSourceHelpers (source_objects)
+
+
+		if selected_helpers_by_objects.keys.count > 0 then
+			for pointer in selected_helpers_by_objects.keys where ( source_obj = this._getSourceObjectBySyncPointer(pointer) ) != undefined do
+				appendIfUnique source_object_valid source_obj
+
+
 
 		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
 		if source_object_valid.count > 0 then
 			new_points_by_objects = for source_obj in source_object_valid collect
 			(
-				select source_obj -- QUICK WORKAROUND: craeted Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
+				 if ( selected_helpers_of_obj = selected_helpers_by_objects[ this._getPointerOfSourceObject(source_obj) ] ) != undefined then
+					verts_to_generate = selected_helpers_of_obj.keys as BitArray -- get vertex indexes of selected helpers - for each source object
 
-				HelperGenerator.generatePointHelpers(source_obj)(this.getAllPointsOfObject source_obj) reset_helpers:reset_helpers
+				all_points_of_object = this.getAllPointsOfObject source_obj
+
+				select source_obj -- QUICK WORKAROUND: created Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
+
+				HelperGenerator.generatePointHelpers(source_obj)(all_points_of_object) verts_to_generate:verts_to_generate reset_helpers:reset_helpers
 			)
 
 		else
@@ -119,7 +138,11 @@ struct SupportManager_v
 		SupportGenerator.SupportObject.raft_mode = raft_mode
 		SupportModifiers.raft_mode = raft_mode
 
-		if ( source_points_valid = this.getSourceHelpers(source_objects) ).count > 0 then
+		helpers_by_source_obj = this.getSourceHelpers(source_objects)
+
+		source_points_valid = for key in helpers_of_source_obj.keys collect helpers_of_source_obj[key]  --return
+
+		if source_points_valid.count > 0 then
 		(
 			new_supports_by_obj = for source_helpers in source_points_valid collect
 				(SupportGenerator.generateSupports(source_helpers))
@@ -167,8 +190,9 @@ struct SupportManager_v
 	function getSourceObjects source_objects =
 	(
 		--format "\n"; print "SupportManager_v.getSourceObjects()"
-		for obj in source_objects where this._getSourceObjectPointer(obj) != undefined collect obj
+		for obj in source_objects where this._getPointerOfSourceObject(obj) != undefined collect obj
 	),
+
 
 	/** Get source line
 	 */
@@ -191,25 +215,25 @@ struct SupportManager_v
 		if point_helpers_by_objects.keys.count == 0 then
 			this._setPointHelpersByObject()
 
-		if ( pointer_sync = this._getSourceObjectPointer(source_obj) ) != undefined then
+		if ( pointer_sync = this._getPointerOfSourceObject(source_obj) ) != undefined then
 			point_helpers_by_objects[pointer_sync]
 	),
 
 
 	/** GET MASTER POINTS in scene by objects
 	  *
-	  * @return 2Dmatrix #( Dictionary )
+	  * @return Array of 2D Dictionaries #( KEY:sourec_object_pointer VALUE: #( KEY:vertex_index VALUE:helper_point ) ) )
 	 */
 	function getSourceHelpers objects_array =
 	(
 		format "\n"; print "SupportManager_v.getSourceObjects()"
 
-        SupportObject	= SupportObject_v()
+        --SupportObject	= SupportObject_v()
         helpers_of_source_obj	= Dictionary #string
 
 		/* 1)  GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
 		for source_obj in source_objs = this.getSourceObjects(objects_array) do
-			helpers_of_source_obj[this._getSourceObjectPointer(source_obj)] = this.getAllPointsOfObject(source_obj)
+			helpers_of_source_obj[this._getPointerOfSourceObject(source_obj)] = this.getAllPointsOfObject(source_obj)
 
 
 		/* 2) GET HELPERS FROM SELECTED OBJECTS */
@@ -223,7 +247,8 @@ struct SupportManager_v
 			helpers_of_source_obj[sync_pointer][Options.getProp master_point #source_vert as integer ] = master_point
 		)
 
-		for key in helpers_of_source_obj.keys collect helpers_of_source_obj[key]  --return
+		--for key in helpers_of_source_obj.keys collect helpers_of_source_obj[key]  --return
+		helpers_of_source_obj --return
 	),
 
 
@@ -248,7 +273,7 @@ struct SupportManager_v
 		VISIBILITY
 
 	--------------------------------------------------------------------------------*/
-	/** Toggle visibility
+	/** Toggle visibility DOESN'T WORK YET
 	  *
 	  *  @param #POINT|#SUPPORT|##RAFT|#BEAM type
 	  *
@@ -256,19 +281,40 @@ struct SupportManager_v
 	function toggleVisibility type staOf =
 	(
 		--format "\n"; print "SupportManager_v.toggleVisibility()"
-
-		source_objects = if selection.count > 0 then selection as Array else for obj in objects where not obj.isHidden collect obj
-
-
-		source_objects_valid = this.getSourceObjects(source_objects)
-
-		for source_obj in source_objects_valid do
-	format "this.getAllPointsByObject source_ob	= % \n" (this.getAllPointsByObject source_ob)
+	--
+	--	source_objects = if selection.count > 0 then selection as Array else for obj in objects where not obj.isHidden collect obj
+	--
+	--
+	--	source_objects_valid = this.getSourceObjects(source_objects)
+	--
+	--	for source_obj in source_objects_valid do
+	--format "this.getAllPointsByObject source_ob	= % \n" (this.getAllPointsByObject source_ob)
 
 	),
 
 
 	private
+
+	/** Get source object by sync pointer
+	  *
+	  * @return node
+	 */
+	function _getSourceObjectBySyncPointer sync_pointer =
+	(
+		--format "\n"; print "SupportManager_v._getSourceObjectBySyncPointer()"
+
+		source_objects = this.getSourceObjects( geometry )
+		source_shapes  = this.getSourceObjects( shapes )
+
+		join source_objects source_shapes
+
+		/* FIND OBJECT MATCHI STRING IN USER PROPS */
+		source_objects_by_pointer = for source_obj in source_objects where this._getPointerOfSourceObject (source_obj) == sync_pointer as string collect source_obj
+
+
+		source_objects_by_pointer[1] --return
+	),
+
 
 	/** FIND MASTER POINTS IN SCENE AND SAVE THEM BY OBJECT POINTER TO DICTIONARY
 	 */
@@ -290,9 +336,9 @@ struct SupportManager_v
 
 	/** Get origin poiter
 	 */
-	function _getSourceObjectPointer source_obj =
+	function _getPointerOfSourceObject source_obj =
 	(
-		--format "\n"; print "SupportManager_v._getSourceObjectPointer()"
+		--format "\n"; print "SupportManager_v._getPointerOfSourceObject()"
 		 Options.getProp source_obj #source_object --return
 	),
 

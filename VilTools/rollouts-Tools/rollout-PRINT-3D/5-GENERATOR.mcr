@@ -14,7 +14,7 @@ icon:	"across:4|height:32|tooltip:CTRL: RESET all points on object.\n\n\n\n\nLAS
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
 			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
-			points_created = (getSupportManagerInstance()).generatePointHelpers( selection ) reset_helpers: keyboard.controlPressed
+			points_created = (getSupportManagerInstance()).generatePointHelpers( selection as Array ) reset_helpers: keyboard.controlPressed
 			--format "POINTS_CREATED: %\n" points_created
 			if points_created != undefined then
 				select points_created
