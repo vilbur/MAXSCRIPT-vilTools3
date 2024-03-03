@@ -9,7 +9,11 @@ struct SupportOptions_v
 	/* POINT GENERATOR OPTIONS */
 	use_normals	= true,
 	normal_limit	= true,
+	keep_down	= true,
 	normal_length	= 3,
+	keep_down_limit	= 1,
+
+
 	use_nth_vertex	= 1,
 
 

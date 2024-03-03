@@ -141,7 +141,7 @@ struct SupportModifiers_v
 	(
 		format "\n"; print "SupportModifiers_v._addSweepModifier()"
 
-		/** Reset mod prpertis
+		/** Reset mod prpertis -- sweep mpdofoer keeps its settings if newly created, i dont know why.. oteh modifiers dont do that :D
 
 			QUICK SOLUTION - FOR MORE MODIFIERS OR PROPERTIES SHOULD COMPLEX SOLUTUION EXISTS
 
@@ -150,12 +150,19 @@ struct SupportModifiers_v
 		(
 			sweep_mod.MirrorXZPlane = off
 			sweep_mod.MirrorXYPlane = off
+
 			sweep_mod.XOffset = 0
 			sweep_mod.yOffset = 0
+
 			sweep_mod.angle = 0
 			sweep_mod.SmoothSection = off
 			sweep_mod.SmoothPath = off
 			sweep_mod.PivotAlignment = 4
+
+
+			sweep_mod.GenMatIDs = on
+			sweep_mod.UseSectionIDs = off
+			sweep_mod.UsePathIDs = off
 		)
 
 		sweep_mod = sweep name:name

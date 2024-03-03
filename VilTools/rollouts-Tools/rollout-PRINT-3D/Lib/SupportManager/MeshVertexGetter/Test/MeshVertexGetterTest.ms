@@ -44,7 +44,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
 --createSourceMesh()
- createSourceMesh vertex_selection:#{2..3} vertex_color:green
+ --createSourceMesh vertex_selection:#{2..3} vertex_color:green
  -- createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
 
 
@@ -60,15 +60,24 @@ select objects[1]
 MeshVertexGetter 	= MeshVertexGetter_v(selection[1])
 
 
-/*------------------------------------------------------------------------------
-	RUN TESTS
---------------------------------------------------------------------------------*/
-all_colored_verts = MeshVertexGetter.getVetexData quiet:true
-
-
 
 /*------------------------------------------------------------------------------
-	PRINT RESULT
+	GET VERS DATA
 --------------------------------------------------------------------------------*/
-for vert_data in all_colored_verts do
+--verts_data = MeshVertexGetter.getVetexData quiet:true
+
+verts_data = MeshVertexGetter.getVetexData quiet:true remove_multi_colored_verts_from_white:true
+
+for vert_data in verts_data do
 	format "vert_data	= % \n" vert_data
+
+
+/*------------------------------------------------------------------------------
+	GET VERTEX COLORS
+--------------------------------------------------------------------------------*/
+--all_colored_verts = MeshVertexGetter.getColoredVerts()
+--
+--for clr in all_colored_verts.keys do
+--	format "COLOR: % VERTS: %\n" clr all_colored_verts[clr]
+--
+--

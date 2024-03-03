@@ -21,8 +21,9 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle(" S C E N E")
+	QuadMenu.setTitle(" X-R E F")
 
+	QuadMenu.addMenu("_Scene-Xref")	separators:#( 3 ) --flat:false --index:1
 )
 
 /*------------------------------------------------------------------------------

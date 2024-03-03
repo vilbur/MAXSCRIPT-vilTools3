@@ -96,7 +96,7 @@ struct SupportManager_v
 			(
 				select source_obj -- QUICK WORKAROUND: craeted Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
 
-				HelperGenerator.generatePointHelpers(source_obj)(this.getAllPointsByObject source_obj) reset_helpers:reset_helpers
+				HelperGenerator.generatePointHelpers(source_obj)(this.getAllPointsOfObject source_obj) reset_helpers:reset_helpers
 			)
 
 		else
@@ -182,9 +182,9 @@ struct SupportManager_v
 	  *
 	  * @return 2DMATRIX - Array of Dictionares or undefined if source object has no points
 	 */
-	function getAllPointsByObject source_obj =
+	function getAllPointsOfObject source_obj =
 	(
-		format "\n"; print "SupportManager_v.getAllPointsByObject()"
+		format "\n"; print "SupportManager_v.getAllPointsOfObject()"
 		if classOf source_obj == Array then source_obj = source_obj[1]
 
 		/* INIT SET POINTS IF NOT SET */
@@ -209,7 +209,7 @@ struct SupportManager_v
 
 		/* 1)  GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
 		for source_obj in source_objs = this.getSourceObjects(objects_array) do
-			helpers_of_source_obj[this._getSourceObjectPointer(source_obj)] = this.getAllPointsByObject(source_obj)
+			helpers_of_source_obj[this._getSourceObjectPointer(source_obj)] = this.getAllPointsOfObject(source_obj)
 
 
 		/* 2) GET HELPERS FROM SELECTED OBJECTS */
@@ -253,7 +253,7 @@ struct SupportManager_v
 	  *  @param #POINT|#SUPPORT|##RAFT|#BEAM type
 	  *
 	 */
-	function toggleVisibility type state =
+	function toggleVisibility type staOf =
 	(
 		--format "\n"; print "SupportManager_v.toggleVisibility()"
 
