@@ -35,11 +35,15 @@ struct MeshVertexGetter_v
 	  * 		2) Get all colored verts if nothing selected
 	  * 		3) Get all verts in nothing is selected and vertex colors does not exists
 	  *
+	  *
+	  * @param boolean remove_multi_colored_verts_from_white	TRUE: collect first non white color | FALSE: collect all colors for vert ( mesh vert is occuring in muliple colors )
+	  * @param boolean quiet	Dont ask to continue if all verts of object used
+	  *
 	  * @return 2Dmatrix  #( #{ verts_to_get_bitarray }, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
 	  */
-	function getVetexData quiet:false =
+	function getVetexData remove_multi_colored_verts_from_white:false quiet:false =
 	(
-		--format "\n"; print "MeshVertexGetter_v.getVetexData()"
+		format "\n"; print "MeshVertexGetter_v.getVetexData()"
 		max modify mode
 
 		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
@@ -55,11 +59,11 @@ struct MeshVertexGetter_v
 		verts_count_VC	= getNumCPVVerts obj.mesh
 
 		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
-		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0)
+		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0) remove_multi_colored_verts_from_white:remove_multi_colored_verts_from_white
 
 		--format "VERTEX_COLORS.COUNT	= % \n" vertex_colors.count
 		--for vertex_color in vertex_colors do
-		--	format "VERTEX_COLOR	= % \n" vertex_color
+		--	--format "VERTEX_COLOR	= % \n" vertex_color
 
 		verts_to_get = case of
 		(
@@ -72,7 +76,7 @@ struct MeshVertexGetter_v
 			/* VERTEX COLORS NOT EXISTS */
 			default: verts_all
 		)
-
+		format "VERTS_TO_GET: %\n" verts_to_get
 		/* SET VERTS POSITIONS WHEN verts_to_get is known  */
 		this._setVertexPositions()
 
@@ -108,7 +112,12 @@ struct MeshVertexGetter_v
 	),
 
 
-	/** Get colored verts
+	/** Get colors and its mesh verts
+	  *
+	  * IMPORTANT - SINGLE MESH VERT CAN APPEAR IN MULTIPLE COLORS - since each map vert can has its own color
+	  *
+	  * @return Dictionary #string BitArrays of mesh verts sorted by color E.G.: #( "color 255 255 255", #{1..999}  )  #( "color 0 255 255", #{1..3}  )
+	  *
 	 */
 	function getColoredVerts  =
 	(
@@ -127,20 +136,67 @@ struct MeshVertexGetter_v
 
 	private
 
-	--/** Load vertex data
-	-- */
-	--function _loadVertexNormals verts_data =
-	--(
-	--	--format "\n"; print "MeshVertexGetter_v._laodVertexData()"
-	--	--this.verts_positions 	= verts_data[2]
-	--	this.verts_normals	= verts_data[4]
-	--),
+	/** Set vertex colors Ditionary
+	  *
+	  * SINGLE MESH VERT CAN APPEAR IN MULTIPLE COLORS - Each map vert can has its own color
+	  *
+	  * NOTES:
+	  *		1) getvertcolor()	INPUT CPV vertex
+	  *		2) getVertsByColor()	RETURN MESH VERTEX
+	  *
+	  *
+	  * @param boolean remove_multi_colored_verts_from_white TRUE: collect first non white color | FALSE: collect all colors for vert ( mesh vert is occuring in muliple colors )
+	  *
+	  * @return Dictionary of BitArrays of mesh verts sorted by color E.G.: #( "color 255 255 255", #{1..999}  )  #( "color 0 255 255", #{1..3}  )
+	  */
+	function _setVertexColors verts_to_get_colors: vertex_colors_exists: remove_multi_colored_verts_from_white:false =
+	(
+		--format "\n"; print "MeshVertexGetter_v._setVertexColors()"
+		/** White verts exists
+		 */
+		function whiteVertsExists = HasDictValue this.vertex_colors ( white as string )
+
+		local color_of_vert
+
+		local white_clr = white as string
+
+		if vertex_colors_exists then
+		(
+			--format "START verts_to_get_colors	= % \n" verts_to_get_colors
+			--format "verts_to_get_colors.numberSet	= % \n" verts_to_get_colors.numberSet
+
+			MeshVertToColorVertexConvert.get_single_vert = false
+
+			while not verts_to_get_colors.isEmpty do
+			(
+				mesh_vert = (verts_to_get_colors as Array )[1]
+
+				map_verts_of_mesh_vert = makeUniqueArray (MeshVertToColorVertexConvert.meshVertsToMapVerts (mesh_vert) flat:true )
+
+				color_of_vert = this._searchNewVertexColor (map_verts_of_mesh_vert)
+
+				mesh_verts_by_color = meshop.getVertsByColor obj.mesh color_of_vert 0.01 0.01 0.01 	-- get all verts by thath color
+
+				this.vertex_colors[ color_of_vert as string ] = mesh_verts_by_color
+
+				verts_to_get_colors -= mesh_verts_by_color
+
+			)
+
+			/* REMOVE MULTI COLORED VERTS FROM WHITE - (if one of vert colors is not white, then vert is not white) */
+			if remove_multi_colored_verts_from_white and whiteVertsExists() then
+				for clr in this.vertex_colors.keys  where clr != white_clr do
+					this.vertex_colors[white_clr] -= vertex_colors[clr]
+		)
+		else
+			vertex_colors[ obj.wirecolor as string ] = verts_to_get_colors
+	),
 
 	/** SET VERTEX POSITIONS only of verts_to_get
 	 */
 	function _setVertexPositions =
 	(
-		format "\n"; print "MeshVertexGetter_v._setVertexPositions()"
+		--format "\n"; print "MeshVertexGetter_v._setVertexPositions()"
 		this.verts_positions = meshop.getVerts obj.mesh verts_to_get node:obj
 	),
 
@@ -180,11 +236,16 @@ struct MeshVertexGetter_v
 		verts_normals --return
 	),
 
+
+
 	/** GET VERTEX COLORS
-	 */
+	  *
+	  *
+	  * @retrun Array of colors - index matchinng index of this.verts_to_get
+	*/
 	function _getVertexColorsByVerts =
 	(
-		format "\n"; print "MeshVertexGetter_v._getVertexColorsByVerts()"
+		--format "\n"; print "MeshVertexGetter_v._getVertexColorsByVerts()"
 
 		colors = for key in vertex_colors.keys collect execute key
 
@@ -193,66 +254,29 @@ struct MeshVertexGetter_v
 		(
 			colors_per_vert = for c = 1 to vertex_colors.count where this.vertex_colors[vertex_colors.keys[c]][vert] collect colors[c]
 
-			colors_per_vert[1]  --return
+			--colors_per_vert[1]  --return
+			colors_per_vert  --return
 		)
 	),
 
-	/** Set vertex colors Ditionary
+	/** Loop map verts of single mesh vert
 	  *
-	  * IMPORTANT:
-	  *		1) getvertcolor()	IS USING CPV vertex
-	  *		2) getVertsByColor()	RETURN MESH VERTEX
+	  * Test if vertex color is new
 	  *
-	  *
-	  * return Dictionary #( "Color 128 128 128", #{1..n} ) KEY: color VALUE: verts of that color
-	  */
-	function _setVertexColors verts_to_get_colors: vertex_colors_exists: =
+	  * @retrun color of map vertex
+	 */
+	function _searchNewVertexColor map_verts =
 	(
-		format "\n"; print "MeshVertexGetter_v._setVertexColors()"
-
+		--format "\n"; print "MeshVertexGetter_v._searchNewVertexColor()"
 		local color_of_vert
 
-		if vertex_colors_exists then
-		(
-			--format "START verts_to_get_colors	= % \n" verts_to_get_colors
-			--format "verts_to_get_colors.numberSet	= % \n" verts_to_get_colors.numberSet
+		i = 1
 
-			MeshVertToColorVertexConvert.get_single_vert = false
+		while hasDictValue vertex_colors ( (color_of_vert = getvertcolor obj.mesh map_verts[i]) as string )  do
+			i += 1
 
-			--counter = 1 -- DEV
-			--while counter < 5 do  -- DEV
-			while not verts_to_get_colors.isEmpty do
-			(
-				--format "\n\n\n"
-
-				mesh_vert = (verts_to_get_colors as Array )[1]
-				--format "mesh_vert	= % \n" mesh_vert
-
-				map_verts = makeUniqueArray (MeshVertToColorVertexConvert.meshVertsToMapVerts (mesh_vert) flat:true )
-				--format "map_verts	= % \n" map_verts
-
-
-				i = 1
-				/* LOOP EACH GEOMETRY VERTEX OF FACE and find which vert share same faces as faces_of_vertex_pattern ( it means that it is the same geometry vert ) */
-				while HasDictValue vertex_colors ( (color_of_vert = getvertcolor obj.mesh map_verts[i]) as string )  do
-					i += 1
-
-				mesh_verts_by_color = meshop.getVertsByColor obj.mesh color_of_vert 0.01 0.01 0.01 	-- get all verts by thath color
-				--format "\nmesh_verts_by_color = % \n" mesh_verts_by_color
-				--format "mesh_verts_by_color.numberSet	= % \n" verts_to_get_colors.numberSet
-
-				vertex_colors[ color_of_vert as string ] = mesh_verts_by_color
-
-				verts_to_get_colors -= mesh_verts_by_color
-				--format "\nverts_to_get_colors	= % \n" verts_to_get_colors
-				--format "verts_to_get_colors.numberSet	= % \n" verts_to_get_colors.numberSet
-				--counter += 1  -- DEV
-			)
-		)
-		else
-			vertex_colors[ obj.wirecolor as string ] = verts_to_get_colors
+		color_of_vert --return
 	),
-
 
 	/** Ask to continue
 	  *

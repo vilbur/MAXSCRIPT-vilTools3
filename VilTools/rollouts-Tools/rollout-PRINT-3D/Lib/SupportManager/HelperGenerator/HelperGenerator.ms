@@ -5,7 +5,7 @@ struct HelperGenerator_v
 	/* construct */
 
 	/* properties */
-	point_helpers = Dictionary #integer,	-- Dictionary #( vert_number, point_helper )
+	point_helpers,
 
 
 	/* dependency */
@@ -20,11 +20,11 @@ struct HelperGenerator_v
 	  *
 	  * @return Array of new created helpers
 	  */
-	function generatePointHelpers source_obj point_helpers_to_generate reset_helpers:true =
+	function generatePointHelpers source_obj point_helpers_of_object reset_helpers:true =
 	(
 		--format "\n"; print "HelperGenerator_v.generatePointHelpers()"
 		--format "source_obj	= % \n" source_obj
-		--format "point_helpers_to_generate	= % \n" point_helpers_to_generate
+		--format "point_helpers_of_object	= % \n" point_helpers_of_object
 
 		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
@@ -33,30 +33,44 @@ struct HelperGenerator_v
 
 		local point_helpers_new = #()
 
+
+
 		/* SET EXISTING POINT HELPERS */
-		if point_helpers_to_generate != undefined then this.point_helpers = point_helpers_to_generate
+		this.point_helpers = if point_helpers_of_object != undefined then point_helpers_of_object else Dictionary #integer -- Dictionary #( vert_number, point_helper ) -- all point  helpers of of source obejct
+
+
 
 		/* GET VERTEX DATA */
-
 		verts_data = if superClassOf source_obj != shape then
-			(MeshVertexGetter_v(source_obj)).getVetexData()
+			(MeshVertexGetter_v(source_obj)).getVetexData remove_multi_colored_verts_from_white:true -- MESH OBEJCT
 		else
-			(ShapeKnotGetter_v(source_obj)(Options.use_nth_vertex)).getVetexData()
+			(ShapeKnotGetter_v(source_obj)(Options.use_nth_vertex)).getVetexData() -- SHAPE OBJECT
+
+
 
 		/* IF USER CANCEL GETTIN DATA */
 		if verts_data == false then
 			return point_helpers_new
 
+
+
 		/* DELETE OLD POINTS */
 		if reset_helpers then
 			this._deleteOldPointHelpers(source_obj)(verts_data[1])
 
+
+
+		/* SET USER PROP DATA */
 		this._setUserDataToSourceObject(source_obj)
 
 
-		/* GENERATE POINTS FOR EACH VERTEX */
+			format "VERTS_TO_GENERATE: %\n" verts_data[1]
+		/* GENERATE POINTS FOR EACH VERTEX */ -- TODO: loop should has its own method
 		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
 		(
+			format "\n\n VERTEX INDEX: %\n" verts_to_generate[i]
+			format "COLOR: %\n" (verts_data[4][i])
+
 			HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:(getWireColor(source_obj)(verts_data[4][i])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
 			if ( point_new = HelperObject.createHelper() ) != undefined then
@@ -68,8 +82,8 @@ struct HelperGenerator_v
 
 		)
 
-		--/* REINSTANCE ALL POINTS PER OBEJCT */
-		this._reinstanceAllPoints()
+		/* REINSTANCE ALL POINTS PER OBEJCT */
+		this._reinstancePointByLevel()
 
 		point_helpers_new --return
 	),
@@ -162,9 +176,9 @@ struct HelperGenerator_v
 	  * Each level of points is different instance
 	  *
 	  */
-	function _reinstanceAllPoints =
+	function _reinstancePointByLevel =
 	(
-		--format "\n"; print "HelperGenerator_v._reinstanceAllPoints()"
+		--format "\n"; print "HelperGenerator_v._reinstancePointByLevel()"
 		fn helpersInSameLevel point_trees i = for point_level in point_trees where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
 
 		point_trees = for vertex_index in point_helpers.keys collect this._getPointsChain( point_helpers[vertex_index] )
