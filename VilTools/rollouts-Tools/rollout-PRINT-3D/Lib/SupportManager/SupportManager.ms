@@ -140,7 +140,7 @@ struct SupportManager_v
 
 		helpers_by_source_obj = this.getSourceHelpers(source_objects)
 
-		source_points_valid = for key in helpers_of_source_obj.keys collect helpers_of_source_obj[key]  --return
+		source_points_valid = for key in helpers_by_source_obj.keys collect helpers_by_source_obj[key]  --return
 
 		if source_points_valid.count > 0 then
 		(

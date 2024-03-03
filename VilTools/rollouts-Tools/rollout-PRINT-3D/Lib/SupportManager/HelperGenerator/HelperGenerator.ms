@@ -26,9 +26,9 @@ struct HelperGenerator_v
 	function generatePointHelpers source_obj point_helpers_of_object verts_to_generate: reset_helpers:true =
 	(
 		--format "\n"; print "HelperGenerator_v.generatePointHelpers()"
-		format "source_obj	= % \n" source_obj
-		format "point_helpers_of_object	= % \n" point_helpers_of_object
-		format "verts_to_generate: %\n" verts_to_generate
+		--format "source_obj	= % \n" source_obj
+		--format "point_helpers_of_object	= % \n" point_helpers_of_object
+		--format "verts_to_generate: %\n" verts_to_generate
 
 		--function getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
 		point_helpers_new = #()
@@ -82,6 +82,7 @@ struct HelperGenerator_v
 		else
 			messageBox "NO POINT HELPER HAS BEEN GENERATED" title:"HelperGenerator"
 
+		gc()
 		point_helpers_new --return
 	),
 
