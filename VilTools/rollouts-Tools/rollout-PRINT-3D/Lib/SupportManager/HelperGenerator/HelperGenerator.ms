@@ -29,7 +29,14 @@ struct HelperGenerator_v
 		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
 		/* USE OBJECT WIRE COLOR IF VERTEX COLOR IS WHITE */
-		function getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
+		--function getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
+		function getWireColor source_obj wirecolor = (
+
+			if classOf wirecolor == Array then wirecolor = wirecolor[1]
+
+			 if wirecolor != white then wirecolor else source_obj.wirecolor --return
+		)
+
 
 		local point_helpers_new = #()
 
@@ -53,37 +60,52 @@ struct HelperGenerator_v
 			return point_helpers_new
 
 
+		/* FILTER EXISTING VERTS */
+		verts_to_generate = if not reset_helpers then
+								--for vertex_index in verts_data[1] where not helperExists(vertex_index) collect vertex_index
+								(for vertex_index in verts_data[1] where not helperExists(vertex_index) collect vertex_index) as BitArray
+							else
+								verts_data[1]
 
-		/* DELETE OLD POINTS */
-		if reset_helpers then
-			this._deleteOldPointHelpers(source_obj)(verts_data[1])
-
-
-
-		/* SET USER PROP DATA */
-		this._setUserDataToSourceObject(source_obj)
-
-
-			format "VERTS_TO_GENERATE: %\n" verts_data[1]
-		/* GENERATE POINTS FOR EACH VERTEX */ -- TODO: loop should has its own method
-		for i = 1 to (verts_to_generate = verts_data[1] as Array ).count where not helperExists(verts_to_generate[i]) do -- where point helper does not exists
+		format "VERTS_TO_GENERATE: %\n" verts_to_generate
+		format "verts_to_generate.numberSet: %\n" verts_to_generate.numberSet
+		if verts_to_generate.numberSet > 0 then
 		(
-			format "\n\n VERTEX INDEX: %\n" verts_to_generate[i]
-			format "COLOR: %\n" (verts_data[4][i])
+			/* SET USER PROP DATA - MUST BE SET BEFORE HELEPRS CREATION*/
+			if verts_to_generate.count > 0 then
+				this._setUserDataToSourceObject(source_obj)
 
-			HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:verts_to_generate[i] pos:verts_data[2][i] normal:verts_data[3][i] wirecolor:(getWireColor(source_obj)(verts_data[4][i])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
-			if ( point_new = HelperObject.createHelper() ) != undefined then
+			/* DELETE OLD POINTS */
+			--if verts_to_generate then
+			--this._deleteOldPointHelpers(source_obj)(verts_to_generate)
+
+
+
+			/* GENERATE POINTS FOR EACH VERTEX */ -- TODO: loop should has its own method
+			for vertex_index in verts_to_generate do
 			(
-				this.point_helpers[HelperObject.vertex_index] = point_new -- IF POINT IS NOT CREATED, THEN VALUE IS undefined, so failed ponts can be managed too
+				data_index	= findItem ( verts_data[1] as Array ) vertex_index -- find vertex in all verts data
 
-				append point_helpers_new point_new
+				HelperObject = HelperObject_v Options:Options source_obj:source_obj vertex_index:vertex_index pos:verts_data[2][data_index] normal:verts_data[3][data_index] wirecolor:(getWireColor(source_obj)(verts_data[4][data_index])) --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
+
+				if ( point_new = HelperObject.createHelper() ) != undefined then
+				(
+					this.point_helpers[vertex_index] = point_new -- IF POINT IS NOT CREATED, THEN VALUE IS undefined, so failed ponts can be managed too
+
+					append point_helpers_new point_new
+				)
 			)
 
-		)
 
-		/* REINSTANCE ALL POINTS PER OBEJCT */
-		this._reinstancePointByLevel()
+			/* REINSTANCE ALL POINTS PER OBEJCT */
+			if point_helpers_new.count > 0 then
+				this._reinstancePointByLevel(point_helpers_new)
+		)
+		--else
+			--messageBox "NO POINT HELPER HAS BEEN GENERATED" title:"HelperGenerator"
+
+
 
 		point_helpers_new --return
 	),
@@ -172,44 +194,56 @@ struct HelperGenerator_v
 	),
 
 	/** Reinstance helper points
-	  *S
+	  *
 	  * Each level of points is different instance
 	  *
 	  */
-	function _reinstancePointByLevel =
+	function _reinstancePointByLevel point_helpers_new =
 	(
 		--format "\n"; print "HelperGenerator_v._reinstancePointByLevel()"
-		fn helpersInSameLevel point_trees i = for point_level in point_trees where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
+		fn helpersInSameLevel point_chains i = for point_level in point_chains where point_level[i] != undefined and isValidNode point_level[i] collect point_level[i]
 
-		point_trees = for vertex_index in point_helpers.keys collect this._getPointsChain( point_helpers[vertex_index] )
+		--point_chains = for vertex_index in point_helpers.keys collect this._getPointsChain( point_helpers[vertex_index] )
+		point_chains	= for point_helper in point_helpers_new collect this._getPointsChain( point_helper )
+		point_chains_max	= amax (for point_chain in point_chains collect point_chain.count)
 
-		max_count = amax (for point_tree in point_trees collect point_tree.count)
+		/* GET OLD CHAIN OF OLD POINTS - to get mster objects for reinstancing */
+		old_points = for key in point_helpers.keys where findItem point_helpers_new point_helpers[key] == 0 collect point_helpers[key]
 
-		max create mode
+		 master_chain =  if old_points.count > 0 then
+		 (
+			point_chains_old = for point_helper in old_points collect this._getPointsChain( point_helper )
 
-		if max_count != undefined then
-			for i = 1 to max_count do
-				this._reinstancePoint( helpersInSameLevel(point_trees)(i) )
+			max_count_old	= amax (for point_chain in point_chains_old collect point_chain.count) -- get max count of arrays
+
+			master_chain = (for point_chain in point_chains_old where point_chain.count = max_count_old collect point_chain)[1] -- get array with max count
+
+			for i = 1 to point_chains[1].count where master_chain[i] == undefined do master_chain[i] = point_chains[1][i] -- fill missing old points with new points ( if new points has more points in chain then old )
+
+			master_chain --return
+		 )
+		 else
+			point_chains[1]
+
+
+		if point_chains_max != undefined then
+			for i = 1 to point_chains_max do
+				this._reinstancePoint( helpersInSameLevel(point_chains)(i) ) master_chain[i]
 	),
 
 	/** Reinstance points
 	  */
-	function _reinstancePoint points_created =
+	function _reinstancePoint for_replace master_object =
 	(
 		--format "\n"; print "HelperGenerator_v._reinstancePoint()"
-		if points_created.count < 2 then
-			return false
+		if for_replace.count < 2 then
+			return false-point
 
-		master_object	= points_created[1]
+		max create mode
 
-		for_replace = deleteItem points_created 1
-
-		--for _point in for_replace do
-		--	instanceReplace _point master_object
-
-		for _point in for_replace do
-			_point.baseobject = master_object.baseobject
-
+		if  master_object != undefined then
+			for _point in for_replace where _point != master_object do
+				_point.baseobject = master_object.baseobject
 	),
 
 
@@ -217,10 +251,15 @@ struct HelperGenerator_v
 	 */
 	function _deleteOldPointHelpers source_obj verts_to_generate =
 	(
-		--format "\n"; print "HelperGenerator_v._deleteOldPointHelpers()"
+		format "\n"; print "HelperGenerator_v._deleteOldPointHelpers()"
 
+		verts_to_generate = verts_to_generate as BitArray
+
+		--for i = point_helpers.keys.count to 1 by -1 do
 		for vertex_index in point_helpers.keys where verts_to_generate[vertex_index] do
 		(
+			--vertex_index = point_helpers.keys[i]
+
 			point_helper_cahin = this._getPointsChain(point_helpers[vertex_index])
 
 			delete (this._getPointsChain(point_helpers[vertex_index]))
@@ -229,7 +268,7 @@ struct HelperGenerator_v
 		)
 	),
 
-	/** Get point trees
+	/** Get point chains
 	 */
 	function _getPointsChain point_helper =
 	(

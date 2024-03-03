@@ -54,8 +54,8 @@ filein( getFilenamePath(getSourceFileName()) + "/inlcudes/create-test-objects.ms
 
 /* VERTEX COLOR */
 --createSourceMesh segments:2 vertex_color:orange vertex_selection:#{2..3}
---createSourceMesh segments:12 vertex_color:orange vertex_selection:#{2..17} obj:#SPHERE
-createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
+createSourceMesh segments:12 vertex_color:orange vertex_selection:#{2..3} obj:#SPHERE
+--createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
 
 
 /* TEST ON TRANSFORMED OBJECT - test  of vertex postion */
@@ -104,10 +104,10 @@ format "SupportManager.options	= % \n" SupportManager.options
 ================================================================================*/
 
 /* 1) GENERATE POINTS FROM SOURCE OBJECT */
---new_ponts = SupportManager.generatePointHelpers( source_objects )
---format "NEW_PONTS	= % \n" new_ponts
+new_ponts = SupportManager.generatePointHelpers( source_objects )
+format "NEW_PONTS	= % \n" new_ponts
 
---points_by_object = SupportManager.getAllPointsByObject( source_objects )
+points_by_object = SupportManager.getAllPointsOfObject( source_objects )
 
 
 

@@ -76,6 +76,7 @@ struct MeshVertexGetter_v
 			/* VERTEX COLORS NOT EXISTS */
 			default: verts_all
 		)
+
 		format "VERTS_TO_GET: %\n" verts_to_get
 		/* SET VERTS POSITIONS WHEN verts_to_get is known  */
 		this._setVertexPositions()
@@ -144,6 +145,10 @@ struct MeshVertexGetter_v
 	  *		1) getvertcolor()	INPUT CPV vertex
 	  *		2) getVertsByColor()	RETURN MESH VERTEX
 	  *
+	  *
+	  * KNOWING ISSUE: remove_multi_colored_verts_from_white
+	  *				If vertex has mutliple colors, then first is used, include white color.
+	  *				Only way to make it work seem to iterate all map verts. THIS IS OVERKIL FOR SUCH SIPMPLE OPARTION ON HIGH VERTEX COUNT OBJECTS... MAX SUCKS !
 	  *
 	  * @param boolean remove_multi_colored_verts_from_white TRUE: collect first non white color | FALSE: collect all colors for vert ( mesh vert is occuring in muliple colors )
 	  *
@@ -238,10 +243,10 @@ struct MeshVertexGetter_v
 
 
 
-	/** GET VERTEX COLORS
+	/** GET VERTEX COLORS of map verts
 	  *
 	  *
-	  * @retrun Array of colors - index matchinng index of this.verts_to_get
+	  * @retrun Color|#(Color) - color of mesh vert, array of colors if has multiple colors
 	*/
 	function _getVertexColorsByVerts =
 	(
@@ -254,8 +259,8 @@ struct MeshVertexGetter_v
 		(
 			colors_per_vert = for c = 1 to vertex_colors.count where this.vertex_colors[vertex_colors.keys[c]][vert] collect colors[c]
 
-			--colors_per_vert[1]  --return
-			colors_per_vert  --return
+			colors_per_vert[1]  --return
+			--colors_per_vert  --return
 		)
 	),
 

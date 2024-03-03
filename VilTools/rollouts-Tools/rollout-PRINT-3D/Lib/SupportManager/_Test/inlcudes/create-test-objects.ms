@@ -26,13 +26,13 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 
 	_obj = case obj of
 	(
-		#SPHERE:	Sphere radius:(getUnit(50)) pos:[0,0, getUnit(80) ] segments:segments -- diameter 3 cm
-		#BOX:	Box  pos:[0,0, getUnit(50) ]  lengthsegs:segments widthsegs:segments heightsegs:segments
+		#SPHERE:	Sphere radius:(getUnit(50)) pos:[0,0, getUnit(200) ] segments:segments -- diameter 3 cm
+		#BOX:	Box  pos:[0,0, getUnit(200) ]  lengthsegs:segments widthsegs:segments heightsegs:segments
 
-		DEFAULT:	Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, getUnit(30.0) ] widthsegs:segments lengthsegs:segments backfacecull: off
+		DEFAULT:	Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, getUnit(200) ] widthsegs:segments lengthsegs:segments backfacecull: off
 	)
 
-	
+
 	 _obj.showVertexColors	= true
 	 _obj.vertexColorsShaded	= true
 

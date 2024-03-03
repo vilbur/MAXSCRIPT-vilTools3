@@ -5,7 +5,8 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportManag
 macroscript	_print_support_generate_points
 category:	"_3D-Print"
 buttontext:	"POINTS"
-icon:	"across:4|height:32|tooltip:GENERATE POINTS From selected object.\n\nLAST OBEJCT IS USED IF NOTHING SELECTED"
+tooltip:	"Generate Points"
+icon:	"across:4|height:32|tooltip:CTRL: RESET all points on object.\n\n\n\n\nLAST OBJECT IS USED IF NOTHING SELECTED.\n\nIMPORTANT: VERTEX MUST HAS SINGLE VERTEX COLOR,\notherwise then generator could not work properly."
 (
 	on execute do
 		undo "Generate Points" on

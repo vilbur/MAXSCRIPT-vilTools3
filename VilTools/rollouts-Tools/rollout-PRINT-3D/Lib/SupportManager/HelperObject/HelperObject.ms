@@ -111,7 +111,7 @@ struct HelperObject_v
 			append this.points_positions vert_pos
 
 		else
-			format "ERROR IN: this._setPointsPositions()\n\ GETTING NORMAL OF POINT: %\n\nOBJECT: % \n" source_obj vertex_index
+			format "ERROR IN: HelperObject_v._setPointsPositions()\n\n GETTING NORMAL OF POINT: %\n\nOBJECT: % \n" source_obj vertex_index
 
 		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
 	),
@@ -199,7 +199,7 @@ struct HelperObject_v
 
 		wirecolor_shifted --return
 	),
-	
+
 	/**
 	 */
 	on create do
