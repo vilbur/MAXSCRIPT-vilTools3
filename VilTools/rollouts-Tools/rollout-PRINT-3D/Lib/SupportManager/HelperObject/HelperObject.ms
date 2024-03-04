@@ -189,7 +189,7 @@ struct HelperObject_v
 	(
 		--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
 		--format "wirecolor:	% \n" wirecolor
-		wirecolor_shifted = copy wirecolor
+		wirecolor_shifted = copy this.wirecolor
 
 
 		if wirecolor_shifted.r >= i then wirecolor_shifted.r -= i

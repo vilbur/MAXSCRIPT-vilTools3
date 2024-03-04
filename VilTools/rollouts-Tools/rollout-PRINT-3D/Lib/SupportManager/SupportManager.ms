@@ -74,7 +74,7 @@ struct SupportManager_v
 	  */
 	function generatePointHelpers source_objects reset_helpers:true =
 	(
-		--format "\n"; print "SupportManager_v.generatePointHelpers()"
+		format "\n"; print "SupportManager_v.generatePointHelpers()"
 
 		local new_points_by_objects
 		--local selected_helpers_by_objects
@@ -83,33 +83,42 @@ struct SupportManager_v
         local source_object_valid	= #()
         local verts_to_generate	= #{}
 
+		/* GET  */
 		local source_object_valid = this.getSourceObjects(source_objects)
+
+	        /* TRY GET SOURCE LINE  */
+		--if source_object_valid.count == 0 then
+		--	source_object_valid = this._getSourceLines(source_objects)
+		--
+
+				format "source_object_valid: %\n" source_object_valid
 
 		/* IF NEW SOURCE OBJECT IS USED */
 		if source_object_valid.count == 0 then
-			 source_object_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass collect source_obj
+			 source_object_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass or superClassOf source_obj == shape collect source_obj
 
-        /* TRY GET SOURCE LINE  */
-		if source_object_valid.count == 0 then
-			source_object_valid = this._getSourceLines(source_objects)
+				format "source_object_valid: %\n" source_object_valid
 
 
 		/* GET SELECTED POINT HELPERS and their source obejcts */
 		selected_helpers_by_objects =  this.getSourceHelpers (source_objects)
 
+		format "SELECTED_HELPERS_BY_OBJECTS: %\n" selected_helpers_by_objects
+		--if selected_helpers_by_objects.keys.count > 0 then
+		for pointer in selected_helpers_by_objects.keys where ( source_obj = this._getSourceObjectBySyncPointer(pointer) ) != undefined do
+			appendIfUnique source_object_valid source_obj
 
-		if selected_helpers_by_objects.keys.count > 0 then
-			for pointer in selected_helpers_by_objects.keys where ( source_obj = this._getSourceObjectBySyncPointer(pointer) ) != undefined do
-				appendIfUnique source_object_valid source_obj
 
-
-
+		--
 		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
 		if source_object_valid.count > 0 then
 			new_points_by_objects = for source_obj in source_object_valid collect
 			(
-				 if ( selected_helpers_of_obj = selected_helpers_by_objects[ this._getPointerOfSourceObject(source_obj) ] ) != undefined then
-					verts_to_generate = selected_helpers_of_obj.keys as BitArray -- get vertex indexes of selected helpers - for each source object
+				if ( pointer = this._getPointerOfSourceObject(source_obj) ) != undefined then
+				(
+					if ( selected_helpers_of_obj = selected_helpers_by_objects[ pointer ] ) != undefined then
+					   verts_to_generate = selected_helpers_of_obj.keys as BitArray -- get vertex indexes of selected helpers - for each source object
+				)
 
 				all_points_of_object = this.getAllPointsOfObject source_obj
 
@@ -123,8 +132,8 @@ struct SupportManager_v
 
 
 		/* FLATTERN ARRAY OF DISTIONARY VALUES */
-		if new_points_by_objects != undefined then
-			for point_helpers in new_points_by_objects where point_helpers.count > 0 do join new_points point_helpers
+		--if new_points_by_objects != undefined then
+		--	for point_helpers in new_points_by_objects where point_helpers.count > 0 do join new_points point_helpers
 
 		new_points --return
 	),
@@ -194,13 +203,13 @@ struct SupportManager_v
 	),
 
 
-	/** Get source line
-	 */
-	function _getSourceLines source_objects =
-	(
-		--format "\n"; print "SupportManager_v._getSourceLine()"
-		for obj in source_objects where superClassOf obj == shape collect obj
-	),
+	--/** Get source line
+	-- */
+	--function _getSourceLines source_objects =
+	--(
+	--	--format "\n"; print "SupportManager_v._getSourceLine()"
+	--	for obj in source_objects where superClassOf obj == shape collect obj
+	--),
 
 	/** GET ALL MASTER POINTS USED BY OBJECT
 	  *
