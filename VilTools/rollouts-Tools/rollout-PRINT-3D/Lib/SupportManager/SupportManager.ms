@@ -89,31 +89,27 @@ struct SupportManager_v
 	        /* TRY GET SOURCE LINE  */
 		--if source_object_valid.count == 0 then
 		--	source_object_valid = this._getSourceLines(source_objects)
-		--
 
-				format "source_object_valid: %\n" source_object_valid
 
 		/* IF NEW SOURCE OBJECT IS USED */
 		if source_object_valid.count == 0 then
 			 source_object_valid = for source_obj in source_objects where superClassOf source_obj == GeometryClass or superClassOf source_obj == shape collect source_obj
 
-				format "source_object_valid: %\n" source_object_valid
-
-
+		format "SOURCE_OBJECT_VALID: %\n" source_object_valid
 		/* GET SELECTED POINT HELPERS and their source obejcts */
 		selected_helpers_by_objects =  this.getSourceHelpers (source_objects)
 
-		format "SELECTED_HELPERS_BY_OBJECTS: %\n" selected_helpers_by_objects
-		--if selected_helpers_by_objects.keys.count > 0 then
 		for pointer in selected_helpers_by_objects.keys where ( source_obj = this._getSourceObjectBySyncPointer(pointer) ) != undefined do
 			appendIfUnique source_object_valid source_obj
 
 
-		--
 		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
 		if source_object_valid.count > 0 then
 			new_points_by_objects = for source_obj in source_object_valid collect
 			(
+				this._manageNameAndLayer(source_obj)
+
+
 				if ( pointer = this._getPointerOfSourceObject(source_obj) ) != undefined then
 				(
 					if ( selected_helpers_of_obj = selected_helpers_by_objects[ pointer ] ) != undefined then
@@ -349,6 +345,42 @@ struct SupportManager_v
 	(
 		--format "\n"; print "SupportManager_v._getPointerOfSourceObject()"
 		 Options.getProp source_obj #source_object --return
+	),
+
+
+	/** Manage name and layer
+	 */
+	function _manageNameAndLayer source_obj =
+	(
+		--format "\n"; print "SupportManager_v._manageNameAndLayer()"
+
+		local layer
+		source_obj_suffix = "-support-source"
+		layer_name_suffix = "-support"
+
+	new_name	= source_obj.name + source_obj_suffix
+	layer_name	= (substituteString source_obj.name source_obj_suffix "" ) + layer_name_suffix -- remove object suffix and add layer suffix
+
+
+		if not matchPattern source_obj.name pattern:("*"+source_obj_suffix) and \
+			queryBox ("Rename source object ?\n\nFROM:\n\n"+source_obj.name + "\n\nTO:\n\n" + new_name ) title:"SupportManager.ms"  then
+				source_obj.name = new_name
+
+
+		if source_obj.layer.name != layer_name and \
+			queryBox ("MOVE\n\n"+source_obj.name + "\n\nTO LAYER\n\n" + layer_name +" ? " ) title:"SupportManager.ms"  then
+			(
+				if ( layer = LayerManager.getLayerFromName layer_name ) == undefined then
+				(
+					layer = LayerManager.newLayerFromName layer_name
+
+					layer.setParent source_obj.layer
+				)
+
+				layer.addnode (source_obj)
+
+			)
+
 	),
 
 	/**

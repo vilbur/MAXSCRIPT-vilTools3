@@ -32,7 +32,7 @@ struct HelperObject_v
 
 		for i = 1 to this.points_positions.count do
 		(
-			_point = Point name:(this._getName(i)) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:(this._shiftWirecolor(i)) Box:(i==1) Cross:true showLinks:true
+			_point = Point name:(this._getName()) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:(this._shiftWirecolor(i)) Box:(i==1) Cross:true showLinks:true
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
@@ -44,8 +44,10 @@ struct HelperObject_v
 			/* LINK FIRST POINT TO SOURCE OBJECT, OTHER POINTS ARE LINKED IN CHAIN  */
 			_point.parent = if i == 1 then source_obj else points_created[points_created.count]
 
-			this._addToLayer (this.source_obj) (_point)
+			/* ADD TO LAYER OF SOURCE OBJECT */
+			source_obj.layer.addNode _point
 
+			/* SAVE USER PROPS DATA TO OBEJCT */
 			this._saveUserDataToPointHelper()
 
 			append points_created _point
@@ -118,25 +120,15 @@ struct HelperObject_v
 
 	/** Get name
 	 */
-	function _getName index =
+	function _getName =
 	(
 		--format "\n"; print "HelperObject_v._getName()"
-		source_obj.name + "-point-" + vertex_index as string + "-" + index as string
+
+		name_stripped = substituteString source_obj.name "-source" ""
+
+		name_stripped + "-point-" + vertex_index as string -- + "-" + index as string
 	),
 
-	/** Add to layer
-	 */
-	function _addToLayer source_obj obj =
-	(
-		layer_name = source_obj.name + "-support"
-
-		if ( layer = LayerManager.getLayerFromName (layer_name) ) == undefined then
-			layer = LayerManager.newLayerFromName (layer_name)
-
-		layer.setParent (source_obj.layer)
-
-		layer.addNode obj
-	),
 
 	/** Align to ctor
 	 */

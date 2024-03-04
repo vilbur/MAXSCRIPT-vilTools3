@@ -24,8 +24,8 @@ struct ShapeKnotGetter_v
 	function getVetexData =
 	(
 		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
-		knots_data = #( #{ }, #(), #(), #()   )
 
+		knots_data = #( #{ }, #(), #(), #()   )
 		source_shapes = this._copyAndCollapseSourceObject( this._getChildrenShape (source_obj) )
 
 		/* Get platform object for each pline vertex */
@@ -51,6 +51,8 @@ struct ShapeKnotGetter_v
 					----append knots_data[3] (getKnotPoint source_shapes[shape_i] spline_i knot_i)
 			)
 
+		--for knot_data in knots_data do
+		--	format "knot_data: %\n" knot_data
 
 		delete source_shapes
 

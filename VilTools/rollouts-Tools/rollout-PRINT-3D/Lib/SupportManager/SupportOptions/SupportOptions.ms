@@ -5,6 +5,7 @@ struct SupportOptions_v
 	/* construct */
 	export_size = 1,
 
+	do_not_modify_properties = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top ),
 
 	/* POINT GENERATOR OPTIONS */
 	use_normals	= true,
@@ -124,9 +125,9 @@ struct SupportOptions_v
 		--format "DISPLAY_UNITS:	% \n" display_units
 		--format "EXPORT_SIZE:	% \n" export_size
 
-		for prop in getPropNames this where ( superClassOf (val = getProperty this prop)) == Number do
+		for prop in getPropNames this where ( superClassOf (val = getProperty this prop )) == Number do
 
-			if val != undefined and findItem #( #display_units, #export_size, #chamfer_top ) prop == 0  then
+			if val != undefined and findItem do_not_modify_properties prop == 0  then
 				setProperty this prop (val / display_units	/ export_size)
 	),
 
