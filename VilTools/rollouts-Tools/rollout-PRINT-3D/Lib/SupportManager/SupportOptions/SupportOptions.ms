@@ -5,7 +5,7 @@ struct SupportOptions_v
 	/* construct */
 	export_size = 1,
 
-	do_not_modify_properties = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top ),
+	_DO_NOT_MODIFY_PROPERTIES = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top ),
 
 	/* POINT GENERATOR OPTIONS */
 	use_normals	= true,
@@ -28,7 +28,7 @@ struct SupportOptions_v
 	bar_width 	= 1.5, -- default width is 1.5mm
 
 	base_height	= 1.0,
-	base_extrude	= 4.0,
+	base_width	= 4.0,
 
 	extrude_top	= 0.5,
 
@@ -44,9 +44,6 @@ struct SupportOptions_v
 
 
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
-
-
-
 
 
 	/* PRIVATE PROPERTIES */
@@ -127,7 +124,7 @@ struct SupportOptions_v
 
 		for prop in getPropNames this where ( superClassOf (val = getProperty this prop )) == Number do
 
-			if val != undefined and findItem do_not_modify_properties prop == 0  then
+			if val != undefined and findItem _DO_NOT_MODIFY_PROPERTIES prop == 0  then
 				setProperty this prop (val / display_units	/ export_size)
 	),
 

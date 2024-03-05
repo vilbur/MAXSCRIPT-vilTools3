@@ -83,12 +83,8 @@ struct SupportManager_v
         local source_object_valid	= #()
         local verts_to_generate	= #{}
 
-		/* GET  */
+		/* GET   */
 		local source_object_valid = this.getSourceObjects(source_objects)
-
-	        /* TRY GET SOURCE LINE  */
-		--if source_object_valid.count == 0 then
-		--	source_object_valid = this._getSourceLines(source_objects)
 
 
 		/* IF NEW SOURCE OBJECT IS USED */
@@ -97,10 +93,6 @@ struct SupportManager_v
 
 		format "SOURCE_OBJECT_VALID: %\n" source_object_valid
 		/* GET SELECTED POINT HELPERS and their source obejcts */
-		selected_helpers_by_objects =  this.getSourceHelpers (source_objects)
-
-		for pointer in selected_helpers_by_objects.keys where ( source_obj = this._getSourceObjectBySyncPointer(pointer) ) != undefined do
-			appendIfUnique source_object_valid source_obj
 
 
 		/* GENEARTE POINTS FOR EACH OBJECT - BUG !!!!!!!!!!!!!! - if multiuple objects are selected, then normal does not work properly, coord system should be checked probably */
@@ -109,27 +101,21 @@ struct SupportManager_v
 			(
 				this._manageNameAndLayer(source_obj)
 
-
-				if ( pointer = this._getPointerOfSourceObject(source_obj) ) != undefined then
-				(
-					if ( selected_helpers_of_obj = selected_helpers_by_objects[ pointer ] ) != undefined then
-					   verts_to_generate = selected_helpers_of_obj.keys as BitArray -- get vertex indexes of selected helpers - for each source object
-				)
-
 				all_points_of_object = this.getAllPointsOfObject source_obj
+
+				indexes_of_selected_helpers = for vertex_index in (this._fiterSelectedHelpers (all_points_of_object)).keys collect vertex_index
+
+				/* RESET SELECTED POINTS  */
+				if not reset_helpers and indexes_of_selected_helpers.count > 0 then
+					reset_helpers = indexes_of_selected_helpers as BitArray
 
 				select source_obj -- QUICK WORKAROUND: created Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
 
-				HelperGenerator.generatePointHelpers(source_obj)(all_points_of_object) verts_to_generate:verts_to_generate reset_helpers:reset_helpers
+				HelperGenerator.generatePointHelpers(source_obj)(all_points_of_object) reset_verts:reset_helpers
 			)
 
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
-
-
-		/* FLATTERN ARRAY OF DISTIONARY VALUES */
-		--if new_points_by_objects != undefined then
-		--	for point_helpers in new_points_by_objects where point_helpers.count > 0 do join new_points point_helpers
 
 		new_points --return
 	),
@@ -190,26 +176,9 @@ struct SupportManager_v
 
 	--------------------------------------------------------------------------------*/
 
-	/** GET SOURCE OBJECTS by objects
-	 */
-	function getSourceObjects source_objects =
-	(
-		--format "\n"; print "SupportManager_v.getSourceObjects()"
-		for obj in source_objects where this._getPointerOfSourceObject(obj) != undefined collect obj
-	),
-
-
-	--/** Get source line
-	-- */
-	--function _getSourceLines source_objects =
-	--(
-	--	--format "\n"; print "SupportManager_v._getSourceLine()"
-	--	for obj in source_objects where superClassOf obj == shape collect obj
-	--),
-
 	/** GET ALL MASTER POINTS USED BY OBJECT
 	  *
-	  * @return 2DMATRIX - Array of Dictionares or undefined if source object has no points
+	  * @return Dictionary #( KEY:vertex_index VALUE:point_helper )
 	 */
 	function getAllPointsOfObject source_obj =
 	(
@@ -225,19 +194,22 @@ struct SupportManager_v
 	),
 
 
+
 	/** GET MASTER POINTS in scene by objects
+
+		 REMOVE THIS METHOD
 	  *
 	  * @return Array of 2D Dictionaries #( KEY:sourec_object_pointer VALUE: #( KEY:vertex_index VALUE:helper_point ) ) )
 	 */
 	function getSourceHelpers objects_array =
 	(
-		format "\n"; print "SupportManager_v.getSourceObjects()"
+		format "\n"; print "SupportManager_v.filterSourceObjects()"
 
         --SupportObject	= SupportObject_v()
         helpers_of_source_obj	= Dictionary #string
 
 		/* 1)  GET POINT HELPERS FROM SELECTED SOURCE OBJECTS */
-		for source_obj in source_objs = this.getSourceObjects(objects_array) do
+		for source_obj in source_objs = this.filterSourceObjects(objects_array) do
 			helpers_of_source_obj[this._getPointerOfSourceObject(source_obj)] = this.getAllPointsOfObject(source_obj)
 
 
@@ -257,6 +229,53 @@ struct SupportManager_v
 	),
 
 
+	/** Find source obejct by any object
+	  *
+	  * @return Array of source objects
+	 */
+	function getSourceObjects objects_array =
+	(
+		format "\n"; print "SupportManager_v.filterSourceObjects()"
+
+        --SupportObject	= SupportObject_v()
+        source_objects	= this.filterSourceObjects(objects_array)
+
+
+		/*  GET SOURCE OBEJCTS BY HELPERS */
+		for obj in objects_array where (master_point = HelperGenerator.getMasterPointByObj(obj)) != undefined do
+		(
+			sync_pointer = Options.getProp master_point #pointer_sync
+
+			if ( source_obj = this._getSourceObjectBySyncPointer sync_pointer ) != undefined then
+				appendIfUnique source_objects source_obj
+		)
+
+		source_objects --return
+	),
+
+	/** GET SOURCE OBJECTS by objects
+	 */
+	function filterSourceObjects source_objects =
+	(
+		--format "\n"; print "SupportManager_v.filterSourceObjects()"
+		for obj in source_objects where this._getPointerOfSourceObject(obj) != undefined collect obj
+	),
+
+	/** Fiter selected ohelpers
+	 */
+	function _fiterSelectedHelpers helpers_by_source_obj =
+	(
+		--format "\n"; print "SupportManager_v.fiterSelectedOhelpers()"
+		selected_helpers = Dictionary #integer
+
+		if  helpers_by_source_obj != undefined then
+			for vertex_index in helpers_by_source_obj.keys where helpers_by_source_obj[vertex_index].isSelected do
+				selected_helpers[vertex_index] = helpers_by_source_obj[vertex_index]
+
+		selected_helpers --return
+	),
+
+
 	/** GET SUPPORTS by objects or scene if source_objects:unsupplied
 	 */
 	function getSupports source_objects: pointer_sync: =
@@ -273,30 +292,6 @@ struct SupportManager_v
 			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync == pointer_sync collect _shape
 	),
 
-	/*------------------------------------------------------------------------------
-
-		VISIBILITY
-
-	--------------------------------------------------------------------------------*/
-	/** Toggle visibility DOESN'T WORK YET
-	  *
-	  *  @param #POINT|#SUPPORT|##RAFT|#BEAM type
-	  *
-	 */
-	function toggleVisibility type staOf =
-	(
-		--format "\n"; print "SupportManager_v.toggleVisibility()"
-	--
-	--	source_objects = if selection.count > 0 then selection as Array else for obj in objects where not obj.isHidden collect obj
-	--
-	--
-	--	source_objects_valid = this.getSourceObjects(source_objects)
-	--
-	--	for source_obj in source_objects_valid do
-	--format "this.getAllPointsByObject source_ob	= % \n" (this.getAllPointsByObject source_ob)
-
-	),
-
 
 	private
 
@@ -308,8 +303,8 @@ struct SupportManager_v
 	(
 		--format "\n"; print "SupportManager_v._getSourceObjectBySyncPointer()"
 
-		source_objects = this.getSourceObjects( geometry )
-		source_shapes  = this.getSourceObjects( shapes )
+		source_objects = this.filterSourceObjects( geometry )
+		source_shapes  = this.filterSourceObjects( shapes )
 
 		join source_objects source_shapes
 
@@ -317,7 +312,8 @@ struct SupportManager_v
 		source_objects_by_pointer = for source_obj in source_objects where this._getPointerOfSourceObject (source_obj) == sync_pointer as string collect source_obj
 
 
-		source_objects_by_pointer[1] --return
+		if isValidNode source_objects_by_pointer[1] then
+			source_objects_by_pointer[1] --return
 	),
 
 
@@ -355,19 +351,19 @@ struct SupportManager_v
 		--format "\n"; print "SupportManager_v._manageNameAndLayer()"
 
 		local layer
-		source_obj_suffix = "-support-source"
-		layer_name_suffix = "-support"
+		source_obj_suffix = "support-source"
+		layer_name_suffix = "support"
 
-	new_name	= source_obj.name + source_obj_suffix
-	layer_name	= (substituteString source_obj.name source_obj_suffix "" ) + layer_name_suffix -- remove object suffix and add layer suffix
+	new_name	= source_obj.name + "-" + source_obj_suffix
+	layer_name	= (substituteString source_obj.name source_obj_suffix "" ) + "-" + layer_name_suffix -- remove object suffix and add layer suffix
 
-
+		/* RENAME SOURCE OBEJT */
 		if not matchPattern source_obj.name pattern:("*"+source_obj_suffix) and \
 			queryBox ("Rename source object ?\n\nFROM:\n\n"+source_obj.name + "\n\nTO:\n\n" + new_name ) title:"SupportManager.ms"  then
 				source_obj.name = new_name
 
-
-		if source_obj.layer.name != layer_name and \
+		/* ADD TO LAYER */
+		if not matchPattern source_obj.layer.name pattern:("*"+layer_name_suffix+"*") and \
 			queryBox ("MOVE\n\n"+source_obj.name + "\n\nTO LAYER\n\n" + layer_name +" ? " ) title:"SupportManager.ms"  then
 			(
 				if ( layer = LayerManager.getLayerFromName layer_name ) == undefined then

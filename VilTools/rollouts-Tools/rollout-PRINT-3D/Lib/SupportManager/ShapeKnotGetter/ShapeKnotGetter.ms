@@ -23,11 +23,12 @@ struct ShapeKnotGetter_v
 	*/
 	function getVetexData =
 	(
-		--format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
+		format "\n"; print "PlatformGenerator_v._getVertexPositionsFromShape()"
 
 		knots_data = #( #{ }, #(), #(), #()   )
 		source_shapes = this._copyAndCollapseSourceObject( this._getChildrenShape (source_obj) )
-
+		format "source_shapes: %\n" source_shapes
+		format "source_shapes.count: %\n" source_shapes.count
 		/* Get platform object for each pline vertex */
 		for spline_i = 1 to numSplines source_shapes[1] do
 			for knot_i = 1 to numKnots source_shapes[1] spline_i where this._isNthVertex (knot_i) do
@@ -47,8 +48,9 @@ struct ShapeKnotGetter_v
 
 
 				/* PLACEHOLDER METHOD FPR GETTING KNOT NORMAL BY DORECTION TO SECN SHAPE */
-				----for shape_i = 1 to source_shapes.count do
-					----append knots_data[3] (getKnotPoint source_shapes[shape_i] spline_i knot_i)
+				--if source_shapes.count > 1 then
+				--	for shape_child_i = 2 to source_shapes.count do
+				--		append knots_data[2] (getKnotPoint source_shapes[shape_child_i] spline_i knot_i)
 			)
 
 		--for knot_data in knots_data do

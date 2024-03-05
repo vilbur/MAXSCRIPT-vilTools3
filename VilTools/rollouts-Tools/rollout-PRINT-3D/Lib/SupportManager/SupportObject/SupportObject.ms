@@ -20,7 +20,7 @@ struct SupportObject_v
 		--format "\n"; print "SupportObject_v.generateSupport()"
 		--format "point_helper	= % \n" point_helper
 
-		support = SplineShape name:( point_helper.name + "-support" ) wirecolor:point_helper.wirecolor pos:point_helper.pos
+		support = SplineShape name:(this._getName(point_helper.name)) wirecolor:(this._shiftWirecolor(point_helper.wirecolor) 1 ) pos:point_helper.pos
 
 		helpers_chain =  this._getPointsChain (point_helper)
 
@@ -87,6 +87,14 @@ struct SupportObject_v
 		updateShape support
 	),
 
+	/** Remove "-point" of source point helper E.G.: "foo-support-point-12" >>> "foo-support-12"
+	 */
+	function _getName point_helper_name =
+	(
+		--format "\n"; print "HelperObject_v._getName()"
+		substituteString point_helper_name "-point" ( if raft_mode then "-raft" else "")
+	),
+
 	/** Get points hierarchy
 	  *
 	  * @param Boolean pop_last retrun only last point of hierarchy
@@ -101,7 +109,7 @@ struct SupportObject_v
 		(
 			children = #(master_point)
 
-			this.getAllChildPoints(master_point) (children)
+			this._getAllChildPoints(master_point) (children)
 
 			--for child in children do
 			--format "child	= % \n" child
@@ -112,9 +120,29 @@ struct SupportObject_v
 			#() --return
 	),
 
-	mapped function getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this.getAllChildPoints _node.children &children ),
+	mapped function _getAllChildPoints _node &children = ( if isValidNode _node then ( for child in _node.children where classOf child == Point do append children child ) else return children; if _node.children.count > 0 then this._getAllChildPoints _node.children &children ),
 
 	--mapped function getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this.getAllChildren _node.children &children ),
+
+	/** Shift wirecolor sligtly to +1 - Helper points are shifter -1
+	  *
+	  *
+	  *
+	  * Each level of points has different wirecolor for better selection
+	  */
+	function _shiftWirecolor wirecolor i =
+	(
+		--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
+		--format "wirecolor:	% \n" wirecolor
+		wirecolor_shifted = copy wirecolor
+
+		if wirecolor_shifted.r >= i then wirecolor_shifted.r += i
+		if wirecolor_shifted.g >= i then wirecolor_shifted.g += i
+		if wirecolor_shifted.b >= i then wirecolor_shifted.b += i
+		--format "wirecolor_shifted:	% \n" wirecolor_shifted
+
+		wirecolor_shifted --return
+	),
 
 	/**
 	 */

@@ -34,7 +34,7 @@ macroscript	_print_platform_generator_base_width
 category:	"_3D-Print"
 buttontext:	"Base width"
 tooltip:	"Width of base part"
-icon:	"across:2|control:spinner|type:#integer|range:[ 0, 99, 4 ]|width:64|offset:[ -6, 0]"
+icon:	"across:2|control:spinner|range:[ 0.1, 999, 4 ]|width:64|offset:[ -6, 0]"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -49,4 +49,3 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 0, 10, 5 ]|width:64|offset
 (
 	format "EventFired:	% \n" EventFired
 )
-

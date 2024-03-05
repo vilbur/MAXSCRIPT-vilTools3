@@ -47,7 +47,7 @@ struct SupportModifiers_v
 			(
 				this._selectFace("Select Base")(this.Options.mat_ids[#BASE])
 
-				this._extrude("Extrude Base") (this.Options.base_extrude)
+				this._extrude("Extrude Base") (this.Options.base_width)
 
 				this._chamfer("Chamfer Base") (this.Options.chamfer_base )
 			)

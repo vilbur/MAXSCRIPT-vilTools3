@@ -12,7 +12,8 @@ struct HelperObject_v
 	/* properties */
 	point_helper,
 
-	points_positions = #(), -- vertex positions to generate platforms
+	old_points 	= #(),
+	points_positions	= #(), -- vertex positions to generate platforms
 
 	/* dependency */
 	/* reference */
@@ -24,15 +25,23 @@ struct HelperObject_v
 	function createHelper =
 	(
 		--format "\n"; print "HelperObject_v.createOrUpdateHelper()"
-		--format "point_helper	= % \n" this.point_helper
+		--format "old_points	= % \n" this.old_points
+
+		function showBox i   = if ( old_point = old_points[i] ) != undefined then old_point.box   else i==1
+		function showCross i = if ( old_point = old_points[i] ) != undefined then old_point.cross else true
 
 		points_created	= #()
+
+		--for old_point in old_points do
+		--	format "isValidNode old_point: %\n" (isValidNode old_point)
+		----delete old_points
+
 
 		this._setPointsPositions (pos)
 
 		for i = 1 to this.points_positions.count do
 		(
-			_point = Point name:(this._getName()) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:(this._shiftWirecolor(i)) Box:(i==1) Cross:true showLinks:true
+			_point = Point name:(this._getName()) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:(this._shiftWirecolor(i)) Box:(showBox(i)) Cross:(showCross(i)) showLinks:true
 
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
@@ -52,6 +61,13 @@ struct HelperObject_v
 
 			append points_created _point
 		)
+		--format "OLD_POINTS: %\n" OLD_POINTS.count
+		/* RELINK CHILDREN OF LAST POINTS */
+		if old_points.count > 0 and (old_point_last = old_points[old_points.count]).children.count > 0 then
+			old_points[old_points.count].children[1].parent = points_created[points_created.count]
+
+		--for old_point in old_points do
+		delete old_points
 
 		point_helper --return first point
 
@@ -174,6 +190,7 @@ struct HelperObject_v
 		Options.setProp point_helper #this	  ( getHandleByAnim point_helper )
 		Options.setProp point_helper #source_vert	  ( vertex_index )
 	),
+
 	/** Shift wirecolor sligtly
 	  * Each level of points has different wirecolor for better selection
 	  */
