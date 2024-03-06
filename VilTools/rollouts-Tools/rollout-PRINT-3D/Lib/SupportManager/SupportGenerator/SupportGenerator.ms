@@ -20,7 +20,7 @@ struct SupportGenerator_v
 	/** Create supports
 	  *
 	  *
-	  *
+	  * @reurn Array of nodes
 	 */
 	function generateSupports point_helpers =
 	(
@@ -106,16 +106,11 @@ struct SupportGenerator_v
 		function _findGroup obj =
 		(
 			--format "\n"; print "SupportGenerator_v.findGroup()"
-
 			if isGroupMember obj then
 			(
 				while not isGroupHead obj.parent do
-				(
-					format "\n\n"
-					format "obj.parent: %\n" obj.parent
-
 					obj = obj.parent
-				)
+
 				obj.parent --return
 			)
 		)

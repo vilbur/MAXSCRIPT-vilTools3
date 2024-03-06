@@ -26,7 +26,7 @@ function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:fal
 
 	_obj = case obj of
 	(
-		#SPHERE:	Sphere radius:(getUnit(50)) pos:[0,0, getUnit(200) ] segments:segments -- diameter 3 cm
+		#SPHERE:	Sphere radius:(getUnit(50)) pos:[0,0, getUnit(100) ] segments:segments -- diameter 3 cm
 		#BOX:	Box  pos:[0,0, getUnit(200) ]  lengthsegs:segments widthsegs:segments heightsegs:segments
 
 		DEFAULT:	Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, getUnit(200) ] widthsegs:segments lengthsegs:segments backfacecull: off

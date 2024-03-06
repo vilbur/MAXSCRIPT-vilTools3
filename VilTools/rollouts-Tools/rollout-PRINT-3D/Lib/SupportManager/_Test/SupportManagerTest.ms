@@ -47,14 +47,14 @@ filein( getFilenamePath(getSourceFileName()) + "/inlcudes/create-test-objects.ms
 
 
 /* VERTICES SELECTED */
---createSourceMesh segments:256 vertex_selection:#{3..4}
+--createSourceMesh segments:256 vertex_selection:#{1..2}
 --createSourceMesh segments:256 obj:#SPHERE vertex_selection:#{1..1000}
 -- createSourceMesh segments:12 obj:#SPHERE vertex_selection:#{32}
 
 
 /* VERTEX COLOR */
---createSourceMesh segments:2 vertex_color:orange vertex_selection:#{2..3}
-createSourceMesh segments:12 vertex_color:orange vertex_selection:#{2..3} obj:#SPHERE
+--createSourceMesh segments:2 vertex_color:orange vertex_selection:#{1..2}
+createSourceMesh segments:12 vertex_color:orange vertex_selection:#{1..2} obj:#SPHERE
 --createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
 
 
@@ -82,50 +82,98 @@ createSourceMesh segments:12 vertex_color:orange vertex_selection:#{2..3} obj:#S
 /*------------------------------------------------------------------------------
 	SET SOURCE OBEJCTS - IMPORTANT: ALL TESTS NEED IT
 --------------------------------------------------------------------------------*/
---source_objects = selection as Array
-source_objects = objects[1]
+--_source_object = selection as Array
+_source_object = objects[1]
+format "SOURCE_OBJECTS A: %\n" _source_object
 
 
-/*==============================================================================
 
-		CREATE INSTANCE OF TESTED CLASS
+print "---------------- CREATE INSTANCE OF SUPPORT MANAGER ----------------"
 
-================================================================================*/
 --SupportManager 	= SupportManager_v bind_to_parent:true
 SupportManager 	= SupportManager_v EXPORT_SIZE:EXPORT_SIZE
 
 
-format "SupportManager.options	= % \n" SupportManager.options
 
-/*==============================================================================
+print "---------------- CONFIGURE GENERATOR ----------------"
 
-		RUN POINTS TEST
+/* renaming source objects and layers are managed without asking */
+SupportManager.Options.quiet_mode = true
 
-================================================================================*/
+/* use all normals without angle limit */
+SupportManager.Options.normal_limit = false
 
-/* 1) GENERATE POINTS FROM SOURCE OBJECT */
-new_ponts = SupportManager.generatePointHelpers( source_objects )
-format "NEW_PONTS	= % \n" new_ponts
-
-points_by_object = SupportManager.getAllPointsOfObject( source_objects )
+/* Distance to second point of support or raft */
+SupportManager.Options.normal_length = 10
 
 
 
 
-/* GENERATE NEW PALTFROMS */
---new_platforms = SupportManager.createSupports( source_objects )
+print "---------------- GENERATE POINTS BY VERTEX COLOR SOURCE OBJECT ----------------"
 
---format "new_platforms	= % \n" new_platforms
---
---format "points_by_object	= % \n" points_by_object
---
---move points_by_object[points_by_object.keys[1]] [0,0,-20]
+new_points = SupportManager.generatePointHelpers ( _source_object )
+format "NEW_POINTS	= % \n" new_points
 
 
 
 
-/*------------------------------------------------------------------------------
+print "---------------- GENERATE SUPPORTS ----------------"
 
-	GENERATE PALFORMS WITH CROSS SECTION
+new_supports = SupportManager.createSupports( new_points )
+format "NEW_SUPPORTS	= % \n" new_supports
 
---------------------------------------------------------------------------------*/
+
+
+
+print "---------------- GENERATE BEAMS ----------------"
+
+SupportManager.Options.max_distance = 100
+
+/* CONNECT ENDS */
+bbeames_connect_ends = SupportManager.createBeams( new_supports )
+
+
+/* CONNECT MIDDLES */
+SupportManager.Options.connect = 2
+beames_connect_middle = SupportManager.createBeams( new_supports )
+
+/* CONNECT IN THIRD OF SUPPORTS HEIGHT */
+SupportManager.Options.connect = 3
+beames_connect_third = SupportManager.createBeams( new_supports )
+
+/* CONNECT IN QUATER OF SUPPORTS HEIGHT */
+SupportManager.Options.connect = 4
+beames_connect_quater = SupportManager.createBeams( new_supports )
+
+
+
+
+
+print "---------------- GENERATE POINTS FROM SELECTED VERTS ----------------"
+
+select _source_object
+
+max modify mode
+
+subObjectLevel = 1
+
+_source_object.modifiers[#Edit_Poly].SetSelection #Vertex #{}
+_source_object.modifiers[#Edit_Poly].Select #Vertex #{3..6}
+
+new_points_by_selection = SupportManager.generatePointHelpers ( selection as Array )
+format "NEW_POINTS	= % \n" new_points_by_selection
+
+
+print "---------------- GENERATE RAFTS ----------------"
+
+new_rafts = SupportManager.createSupports( new_points ) raft_mode:true
+format "NEW_RAFTS	= % \n" new_rafts
+
+
+print "---------------- GENERATE RAFTS BEAMS ----------------"
+
+beames_rafts = SupportManager.createBeams( new_rafts )
+
+
+
+

@@ -56,8 +56,6 @@ struct HelperObject_v
 			/* ADD TO LAYER OF SOURCE OBJECT */
 			source_obj.layer.addNode _point
 
-
-
 			/* SAVE USER PROPS DATA TO OBEJCT */
 			this._saveUserDataToPointHelper()
 
@@ -71,11 +69,9 @@ struct HelperObject_v
 		--for old_point in old_points do
 		delete old_points
 
---format "_point: %\n" _point
---format "isGroupMember source_obj: %\n" (isGroupMember source_obj)
-			if isGroupMember source_obj then
-			--format "SOURCE_OBJ.PARENT: %\n" source_obj.parent
-				attachNodesToGroup points_created source_obj.parent
+		/* ADD TO PARENT GROUP BY source object */
+		if isGroupMember source_obj then
+			attachNodesToGroup points_created source_obj.parent
 
 		point_helper --return first point
 
@@ -88,7 +84,12 @@ struct HelperObject_v
 	  */
 	function _setPointsPositions vert_pos =
 	(
-		--format "\n"; print "HelperObject_v._setPointsPositions()"
+		format "\n"; print "HelperObject_v._setPointsPositions()"
+
+		format "this.Options.use_normals: %\n" this.Options.use_normals
+		format "this.normal: %\n" this.normal
+		format "TEST 1: %\n" (this.Options.use_normals and this.normal != undefined)
+		format "TEST 2: %\n" (not this.Options.use_normals and this.normal != undefined)
 
 		/* GET POINT CHAIN BY NORMALS */
 		if this.Options.use_normals and this.normal != undefined then

@@ -15,9 +15,9 @@
  */
 macroscript	_print_generator_beams_connect_increment
 category:	"_Export"
-buttontext:	"Connect"
-toolTip:	"Which portion of support will beam connect"
-icon:	"control:radiobuttons|across:1|align:#CENTER|items:#('END', 'MIDDLE', 'THIRD', 'QUATER')|columns:4|offset:[ -4, 0 ]"
+buttontext:	"[Connect]"
+toolTip:	"Where support is connected to beam"
+icon:	"control:radiobuttons|across:1|align:#CENTER|items:#('END', 'MIDDLE', 'THIRD', 'QUATER')|columns:4|offset:[ -72, 0 ]"
 (
 	--export_dir = execute ("@"+ "\""+EventFired.Roll.export_dir.text +"\"")
 

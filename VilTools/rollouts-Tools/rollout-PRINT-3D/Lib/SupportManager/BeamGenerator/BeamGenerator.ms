@@ -56,7 +56,10 @@ struct BeamGenerator_v
 
 		supports_order = #( support_A, support_B )
 
-		for i = 1 to 2 do
+		beams_to_generate_count = if this.Options.connect == 2 then 1 else 2 -- do not generate cross beam if middle of supports i connected
+
+
+		for i = 1 to beams_to_generate_count do
 		(
 			if i == 2 then -- reverse array
 				supports_order = for i = supports_order.count to 1 by -1 collect supports_order[i]
@@ -75,7 +78,7 @@ struct BeamGenerator_v
 
 				Options.setProp new_beam #this (getHandleByAnim new_beam)
 
-				Options.setProp new_beam #beam_supports #( getHandleByAnim supports_order[1], getHandleByAnim supports_order[2] )
+				Options.setProp new_beam #beam_supports #( Options.getThisPointer (supports_order[1]), Options.getThisPointer (supports_order[2]) )
 			)
 		)
 	),
@@ -85,15 +88,6 @@ struct BeamGenerator_v
 	function _createBeam support_1 support_2 =
 	(
 		format "\n"; print "BeamGenerator_v._createBeam()"
-
-		/** Get top sition
-		 */
-		--function getPositionTop    pos = (pos.z *= 3 / 4.0; pos) --return
-		--function getPositionBottom pos = (pos.z *= 2.0;    pos) --return
-		--function getPositionTop    pos = pos --return
-		--function getPositionBottom pos = pos --return
-		--function getPositionBottom pos point_bottom point_top = (pos.z += (distance point_bottom point_top) / 4; pos) --return
-		--function getPositionTop 	pos point_bottom point_top = (pos.z -= (distance point_bottom point_top) / 4; pos) --return
 
 		/** Get beam postion on top and bottom
 		 */
@@ -112,44 +106,37 @@ struct BeamGenerator_v
 			modify_point --return
 		)
 
-
 		num_knots_1	= ( numKnots support_1 )
 		num_knots_2	= ( numKnots support_2 )
 
 		segments_1 = num_knots_1 - 1
 		segments_2 = num_knots_2 - 1
 
+		/* GET BOTTOM POINTS */
 		i_bottom_1 = if segments_1 == 1 then 2 else num_knots_1 - 1 -- get second point or second point from end ( above ground point )
 		i_bottom_2 = if segments_2 == 1 then 2 else num_knots_2 - 1
 
 
-
+		/* GET POSITIONS OF POINTS */
 		point_bottom_1	= getKnotPoint support_1	1 i_bottom_1	-- get 2. point from bottom
 		point_bottom_2	= getKnotPoint support_2	1 i_bottom_2	-- get 2. point from bottom
 		point_top_1	= getKnotPoint support_1	1 (i_bottom_1 - 1)	-- get 1. or 2. point from top
 		point_top_2	= getKnotPoint support_2	1 (i_bottom_2 - 1)	-- get 1. or 2. point from top
-		format "point_bottom_1: %\n" point_bottom_1
-		format "point_top_1: %\n" point_top_1
-		format "point_top_2: %\n" point_top_2
---		point_bottom_1 = point_bottom_1 / 10
---		point_top_1 = point_top_1 / 10
---		point_top_2 = point_top_2 / 10
---format "\n"
 
-		format "point_bottom_1: %\n" point_bottom_1
-		format "point_top_1: %\n" point_top_1
-		format "point_top_2: %\n" point_top_2
 
-		beam_start	= getBeamPosition #BOTTOM (point_bottom_1)(point_top_1)
+		/* FIND BEAM START & END */
+		beam_start	= getBeamPosition #BOTTOM	(point_bottom_1)(point_top_1)
+		beam_end_top	= getBeamPosition #TOP	(point_top_2)(point_bottom_2)
 
-		beam_end_top	= getBeamPosition #TOP(point_top_2)(point_bottom_2)
-
+		/* USE LOWER TOP POINT IF SAME HEIGHT */
 		if same_height and ( point_top_first_support = getBeamPosition #TOP(point_top_1)(point_bottom_1)).z < beam_end_top.z then
 			beam_end_top.z = point_top_first_support.z
 
+		/* GET DISTANCE BETWEEN POINTS */
 		distance_between_points = this.getPointDistance (copy beam_start) (copy beam_end_top )
 
-		--if beam_start.z > this.Options.beams_min_height and  distance_between_points < this.Options.beams_max_distance then
+		/* CHECK MAX DISTANCE BETWEEN POINTS */
+		if distance_between_points < this.Options.max_distance then
 			beam_obj = this._drawLine (support_1) (beam_start) (beam_end_top)
 
 		beam_obj --return
@@ -166,20 +153,15 @@ struct BeamGenerator_v
 
 		beam_obj = SplineShape name:(support_A.name + "-beam")
 
-
 		beam_obj.parent	= support_A
 		beam_obj.wirecolor	= support_A.wirecolor
 
-
 		addNewSpline beam_obj
-		format "start_point:	% \n" start_point
-		format "end_point:	% \n" end_point
 
 		addKnot beam_obj cross_spline_id #corner #line start_point
 		addKnot beam_obj cross_spline_id #corner #line end_point
 
 		setMaterialID beam_obj cross_spline_id 1 this.Options.mat_ids[#BEAM] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
-		--setMaterialID beamV_obj cross_spline_id 1 6
 
 		updateShape beam_obj
 

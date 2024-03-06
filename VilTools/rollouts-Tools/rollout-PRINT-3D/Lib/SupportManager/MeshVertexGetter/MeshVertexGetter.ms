@@ -49,6 +49,7 @@ struct MeshVertexGetter_v
 		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
 		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_get ).isEmpty == false
 		fn positionChanged	verts_cache = verts_cache != undefined and( with PrintAllElements on verts_cache[3] as string == this.verts_positions as string )
+		fn normalsChanged	verts_cache = verts_cache != undefined and verts_cache[4].count != this.verts_to_get.numberSet
 
 		--this.obj = _obj
 
@@ -60,11 +61,9 @@ struct MeshVertexGetter_v
 
 		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
 		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0) remove_multi_colored_verts_from_white:remove_multi_colored_verts_from_white
-
-		--format "VERTEX_COLORS.COUNT	= % \n" vertex_colors.count
-		--for vertex_color in vertex_colors do
-		--	--format "VERTEX_COLOR	= % \n" vertex_color
-
+		format "!!!!!!!!!!!!!!!!!!!!!! TEST: %\n" ((not vertex_sel.isEmpty and subObjectLevel == 1 ))
+		format "vertex_sel: %\n" vertex_sel
+		/* GET VERTS TO GENERATE FROM */
 		verts_to_get = case of
 		(
 			/* GET SELECTED VERTS */
@@ -86,15 +85,18 @@ struct MeshVertexGetter_v
 		(
 			verts_cache 	= VERTEX_DATA_CACHE[ object_pointer ]
 
-			this.verts_normals =	if verts_cache == undefined \
-				or transformChanged(verts_cache)\
-				or vertsSelChanged(verts_cache)\
-				or positionChanged(verts_cache)
+			this.verts_normals =	if verts_cache == undefined	   	\
+				or transformChanged(verts_cache)	\
+				or vertsSelChanged(verts_cache)	\
+				or positionChanged(verts_cache)	\
+				or normalsChanged(verts_cache)		\
+
 				then
 					this._getVertNormals()
 				else
 					verts_cache[4]
-
+			--this.verts_normals =	this._getVertNormals()
+			format "THIS.VERTS_NORMALS: %\n" this.verts_normals
 			this.verts_data = #( verts_to_get, verts_positions, verts_normals, this._getVertexColorsByVerts()  )
 
 			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]

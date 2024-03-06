@@ -9,7 +9,7 @@ struct SupportOptions_v
 
 	/* POINT GENERATOR OPTIONS */
 	use_normals	= true,
-	normal_limit	= true,
+	normal_limit	= false,
 	keep_down	= true,
 	normal_length	= 3,
 	keep_down_limit	= 1,
@@ -54,6 +54,8 @@ struct SupportOptions_v
 
 	propkeys = Dictionary #( #source_object, "pointer_sync_source" ) #( #source_vert, "source_vert" ) #( #pointer_sync, "pointer_sync" ) #( #this, "this" ) #( #beam_supports, "beam_supports" ), -- keys used for node`s user data
 
+	quiet_mode = false,
+
 	/** Init
 	  *
 	  */
@@ -73,7 +75,7 @@ struct SupportOptions_v
 	function getProp obj key_of_key =
 	(
 		--format "\n"; print "SupportOptions_v.getProp()"
-		getUserPropVal obj propkeys[key_of_key] asString:true --return
+		getUserPropVal obj propkeys[key_of_key] --asString:true --return
 	),
 
 	/** Set node prop data
@@ -94,6 +96,24 @@ struct SupportOptions_v
 
 		setUserPropVal to_object propkeys[from_key] ( getUserPropVal from_object propkeys[destination_key] )
 	),
+
+	/** Get this pointer
+	 */
+	function getThisPointer obj =
+	(
+		--format "\n"; print "SupportOptions_v.getThisPointer()"
+		local this_pointer
+
+		if ( this_pointer = this.getProp obj #THIS ) == undefined then
+		(
+			this_pointer = getHandleByAnim obj
+
+			this.setProp obj #THIS this_pointer
+		)
+
+		this_pointer as string --return
+	),
+
 
 	private
 
@@ -121,14 +141,19 @@ struct SupportOptions_v
 	  */
 	function _setDimensions =
 	(
-		--format "\n"; print "SupportOptions_v._setDimensions()"
+		format "\n"; print "SupportOptions_v._setDimensions()"
 		--format "DISPLAY_UNITS:	% \n" display_units
 		--format "EXPORT_SIZE:	% \n" export_size
 
 		for prop in getPropNames this where ( superClassOf (val = getProperty this prop )) == Number do
-
 			if val != undefined and findItem _DO_NOT_MODIFY_PROPERTIES prop == 0  then
-				setProperty this prop (val / display_units	/ export_size)
+			(
+				--format "\n\n"
+				--format "val: %\n" val
+				modified_val = (val / display_units	/ export_size)
+				--format "modified_val: %\n" modified_val
+				setProperty this prop modified_val
+			)
 	),
 
 	/** Set base height

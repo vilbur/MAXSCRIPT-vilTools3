@@ -73,13 +73,14 @@ struct SupportManager_v
 	  *
 	  */
 	function generatePointHelpers source_objects reset_helpers:true =
-	(
-		format "\n"; print "SupportManager_v.generatePointHelpers()"
+    (
+        format "\n"; print "SupportManager_v.generatePointHelpers()"
+		this.Options.init()
 
 		local new_points_by_objects
 		--local selected_helpers_by_objects
 
-        local new_points = #()
+        local new_points_all = #()
         local source_object_valid	= #()
         local verts_to_generate	= #{}
 
@@ -112,13 +113,15 @@ struct SupportManager_v
 
 				select source_obj -- QUICK WORKAROUND: created Points has differenet direction along vertex normals - IF MUTLIPLE OBJECTS SELECTED, something with "coordsys"
 
-				HelperGenerator.generatePointHelpers(source_obj)(all_points_of_object) reset_verts:reset_helpers
+				new_points = HelperGenerator.generatePointHelpers(source_obj)(all_points_of_object) reset_verts:reset_helpers
+
+				join new_points_all new_points
 			)
 
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
 
-		new_points --return
+		new_points_all --return
 	),
 
 	/** Create supports
@@ -126,33 +129,35 @@ struct SupportManager_v
 	function createSupports source_objects raft_mode:false =
 	(
 		--format "\n"; print "SupportManager_v.createSupports()"
+		this.Options.init()
+
+        local new_supports = #()
 
 		SupportGenerator.SupportObject.raft_mode = raft_mode
 		SupportModifiers.raft_mode = raft_mode
 
-		helpers_by_source_obj = this.getSourceHelpers(source_objects)
-
-		source_points_valid = for key in helpers_by_source_obj.keys collect helpers_by_source_obj[key]  --return
-
-		if source_points_valid.count > 0 then
-		(
-			new_supports_by_obj = for source_helpers in source_points_valid collect
-				(SupportGenerator.generateSupports(source_helpers))
-
-			supports_per_objects = this.getSupports pointer_sync:(Options.getProp new_supports_by_obj[1][1] #pointer_sync)
-
-			for new_supports in new_supports_by_obj do
+		if (helpers_by_source_obj = this.getSourceHelpers(source_objects)).count > 0 then
+			 for source_obj_pointer in helpers_by_source_obj.keys do
 			(
-				supports_per_objects = this.getSupports pointer_sync:(Options.getProp new_supports[1] #pointer_sync)
+				format "SOURCE_OBJ_POINTER: %\n" source_obj_pointer
+				format "HELPERS: %\n" helpers_by_source_obj[source_obj_pointer]
+				/* GENERATE SUPPORTS PER SOURCE OBJECTS */
+				new_supports_of_obj =(SupportGenerator.generateSupports(helpers_by_source_obj[source_obj_pointer]))
+				format "NEW_SUPPORTS_OF_OBJ: %\n" new_supports_of_obj
+				/* GET ALL SUPPORTS OF SOURCE OBJECTS */
+				all_supports_of_obj = this.getSupports pointer_sync:source_obj_pointer
 
-				/* BUG IN getSupports() - NEW SUPPORTS ARE NOT FOUND IN SCENE by userprop */
-				join supports_per_objects new_supports
+				format "ALL_SUPPORTS_OF_OBJ: %\n" all_supports_of_obj
+				join new_supports new_supports_of_obj
 
-				SupportModifiers.addModifiers(supports_per_objects) -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
+				/* ADD MODIFIER INSTANCES */
+				SupportModifiers.addModifiers(all_supports_of_obj) -- SUPPORT OBJECT MUST BE SELECTED TO APPLY MODIFIERS
 			)
-		)
+
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
+
+		new_supports --return
 	),
 
 	/** Create Beams
@@ -162,6 +167,7 @@ struct SupportManager_v
 	function createBeams source_objects =
 	(
 		format "\n"; print "SupportManager_v.createBeams()"
+		this.Options.init()
 
 		shapes_for_beams = for obj in source_objects where superClassOf obj.baseobject == shape collect obj
 
@@ -195,7 +201,7 @@ struct SupportManager_v
 			this._setPointHelpersByObject()
 
 		if ( pointer_sync = this._getPointerOfSourceObject(source_obj) ) != undefined then
-			point_helpers_by_objects[pointer_sync]
+			point_helpers_by_objects[pointer_sync as string]
 	),
 
 
@@ -221,7 +227,7 @@ struct SupportManager_v
 		/* 2) GET HELPERS FROM SELECTED OBJECTS */
 		for obj in objects_array where (master_point = HelperGenerator.getMasterPointByObj(obj)) != undefined do
 		(
-			sync_pointer = Options.getProp master_point #pointer_sync
+			sync_pointer = (Options.getProp master_point #pointer_sync) as string
 
 			if not HasDictValue helpers_of_source_obj sync_pointer then
 				helpers_of_source_obj[sync_pointer] = Dictionary #integer
@@ -288,13 +294,15 @@ struct SupportManager_v
 		--format "\n"; print "SupportManager_v.getSupportsBySyncInter()"
 		--for _shape in shapes where Options.getProp _shape "pointer_sync" == pointer_sync as string collect _shape
 		if source_objects == unsupplied then
-			source_objects = geometry
+			source_objects = shapes
 
-		if pointer_sync == unsupplied then
+		if pointer_sync != unsupplied then
+			/* GET ALL SUPPORTS */
 			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync != undefined collect _shape
 
 		else
-			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync == pointer_sync collect _shape
+			/* GET SUPPORTS OF SINGLE OBJECT */
+			for _shape in source_objects where superClassOf _shape.baseobject == shape and Options.getProp _shape #pointer_sync == pointer_sync as IntegerPtr  collect _shape
 	),
 
 
@@ -329,8 +337,8 @@ struct SupportManager_v
 		format "\n"; print "SupportManager_v._setPointHelpersByObject()"
 
 		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = Options.getProp _helper #pointer_sync  ) != undefined do
-			--if Options.getProp _helper #this  == getHandleByAnim _helper then -- test if helper is original node, prevent duplicated helpers
 		(
+			source_obj_pointer = source_obj_pointer as string
 
 			if point_helpers_by_objects[source_obj_pointer] == undefined then
 				point_helpers_by_objects[source_obj_pointer] = Dictionary #integer
@@ -356,6 +364,9 @@ struct SupportManager_v
 		--format "\n"; print "SupportManager_v._manageNameAndLayer()"
 
 		local layer
+
+		quiet_mode = Options.quiet_mode
+
 		source_obj_suffix = "support-source"
 		layer_name_suffix = "support"
 
@@ -364,12 +375,12 @@ struct SupportManager_v
 
 		/* RENAME SOURCE OBEJT */
 		if not matchPattern source_obj.name pattern:("*"+source_obj_suffix) and \
-			queryBox ("Rename source object ?\n\nFROM:\n\n"+source_obj.name + "\n\nTO:\n\n" + new_name ) title:"SupportManager.ms"  then
+			( quiet_mode or queryBox ("Rename source object ?\n\nFROM:\n\n"+source_obj.name + "\n\nTO:\n\n" + new_name ) title:"SupportManager.ms" ) then
 				source_obj.name = new_name
 
 		/* ADD TO LAYER */
 		if not matchPattern source_obj.layer.name pattern:("*"+layer_name_suffix+"*") and \
-			queryBox ("MOVE\n\n"+source_obj.name + "\n\nTO LAYER\n\n" + layer_name +" ? " ) title:"SupportManager.ms"  then
+			( quiet_mode or queryBox ("MOVE\n\n"+source_obj.name + "\n\nTO LAYER\n\n" + layer_name +" ? " ) title:"SupportManager.ms" ) then
 			(
 				if ( layer = LayerManager.getLayerFromName layer_name ) == undefined then
 				(
@@ -394,7 +405,6 @@ struct SupportManager_v
         SupportGenerator = SupportGenerator_v Options:Options
         SupportModifiers = SupportModifiers_v Options:Options
         BeamGenerator    = BeamGenerator_v Options:Options
-
 	)
 )
 
@@ -422,7 +432,7 @@ function getSupportManagerInstance =
 
     SupportManager.BeamGenerator.same_height	= ROLLOUT_print_3d.CBX_same_height.state
 
-	SupportManager.Options.init()
+	--SupportManager.Options.init()
 
 	SupportManager --return
 )
