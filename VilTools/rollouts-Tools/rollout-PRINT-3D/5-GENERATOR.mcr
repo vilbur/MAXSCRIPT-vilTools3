@@ -37,7 +37,7 @@ icon:	"across:4|height:32|tooltip:GEENERATE SUPPORTS.\n\nWORKS ON SELECTION OF:\
 		undo "Generate Supports" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
 
 			(getSupportManagerInstance()).createSupports( selection as Array )
 		)
@@ -54,7 +54,7 @@ icon:	"across:4|height:32|tooltip:GEENERATE RAFTS.\n\nWORKS ON SELECTION OF:\n\t
 		undo "Generate Rafts" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
 
 			(getSupportManagerInstance()).createSupports( selection as Array ) raft_mode:true
 		)
@@ -72,7 +72,7 @@ icon:	"across:4|height:32|tooltip:GEENERATE BEAMS between supports.\n\nWORKS ON 
 		undo "Generate Beams" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\5-GENERATOR.mcr"
 
 			(getSupportManagerInstance()).createBeams( selection as Array )
 		)

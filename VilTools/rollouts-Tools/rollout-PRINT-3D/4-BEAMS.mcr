@@ -10,7 +10,20 @@
 --(
 --	format "EventFired:	% \n" EventFired
 --)
+/**  Export format
+  *
+ */
+macroscript	_print_generator_beams_connect_increment
+category:	"_Export"
+buttontext:	"Connect"
+toolTip:	"Which portion of support will beam connect"
+icon:	"control:radiobuttons|across:1|align:#CENTER|items:#('END', 'MIDDLE', 'THIRD', 'QUATER')|columns:4|offset:[ -4, 0 ]"
+(
+	--export_dir = execute ("@"+ "\""+EventFired.Roll.export_dir.text +"\"")
 
+	--DosCommand ("explorer \""+export_dir+"\"")
+	--format "EventFired	= % \n" EventFired
+)
 
 /**
   *
@@ -19,7 +32,7 @@ macroscript	_print_generator_beams_max_distance
 category:	"_3D-Print"
 buttontext:	"Max Distance"
 tooltip:	"Max distance between between supports"
-icon:	"across:3|control:spinner|type:#integer|range:[ 1, 999, 5 ]|width:64|offset:[ 32, 0 ]"
+icon:	"across:3|control:spinner|type:#integer|range:[ 1, 999, 5 ]|width:64|offset:[ 36, 6 ]"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -31,7 +44,7 @@ macroscript	_print_generator_beams_max_length
 category:	"_3D-Print"
 buttontext:	"Min Height"
 tooltip:	"Min Height of supports where beam is created"
-icon:	"across:3|control:spinner|type:#integer|range:[ 1, 999, 5 ]|width:64"
+icon:	"across:3|control:spinner|type:#integer|range:[ 1, 999, 5 ]|width:64|offset:[ 0, 6 ]"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -43,7 +56,7 @@ macroscript	_print_generator_beams_max_length
 category:	"_3D-Print"
 buttontext:	"Same Height"
 tooltip:	"Set height of beams on each support"
-icon:	"across:3|control:checkbox"
+icon:	"across:3|control:checkbox|offset:[ 0, 6 ]"
 (
 	format "EventFired:	% \n" EventFired
 )

@@ -5,7 +5,7 @@ struct SupportOptions_v
 	/* construct */
 	export_size = 1,
 
-	_DO_NOT_MODIFY_PROPERTIES = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top ),
+	_DO_NOT_MODIFY_PROPERTIES = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top, #connect ),
 
 	/* POINT GENERATOR OPTIONS */
 	use_normals	= true,
@@ -24,7 +24,7 @@ struct SupportOptions_v
 	bottom_layers_count = 15,
 
 
-	/* options */
+	/* SUPPORT MODIFIERS */
 	bar_width 	= 1.5, -- default width is 1.5mm
 
 	base_height	= 1.0,
@@ -42,11 +42,14 @@ struct SupportOptions_v
 	max_distance	= 20,	-- max distance between platforms
 	min_height	= 10,	-- generate cross section only if platform is higher than this number
 
+	/* BEAMS OPTIONS */
+	connect = 1,
 
-	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
 
 
 	/* PRIVATE PROPERTIES */
+	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
+
 	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #BEAM, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
 	propkeys = Dictionary #( #source_object, "pointer_sync_source" ) #( #source_vert, "source_vert" ) #( #pointer_sync, "pointer_sync" ) #( #this, "this" ) #( #beam_supports, "beam_supports" ), -- keys used for node`s user data

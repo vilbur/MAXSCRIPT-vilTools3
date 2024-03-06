@@ -65,11 +65,15 @@ struct BeamGenerator_v
 
 			if new_beam != undefined then
 			(
+				this._addToGroup (new_beam) (support_A)
+
 				/* COPY MODIFIERS OF PARENT SUPPORT NAME WHICH NAME IS MATCHING: "*BAR*" */
 				for i = support_A.modifiers.count to 1 by -1 where matchPattern support_A.modifiers[i].name pattern:"*BAR*" do
 					addModifier new_beam support_A.modifiers[i]
 
 				append beams_created (new_beam)
+
+				Options.setProp new_beam #this (getHandleByAnim new_beam)
 
 				Options.setProp new_beam #beam_supports #( getHandleByAnim supports_order[1], getHandleByAnim supports_order[2] )
 			)
@@ -80,28 +84,68 @@ struct BeamGenerator_v
 	 */
 	function _createBeam support_1 support_2 =
 	(
-		--format "\n"; print "BeamGenerator_v._createBeam()"
+		format "\n"; print "BeamGenerator_v._createBeam()"
 
 		/** Get top sition
 		 */
-		function getPositionTop    pos = (pos.z *= 3 / 4.0; pos) --return
-		function getPositionBottom pos = (pos.z *= 2.0;    pos) --return
+		--function getPositionTop    pos = (pos.z *= 3 / 4.0; pos) --return
+		--function getPositionBottom pos = (pos.z *= 2.0;    pos) --return
+		--function getPositionTop    pos = pos --return
+		--function getPositionBottom pos = pos --return
+		--function getPositionBottom pos point_bottom point_top = (pos.z += (distance point_bottom point_top) / 4; pos) --return
+		--function getPositionTop 	pos point_bottom point_top = (pos.z -= (distance point_bottom point_top) / 4; pos) --return
+
+		/** Get beam postion on top and bottom
+		 */
+		function getBeamPosition direction modify_point distance_point =
+		(
+			--format "\n"; print "BeamGenerator_v.getBeamS()"
+
+			increment = (distance modify_point distance_point) / this.Options.connect -- Divide by 0|1|3 this.Options.connect:radiobuttons items:#('END', 'MIDDLE', 'QUATER')
+
+
+			if direction == #BOTTOM then
+				modify_point.z += increment
+			else
+				modify_point.z -= increment
+
+			modify_point --return
+		)
 
 
 		num_knots_1	= ( numKnots support_1 )
 		num_knots_2	= ( numKnots support_2 )
 
-		point_bottom	= getKnotPoint support_1	1 (num_knots_1 - 1)	-- get 2. point from bottom
-		point_top_1	= getKnotPoint support_1	1 (num_knots_1 - 2)	-- get 1. or 2. point from top
-		point_top_2	= getKnotPoint support_2	1 (num_knots_2 - 2)	-- get 1. or 2. point from top
+		segments_1 = num_knots_1 - 1
+		segments_2 = num_knots_2 - 1
+
+		i_bottom_1 = if segments_1 == 1 then 2 else num_knots_1 - 1 -- get second point or second point from end ( above ground point )
+		i_bottom_2 = if segments_2 == 1 then 2 else num_knots_2 - 1
 
 
-		beam_start	= getPositionBottom(point_bottom)
 
-		beam_end_top	= getPositionTop(point_top_2)
+		point_bottom_1	= getKnotPoint support_1	1 i_bottom_1	-- get 2. point from bottom
+		point_bottom_2	= getKnotPoint support_2	1 i_bottom_2	-- get 2. point from bottom
+		point_top_1	= getKnotPoint support_1	1 (i_bottom_1 - 1)	-- get 1. or 2. point from top
+		point_top_2	= getKnotPoint support_2	1 (i_bottom_2 - 1)	-- get 1. or 2. point from top
+		format "point_bottom_1: %\n" point_bottom_1
+		format "point_top_1: %\n" point_top_1
+		format "point_top_2: %\n" point_top_2
+--		point_bottom_1 = point_bottom_1 / 10
+--		point_top_1 = point_top_1 / 10
+--		point_top_2 = point_top_2 / 10
+--format "\n"
 
-		if same_height and ( point_top_second_support = getPositionTop(point_top_1)).z < beam_end_top.z then
-			beam_end_top.z = point_top_second_support.z
+		format "point_bottom_1: %\n" point_bottom_1
+		format "point_top_1: %\n" point_top_1
+		format "point_top_2: %\n" point_top_2
+
+		beam_start	= getBeamPosition #BOTTOM (point_bottom_1)(point_top_1)
+
+		beam_end_top	= getBeamPosition #TOP(point_top_2)(point_bottom_2)
+
+		if same_height and ( point_top_first_support = getBeamPosition #TOP(point_top_1)(point_bottom_1)).z < beam_end_top.z then
+			beam_end_top.z = point_top_first_support.z
 
 		distance_between_points = this.getPointDistance (copy beam_start) (copy beam_end_top )
 
@@ -110,6 +154,8 @@ struct BeamGenerator_v
 
 		beam_obj --return
 	),
+
+
 
 	/** Draw line
 	 */
@@ -126,8 +172,8 @@ struct BeamGenerator_v
 
 
 		addNewSpline beam_obj
-		--format "point_bottom:	% \n" point_bottom
-		--format "point_top:	% \n" point_top
+		format "start_point:	% \n" start_point
+		format "end_point:	% \n" end_point
 
 		addKnot beam_obj cross_spline_id #corner #line start_point
 		addKnot beam_obj cross_spline_id #corner #line end_point
@@ -161,7 +207,34 @@ struct BeamGenerator_v
 	  */
 	function filterEditSplineObjects =
 	(
-		for platform in supports where superClassOf platform.baseobject == shape collect platform
+		for support in supports where superClassOf support.baseobject == shape collect support
+	),
+	/** Add to group
+	 */
+	function _addToGroup support point_helper =
+	(
+		/** Find group
+		 */
+		function _findGroup obj =
+		(
+			--format "\n"; print "SupportGenerator_v.findGroup()"
+
+			if isGroupMember obj then
+			(
+				while not isGroupHead obj.parent do
+				(
+					format "\n\n"
+					format "obj.parent: %\n" obj.parent
+
+					obj = obj.parent
+				)
+				obj.parent --return
+			)
+		)
+
+		--format "\n"; print "SupportGenerator_v.addToGroup()"
+		if ( _group = _findGroup point_helper ) != undefined then
+			attachNodesToGroup support _group
 	),
 
 	/**

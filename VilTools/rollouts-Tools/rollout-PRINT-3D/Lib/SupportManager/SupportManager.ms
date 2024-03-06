@@ -102,9 +102,10 @@ struct SupportManager_v
 				this._manageNameAndLayer(source_obj)
 
 				all_points_of_object = this.getAllPointsOfObject source_obj
+				format "all_points_of_object: %\n" all_points_of_object
 
 				indexes_of_selected_helpers = for vertex_index in (this._fiterSelectedHelpers (all_points_of_object)).keys collect vertex_index
-
+				format "indexes_of_selected_helpers: %\n" indexes_of_selected_helpers
 				/* RESET SELECTED POINTS  */
 				if not reset_helpers and indexes_of_selected_helpers.count > 0 then
 					reset_helpers = indexes_of_selected_helpers as BitArray
@@ -155,15 +156,19 @@ struct SupportManager_v
 	),
 
 	/** Create Beams
+	  *
+	  * Connect any line with cross beams
 	 */
 	function createBeams source_objects =
 	(
-		format "\n"; print "SupportManager_v.rebuildSupports()"
+		format "\n"; print "SupportManager_v.createBeams()"
+
+		shapes_for_beams = for obj in source_objects where superClassOf obj.baseobject == shape collect obj
 
 
-		if ( supports_valid = this.getSupports source_objects:source_objects ).count > 0 then
+		if shapes_for_beams.count > 0 then
 		(
-			beams_created = BeamGenerator.create (supports_valid)
+			beams_created = BeamGenerator.create (shapes_for_beams)
 		)else
 			messageBox "ERROR CREATE BEAMS\n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
 
@@ -265,9 +270,9 @@ struct SupportManager_v
 	 */
 	function _fiterSelectedHelpers helpers_by_source_obj =
 	(
-		--format "\n"; print "SupportManager_v.fiterSelectedOhelpers()"
+		format "\n"; print "SupportManager_v.fiterSelectedOhelpers()"
 		selected_helpers = Dictionary #integer
-
+		format "helpers_by_source_obj: %\n" helpers_by_source_obj
 		if  helpers_by_source_obj != undefined then
 			for vertex_index in helpers_by_source_obj.keys where helpers_by_source_obj[vertex_index].isSelected do
 				selected_helpers[vertex_index] = helpers_by_source_obj[vertex_index]
@@ -405,15 +410,15 @@ function getSupportManagerInstance =
 
 	SupportManager = SupportManager_v export_size:ROLLOUT_export.SPIN_export_size.value --use_every_nth_vert_of_spline:ROLLOUT_print_3d.SPIN_use_nth_vertex.value
 
-	--Options	= SupportManager.Options
+	control_type_to_fetch_values = "SPIN|CBX|RB"
 
 	/** FILL SupportManager PROPERTIES WITH DATA FROM UI
 	  *
 	  * Perform kind of this in loop:
 	  *   Options.base_extrude	= roll.SPIN_base_width.value
 	  */
-	for ctrl in ROLLOUT_print_3d.controls where (prop_key = regExReplace ctrl.name "^(SPIN|CBX)_" "") != undefined and hasProperty SupportManager.Options prop_key do
-		setProperty SupportManager.Options prop_key ( if classOf ctrl == CheckBoxControl then ctrl.state else ctrl.value )
+	for ctrl in ROLLOUT_print_3d.controls where (prop_key = regExReplace ctrl.name ("^("+control_type_to_fetch_values+")_") "") != undefined and hasProperty SupportManager.Options prop_key do
+		setProperty SupportManager.Options prop_key ( if classOf ctrl == CheckBoxControl or classOf ctrl == RadioControl  then ctrl.state else ctrl.value )
 
     SupportManager.BeamGenerator.same_height	= ROLLOUT_print_3d.CBX_same_height.state
 

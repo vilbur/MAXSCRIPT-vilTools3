@@ -56,6 +56,8 @@ struct HelperObject_v
 			/* ADD TO LAYER OF SOURCE OBJECT */
 			source_obj.layer.addNode _point
 
+
+
 			/* SAVE USER PROPS DATA TO OBEJCT */
 			this._saveUserDataToPointHelper()
 
@@ -68,6 +70,12 @@ struct HelperObject_v
 
 		--for old_point in old_points do
 		delete old_points
+
+--format "_point: %\n" _point
+--format "isGroupMember source_obj: %\n" (isGroupMember source_obj)
+			if isGroupMember source_obj then
+			--format "SOURCE_OBJ.PARENT: %\n" source_obj.parent
+				attachNodesToGroup points_created source_obj.parent
 
 		point_helper --return first point
 

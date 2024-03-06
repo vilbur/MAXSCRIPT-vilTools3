@@ -20,13 +20,15 @@ struct SupportObject_v
 		--format "\n"; print "SupportObject_v.generateSupport()"
 		--format "point_helper	= % \n" point_helper
 
-		support = SplineShape name:(this._getName(point_helper.name)) wirecolor:(this._shiftWirecolor(point_helper.wirecolor) 1 ) pos:point_helper.pos
+		support = SplineShape name:(this._getName(point_helper.name)) wirecolor:(this._shiftWirecolor(point_helper.wirecolor) ) pos:point_helper.pos
 
 		helpers_chain =  this._getPointsChain (point_helper)
 
 		this._createLineFromPoints(helpers_chain)
 
 		support.parent = helpers_chain[helpers_chain.count]
+
+		Options.setProp support #this (getHandleByAnim support)
 
 		support --return
 	),
@@ -130,10 +132,12 @@ struct SupportObject_v
 	  *
 	  * Each level of points has different wirecolor for better selection
 	  */
-	function _shiftWirecolor wirecolor i =
+	function _shiftWirecolor wirecolor =
 	(
 		--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
 		--format "wirecolor:	% \n" wirecolor
+		i = -1
+
 		wirecolor_shifted = copy wirecolor
 
 		if wirecolor_shifted.r >= i then wirecolor_shifted.r += i

@@ -35,16 +35,24 @@ struct SupportGenerator_v
 		supports_created = for vertex_index in sort point_helpers.keys collect
 		(
 			--format "vertex_index	= % \n" vertex_index
-			this._deleteSupportByHelper( point_helpers[vertex_index] )
+			point_helper = point_helpers[vertex_index]
 
-			support = SupportObject.generateSupport( point_helpers[vertex_index] )
+			this._deleteSupportByHelper(  point_helper )
 
-			this._saveUserData (point_helpers[vertex_index]) (support)
+
+			support = SupportObject.generateSupport(  point_helper )
+
+			this._addToGroup support point_helper
+
+			this._saveUserData ( point_helper ) (support)
 
 			support --return
 		)
 
 		--for SupportObject in supportObjects collect SupportObject.support
+		--if isGroupMember point_helper then
+		--format "SOURCE_OBJ.PARENT: %\n" source_obj.parent
+			--attachNodesToGroup support point_helper.parent
 
 		/* GET ALL SUPPORTS GENERATED FOR OBJECT */
 		--supports_by_object = for helper_data in point_helpers where ( support = this._getSupportByHelper(helper_data.value) ) != undefined collect support
@@ -88,6 +96,36 @@ struct SupportGenerator_v
 
 		supports[1] --return
 	),
+
+	/** Add to group
+	 */
+	function _addToGroup support point_helper =
+	(
+		/** Find group
+		 */
+		function _findGroup obj =
+		(
+			--format "\n"; print "SupportGenerator_v.findGroup()"
+
+			if isGroupMember obj then
+			(
+				while not isGroupHead obj.parent do
+				(
+					format "\n\n"
+					format "obj.parent: %\n" obj.parent
+
+					obj = obj.parent
+				)
+				obj.parent --return
+			)
+		)
+
+		--format "\n"; print "SupportGenerator_v.addToGroup()"
+		if ( _group = _findGroup point_helper ) != undefined then
+			attachNodesToGroup support _group
+	),
+
+
 
 	mapped function _getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this._getAllChildren _node.children &children ),
 
