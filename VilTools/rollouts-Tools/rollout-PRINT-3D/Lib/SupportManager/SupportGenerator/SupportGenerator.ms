@@ -37,10 +37,11 @@ struct SupportGenerator_v
 			--format "vertex_index	= % \n" vertex_index
 			point_helper = point_helpers[vertex_index]
 
+			/* DELETE OLD SUPPORT (RESET) */
 			this._deleteSupportByHelper(  point_helper )
 
+			support = SupportObject.generateSupport( point_helper ) --support_exists:(this._getSupport( point_helper ))
 
-			support = SupportObject.generateSupport(  point_helper )
 
 			this._addToGroup support point_helper
 
@@ -62,6 +63,14 @@ struct SupportGenerator_v
 
 
 	private
+
+
+	/** Get support by helper
+	 */
+	function _getSupport point_helper =
+	(
+		this._getSupportByHelper(point_helper)
+	),
 
 	/** Get support by helper
 	 */
@@ -99,7 +108,7 @@ struct SupportGenerator_v
 
 	/** Add to group
 	 */
-	function _addToGroup support point_helper =
+	function _addToGroup new_members search_group_obj =
 	(
 		/** Find group
 		 */
@@ -116,8 +125,8 @@ struct SupportGenerator_v
 		)
 
 		--format "\n"; print "SupportGenerator_v.addToGroup()"
-		if ( _group = _findGroup point_helper ) != undefined then
-			attachNodesToGroup support _group
+		if ( _group = _findGroup search_group_obj ) != undefined then
+			attachNodesToGroup new_members _group
 	),
 
 

@@ -82,7 +82,7 @@ struct SupportManager_v
 
         local new_points_all = #()
         local source_object_valid	= #()
-        local verts_to_generate	= #{}
+        --local verts_to_generate	= #{}
 
 		/* GET   */
 		local source_object_valid = this.getSourceObjects(source_objects)
@@ -121,6 +121,8 @@ struct SupportManager_v
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object is selected" title:"SupportManager"  beep:false
 
+        redrawViews()
+
 		new_points_all --return
 	),
 
@@ -139,15 +141,14 @@ struct SupportManager_v
 		if (helpers_by_source_obj = this.getSourceHelpers(source_objects)).count > 0 then
 			 for source_obj_pointer in helpers_by_source_obj.keys do
 			(
-				format "SOURCE_OBJ_POINTER: %\n" source_obj_pointer
-				format "HELPERS: %\n" helpers_by_source_obj[source_obj_pointer]
 				/* GENERATE SUPPORTS PER SOURCE OBJECTS */
 				new_supports_of_obj =(SupportGenerator.generateSupports(helpers_by_source_obj[source_obj_pointer]))
-				format "NEW_SUPPORTS_OF_OBJ: %\n" new_supports_of_obj
+				--format "NEW_SUPPORTS_OF_OBJ: %\n" new_supports_of_obj
+
 				/* GET ALL SUPPORTS OF SOURCE OBJECTS */
 				all_supports_of_obj = this.getSupports pointer_sync:source_obj_pointer
+				--format "ALL_SUPPORTS_OF_OBJ: %\n" all_supports_of_obj
 
-				format "ALL_SUPPORTS_OF_OBJ: %\n" all_supports_of_obj
 				join new_supports new_supports_of_obj
 
 				/* ADD MODIFIER INSTANCES */
@@ -156,7 +157,7 @@ struct SupportManager_v
 
 		else
 			messageBox "ERROR CREATE SUPPORTS \n\nNot any valid source object selected" title:"SupportManager.ms"  beep:false
-
+		format "NEW_SUPPORTS: %\n" new_supports
 		new_supports --return
 	),
 
@@ -227,12 +228,12 @@ struct SupportManager_v
 		/* 2) GET HELPERS FROM SELECTED OBJECTS */
 		for obj in objects_array where (master_point = HelperGenerator.getMasterPointByObj(obj)) != undefined do
 		(
-			sync_pointer = (Options.getProp master_point #pointer_sync) as string
+			sync_pointer = Options.getProp master_point #pointer_sync as_string:true
 
 			if not HasDictValue helpers_of_source_obj sync_pointer then
 				helpers_of_source_obj[sync_pointer] = Dictionary #integer
 
-			helpers_of_source_obj[sync_pointer][Options.getProp master_point #source_vert as integer ] = master_point
+			helpers_of_source_obj[sync_pointer][Options.getProp master_point #source_vert ] = master_point
 		)
 
 		--for key in helpers_of_source_obj.keys collect helpers_of_source_obj[key]  --return
@@ -336,10 +337,8 @@ struct SupportManager_v
 	(
 		format "\n"; print "SupportManager_v._setPointHelpersByObject()"
 
-		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = Options.getProp _helper #pointer_sync  ) != undefined do
+		for _helper in helpers where classOf _helper == Point and ( source_obj_pointer = Options.getProp _helper #pointer_sync as_string:true ) != undefined do
 		(
-			source_obj_pointer = source_obj_pointer as string
-
 			if point_helpers_by_objects[source_obj_pointer] == undefined then
 				point_helpers_by_objects[source_obj_pointer] = Dictionary #integer
 
@@ -353,7 +352,7 @@ struct SupportManager_v
 	function _getPointerOfSourceObject source_obj =
 	(
 		--format "\n"; print "SupportManager_v._getPointerOfSourceObject()"
-		 Options.getProp source_obj #source_object --return
+		Options.getProp source_obj #source_object as_string:true
 	),
 
 

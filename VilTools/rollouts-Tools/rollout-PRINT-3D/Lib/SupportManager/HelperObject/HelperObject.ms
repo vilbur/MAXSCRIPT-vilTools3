@@ -36,8 +36,8 @@ struct HelperObject_v
 		--	format "isValidNode old_point: %\n" (isValidNode old_point)
 		----delete old_points
 
-
 		this._setPointsPositions (pos)
+
 
 		for i = 1 to this.points_positions.count do
 		(
@@ -70,8 +70,7 @@ struct HelperObject_v
 		delete old_points
 
 		/* ADD TO PARENT GROUP BY source object */
-		if isGroupMember source_obj then
-			attachNodesToGroup points_created source_obj.parent
+		this._addToGroup (points_created) (source_obj)
 
 		point_helper --return first point
 
@@ -85,62 +84,48 @@ struct HelperObject_v
 	function _setPointsPositions vert_pos =
 	(
 		format "\n"; print "HelperObject_v._setPointsPositions()"
-
-		format "this.Options.use_normals: %\n" this.Options.use_normals
-		format "this.normal: %\n" this.normal
-		format "TEST 1: %\n" (this.Options.use_normals and this.normal != undefined)
-		format "TEST 2: %\n" (not this.Options.use_normals and this.normal != undefined)
-
-		/* GET POINT CHAIN BY NORMALS */
-		if this.Options.use_normals and this.normal != undefined then
+		/** Set second point by normal of vertex
+		 */
+		function setSecondByNormal vert_pos _normal =
 		(
-			local _normal = this.normal * source_obj.transform - source_obj.pos
-			--local _normal = this.normal
-			--format "\nVERTEX: % NORMAL:  %" vertex_index normal.z
-			normal_limit = this.Options.normal_limit
+			--format "\n"; print "HelperObject_v.setSecondByNormal()"
+			local second_vert = copy vert_pos
 
+			second_vert += this.Options.normal_length * normalize( _normal ) -- MOVE POSITION ALONG NORMAL
 
-			/* if normal_limit is on: THEN USE ONLY VERTICES FACING DOWN OR SIDE - dont use on platforms facing straight down ( -1 is is facing down, 1 is facing up ) */
-			if not normal_limit or ( normal_limit and _normal.z <= 0 ) then
-			(
-				append this.points_positions vert_pos
+			/* KEEP SECOND POINT BELLOW FIRST OF GIVEN AMOUNT */
+			if this.Options.keep_down and ( difference = vert_pos.z - vert_pos.z ) < this.Options.keep_down_limit then
+				second_vert.z -= this.Options.keep_down_limit - difference
 
-				local second_vert = copy vert_pos
-
-				local normal_length = this.Options.normal_length
-
-				/* ADD SECOND VERT TO KEEP NORMAL */
-				if not normal_limit or ( normal_limit and vert_pos.z > normal_length * 1.5 ) then -- if platform has enough space verticaly
-				(
-					--vert_pos = vert_pos + normal_length * normalize( _normal )
-					--format "VECTOR	= % \n" (normalize( _normal ))
-					second_vert += normal_length * normalize( _normal ) -- MOVE POSITION ALONG NORMAL
-					--format "_normal:	% \n" _normal
-
-					--/* MOVE POINT LITTLE DOWN IF NORMAL IS FACING TO SIDE */
-					--if normal_limit and _normal.z > -0.25   then
-					--	vert_pos.z -= normal_length
-
-					if this.Options.keep_down and ( difference = vert_pos.z - vert_pos.z ) < this.Options.keep_down_limit then
-						second_vert.z -= this.Options.keep_down_limit - difference
-
-
-
-					append this.points_positions second_vert
-				)
-			)
-			else if normal_limit then
-				format "\nVERTEX: % NOT USED - VERTEX NORMAL IS FACING UP:  %" vertex_index _normal.z
+			append this.points_positions second_vert
 		)
 
-		/* DO NOT USE NORMALS */
-		else if not this.Options.use_normals and this.normal != undefined then
+		/** Set second down
+		 */
+		function setSecondDown vert_pos =
+		(
+			--format "\n"; print "HelperObject_v.setSecondDown()"
+			vert_pos.z -= this.Options.normal_length
+
 			append this.points_positions vert_pos
+		)
 
-		else
-			format "ERROR IN: HelperObject_v._setPointsPositions()\n\n GETTING NORMAL OF POINT: %\n\nOBJECT: % \n" source_obj vertex_index
+		local _normal = if this.normal != undefined then this.normal * source_obj.transform - source_obj.pos
 
-		--format "THIS.VERTS_POSITIONS	= % \n" this.points_positions
+		/* RETRUN IF NORMAL NOT FIT */
+		if this.Options.normal_limit and _normal.z > 0 then
+			return false
+
+
+		/* ADD FIRST POINT */
+		append this.points_positions vert_pos
+
+		/* ADD SECOND POINT */
+		case this.Options.second_point_direction of
+		(
+			1: setSecondByNormal	(copy vert_pos)(_normal)
+			2: setSecondDown	(copy vert_pos)
+		)
 	),
 
 	/** Get name
@@ -177,9 +162,9 @@ struct HelperObject_v
 		tm  = obj.transform
 		vec = normalize vec
 		dir = normalize dir
-		rtm = angleaxis (acos (dot vec dir)) (normalize (cross dir vec))
+		rtm = AngleAxis (acos (dot vec dir)) ( normalize (cross dir vec))
 
-		obj.transform = translate (rotate (scalematrix tm.scale) (tm.rotation*rtm)) tm.pos
+		obj.transform = Translate ( Rotate ( ScaleMatrix tm.scale) (tm.rotation*rtm)) tm.pos
 
 		if pos == true then
 			obj.pos = p1
@@ -210,13 +195,36 @@ struct HelperObject_v
 		wirecolor_shifted = copy this.wirecolor
 
 
-		if wirecolor_shifted.r >= i then wirecolor_shifted.r -= i
-		if wirecolor_shifted.g >= i then wirecolor_shifted.g -= i
-		if wirecolor_shifted.b >= i then wirecolor_shifted.b -= i
+		if wirecolor_shifted.r >= abs i then wirecolor_shifted.r -= i
+		if wirecolor_shifted.g >= abs i then wirecolor_shifted.g -= i
+		if wirecolor_shifted.b >= abs i then wirecolor_shifted.b -= i
 		--format "wirecolor_shifted:	% \n" wirecolor_shifted
 
 		wirecolor_shifted --return
 	),
+
+	/** Add to group
+	 */
+	function _addToGroup new_members search_group_obj =
+	(
+		/** Find group
+		 */
+		function _findGroup obj =
+		(
+			--format "\n"; print "SupportGenerator_v.findGroup()"
+			if isGroupMember obj then
+			(
+				while not isGroupHead obj.parent do
+					obj = obj.parent
+
+				obj.parent --return
+			)
+		)
+
+		if new_members.count > 0 and ( _group = _findGroup search_group_obj ) != undefined then
+			attachNodesToGroup new_members _group
+	),
+
 
 	/**
 	 */

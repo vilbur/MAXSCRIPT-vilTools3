@@ -33,7 +33,7 @@ struct HelperGenerator_v
 		format "\n"; print "HelperGenerator_v.generatePointHelpers()"
 		--format "source_obj	= % \n" source_obj
 		--format "point_helpers_of_object	= % \n" point_helpers_of_object
-		format "RESET_HELPERS: %\n" reset_verts
+		--format "RESET_HELPERS: %\n" reset_verts
 
 		--function getWireColor source_obj wirecolor = if wirecolor != white then wirecolor else source_obj.wirecolor
 		point_helpers_new = #()
@@ -70,7 +70,7 @@ struct HelperGenerator_v
 			for vertex_index in verts_to_generate do
 			(
 				data_index	= findItem ( verts_data[1] as Array ) vertex_index -- find vertex in all verts data
-
+				format "vertex_index: %\n" vertex_index
 				HelperObject = HelperObject_v \
 									Options:Options	\
 									source_obj:source_obj	\
@@ -91,13 +91,14 @@ struct HelperGenerator_v
 			)
 
 			/* REINSTANCE ALL POINTS PER OBEJCT */
-			if point_helpers_new.count > 0 then
-				this._reinstancePointByLevel(point_helpers_new)
+			--if point_helpers_new.count > 0 then
+				--this._reinstancePointByLevel(point_helpers_new)
 		)
 		else
 			messageBox "NO POINT HELPER HAS BEEN GENERATED" title:"HelperGenerator"
 
 		gc()
+		
 		point_helpers_new --return
 	),
 
@@ -133,9 +134,9 @@ struct HelperGenerator_v
 	 */
 	function _getVertsToGenerateFromObjects reset_verts =
 	(
-		format "\n"; print "HelperGenerator_v._getVertsToGenerateFromObjects()"
-		format "this.point_helpers: %\n" this.point_helpers
-		format "this.point_helpers.keys: %\n" this.point_helpers.keys
+		--format "\n"; print "HelperGenerator_v._getVertsToGenerateFromObjects()"
+		--format "this.point_helpers: %\n" this.point_helpers
+		--format "this.point_helpers.keys: %\n" this.point_helpers.keys
 		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
 		/* FILTER EXISTING VERTS */

@@ -5,7 +5,7 @@ struct SupportOptions_v
 	/* construct */
 	export_size = 1,
 
-	_DO_NOT_MODIFY_PROPERTIES = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top, #connect ),
+	_DO_NOT_MODIFY_PROPERTIES = #( #display_units, #export_size, #use_nth_vertex , #chamfer_top, #connect, #second_point_direction ),
 
 	/* POINT GENERATOR OPTIONS */
 	use_normals	= true,
@@ -14,6 +14,7 @@ struct SupportOptions_v
 	normal_length	= 3,
 	keep_down_limit	= 1,
 
+	second_point_direction	= 1,
 
 	use_nth_vertex	= 1,
 
@@ -35,9 +36,9 @@ struct SupportOptions_v
 	chamfer_base = 2,
 	chamfer_top	= 5,	-- CHAMFER MIN: 0 - CHAMFER MAX: 10
 
-	cross_section	= false, -- connect columns of platform with cross beams
-	cross_section_max	= 20,	-- max distance between platforms
-	cross_section_min_height	= 10,	-- generate cross section only if platform is higher than this number
+	--cross_section	= false, -- connect columns of platform with cross beams
+	--cross_section_max	= 20,	-- max distance between platforms
+	--cross_section_min_height	= 10,	-- generate cross section only if platform is higher than this number
 
 	max_distance	= 20,	-- max distance between platforms
 	min_height	= 10,	-- generate cross section only if platform is higher than this number
@@ -50,11 +51,16 @@ struct SupportOptions_v
 	/* PRIVATE PROPERTIES */
 	display_units = 1, -- correct size of platforms, E.g.: IF MODEL IS MADE IN METERS BUT IT IS PRINTED SCALED DOWN TO MILIMETERS
 
+	quiet_mode = false,
+
 	mat_ids	= Dictionary #( #TOP, 1 /* READ-ONLY */ ) #( #MIDDLE, 3 ) #( #BASE, 4 ) #( #BOTTOM, 2 /* READ-ONLY */ ) #( #CHMAFER, 5 ) #( #BEAM, 6 ), -- #top and #bottom are read-only and they are default by Edit Spline
 
-	propkeys = Dictionary #( #source_object, "pointer_sync_source" ) #( #source_vert, "source_vert" ) #( #pointer_sync, "pointer_sync" ) #( #this, "this" ) #( #beam_supports, "beam_supports" ), -- keys used for node`s user data
-
-	quiet_mode = false,
+	propkeys = Dictionary	#( #source_object,	"pointer_sync_source" )	\
+		#( #source_vert,	"source_vert" )	\
+		#( #pointer_sync,	"pointer_sync" )	\
+		#( #this,	"this" )	\
+		#( #beam_supports,	"beam_supports" )	\
+		#( #raft_mode,	"raft_mode" ), -- keys used for node`s user data
 
 	/** Init
 	  *
@@ -72,10 +78,10 @@ struct SupportOptions_v
 
 	/** Get node prop data
 	 */
-	function getProp obj key_of_key =
+	function getProp obj key_of_key as_string:false =
 	(
 		--format "\n"; print "SupportOptions_v.getProp()"
-		getUserPropVal obj propkeys[key_of_key] --asString:true --return
+		getUserPropVal obj propkeys[key_of_key] asString:as_string --return
 	),
 
 	/** Set node prop data

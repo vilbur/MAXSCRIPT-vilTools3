@@ -11,6 +11,8 @@ struct MeshVertexGetter_v
 	obj,	-- object used for getting data ( collapsed copy of obj  OR obj if it is Edit_Poly )
 
 	/* properties */
+	obj_original, --store original node if object needs to be collapsed
+
 	verts_to_get	= #{},	-- selected or colored verts of  object
 	verts_positions	= #(),	-- positions only of verts_to_get
 	verts_normals	= #(),	-- normals only of verts_to_get
@@ -61,8 +63,8 @@ struct MeshVertexGetter_v
 
 		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
 		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0) remove_multi_colored_verts_from_white:remove_multi_colored_verts_from_white
-		format "!!!!!!!!!!!!!!!!!!!!!! TEST: %\n" ((not vertex_sel.isEmpty and subObjectLevel == 1 ))
-		format "vertex_sel: %\n" vertex_sel
+
+
 		/* GET VERTS TO GENERATE FROM */
 		verts_to_get = case of
 		(
@@ -91,12 +93,15 @@ struct MeshVertexGetter_v
 				or positionChanged(verts_cache)	\
 				or normalsChanged(verts_cache)		\
 
-				then
-					this._getVertNormals()
-				else
-					verts_cache[4]
-			--this.verts_normals =	this._getVertNormals()
-			format "THIS.VERTS_NORMALS: %\n" this.verts_normals
+								then
+									this._getVertNormals()
+								else
+									verts_cache[4]
+
+
+			------this.verts_normals =	this._getVertNormals() -- FOR DEBUG for case of debbuging cache
+
+
 			this.verts_data = #( verts_to_get, verts_positions, verts_normals, this._getVertexColorsByVerts()  )
 
 			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
@@ -106,11 +111,18 @@ struct MeshVertexGetter_v
 
 			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_get, verts_positions, verts_normals ) --return
 
+			if  obj_original != undefined then
+				delete obj
 
 			this.verts_data --return
 		)
 		else
+		(
+			if  obj_original != undefined then -- HOTFIX
+				delete obj
+
 			undefined -- return
+		)
 
 	),
 
@@ -299,13 +311,43 @@ struct MeshVertexGetter_v
 
 		_continue --return
 	),
+
+	/** Collapse object if vertex count of top|current mesh is differrent then baseobject
+
+
+
+	 */
+	function _collapseObjectIfNeeded =
+	(
+		--format "\n"; print "MeshVertexGetter_v.coolapseObjectIfNeeded()"
+		if getNumVerts obj.mesh != getNumVerts obj.baseobject.mesh then
+		(
+			--max modify mode
+			sub_object_level = subObjectLevel
+
+			snapshot_obj = snapshot obj
+
+			convertTo snapshot_obj PolyMeshObject
+
+			this.obj_original = obj
+
+			this.obj = snapshot_obj
+
+			select this.obj
+
+			if  sub_object_level != undefined then
+				subObjectLevel = sub_object_level
+		)
+
+	),
+
 	/**
 	 */
 	on create do
 	(
+		this._collapseObjectIfNeeded()
+
 		MeshVertToColorVertexConvert = MeshVertToColorVertexConvertor_v(obj)
-
-
 	)
 
 )

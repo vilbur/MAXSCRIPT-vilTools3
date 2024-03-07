@@ -19,74 +19,106 @@ struct SupportObject_v
 	(
 		--format "\n"; print "SupportObject_v.generateSupport()"
 		--format "point_helper	= % \n" point_helper
+		--format "point_helper.wirecolor: %\n" point_helper.wirecolor
 
-		support = SplineShape name:(this._getName(point_helper.name)) wirecolor:(this._shiftWirecolor(point_helper.wirecolor) ) pos:point_helper.pos
+		this.support = SplineShape name:(this._getName(point_helper.name)) wirecolor:(this._shiftWirecolor(point_helper.wirecolor) ) pos:point_helper.pos
 
 		helpers_chain =  this._getPointsChain (point_helper)
 
-		this._createLineFromPoints(helpers_chain)
+		this._createLineFromPoints(support)(helpers_chain)
 
 		support.parent = helpers_chain[helpers_chain.count]
 
 		Options.setProp support #this (getHandleByAnim support)
 
+		Options.setProp support #raft_mode raft_mode
+
+		this.support --return
+	),
+
+	/** Rebuild existing support
+	  *
+	  * @pram Node support_exists existing support for rebuid
+	 */
+	function rebuildSupport support =
+	(
+		--format "\n"; print "SupportObject_v.rebuildSupport()"
+		--format "point_helper	= % \n" point_helper
+		line_updated = SplineShape()
+
+		helpers_chain =  this._getPointsChain (point_helper)
+
+		deleteSpline support 1
+
+		this._createLineFromPoints(line_updated)(helpers_chain) _raft_mode:( Options.getProp support_exists #raft_mode ) -- raft mode by existing support|raft
+
+		support.pos = line_updated.pos
+
+		support.baseobject = line_updated.baseobject
+
+		delete line_updated
+
 		support --return
 	),
 
+
 	private
+
 
 	/** Create line netween point helpers
 	  */
-	function _createLineFromPoints helpers_chain =
+	function _createLineFromPoints spline_shape helpers_chain =
 	(
 		--format "\n"; print "SupportObject_v._createLineForVertex()"
 		--format "HELPERS_TREE: %\n" helpers_chain
 
 		spline_index = 1
 
-		addNewSpline support
+		addNewSpline spline_shape
 
 		/*------------------------------------------------------------------------------
 			ADD KNOTS FROM TOP TO BOTTOM
 		--------------------------------------------------------------------------------*/
 		for point_helper in helpers_chain do
-			addKnot support spline_index #corner #line point_helper.pos
+			addKnot spline_shape spline_index #corner #line point_helper.pos
 
 		if raft_mode then
-			setMaterialID support spline_index 1 this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+			setMaterialID spline_shape spline_index 1 this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
-		/*------------------------------------------------------------------------------
-			ABOVE POINT ABOVE GROUND - NOT IF RAFT MODE
-		--------------------------------------------------------------------------------*/
 		if not raft_mode then
 		(
+			/*------------------------------------------------------------------------------
+				ABOVE POINT ABOVE GROUND - NOT IF RAFT MODE
+			--------------------------------------------------------------------------------*/
 			pos =  helpers_chain[helpers_chain.count].pos -- get pos of last point above ground
 
 			pos.z = this.Options.base_height -- set knot above ground to set base height and keep last segment straight for extrude
 
-			addKnot support spline_index #corner #line pos
+			addKnot spline_shape spline_index #corner #line pos
 
-			pos.z = 0 -- set support to ground
+			pos.z = 0 -- set spline_shape to ground
 
 
 			/*------------------------------------------------------------------------------
 				GROUND POINT
 			--------------------------------------------------------------------------------*/
-			addKnot support spline_index #corner #line pos
+			addKnot spline_shape spline_index #corner #line pos
 
 
 			/*------ SET MATERIAL TO SEGMENTS ------*/
-			num_of_segments = numSegments support ( numSplines support)
+			num_of_segments = numSegments spline_shape ( numSplines spline_shape)
 
 			for segment_i = 1 to num_of_segments do
-				setMaterialID support spline_index segment_i this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+				setMaterialID spline_shape spline_index segment_i this.Options.mat_ids[#MIDDLE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 
 			/*------ SET MATERIAL TO BOTTOM SEGMENT ------*/
 
-			setMaterialID support spline_index num_of_segments this.Options.mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
+			setMaterialID spline_shape spline_index num_of_segments this.Options.mat_ids[#BASE] -- setMaterialID <splineShape> <spline_index> <seg_index> <matID>
 		)
 
-		updateShape support
+		updateShape spline_shape
+
+		spline_shape --return
 	),
 
 	/** Remove "-point" of source point helper E.G.: "foo-support-point-12" >>> "foo-support-12"
@@ -135,15 +167,15 @@ struct SupportObject_v
 	function _shiftWirecolor wirecolor =
 	(
 		--format "\n"; print "PlatformGenerator_v.shiftWirecolor()"
-		--format "wirecolor:	% \n" wirecolor
-		i = -1
+		--format "WIRECOLOR:	% \n" wirecolor
+		i = 1
 
 		wirecolor_shifted = copy wirecolor
 
-		if wirecolor_shifted.r >= i then wirecolor_shifted.r += i
-		if wirecolor_shifted.g >= i then wirecolor_shifted.g += i
-		if wirecolor_shifted.b >= i then wirecolor_shifted.b += i
-		--format "wirecolor_shifted:	% \n" wirecolor_shifted
+		if wirecolor_shifted.r <= 254 then wirecolor_shifted.r += i
+		if wirecolor_shifted.g <= 254 then wirecolor_shifted.g += i
+		if wirecolor_shifted.b <= 254 then wirecolor_shifted.b += i
+		--format "WIRECOLOR_SHIFTED:	% \n" wirecolor_shifted
 
 		wirecolor_shifted --return
 	),
