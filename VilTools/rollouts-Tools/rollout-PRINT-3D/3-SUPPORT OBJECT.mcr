@@ -41,6 +41,17 @@ icon:	"across:2|control:spinner|range:[ 0.1, 999, 4 ]|width:64|offset:[ -6, 0]"
 
 /**
  */
+macroscript	_print_platform_generator_base_height
+category:	"_3D-Print"
+buttontext:	"Base Height"
+tooltip:	"Height of support base"
+icon:	"across:2|control:spinner|range:[ 0.1, 999, 1 ]|width:64|offset:[ -6, 0]"
+(
+	format "EventFired:	% \n" EventFired
+)
+
+/**
+ */
 macroscript	_print_platform_generator_bar_chamfer
 category:	"_3D-Print"
 buttontext:	"Chamfer Top"
@@ -49,3 +60,5 @@ icon:	"across:2|control:spinner|type:#integer|range:[ 0, 10, 5 ]|width:64|offset
 (
 	format "EventFired:	% \n" EventFired
 )
+
+

@@ -313,19 +313,20 @@ struct MeshVertexGetter_v
 	),
 
 	/** Collapse object if vertex count of top|current mesh is differrent then baseobject
-
-
-
 	 */
 	function _collapseObjectIfNeeded =
 	(
 		--format "\n"; print "MeshVertexGetter_v.coolapseObjectIfNeeded()"
-		if getNumVerts obj.mesh != getNumVerts obj.baseobject.mesh then
+
+		if classOf obj.baseobject != Editable_Poly or getNumVerts obj.mesh != getNumVerts obj.baseobject.mesh then
 		(
+			--format "\n!!!!!!!!!!!!!!!!! COLLLAPSE"
 			--max modify mode
 			sub_object_level = subObjectLevel
 
 			snapshot_obj = snapshot obj
+
+			snapshot_obj.transform = obj.transform
 
 			convertTo snapshot_obj PolyMeshObject
 

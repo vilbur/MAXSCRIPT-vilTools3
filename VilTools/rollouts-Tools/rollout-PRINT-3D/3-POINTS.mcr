@@ -1,19 +1,35 @@
 
+
+/**  Export format
+  *
+ */
+macroscript	_print_generator_normal_mode
+category:	"_Export"
+buttontext:	"Second Point Direction"
+toolTip:	"Where support is connected to beam"
+icon:	"control:radiobuttons|across:1|align:#CENTER|items:#( 'NORMAL', 'DOWN' )|columns:3|offset:[ -72, 0 ]"
+(
+	--export_dir = execute ("@"+ "\""+EventFired.Roll.export_dir.text +"\"")
+
+	--DosCommand ("explorer \""+export_dir+"\"")
+	format "EventFired	= % \n" EventFired
+)
+
 /*==============================================================================
 
 		COTNROLS ROW 1
 
 ================================================================================*/
-/** CHECKBOX
-  */
-macroscript	_print_platform_generator_normal_use
-category:	"_3D-Print"
-buttontext:	"Use Normals"
-tooltip:	"Use normals to get support direction.\n\nPoints direction is to ground if FALSE "
-icon:	"across:2|control:checkbox|range:[ 1, 999, 3 ]"
-(
-	format "EventFired:	% \n" EventFired
-)
+--/** CHECKBOX
+--  */
+--macroscript	_print_platform_generator_normal_use
+--category:	"_3D-Print"
+--buttontext:	"Use Normals"
+--tooltip:	"Use normals to get support direction.\n\nPoints direction is to ground if FALSE "
+--icon:	"across:2|control:checkbox|range:[ 1, 999, 3 ]"
+--(
+--	format "EventFired:	% \n" EventFired
+--)
 
 /** SPINNER
   */

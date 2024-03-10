@@ -52,75 +52,62 @@ struct BeamGenerator_v
 	function _createBeamsBetweenTwoSuppotrts support_A support_B =
 	(
 		--format "\n"; print "BeamGenerator_v._createBeamsBetweenTwoSuppotrts()"
-		/** Get beam postion on top and bottom
-		 */
-		function getPosOnLine direction modify_point distance_point =
-		(
-			--format "\n"; print "BeamGenerator_v.getBeamS()"
 
-			--increment = (distance modify_point distance_point) / this.Options.connect -- Divide by 0|1|3 this.Options.connect:radiobuttons items:#('END', 'MIDDLE', 'QUATER')
-			--
-			--
-			--if direction == #BOTTOM then
-			--	modify_point.z += increment
-			--else
-			--	modify_point.z -= increment
-			--
-			--modify_point --return
+		/** Get posiotion of point on line
+		 */
+		function getPosOnLine direction point_data offset =
+		(
+			dir = if direction == #BOTTOM then -1 else 1
+
+			point_data[direction]	+ ( offset	* point_data[#VECTOR]* dir)
 		)
 
 		beams_created = #()
 
-		supports_order = #( support_A, support_B )
+		point_data_A = this._getSegmentEndPoints(support_A)
+		point_data_B = this._getSegmentEndPoints(support_B)
 
-		beams_to_generate_count = if this.Options.connect == 2 then 1 else 2 -- do not generate cross beam if middle of supports i connected
+
+		length_A = distance point_data_A[#BOTTOM] point_data_A[#TOP]
+		length_B = distance point_data_B[#BOTTOM] point_data_B[#TOP]
+
+		/* DISTANCE FROM END POINTS */
+		offset_A = length_A / this.Options.connect -- Divide by 0|1|3 this.Options.connect:radiobuttons items:#('END', 'MIDDLE', 'QUATER')
+		offset_B = length_B / this.Options.connect
 
 
-		ends_A = this._getSegmentEndPoints(support_A)
-		ends_B = this._getSegmentEndPoints(support_B)
+		/* BEAM 1 */
+		pos_bottom_1  	= getPosOnLine #BOTTOM	point_data_A offset_A
+		pos_top_1	= getPosOnLine #TOP	point_data_B offset_B
+
+		/* BEAM 2 */
+		pos_bottom_2  	= getPosOnLine #BOTTOM	point_data_B offset_B
+		pos_top_2	= getPosOnLine #TOP	point_data_A offset_A
 
 		--if same_height then
 		--(
 		--	/* GET BOTTOM POS WHICH IS UPPER */
-		--	pos_z_bottom = if ends_A[#BOTTOM].z > ends_B[#BOTTOM].z then ends_A[#BOTTOM].z else ends_B[#BOTTOM].z
+		--	pos_bottom_1 = if pos_bottom_1.z > pos_bottom_2.z then pos_bottom_1 else pos_bottom_2
+		--	pos_bottom_2 = if pos_bottom_1.z > pos_bottom_2.z then pos_bottom_1 else pos_bottom_2
 		--
 		--
 		--	/* GET TOP POS WHICH IS LOWER */
-		--	pos_z_top = if ends_A[#TOP].z > ends_B[#TOP].z then ends_A[#TOP].z else ends_B[#TOP].z
+		--	pos_top_1 = pos_top_2 = if pos_top_1.z > pos_top_2.z then pos_top_1 else pos_top_2
 		--)
 
 
-		offset = 30
 
-		length_A = distance ends_A[#BOTTOM] ends_A[#TOP]
-		length_B = distance ends_B[#BOTTOM] ends_B[#TOP]
+		this._createBeam support_A support_B pos_bottom_1 pos_top_1
 
-		offset_bottom = length_A / 4
-		offset_top = length_B / 4
-
-
-		pos_bottom  = ends_A[#BOTTOM]	+ ( offset_bottom	* ends_A[#VECTOR]* -1)
-		pos_top     = ends_B[#TOP]	+ ( offset_top	* ends_B[#VECTOR]  )
-
-		new_beam = this._drawLine (support_A) (pos_bottom) (pos_top)
-
-
-		this._addToGroup (new_beam) (support_A)
-
-		/* COPY MODIFIERS OF PARENT SUPPORT NAME WHICH NAME IS MATCHING: "*BAR*" */
-		for i = support_A.modifiers.count to 1 by -1 where matchPattern support_A.modifiers[i].name pattern:"*BAR*" do
-			addModifier new_beam support_A.modifiers[i]
+		if this.Options.connect != 2 then
+			this._createBeam support_B support_A pos_bottom_2 pos_top_2
 
 		append beams_created new_beam
-
-		Options.setProp new_beam #this (getHandleByAnim new_beam)
-
-		--Options.setProp new_beam #beam_supports #( Options.getThisPointer (supports_order[1]), Options.getThisPointer (supports_order[2]) )
 
 		beams_created --return
 	),
 
-	/** Get segment ends
+	/** Get segment point_data
 	 */
 	function _getSegmentEndPoints support =
 	(
@@ -140,55 +127,35 @@ struct BeamGenerator_v
 
 	/** Create beam
 	 */
-	function _createBeam support_1 support_2 =
+	function _createBeam support_A support_B pos_bottom pos_top =
 	(
 		format "\n"; print "BeamGenerator_v._createBeam()"
 
-		--/** Get beam postion on top and bottom
-		-- */
-		--function getPosOnLine direction modify_point distance_point =
-		--(
-		--	--format "\n"; print "BeamGenerator_v.getBeamS()"
-		--
-		--	increment = (distance modify_point distance_point) / this.Options.connect -- Divide by 0|1|3 this.Options.connect:radiobuttons items:#('END', 'MIDDLE', 'QUATER')
-		--
-		--
-		--	if direction == #BOTTOM then
-		--		modify_point.z += increment
-		--	else
-		--		modify_point.z -= increment
-		--
-		--	modify_point --return
-		--)
 
-		num_knots_1	= ( numKnots support_1 )
-		num_knots_2	= ( numKnots support_2 )
+		new_beam = SplineShape name:(support_A.name + "-beam") wirecolor:(this._shiftWirecolor(support_A.wirecolor) )
 
-		/* GET BOTTOM POINTS */
-		i_bottom_1 = if ( numSegments support_1 1) == 1 then 2 else num_knots_1 - 1 -- get second point or second point from end ( above ground point )
-		i_bottom_2 = if ( numSegments support_2 1) == 1 then 2 else num_knots_2 - 1
+		new_beam = this._drawLine (new_beam) (pos_bottom) (pos_top)
+
+		this._addToGroup (new_beam) (support_A)
+
+		new_beam.parent	= support_A
+		new_beam.pivot = new_beam.center
 
 
-		/* GET POSITIONS OF POINTS */
-		point_bottom_1	= getKnotPoint support_1	1 i_bottom_1	-- get 2. point from bottom
-		point_bottom_2	= getKnotPoint support_2	1 i_bottom_2	-- get 2. point from bottom
-		point_top_1	= getKnotPoint support_1	1 (i_bottom_1 - 1)	-- get 1. or 2. point from top
-		point_top_2	= getKnotPoint support_2	1 (i_bottom_2 - 1)	-- get 1. or 2. point from top
+		Options.setProp new_beam #this (getHandleByAnim new_beam)
+
+		Options.setProp new_beam #beam_supports #( Options.getThisPointer (support_A), Options.getThisPointer (support_B) )
 
 
-		/* FIND BEAM START & END */
-		--beam_start	= getPosOnLine #BOTTOM	(point_bottom_1)(point_top_1)
-		--beam_end_top	= getPosOnLine #TOP	(point_top_2)(point_bottom_2)
 
-		/* USE LOWER TOP POINT IF SAME HEIGHT */
-		--if same_height and ( point_top_first_support = getPosOnLine #TOP(point_top_1)(point_bottom_1)).z < beam_end_top.z then
-		--if same_height then
-		--(
-		--
-		--
-		--
-		--	beam_end_top.z = point_top_first_support.z
-		--)
+		/* COPY MODIFIERS OF PARENT SUPPORT NAME WHICH NAME IS MATCHING: "*BAR*" */
+		for i = support_A.modifiers.count to 1 by -1 where matchPattern support_A.modifiers[i].name pattern:"*BAR*" do
+			addModifier new_beam support_A.modifiers[i]
+
+
+
+
+
 
 		/* GET DISTANCE BETWEEN POINTS */
 		--distance_between_points = this.getPointDistance (copy beam_start) (copy beam_end_top )
@@ -196,9 +163,9 @@ struct BeamGenerator_v
 
 		/* CHECK MAX DISTANCE BETWEEN POINTS */
 		--if distance_between_points < this.Options.max_distance then
-			--beam_obj = this._drawLine (support_1) (beam_start) (beam_end_top)
+			--new_beam = this._drawLine (support_1) (beam_start) (beam_end_top)
 
-		--beam_obj --return
+		new_beam --return
 		 --return
 	),
 
@@ -206,15 +173,11 @@ struct BeamGenerator_v
 
 	/** Draw line
 	 */
-	function _drawLine support_A start_point end_point =
+	function _drawLine beam_obj start_point end_point =
 	(
 		--format "\n"; print "BeamGenerator_v.drawLine()"
 		cross_spline_id = 1 -- index of spline
 
-		beam_obj = SplineShape name:(support_A.name + "-beam") wirecolor:(this._shiftWirecolor(support_A.wirecolor) )
-
-		beam_obj.parent	= support_A
-		beam_obj.wirecolor	= support_A.wirecolor
 
 		addNewSpline beam_obj
 
@@ -225,7 +188,6 @@ struct BeamGenerator_v
 
 		updateShape beam_obj
 
-		beam_obj.pivot = beam_obj.center
 
 		--for i = support_A.modifiers.count to 1 by -1 do
 		--	addModifier beam_obj support_A.modifiers[i]

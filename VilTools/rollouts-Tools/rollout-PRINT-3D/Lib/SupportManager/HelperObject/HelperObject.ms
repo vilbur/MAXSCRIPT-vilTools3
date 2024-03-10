@@ -83,7 +83,7 @@ struct HelperObject_v
 	  */
 	function _setPointsPositions vert_pos =
 	(
-		format "\n"; print "HelperObject_v._setPointsPositions()"
+		--format "\n"; print "HelperObject_v._setPointsPositions()"
 		/** Set second point by normal of vertex
 		 */
 		function setSecondByNormal vert_pos _normal =
@@ -118,7 +118,7 @@ struct HelperObject_v
 
 
 		/* ADD FIRST POINT */
-		append this.points_positions vert_pos
+		append this.points_positions (vert_pos )
 
 		/* ADD SECOND POINT */
 		case this.Options.second_point_direction of
