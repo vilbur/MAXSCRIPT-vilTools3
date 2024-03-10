@@ -153,7 +153,7 @@ struct PlatformObject_v
 
 	private
 
-	mapped function getAllChildPoints _node &children = ( if isValidNode _node then join children _node.children else return children; if _node.children.count > 0 and classOf _node.children[1] == Point then this.getAllChildPoints _node.children &children ),
+	mapped function getAllChildPoints _node &children = ( if isValidNode _node then ( for child in _node.children where classOf child == Point do append children child ) else return children; if _node.children.count > 0 then this._getAllChildPoints _node.children &children ),
 
 	mapped function getAllChildren _node &children = ( join children _node.children; if _node.children.count > 0 then this.getAllChildren _node.children &children ),
 

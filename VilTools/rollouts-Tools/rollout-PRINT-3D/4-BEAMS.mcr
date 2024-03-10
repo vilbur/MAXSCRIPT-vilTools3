@@ -60,3 +60,25 @@ icon:	"across:3|control:checkbox|offset:[ 0, 6 ]"
 (
 	format "EventFired:	% \n" EventFired
 )
+
+/*==============================================================================
+
+		GENERATE BUTTON
+
+================================================================================*/
+/*
+*/
+macroscript	_print_support_generator_beams
+category:	"_3D-Print"
+buttontext:	"BEAMS"
+icon:	"across:1|offset:[ 0, 6 ]|width:242|height:32|tooltip:GEENERATE BEAMS between supports.\n\nWORKS ON SELECTION OF:\n\t1) SOURCE OBJECT\n\t2) POINTS\n\t3) SUPPORTS"
+(
+	on execute do
+		undo "Generate Beams" on
+		(
+			clearListener(); print("Cleared in:\n"+getSourceFileName())
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\6-GENERATOR.mcr"
+
+			(getSupportManagerInstance()).createBeams( selection as Array )
+		)
+)
