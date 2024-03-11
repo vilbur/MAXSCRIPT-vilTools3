@@ -13,6 +13,7 @@ struct SupportModifiers_v
 
 
 	/* options */
+	chamfer_values = Dictionary(),
 
 
 	/* dependency */
@@ -29,6 +30,7 @@ struct SupportModifiers_v
 		--format "supports.count	= % \n" supports.count
 		this.supports = supports
 
+		this._setChamferValues()
 
 		if not this._modifiersExists() then
 		(
@@ -40,7 +42,8 @@ struct SupportModifiers_v
 
 			this._addEditSpline()
 
-			this._addSweepModifier("Bar Width")
+			this._addSweepModifier("Bar Width") (  if raft_mode then this.Options.raft_width else this.Options.bar_width )
+
 			--format "RAFT_MODE	= % \n" raft_mode
 			--format "not raft_mode	= % \n" (not raft_mode)
 			if not raft_mode then
@@ -49,11 +52,11 @@ struct SupportModifiers_v
 
 				this._extrude("Extrude Base") (this.Options.base_width)
 
-				this._chamfer("Chamfer Base") (this.Options.chamfer_base )
+				this._chamfer("Chamfer Base") (this.chamfer_values[#BASE])
 			)
 
 
-			this._chamfer("Chamfer Bar")  (this.Options.chamfer_top ) selection_option:#ALL materialoption:( if raft_mode then #OFF else #DIFFERENT )  material_ID:( if raft_mode then this.Options.mat_ids[#MIDDLE] )
+			this._chamfer("Chamfer Bar")  (this.chamfer_values[ if raft_mode then #RAFT else #TOP]) selection_option:#ALL materialoption:( if raft_mode then #OFF else #DIFFERENT )  material_ID:( if raft_mode then this.Options.mat_ids[#MIDDLE] )
 
 			this._selectFace("Select Top Face")(this.Options.mat_ids[ if raft_mode then #MIDDLE else #TOP ]) invert_sel:raft_mode
 
@@ -137,7 +140,7 @@ struct SupportModifiers_v
 	/** SWEEP Modifier
 	  *
 	  */
-	function _addSweepModifier name =
+	function _addSweepModifier name diameter =
 	(
 		format "\n"; print "SupportModifiers_v._addSweepModifier()"
 
@@ -175,7 +178,7 @@ struct SupportModifiers_v
 
 		redrawViews() -- IMPORTANT TO UPDATE AFTER SETTING SHAPE AND BEFORE EDITING ITS PROPERTIES
 
-		sweep_mod[#Cylinder_Section].radius	= this.Options.bar_width / 2
+		sweep_mod[#Cylinder_Section].radius	= diameter / 2
 		sweep_mod[#Cylinder_Section].steps	= 6 -- Interpolation
 
 		--sweep_mod[#Bar_Section].cornerRadius = 0
@@ -254,6 +257,22 @@ struct SupportModifiers_v
 		*/
 
 		modPanel.addModToSelection ( chamfer_mod ) --ui:on
+	),
+
+	/** Set chamfer values, derivated from bar width
+	  *
+	  */
+	function _setChamferValues =
+	(
+		--format "\n"; print "SupportOptions_v._setChamferValues()"
+		--format "base_height	= % \n" base_height
+		--format "chamfer_top	= % \n" chamfer_top
+		this.chamfer_values[#BASE]	= this.Options.base_height / 2
+		this.chamfer_values[#TOP]	= (this.Options.bar_width / 2 / 10) * this.Options.chamfer_top -- chamfer in steps between 0-10
+		this.chamfer_values[#RAFT]	= (this.Options.raft_width / 2 / 10) * this.Options.chamfer_top
+
+		--format "this.chamfer_values: %\n" this.chamfer_values
+
 	),
 
 	/** Add extrude modifier

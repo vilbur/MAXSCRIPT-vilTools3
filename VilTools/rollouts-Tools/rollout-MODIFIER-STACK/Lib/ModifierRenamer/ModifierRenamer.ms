@@ -21,7 +21,7 @@ struct ModifierRenamer_v
 	(
 		format "\n%" (getSourceFileName())
 		format "\n"; print "ModifierRenamer_v.generateName()"
-		--format "classOf modObject:	% \n" (classOf this.modObject)
+		format "classOf modObject:	% \n" (classOf this.modObject)
 		this._DevPrintModProperties()
 
 		method_name = "_" + (classOf this.modObject) as string
@@ -42,6 +42,7 @@ struct ModifierRenamer_v
 				Materialmodifier:	"Mat ID " + this.modObject.materialID as string
 				FFDBox:	"FFDBox"
 				FFD_2x2x2:	"FFD2"
+				DeleteSplineModifier:	"Delete"
 
 				default: this.modObject.name
 			)
@@ -183,7 +184,7 @@ struct ModifierRenamer_v
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._getModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		--format "subObjectLevel:	% \n" subObjectLevel
-		mod_name = "VolSel "
+		mod_name = "VolSel"
 
 		/** Get texture name
 		  *
@@ -341,6 +342,25 @@ struct ModifierRenamer_v
 		--format "\n"; print "ModifierRenamer_v._Uvwmap()"
 		"UV"
 	),
+
+	/** normalize spline
+	 */
+	function _Normalize_Spline2 =
+	(
+		--format "\n"; print "ModifierRenamer_v.__Normalize_Spline2()"
+		mod_name = "Normalize"
+
+		mod_name += case this.modObject.NormalizeType of
+		(
+			0: " Length "+ this.modObject.length as string
+			1: " Knots "+ this.modObject.numKnots as string
+
+			default:""
+		)
+
+		 --return
+	),
+
 
 	/**  spline offset
 	  *

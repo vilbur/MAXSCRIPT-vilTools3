@@ -1,3 +1,7 @@
+
+
+-- DEV IMPORT
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportManager.ms" )	--"./Lib/SupportManager/SupportManager.ms"
 /*==============================================================================
 
 		COTNROLS ROW 1
@@ -71,7 +75,7 @@ macroscript	_print_platform_generator_bar_width
 category:	"_3D-Print"
 buttontext:	"Bar width"
 tooltip:	"Bar width in mm of printed model.\n\nExported scale is used"
-icon:	"across:2|control:spinner|range:[ 0.1, 99, 1.5 ]|width:64|offset:[ -8, 6]"
+icon:	"across:2|control:spinner|range:[ 0.8, 99, 1.5 ]|width:64|offset:[ -8, 6]"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -82,7 +86,7 @@ macroscript	_print_platform_generator_raft_width
 category:	"_3D-Print"
 buttontext:	"Raft width"
 tooltip:	"Raft width in mm of printed model.\n\nExported scale is used"
-icon:	"across:2|control:spinner|range:[ 0.1, 99, 1.5 ]|width:64|offset:[ -8, 6]"
+icon:	"across:2|control:spinner|range:[ 0.3, 99, 0.5 ]|width:64|offset:[ -8, 6]"
 (
 	format "EventFired:	% \n" EventFired
 )

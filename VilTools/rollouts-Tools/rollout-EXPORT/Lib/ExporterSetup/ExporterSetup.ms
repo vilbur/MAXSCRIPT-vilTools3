@@ -81,8 +81,10 @@ struct ExporterSetup_v
 	 */
 	function _exportPrint =
 	(
-		format "\n"; print "ExporterSetup_v._exportPrint()"
-		format "ROLLOUT_export.SPIN_export_size.value:	% \n" ROLLOUT_export.SPIN_export_size.value
+		--format "\n"; print "ExporterSetup_v._exportPrint()"
+		--format "ROLLOUT_export.SPIN_export_size.value:	% \n" ROLLOUT_export.SPIN_export_size.value
+
+		format "\nEXPORTING 3D PRINT\n"
 
 		Exporter =	(PrintExporter_v(this.export_nodes))
 

@@ -54,7 +54,7 @@ filein( getFilenamePath(getSourceFileName()) + "/inlcudes/create-test-objects.ms
 
 /* VERTEX COLOR */
 --createSourceMesh segments:2 vertex_color:orange vertex_selection:#{1..2}
-createSourceMesh segments:12 vertex_color:orange vertex_selection:#{1..2} obj:#SPHERE
+createSourceMesh segments:12 vertex_color:orange vertex_selection:#{1..6} obj:#SPHERE
 --createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
 
 
@@ -124,56 +124,52 @@ format "NEW_SUPPORTS	= % \n" new_supports
 
 
 
-
-print "---------------- GENERATE BEAMS ----------------"
-
-SupportManager.Options.max_distance = 100
-
-/* CONNECT ENDS */
-bbeames_connect_ends = SupportManager.createBeams( new_supports )
-
-
-/* CONNECT MIDDLES */
-SupportManager.Options.connect = 2
-beames_connect_middle = SupportManager.createBeams( new_supports )
-
-/* CONNECT IN THIRD OF SUPPORTS HEIGHT */
-SupportManager.Options.connect = 3
-beames_connect_third = SupportManager.createBeams( new_supports )
-
-/* CONNECT IN QUATER OF SUPPORTS HEIGHT */
-SupportManager.Options.connect = 4
-beames_connect_quater = SupportManager.createBeams( new_supports )
-
-
-
-
-
-print "---------------- GENERATE POINTS FROM SELECTED VERTS ----------------"
-
-select _source_object
-
-max modify mode
-
-subObjectLevel = 1
-
-_source_object.modifiers[#Edit_Poly].SetSelection #Vertex #{}
-_source_object.modifiers[#Edit_Poly].Select #Vertex #{3..6}
-
-new_points_by_selection = SupportManager.generatePointHelpers ( selection as Array )
-format "NEW_POINTS	= % \n" new_points_by_selection
-
-
-print "---------------- GENERATE RAFTS ----------------"
-
-new_rafts = SupportManager.createSupports( new_points ) raft_mode:true
-format "NEW_RAFTS	= % \n" new_rafts
-
-
-print "---------------- GENERATE RAFTS BEAMS ----------------"
-
-beames_rafts = SupportManager.createBeams( new_rafts )
-
-
-
-
+--
+--print "---------------- GENERATE BEAMS ----------------"
+--
+--SupportManager.Options.max_distance = 100
+--
+--/* CONNECT ENDS */
+--bbeames_connect_ends = SupportManager.createBeams( new_supports )
+--
+--
+--/* CONNECT MIDDLES */
+--SupportManager.Options.connect = 2
+--beames_connect_middle = SupportManager.createBeams( new_supports )
+--
+--/* CONNECT IN THIRD OF SUPPORTS HEIGHT */
+--SupportManager.Options.connect = 3
+--beames_connect_third = SupportManager.createBeams( new_supports )
+--
+--/* CONNECT IN QUATER OF SUPPORTS HEIGHT */
+--SupportManager.Options.connect = 4
+--beames_connect_quater = SupportManager.createBeams( new_supports )
+--
+--
+--
+--
+--
+--print "---------------- GENERATE POINTS FROM SELECTED VERTS ----------------"
+--
+--select _source_object
+--
+--max modify mode
+--
+--subObjectLevel = 1
+--
+--_source_object.modifiers[#Edit_Poly].SetSelection #Vertex #{}
+--_source_object.modifiers[#Edit_Poly].Select #Vertex #{3..6}
+--
+--new_points_by_selection = SupportManager.generatePointHelpers ( selection as Array )
+--format "NEW_POINTS	= % \n" new_points_by_selection
+--
+--
+--print "---------------- GENERATE RAFTS ----------------"
+--
+--new_rafts = SupportManager.createSupports( new_points ) raft_mode:true
+--format "NEW_RAFTS	= % \n" new_rafts
+--
+--
+--print "---------------- GENERATE RAFTS BEAMS ----------------"
+--
+--beames_rafts = SupportManager.createBeams( new_rafts )

@@ -68,6 +68,7 @@ function importStdScripts =
 		"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 		"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
 
+		"/rollout-PRINT-3D/Lib/SupportManager/SupportManager.ms",
 
 		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)

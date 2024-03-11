@@ -134,7 +134,8 @@ macroscript	modifiers_keep_active_last_modifier
 category:	"_Modifier-Stack"
 buttonText:	"Last Modifier"
 tooltip:	"Select last modifier when object is selected"
-icon:	"control:checkbutton|MENU:true|autorun:true"
+-- AUTORUN TEMPORARY DISABLED, IT IS FIRED UP ON HelperGenerator_v.generatePointHelpers reset_verts:true
+icon:	"control:checkbutton|MENU:true|autorun:false"
 (
 
 	on execute do

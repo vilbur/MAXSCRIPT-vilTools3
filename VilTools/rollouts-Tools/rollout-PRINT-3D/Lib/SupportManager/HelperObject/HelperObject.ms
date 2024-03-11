@@ -43,12 +43,17 @@ struct HelperObject_v
 		(
 			_point = Point name:(this._getName()) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:(this._shiftWirecolor(i)) Box:(showBox(i)) Cross:(showCross(i)) showLinks:true
 
+			format "\n---------------\n"
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
+			(
 				this.point_helper = _point
-			else
-				this._alignToVector (_point) (points_created[i - 1].pos) (_point.pos)
 
+				if points_positions.count > 1 then
+					this._alignToVector (_point) (_point.pos) (points_positions[i + 1]) -- HOT FIX THEN ALIGN BY NORMAL ( SINGLE VALUE ) WILL WORK
+			)
+			else
+				this._alignToVector (_point) (points_positions[i - 1]) (_point.pos)
 
 			/* LINK FIRST POINT TO SOURCE OBJECT, OTHER POINTS ARE LINKED IN CHAIN  */
 			_point.parent = if i == 1 then source_obj else points_created[points_created.count]
@@ -142,13 +147,14 @@ struct HelperObject_v
 
 	/** Align to ctor
 	 */
-	function _alignToVector obj p1 p2 =
+	function _alignToVector obj point_to_rotate obj_pos =
 	(
-		--format "\n"; print "HelperObject_v._alignToCtor()"
+		format "\n"; print "HelperObject_v._alignToVector()"
 		--format "obj	= % \n" obj
-		--format "% %\n" p1 p2
+		--format "% %\n" point_to_rotate obj_pos
 
-		dir = normalize (p2 - p1)
+		dir = normalize (obj_pos - point_to_rotate)
+		format "dir: %\n" dir
 
 		axis = #z
 
@@ -162,13 +168,65 @@ struct HelperObject_v
 		tm  = obj.transform
 		vec = normalize vec
 		dir = normalize dir
-		rtm = AngleAxis (acos (dot vec dir)) ( normalize (cross dir vec))
+
+		angle_vectors = acos (dot vec dir) -- get angle between
+
+		axis_of_plane_defined_by_vectors = normalize (cross dir vec)
+
+		rtm = AngleAxis (angle_vectors) ( axis_of_plane_defined_by_vectors )
 
 		obj.transform = Translate ( Rotate ( ScaleMatrix tm.scale) (tm.rotation*rtm)) tm.pos
 
 		if pos == true then
-			obj.pos = p1
+			obj.pos = point_to_rotate
 	),
+
+	--/** Align to ctor
+	-- */
+	--function _alignToNormal obj =
+	--(
+	--	format "\n"; print "HelperObject_v._alignToNormal()"
+	--	--format "obj	= % \n" obj
+	--	--format "% %\n" point_to_rotate obj_pos
+	--
+	--
+	--
+	--	obj_pos = obj.pos
+	--	--point_to_rotate = obj.pos	+ ( 10.0	* normal )
+	--	point_to_rotate = obj.pos + ( 10.0	* normal )
+	--
+	--
+	--
+	--	--format "normal: %\n" ((normal))
+	--	--normal = normalize (obj_pos - point_to_rotate)
+	--	dir = normalize (obj_pos - point_to_rotate)
+	--	--dir = normal * -1
+	--
+	--	--format "dir: %\n" dir
+	--	axis = #z
+	--
+	--	vec = case axis of
+	--	(
+	--		#x: obj.transform[1]
+	--		#y: obj.transform[2]
+	--		#z: obj.transform[3]
+	--	)
+	--
+	--	tm	= obj.transform
+	--	vec	= normalize vec
+	--	normal	= normalize dir
+	--
+	--	angle_vectors = acos (dot vec dir) -- get angle between
+	--
+	--	axis_of_plane_defined_by_vectors = normalize (cross dir vec)
+	--
+	--	rtm = AngleAxis (angle_vectors) ( axis_of_plane_defined_by_vectors )
+	--
+	--	obj.transform = Translate ( Rotate ( ScaleMatrix tm.scale) (tm.rotation * rtm)) tm.pos
+	--
+	--	--if pos == true then
+	--		--obj.pos = pos
+	--),
 
 	/** Set data about source object to first  point
 	  *

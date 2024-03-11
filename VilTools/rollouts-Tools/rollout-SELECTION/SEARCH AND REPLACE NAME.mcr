@@ -41,27 +41,33 @@ icon:	"control:editText|across:3"
 macroscript selection_search_and_replace
 category:	"Selection"
 buttonText:	"Search & Replace"
-tooltip:	"Regex Search & Replace in names of selection"
+tooltip:	"Regex Search & Replace in names of selection or all objects if nothing selected"
 icon:	"across:3"
 (
 
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Search And Replace Object Name.mcr"
-
-	--messageBox "Placeholder" title:""
-	format "EventFired	= % \n" EventFired
-
-	search_text  = ROLLOUT_selection.ET_search_in_name.text
-	replace_text = ROLLOUT_selection.ET_replace_in_name.text
-
-	for obj in selection do
+	on execute do
 	(
+		--format "EventFired	= % \n" EventFired
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\SEARCH AND REPLACE NAME.mcr"
+		search_text  = ROLLOUT_selection.ET_search_in_name.text
+		replace_text = ROLLOUT_selection.ET_replace_in_name.text
 
-		--format "search_text	= % \n" search_text
-		--format "replace_text	= % \n" replace_text
+		objects_replace =	if selection.count == 0 then objects else selection --return
 
-		if search_text != "" then
-			obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" search_text ).Replace obj.name replace_text
 
+		if queryBox ( "Replace name in "+( if selection.count == 0 then "ALL OBJECTS" else "SELECTION")+ " ?\n\nSEARCH FOR:\n\n"+search_text+"\n\nREPALCE WITH:\n\n"+replace_text) title:"Replace Name" then
+		(
+			counter = 0
+
+			if search_text != "" then
+				for obj in objects_replace where matchPattern obj.name pattern:("*"+search_text+"*") do
+				(
+					obj.name = ( dotNetObject "System.Text.RegularExpressions.Regex" search_text ).Replace obj.name replace_text
+
+					counter+=1
+				)
+
+			messageBox ( counter as string +  " object names has benn replaced") title:"SUCCESS"  beep:false
+		)
 	)
-
 )

@@ -12,9 +12,14 @@ icon:	"Across:2|width:190|height:48"
 --icon:	"control:checkbutton"
 (
 	/* IMPORT ZBRUSH PLUGIN */
-	filein @"C:\GoogleDrive\ProgramsData\CG\ZBrush\Plugins\INSTALLED\MaxZbrushSync\3DsMax\Lib\MaxToZbrushSync.ms" --"./../../../../../../../../../../../../../../../GoogleDrive/ProgramsData/CG/ZBrush/Plugins/INSTALLED/MaxZbrushSync/3DsMax/Lib/MaxToZbrushSync.ms"
+-- 	filein @"C:\GoogleDrive\ProgramsData\CG\ZBrush\Plugins\INSTALLED\MaxZbrushSync\3DsMax\Lib\MaxToZbrushSync.ms" --"./../../../../../../../../../../../../../../../GoogleDrive/ProgramsData/CG/ZBrush/Plugins/INSTALLED/MaxZbrushSync/3DsMax/Lib/MaxToZbrushSync.ms"
 
-	(MaxToZbrushSync_v()).exportObjToZbrush()
+	on execute do
+	(
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/MaxToZbrushSync.ms" )	--"./Lib/MaxToZbrushSync.ms"
+
+		(MaxToZbrushSync_v()).exportObjToZbrush()
+	)
 )
 
 /**
@@ -30,11 +35,12 @@ toolTip:	""
 (
 
 	/* IMPORT ZBRUSH PLUGIN */
-	filein @"C:\GoogleDrive\ProgramsData\CG\ZBrush\Plugins\INSTALLED\MaxZbrushSync\3DsMax\Lib\MaxToZbrushSync.ms" --"./../../../../../../../../../../../../../../../GoogleDrive/ProgramsData/CG/ZBrush/Plugins/INSTALLED/MaxZbrushSync/3DsMax/Lib/MaxToZbrushSync.ms"
-
-	undo "Import Zbrush" on
+	on execute do
 	(
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/MaxToZbrushSync.ms" )	--"./Lib/MaxToZbrushSync.ms"
+
 		(MaxToZbrushSync_v()).importObjToMax()
 	)
+
 
 )

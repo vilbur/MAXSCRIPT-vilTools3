@@ -43,6 +43,10 @@ struct SupportOptions_v
 	max_distance	= 20,	-- max distance between platforms
 	min_height	= 10,	-- generate cross section only if platform is higher than this number
 
+
+	/* RAFT OPTIONS */
+	raft_width 	= 0.5,
+
 	/* BEAMS OPTIONS */
 	connect = 1,
 
@@ -72,7 +76,6 @@ struct SupportOptions_v
 
 		this._setDimensions()
 
-		this._setChamferValues()
 		--format "chamfer_top_divider	= % \n" chamfer_top_divider
 	),
 
@@ -171,22 +174,6 @@ struct SupportOptions_v
 		base_height = this.bottom_layers_count * this.layer_height / export_size
 	),
 
-
-	/** Set chamfer values, derivated from bar width
-	  *
-	  */
-	function _setChamferValues =
-	(
-		--format "\n"; print "SupportOptions_v._setChamferValues()"
-		--format "base_height	= % \n" base_height
-		--format "chamfer_top	= % \n" chamfer_top
-
-
-		chamfer_base	= base_height / 2
-		--format "CHAMFER_BASE	= % \n" chamfer_base
-		chamfer_top	= (bar_width / 2 / 10) * chamfer_top -- chamfer in steps between 0-10
-		--format "CHAMFER_TOP	= % \n" chamfer_top
-	),
 
 	/**
 	 *

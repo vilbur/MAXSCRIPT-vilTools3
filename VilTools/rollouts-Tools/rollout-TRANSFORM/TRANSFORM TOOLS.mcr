@@ -1,14 +1,40 @@
 
+global SAVED_TRANSFORMS_OF_SELECTION = Dictionary #string
+
 /**
  *
  */
-macroscript	_measurements_get_obejct_dimensions
-category:	"_Transform"
+macroscript	_transfrom_save_load_transforms
+category:	"_Transform-Tools"
+buttontext:	"Save\Load Tranforms"
+toolTip:	"Save Tranforms - Ctrl: Load"
+icon:	"tooltip:Save transform of selected objects.\n\nCTRL: Load Transfroms"
+(
+	on execute do
+	(
+		for obj in selection do
+			if not keyboard.controlPressed then
+				SAVED_TRANSFORMS_OF_SELECTION[ (getHandleByAnim  obj) as string ] = obj.transform
+
+		else
+			undo "Select Vertex Color" on
+				if ( transform_saved = SAVED_TRANSFORMS_OF_SELECTION[ (getHandleByAnim  obj) as string ] ) != undefined then
+					obj.transform = transform_saved
+
+	)
+)
+
+
+/**
+ *
+ */
+macroscript	_transfrom_get_object_dimensions
+category:	"_Transform-Tools"
 buttontext:	"Get Dimensions"
 toolTip:	"Open Transform Randomizer Rollout"
 --icon:	"#(path, index)"
 (
-
+	on execute do
 	if( selection.count > 0 ) then
 	(
 		obj = selection[1]

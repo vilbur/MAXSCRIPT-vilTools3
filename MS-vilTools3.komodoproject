@@ -45,6 +45,8 @@
 </livefolder>
 <livefolder id="e4ab3889-9904-42af-b0a6-605ddce294d3" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-SPLINE" url="VilTools/rollouts-Tools/rollout-SPLINE/">
 </livefolder>
+<livefolder id="e684986c-0f44-43eb-9580-053a240c9e32" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-SCENE-MANAGER" url="VilTools/rollouts-Tools/rollout-SCENE-MANAGER/">
+</livefolder>
 <livefolder id="edd3409e-ab07-464a-9ad0-09968fd2a16f" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-VERTEX-COLOR" url="VilTools/rollouts-Tools/rollout-VERTEX-COLOR/">
 </livefolder>
 <preference-set idref="640e1e37-f762-488e-ae28-11c19c36e314" id="project" preftype="project">

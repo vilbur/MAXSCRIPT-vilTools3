@@ -40,7 +40,7 @@ tooltip:	"Regex Search & Replace in layer names in selected layers"
 icon:	"across:3"
 (
 
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\ Search And Replace Name.mcr"
+	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Layers Name.mcr"
 
 	--messageBox "Placeholder" title:""
 	format "EventFired	= % \n" EventFired

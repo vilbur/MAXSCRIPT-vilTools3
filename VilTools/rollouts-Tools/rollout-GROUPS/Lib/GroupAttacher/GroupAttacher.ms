@@ -64,6 +64,38 @@ struct GroupAttacher_v
 	private
 
 
+
+	/** Find group
+
+		NEW METHOD QUICK ADD, FOR USE LATER
+
+	 */
+	function _findGroup obj =
+	(
+		--format "\n"; print "SupportGenerator_v.findGroup()"
+
+		if isGroupMember obj then
+		(
+			while not isGroupHead obj.parent do
+			(
+				format "\n\n"
+				format "obj.parent: %\n" obj.parent
+
+				obj = obj.parent
+			)
+
+
+			obj.parent --return
+
+		)
+	),
+
+
+
+
+
+
+
 	/** Get instances of group
 	 */
 	function _getInstancesOfGroup =
