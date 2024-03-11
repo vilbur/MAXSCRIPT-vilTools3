@@ -124,11 +124,31 @@ struct LayersManager_v
 	 */
 	function getTopLayers layers =
 	(
-		--format "\n"; print "LayersManager_v.getAllTopLayers()"
+		format "\n"; print "LayersManager_v.getTopLayers()"
 		layers = this.getLayers(layers)
 
 		for layer in this.getLayersTree(layers) where layer.getParent() == undefined collect layer
 	),
+
+	/** Find top layer
+	 */
+	function findLayer pattern search_only_top_layers:false =
+	(
+		format "\n"; print "SceneLayers_v.findLayer()"
+
+		all_layers = this.getAllLayers()
+
+		search_layers  = if search_only_top_layers then this.getTopLayers (all_layers) else all_layers
+
+		--top_layers = LayersManager.getTopLayers (pattern)
+		format "all_layers: %\n" all_layers
+
+		found_layers = for layer in search_layers where matchPattern layer.name pattern:("*"+pattern+"*") collect layer
+		--format "found_layers: %\n" found_layers
+		if found_layers.count > 0 then
+			found_layers[1] --return
+	),
+
 
 	/** Get children layers of given layers
 	  */

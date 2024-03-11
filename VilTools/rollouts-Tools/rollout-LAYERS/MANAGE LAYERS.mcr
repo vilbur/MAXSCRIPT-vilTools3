@@ -2,7 +2,7 @@
 /* NEW LAYER
 */
 macroscript	layers_new_layer
-category:	"_Layers-3"
+category:	"_Layers-Manage"
 buttontext:	"New Layer"
 --toolTip:	"Select Objects of selected layers, or layers of selected objects."
 icon:	"MENU:NEW Layer"
@@ -46,7 +46,7 @@ icon:	"MENU:NEW Layer"
 /** EXPAND SELECTED LAYERS
  */
 macroscript	_layers_expand_layers_of_selection
-category:	"_Layers-3"
+category:	"_Layers-Manage"
 buttontext:	"Expand Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
 icon:	"MENU:EXPAND Layers"
@@ -75,7 +75,7 @@ icon:	"MENU:EXPAND Layers"
 /** COLLAPSE SELECTED LAYERS
  */
 macroscript	_layers_collapse_all_layers
-category:	"_Layers-3"
+category:	"_Layers-Manage"
 buttontext:	"Collapse Layers"
 tooltip:	"Collapse Layers in manager"
 icon:	"MENU:COLLAPSE Layers"
@@ -88,7 +88,7 @@ icon:	"MENU:COLLAPSE Layers"
 /** CLONE LAYERS
  */
 macroscript	_layers_manager_clone_layers
-category:	"_Layers-3"
+category:	"_Layers-Manage"
 buttontext:	"Clone Layers"
 tooltip:	"Copy selected objects to new layers"
 icon:	"MENU:CLONE Layers"

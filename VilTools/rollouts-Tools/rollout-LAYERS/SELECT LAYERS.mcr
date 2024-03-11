@@ -1,7 +1,7 @@
 /**
  */
 macroscript	_layers_activate_curent_layer_of_selection
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Set current"
 tooltip:	"Set current layer by selection"
 icon:	"MENU:Set Current"
@@ -27,7 +27,7 @@ autoUndoEnabled:true
 /* ADD TO CURRENT LAYER
 */
 macroscript	layers_add_selection_to_current_layer
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Add to selected layer"
 toolTip:	"Add to first selected layer \n or layer of last selected object."
 icon:	"MENU:ADD to selected Layer"
@@ -70,7 +70,7 @@ autoUndoEnabled:true
 /* SELECT OBEJCTS IN LAYERS
 */
 macroscript	layers_move_to_edit_layer
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Move to edit layer"
 --toolTip:	"Select Objects of selected layers, or layers of selected objects."
 icon:	"MENU:MOVE to edit layer"
@@ -90,7 +90,7 @@ autoUndoEnabled:true
 /* SELECT OBEJCTS IN LAYERS
 */
 macroscript	layers_select_all_objects_selection
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Select Objects"
 toolTip:	"Select Objects of selected layers, or layers of selected objects \n\nMenu Option: Select objects in all nensted layers"
 icon:	"MENU:Select OBJECTS"
@@ -122,7 +122,7 @@ autoUndoEnabled:true
 /** SELECT CHILDREN LAYERS
  */
 macroscript	_layers_manager_select_children_layer
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Select Child layers"
 tooltip:	"Select Child layers \n\nMenu Option: Select all nensted layers"
 icon:	"MENU:Select CHILD Layers"
@@ -156,7 +156,7 @@ autoUndoEnabled:true
 /** SELECT BY OBEJCT
  */
 macroscript	_layers_manager_select_layer_by_objects
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Select By Objects"
 tooltip:	"Select layers by Objects"
 icon:	"MENU:tooltip"
@@ -174,7 +174,7 @@ autoUndoEnabled:true
 /** SELECT BY PREFIX
  */
 macroscript	_layers_manager_select_layer_by_prefix
-category:	"_Layers-2"
+category:	"_Layers-Select"
 buttontext:	"Select By Prefix"
 tooltip:	"Select layers by prefix"
 icon:	"MENU:true|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
