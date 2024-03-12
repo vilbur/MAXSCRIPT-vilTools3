@@ -125,7 +125,8 @@ struct LayersManager_v
 	function getTopLayers layers =
 	(
 		format "\n"; print "LayersManager_v.getTopLayers()"
-		layers = this.getLayers(layers)
+
+		layers = 	if layers == #ALL then this.getAllLayers() else this.getLayers(layers)
 
 		for layer in this.getLayersTree(layers) where layer.getParent() == undefined collect layer
 	),

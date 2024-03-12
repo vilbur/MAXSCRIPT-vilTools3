@@ -11,7 +11,7 @@ struct SceneLayers_v
 	top_layer_names_ext	= #( #HELP, #SUPPORTS, #REFERENCE ),
 
 	prefix = "——————",
-	diameter = "-",
+	delimeter = "-",
 
 	--suffix_pattern = this.arrayToString( top_layer_names + top_layer_names_ext ) "|",
 	suffix_pattern,
@@ -38,7 +38,7 @@ struct SceneLayers_v
 
 	/**
 	 */
-	function _getTopLayerTitles =
+	function _getTopLayerTitles flat:false =
 	(
 		format "\n"; print "SceneLayers_v.create()"
 
@@ -62,29 +62,34 @@ struct SceneLayers_v
 			top_layer_titles[ used_layers[i]] =  " " + suffix + prefix + " "+ toUpper layer_name + " " + prefix+ prefix+ prefix
 		)
 
+
+		if flat then
+			top_layer_titles = for data in top_layer_titles collect data.value
+
 		top_layer_titles --return
 
 	),
 
 
 	/** Move to layer
+	  *
+	  * @param name mode #MOVE|#COPY|#INSTANCE|#REFERENCE
 	 */
-	function moveToLayer obj name_key =
+	function moveToLayer obj name_key mode:#MOVE =
 	(
 		format "\n"; print "SceneLayers_v.moveToLayer()"
-
 		name_key = name_key as name
 
+		top_layers = this.getTopLayers()
 		top_layer = this._getOrCreateTopLayer(name_key)
 
 		layers_tree =  this._getLayersTree (obj.layer)
 
-		last_layer = copy top_layer
+		/* REMOVE TOP LAYER FROM OLD TREE */
+		if ( index = findItem top_layers layers_tree[1] ) > 0 then
+			deleteItem layers_tree 1
 
 		layer_names_source = for layer in layers_tree collect layer.name
-
-		--for layer_name_source in layer_names_source do
-			--format "layer_name_source: %\n" layer_name_source
 
 		if layer_names_source[1] != "0" then
 		(
@@ -99,14 +104,59 @@ struct SceneLayers_v
 
 			new_layers = LayersManager.createLayersTree(layer_names_target) parent_layer:top_layer
 
-			new_layers[new_layers.count].addNode obj
+			layer = new_layers[new_layers.count]
 		)
 		else
 			/* IF OBJECT IS IN "Default" Layer */
-			top_layer.addNode obj
+			layer = top_layer
 
-			macros.run "Scene Explorer" "SERemoveEmptyLayers"
 
+		this._moveOrCopyObjToLayer name_key #(obj) layer mode
+
+		macros.run "Scene Explorer" "SERemoveEmptyLayers"
+
+		if name_key == #FINAL then
+			for new_layer in new_layers do
+				new_layer.setName ( substituteString new_layer.name "-final" "")
+
+	),
+
+
+	/** Move or py obj to layer
+	 */
+	function _moveOrCopyObjToLayer name_key objs layer mode =
+	(
+		--format "\n"; print "SceneLayers_v.moveOrPyObjToLayer()"
+
+		local new_nodes
+
+		if mode != #MOVE then
+		(
+			maxOps.CloneNodes objs expandHierarchy:true cloneType:mode newNodes:&new_nodes
+
+			for i = 1 to new_nodes.count do
+				new_nodes[i].name = objs[i].name
+
+		)
+
+
+		nodes_to_add = if new_nodes != undefined then new_nodes else objs
+
+		layer.addNodes nodes_to_add
+
+		for node_to_add in nodes_to_add do
+		(
+			format "node_to_add: %\n" node_to_add
+			obj_name_new = this._rmoveLayerTypeSuffix node_to_add.name
+
+			if name_key != #FINAL then
+				obj_name_new += delimeter + toLower (name_key as string )
+
+			node_to_add.name = obj_name_new
+		)
+
+
+		nodes_to_add --return
 	),
 
 	/** Get layers tree
@@ -132,14 +182,16 @@ struct SceneLayers_v
 			format "\n"; print "SceneLayers_v.getLayerKeySuffix()"
 
 			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerKey layers_top[1].name) != undefined  then
-				diameter + ( toLower layer_key)
+				delimeter + ( toLower layer_key)
 			else
 				""
 		)
 
 		local obj_layer
 
-		obj_name_stripped = this._regExReplace obj.name "[_-]*\d+$" ""
+		obj_name_stripped = this._rmoveLayerTypeSuffix obj.name
+
+		obj_name_stripped = this._regExReplace obj_name_stripped "[_-]*\d+$" ""
 
 		if not matchPattern obj.layer.name pattern:( obj_name_stripped + "*") then
 		(
@@ -154,16 +206,14 @@ struct SceneLayers_v
 
 	/** Find top layer
 	 */
-	function findTopLayer pattern =
+	function getTopLayers =
 	(
 		--format "\n"; print "SceneLayers_v.findTopLayer()"
-		--
-		--top_layers = LayersManager.findLayer (pattern) search_only_top_layers:true
-		----format "top_layers: %\n" top_layers
-		--
-		----found_layers = for layer in top_layers where matchPattern layer.name pattern:("*"+pattern+"*") collect layer
-		--
-		--found_layers[1] --return
+		all_top_layers = LayersManager.getTopLayers #ALL
+
+		top_layers_titles = this._getTopLayerTitles flat:true
+
+		for layer in all_top_layers where findItem top_layers_titles layer.name  > 0 collect layer
 	),
 
 	/**
@@ -200,15 +250,6 @@ struct SceneLayers_v
 		top_layer --return
 	),
 
-	/** Create top layer
-	 */
-	function _createTopLayer =
-	(
-		--format "\n"; print "SceneLayers_v._createTopLayer()"
-
-
-	),
-
 	/** Get source layer names
 	 */
 	function _getSourceLayerNames layer_names _replace =
@@ -217,7 +258,7 @@ struct SceneLayers_v
 		RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+this.suffix_pattern+")$") this.IgnoreCase )
 
 		for layer_name in layer_names collect
-			 (RegExR.Replace layer_name "" ) + (diameter + _replace )
+			 (this._rmoveLayerTypeSuffix layer_name) + (delimeter + _replace )
 	),
 
 	/** Reg ex replace
@@ -229,8 +270,15 @@ struct SceneLayers_v
 		RegExR.Replace _string _replace
 	),
 
+	/** Rmove layer type suffix
+	 */
+	function _rmoveLayerTypeSuffix _string =
+	(
+		--format "\n"; print "SceneLayers_v._rmoveLayerTypeSuffix()"
+		RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+this.suffix_pattern+")$") this.IgnoreCase )
 
-
+		RegExR.Replace _string ""
+	),
 
 	/**
 	 */

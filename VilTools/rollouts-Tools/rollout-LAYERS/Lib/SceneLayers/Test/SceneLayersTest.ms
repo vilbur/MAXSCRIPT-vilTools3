@@ -26,23 +26,24 @@ objects_layer = LayersManager.newLayer "Foo-Obejcts" --parent:top_layer_edit
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
 SceneLayers.moveToLayer( $Sphere001 ) #EDIT
-layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere001 )
+layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere001*[1] )
 
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
 
 
-
-layer_box	= SceneLayers.moveToLayerByObject( $Box001 )
-layer_box.setParent (objects_layer)
-
-
-SceneLayers.moveToLayer( $Box001 )(#SOURCE)
-SceneLayers.moveToLayer( $Box001 )("FINAL")
-
+--
+--layer_box	= SceneLayers.moveToLayerByObject( $Box001 )
+--layer_box.setParent (objects_layer)
+--
+--
+--SceneLayers.moveToLayer( $Box001 )(#SOURCE)
+--SceneLayers.moveToLayer( $Box001 )(#EDIT) mode:#REFERENCE
+--SceneLayers.moveToLayer( $Box001 )("FINAL") mode:#COPY
+--
 
 --format "layer_edit: %\n" layer_edit
---
---
---actionMan.executeAction 0 "40021"  -- Selection: Select All
+
+
+actionMan.executeAction 0 "40021"  -- Selection: Select All
