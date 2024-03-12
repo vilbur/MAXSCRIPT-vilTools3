@@ -342,6 +342,33 @@ struct LayersManager_v
 		new_layer --return
 	),
 
+	/** Create layers tree
+	  *
+	  * @param #(string) layer_names hierrachy of layer names in order Parent > Child E.G.: #("Layer Title Top", "Layer Title child" )
+	 */
+	function createLayersTree layer_names parent_layer:undefined =
+	(
+		--format "\n"; print "LayersManager_v.createLayersTree()"
+
+		layers = #()
+
+		for i = 1 to layer_names.count do
+		(
+			layers_by_name = this.getLayerByName(layer_names[i])
+
+			layer = if layers_by_name.count == 0 then
+						this.newLayer layer_names[i] parent:parent_layer
+					else
+						layers_by_name[1]
+
+			append layers layer
+
+			parent_layer = layer
+		)
+
+		layers --return
+	),
+
 	/** Set current first layer of layers, if not current in layers array
 	  *
 	  * @pram <mixin> layers

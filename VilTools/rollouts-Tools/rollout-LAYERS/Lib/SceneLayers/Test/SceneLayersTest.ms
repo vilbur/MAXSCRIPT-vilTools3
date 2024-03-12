@@ -20,26 +20,29 @@ SceneLayers.createTopLayers()
 
 
 /* MAKE LAYERS HIERARCHY */
-top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
+--top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
+objects_layer = LayersManager.newLayer "Foo-Obejcts" --parent:top_layer_edit
 
-objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
+
+/* CREATE CUSTOM LAYER FOR OBJECT */
+SceneLayers.moveToLayer( $Sphere001 ) #EDIT
+layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere001 )
 
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
-layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere001 )
-layer_box	= SceneLayers.moveToLayerByObject( $Box001 )
 
-layer_sphere.setParent (objects_layer)
+
+
+layer_box	= SceneLayers.moveToLayerByObject( $Box001 )
 layer_box.setParent (objects_layer)
 
 
-
-SceneLayers.moveToLayer( $Sphere001 )("SOURCE")
-SceneLayers.moveToLayer( $Box001 )("SOURCE")
-
-
-format "layer_edit: %\n" layer_edit
+SceneLayers.moveToLayer( $Box001 )(#SOURCE)
+SceneLayers.moveToLayer( $Box001 )("FINAL")
 
 
-actionMan.executeAction 0 "40021"  -- Selection: Select All
+--format "layer_edit: %\n" layer_edit
+--
+--
+--actionMan.executeAction 0 "40021"  -- Selection: Select All
