@@ -9,7 +9,8 @@ delete objects
 macros.run "Scene Explorer" "SERemoveEmptyLayers"
 
 _sphere = Sphere()
-_box = Box()
+--_box = Box()
+_box = Box name:"BoxFooBar"
 
 SceneLayers 	= SceneLayers_v()
 LayersManager = LayersManager_v()
@@ -20,30 +21,29 @@ SceneLayers.createTopLayers()
 
 
 /* MAKE LAYERS HIERARCHY */
---top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
-objects_layer = LayersManager.newLayer "Foo-Obejcts" --parent:top_layer_edit
+top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
+
+objects_layer = LayersManager.newLayer "Foo-Obejcts"
+--objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
 SceneLayers.moveToLayer( $Sphere001 ) #EDIT
-layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere001*[1] )
+layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere* )
 
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
+layer_box	= SceneLayers.moveToLayerByObject( $Box* )
+layer_box[1].setParent (objects_layer)
 
 
---
---layer_box	= SceneLayers.moveToLayerByObject( $Box001 )
---layer_box.setParent (objects_layer)
---
---
---SceneLayers.moveToLayer( $Box001 )(#SOURCE)
---SceneLayers.moveToLayer( $Box001 )(#EDIT) mode:#REFERENCE
---SceneLayers.moveToLayer( $Box001 )("FINAL") mode:#COPY
---
+SceneLayers.moveToLayer( $Box*[1] )	(#SOURCE)
+SceneLayers.moveToLayer( $Box* )	(#EDIT) mode:#REFERENCE
+SceneLayers.moveToLayer( $'Box*-edit' )	("FINAL") mode:#COPY
 
---format "layer_edit: %\n" layer_edit
+
+format "layer_edit: %\n" layer_edit
 
 
 actionMan.executeAction 0 "40021"  -- Selection: Select All
