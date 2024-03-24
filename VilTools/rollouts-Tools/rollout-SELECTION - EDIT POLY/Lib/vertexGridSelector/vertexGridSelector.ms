@@ -27,34 +27,31 @@ struct VertexGridSelector_v
 
 		this.sel_modified = #{}
 
+		--verts_positions = meshop.getVerts obj.mesh #{1..(getNumVerts obj.mesh)} node:obj
+
+
 		for x = 1 to points_grid.count do
 			for y = 1 to points_grid[x].count do
 			(
-				points_in_cell = points_grid[x][y]
-				--format "points_in_cell: %\n" points_in_cell
+				verts_in_cell = points_grid[x][y] as Array
 
-				verts_pos_in_cell = meshop.getVerts obj.mesh points_in_cell node:obj
-
-
-				z_positions = for pos in verts_pos_in_cell collect pos.z
-				--format "z_positions: %\n" z_positions
-				z_pos_min = amin z_positions
-			--format "z_pos_min: %\n" z_pos_min
-
-				if (index	= findItem z_positions (amin z_positions)) > 0 then
+				/* GET LOWEST POINT IN CELL */
+				if verts_in_cell.count > 1 then
 				(
-					--lowest_vert = #{( vertex_sel as Array )[index]}
-					lowest_vert = ( points_in_cell as Array )[index]
+					z_positions = for vert in verts_in_cell where verts_positions[vert] != undefined collect verts_positions[vert].z
+					--format "z_positions: %\n" z_positions
 
-					sel_modified[lowest_vert] = true
-					--format "verts_to_get: %\n" points_in_cell
+					z_pos_min = amin z_positions
 
+					if ( index = findItem z_positions (amin z_positions) ) > 0 then
+						sel_modified[verts_in_cell[index]] = true
 				)
-
+				else
+					sel_modified[verts_in_cell[1]] = true -- if single vertex in cell
 			)
 
 		--this.selectVerts (sel_modified)
-
+		gc()
 
 	),
 
@@ -76,27 +73,42 @@ struct VertexGridSelector_v
 					this.sel_modified +=  points_grid[x][y]
 			)
 
+		format "INVERT_SEL: %\n" invert_sel
 		this.sel_modified = if invert_sel then verts_to_get - sel_modified else sel_modified --return
 	),
 
-	/** Select ngle vert per face island
+	/** Select sinlge vert per face island
+
+		Point with lowest position on Z
 	 */
 	function getSingleVertPerFaceIsland =
 	(
-		--format "\n"; print "VertexGridSelector_v.selectNgleVertPerFaceIsland()"
-		this.getVertsInGrid()
+		format "\n"; print "VertexGridSelector_v.getSingleVertPerFaceIsland()"
 
-		this.sel_modified = copy verts_to_get
+		/** Is not same array
+		 */
+		--function isNotSameArray arr1 arr2     = not ( arr1 -  arr2 ).isEmpty
+		function facesShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
+		--function faceShareFaces verts1 verts2 = not ( verts1 * verts2 ).isEmpty
 
-		verts_to_get	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
+
+		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
+		verts_count	= getNumVerts obj.mesh
+		verts_all	= #{1..(verts_count)}
+
+		verts_to_get = if vertex_sel.isEmpty then verts_all else vertex_sel
+
+		--this.sel_modified = copy verts_to_get
 
 		if verts_to_get.numberSet == 0 then
 			return false
 
-		tested_pairs = #()
+		tested_pairs = #{} -- store stringified array of face id used in loop already
+		verts_islands = #() -- #( #{ veret_ids } ) array of bitarrays of verts sorted by island the occupy
 		face_islands = #() -- #( #{ faces_ids } ) array of bitarrays of faces sorted by island the occupy
 		verts_per_faces = #()
 
+		this.sel_modified = #{}
 
 		face_sel = polyop.getFacesUsingVert obj verts_to_get
 
@@ -104,56 +116,68 @@ struct VertexGridSelector_v
 
 		verts_per_faces = for face_id in face_sel collect polyop.getVertsUsingFace obj #{face_id}
 
-		/** Is not same array
-		 */
-		function isNotSameArray arr1 arr2     = not ( arr1 -  arr2 ).isEmpty
-		function faceShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
-		function faceShareFaces verts1 verts2 = not ( verts1 * verts2 ).isEmpty
-
+		timer_start = timeStamp()
 
 		for f = 1 to face_ids.count do
 		(
-			foreign_faces = #{face_ids[f]}
+			face_joined = true
 
-			 for v = 1 to face_ids.count do
-			 (
-				test_key = ( sort#(f,v) ) as string
-
-				if findItem tested_pairs test_key == 0 then
+			for i = 1 to verts_islands.count do
+				if facesShareVerts (verts_islands[i]) (verts_per_faces[f]) then
 				(
+					verts_islands[i] +=  verts_per_faces[f]
 
-					if isNotSameArray(verts_per_faces[f])(verts_per_faces[v]) and \
-						 faceShareVerts (verts_per_faces[f])(verts_per_faces[v]) do
-							foreign_faces[face_ids[v]] = true
+					append face_islands[i] face_ids[f]
 
-					appendIfUnique tested_pairs test_key
+					face_joined = false
 				)
-			 )
 
-			islands_matching = for i = 1 to face_islands.count where faceShareFaces (face_islands[i]) (foreign_faces) collect i
+			if face_joined then
+			(
+				append face_islands #(face_ids[f])
 
-			if islands_matching.count > 0 then
-				for i in islands_matching do
-					face_islands[i] += foreign_faces
-			else
-				append face_islands foreign_faces
+				append verts_islands verts_per_faces[f]
+			)
+
 		)
 
+		format "\n start: % ms\n" (( timeStamp()) - timer_start)
 
-		for face_island in face_islands do
+		--for face_island in face_islands do
+		--	format "face_island: %\n" face_island
+		--format "\n--------------\n"
+		--for verts_island in verts_islands do
+		--	format "verts_island: %\n" verts_island
+
+		new_sel = #{}
+
+		for verts_island in verts_islands do
 		(
-			verts_of_island = polyop.getVertsUsingFace obj face_island
-
-			island_and_sel_verts = (verts_of_island * verts_to_get) as Array
+			verts_in_sel = (verts_island * verts_to_get) as Array
+			--format "verts_in_sel: %\n" verts_in_sel
 
 			/* remove other verts on island from selection */
-			if island_and_sel_verts.count > 1 then
-				for i = 2 to island_and_sel_verts.count do
-					this.sel_modified[island_and_sel_verts[i]] = false
+			if verts_in_sel.count > 1 then
+			(
+				verts_pos_z = for pos in meshop.getVerts obj.mesh (verts_in_sel as BitArray) node:obj collect pos.z
 
+				--format "verts_pos_z: %\n" verts_pos_z
+				lowest_point = findItem verts_pos_z (amin verts_pos_z)
+
+				--deleteItem verts_in_sel ( ) -- remove lowes point
+				this.sel_modified[verts_in_sel[lowest_point]] = true
+
+				--for i = 1 to verts_in_sel.count do
+					--this.sel_modified[verts_in_sel[i]] = false
+			)
+			else
+				this.sel_modified[verts_in_sel[1]] = true
 		)
 
+		format "this.sel_modified.numberSet: %\n" this.sel_modified.numberSet
 
+
+		gc()
 	),
 
 	/** Get point in grid
@@ -240,6 +264,8 @@ struct VertexGridSelector_v
 
 		deleteItem  points_grid points_grid.count
 
+		gc()
+
 		points_grid --return
 	),
 
@@ -262,6 +288,7 @@ struct VertexGridSelector_v
 
 		else if classOf _mod  == Editable_Poly then
 			_mod.SetSelection #Vertex this.sel_modified
+
 
 	),
 

@@ -11,7 +11,8 @@ function prepareScene vertex_selection:false =
 	--format "\n"; print ".prepreEne()"
 	delete objects
 
-	obj = Plane width:100 length:100 pos:[ 50, 20, 50 ] widthsegs:100 lengthsegs:100 isSelected:on
+	--obj = Plane width:100 length:100 pos:[ 50, 20, 50 ] widthsegs:100 lengthsegs:100 isSelected:on
+	obj = Plane width:50 length:50 pos:[ 50, 20, 50 ] widthsegs:50 lengthsegs:50 isSelected:on
 	--obj = Plane width:60 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10 isSelected:on
 	--obj = Plane width:40 length:30 pos:[ 50, 20, 50 ] widthsegs:40 lengthsegs:30 isSelected:on
 
@@ -19,7 +20,7 @@ function prepareScene vertex_selection:false =
 	--obj = Plane width:30 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10 isSelected:on
 	--obj = Plane width:20 length:20 pos:[ 50, 20, 50 ] widthsegs:4 lengthsegs:4 isSelected:on
 
-	modPanel.addModToSelection (Noisemodifier scale:10 strength:[0,0,10] ) ui:on
+	modPanel.addModToSelection (Noisemodifier scale:5 strength:[0,0,10] ) ui:on
 
 	rotate obj ( angleaxis 180 [1,0,0])
 
@@ -36,7 +37,7 @@ function prepareScene vertex_selection:false =
 )
 
 
---prepareScene()
+prepareScene()
 --prepareScene vertex_selection:true
 
 
@@ -44,7 +45,7 @@ function prepareScene vertex_selection:false =
 /*------------------------------------------------------------------------------
 	SET CLASS INSTANCE
 --------------------------------------------------------------------------------*/
-VertexGridSelector 	= VertexGridSelector_v( objects[1] ) resolution:15
+VertexGridSelector 	= VertexGridSelector_v( objects[1] ) resolution:5
 
 
 --VertexGridSelector.resolution = 20
@@ -53,14 +54,20 @@ VertexGridSelector 	= VertexGridSelector_v( objects[1] ) resolution:15
 --	format "points_in_square: %\n" points_in_square
 
 
-/* SELECT LOWES VERTS ON OBJECT\SELECTION */
 --VertexGridSelector.selectLowestVerts()
 
-
+/* GET VERTEX IN CHECK BOARD PATTERN */
 --VertexGridSelector.getCheckerSelection invert_sel:true
 --VertexGridSelector.selectVerts()
 
+--/* SELECT LOWES VERTS ON OBJECT\SELECTION */
 VertexGridSelector.getLowestVerts()
+VertexGridSelector.selectVerts()
+
+
+
+/* LEFT ONLY LOWEST VERT IF MULTIPLE VERTS ARE ON ISLAND OF FACES */
+VertexGridSelector.getSingleVertPerFaceIsland()
 VertexGridSelector.selectVerts()
 
 --macros.run "_Epoly-Vertex-Color" "epoly_vertex_color_set_to_baseobject"
