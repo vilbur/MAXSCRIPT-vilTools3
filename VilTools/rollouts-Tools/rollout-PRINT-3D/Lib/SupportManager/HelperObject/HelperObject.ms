@@ -43,7 +43,8 @@ struct HelperObject_v
 		(
 			_point = Point name:(this._getName()) pos:this.points_positions[i] size:(this.Options.bar_width * 2) wirecolor:(this._shiftWirecolor(i)) Box:(showBox(i)) Cross:(showCross(i)) showLinks:true
 
-			format "\n---------------\n"
+			--format "\n---------------\n"
+
 			/* SET FIRST TOP POINT OF SUPPORT AS MAIN POINT HELPER */
 			if i == 1 then
 			(
@@ -94,6 +95,7 @@ struct HelperObject_v
 		function setSecondByNormal vert_pos _normal =
 		(
 			--format "\n"; print "HelperObject_v.setSecondByNormal()"
+			--format "_normal: %\n" _normal
 			local second_vert = copy vert_pos
 
 			second_vert += this.Options.normal_length * normalize( _normal ) -- MOVE POSITION ALONG NORMAL
@@ -102,7 +104,10 @@ struct HelperObject_v
 			if this.Options.keep_down and ( difference = vert_pos.z - vert_pos.z ) < this.Options.keep_down_limit then
 				second_vert.z -= this.Options.keep_down_limit - difference
 
-			append this.points_positions second_vert
+			--format "vert_pos: %\n" vert_pos
+			--format "second_vert: %\n" second_vert
+			--append this.points_positions second_vert
+			second_vert --return
 		)
 
 		/** Set second down
@@ -112,7 +117,8 @@ struct HelperObject_v
 			--format "\n"; print "HelperObject_v.setSecondDown()"
 			vert_pos.z -= this.Options.normal_length
 
-			append this.points_positions vert_pos
+			--append this.points_positions vert_pos
+			vert_pos --return
 		)
 
 		local _normal = if this.normal != undefined then this.normal * source_obj.transform - source_obj.pos
@@ -126,11 +132,16 @@ struct HelperObject_v
 		append this.points_positions (vert_pos )
 
 		/* ADD SECOND POINT */
-		case this.Options.second_point_direction of
+		second_point_pos = case this.Options.second_point_direction of
 		(
 			1: setSecondByNormal	(copy vert_pos)(_normal)
 			2: setSecondDown	(copy vert_pos)
 		)
+
+		/* CHECK POSITION ABOVE GROUND, POINT IS NOT CRETED IF BOTTOM SPACE IS NOT 2x BASE HEIGH */
+		if second_point_pos != undefined and second_point_pos.z >= this.Options.base_height * 2 then
+			append this.points_positions second_point_pos
+
 	),
 
 	/** Get name
@@ -149,12 +160,12 @@ struct HelperObject_v
 	 */
 	function _alignToVector obj point_to_rotate obj_pos =
 	(
-		format "\n"; print "HelperObject_v._alignToVector()"
+		--format "\n"; print "HelperObject_v._alignToVector()"
 		--format "obj	= % \n" obj
 		--format "% %\n" point_to_rotate obj_pos
 
 		dir = normalize (obj_pos - point_to_rotate)
-		format "dir: %\n" dir
+		--format "dir: %\n" dir
 
 		axis = #z
 

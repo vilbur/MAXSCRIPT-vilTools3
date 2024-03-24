@@ -318,14 +318,25 @@ Tooltip:	"3Pt Align"
 ) -- macroscript
 
 
+
+
+
+/**
+*/
 macroscript miauuAlignObjsToVector
 ButtonText:	"Align to vector"
 category:	"_Transform-Align"
 icon:	"MENU:true|Tooltip:Align choosen axis of selected object to a vector defined by the two picked points"
 (
-     filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms" )	--"./../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms"
-	 macros.run "miauu" "miauuAlignObjsToVector"
+	 on execute do
+	 (
+        filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms" )	--"./../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms"
+        macros.run "miauu" "miauuAlignObjsToVector"
+	 )
 )
+
+
+
 /**
 */
 macroscript ThreePointAlign_help
@@ -333,9 +344,12 @@ ButtonText:	"3Pt Align"
 category:	"_Transform-Align"
 Tooltip:	"3Pt Align"
 (
-     image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
+	 on execute do
+     (
+        image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
 
-	DOSCommand ("start \"\" \""+image_path+"\"")
+		DOSCommand ("start \"\" \""+image_path+"\"")
+	 )
 )
 
 
@@ -351,14 +365,17 @@ icon:	"MENU:true"
 (
 	--clearListener()
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Align.mcr"
-
-	if( selection.count < 2 ) then
-		return messageBox "Select 2 obejcts at least" title:"Move To Center"  beep:false
-
-
-	selection_center = selection.center
+	 on execute do
+	 (
+		if( selection.count < 2 ) then
+			return messageBox "Select 2 obejcts at least" title:"Move To Center"  beep:false
 
 
-	for obj in selection do
-		obj.pos = selection_center
+		selection_center = selection.center
+
+
+		for obj in selection do
+			obj.pos = selection_center
+
+	 )
 )

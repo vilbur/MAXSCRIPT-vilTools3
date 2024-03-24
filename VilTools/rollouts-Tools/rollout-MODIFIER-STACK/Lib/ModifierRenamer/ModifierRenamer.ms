@@ -373,8 +373,19 @@ struct ModifierRenamer_v
 
 
 		mod_name --return
-
 	),
+
+	/** _UVW_Xform
+	 */
+	function _UVW_Xform =
+	(
+		--format "\n"; print "ModifierRenamer_v.test()"
+		mod_name = "UVxForm"
+
+
+		mod_name --return
+	),
+
 
 	/**
 	 */

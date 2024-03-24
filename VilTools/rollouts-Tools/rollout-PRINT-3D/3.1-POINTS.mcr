@@ -1,3 +1,5 @@
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SupportManager/SupportManager.ms" )	--"./Lib/SupportManager/SupportManager.ms"
+
 /*==============================================================================
 
 		COTNROLS ROW 1
@@ -111,8 +113,9 @@ icon:	"across:2|offset:[ 16, 8 ]|height:32|width:128|align:#LEFT|tooltip:CTRL: R
 		--undo off
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\6-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-POINTS.mcr"
 			points_created = (getSupportManagerInstance()).generatePointHelpers( selection as Array ) reset_helpers: keyboard.controlPressed
+
 			--format "POINTS_CREATED: %\n" points_created
 			if points_created != undefined then
 				select points_created
@@ -133,10 +136,3 @@ icon:	"across:2|offset:[ 0, 12]|control:spinner|align:#RIGHT|fieldwidth:24|type:
 (
 	format "EventFired:	% \n" EventFired
 )
-
-
-
-
-
-
-

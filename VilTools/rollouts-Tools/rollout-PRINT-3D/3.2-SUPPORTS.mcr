@@ -75,7 +75,7 @@ macroscript	_print_platform_generator_bar_width
 category:	"_3D-Print"
 buttontext:	"Bar width"
 tooltip:	"Bar width in mm of printed model.\n\nExported scale is used"
-icon:	"across:2|control:spinner|range:[ 0.8, 99, 1.5 ]|width:64|offset:[ -8, 6]"
+icon:	"across:2|control:spinner|range:[ 0.8, 99, 1.0 ]|width:64|offset:[ -8, 6]"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -109,7 +109,7 @@ icon:	"across:2|offset:[0, 6]|height:32|width:128|tooltip:GEENERATE SUPPORTS.\n\
 		undo "Generate Supports" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\6-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-SUPPORTS.mcr"
 
 			(getSupportManagerInstance()).createSupports( selection as Array )
 		)
@@ -126,7 +126,7 @@ icon:	"across:2|offset:[0, 6]|height:32|width:128|tooltip:GEENERATE RAFTS.\n\nWO
 		undo "Generate Rafts" on
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\6-GENERATOR.mcr"
+			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-SUPPORTS.mcr"
 
 			(getSupportManagerInstance()).createSupports( selection as Array ) raft_mode:true
 		)

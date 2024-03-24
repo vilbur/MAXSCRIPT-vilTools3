@@ -1,6 +1,24 @@
 filein	( getFilenamePath(getSourceFileName()) + "/Lib/TransformLocker/TransformLocker.ms" )	-- "./Lib/TransformLocker/TransformLocker.ms"
 
 
+/** Lock objects transforms
+ */
+function lockObjectsTransforms type =
+(
+	--format "\n"; print ".lockObjectsTransforms()"
+	/** Get axis
+	 */
+	function axis type axis = keys = ( type as string + "_" axis as string ) as name
+
+	TransformLocker_v( selection )
+
+	current_state = TransformLocker.getState ( objects[1] )
+
+	new_sate = not (current_state[axis(type)(#X)] and current_state[axis(type)(#Y)] and current_state[axis(type)(#Z)])
+
+	(TransformLocker_v( selection ) ).toggle (new_sate) type:type
+)
+
 /*------------------------------------------------------------------------------
 	LOCK TRANSFORMS
 --------------------------------------------------------------------------------*/
@@ -27,7 +45,7 @@ icon:	"MENU:true"
 		)
 )
 
-/** TOGGLE POSITION
+/** TOGGLE POSITION LOCK
   *
   */
 macroscript _transfrom_lock_toggle_position
@@ -39,17 +57,13 @@ icon:	"MENU:true"
 	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
 
 	on execute do
-		undo "Lock transforms" on
-		(
-			current_state = TransformLocker.getState ( objects[1] )
+		undo "Lock Position" on
+			lockObjectsTransforms (#MOVE)
 
-			new_sate = not (current_state[#MOVE_X] and current_state[#MOVE_Y] and current_state[#MOVE_Z])
-
-			(TransformLocker_v( selection ) ).toggle (new_sate) type:#MOVE
-		)
 )
 
-/** TOGGLE Rotation
+
+/** TOGGLE SCALE LOCK
   *
   */
 macroscript _transfrom_lock_toggle_rotation
@@ -61,16 +75,25 @@ icon:	"MENU:true"
 	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
 
 	on execute do
-		undo "Lock transforms" on
-		(
-			current_state = TransformLocker.getState ( objects[1] )
-
-			new_sate = not (current_state[#MOVE_X] and current_state[#MOVE_Y] and current_state[#MOVE_Z])
-
-			(TransformLocker_v( selection ) ).toggle (new_sate) type:#MOVE
-		)
+		undo "Lock Rotation" on
+			lockObjectsTransforms (#ROTATE)
 )
 
+/** TOGGLE ROTATION LOCK
+  *
+  */
+macroscript _transfrom_lock_toggle_scale
+category:	"_Transform-Lock"
+buttonText:	"Lock\Unlock Scale"
+toolTip:	"Lock Postion of Scale"
+icon:	"MENU:true"
+(
+	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
+
+	on execute do
+		undo "Lock Scale" on
+			lockObjectsTransforms (#SCALE)
+)
 
 /* Restore saved transforms
 */

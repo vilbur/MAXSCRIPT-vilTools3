@@ -1,9 +1,14 @@
+
+
+
+
+
 /**
   *
   */
 macroscript	print_tools_connect_selected_poins
 category:	"_3D-Print-Platform-Tools"
-buttontext:	"Connect Verts"
+buttontext:	"Verts To Line"
 tooltip:	"Connect selected vers of Edit Poly object with line"
 icon:	"across:5|height:32"
 (

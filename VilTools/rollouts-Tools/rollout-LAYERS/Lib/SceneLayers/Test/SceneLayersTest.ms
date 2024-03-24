@@ -28,7 +28,7 @@ objects_layer = LayersManager.newLayer "Foo-Obejcts"
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
-SceneLayers.moveToLayer( $Sphere001 ) #EDIT
+SceneLayers.moveToLayer( $Sphere001 ) layer_type:#EDIT
 layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere* )
 
 
@@ -38,9 +38,9 @@ layer_box	= SceneLayers.moveToLayerByObject( $Box* )
 layer_box[1].setParent (objects_layer)
 
 
-SceneLayers.moveToLayer( $Box*[1] )	(#SOURCE)
-SceneLayers.moveToLayer( $Box* )	(#EDIT) mode:#REFERENCE
-SceneLayers.moveToLayer( $'Box*-edit' )	("FINAL") mode:#COPY
+SceneLayers.moveToLayer( $Box*[1] )	layer_type:(#SOURCE)
+SceneLayers.moveToLayer( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
+SceneLayers.moveToLayer( $'Box*-edit' )	layer_type:("FINAL")	mode:#COPY
 
 
 format "layer_edit: %\n" layer_edit

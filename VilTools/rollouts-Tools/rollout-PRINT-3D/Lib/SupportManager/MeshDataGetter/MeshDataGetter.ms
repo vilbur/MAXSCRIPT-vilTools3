@@ -4,36 +4,8 @@ if VERTEX_DATA_CACHE == undefined then -- DEV
 
 
 /** Mesh vertex getter
-
-
-
-
-
-
-
-
-
-
-			DEPRECATED
-
-
-			USE MeshDataGetter_() INSTEAD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  */
-struct MeshVertexGetter_v
+struct MeshDataGetter_v
 (
 	/* construct */
 	obj,	-- object used for getting data ( collapsed copy of obj  OR obj if it is Edit_Poly )
@@ -41,12 +13,12 @@ struct MeshVertexGetter_v
 	/* properties */
 	obj_original, --store original node if object needs to be collapsed
 
-	verts_to_get	= #{},	-- selected or colored verts of  object
-	verts_positions	= #(),	-- positions only of verts_to_get
-	verts_normals	= #(),	-- normals only of verts_to_get
+	mesh_to_get	= #{},	-- selected or colored verts of  object
+	mesh_positions	= #(),	-- positions only of mesh_to_get
+	mesh_normals	= #(),	-- normals only of mesh_to_get
 	vertex_colors	= Dictionary #string,	 -- vertex colors of all verts
 
-	verts_data      = #(), -- 2d matrix #( #{verts_to_get}, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
+	mesh_data      = #(), -- 2d matrix #( #{mesh_to_get}, #( mesh_positions ), #( mesh_normals ), #( vertex_colors )   )
 
 	--platform_vertex_data_key = "platform_vertex_data",
 
@@ -58,7 +30,7 @@ struct MeshVertexGetter_v
 
 	/** Get vertex positions, color and normals from Editable Poly object
 	  *
-	  * Verts used are stored in this.verts_to_get
+	  * Verts used are stored in this.mesh_to_get
 	  *
 	  * 	USED VERTEX BY
 	  * 		1) Get selected verts if subobejctlevel is 1 and any vertex is selected
@@ -66,32 +38,31 @@ struct MeshVertexGetter_v
 	  * 		3) Get all verts in nothing is selected and vertex colors does not exists
 	  *
 	  *
-	  * @param boolean remove_multi_colored_verts_from_white	TRUE: collect first non white color | FALSE: collect all colors for vert ( mesh vert is occuring in muliple colors )
+	  * @param boolean remove_multi_colored_mesh_from_white	TRUE: collect first non white color | FALSE: collect all colors for vert ( mesh vert is occuring in muliple colors )
 	  * @param boolean quiet	Dont ask to continue if all verts of object used
 	  *
-	  * @return 2Dmatrix  #( #{ verts_to_get_bitarray }, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
+	  * @return 2Dmatrix  #( #{ mesh_to_get_bitarray }, #( mesh_positions ), #( mesh_normals ), #( vertex_colors )   )
 	  */
-	function getVetexData verts_to_get:undefined remove_multi_colored_verts_from_white:false quiet:false =
+	function getVetexData mesh_to_get:undefined remove_multi_colored_mesh_from_white:false quiet:false =
 	(
-		format "\n"; print "MeshVertexGetter_v.getVetexData()"
+		format "\n"; print "MeshDataGetter_v.getVetexData()"
 		max modify mode
 
-		fn transformChanged	verts_cache = verts_cache != undefined and verts_cache[1] != this.obj.transform
-		fn vertsSelChanged	verts_cache = verts_cache != undefined and ( verts_cache[2] - this.verts_to_get ).isEmpty == false
-		fn positionChanged	verts_cache = verts_cache != undefined and( with PrintAllElements on verts_cache[3] as string == this.verts_positions as string )
-		fn normalsChanged	verts_cache = verts_cache != undefined and verts_cache[4].count != this.verts_to_get.numberSet
+		fn transformChanged	mesh_cache = mesh_cache != undefined and mesh_cache[1] != this.obj.transform
+		fn vertsSelChanged	mesh_cache = mesh_cache != undefined and ( mesh_cache[2] - this.mesh_to_get ).isEmpty == false
+		fn positionChanged	mesh_cache = mesh_cache != undefined and( with PrintAllElements on mesh_cache[3] as string == this.mesh_positions as string )
+		fn normalsChanged	mesh_cache = mesh_cache != undefined and mesh_cache[4].count != this.mesh_to_get.numberSet
 
 		--this.obj = _obj
 
 		object_pointer = (getHandleByAnim obj) as string
-		verts_count	= getNumVerts obj.mesh
-		verts_all	= #{1..(verts_count)}
+		mesh_count	= getNumVerts obj.mesh
+		mesh_all	= #{1..(mesh_count)}
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-		verts_count_VC	= getNumCPVVerts obj.mesh
+		mesh_count_VC	= getNumCPVVerts obj.mesh
 
-		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
-		this._setVertexColors verts_to_get_colors:verts_all vertex_colors_exists:(verts_count_VC != 0) remove_multi_colored_verts_from_white:remove_multi_colored_verts_from_white
-
+		/* SET COLORS FIRST - needed for getting mesh_to_get by color  */
+		this._setVertexColors mesh_to_get_colors:mesh_all vertex_colors_exists:(mesh_count_VC != 0) remove_multi_colored_mesh_from_white:remove_multi_colored_mesh_from_white
 
 
 		/* GET VERTS TO GENERATE FROM */
@@ -111,7 +82,6 @@ struct MeshVertexGetter_v
 								)
 
 		format "VERTS_TO_GET: %\n" this.verts_to_get
-		format "COUNT: %\n" this.verts_to_get.numberSet
 		/* SET VERTS POSITIONS WHEN verts_to_get is known  */
 		this._setVertexPositions()
 
@@ -120,7 +90,6 @@ struct MeshVertexGetter_v
 		(
 			verts_cache 	= VERTEX_DATA_CACHE[ object_pointer ]
 
-			format "verts_cache: %\n" verts_cache
 			/* GET NORMALS FROM CACHE OR GET NEW DATA */
 			this.verts_normals =	if verts_cache == undefined	   	\
 				or transformChanged(verts_cache)	\
@@ -159,7 +128,51 @@ struct MeshVertexGetter_v
 			undefined -- return
 		)
 
+
 	),
+
+	/** Get face data
+	 */
+	function getFaceData faces_to_get: =
+	(
+		format "\n"; print "MeshDataGetter_v.getFacveData()"
+
+		/** Average point3 array
+		 */
+		function averagePoint3Array arr =
+		(
+			local result = point3 0 0 0
+
+			for val in arr do result += val
+
+			result /= arr.count
+
+			result --return
+		)
+
+		verts_by_faces = #()
+		_verts_positions = #()
+
+		for face_id in faces_to_get where (verts = getFace obj.mesh face_id ) != undefined do
+			for prop in #(#x,#y,#z) do
+				appendIfUnique verts_by_faces (getProperty verts prop)
+		--format "VERTS_BY_FACES: %\n" (verts_by_faces as BitArray )
+
+		normals	= for face_id in faces_to_get collect getFaceNormal obj.mesh face_id
+		_verts_positions	= meshop.getVerts obj.mesh verts_by_faces node:obj
+
+		face_center_pos = averagePoint3Array(_verts_positions)
+
+		face_normal = averagePoint3Array(normals)
+
+		/* DELETE TEM OBJ COPY */
+		if  obj_original != undefined then
+			delete obj
+
+		#( face_center_pos, face_normal ) --return
+
+	),
+
 
 
 	/** Get colors and its mesh verts
@@ -171,15 +184,15 @@ struct MeshVertexGetter_v
 	 */
 	function getColoredVerts  =
 	(
-		--format "\n"; print "MeshVertexGetter_v._getColoredVerts()"
+		--format "\n"; print "MeshDataGetter_v._getColoredVerts()"
 		--object_pointer = (getHandleByAnim obj) as string
-		verts_count	= getNumVerts obj.mesh
-		verts_all	= #{1..(verts_count)}
+		mesh_count	= getNumVerts obj.mesh
+		mesh_all	= #{1..(mesh_count)}
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-		verts_count_VC	= getNumCPVVerts obj.mesh
+		mesh_count_VC	= getNumCPVVerts obj.mesh
 
-		/* SET COLORS FIRST - needed for getting verts_to_get by color  */
-		this._setVertexColors verts_to_get_colors:( if not vertex_sel.isEmpty then vertex_sel else verts_all) vertex_colors_exists:(verts_count_VC != 0)
+		/* SET COLORS FIRST - needed for getting mesh_to_get by color  */
+		this._setVertexColors mesh_to_get_colors:( if not vertex_sel.isEmpty then vertex_sel else mesh_all) vertex_colors_exists:(mesh_count_VC != 0)
 
 		this.vertex_colors --return
 	),
@@ -195,7 +208,7 @@ struct MeshVertexGetter_v
 	  *		2) getVertsByColor()	RETURN MESH VERTEX
 	  *
 	  *
-	  * KNOWING ISSUE: remove_multi_colored_verts_from_white
+	  * KNOWING ISSUE: remove_multi_colored_mesh_from_white
 	  *				If vertex has mutliple colors, then first is used, include white color.
 	  *				Only way to make it work seem to iterate all map verts. THIS IS OVERKIL FOR SUCH SIPMPLE OPARTION ON HIGH VERTEX COUNT OBJECTS... MAX SUCKS !
 	  *
@@ -205,7 +218,7 @@ struct MeshVertexGetter_v
 	  */
 	function _setVertexColors verts_to_get_colors: vertex_colors_exists: remove_multi_colored_verts_from_white:false =
 	(
-		--format "\n"; print "MeshVertexGetter_v._setVertexColors()"
+		--format "\n"; print "MeshDataGetter_v._setVertexColors()"
 		/** White verts exists
 		 */
 		function whiteVertsExists = HasDictValue this.vertex_colors ( white as string )
@@ -250,8 +263,10 @@ struct MeshVertexGetter_v
 	 */
 	function _setVertexPositions =
 	(
-		--format "\n"; print "MeshVertexGetter_v._setVertexPositions()"
+		--format "\n"; print "MeshDataGetter_v._setVertexPositions()"
 		this.verts_positions = meshop.getVerts obj.mesh verts_to_get node:obj
+
+
 	),
 
 
@@ -259,7 +274,7 @@ struct MeshVertexGetter_v
 	 */
 	function _getVertNormals =
 	(
-		format "\n"; print "MeshVertexGetter_v._getVertNormals()"
+		format "\n"; print "MeshDataGetter_v._getVertNormals()"
 		--this.verts_normals = for vert in verts_to_get collect ( getnormal obj.mesh vert )
 		sub_object_level = subObjectLevel
 
@@ -299,7 +314,7 @@ struct MeshVertexGetter_v
 	*/
 	function _getVertexColorsByVerts =
 	(
-		--format "\n"; print "MeshVertexGetter_v._getVertexColorsByVerts()"
+		--format "\n"; print "MeshDataGetter_v._getVertexColorsByVerts()"
 
 		colors = for key in vertex_colors.keys collect execute key
 
@@ -321,7 +336,7 @@ struct MeshVertexGetter_v
 	 */
 	function _searchNewVertexColor map_verts =
 	(
-		--format "\n"; print "MeshVertexGetter_v._searchNewVertexColor()"
+		--format "\n"; print "MeshDataGetter_v._searchNewVertexColor()"
 		local color_of_vert
 
 		i = 1
@@ -337,7 +352,7 @@ struct MeshVertexGetter_v
 	  */
 	function _askToContinue verts_count =
 	(
-		----format "\n"; print "MeshVertexGetter_v._askToContinue()"
+		----format "\n"; print "MeshDataGetter_v._askToContinue()"
 		_continue = true
 
 		--if verts_to_get.count > 500 and not queryBox ( verts_to_get.count as string +" platforms will be generated.\n\nEstimated time: "+ estimated_time as string +" s\n\n   CONTINUE ?" ) title:"PLATFORMS GENERATION"  then
@@ -351,7 +366,7 @@ struct MeshVertexGetter_v
 	 */
 	function _collapseObjectIfNeeded =
 	(
-		--format "\n"; print "MeshVertexGetter_v.coolapseObjectIfNeeded()"
+		--format "\n"; print "MeshDataGetter_v.coolapseObjectIfNeeded()"
 
 		if classOf obj.baseobject != Editable_Poly or getNumVerts obj.mesh != getNumVerts obj.baseobject.mesh then
 		(
@@ -387,3 +402,4 @@ struct MeshVertexGetter_v
 	)
 
 )
+n

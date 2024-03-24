@@ -24,11 +24,10 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("L A Y E R S 2")
+	QuadMenu.setTitle("SELECT LAYERS")
 
 
-	Layers2Menu	= Menu_v("_Layers-2")
-	Layers2Menu.addSeparator index:#( 2, 4 )
+	QuadMenu.addMenu("_Layers-Select") separators:#( 2,4 )	--flat:false --index:1
 
 	QuadMenu.addMenu(Layers2Menu)	--flat:false --index:1
 )
@@ -38,13 +37,9 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("L A Y E R S 3")
+	QuadMenu.setTitle("MANAGE LAYERS")
 
-	Layers3Menu	= Menu_v("_Layers-3")
-
-	Layers3Menu.addSeparator index:#( 2,4 )
-
-	QuadMenu.addMenu(Layers3Menu)	--flat:false --index:1
+	QuadMenu.addMenu("_Layers-Manage") separators:#( 2,4 )	--flat:false --index:1
 
 	QuadMenu.addSeparator()
 

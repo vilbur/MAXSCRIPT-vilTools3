@@ -44,7 +44,7 @@ function wireParamsCallback state_1 state_2 =
 (
 	--format "\n"; print ".wireParamsCallback()"
 
-	--messageBox WIRE_PARAMS_LABELS[1][state_1]
+	--messageBox WIRE_PARAMS_LABELS[1][[state_1]
 	--messageBox WIRE_PARAMS_LABELS[2][state_2]
 
 	if state_1 != undefined and state_1 != undefined then
@@ -69,10 +69,15 @@ function wireParamsCallback state_1 state_2 =
 			/*
 				THIS NEED MORE LABOR THEN HAS BEEN EXPECTED
 
-			*/
-			paramWire.connect2way obj_1.baseObject[param_1] obj_2.baseObject[param_2] "Height_Segments" "Height_Segments"
+				delete objects
+				c1 = Cylinder radius:20 height:100 isSelected:on
+				c2 = Cylinder radius:20 height:100 isSelected:on pos:[0,50,00]
 
-		)catch(
+
+				paramWire.connect2Way c1.baseObject[#radius] c2.baseObject[#radius] \ "radius / 2" "radius * 2"
+			*/
+		)
+		catch(
 			format "!!!!! ERROR IN TRY %\n\n" (getCurrentException())
 		)
 	)

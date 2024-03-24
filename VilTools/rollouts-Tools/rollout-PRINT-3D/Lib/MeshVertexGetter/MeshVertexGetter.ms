@@ -4,34 +4,6 @@ if VERTEX_DATA_CACHE == undefined then -- DEV
 
 
 /** Mesh vertex getter
-
-
-
-
-
-
-
-
-
-
-			DEPRECATED
-
-
-			USE MeshDataGetter_() INSTEAD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  */
 struct MeshVertexGetter_v
 (
@@ -71,7 +43,7 @@ struct MeshVertexGetter_v
 	  *
 	  * @return 2Dmatrix  #( #{ verts_to_get_bitarray }, #( verts_positions ), #( verts_normals ), #( vertex_colors )   )
 	  */
-	function getVetexData verts_to_get:undefined remove_multi_colored_verts_from_white:false quiet:false =
+	function getVetexData verts_to_get: remove_multi_colored_verts_from_white:false quiet:false =
 	(
 		format "\n"; print "MeshVertexGetter_v.getVetexData()"
 		max modify mode
@@ -95,7 +67,7 @@ struct MeshVertexGetter_v
 
 
 		/* GET VERTS TO GENERATE FROM */
-		this.verts_to_get =  if classOf verts_to_get == BitArray then
+		this.verts_to_get = verts_to_get = if verts_to_get != unsupplied then
 								verts_to_get
 							else
 								case of
@@ -110,17 +82,15 @@ struct MeshVertexGetter_v
 									default: verts_all
 								)
 
-		format "VERTS_TO_GET: %\n" this.verts_to_get
-		format "COUNT: %\n" this.verts_to_get.numberSet
+		format "VERTS_TO_GET: %\n" verts_to_get
 		/* SET VERTS POSITIONS WHEN verts_to_get is known  */
 		this._setVertexPositions()
 
 		/* WARNING IF ALL VERTS ARE USED */
-		if verts_count != this.verts_to_get.numberSet or quiet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
+		if verts_count != verts_to_get.numberSet or quiet or queryBox ("USE ALL "+ verts_count as string +" VERTS ?") title:"SET VERTS DATA"  then
 		(
 			verts_cache 	= VERTEX_DATA_CACHE[ object_pointer ]
 
-			format "verts_cache: %\n" verts_cache
 			/* GET NORMALS FROM CACHE OR GET NEW DATA */
 			this.verts_normals =	if verts_cache == undefined	   	\
 				or transformChanged(verts_cache)	\
@@ -137,14 +107,14 @@ struct MeshVertexGetter_v
 			------this.verts_normals =	this._getVertNormals() -- FOR DEBUG for case of debbuging cache
 
 
-			this.verts_data = #( this.verts_to_get, verts_positions, verts_normals, this._getVertexColorsByVerts()  )
+			this.verts_data = #( verts_to_get, verts_positions, verts_normals, this._getVertexColorsByVerts()  )
 
 			--format "verts_data[1] count: % array: % \n" verts_data[1].numberSet verts_data[1]
 			--format "verts_data[2] count: % array: % \n" verts_data[2].count verts_data[2]
 			--format "verts_data[3] count: % array: % \n" verts_data[3].count verts_data[3]
 			--format "verts_data[4] count: % array: % \n" verts_data[4].count verts_data[4]
 
-			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, this.verts_to_get, verts_positions, verts_normals ) --return
+			VERTEX_DATA_CACHE[ object_pointer ] = #( obj.transform, verts_to_get, verts_positions, verts_normals ) --return
 
 			if  obj_original != undefined then
 				delete obj

@@ -54,8 +54,8 @@ filein( getFilenamePath(getSourceFileName()) + "/inlcudes/create-test-objects.ms
 
 /* VERTEX COLOR */
 --createSourceMesh segments:2 vertex_color:orange vertex_selection:#{1..2}
-createSourceMesh segments:12 vertex_color:orange vertex_selection:#{1..6} obj:#SPHERE
---createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
+--createSourceMesh segments:12 vertex_color:orange vertex_selection:#{1..6} obj:#SPHERE
+createSourceMesh segments:16 obj:#SPHERE vertex_selection:#{1..32} vertex_color:orange
 
 
 /* TEST ON TRANSFORMED OBJECT - test  of vertex postion */
@@ -109,19 +109,19 @@ SupportManager.Options.normal_length = 10
 
 
 
-print "---------------- GENERATE POINTS BY VERTEX COLOR SOURCE OBJECT ----------------"
+--print "---------------- GENERATE POINTS BY VERTEX COLOR SOURCE OBJECT ----------------"
+--
+--new_points = SupportManager.generatePointHelpers ( _source_object )
+--format "NEW_POINTS	= % \n" new_points
 
-new_points = SupportManager.generatePointHelpers ( _source_object )
-format "NEW_POINTS	= % \n" new_points
-
-
-
-
-print "---------------- GENERATE SUPPORTS ----------------"
-
-new_supports = SupportManager.createSupports( new_points )
-format "NEW_SUPPORTS	= % \n" new_supports
-
+--
+--
+--
+--print "---------------- GENERATE SUPPORTS ----------------"
+--
+--new_supports = SupportManager.createSupports( new_points )
+--format "NEW_SUPPORTS	= % \n" new_supports
+--
 
 
 --
@@ -145,20 +145,14 @@ format "NEW_SUPPORTS	= % \n" new_supports
 --SupportManager.Options.connect = 4
 --beames_connect_quater = SupportManager.createBeams( new_supports )
 --
---
---
---
+
+
 --
 --print "---------------- GENERATE POINTS FROM SELECTED VERTS ----------------"
 --
 --select _source_object
---
---max modify mode
---
---subObjectLevel = 1
---
---_source_object.modifiers[#Edit_Poly].SetSelection #Vertex #{}
---_source_object.modifiers[#Edit_Poly].Select #Vertex #{3..6}
+
+--selectVertsForTest _source_object #{3..6}
 --
 --new_points_by_selection = SupportManager.generatePointHelpers ( selection as Array )
 --format "NEW_POINTS	= % \n" new_points_by_selection
@@ -173,3 +167,14 @@ format "NEW_SUPPORTS	= % \n" new_supports
 --print "---------------- GENERATE RAFTS BEAMS ----------------"
 --
 --beames_rafts = SupportManager.createBeams( new_rafts )
+
+
+--
+--print "---------------- GENERATE PINS ----------------"
+--delete shapes
+
+selectVertsForTest _source_object #{ 1,3,51,62 }
+--selectVertsForTest _source_object #{ 51 }
+--selectVertsForTest _source_object #{ 62 }
+
+pins = SupportManager.createPins( _source_object )

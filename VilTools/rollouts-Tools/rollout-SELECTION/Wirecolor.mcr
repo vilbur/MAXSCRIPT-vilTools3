@@ -6,7 +6,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )
 
 macroscript	wirecolor_random
 category:	"_Wirecolor"
-buttontext:	"Random color"
+buttontext:	"&Random color"
 toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
 icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
 (
@@ -49,7 +49,7 @@ icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
 macroscript	wirecolor_random_menu
 category:	"_Wirecolor"
 buttontext:	"Random color"
-toolTip:	"Color menu"
+toolTip:	"Color menuc"
 --icon:	"MENU:true"
 (
 	_Color 	= Color_v()
@@ -73,9 +73,9 @@ toolTip:	"Color menu"
 */
 macroscript	wirecolor_select_only_visible
 category:	"_Wirecolor"
-buttontext:	"Select"
+buttontext:	"&Select by wirecolor"
 toolTip:	"Select by wirecolor"
-icon:	"MENU:tooltip"
+icon:	"MENU:TRUE"
 (
 	fn compareNames obj_1 obj_2 = stricmp obj_1.name obj_2.name
 
@@ -100,7 +100,7 @@ icon:	"MENU:tooltip"
 
 macroscript	wirecolor_by_last
 category:	"_Wirecolor"
-buttontext:	"Color By Last"
+buttontext:	"Color &By Last"
 toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
 icon:	"MENU:true"
 (

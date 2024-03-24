@@ -3,10 +3,21 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("E D I T 1")
+	QuadMenu.setTitle("M O V E")
+
+	--FooMenu	= Menu_v("Selection")
+	--FooMenu.removeItem()
+	--FooMenu.clearSeparators()
 
 
-	QuadMenu.addMenu("_Epoly-Options") separators: #( 3 )	--flat:false
+	--QuadMenu.addSeparator()
+	--QuadMenu.addSeparators #()
+
+	QuadMenu.addMenu("_SceneLayers-Move")	title:"Move To"	flat:false --separators: #( 1 ) --index:--index:--index:
+	QuadMenu.addMenu("_SceneLayers-Copy")	title:"Copy To"	flat:false --separators: #( 1 ) --index:--index:--index:
+	QuadMenu.addMenu("_SceneLayers-Instance")	title:"Instance To"	flat:false --separators: #( 1 ) --index:--index:--index:
+	QuadMenu.addMenu("_SceneLayers-Reference")	title:"Reference To"	flat:false --separators: #( 1 ) --index:--index:--index:
+
 )
 
 /*------------------------------------------------------------------------------
@@ -14,11 +25,8 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("E D I T 2")
-
-	QuadMenu.addMenu("_Epoly-Hard-Edges")	title:"H A R D - E D G E S" separators: #( 1 ) --flat:false
-
-	QuadMenu.addMenu("_Epoly-Explode") title:"E X P L O D E" flat:false
+	QuadMenu.setTitle("M A N A G E" )
+	QuadMenu.addMenu("_SceneLayers-Manage")	--title:""	flat:false --separators: #( 1 ) --index:--index:--index:
 
 )
 
@@ -27,14 +35,10 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("E D I T 3")
+	--QuadMenu.setTitle("I N S T A N C E")
+	QuadMenu.setTitle("V I S I B I L I T Y")
 
-	QuadMenu.addMenu("_Epoly-Vertex-Color") --title:"" flat:false
-
-	--QuadMenu.addSeparator()
-
-	QuadMenu.addMenu("_Epoly-Edit-Dialogs")  separators: #( 1, 3 )	--flat:false
-
+	QuadMenu.addMenu("_SceneLayers-Visibility")	--title:""	flat:false --separators: #( 1 ) --index:--index:--index:
 )
 
 /*------------------------------------------------------------------------------
@@ -42,15 +46,6 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("E D I T 4")
-
-	QuadMenu.addMenu("_Epoly-Vertex-Color-Tools") --title:"" flat:false
-	QuadMenu.addSeparator()
-
-	QuadMenu.addMenu("_Epoly-Selection") --separators: #( 1, 2 )
-	QuadMenu.addSeparator()
-
-	QuadMenu.addMenu("_Epoly-Loop-Tools") separators: #( 1, 2 )
 
 )
 

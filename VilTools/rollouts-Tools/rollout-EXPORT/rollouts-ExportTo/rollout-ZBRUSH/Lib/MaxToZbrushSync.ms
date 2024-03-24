@@ -67,18 +67,48 @@ struct MaxToZbrushSync_v
 		(
 			importFile file #noPrompt using:Importer
 
-			obj = selection[1]
+			imported_polygroups = selection as Array
 
-			this._flipUV( obj )
+			if imported_polygroups.count > 1 then
+			(
+				this._addMaterialModifier(imported_polygroups)
 
-			maxOps.CollapseNodeTo obj 1 true
+				for i = imported_polygroups.count to 2 by -1 do
+					polyop.attach imported_polygroups[1] imported_polygroups[i]
 
-			this._replaceImportedObjects(objects_before_import)( obj )( getFilenameFile( file ))
+				imported_obj = imported_polygroups[1]
+
+				append imported_objects imported_obj
+
+				addModifier imported_obj (Vertex_Weld threshold:0.001)
+
+				--this._flipUV( imported_obj )
+
+				maxOps.CollapseNodeTo imported_obj 1 true
+
+				--( polyop.weldVertsByThreshold imported_obj #{1..( polyop.getNumVerts imported_obj)}) --weld vetices
+
+			)
+			else
+				imported_obj = imported_polygroups[1]
+
+			imported_obj.name = getFilenameFile( file )
+
+			this._replaceImportedObjects(objects_before_import)( imported_obj )( imported_obj.name )
 		)
 
 		select imported_objects
 	),
 
+	/** Add material modifier
+	 */
+	function _addMaterialModifier imported_objects =
+	(
+		--format "\n"; print "MaxToZbrushSync_v._addMaterialModifier()"
+		--for imported_object in imported_objects do
+		for i = 2 to imported_objects.count do
+			addModifier imported_objects[i] (Materialmodifier materialID:i)
+	),
 
 	private
 
@@ -90,13 +120,13 @@ struct MaxToZbrushSync_v
 
 		obj = objects_to_export[index]
 
-		UVWxform = this._flipUV(obj)
+		--UVWxform = this._flipUV(obj)
 
 		select obj
 
 		exportFile ( export_dir + "/"+ (this._getCounterPrefix (index)) + "-_-" + obj.name + ".obj" ) #noPrompt selectedOnly:true using:Exporter
 
-		deleteModifier obj UVWxform
+		--deleteModifier obj UVWxform
 	),
 
 	/** Get counter prefix
@@ -112,7 +142,7 @@ struct MaxToZbrushSync_v
 		prefix + index as string --return
 	),
 
-	/** Flip
+	/** Flip - DEPRECATED - FLIPPING MAPPING IS PROCESSED IN ZBRUSH ON IMPORT AND EXPORT
 	 */
 	function _flipUV obj =
 	(

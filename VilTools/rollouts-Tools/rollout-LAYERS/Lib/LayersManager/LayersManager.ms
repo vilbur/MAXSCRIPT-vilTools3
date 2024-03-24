@@ -421,8 +421,6 @@ struct LayersManager_v
 		)
 	),
 
-
-
 	/** Select Layers
 	  * @param string|<MixinInterface:LayerProperties>|array layers
 	  */

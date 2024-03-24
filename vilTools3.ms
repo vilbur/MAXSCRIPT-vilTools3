@@ -58,7 +58,8 @@ function importStdScripts =
 		--"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
 		--"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
 
-		"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",
+		"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
+		"/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms"
 		"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
 
 		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
@@ -68,7 +69,9 @@ function importStdScripts =
 		"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 		"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
 
-		"/rollout-PRINT-3D/Lib/SupportManager/SupportManager.ms",
+		--"/rollout-PRINT-3D/Lib/SupportManager/SupportManager.ms",
+
+
 
 		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	)
@@ -80,7 +83,7 @@ function importStdScripts =
 
 	insertItem ( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms") filein_files 1
 
-	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms" -- "C:\Program Files\Autodesk\3ds Max 2023\stdplugs\stdscripts\viltools-startup.ms"
+	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms" -- "C:/Program Files\Autodesk\3ds Max 2023\stdplugs\stdscripts\viltools-startup.ms"
 
 	--deleteFile stdscript_file_path
 

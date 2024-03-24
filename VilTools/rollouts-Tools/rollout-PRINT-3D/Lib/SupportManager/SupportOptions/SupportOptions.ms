@@ -50,6 +50,10 @@ struct SupportOptions_v
 	/* BEAMS OPTIONS */
 	connect = 1,
 
+	/* PINS OPTIONS */
+	pin_width	= 3.0, -- outter diametter of outter pin
+	pin_height	= 5.0, -- outter diametter of outter pin
+	pin_gap 	= 0.2, -- size of gap between inner and outter pin
 
 
 	/* PRIVATE PROPERTIES */

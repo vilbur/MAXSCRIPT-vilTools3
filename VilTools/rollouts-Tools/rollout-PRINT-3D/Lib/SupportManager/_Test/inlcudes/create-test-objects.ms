@@ -15,6 +15,22 @@ function getUnit val  =
 	val / display_units / EXPORT_SIZE --return
 )
 
+/** Select verts
+ */
+function selectVertsForTest obj vert_sel =
+(
+	--format "\n"; print ".selectVertsForTest()"
+	select obj
+
+	max modify mode
+
+	subObjectLevel = 1
+
+	obj.modifiers[#Edit_Poly].SetSelection #Vertex #{}
+	obj.modifiers[#Edit_Poly].Select #Vertex vert_sel
+
+)
+
 /**
   */
 function createSourceMesh segments:1 vertex_selection:#{} test_shifted_pivot:false obj:#PLANE vertex_color: =

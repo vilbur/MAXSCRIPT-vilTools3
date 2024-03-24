@@ -1,6 +1,13 @@
 filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./../rollout-VERTEX-COLOR/Lib/meshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
 
+filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	--"./../../../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
+
+/* MeshVertexGetter IS OBSOLETTE, REMOVE IT */
 filein( getFilenamePath(getSourceFileName()) + "/MeshVertexGetter/MeshVertexGetter.ms" )	--"./MeshVertexGetter/MeshVertexGetter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/MeshDataGetter/MeshDataGetter.ms" )	--"./MeshDataGetter/MeshDataGetter.ms"
+
+
+
 filein( getFilenamePath(getSourceFileName()) + "/ShapeKnotGetter/ShapeKnotGetter.ms" )	--"./ShapeKnotGetter/ShapeKnotGetter.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/SupportModifiers/SupportModifiers.ms" )	--"./SupportModifiers/SupportModifiers.ms"
@@ -14,6 +21,8 @@ filein( getFilenamePath(getSourceFileName()) + "/SupportObject/SupportObject.ms"
 filein( getFilenamePath(getSourceFileName()) + "/HelperGenerator/HelperGenerator.ms" )	--"./HelperGenerator/HelperGenerator.ms"
 filein( getFilenamePath(getSourceFileName()) + "/SupportGenerator/SupportGenerator.ms" )	--"./SupportGenerator/SupportGenerator.ms"
 filein( getFilenamePath(getSourceFileName()) + "/BeamGenerator/BeamGenerator.ms" )	--"./BeamGenerator/BeamGenerator.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/../PinsGenerator/PinsGenerator.ms" )	--"./../PinsGenerator/PinsGenerator.ms"
 
 
 /** Support manager
@@ -43,7 +52,7 @@ filein( getFilenamePath(getSourceFileName()) + "/BeamGenerator/BeamGenerator.ms"
   * 					4a) RAFT     Same as support obejct, but ends on last point in chain
   * 					4b) SUPPORT: Line connecting all points in chain.
   *
-  *		 					5) BEAM: Cross lines connectnig supports
+  *		 					5) BEAM: Cross lines connectn[ig supports
  */
 struct SupportManager_v
 (
@@ -61,6 +70,7 @@ struct SupportManager_v
 	BeamGenerator,
 
 	SupportModifiers,
+	PinsGenerator,
 
 	SupportObject = SupportObject_v(),
 
@@ -181,6 +191,15 @@ struct SupportManager_v
 
 	),
 
+	/** Create pins
+	 */
+	function createPins source_objects =
+	(
+		format "\n"; print "SupportManager_v.createPins()"
+		source_obj = selection[1]
+
+		new_pins = PinsGenerator.createPins(source_obj)
+	),
 
 	/*------------------------------------------------------------------------------
 
@@ -372,26 +391,27 @@ struct SupportManager_v
 	new_name	= source_obj.name + "-" + source_obj_suffix
 	layer_name	= (substituteString source_obj.name source_obj_suffix "" ) + "-" + layer_name_suffix -- remove object suffix and add layer suffix
 
-		/* RENAME SOURCE OBEJT */
-		if not matchPattern source_obj.name pattern:("*"+source_obj_suffix) and \
-			( quiet_mode or queryBox ("Rename source object ?\n\nFROM:\n\n"+source_obj.name + "\n\nTO:\n\n" + new_name ) title:"SupportManager.ms" ) then
+		/* IF SOURCE OBJECT IS  1st USED, THEN RENAME SOURCE OBEJT AND TO ITS OWN LAYER*/
+		if this._getPointerOfSourceObject (source_obj) == undefined \
+			and not matchPattern source_obj.name pattern:("*"+source_obj_suffix) and \
+			(quiet_mode or queryBox ("Rename source object ?\n\nFROM:\n\n"+source_obj.name + "\n\nTO:\n\n" + new_name ) title:"SupportManager.ms" ) then
+			(
 				source_obj.name = new_name
 
-		/* ADD TO LAYER */
-		if not matchPattern source_obj.layer.name pattern:("*"+layer_name_suffix+"*") and \
-			( quiet_mode or queryBox ("MOVE\n\n"+source_obj.name + "\n\nTO LAYER\n\n" + layer_name +" ? " ) title:"SupportManager.ms" ) then
-			(
-				if ( layer = LayerManager.getLayerFromName layer_name ) == undefined then
-				(
-					layer = LayerManager.newLayerFromName layer_name
+				/* ADD TO LAYER */
+				if not matchPattern source_obj.layer.name pattern:("*"+layer_name_suffix+"*") and \
+					( quiet_mode or queryBox ("MOVE\n\n"+source_obj.name + "\n\nTO LAYER\n\n" + layer_name +" ? " ) title:"SupportManager.ms" ) then
+					(
+						if ( layer = LayerManager.getLayerFromName layer_name ) == undefined then
+						(
+							layer = LayerManager.newLayerFromName layer_name
 
-					layer.setParent source_obj.layer
-				)
+							layer.setParent source_obj.layer
+						)
 
-				layer.addnode (source_obj)
-
+						layer.addnode (source_obj)
+					)
 			)
-
 	),
 
 	/**
@@ -404,6 +424,7 @@ struct SupportManager_v
         SupportGenerator = SupportGenerator_v Options:Options
         SupportModifiers = SupportModifiers_v Options:Options
         BeamGenerator    = BeamGenerator_v Options:Options
+        PinsGenerator    = PinsGenerator_v Options:Options
 	)
 )
 
