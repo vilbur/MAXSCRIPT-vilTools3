@@ -1,10 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/VertexColorGetter/VertexColorGetter.ms" )	--"./VertexColorGetter/VertexColorGetter.ms"
-
-
-if VERTEX_DATA_CACHE == undefined then -- DEV
-	global VERTEX_DATA_CACHE = Dictionary #integer
-
-
+filein( getFilenamePath(getSourceFileName()) + "/MeshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./MeshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
 /**
  */
 struct VertDataGetter_v
@@ -21,10 +15,10 @@ struct VertDataGetter_v
 	verts_positions 	= #(),
 	verts_normals	= #(),
 	face_normals 	= #(),
-	vertex_colors,
+	vertex_colors 	= Dictionary #string,
 
 	/* dependency */
-	VertexColorGetter,
+	MeshVertToColorVertexConvert,
 
 	/* reference */
 	/* inhered */
@@ -45,7 +39,7 @@ struct VertDataGetter_v
 			verts_data[#COLORS] = this.getVertexColors()
 
 		--if normals then
-			--verts_data[#NORMALS] = this.getVertexNormals()
+		--	verts_data[#NORMALS] = this.getVertexNormals()
 
 
 		verts_data --return
@@ -69,8 +63,8 @@ struct VertDataGetter_v
 		--vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 		--verts_count_VC	= getNumCPVVerts obj.mesh
 
-		vertex_colors = VertexColorGetter.getVertexColors (verts_process)
-		--this._setVertexColors verts_to_get_colors:verts_process vertex_colors_exists:(getNumCPVVerts obj.mesh != 0)
+
+		this._setVertexColors()
 
 		vertex_colors --return
 	),
@@ -79,15 +73,15 @@ struct VertDataGetter_v
 	 */
 	function getVertexNormals =
 	(
-		format "\n"; print "VertDataGetter_v.getVertexNormals()"
-		timer_get_normals = timeStamp()
-
-		if vertex_count < 7000 then
-			this._setVertNormalsByFaceNormal()
-		else
-			this._setVertNormalsByModifier()
-
-		verts_normals --return
+		--format "\n"; print "VertDataGetter_v.getVertexNormals()"
+		--timer_get_normals = timeStamp()
+		--
+		--if vertex_count < 7000 then
+		--	this._setVertNormalsByFaceNormal()
+		--else
+		--	this._setVertNormalsByModifier()
+		--
+		--verts_normals --return
 
 
 		--format "\n getVertexNormals: % ms\n" (( timeStamp()) - timer_get_normals)
@@ -110,6 +104,20 @@ struct VertDataGetter_v
 			--verts_normals --return
 
 		*/
+
+			timer_normal_by_modifier = timeStamp()
+			this._setVertNormalsByModifier()
+			format "\n normal_by_modifier: % ms\n" (( timeStamp()) - timer_normal_by_modifier)
+			format "VERTS_NORMALS: %\n" verts_normals
+			format "\n------------\n"
+
+			timer_normal_by_face_normal = timeStamp()
+			this._setVertNormalsByFaceNormal()
+			format "\n normal_by_face_normal: % ms\n" (( timeStamp()) - timer_normal_by_face_normal)
+			format "VERTS_NORMALS: %\n" verts_normals
+			format "\n\n\n"
+			verts_normals --return
+
 	),
 
 	private
@@ -226,10 +234,70 @@ struct VertDataGetter_v
 	  *
 	  * @return Dictionary of BitArrays of mesh verts sorted by color E.G.: #( "color 255 255 255", #{1..999}  )  #( "color 0 255 255", #{1..3}  )
 	  */
-	function _setVertexColors verts_to_get_colors: vertex_colors_exists: remove_multi_colored_verts_from_white:false =
+	function _setVertexColors =
 	(
+		format "\n"; print "VertexColorGetter_v.getVerticalColors()"
+		--format "\n"; print "MeshVertexGetter_v._setVertexColors()"
+		/** Loop map verts of single mesh vert
+		  *
+		  * Test if vertex color is new
+		  *
+		  * @retrun color of map vertex
+		 */
+		--function _searchNewVertexColor map_verts =
+		--(
+		--	--format "\n"; print "MeshVertexGetter_v._searchNewVertexColor()"
+		--	local color_of_vert
+		--
+		--	i = 1
+		--	while hasDictValue this.vertex_colors ( (color_of_vert = getvertcolor obj.mesh map_verts[i]) as string )  do
+		--		i += 1
+		--
+		--	color_of_vert --return
+		--)
+		--
+		--/** White verts exists
+		-- */
+		--function whiteVertsExists = hasDictValue this.vertex_colors ( white as string )
+		--
+		--local color_of_vert
+		--
+		--local white_clr = white as string
+		--
+		--/* IF VERTEX COLORS EXISTS */
+		--if  (getNumCPVVerts obj.mesh != 0) then
+		--(
+		--	--format "START verts_to_get_colors	= % \n" verts_to_get_colors
+		--	--format "verts_to_get_colors.numberSet	= % \n" verts_to_get_colors.numberSet
+		--
+		--	MeshVertToColorVertexConvert.get_single_vert = false
+		--
+		--	while not verts_to_get_colors.isEmpty do
+		--	(
+		--		mesh_vert = (verts_to_get_colors as Array )[1]
+		--
+		--		map_verts_of_mesh_vert = makeUniqueArray (MeshVertToColorVertexConvert.meshVertsToMapVerts (mesh_vert) flat:true )
+		--
+		--		color_of_vert = _searchNewVertexColor (map_verts_of_mesh_vert)
+		--
+		--		mesh_verts_by_color = meshop.getVertsByColor obj.mesh color_of_vert 0.01 0.01 0.01 	-- get all verts by thath color
+		--
+		--		this.vertex_colors[ color_of_vert as string ] = mesh_verts_by_color
+		--
+		--		verts_to_get_colors -= mesh_verts_by_color
+		--
+		--	)
+		--
+		--	/* REMOVE MULTI COLORED VERTS FROM WHITE - (if one of vert colors is not white, then vert is not white) */
+		--	if whiteVertsExists() then
+		--		for clr in this.vertex_colors.keys  where clr != white_clr do
+		--			this.vertex_colors[white_clr] -= vertex_colors[clr]
+		--)
+		----else
+		--	--vertex_colors[ obj.wirecolor as string ] = verts_to_get_colors
 
 	),
+
 
 	/**
 	 */
@@ -242,8 +310,7 @@ struct VertDataGetter_v
 
 		this._setVertsPositions()
 
-
-		VertexColorGetter	= VertexColorGetter_v(obj)
+		MeshVertToColorVertexConvert	= MeshVertToColorVertexConvertor_v(obj)
 
 
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
