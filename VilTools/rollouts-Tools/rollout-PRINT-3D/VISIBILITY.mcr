@@ -12,7 +12,7 @@ icon:	"id:BTN_visibility_points|across:5|height:32|width:64|tooltip:GENERATE POI
 		--undo off
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\6-VISIBILITY.mcr"
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\6-VISIBILITY.mcr"
 
 			(SupportManager_v()).toggleVisibility (#POINT) (true)
 
@@ -35,7 +35,7 @@ icon:	"id:BTN_visibility_Supports|across:5|height:32|width:64|tooltip:GEENERATE 
 	--	undo "Show\Hide Supports" on
 	--	(
 	--		clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
+	--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 	--
 	--		--SupportManager = getSupportManagerInstance()
 	--
@@ -54,7 +54,7 @@ icon:	"id:BTN_visibility_Rafts|across:5|height:32|width:64|tooltip:GEENERATE RAF
 	--	undo "Show\Hide Rafts" on
 	--	(
 	--		clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
+	--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 	--
 	--		--SupportManager = getSupportManagerInstance()
 	--
@@ -74,7 +74,7 @@ icon:	"id:BTN_visibility_beams|across:5|height:32|width:64|tooltip:GEENERATE BEA
 	--	undo "Show\Hide Beams" on
 	--	(
 	--		clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
+	--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 	--
 	--		--SupportManager = getSupportManagerInstance()
 	--
@@ -93,7 +93,7 @@ icon:	"id:BTN_visibility_all|across:5|height:32|width:64|tooltip:GENERATE POINTS
 		--undo off
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\SUPPORT GENERATOR.mcr"
 
 			(SupportManager_v()).toggleVisibility (#POINT) (true)
 

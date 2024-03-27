@@ -1,102 +1,63 @@
-clearListener(); print("Cleared in:"+getSourceFileName())
-
-fn round p3 dp =
-(
-	local tempArr = #(p3.x,p3.y,p3.z)
-	local mult = 10.00^(dp as float)
-	local rp3Arr = for c in tempArr collect ((floor ((c * mult)+0.5)) / mult)
-	point3 rp3Arr[1] rp3Arr[2] rp3Arr[3]
-)
---round [111.1589,12.856,85.5896] 3
-
-	--
-	--delete objects
-	--obj = Plane width:60 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10 isSelected:on
-	--
-	--modPanel.addModToSelection (Noisemodifier scale:2 strength:[0,0,10] ) ui:on
-	--
-	----rotate obj ( angleaxis 180 [1,0,0])
-	--
-	--macros.run "Modifier Stack" "Convert_to_Poly"
-
-	obj = selection[1]
-
-	vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-	verts_count	= getNumVerts obj.mesh
-	verts_all	= #{1..(verts_count)}
-
-	verts_positions = meshop.getVerts obj.mesh verts_all node:obj
-	--format "verts_positions as Array: %\n" (verts_positions as Array)
-
-	/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
-	pos_round = for pos in verts_positions collect round pos -1
-	x_positions = for pos in pos_round collect pos.x
-	y_positions = for pos in pos_round collect pos.y
-	z_positions = for pos in pos_round collect pos.z
-
-	--format "amin x_positions: %\n" (amin x_positions)
-	--format "amax x_positions: %\n" (amax x_positions)
-
-	x_size = (amax x_positions) - (amin x_positions)
-	y_size = (amax y_positions) - (amin y_positions)
-
-	--x_size /= 10
-	--y_size /= 10
-
-	points_grid = #()
 --
-	--format "x_size: %\n" x_size
-	--format "y_size: %\n" y_size
+--
+--
+--   theObj = selection[1]
+--   convertToMesh theObj --convert to EMesh
+--   theMeshCount = theObj.numfaces --get the number of faces in the object
+--   selArray = #() --init. an array to collect faces
+--   for f = 1 to theMeshCount do --loop through all faces
+--   (
+--
+--	tm = (eulerAngles 45 4 0 )as matrix3
+--
+--     --in coordsys ( inverse ( viewport.GetTM() ) ) theFN = getFaceNormal theObj f
+--     in coordsys (  tm ) theFN = getFaceNormal theObj f
+--
+--     if theFN.z < 0 then append selArray f -- if Z is negative, add to array
+--   )
+--
+--   subObjectLevel = 3 --go to Face SO level
+--
+--   setFaceSelection theObj selArray --set the face selection in the EMesh
+--   --max modify mode --go to modify mode
+--   --select theObj --select the mesh
+--   --modPanel.addModToSelection (deleteMesh()) --add a delete mesh, preserving the SO selection
+--
+--
+--
 
-	for x = (amin x_positions) to (amax x_positions) by 10 do
-		for y = (amin y_positions) to (amax y_positions) by 10 do
-		(
-			--format "\n--------------------\n"
-			--format "x: %\n" x
-			--format "y: %\n" y
 
-			points_in_square = for p = 1 to pos_round.count \
-				where pos_round[p].x >= x \
-				and pos_round[p].x < x + 10 \
-				and pos_round[p].y >= y \
-				and pos_round[p].y < y + 10 \
-			collect p
 
-		if points_in_square.count > 0 then
-			append points_grid points_in_square
-	 )
 
-	lowest_verts = #{}
 
-	for points_in_square in points_grid do
-	(
-		format "points_in_square: %\n" points_in_square
 
-		verts_positions = meshop.getVerts obj.mesh (points_in_square as BitArray )  node:obj
+   theObj = selection[1]
+   --convertToMesh theObj --convert to EMesh
+   theMeshCount = polyop.getNumFaces theObj --get the number of faces in the object
+   selArray = #() --init. an array to collect faces
+   for f = 1 to theMeshCount do --loop through all faces
+   (
 
-		z_positions = for pos in verts_positions collect pos.z
+	tm = ( eulerAngles 0 0 0 ) as matrix3
 
-		z_pos_min = amin z_positions
+     --in coordsys ( inverse ( viewport.GetTM() ) ) theFN = getFaceNormal theObj f
+     --in coordsys (  Matrix3 0 ) theFN = polyop.getFaceNormal theObj f
+     theFN = polyop.getFaceNormal theObj f
 
-		index	= findItem z_positions (amin z_positions)
+     --if theFN.z < 0 then append selArray f -- if Z is negative, add to array
+     --if theFN.z < -0.25 then append selArray f -- if Z is negative, add to array
+     --if theFN.z < -0.5 then append selArray f -- if Z is negative, add to array
+     if theFN.z < -0.85 then append selArray f -- if Z is negative, add to array
+   )
 
-		--lowest_vert = #{( vertex_sel as Array )[index]}
-		lowest_vert = ( points_in_square as Array )[index]
+   subObjectLevel = 4 --go to Face SO level
+	theObj.EditablePoly.SetSelection #Face (selArray as BitArray )
 
-		lowest_verts[lowest_vert] = true
+   --setFaceSelection theObj selArray --set the face selection in the EMesh
+   --max modify mode --go to modify mode
+   --select theObj --select the mesh
+   --modPanel.addModToSelection (deleteMesh()) --add a delete mesh, preserving the SO selection
 
-	)
-		--format "points_in_square: %\n" points_in_square
 
-	subObjectLevel = 1
 
-	if classOf ( _mod = modPanel.getCurrentObject() ) == Edit_Poly then
-	(
-		_mod.SetSelection #Vertex #{}
-		_mod.Select #Vertex lowest_verts
-
-	)
-
-	else fif classOf _mod  == Editable_Poly then
-		_mod.SetSelection #Vertex lowest_verts
 

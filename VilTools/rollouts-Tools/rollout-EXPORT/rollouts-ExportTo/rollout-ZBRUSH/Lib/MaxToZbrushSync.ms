@@ -1,3 +1,4 @@
+
 /** Max to zbrush sync
   *
   * HOW TO GET LOCATION OF INI FILES
@@ -39,7 +40,10 @@ struct MaxToZbrushSync_v
 	(
 		format "\n"; print "MaxToZbrushSync_v.exportObj()"
 
-		this._clearExportFolder()
+
+		this._createExportDir()
+
+		this._clearExportDir()
 
 		objects_to_export = for o in selection where superClassOf o == GeometryClass collect o
 
@@ -157,12 +161,22 @@ struct MaxToZbrushSync_v
 
 	/** Set preset file
 	 */
-	function _setPresetFile preset_file exporter_preset_path =
+	function _setPresetFile =
 	(
 		--format "\n"; print "MaxToZbrushSync_v.setPresetFile()"
-		deleteFile exporter_preset_path
 
-		copyFile preset_file exporter_preset_path
+		my_preset_dir = getFilenamePath(getSourceFileName()) + "Presets"
+
+		for Imp_or_Exp in #( Exporter, Importer) do
+			for target_file in #( Imp_or_Exp.getIniName(), Imp_or_Exp.getPresetIniName() ) do
+				if doesFileExist ( ini_preset_path = my_preset_dir + "\\" + filenameFromPath( target_file ) ) then
+				(
+					deleteFile target_file
+
+					copyFile ini_preset_path target_file
+				)
+				else
+					messageBox ("Missing preset file\n\n`"+ini_preset_path+"\n\nFile is used in ExporterOBJ_v._copyPresetFile()") title:"Missing preset file"  beep:false
 	),
 
 	/** Replace imported objects
@@ -222,10 +236,18 @@ struct MaxToZbrushSync_v
 			child.parent = target_object
 	),
 
+	/** Create export dir
+	 */
+	function _createExportDir =
+	(
+		--format "\n"; print "MaxToZbrushSync_v._vreateExportDir()"
+		makeDir export_dir all:true
+	),
+
 	/** Clear export folder
 	  * remove ".obj" and ".mtl" files
 	 */
-	function _clearExportFolder =
+	function _clearExportDir =
 	(
 		for file in getFiles (export_dir + "/*.*") where matchPattern file pattern:"*.obj" or matchPattern file pattern:"*.mtl" do
 			deleteFile file
@@ -236,9 +258,7 @@ struct MaxToZbrushSync_v
 	on create do
 	(
 		--format "\n"; print "MaxToZbrushSync.onCreate()"
-		makeDir export_dir all:true
-		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
-		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-	)
+		this._setPresetFile()
 
+	)
 )

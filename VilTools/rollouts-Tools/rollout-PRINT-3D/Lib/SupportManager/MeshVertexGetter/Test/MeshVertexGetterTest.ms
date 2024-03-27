@@ -1,7 +1,5 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
-filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VERTEX-COLOR\Lib\meshVertToColorVertexConvertor\MeshVertToColorVertexConvertor.ms"
-
 filein( getFilenamePath(getSourceFileName()) + "/../MeshVertexGetter.ms" )	--"./../MeshVertexGetter.ms"
 
 /**

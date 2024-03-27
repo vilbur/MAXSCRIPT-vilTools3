@@ -113,7 +113,7 @@ icon:	"across:2|offset:[ 16, 8 ]|height:32|width:128|align:#LEFT|tooltip:CTRL: R
 		--undo off
 		(
 			clearListener(); print("Cleared in:\n"+getSourceFileName())
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-POINTS.mcr"
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-POINTS.mcr"
 			points_created = (getSupportManagerInstance()).generatePointHelpers( selection as Array ) reset_helpers: keyboard.controlPressed
 
 			--format "POINTS_CREATED: %\n" points_created

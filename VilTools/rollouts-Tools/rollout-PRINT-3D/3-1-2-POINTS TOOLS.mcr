@@ -53,8 +53,8 @@ icon:	"MENU:false|across:4|height:24"
 	if subObjectLevel == 1 then
 	undo "Filter 1 vert per face" on
 	(
-		--clearListener(); print("Cleared in:\n"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
 
 		VertexGridSelector 	= VertexGridSelector_v( selection[1] )
 

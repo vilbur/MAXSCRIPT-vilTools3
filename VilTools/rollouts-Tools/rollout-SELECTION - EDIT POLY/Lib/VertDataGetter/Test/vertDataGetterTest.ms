@@ -32,7 +32,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 		polyop.setVertColor _obj 0 vertex_selection.count red -- color last vertex in red color
 
-		--_obj.EditablePoly.SetSelection #Vertex vertex_selection
+		_obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
 
 	modPanel.addModToSelection (Edit_Poly ()) ui:on
@@ -48,11 +48,11 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:120
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
-  createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
+  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
 
 
 /* SELECT SOURCE OBJECTS - IMPORTANT  */
-select objects[1]
+--select objects[1]
 --source_objects = for obj in selection collect obj
 
 
@@ -64,8 +64,8 @@ VertDataGetter 	= VertDataGetter_v( selection[1] )
 
 verts_data = VertDataGetter.getData positions:true colors:true normals:true
 
-for key in verts_data.keys do
-	format "%: %\n\n" key verts_data[key]
+--for key in verts_data.keys do
+	--format "%: %\n\n" key verts_data[key]
 
 
 

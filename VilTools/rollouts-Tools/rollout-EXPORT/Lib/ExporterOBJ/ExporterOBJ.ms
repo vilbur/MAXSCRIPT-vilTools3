@@ -68,30 +68,24 @@ struct ExporterOBJ_v
 
 
 	private
-
-	/** Copy preset file
+	/** Set preset file
 	 */
-	function _copyPresetFile =
+	function _setPresetFile =
 	(
-		--format "\n"; print "ExporterOBJ_v._copyPresetFile()"
+		--format "\n"; print "MaxToZbrushSync_v.setPresetFile()"
 
-		ini_file_path	= Exporter.getIniName()
+		my_preset_dir = getFilenamePath(getSourceFileName()) + "Presets"
 
-		ini_preset_path = getDir (#userscripts) + @"\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\Lib\ExporterOBJ\Presets\\" +preset as string + ".ini"
-		--format "ini_file_path	= % \n" ini_file_path
-		--format "Exporter.getIniName()	= % \n" (Exporter.getIniName())
-		--format "ini_preset_path	= % \n" ini_preset_path
-		--format "doesFileExist ini_preset_path	= % \n" (doesFileExist ini_preset_path)
+		for Imp_or_Exp in #( Exporter, Importer) do
+			for target_file in #( Imp_or_Exp.getIniName(), Imp_or_Exp.getPresetIniName() ) do
+				if doesFileExist ( ini_preset_path = my_preset_dir + "\\" + filenameFromPath( target_file ) ) then
+				(
+					deleteFile target_file
 
-		if doesFileExist ini_preset_path then
-		(
-			deleteFile ini_file_path
-
-			copyFile ini_preset_path ini_file_path
-		)
-		else
-			messageBox ("Missing preset file\n\n`"+ini_preset_path+"\n\nFile is used in ExporterOBJ_v._copyPresetFile()") title:"Missing preset file"  beep:false
-
+					copyFile ini_preset_path target_file
+				)
+				else
+					messageBox ("Missing preset file\n\n`"+ini_preset_path+"\n\nFile is used in ExporterOBJ_v._setPresetFile()") title:"Missing preset file"  beep:false
 	),
 
 	/**
@@ -100,7 +94,7 @@ struct ExporterOBJ_v
 	(
 		format "\n"; print "ExporterOBJ.onCreate()"
 
-		this._copyPresetFile()
+		this._setPresetFile()
 	)
 
 )

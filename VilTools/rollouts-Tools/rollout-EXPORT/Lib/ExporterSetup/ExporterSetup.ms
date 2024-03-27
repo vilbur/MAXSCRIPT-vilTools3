@@ -47,7 +47,6 @@ struct ExporterSetup_v
 			(
 				#Obj:	this._exportObj()
 				#Print:	this._exportPrint()
-				#Zbrush:	this._exportZbrush()
 				#Unreal:	this._exportUnreal()
 			)
 
@@ -110,13 +109,6 @@ struct ExporterSetup_v
 	function _exportUnreal =
 	(
 		format "\n"; print "ExporterSetup_v._exportUnreal()"
-	),
-
-	/** Export obj
-	 */
-	function _exportZbrush =
-	(
-		format "\n"; print "ExporterSetup_v._exportObj()"
 	),
 
 	/*------------------------------------------------------------------------------
