@@ -1,4 +1,19 @@
 /** Get lowest verts in grid
+
+
+	IMPORTANT:
+		  DIFFERENT METHODS CAN RETURN DIFFERENT BitArray ON SAME SELECTION e.g.: #{1..157090} and #{1..930, 932..157091} -- vertext index 931 is missing and array is larger
+
+		  In polyop methods is one vertex index missing in middle of BitArray
+
+			Noticed on model imported from Zbrush
+
+		  SOLUTION: REXPORT OBJECT, xform and attach to new object doesnt help
+
+		  A) 'getVertSelection obj.mesh'	returns #{1..1000}
+		  B) 'polyop.getVertSelection obj'	returns #{1..930, 932..1001}
+
+
  */
 struct VertexGridSelector_v
 (
@@ -9,10 +24,11 @@ struct VertexGridSelector_v
 	--resolution = 5,
 	resolution = 10,
 
-	verts_to_get 	= #{}, -- source vertex to operate, selection or all verts if nothing selected
+	verts_process 	= #{}, -- source vertex to operate, selection or all verts if nothing selected
 	points_grid 	= #(), -- 2DMatrix of verts which share same cell in grid points_grid[X_CELL][Y_CELL]
 	sel_modified 	= #{}, -- modified selection for selecting
-	verts_positions 	= #{},
+	verts_positions 	= #(),
+	face_normals 	= #(),
 
 	/* dependency */
 	/* reference */
@@ -23,36 +39,17 @@ struct VertexGridSelector_v
 	function getLowestVerts =
 	(
 		--format "\n"; print "VertexGridSelector_v.selectLowestInts()"
-		this.getVertsInGrid()
+		this._getVertsInGrid()
 
-		this.sel_modified = #{}
-
-		--verts_positions = meshop.getVerts obj.mesh #{1..(getNumVerts obj.mesh)} node:obj
-
+		this.sel_modified = copy verts_process
+		format "verts_process: %\n" verts_process
+		--format "verts_process: %\n" verts_process.numberSet
 
 		for x = 1 to points_grid.count do
 			for y = 1 to points_grid[x].count do
-			(
-				verts_in_cell = points_grid[x][y] as Array
+				this._filterOnlyMinZVerts (points_grid[x][y])
 
-				/* GET LOWEST POINT IN CELL */
-				if verts_in_cell.count > 1 then
-				(
-					z_positions = for vert in verts_in_cell where verts_positions[vert] != undefined collect verts_positions[vert].z
-					--format "z_positions: %\n" z_positions
-
-					z_pos_min = amin z_positions
-
-					if ( index = findItem z_positions (amin z_positions) ) > 0 then
-						sel_modified[verts_in_cell[index]] = true
-				)
-				else
-					sel_modified[verts_in_cell[1]] = true -- if single vertex in cell
-			)
-
-		--this.selectVerts (sel_modified)
 		gc()
-
 	),
 
 	/** Get checker apttern of selection
@@ -60,7 +57,7 @@ struct VertexGridSelector_v
 	function getCheckerSelection invert_sel:false =
 	(
 		format "\n"; print "VertexGridSelector_v.getCheckerSelection()"
-		this.getVertsInGrid()
+		this._getVertsInGrid()
 
 		this.sel_modified = #{}
 
@@ -73,8 +70,8 @@ struct VertexGridSelector_v
 					this.sel_modified +=  points_grid[x][y]
 			)
 
-		format "INVERT_SEL: %\n" invert_sel
-		this.sel_modified = if invert_sel then verts_to_get - sel_modified else sel_modified --return
+		--format "INVERT_SEL: %\n" invert_sel
+		this.sel_modified = if invert_sel then verts_process - sel_modified else sel_modified --return
 	),
 
 	/** Select sinlge vert per face island
@@ -85,114 +82,63 @@ struct VertexGridSelector_v
 	(
 		format "\n"; print "VertexGridSelector_v.getSingleVertPerFaceIsland()"
 
-		/** Is not same array
-		 */
-		--function isNotSameArray arr1 arr2     = not ( arr1 -  arr2 ).isEmpty
-		function facesShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
-		--function faceShareFaces verts1 verts2 = not ( verts1 * verts2 ).isEmpty
+		this._getVertsToProcess()
+		format "verts_process: %\n" verts_process
 
-
-		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-		verts_count	= getNumVerts obj.mesh
-		verts_all	= #{1..(verts_count)}
-
-		verts_to_get = if vertex_sel.isEmpty then verts_all else vertex_sel
-
-		--this.sel_modified = copy verts_to_get
-
-		if verts_to_get.numberSet == 0 then
+		if verts_process.numberSet == 0 then
 			return false
 
-		tested_pairs = #{} -- store stringified array of face id used in loop already
-		verts_islands = #() -- #( #{ veret_ids } ) array of bitarrays of verts sorted by island the occupy
-		face_islands = #() -- #( #{ faces_ids } ) array of bitarrays of faces sorted by island the occupy
-		verts_per_faces = #()
+		this.sel_modified = copy verts_process
 
-		this.sel_modified = #{}
-
-		face_sel = polyop.getFacesUsingVert obj verts_to_get
-
-		face_ids = face_sel as Array
-
-		verts_per_faces = for face_id in face_sel collect polyop.getVertsUsingFace obj #{face_id}
-
-		timer_start = timeStamp()
-
-		for f = 1 to face_ids.count do
-		(
-			face_joined = true
-
-			for i = 1 to verts_islands.count do
-				if facesShareVerts (verts_islands[i]) (verts_per_faces[f]) then
-				(
-					verts_islands[i] +=  verts_per_faces[f]
-
-					append face_islands[i] face_ids[f]
-
-					face_joined = false
-				)
-
-			if face_joined then
-			(
-				append face_islands #(face_ids[f])
-
-				append verts_islands verts_per_faces[f]
-			)
-
-		)
-
-		format "\n start: % ms\n" (( timeStamp()) - timer_start)
-
-		--for face_island in face_islands do
-		--	format "face_island: %\n" face_island
-		--format "\n--------------\n"
-		--for verts_island in verts_islands do
-		--	format "verts_island: %\n" verts_island
-
-		new_sel = #{}
-
-		for verts_island in verts_islands do
-		(
-			verts_in_sel = (verts_island * verts_to_get) as Array
-			--format "verts_in_sel: %\n" verts_in_sel
-
-			/* remove other verts on island from selection */
-			if verts_in_sel.count > 1 then
-			(
-				verts_pos_z = for pos in meshop.getVerts obj.mesh (verts_in_sel as BitArray) node:obj collect pos.z
-
-				--format "verts_pos_z: %\n" verts_pos_z
-				lowest_point = findItem verts_pos_z (amin verts_pos_z)
-
-				--deleteItem verts_in_sel ( ) -- remove lowes point
-				this.sel_modified[verts_in_sel[lowest_point]] = true
-
-				--for i = 1 to verts_in_sel.count do
-					--this.sel_modified[verts_in_sel[i]] = false
-			)
-			else
-				this.sel_modified[verts_in_sel[1]] = true
-		)
-
-		format "this.sel_modified.numberSet: %\n" this.sel_modified.numberSet
-
+		/* LOOP EACH ISLAND OF VERTS */
+		for verts_island in (verts_islands = this._sortVertsByIslands()) do
+			this._filterOnlyMinZVerts (verts_island * verts_process)
 
 		gc()
 	),
 
+
+	/** Select final selection
+	 */
+	function selectVerts =
+	(
+		format "\n"; print "VertexGridSelector_v.selectVerts()"
+		format "this.sel_modified.isEmpty: %\n" this.sel_modified.isEmpty
+
+		format "sel_modified: %\n" sel_modified
+		--format "sel_modified: %\n" sel_modified.numberSet
+
+		if this.sel_modified.isEmpty then
+			this.sel_modified = deepCopy verts_process
+
+
+		subObjectLevel = 1
+		_mod = modPanel.getCurrentObject()
+		_mod.SetSelection #Vertex #{}
+
+		if classOf _mod == Edit_Poly then
+			_mod.Select #Vertex this.sel_modified
+
+		else if classOf _mod  == Editable_Poly then
+			_mod.SetSelection #Vertex this.sel_modified
+
+
+	),
+
+	private
 	/** Get point in grid
 
-			return 2 matrix of cells on XY grid
-			#(
-				#( #{x1y1}, #{x1y2} )
-				#( #{x2y1}, #{x2y2} )
-				#( #{x3y1}, #{x3y2} )
-			)
+		return 2 matrix of cells on XY grid
+		#(
+			#( #{x1y1}, #{x1y2} )
+			#( #{x2y1}, #{x2y2} )
+			#( #{x3y1}, #{x3y2} )
+		)
 
 	 */
-	function getVertsInGrid =
+	function _getVertsInGrid =
 	(
-		format "\n"; print "VertexGridSelector_v.getVertsInGrid()"
+		format "\n"; print "VertexGridSelector_v._getVertsInGrid()"
 		fn roundPoint3 p3 dp =
 		(
 			local tempArr = #(p3.x,p3.y,p3.z)
@@ -201,18 +147,12 @@ struct VertexGridSelector_v
 			point3 rp3Arr[1] rp3Arr[2] rp3Arr[3]
 		)
 
-		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-		verts_count	= getNumVerts obj.mesh
-		verts_all	= #{1..(verts_count)}
+		this._getVertsToProcess()
 
-		verts_to_get = if vertex_sel.isEmpty then verts_all else vertex_sel
-
-		verts_to_get_arr = verts_to_get as Array
-
-		verts_positions = meshop.getVerts obj.mesh verts_to_get node:obj
-
+		--verts_process_arr = verts_process as Array
+		--format "VERTS_PROCESS: %\n" verts_process
 		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
-		pos_round = for pos in verts_positions collect roundPoint3 pos 0
+		pos_round = for vert in verts_process collect roundPoint3 this.verts_positions[vert] 0
 
 		x_positions = for pos in pos_round collect pos.x
 		y_positions = for pos in pos_round collect pos.y
@@ -223,28 +163,23 @@ struct VertexGridSelector_v
 		y_min = amin y_positions
 		y_max = amax y_positions
 
-		--format "x_min: %\n" x_min
-		--format "x_max: %\n" x_max
-		--format "y_min: %\n" y_min
-		--format "y_max: %\n" y_max
-
-		x_size = x_max - y_min
-		y_size = y_max - y_min
-
-		counter_x = 0
-
+		--x_size = x_max - y_min
+		--y_size = y_max - y_min
 
 		this.points_grid = for x = x_min to x_max by resolution collect
 			for y = y_min to y_max by resolution collect #{} -- bitAarray to store verts which occupy cell of grid
 
-		for i = 1 to verts_positions.count do
+		for vert in verts_process do
+		--for i = 1 to verts_positions.count do
 		(
-			index_x = ((( verts_positions[i].x - x_min ) / resolution) as integer) + 1
-			index_y = ((( verts_positions[i].y - y_min ) / resolution) as integer) + 1
+			vert_position = verts_positions[vert]
 
-			index_vert = verts_to_get_arr[i]
+			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
+			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1
 
-			points_grid[index_x][index_y][index_vert] = true
+			--index_vert = verts_process_arr[i]
+
+			points_grid[index_x][index_y][vert] = true
 		)
 
 		/* MARGE LAST TOP SQUARES - verts from last cell are on border of verts, they belongs to last cell */
@@ -269,30 +204,169 @@ struct VertexGridSelector_v
 		points_grid --return
 	),
 
-	/** Select final selection
+	/**  Left only single lowest vert of verts
+	  *   Verts above are removed from selection
 	 */
-	function selectVerts =
+	function _filterOnlyMinZVerts verts =
 	(
-		format "\n"; print "VertexGridSelector_v.selectVerts()"
-		format "this.sel_modified.isEmpty: %\n" this.sel_modified.isEmpty
-		if this.sel_modified.isEmpty then
-			this.sel_modified = deepCopy verts_to_get
+		--format "\n"; print "VertexGridSelector_v._SelectOnlyMinZVerts()"
 
+		--(verts as Array )[1] --return
 
-		subObjectLevel = 1
-		_mod = modPanel.getCurrentObject()
-		_mod.SetSelection #Vertex #{}
+		if ( lowest_vert = this._getMinZposVert(verts) ) != undefined then
+		(
+			--format "LOWEST_VERT: %\n" lowest_vert
+			verts[lowest_vert] = false
 
-		if classOf _mod == Edit_Poly then
-			_mod.Select #Vertex this.sel_modified
+		)
 
-		else if classOf _mod  == Editable_Poly then
-			_mod.SetSelection #Vertex this.sel_modified
-
+		/*  remove verts above from selection */
+		for vert in verts do
+			this.sel_modified[vert] = false
 
 	),
 
-	private
+	/** Get vert with min z pos
+	  *
+	  * @param BitArray verts
+	 */
+	function _getMinZposVert verts =
+	(
+		--format "\n"; print "VertexGridSelector_v.getMinZposVert()"
+		verts_arr = verts as Array
+
+		function normalLimit faces_of_vert =
+		(
+			average_normal = point3 0 0 0
+			--faces_normal = for face_id in faces_of_vert collect this.face_normals[face_id]
+
+			for face_id in faces_of_vert do average_normal += this.face_normals[face_id]
+
+			average_normal = normalize average_normal
+
+			--format "average_normal: %\n" average_normal
+			--format "average_normal.z < -0.25: %\n" (average_normal.z < -0.25)
+
+			 --average_normal.z < 0 -- return
+			 average_normal.z < 0.25 -- return
+			 --average_normal.z < -0.5 -- return
+			 --average_normal.z < -0.8 -- return
+
+		)
+
+
+			format "verts_arr: %\n" verts_arr
+		if verts.count > 1 then
+			verts_arr = for vert in verts_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect vert
+
+			format "verts_arr: %\n" verts_arr
+
+
+		/* GET LOWEST POINT IN CELL */
+		if verts.count > 1 then
+		(
+			--verts_arr = for vert in verts_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect verts_positions[vert].z
+			--format "verts_arr: %\n" verts_arr
+
+			z_positions = for vert in verts_arr collect verts_positions[vert].z
+
+			if ( index = findItem z_positions (amin z_positions) ) > 0 then
+				verts_arr[index] --return
+		)
+		else
+			verts_arr[1] --return
+
+			--verts_arr[1] --return
+	),
+
+	/** Get verts to ocess
+
+
+	 */
+	function _getVertsToProcess =
+	(
+		format "\n"; print "VertexGridSelector_v._getVertsToProcess()"
+		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
+		verts_count	= getNumVerts obj.mesh
+		verts_all	= #{1..(verts_count)}
+
+		/* CHECK INDEXES OF VERTS NEEDED */
+		--this._checkSelectionIngerity (vertex_sel as Array ) ( ( polyop.getVertSelection obj ) as Array )
+
+
+		/* VERTEX POSITIONS */
+		this.verts_positions = meshop.getVerts obj.mesh verts_all node:obj
+
+		/* PROCESS ALL OR ONLY SELECTED VERTS */
+		this.verts_process = if vertex_sel.isEmpty then verts_all else vertex_sel
+
+
+		face_normals = for f = 1 to polyop.getNumFaces obj collect  polyop.getFaceNormal obj f
+	),
+
+
+	/** Get ace islands by verts
+	  *
+	  * @param BitArray verts which faces will be sorted by islands
+	  *
+	  * @return #( #{..} ) array of vertex ids, each array are verts of one island
+	 */
+	function _sortVertsByIslands =
+	(
+		--format "\n"; print "VertexGridSelector_v.getAceIslandsByVerts()"
+		function facesShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
+
+		tested_pairs	= #{} -- store stringified array of face id used in loop already
+		verts_islands	= #() -- #( #{ veret_ids } ) array of bitarrays of verts sorted by island the occupy
+		--face_islands	= #() -- #( #{ faces_ids } ) array of bitarrays of faces sorted by island the occupy
+		verts_per_faces	= #()
+
+
+		faces_by_verts = ( polyop.getFacesUsingVert obj verts_process) as Array
+
+		verts_per_faces = for face_id in faces_by_verts collect polyop.getVertsUsingFace obj #{face_id}
+
+		timer_start = timeStamp()
+
+		for f = 1 to faces_by_verts.count do
+		(
+			face_joined = true
+
+			for i = 1 to verts_islands.count do
+				if facesShareVerts (verts_islands[i]) (verts_per_faces[f]) then
+				(
+					verts_islands[i] +=  verts_per_faces[f]
+
+					/* CURENTLY NOT NEEDED, GET FACE IDS BY ISLAND */
+					--append face_islands[i] faces_by_verts[f]
+
+					face_joined = false
+				)
+
+			if face_joined then
+			(
+					/* CURENTLY NOT NEEDED, GET FACE IDS BY ISLAND */
+				--append face_islands #(faces_by_verts[f])
+
+				append verts_islands verts_per_faces[f]
+			)
+
+		)
+
+		verts_islands --return
+	),
+
+	/** Check selection ingerity
+	 */
+	function _checkSelectionIngerity mesh_sel polyop_sel =
+	(
+		--format "\n"; print "VertexGridSelector_v._checkSelectionIngerity()"
+
+		if mesh_sel[mesh_sel.count] 1= polyop_sel[polyop_sel.count] then
+			messageBox ("Object '"+obj.name+"' needs to be rexported.\n\nVertex needs to be reindexed" )title:"VertexGridSelector_v"
+
+	),
+
 
 	/**
 	 */
