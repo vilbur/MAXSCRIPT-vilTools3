@@ -1,9 +1,7 @@
 filein( getFilenamePath(getSourceFileName()) + "/MeshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./MeshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
 
-if VERTEX_DATA_CACHE == undefined then -- DEV
+--if VERTEX_DATA_CACHE == undefined then -- DEV
 	global VERTEX_DATA_CACHE = Dictionary #integer -- store vertex normals VERTEX_DATA_CACHE[sliderTime]["obj pointer"][#transform|#verts|#positions|#normals]
-
-
 
 /**
  */
@@ -22,8 +20,6 @@ struct VertDataGetter_v
 	colors 	= Dictionary #string,
 
 	face_normals 	= #(),
-	--points_grid 	= #(), -- 2DMatrix of verts which share same cell in grid points_grid[X_CELL][Y_CELL]
-	--sel_modified 	= #{}, -- modified selection for selecting
 
 	get_normal_method_limit = 7000, -- vertex count where Edit_Normals modifier if faster for getting normals
 	/* dependency */
@@ -36,59 +32,39 @@ struct VertDataGetter_v
 	 */
 	function getData positions:true colors:true normals:true =
 	(
-		format "\n"; print "VertDataGetter_v.getData()"
-		format "this.verts: %\n" this.verts
-
-
-		verts_data = Dictionary #( #VERTS, verts )
-
+		--format "\n"; print "VertDataGetter_v.getData()"
 		this._setVertsPositions()
 
-		--if positions then
-		--	verts_data[#POSITIONS] = this.positions
-		--
-		--
-		--if colors then
-		--	verts_data[#COLORS] = this.getVertexColors()
+		if colors then
+			this._setVertexColors()
 
 		if normals then
-		(
-			--this._setCacheData()
 			this._setVertexNormals()
 
+		this._getVertsData() --return
+	),
 
-		--	verts_data[#NORMALS] =
-		)
+	private
 
+	/** Get verts data
+	 */
+	function _getVertsData =
+	(
+		--format "\n"; print "VertDataGetter_v._getVertsData()"
+		verts_data =  Dictionary #( #VERTS, this.verts ) #( #POSITIONS, this.positions )
+
+		for prop in #( #COLORS, #NORMALS ) do
+			verts_data[prop] = getProperty this prop
 
 		verts_data --return
 	),
 
-	/** Get verts possitions
-	 */
-	function getVertsPositions =
-	(
-		--format "\n"; print "VertDataGetter_v.getVertsSitions()"
-		for vert in verts collect  this.positions[vert]
-	),
-
-	/** Get vertex colors
-	 */
-	function getVertexColors =
-	(
-		--format "\n"; print "VertDataGetter_v.getVertexColors()"
-		this._setVertexColors()
-
-		colors --return
-	),
-
-	private
 
 	/** Get vertex normals
 	 */
 	function _getVertexNormals verts_get =
 	(
-		format "\n"; print "VertDataGetter_v._setVertexNormals()"
+		--format "\n"; print "VertDataGetter_v._setVertexNormals()"
 		if vertex_count < get_normal_method_limit then
 			this._getVertNormalsByFaceNormal(verts_get)--return
 		else
@@ -99,7 +75,7 @@ struct VertDataGetter_v
 	 */
 	function _getVertNormalsByModifier verts_get =
 	(
-		format "\n"; print "MeshVertexGetter_v._getVertNormalsByModifier()"
+		--format "\n"; print "MeshVertexGetter_v._getVertNormalsByModifier()"
 		--this.normals = for vert in verts collect ( getnormal obj.mesh vert )
 
 		verts_get = verts_get as Array
@@ -137,7 +113,7 @@ struct VertDataGetter_v
 	 */
 	function _getVertNormalsByFaceNormal verts_get =
 	(
-		format "\n"; print "VertDataGetter_v._getVertNormalsByFaceNormal()"
+		--format "\n"; print "VertDataGetter_v._getVertNormalsByFaceNormal()"
 		/* get vert normal by averaging normals of their faces
 		*/
 		function getVertNormal faces_of_vert =
@@ -176,11 +152,11 @@ struct VertDataGetter_v
 	 */
 	function _setVertsToProcess =
 	(
-		format "\n"; print "VertexGridSelector_v._setVertsToProcess()"
+		--format "\n"; print "VertexGridSelector_v._setVertsToProcess()"
 		vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 
-		format "vertex_sel: %\n" vertex_sel
-		format "this._getAllVerts(): %\n" (this._getAllVerts())
+		--format "vertex_sel: %\n" vertex_sel
+		--format "this._getAllVerts(): %\n" (this._getAllVerts())
 
 		/* CHECK INDEXES OF VERTS NEEDED */
 		--this._checkSelectionIngerity (vertex_sel as Array ) ( ( polyop.getVertSelection obj ) as Array )
@@ -248,9 +224,11 @@ struct VertDataGetter_v
 		(
 			MeshVertToColorVertexConvert.get_single_vert = false
 
-			while not verts.isEmpty do
+			verts_get_colors = copy verts
+
+			while not verts_get_colors.isEmpty do
 			(
-				mesh_vert = (verts as Array )[1]
+				mesh_vert = ( verts_get_colors as Array )[1]
 
 				map_verts_of_mesh_vert = makeUniqueArray (MeshVertToColorVertexConvert.meshVertsToMapVerts (mesh_vert) flat:true )
 
@@ -260,7 +238,7 @@ struct VertDataGetter_v
 
 				this.colors[ color_of_vert as string ] = mesh_verts_by_color
 
-				verts -= mesh_verts_by_color
+				verts_get_colors -= mesh_verts_by_color
 			)
 
 			/* REMOVE MULTI COLORED VERTS FROM WHITE - (if one of vert colors is not white, then vert is not white) */
@@ -270,92 +248,80 @@ struct VertDataGetter_v
 		)
 	),
 
-	/** Set cache data
+	/** Set vertex normals
+		Normals are stored in chache, because its time consuming to get then on high vertex count
+
 
 	   VERTEX_DATA_CACHE[sliderTime]["obj pointer"][#TRANSFORM|#VERTS|#POSITIONS|#NORMALS]
 
 	 */
 	function _setVertexNormals =
 	(
-		format "\n"; print "VertDataGetter_v._setVertexNormals()"
+		--format "\n"; print "VertDataGetter_v._setVertexNormals()"
 
+		function dataIndex vertex_index = findItem (this.verts as Array ) vertex_index
 
-		--fn transformChanged	verts_data =  verts_data[#transform] != this.obj.transform
-		--fn vertsSelChanged	verts_data =  ( verts_data[2] - this.verts_to_get ).isEmpty == false
-		--fn positionChanged	verts_data = ( with PrintAllElements on verts_data[3] as string == this.positions as string )
-		--fn normalsChanged		verts_data =  verts_data[4].count != this.verts_to_get.numberSet
+		function cacheDataIndex vertex_index = findItem ( this.cache_data[#VERTS] as Array ) vertex_index
 
-		function dataIndex vertex_index = findItem this.verts vertex_index
+		this.cache_data = this._getCacheData()
 
-		function cacheDataIndex cache_data vertex_index = findItem cache_data[#VERTS] vertex_index
-
-		cache_data = this._getCacheData()
-		format "this.verts: %\n" this.verts
-		format "this.positions: %\n" this.positions
-		verts_new	= verts - cache_data[#VERTS]
-		verts_in_cache	= verts * cache_data[#VERTS]
+		verts_new	= verts - cache_data[#VERTS] -- verts which are not in cache yet
+		verts_in_cache	= verts * cache_data[#VERTS] -- verts in chache already
+		verts_in_cache = verts_in_cache as Array
 		format "verts_new: %\n" verts_new
-		format "verts_in_cache: %\n" verts_in_cache
-		 --for vert in verts_in_cache do
-			--format "vert: %\n" dataIndex(vert)
 
-
+		/* GET CURRENT  AND CACHE VERTS POSITIONS */
 		pos_current = for vert in verts_in_cache collect this.positions [dataIndex(vert)]
-		pos_cache	  = for vert in verts_in_cache collect cache_data[#positions][dataIndex(vert)]
+		pos_cache	  = for vert in verts_in_cache collect cache_data[#positions][cacheDataIndex(vert)]
 
+		/* UPDATE NORMAL IF VERT CHANGE ITS POSITION */
 		verts_update_chache = (for i = 1 to verts_in_cache.count where pos_cache[i] != pos_current[i] collect verts_in_cache[i]) as BitArray
-		format "verts_update_chache: %\n" verts_update_chache
-		verts_update = verts_update_chache + verts_new
-		format "verts_update: %\n" verts_update
+		--format "verts_update_chache: %\n" verts_update_chache
 
-		normals_new = this._getVertexNormals ( verts_update )
+		verts_update   = verts_update_chache + verts_new
+		normals_update = this._getVertexNormals ( verts_update )
+		format "normals_update: %\n" normals_update
 
-
-		if cache_data[#NORMALS].count > 0 then
+		/* SET NEW CACHE */
+		if cache_data[#VERTS].count == 0 then
 		(
+			this.cache_data[#VERTS]   = verts_new
+			this.cache_data[#NORMALS] = normals_update
+		)
+		else  /* UPDATE NORMALS IN CACHE */
 			for vert in verts_update do
-			(
-				cache_data[#VERTS][vert] = true -- add vertex to chache
+				this._updateNormalInCache (verts_update_chache) (vert) (normals_update)
 
-				cache_index = findItem cache_data[#VERTS] vert -- get its index in chache
+		/* SET VERTEX POSTIONS */
+		this.cache_data[#POSITIONS] = meshop.getVerts obj.mesh cache_data[#VERTS] node:obj
 
-				vertex_normal = normals_new[cache_index]
+		/* UPDATE CAHCE GLOBAL VARIABLE */
+		VERTEX_DATA_CACHE[ sliderTime as integer ][getHandleByAnim obj as string ] = this.cache_data
 
-
-				if verts_update_chache[vert] then
-					/* UPDATE OLD */
-					cache_data[#NORMALS][cache_index] = vertex_normal
-				else
-					/* INSERT NEW NORMAL */
-					insertItem vertex_normal cache_data[#NORMALS] cache_index
-			)
-		)
-		else
-		(
-			cache_data[#VERTS]   = verts_new
-			cache_data[#NORMALS] = normals_new
-		)
-
-
-		cache_data[#POSITIONS] = meshop.getVerts obj.mesh cache_data[#VERTS] node:obj
-
-		format "CACHE_DATA: %\n" cache_data
-		format "this.verts: %\n" this.verts
-		format "cache_data[#VERTS]: %\n" cache_data[#VERTS]
-
-		VERTEX_DATA_CACHE[sliderTime as integer ][getHandleByAnim obj as string ] = cache_data
-
-		/* DEBUG */
-		cache_data_test = VERTEX_DATA_CACHE[sliderTime as integer ][getHandleByAnim obj as string ]
-		--for key in cache_data_test.keys where (cache_data_test[key] as Array ).count != cache_data_test[#VERTS].numberSet do
-			--format "VertDataGetter_v._setVertexNormals() CACHE DATA COUNT IS NOT CONSISTENT: %\n" key
-		format "this.verts: %\n" this.verts
-
-		for key in cache_data_test.keys do
-			format "%: %\n" key (cache_data_test[key] as Array ).count
+		this.normals = for vert in verts collect this.cache_data[#NORMALS][cacheDataIndex(vert)]
 	),
 
-	/** Set new cache
+	/** Update cache nornal
+	 */
+	function _updateNormalInCache verts_update_chache vert normals_update =
+	(
+		--format "\n"; print "VertDataGetter_v._updateNormalInCache()"
+		this.cache_data[#VERTS][vert] = true -- add vertex to chache
+
+		cache_index = findItem (this.cache_data[#VERTS] as Array ) vert -- get its index in chache
+		--format "cache_index: %\n" cache_index
+		vertex_normal = normals_update[cache_index]
+
+		if verts_update_chache[vert] then
+			/* UPDATE OLD */
+			this.cache_data[#NORMALS][cache_index] = vertex_normal
+		else
+			/* INSERT NEW NORMAL */
+			insertItem vertex_normal cache_data[#NORMALS] cache_index
+	),
+
+	/** Get data from chache
+	  * Create blank data for object if not exists
 	 */
 	function _getCacheData =
 	(
@@ -392,7 +358,7 @@ struct VertDataGetter_v
 	 */
 	on create do
 	(
-		format "\n"; print "VertDataGetter.onCreate()"
+		--format "\n"; print "VertDataGetter.onCreate()"
 		this.vertex_count = getNumVerts obj.mesh
 
 		this._setVertsToProcess()
