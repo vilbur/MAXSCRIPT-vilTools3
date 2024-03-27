@@ -28,25 +28,25 @@ struct PinsGenerator_v
 
 			if vertex_sel.numberSet > 0 then
 			(
-				verts_data = (MeshVertexGetter_v(obj)).getVetexData verts_to_get:vertex_sel
+				verts_data = (VertDataGetter_v(obj)).getData verts:vertex_sel
 				--verts_to_generate =  this._getVertsToGenerateFromObjects (reset_verts)
 
 				format "VERTS_DATA: %\n" verts_data
 
-				for i = 1 to verts_data[1].numberSet do
-					this.generatePin verts_data[2][i] normal:verts_data[3][i]
+				for i = 1 to verts_data[#VERTS].numberSet do
+					this.generatePin verts_data[#POSITIONS][i] normal:verts_data[#NORMALS][i]
 			)
 
 		)
-		else if subObjectLevel == 4 then
-		(
-			face_sel	= getFaceSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-
-			faces_data = (MeshDataGetter_v(obj)).getFaceData faces_to_get:face_sel
-
-			this.generatePin faces_data[1] normal:faces_data[2]
-
-		)
+		--else if subObjectLevel == 4 then
+		--(
+		--	face_sel	= getFaceSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
+		--
+		--	faces_data = (MeshDataGetter_v(obj)).getFaceData faces_to_get:face_sel
+		--
+		--	this.generatePin faces_data[#VERTS] normal:faces_data[#POSITIONS]
+		--
+		--)
 
 
 	),

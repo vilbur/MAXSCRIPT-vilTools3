@@ -3,9 +3,9 @@ filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-VERTEX-COLOR/L
 filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	--"./../../../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
 
 /* MeshVertexGetter IS OBSOLETTE, REMOVE IT */
-filein( getFilenamePath(getSourceFileName()) + "/MeshVertexGetter/MeshVertexGetter.ms" )	--"./MeshVertexGetter/MeshVertexGetter.ms"
-filein( getFilenamePath(getSourceFileName()) + "/MeshDataGetter/MeshDataGetter.ms" )	--"./MeshDataGetter/MeshDataGetter.ms"
-
+--filein( getFilenamePath(getSourceFileName()) + "/MeshVertexGetter/MeshVertexGetter.ms" )	--"./MeshVertexGetter/MeshVertexGetter.ms"
+----filein( getFilenamePath(getSourceFileName()) + "/MeshDataGetter/MeshDataGetter.ms" )	--"./MeshDataGetter/MeshDataGetter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-SELECTION - EDIT POLY/Lib/VertDataGetter/VertDataGetter.ms" )	--"./../../../rollout-SELECTION - EDIT POLY/Lib/VertDataGetter/VertDataGetter.ms"
 
 
 filein( getFilenamePath(getSourceFileName()) + "/ShapeKnotGetter/ShapeKnotGetter.ms" )	--"./ShapeKnotGetter/ShapeKnotGetter.ms"

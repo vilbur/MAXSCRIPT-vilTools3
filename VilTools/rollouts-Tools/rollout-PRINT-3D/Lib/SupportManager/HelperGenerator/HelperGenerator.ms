@@ -44,9 +44,9 @@ struct HelperGenerator_v
 		this.point_helpers = if point_helpers_of_object != undefined then point_helpers_of_object else Dictionary #integer -- Dictionary #( vert_number, point_helper ) -- all point  helpers of of source obejct
 
 		/* IF USER CANCEL GETTIN DATA */
-		if ( this.verts_data = this._getVertsData() ) == undefined then
-			return point_helpers_new
-
+		--if ( this.verts_data = this._getVertsData() ) == undefined then
+			--return point_helpers_new
+		this.verts_data = this._getVertsData()
 
 		/* FIND VERTS if not defined */
 		--if verts_to_generate.numberSet == 0 and reset_verts then
@@ -58,6 +58,11 @@ struct HelperGenerator_v
 								reset_verts
 
 		format "VERTS_TO_GENERATE: %\n" verts_to_generate
+		format "verts_data[#VERTS]: %\n" verts_data[#VERTS]
+		format "verts_data[#POSITIONS]: %\n" verts_data[#POSITIONS]
+		format "verts_data[#NORMALS]: %\n" verts_data[#NORMALS]
+		format "verts_data[#COLORS]: %\n" verts_data[#COLORS]
+
 
 		if verts_to_generate.numberSet > 0 then
 		(
@@ -69,16 +74,18 @@ struct HelperGenerator_v
 			/* GENERATE POINTS FOR EACH VERTEX */ -- TODO: loop should has its own method
 			for vertex_index in verts_to_generate do
 			(
-				data_index	= findItem ( verts_data[1] as Array ) vertex_index -- find vertex in all verts data
-				--format "vertex_index: %\n" vertex_index
+				data_index	= findItem ( verts_data[#VERTS] as Array ) vertex_index -- find vertex in all verts data
+				format "vertex_index: %\n" vertex_index
+				format "data_index: %\n" data_index
+
 				HelperObject = HelperObject_v \
 									Options:Options	\
 									source_obj:source_obj	\
 									vertex_index:vertex_index	\
-									pos:verts_data[2][data_index]	\
-									normal:verts_data[3][data_index]	\
+									pos:verts_data[#POSITIONS][data_index]	\
+									normal:verts_data[#NORMALS][data_index]	\
 									old_points:(this._getOldPointsChain(vertex_index))	\
-									wirecolor:(this._getWireColor(verts_data[4][data_index]))	\ --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
+									wirecolor:(this._getWireColor(verts_data[#COLORS])(vertex_index))	\ --point_helper:point_helpers[verts_to_generate[i]] -- get point helepr by vertex number
 
 
 
@@ -124,7 +131,7 @@ struct HelperGenerator_v
 		--format "\n"; print "HelperGenerator_v.setVersData()"
 		if superClassOf source_obj != shape then
 			/* GET DATA FROM MESH */
-			(MeshVertexGetter_v(source_obj)).getVetexData remove_multi_colored_verts_from_white:true -- MESH OBEJCT
+			(VertDataGetter_v(source_obj)).getData() -- MESH OBEJCT
 		else
 			/* GET DATA FROM SHAPE */
 			(ShapeKnotGetter_v(source_obj)(Options.use_nth_vertex)).getVetexData() -- SHAPE OBJECT
@@ -140,10 +147,10 @@ struct HelperGenerator_v
 		function helperExists vertex_index = this.point_helpers[vertex_index] != undefined
 
 		/* FILTER EXISTING VERTS */
-		if not reset_verts then
-			(for vertex_index in verts_data[1] where not helperExists(vertex_index) collect vertex_index) as BitArray  --return
-		else
-			verts_data[1]  --return
+		--if not reset_verts then
+		--	(for vertex_index in this.verts_data[#VERTS] where not helperExists(vertex_index) collect vertex_index) as BitArray  --return
+		--else
+			verts_data[#VERTS]  --return
 	),
 
 	/** set current pointer to source object
@@ -231,11 +238,17 @@ struct HelperGenerator_v
 
 	/* USE OBJECT WIRE COLOR IF VERTEX COLOR IS WHITE
 	*/
-	function _getWireColor wirecolor = (
+	function _getWireColor wirecolors vertex_index =
+	(
+		--format "\n"; print "HelperGenerator_v._getWireColor()"
+		--format "wirecolors: %\n" wirecolors
 
-		if classOf wirecolor == Array then wirecolor = wirecolor[1]
+		vertex_colors = for clr in wirecolors.keys where wirecolors[clr][vertex_index] collect execute clr
+		--format "vertex_colors: %\n" vertex_colors
 
-		 if wirecolor != white then wirecolor else this.source_obj.wirecolor --return
+		--if classOf vertex_colors =  == Array then wirecolor = wirecolor[1]
+
+		 if vertex_colors.count > 0 then vertex_colors[1] else this.source_obj.wirecolor --return
 	),
 
 	/** Get point chains

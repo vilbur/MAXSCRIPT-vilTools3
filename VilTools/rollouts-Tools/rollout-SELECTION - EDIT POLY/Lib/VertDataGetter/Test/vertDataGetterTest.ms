@@ -13,12 +13,12 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 	segment_size = 10
 
-	--_obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
-	_obj = Sphere radius:15 pos:[0,0, 50 ] segments:segments showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+	--obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
+	obj = Sphere radius:15 pos:[0,0, 50 ] segments:segments showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
 
-	select _obj
+	select obj
 
-	Rotate _obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
+	Rotate obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
 
 	macros.run "Modifier Stack" "Convert_to_Poly"
 
@@ -27,12 +27,12 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 		subObjectLevel = 1
 
 		if vertex_color != unsupplied then
-			polyop.setVertColor _obj 0 vertex_selection vertex_color
+			polyop.setVertColor obj 0 vertex_selection vertex_color
 
 
-		--polyop.setVertColor _obj 0 vertex_selection.count red -- color last vertex in red color
+		--polyop.setVertColor obj 0 vertex_selection.count red -- color last vertex in red color
 
-		_obj.EditablePoly.SetSelection #Vertex vertex_selection
+		--obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
 
 	--modPanel.addModToSelection (Edit_Poly ()) ui:on
@@ -44,17 +44,18 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
 --createSourceMesh()
- --createSourceMesh vertex_selection:#{2..3} vertex_color:green
-  createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
+ createSourceMesh vertex_selection:#{2..3} vertex_color:green
+  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:120
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
 
 
 /* SELECT SOURCE OBJECTS - IMPORTANT  */
-select objects[1]
+obj =  objects[1]
 --source_objects = for obj in selection collect obj
 
+select obj
 
 /*------------------------------------------------------------------------------
 	SET INSTANCE
@@ -62,11 +63,20 @@ select objects[1]
 
 VertDataGetter 	= VertDataGetter_v( selection[1] )
 
-verts_data = VertDataGetter.getData positions:true colors:true normals:true
 
-format "\n\n ------ RESULT --------\n\n"
-for key in verts_data.keys do
-	format "%: %\n\n" key verts_data[key]
+
+for i = 1 to 3 do
+(
+	obj.EditablePoly.SetSelection #Vertex #{i}
+
+	verts_data = VertDataGetter.getData positions:true colors:true normals:true
+
+	format "\n\n ------ RESULT % --------\n\n" i
+	for key in verts_data.keys do
+		format "%: %\n\n" key verts_data[key]
+
+
+)
 
 
 
