@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../rollout-SELECTION - EDIT POLY/Lib/vertexGridSelector/vertexGridSelector.ms" )	--"./../rollout-SELECTION - EDIT POLY/Lib/vertexGridSelector/vertexGridSelector.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms" )	--"./../rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms"
 
 
 /**  Export format
@@ -32,9 +32,9 @@ icon:	"MENU:false|across:4|height:24"
 
 		obj	= selection[1]
 
-		VertexGridSelector 	= VertexGridSelector_v( obj ) resolution:ROLLOUT_print_3d.SPIN_grid_step.value
-		VertexGridSelector.getLowestVerts()
-		VertexGridSelector.selectVerts()
+		VertSelector 	= VertSelector_v( obj ) resolution:ROLLOUT_print_3d.SPIN_grid_step.value
+		VertSelector.getLowestVerts()
+		VertSelector.selectVerts()
 
 	)
 )
@@ -56,10 +56,10 @@ icon:	"MENU:false|across:4|height:24"
 		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
 
-		VertexGridSelector 	= VertexGridSelector_v( selection[1] )
+		VertSelector 	= VertSelector_v( selection[1] )
 
-		VertexGridSelector.getSingleVertPerFaceIsland()
-		VertexGridSelector.selectVerts()
+		VertSelector.getSingleVertPerFaceIsland()
+		VertSelector.selectVerts()
 
 	)
 )
@@ -81,11 +81,11 @@ icon:	"MENU:false|across:4|height:24"
 
 		obj	= selection[1]
 
-		VertexGridSelector 	= VertexGridSelector_v( obj ) resolution:ROLLOUT_print_3d.SPIN_grid_step.value
+		VertSelector 	= VertSelector_v( obj ) resolution:ROLLOUT_print_3d.SPIN_grid_step.value
 
-		VertexGridSelector.getCheckerSelection invert_sel:( keyboard.controlPressed )
+		VertSelector.getCheckerSelection invert_sel:( keyboard.controlPressed )
 
-		VertexGridSelector.selectVerts()
+		VertSelector.selectVerts()
 
 
 	)

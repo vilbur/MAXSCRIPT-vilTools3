@@ -17,7 +17,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../VertDataGetter/VertDataGette
 
 
  */
-struct VertexGridSelector_v
+struct VertSelector_v
 (
 	/* construct */
 	obj,
@@ -42,7 +42,7 @@ struct VertexGridSelector_v
 	 */
 	function getLowestVerts =
 	(
-		--format "\n"; print "VertexGridSelector_v.selectLowestInts()"
+		--format "\n"; print "VertSelector_v.selectLowestInts()"
 		this._getVertsInGrid()
 
 		this.sel_modified = copy verts_process
@@ -60,7 +60,7 @@ struct VertexGridSelector_v
 	 */
 	function getCheckerSelection invert_sel:false =
 	(
-		format "\n"; print "VertexGridSelector_v.getCheckerSelection()"
+		format "\n"; print "VertSelector_v.getCheckerSelection()"
 		this._getVertsInGrid()
 
 		this.sel_modified = #{}
@@ -84,7 +84,7 @@ struct VertexGridSelector_v
 	 */
 	function getSingleVertPerFaceIsland =
 	(
-		format "\n"; print "VertexGridSelector_v.getSingleVertPerFaceIsland()"
+		format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
 
 		this._getVertsToProcess()
 		format "verts_process: %\n" verts_process
@@ -106,7 +106,7 @@ struct VertexGridSelector_v
 	 */
 	function selectVerts =
 	(
-		format "\n"; print "VertexGridSelector_v.selectVerts()"
+		format "\n"; print "VertSelector_v.selectVerts()"
 		format "this.sel_modified.isEmpty: %\n" this.sel_modified.isEmpty
 
 		format "sel_modified: %\n" sel_modified
@@ -142,10 +142,10 @@ struct VertexGridSelector_v
 	 */
 	function _getVertsInGrid =
 	(
-		format "\n"; print "VertexGridSelector_v._getVertsInGrid()"
+		--format "\n"; print "VertSelector_v._getVertsInGrid()"
 		fn roundPoint3 p3 dp =
 		(
-			format "p3: %\n" p3
+			--format "p3: %\n" p3
 			local tempArr = #(p3.x,p3.y,p3.z)
 			local mult = 10.00^(dp as float)
 			local rp3Arr = for c in tempArr collect ((floor ((c * mult)+0.5)) / mult)
@@ -157,7 +157,7 @@ struct VertexGridSelector_v
 		--verts_process_arr = verts_process as Array
 		--format "VERTS_PROCESS: %\n" verts_process
 		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
-		pos_round = for vert in verts_process collect roundPoint3 (this.VertDataGetter.getPosition(vert)) 0
+		pos_round = for vert in verts_process collect roundPoint3 (VertDataGetter.getPosition(vert)) 0
 
 		x_positions = for pos in pos_round collect pos.x
 		y_positions = for pos in pos_round collect pos.y
@@ -177,7 +177,7 @@ struct VertexGridSelector_v
 		for vert in verts_process do
 		--for i = 1 to verts_data[#POSITIONS].count do
 		(
-			vert_position = this.VertDataGetter.getPosition(vert)
+			vert_position = VertDataGetter.getPosition(vert)
 
 			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
 			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1
@@ -214,7 +214,7 @@ struct VertexGridSelector_v
 	 */
 	function _filterOnlyMinZVerts verts =
 	(
-		--format "\n"; print "VertexGridSelector_v._SelectOnlyMinZVerts()"
+		--format "\n"; print "VertSelector_v._SelectOnlyMinZVerts()"
 
 		--(verts as Array )[1] --return
 
@@ -237,7 +237,7 @@ struct VertexGridSelector_v
 	 */
 	function _getMinZposVert verts =
 	(
-		--format "\n"; print "VertexGridSelector_v.getMinZposVert()"
+		--format "\n"; print "VertSelector_v.getMinZposVert()"
 		verts_arr = verts as Array
 
 		function normalLimit faces_of_vert =
@@ -245,7 +245,7 @@ struct VertexGridSelector_v
 			average_normal = point3 0 0 0
 			--faces_normal = for face_id in faces_of_vert collect this.face_normals[face_id]
 
-			for face_id in faces_of_vert do average_normal += this.VertDataGetter.face_normals[face_id]
+			for face_id in faces_of_vert do average_normal += VertDataGetter.face_normals[face_id]
 
 			average_normal = normalize average_normal
 
@@ -270,10 +270,10 @@ struct VertexGridSelector_v
 		/* GET LOWEST POINT IN CELL */
 		if verts.count > 1 then
 		(
-			--verts_arr = for vert in verts_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect verts_data[#POSITIONS][vert].z
+			--verts_arr = for vert in verts_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect VertDataGetter.getPosition(vert) axis:#Z
 			--format "verts_arr: %\n" verts_arr
 
-			z_positions = for vert in verts_arr collect verts_data[#POSITIONS][vert].z
+			z_positions = for vert in verts_arr collect VertDataGetter.getPosition(vert) axis:#Z
 
 			if ( index = findItem z_positions (amin z_positions) ) > 0 then
 				verts_arr[index] --return
@@ -290,7 +290,7 @@ struct VertexGridSelector_v
 	 */
 	function _getVertsToProcess =
 	(
-		format "\n"; print "VertexGridSelector_v._getVertsToProcess()"
+		format "\n"; print "VertSelector_v._getVertsToProcess()"
 		verts_data = VertDataGetter.getData()
 
 		verts_process = verts_data[#VERTS]
@@ -321,7 +321,7 @@ struct VertexGridSelector_v
 	 */
 	function _sortVertsByIslands =
 	(
-		--format "\n"; print "VertexGridSelector_v.getAceIslandsByVerts()"
+		--format "\n"; print "VertSelector_v.getAceIslandsByVerts()"
 		function facesShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
 
 		tested_pairs	= #{} -- store stringified array of face id used in loop already
@@ -368,23 +368,17 @@ struct VertexGridSelector_v
 	 */
 	function _checkSelectionIngerity mesh_sel polyop_sel =
 	(
-		--format "\n"; print "VertexGridSelector_v._checkSelectionIngerity()"
+		--format "\n"; print "VertSelector_v._checkSelectionIngerity()"
 
 		if mesh_sel[mesh_sel.count] 1= polyop_sel[polyop_sel.count] then
-			messageBox ("Object '"+obj.name+"' needs to be rexported.\n\nVertex needs to be reindexed" )title:"VertexGridSelector_v"
-
+			messageBox ("Object '"+obj.name+"' needs to be rexported.\n\nVertex needs to be reindexed" )title:"VertSelector_v"
 	),
-
 
 	/**
 	 */
 	on create do
 	(
-		--format "\n"; print "VertexGridSelector.onCreate()"
+		--format "\n"; print "VertSelector.onCreate()"
 		VertDataGetter 	= VertDataGetter_v( obj )
-
-		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
-		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
 	)
-
 )

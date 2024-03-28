@@ -32,7 +32,7 @@ struct VertDataGetter_v
 	 */
 	function getData verts: positions:true colors:true normals:true =
 	(
-		format "\n"; print "VertDataGetter_v.getData()"
+		--format "\n"; print "VertDataGetter_v.getData()"
 		this._setVertsToProcess(verts)
 		--format "VERTS: %\n" this.verts
 		if positions then
@@ -47,6 +47,38 @@ struct VertDataGetter_v
 		--format "NORMALS: %\n" this.normals
 		this._getVertsData #( #POSITIONS, #COLORS, #NORMALS ) #( positions, colors, normals ) --return
 	),
+
+	/** Get position
+	 */
+	function get prop vert =
+	(
+		--format "\n"; print "VertDataGetter_v.get()"
+		--format "prop: %\n" prop
+		--format "vert: %\n" vert
+		--format "index: %\n" (this.dataIndex(vert))
+		--format "data: %\n" (getProperty this prop)
+
+		(getProperty this prop)[this.dataIndex(vert)] -- get value from E.G.: this[#POSITIONS][data_index]
+	),
+
+	/** Get position
+
+	  * @param #X|#Y|#Z axis
+	 */
+	function getPosition vert axis: =
+	(
+		--format "\n"; print "VertDataGetter_v.getPosition()"
+		if ( pos = positions[this.dataIndex(vert)] ) != undefined and axis != unsupplied then
+			getProperty pos axis
+		else
+			pos
+	),
+
+	function dataIndex vertex_index =
+	(
+		findItem (this.verts as Array ) vertex_index
+	),
+
 
 	private
 
@@ -249,7 +281,7 @@ struct VertDataGetter_v
 	(
 		format "\n"; print "VertDataGetter_v._setVertexNormals()"
 
-		function dataIndex vertex_index = findItem (this.verts as Array ) vertex_index
+		--function dataIndex vertex_index = findItem (this.verts as Array ) vertex_index
 
 		function cacheDataIndex vertex_index = findItem ( this.cache_data[#VERTS] as Array ) vertex_index
 
@@ -259,17 +291,17 @@ struct VertDataGetter_v
 
 		this.cache_data = this._getCacheData()
 
-		format "CACHE SIZE: %\n" this.cache_data[#VERTS].numberSet
+		--format "CACHE SIZE: %\n" this.cache_data[#VERTS].numberSet
 		--format "cache_data[#VERTS]: %\n" this.cache_data[#VERTS]
 		--format "cache_data[#NORMALS]: %\n" this.cache_data[#NORMALS]
 
 		verts_new	= verts - cache_data[#VERTS] -- verts which are not in cache yet
 		verts_in_cache	= verts * cache_data[#VERTS] -- verts in chache already
 		verts_in_cache = verts_in_cache as Array
-		format "verts_new: %\n" verts_new
+		--format "verts_new: %\n" verts_new
 
 		/* GET CURRENT  AND CACHE VERTS POSITIONS */
-		pos_current = for vert in verts_in_cache collect this.positions [dataIndex(vert)]
+		pos_current = for vert in verts_in_cache collect this.positions [this.dataIndex(vert)]
 		pos_cache	  = for vert in verts_in_cache collect cache_data[#positions][cacheDataIndex(vert)]
 
 		/* UPDATE NORMAL IF VERT CHANGE ITS POSITION */
@@ -323,21 +355,21 @@ struct VertDataGetter_v
 		this.normals = for vert in verts collect this.cache_data[#NORMALS][cacheDataIndex(vert)]
 	),
 
-	/** Update cache nornal
-	 */
-	function _updateNormalInCache update_or_insert vert vertex_normal =
-	(
-		format "\n"; print "VertDataGetter_v._updateNormalInCache()"
-		format "verts_update_chache: %\n" verts_update_chache
-		this.cache_data[#VERTS][vert] = true -- add vertex to chache
-
-		if update_or_insert then
-			/* UPDATE OLD */
-			this.cache_data[#NORMALS][cache_index] = vertex_normal
-		else
-			/* INSERT NEW NORMAL */
-			insertItem vertex_normal cache_data[#NORMALS] cache_index
-	),
+	--/** Update cache nornal
+	-- */
+	--function _updateNormalInCache update_or_insert vert vertex_normal =
+	--(
+	--	--format "\n"; print "VertDataGetter_v._updateNormalInCache()"
+	--	--format "verts_update_chache: %\n" verts_update_chache
+	--	this.cache_data[#VERTS][vert] = true -- add vertex to chache
+	--
+	--	if update_or_insert then
+	--		/* UPDATE OLD */
+	--		this.cache_data[#NORMALS][cache_index] = vertex_normal
+	--	else
+	--		/* INSERT NEW NORMAL */
+	--		insertItem vertex_normal cache_data[#NORMALS] cache_index
+	--),
 
 	/** Get data from chache
 	  * Create blank data for object if not exists
