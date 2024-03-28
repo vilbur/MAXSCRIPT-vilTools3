@@ -32,17 +32,25 @@ struct VertDataGetter_v
 	 */
 	function getData verts: positions:true colors:true normals:true =
 	(
-		--format "\n"; print "VertDataGetter_v.getData()"
+		format "\n"; print "VertDataGetter_v.getData()"
+		--format "positions: %\n" positions
+		--format "colors: %\n" colors
+		--format "normals: %\n" normals
+
 		this._setVertsToProcess(verts)
 		--format "VERTS: %\n" this.verts
+
 		if positions then
 			this._setVertsPositions()
 
 		if colors then
 			this._setVertexColors()
 
+		timer_normals = timeStamp()
+
 		if normals then
 			this._setVertexNormals()
+		--format "\n normals: % ms\n" (( timeStamp()) - timer_normals)
 
 		--format "NORMALS: %\n" this.normals
 		this._getVertsData #( #POSITIONS, #COLORS, #NORMALS ) #( positions, colors, normals ) --return
@@ -74,11 +82,31 @@ struct VertDataGetter_v
 			pos
 	),
 
+	/*
+	  * @param #X|#Y|#Z axis
+	 */
+	function getNormal vert =
+	(
+		--format "\n"; print "VertDataGetter_v.getPosition()"
+		this.normals[this.dataIndex(vert)] --return
+	),
+	/* Get index of data by vertex number in this.positions|normlas|colors|
+	*
+	* Bitarray way to accomplish : findItem (this.verts_arr) vertex_index
+	*
+	*/
 	function dataIndex vertex_index =
 	(
-		findItem (this.verts as Array ) vertex_index
-	),
+		--format "\n"; print "VertDataGetter_v.dataIndex()"
+		--format "vertex_index: %\n" vertex_index
+		--format "verts: %\n" verts
+		--format "-verts: %\n" -verts
+		missing = -verts - #{vertex_index..(vertex_count)} -- find how many indexes is false before vertex_index
+		--format "missing: %\n" missing
+		--format "missing.numberSet: %\n" missing.numberSet
 
+		vertex_index - missing.numberSet
+	),
 
 	private
 
@@ -97,77 +125,7 @@ struct VertDataGetter_v
 	),
 
 
-	/** Get vertex normals
-	 */
-	function _getVertexNormals verts_get =
-	(
-		--format "\n"; print "VertDataGetter_v._setVertexNormals()"
-		if vertex_count < get_normal_method_limit then
-			this._getVertNormalsByFaceNormal(verts_get)--return
-		else
-			this._getVertNormalsByModifier(verts_get)--return
-	),
 
-	/** set vert normals by modifier
-	 */
-	function _getVertNormalsByModifier verts_get =
-	(
-		--format "\n"; print "MeshVertexGetter_v._getVertNormalsByModifier()"
-		--this.normals = for vert in verts collect ( getnormal obj.mesh vert )
-
-		verts_get = verts_get as Array
-
-		sub_object_level = subObjectLevel
-
-		EditNormalsModifier = Edit_Normals()
-
-		addModifier obj EditNormalsModifier
-
-		_normals = for i = 1 to verts_get.count collect
-		(
-			normal_averaged	= [0,0,0]
-			normals_per_vertex	= #{}
-
-			vert = verts_get[i]
-
-			EditNormalsModifier.ConvertVertexSelection #{vert} (normals_per_vertex)
-
-			for normal in normals_per_vertex as Array do normal_averaged += EditNormalsModifier.getNormal(normal) node:obj
-
-			normalize normal_averaged
-		)
-
-		--normals = for vert in verts collect (EditNormalsModifier.getNormal(vert)) * obj.transform
-
-		deleteModifier obj EditNormalsModifier
-
-		subObjectLevel = sub_object_level
-
-		_normals --return
-	),
-
-	/** Set vert normals by face normal
-	 */
-	function _getVertNormalsByFaceNormal verts_get =
-	(
-		--format "\n"; print "VertDataGetter_v._getVertNormalsByFaceNormal()"
-		/* get vert normal by averaging normals of their faces
-		*/
-		function getVertNormal faces_of_vert =
-		(
-			average_normal = point3 0 0 0
-
-			for face_id in faces_of_vert do average_normal += this.face_normals[face_id]
-
-			normalize average_normal
-		)
-
-		this._setFaceNormals()
-
-		for vert in (verts_get as Array ) collect getVertNormal( polyop.getFacesUsingVert obj vert)
-	),
-
-	/** Get verts to ocess
 
 	/** Set verts positions
 	 */
@@ -280,79 +238,164 @@ struct VertDataGetter_v
 	function _setVertexNormals =
 	(
 		format "\n"; print "VertDataGetter_v._setVertexNormals()"
+		/* Get index of data by vertex number in chache
+		* Bitarray way to accomplish : findItem (this.verts_arr) vertex_index
+		*/
+		function cacheDataIndex vertex_index =
+		(
+			--format "\n"; print "VertDataGetter_v.normalIndex()"
+			vertex_count_in_cache = this.cache_data[#VERTS].count
 
-		--function dataIndex vertex_index = findItem (this.verts as Array ) vertex_index
+			missing = -verts - #{vertex_index..(vertex_count)} -- find how many indexis is false before vertex_index
 
-		function cacheDataIndex vertex_index = findItem ( this.cache_data[#VERTS] as Array ) vertex_index
+			index = vertex_index - missing.numberSet
+			--format "index: %\n" index
+			index --return
+		)
+		--function normalIndex vertex_index = findItem (this.verts_arr) vertex_index
+		function normalIndex normals_arr verts_get_normals  vertex_index =
+		(
+			missing = -verts_get_normals - #{vertex_index..(vertex_count)} -- find how many indexis is false before vertex_index
 
-		function normalIndex vertex_index = findItem (this.verts as Array ) vertex_index
+			normals_arr[ vertex_index - missing.numberSet ]
+		)
+
+		verts_update_chache = #{}
 
 		if this.positions.count == 0 then	this._setVertsPositions()
 
 		this.cache_data = this._getCacheData()
 
-		--format "CACHE SIZE: %\n" this.cache_data[#VERTS].numberSet
-		--format "cache_data[#VERTS]: %\n" this.cache_data[#VERTS]
-		--format "cache_data[#NORMALS]: %\n" this.cache_data[#NORMALS]
-
 		verts_new	= verts - cache_data[#VERTS] -- verts which are not in cache yet
 		verts_in_cache	= verts * cache_data[#VERTS] -- verts in chache already
-		verts_in_cache = verts_in_cache as Array
-		--format "verts_new: %\n" verts_new
 
+		--format "verts: %\n" verts
+		--format "cache_data[#VERTS]: %\n" cache_data[#VERTS]
+		--format "VERTS_NEW: %\n" verts_new
 		/* GET CURRENT  AND CACHE VERTS POSITIONS */
-		pos_current = for vert in verts_in_cache collect this.positions [this.dataIndex(vert)]
-		pos_cache	  = for vert in verts_in_cache collect cache_data[#positions][cacheDataIndex(vert)]
+		timer_TEST = timeStamp()
+		for vert in verts_in_cache do
+		(
+			--vert	= verts_in_cache[i]
+
+			pos_current = (this.positions [this.dataIndex(vert)])
+			pos_cache   = (cache_data[#positions][cacheDataIndex(vert)])
+
+			if pos_cache != pos_current then
+				verts_update_chache[vert] = true
+		)
+		--format "\n TEST: % ms\n" (( timeStamp()) - timer_TEST)
+
+
+		verts_get_normals = verts_update_chache + verts_new
+		--format "VERTS_GET_NORMALS: %\n" verts_get_normals
 
 		/* UPDATE NORMAL IF VERT CHANGE ITS POSITION */
-		verts_update_chache = (for i = 1 to verts_in_cache.count where pos_cache[i] != pos_current[i] collect verts_in_cache[i]) as BitArray
-		--format "verts_update_chache: %\n" verts_update_chache
-		verts_get_normals = verts_update_chache + verts_new
-		normals_update    = this._getVertexNormals ( verts_get_normals )
-		--format "normals_update: %\n" normals_update
-
-		for vert in verts_get_normals do
+		if verts_get_normals.numberSet > 0 then
 		(
-			vertex_normal = normals_update[findItem (verts_get_normals as Array ) vert]
-			--format "VERTEX_NORMAL: %\n" vertex_normal
-			if not verts_update_chache[vert] then
+			normals_update    = this._getVertexNormals ( verts_get_normals )
+
+			for vert in verts_get_normals do
 			(
+				--vertex_normal = normals_update[findItem (verts_get_normals as Array ) vert]
+				--format "VERT: %\n" vert
+				vertex_normal = normalIndex (normals_update)(verts_get_normals)(vert)
+				--format "VERT: %\n" vert
+
+				--format "VERTEX_NORMAL: %\n" vertex_normal
 				this.cache_data[#VERTS][vert] = true -- add vertex to chache
 
-				insertItem vertex_normal cache_data[#NORMALS] (cacheDataIndex(vert))
+				if not verts_update_chache[vert] then
+					insertItem vertex_normal cache_data[#NORMALS] (cacheDataIndex(vert))
+
+				else
+					this.cache_data[#NORMALS][cacheDataIndex(vert)] = vertex_normal
 			)
-			else
-				this.cache_data[#NORMALS][cacheDataIndex(vert)] = vertex_normal
+
+			/* SET VERTEX POSTIONS */
+			this.cache_data[#POSITIONS] = meshop.getVerts obj.mesh cache_data[#VERTS] node:obj
+
+			/* UPDATE CAHCE GLOBAL VARIABLE */
+			VERTEX_DATA_CACHE[ sliderTime as integer ][getHandleByAnim obj as string ] = this.cache_data
+
 		)
 
-		--verts_update_arr	= verts_update as Array
-		--format "verts_update: %\n" verts_update
-		--normals_update = this._getVertexNormals ( verts_update )
-		--format "normals_update: %\n" normals_update
-		--
-		----/* SET NEW CACHE */
-		--if cache_data[#VERTS].count == 0 then
-		--(
-		--	this.cache_data[#VERTS]   = verts_new
-		--	this.cache_data[#NORMALS] = normals_update
-		--)
-		--else
-		--
-		--/* UPDATE NORMALS IN CACHE */
-		--	for i = 1 to verts_update.count do
-		--	--for vert in verts_update do
-		--		this._updateNormalInCache ( verts_update_chache[verts_update_arr[i]] ) (vert) (normals_update[i])
-
-			--this.cache_data[#VERTS]   = verts_new
-			--this.cache_data[#NORMALS] = normals_update
-
-		/* SET VERTEX POSTIONS */
-		this.cache_data[#POSITIONS] = meshop.getVerts obj.mesh cache_data[#VERTS] node:obj
-
-		/* UPDATE CAHCE GLOBAL VARIABLE */
-		VERTEX_DATA_CACHE[ sliderTime as integer ][getHandleByAnim obj as string ] = this.cache_data
-
 		this.normals = for vert in verts collect this.cache_data[#NORMALS][cacheDataIndex(vert)]
+	),
+
+	/** Get vertex normals
+	 */
+	function _getVertexNormals verts_get =
+	(
+		format "\n"; print "VertDataGetter_v._getVertexNormals()"
+		if vertex_count < get_normal_method_limit then
+			this._getVertNormalsByFaceNormal(verts_get)--return
+		else
+			this._getVertNormalsByModifier(verts_get)--return
+	),
+
+	/** set vert normals by modifier
+	 */
+	function _getVertNormalsByModifier verts_get =
+	(
+		--format "\n"; print "MeshVertexGetter_v._getVertNormalsByModifier()"
+		--this.normals = for vert in verts collect ( getnormal obj.mesh vert )
+
+		--verts_get = verts_get as Array
+
+		sub_object_level = subObjectLevel
+
+		EditNormalsModifier = Edit_Normals()
+
+		addModifier obj EditNormalsModifier
+
+		--_normals = for i = 1 to verts_get.count collect
+		_normals = for vert in verts_get collect
+		(
+			--format "\n----------\n"
+			--format "vert: %\n" vert
+
+			normal_averaged	= [0,0,0]
+			normals_per_vertex	= #{}
+
+			--vert = verts_get[i]
+
+			EditNormalsModifier.ConvertVertexSelection #{vert} (normals_per_vertex) -- cast normals ids of vertex to normals_per_vertex BitArray
+			--format "normals_per_vertex: %\n" normals_per_vertex
+			for normal in normals_per_vertex do normal_averaged += EditNormalsModifier.getNormal(normal) node:obj
+
+			normalize normal_averaged
+		)
+
+		--normals = for vert in verts collect (EditNormalsModifier.getNormal(vert)) * obj.transform
+
+		deleteModifier obj EditNormalsModifier
+
+		subObjectLevel = sub_object_level
+
+		_normals --return
+	),
+
+	/** Set vert normals by face normal
+	 */
+	function _getVertNormalsByFaceNormal verts_get =
+	(
+		--format "\n"; print "VertDataGetter_v._getVertNormalsByFaceNormal()"
+		--format "verts_get: %\n" verts_get
+		/* get vert normal by averaging normals of their faces
+		*/
+		function getVertNormal faces_of_vert =
+		(
+			average_normal = point3 0 0 0
+
+			for face_id in faces_of_vert do average_normal += this.face_normals[face_id]
+
+			normalize average_normal
+		)
+
+		this._setFaceNormals()
+
+		for vert in (verts_get as Array ) collect getVertNormal( polyop.getFacesUsingVert obj vert)
 	),
 
 	--/** Update cache nornal
@@ -421,6 +464,9 @@ struct VertDataGetter_v
 		)
 		else
 			verts_to_get
+
+		--format "this.verts: %\n" this.verts
+		--this.verts_arr = this.verts as Array
 	),
 
 	/**

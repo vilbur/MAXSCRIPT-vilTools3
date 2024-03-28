@@ -76,7 +76,7 @@ icon:	"MENU:false|across:4|height:24"
 	on execute do
 	if selection.count > 0 then
 	(
-		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
 
 		obj	= selection[1]

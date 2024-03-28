@@ -12,7 +12,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	segment_size = 10
 
 	--obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
-	obj = Sphere radius:20 pos:[0,0, 50 ] segments:segments showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+	obj = Sphere radius:20 pos:[0,0, 50 ] segments:segments --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
 
 	--obj = Plane width:20 length:20 pos:[ 50, 20, 50 ] widthsegs:4 lengthsegs:4
 
@@ -27,9 +27,11 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 	select obj
 
-	modPanel.addModToSelection (Noisemodifier scale:5 strength:[0,0,10] ) ui:on
+	modPanel.addModToSelection (Noisemodifier scale:8 strength:[0,0,10] ) ui:on
 
 	Rotate obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
+
+	modPanel.addModToSelection (smooth ()) ui:on
 
 	macros.run "Modifier Stack" "Convert_to_Poly"
 
@@ -43,7 +45,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 		--polyop.setVertColor obj 0 vertex_selection.count red -- color last vertex in red color
 
-		--obj.EditablePoly.SetSelection #Vertex vertex_selection
+		obj.EditablePoly.SetSelection #Vertex vertex_selection
 	)
 
 	--modPanel.addModToSelection (Edit_Poly ()) ui:on
@@ -55,9 +57,16 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
 --createSourceMesh()
+
+
+  --createSourceMesh segments:4
+  --createSourceMesh vertex_color:orange segments:32
+  createSourceMesh vertex_color:orange segments:64
+
  --createSourceMesh vertex_selection:#{2..3} vertex_color:green
-  createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
-  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:120
+  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
+  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:32
+  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
 
@@ -71,7 +80,8 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 VertSelector 	= VertSelector_v( objects[1] ) resolution:10
 
 
-VertSelector.resolution = 5
+--VertSelector.resolution = 5
+VertSelector.resolution = 10
 
 --for points_in_square in VertSelector.points_grid do
 --	format "points_in_square: %\n" points_in_square
@@ -79,15 +89,19 @@ VertSelector.resolution = 5
 
 
 
---/* SELECT LOWES VERTS ON OBJECT\SELECTION */
+--/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
 --VertSelector.getLowestVerts();	VertSelector.selectVerts()
 
+--/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
+--VertSelector.getVertsByNormal();	VertSelector.selectVerts()
 
 
 /* LEFT ONLY LOWEST VERT IF MULTIPLE VERTS ARE ON ISLAND OF FACES */
 --VertSelector.getSingleVertPerFaceIsland();--VertSelector.selectVerts()
 --
---/* GET VERTEX IN CHECK BOARD PATTERN */
+
+
+/* GET VERTEX IN CHECK BOARD PATTERN */
 VertSelector.getCheckerSelection invert_sel:false;  VertSelector.selectVerts()
 
 

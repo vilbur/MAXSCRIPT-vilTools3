@@ -21,6 +21,8 @@ struct VertSelector_v
 (
 	/* construct */
 	obj,
+	normal_limit = -0.5,
+	--normal_limit = 0.0,
 
 	/* properties */
 	--resolution = 5,
@@ -42,11 +44,16 @@ struct VertSelector_v
 	 */
 	function getLowestVerts =
 	(
-		--format "\n"; print "VertSelector_v.selectLowestInts()"
+		format "\n"; print "VertSelector_v.selectLowestInts()"
+		this._getVertsToProcess()
+
+		--verts_process = this._filterVertsByNormal (verts_process)
+		format "VERTS_PROCESS: %\n" verts_process
+
 		this._getVertsInGrid()
 
 		this.sel_modified = copy verts_process
-		format "verts_process: %\n" verts_process
+		--format "verts_process: %\n" verts_process
 		--format "verts_process: %\n" verts_process.numberSet
 
 		for x = 1 to points_grid.count do
@@ -56,12 +63,41 @@ struct VertSelector_v
 		gc()
 	),
 
+	/** Get verts by normal
+	 */
+	function getVertsByNormal =
+	(
+		--format "\n"; print "VertSelector_v.getVertsByNormal()"
+		this._getVertsToProcess()
+
+		--normal_limit = 0
+		--normal_limit = 0.25
+		--normal_limit = -0.8
+		--format "VERTS LOOP: %\n" verts_process
+		--verts_arr = verts_process as Array
+		--if verts_process.count > 1 then
+		this.sel_modified = this._filterVertsByNormal(verts_process)
+
+
+		--for vert in verts_process_arr do
+				--format "vert: % NORMAL: %\n" vert (VertDataGetter.getNormal(vert))
+
+
+		--verts_process_arr --return
+	),
+
 	/** Get checker apttern of selection
 	 */
 	function getCheckerSelection invert_sel:false =
 	(
 		format "\n"; print "VertSelector_v.getCheckerSelection()"
+		this._getVertsToProcess()
+
+		verts_process = this._filterVertsByNormal (verts_process)
+
+		timer_getVertsInGrid = timeStamp()
 		this._getVertsInGrid()
+		format "\n getVertsInGrid: % ms\n" (( timeStamp()) - timer_getVertsInGrid)
 
 		this.sel_modified = #{}
 
@@ -84,10 +120,10 @@ struct VertSelector_v
 	 */
 	function getSingleVertPerFaceIsland =
 	(
-		format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
+		--format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
 
 		this._getVertsToProcess()
-		format "verts_process: %\n" verts_process
+		--format "verts_process: %\n" verts_process
 
 		if verts_process.numberSet == 0 then
 			return false
@@ -106,10 +142,10 @@ struct VertSelector_v
 	 */
 	function selectVerts =
 	(
-		format "\n"; print "VertSelector_v.selectVerts()"
-		format "this.sel_modified.isEmpty: %\n" this.sel_modified.isEmpty
+		--format "\n"; print "VertSelector_v.selectVerts()"
+		--format "this.sel_modified.isEmpty: %\n" this.sel_modified.isEmpty
 
-		format "sel_modified: %\n" sel_modified
+		--format "sel_modified: %\n" sel_modified
 		--format "sel_modified: %\n" sel_modified.numberSet
 
 		if this.sel_modified.isEmpty then
@@ -142,7 +178,7 @@ struct VertSelector_v
 	 */
 	function _getVertsInGrid =
 	(
-		--format "\n"; print "VertSelector_v._getVertsInGrid()"
+		format "\n"; print "VertSelector_v._getVertsInGrid()"
 		fn roundPoint3 p3 dp =
 		(
 			--format "p3: %\n" p3
@@ -152,16 +188,34 @@ struct VertSelector_v
 			point3 rp3Arr[1] rp3Arr[2] rp3Arr[3]
 		)
 
-		this._getVertsToProcess()
 
 		--verts_process_arr = verts_process as Array
 		--format "VERTS_PROCESS: %\n" verts_process
 		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
-		pos_round = for vert in verts_process collect roundPoint3 (VertDataGetter.getPosition(vert)) 0
+		--pos_round = for vert in verts_process collect roundPoint3 (VertDataGetter.getPosition(vert)) 0
 
-		x_positions = for pos in pos_round collect pos.x
-		y_positions = for pos in pos_round collect pos.y
-		z_positions = for pos in pos_round collect pos.z
+		x_positions = #()
+		y_positions = #()
+		z_positions = #()
+
+		verts_process_arr = verts_process as Array
+
+		verts_pos = for vert in verts_process collect
+		(
+			pos = VertDataGetter.getPosition(vert)
+
+			append x_positions pos.x
+			append y_positions pos.y
+			append z_positions pos.z
+
+			pos --return
+		)
+
+		--pos_round = for vert in verts_process collect VertDataGetter.getPosition(vert)
+		--
+		--x_positions = for pos in verts_pos collect pos.x
+		--y_positions = for pos in verts_pos collect pos.y
+		--z_positions = for pos in verts_pos collect pos.z
 
 		x_min = amin x_positions
 		x_max = amax x_positions
@@ -170,21 +224,21 @@ struct VertSelector_v
 
 		--x_size = x_max - y_min
 		--y_size = y_max - y_min
-
+		/* CREATE EMPTY MATRIX */
 		this.points_grid = for x = x_min to x_max by resolution collect
 			for y = y_min to y_max by resolution collect #{} -- bitAarray to store verts which occupy cell of grid
 
-		for vert in verts_process do
+		--for vert in verts_process do
+		for i = 1 to verts_process_arr.count do
 		--for i = 1 to verts_data[#POSITIONS].count do
 		(
-			vert_position = VertDataGetter.getPosition(vert)
+			vert_position = verts_pos[i]
 
 			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
 			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1
 
-			--index_vert = verts_process_arr[i]
 
-			points_grid[index_x][index_y][vert] = true
+			points_grid[index_x][index_y][verts_process_arr[i]] = true
 		)
 
 		/* MARGE LAST TOP SQUARES - verts from last cell are on border of verts, they belongs to last cell */
@@ -205,7 +259,7 @@ struct VertSelector_v
 		deleteItem  points_grid points_grid.count
 
 		gc()
-
+		format "POINTS_GRID: %\n" points_grid
 		points_grid --return
 	),
 
@@ -238,40 +292,44 @@ struct VertSelector_v
 	function _getMinZposVert verts =
 	(
 		--format "\n"; print "VertSelector_v.getMinZposVert()"
+		--verts_process_arr = verts as Array
+		--
+		--function normalLimit faces_of_vert =
+		--(
+		--	--average_normal = point3 0 0 0
+		--	--faces_normal = for face_id in faces_of_vert collect this.face_normals[face_id]
+		--
+		--	--for face_id in faces_of_vert do average_normal += VertDataGetter.face_normals[face_id]
+		--
+		--	--average_normal = normalize average_normal
+		--
+		--	--format "average_normal: %\n" average_normal
+		--	--format "average_normal.z < -0.25: %\n" (average_normal.z < -0.25)
+		--
+		--	 --average_normal.z < 0 -- return
+		--	 average_normal.z < 0.25 -- return
+		--	 --average_normal.z < -0.5 -- return
+		--	 --average_normal.z < -0.8 -- return
+		--
+		--)
+
+
+			--format "verts_process_arr: %\n" verts_process_arr
+		--normal_limit = 0
+		--normal_limit = 0.25
+		--normal_limit = -0.8
+		--
 		verts_arr = verts as Array
+		----if verts.count > 1 then
+		--	verts_process_arr = for vert in verts where (VertDataGetter.getNormal(vert)).z < normal_limit collect vert
 
-		function normalLimit faces_of_vert =
-		(
-			average_normal = point3 0 0 0
-			--faces_normal = for face_id in faces_of_vert collect this.face_normals[face_id]
-
-			for face_id in faces_of_vert do average_normal += VertDataGetter.face_normals[face_id]
-
-			average_normal = normalize average_normal
-
-			--format "average_normal: %\n" average_normal
-			--format "average_normal.z < -0.25: %\n" (average_normal.z < -0.25)
-
-			 --average_normal.z < 0 -- return
-			 average_normal.z < 0.25 -- return
-			 --average_normal.z < -0.5 -- return
-			 --average_normal.z < -0.8 -- return
-
-		)
-
-
-			format "verts_arr: %\n" verts_arr
-		if verts.count > 1 then
-			verts_arr = for vert in verts_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect vert
-
-			format "verts_arr: %\n" verts_arr
 
 
 		/* GET LOWEST POINT IN CELL */
 		if verts.count > 1 then
 		(
-			--verts_arr = for vert in verts_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect VertDataGetter.getPosition(vert) axis:#Z
-			--format "verts_arr: %\n" verts_arr
+			--verts_process_arr = for vert in verts_process_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect VertDataGetter.getPosition(vert) axis:#Z
+			--format "verts_process_arr: %\n" verts_process_arr
 
 			z_positions = for vert in verts_arr collect VertDataGetter.getPosition(vert) axis:#Z
 
@@ -284,6 +342,15 @@ struct VertSelector_v
 			--verts_arr[1] --return
 	),
 
+
+	/** Filter verts by normal
+	 */
+	function _filterVertsByNormal verts =
+	(
+		--format "\n"; print "VertSelector_v._filterVertsByNormal()"
+		(for vert in verts where (VertDataGetter.getNormal(vert)).z < normal_limit collect vert) as BitArray
+	),
+
 	/** Get verts to ocess
 
 
@@ -291,7 +358,14 @@ struct VertSelector_v
 	function _getVertsToProcess =
 	(
 		format "\n"; print "VertSelector_v._getVertsToProcess()"
-		verts_data = VertDataGetter.getData()
+
+		timer_GETDATA = timeStamp()
+		verts_data = VertDataGetter.getData positions:true normals:true colors:false
+		format "\n GETDATA: % ms\n" (( timeStamp()) - timer_GETDATA)
+
+		format "VERTS: %\n" verts_data[#VERTS]
+		format "POSITIONS: %\n" verts_data[#POSITIONS]
+		format "NORMALS: %\n" verts_data[#NORMALS]
 
 		verts_process = verts_data[#VERTS]
 		--vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
