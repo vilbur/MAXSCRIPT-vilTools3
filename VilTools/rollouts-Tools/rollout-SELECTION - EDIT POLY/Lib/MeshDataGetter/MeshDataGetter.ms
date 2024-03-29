@@ -13,23 +13,32 @@ struct MeshDataGetter_v
 
 	/* properties */
 	vertex_count,
+	face_count,
+
     verts_process 	= #{}, -- source vertex to operate, selection or all verts if nothing selected
 
-	data = Dictionary(),
+	verts_data = Dictionary(),
+	face_data  = Dictionary(),
 
 	/* dependency */
-	Normals = NormalLimits_v(),
+	VertNormalLimits = NormalLimits_v(),
+	FaceNormalLimits = NormalLimits_v(),
 
 	MeshVertToColorVertexConvert,
 
 	/* reference */
 	/* inhered */
 
-	/** Get data
-
+	/** Get verts_data
+	  *
+	  *  1) Get verts to process: SELECTED|ALL|DEFINED IN PARAM
+	  *  2) Modify verts to process by desired way ( remove by normal )
+	  *  3) Set verts to grid.
+	  *  4) Get vertex data
+	  *
 	  * @return Dictionary KEYS: #VERTS|#POSITIONS|#COLORS|#FACES|#NORMALS  VALUES:vertex_ids|vertex_positions|vertex_colors|faces_ids|faces_normals
 	 */
-	function getData verts: positions: colors: normals: =
+	function getVertexData verts: positions: colors: normals: =
 	(
 		--format "\n"; print "MeshDataGetter_v.getData()"
 		function pararmExists param = param != unsupplied and param
@@ -37,31 +46,80 @@ struct MeshDataGetter_v
 		if positions == unsupplied and colors == unsupplied and normals == unsupplied then
 			positions = colors = normals = true
 
-		data = Dictionary()
+		/* RESET DATA */
+		verts_data = Dictionary()
 
 		/* GET VERTS INDEXES */
-		data[#VERTS] = this._setVertsToProcess(verts)
+		verts_data[#VERTS] = this._setVertsToProcess verts:verts
 
-		if this.Normals.limitsExists() then
-			this._filterVertsByNormals()
+
+		if this.VertNormalLimits.limitsExists() then
+			this._filterVertsByNormalLimit()
+
+		--if this.FaceNormalLimits.limitsExists() then
+			--this._filterVertsByFaceNormalLimit()
 
 		/* GET POSITIONS */
-		if pararmExists(positions) then
-			data[#POSITIONS] = this._getVertsPositions()
-
-
-		/* GET COLORS */
-		if pararmExists(colors) then
-			data[#COLORS] = this._getVertexColors()
+		--if pararmExists(positions) then
+		--	verts_data[#POSITIONS] = this._getVertsPositions()
+		--
+		--
+		--/* GET COLORS */
+		--if pararmExists(colors) then
+		--	verts_data[#COLORS] = this._getVertexColors()
 
 
 		/* GET NORMALS */
-		if pararmExists(normals) and data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByNormals()
-			data[#NORMALS] = this._getFaceNormals()
+		--if pararmExists(normals) and verts_data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByFaceNormalLimit()
+		--	verts_data[#NORMALS] = this._getVertsNormals()
 
 
-		data --return
+		verts_data --return
 	),
+
+	/** Get faces data
+
+	  * @return Dictionary KEYS: #VERTS|#POSITIONS|#COLORS|#FACES|#NORMALS  VALUES:vertex_ids|vertex_positions|vertex_colors|faces_ids|faces_normals
+	 */
+	function getFacesData faces: normals: =
+	(
+		format "\n"; print "MeshDataGetter_v.getData()"
+		function pararmExists param = param != unsupplied and param
+
+		/* ALL APRAMS ARE TRUE IF ARE NOT DEFINED */
+		if  normals == unsupplied then
+			normals = true
+
+		/* RESET DATA */
+
+		face_data = Dictionary()
+
+		/* GET VERTS INDEXES */
+		verts_data[#VERTS] = this._setVertsToProcess faces:faces
+
+		--face_data[#FACES] = polyop.getFacesUsingVert obj verts_data[#VERTS]
+
+		if this.FaceNormalLimits.limitsExists() then
+			this._getFaceNormalsByLimit()
+
+		--/* GET POSITIONS */
+		--if pararmExists(positions) then
+		--	verts_data[#POSITIONS] = this._getVertsPositions()
+		--
+		--
+		--/* GET COLORS */
+		--if pararmExists(colors) then
+		--	verts_data[#COLORS] = this._getVertexColors()
+		--
+
+		/* GET NORMALS */
+		if pararmExists(normals) and face_data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByFaceNormalLimit()
+			face_data[#NORMALS] = this._getFaceNormals()
+
+
+		face_data --return
+	),
+
 
 	/** Get position
 
@@ -70,7 +128,7 @@ struct MeshDataGetter_v
 	function getPosition vert axis: =
 	(
 		--format "\n"; print "VertDataGetter_v.getPosition()"
-		if ( pos = data[#POSITIONS][this.dataIndex(vert)] ) != undefined and axis != unsupplied then
+		if ( pos = verts_data[#POSITIONS][this.dataIndexVert(vert)] ) != undefined and axis != unsupplied then
 			getProperty pos axis
 		else
 			pos
@@ -86,7 +144,7 @@ struct MeshDataGetter_v
 		--format "\n"; print "MeshDataGetter_v.getPositionsSplitted()"
 		x_positions = y_positions = z_positions = #()
 
-		for pos in data[#POSITIONS] do
+		for pos in verts_data[#POSITIONS] do
 		(
 			append x_positions pos.x
 			append y_positions pos.y
@@ -96,24 +154,27 @@ struct MeshDataGetter_v
 		#( x_positions, z_positions, z_positions  ) --return
 	),
 
-	/* Get index of data by vertex number in this.positions|normlas|colors|
+	/* Get index of verts_data by vertex number in this.positions|normlas|colors|
 	*
 	* Bitarray way to accomplish : findItem (this.verts_arr) vertex_index
-	*
 	*/
-	function dataIndex vertex_index =
+	function dataIndexVert vertex_index =
 	(
-		--format "\n"; print "VertDataGetter_v.dataIndex()"
-		--format "vertex_index: %\n" vertex_index
-		--format "verts: %\n" verts
-		--format "-verts: %\n" -verts
-		missing = -data[#VERTS] - #{vertex_index..(vertex_count)} -- find how many indexes is false before vertex_index
-		--format "missing: %\n" missing
-		--format "missing.numberSet: %\n" missing.numberSet
+		--format "\n"; print "VertDataGetter_v.dataIndexVert()"
+		missing = -verts_data[#VERTS] - #{vertex_index..(vertex_count)} -- find how many indexes is false before vertex_index
 
 		vertex_index - missing.numberSet
 	),
 
+	/**
+	*/
+	function dataIndexFace face_id =
+	(
+		--format "\n"; print "VertDataGetter_v.dataIndexVert()"
+		missing = -face_data[#FACES] - #{face_id..(face_count)} -- find how many indexes is false before face_id
+
+		face_id - missing.numberSet
+	),
 
 	/*------------------------------------------------------------------------------
 		SETTERS
@@ -130,14 +191,83 @@ struct MeshDataGetter_v
 
 	/** Filter verts by normals
 	 */
-	function _filterVertsByNormals =
+	function _filterVertsByFaceNormalLimit =
 	(
-		--format "\n"; print "MeshDataGetter_v._filterVertsByNormals()"
+		--format "\n"; print "MeshDataGetter_v._filterVertsByFaceNormalLimit()"
 		this._getFaceNormals()
 
-		verts_of_valid_faces = polyop.getVertsUsingFace obj data[#FACES]
+		verts_of_valid_faces = polyop.getVertsUsingFace obj face_data[#FACES]
 
-		data[#VERTS] *= verts_of_valid_faces -- left only valid verts in BitArray
+		verts_data[#VERTS] *= verts_of_valid_faces -- left only valid verts in BitArray
+	),
+
+	/** Filter verts by normal limit
+	 */
+	function _filterVertsByNormalLimit =
+	(
+		--format "\n"; print "MeshDataGetter_v._filterVertsByNormalLimit()"
+		if verts_data[#NORMALS] == undefined then
+			verts_data[#NORMALS] = this._getVertsNormals()
+
+		normal_limit = this.VertNormalLimits.get #Z
+		absolute 	   = this.VertNormalLimits.absolute
+
+		--for i = 1 to verts_data[#NORMALS].count do
+		for i = verts_data[#NORMALS].count to 1 by -1 do -- loop backwards because deleteing noramls from verts_data[#NORMALS]
+		(
+			--vert_normal = verts_data[#NORMALS][i]
+			----vert_normal = polyop.getFaceNormal obj face
+			--
+			--dot_prod = dot vert_normal z_axis
+			--
+			--normal_angle = if VertNormalLimits.absolute then acos( abs dot_prod ) else acos dot_prod
+
+			/* COPMMARE ANGLES OF NORMAL AND LIMIT */
+			--if not (normal_angle > normal_limit[1] and normal_angle < normal_limit[2]) then
+			if not ( this._testAngleOfNormalLimit( verts_data[#NORMALS][i] )(normal_limit)(absolute) ) then
+			(
+				deleteItem verts_data[#NORMALS] i
+				deleteItem verts_data[#VERTS] i
+			)
+
+		)
+	),
+
+	/** Test angle of normal limit
+	 */
+	function _testAngleOfNormalLimit normal normal_limit absolute  =
+	(
+		--format "\n"; print "MeshDataGetter_v._testAngleOfNormalLimit()"
+
+		dot_prod = dot normal z_axis
+
+		normal_angle = if absolute then acos( abs dot_prod ) else acos dot_prod
+
+		normal_angle > normal_limit[1] and normal_angle < normal_limit[2]
+	),
+
+	/** Get verts normals
+	 */
+	function _getVertsNormals =
+	(
+		--format "\n"; print "MeshDataGetter_v._getVertsNormals()"
+
+		if face_data[#NORMALS] == undefined then
+			face_data[#NORMALS] = this._getFaceNormals()
+
+
+		vertex_normals = for vert in verts_data[#VERTS] collect
+		(
+			average_normal = point3 0 0 0
+
+			faces_of_vert = polyop.getFacesUsingVert obj vert
+
+			for face_id in faces_of_vert do average_normal += face_data[#NORMALS][dataIndexFace(face_id)]
+
+			normalize average_normal
+		)
+
+		vertex_normals --return
 	),
 
 	/** Get normals of faces which belongs to this.verts_process
@@ -145,52 +275,72 @@ struct MeshDataGetter_v
 	function _getFaceNormals =
 	(
 		format "\n"; print "MeshVertexGetter_v._getFaceNormals()"
+
+		if face_data[#FACES] == undefined then
+			this._setFaces()
+
+		 for face in face_data[#FACES] collect polyop.getFaceNormal obj face
+	),
+	/** Get normals of faces which belongs to this.verts_process
+	 */
+	function _getFaceNormalsByLimit =
+	(
+		--format "\n"; print "MeshVertexGetter_v._getFaceNormals()"
 		local face_normal
 
 		local face_normals = #()
 
-		data[#FACES] = polyop.getFacesUsingVert obj data[#VERTS]
+		this._setFaces()
 
+		normal_limit = this.FaceNormalLimits.get #Z
+		absolute 	   = this.FaceNormalLimits.absolute
 
-		if Normals.limitsExists() then
+		for face in face_data[#FACES] do
 		(
-			normal_limit = this.Normals.get #Z
+			--face_normal = polyop.getFaceNormal obj face
+			--
+			--dot_prod = dot face_normal z_axis
+			--
+			--normal_angle = if FaceNormalLimits.absolute then acos( abs dot_prod ) else acos dot_prod
 
-			for face in data[#FACES] do
-			(
-				face_normal = polyop.getFaceNormal obj face
+			/* COPMMARE ANGLES OF NORMAL AND LIMIT */
+			--if normal_angle > normal_limit[1] and normal_angle < normal_limit[2] then
+			if this._testAngleOfNormalLimit( polyop.getFaceNormal obj face )(normal_limit)(absolute) then
+				/* ADD NORMAL IF FIT BETWEEN LIMITS */
+				append face_normals face_normal
 
-				dot_prod = dot face_normal z_axis
-
-				normal_angle = if Normals.absolute then acos( abs dot_prod ) else acos dot_prod
-
-				/* COPMMARE ANGLES OF NORMAL AND LIMIT */
-				if normal_angle > normal_limit[1] and normal_angle < normal_limit[2] then
-					/* ADD NORMAL IF FIT BETWEEN LIMITS */
-					append face_normals face_normal
-
-				else /* REMOVE FACE IF NOT FIT NORMAL LIMIT */
-					data[#FACES][face] = false
-			)
+			else /* REMOVE FACE IF NOT FIT NORMAL LIMIT */
+				face_data[#FACES][face] = false
 		)
-		else
-			face_normals = for face in data[#FACES] collect polyop.getFaceNormal obj face
 
 		face_normals --return
 	),
 
+	/** Set faces
+	 */
+	function _setFaces =
+	(
+		--format "\n"; print "MeshDataGetter_v.setFaces()"
+		--format "verts_data[#VERTS]: %\n" verts_data[#VERTS]
+		face_data[#FACES] = polyop.getFacesUsingVert obj verts_data[#VERTS]
+	),
+
 	/*
 	 */
-	function _setVertsToProcess verts_to_get =
+	function _setVertsToProcess verts: faces: =
 	(
 		--format "\n"; print "VertexGridSelector_v._setVertsToProcess()"
 		this.vertex_count = getNumVerts obj.mesh
+		this.face_count   = getNumFaces obj.mesh
 
-		this.verts_process = case verts_to_get of
+		if faces != unsupplied then
+			verts =  polyop.getVertsUsingFace obj faces
+
+		this.verts_process = case verts of
 		(
 			(#SELECTION):	getVertSelection obj.mesh -- get verts by current selecion
 			(unsupplied):	#{1..(vertex_count)}	-- get all verts if undefined
-			default:	verts_to_get	-- get given verts
+			default:	verts	-- get given verts
 		)
 
 		this.verts_process --return

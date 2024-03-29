@@ -12,7 +12,7 @@ struct VertDataGetter_v
 
 	/* properties */
 	vertex_count,
-	cache_data,
+	--cache_data,
 
 	verts 	= #{}, -- source vertex to operate, selection or all verts if nothing selected
 	positions 	= #(),
@@ -22,6 +22,7 @@ struct VertDataGetter_v
 	face_normals 	= #(),
 
 	get_normal_method_limit = 7000, -- vertex count where Edit_Normals modifier if faster for getting normals
+
 	/* dependency */
 	MeshVertToColorVertexConvert,
 
@@ -135,13 +136,6 @@ struct VertDataGetter_v
 		this.positions = meshop.getVerts obj.mesh verts node:obj
 	),
 
-	/** Set face normals
-	 */
-	function _setFaceNormals =
-	(
-		--format "\n"; print "VertDataGetter_v._setFaceNormals()"
-		face_normals = for f = 1 to polyop.getNumFaces obj collect  polyop.getFaceNormal obj f
-	),
 
 	/** Get all verts
 	 */
@@ -397,6 +391,15 @@ struct VertDataGetter_v
 
 		for vert in (verts_get as Array ) collect getVertNormal( polyop.getFacesUsingVert obj vert)
 	),
+
+	/** Set face normals
+	 */
+	function _setFaceNormals =
+	(
+		--format "\n"; print "VertDataGetter_v._setFaceNormals()"
+		face_normals = for f = 1 to polyop.getNumFaces obj collect  polyop.getFaceNormal obj f
+	),
+
 
 	--/** Update cache nornal
 	-- */

@@ -33,7 +33,7 @@ struct VertSelector_v
 	MeshDataGetter,
 
 	/* reference */
-	data,	-- MeshDataGetter.data
+	verts_data,	-- MeshDataGetter.verts_data
 
 	/* inhered */
 
@@ -43,13 +43,34 @@ struct VertSelector_v
 	(
 		format "\n"; print "VertSelector_v.selectLowestInts()"
 
-		MeshDataGetter.Normals.z = [ 135, 180 ]
+		MeshDataGetter.VertNormals.z = [ 135, 180 ]
 
-		data = MeshDataGetter.getData positions:true normals:true
+		verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
 
 		this._getVertsInGrid()
 
-		this.sel_modified = copy data[#VERTS]
+		this.sel_modified = copy verts_data[#VERTS]
+
+		for x = 1 to points_grid.count do
+			for y = 1 to points_grid[x].count do
+				this._filterOnlyMinZVerts (points_grid[x][y])
+
+		gc()
+	),
+
+	/** Select lowest
+	 */
+	function getCliffVerts =
+	(
+		format "\n"; print "VertSelector_v.selectLowestInts()"
+
+		MeshDataGetter.VertNormals.z = [ 135, 180 ]
+
+		verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
+
+		this._getVertsInGrid()
+
+		this.sel_modified = copy verts_data[#VERTS]
 
 		for x = 1 to points_grid.count do
 			for y = 1 to points_grid[x].count do
@@ -89,7 +110,7 @@ struct VertSelector_v
 		--this._getVertsToProcess()
 
 		--this._getVertsToProcess normals:false
-		data = MeshDataGetter.getData positions:true
+		verts_data = MeshDataGetter.getVertexData positions:true
 
 		timer_getVertsInGrid = timeStamp()
 		this._getVertsInGrid()
@@ -118,20 +139,20 @@ struct VertSelector_v
 	(
 		format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
 
-		data = MeshDataGetter.getData verts:#SELECTION positions:true
+		verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true
 
 
-		--if  data[#VERTS].numberSet == 0 then
+		--if  verts_data[#VERTS].numberSet == 0 then
 		--	return false
 
-		this.sel_modified = copy data[#VERTS]
+		this.sel_modified = copy verts_data[#VERTS]
 
 		/* LOOP EACH ISLAND OF VERTS */
 		for verts_island in (verts_islands = this._sortVertsByIslands()) do
 		(
 			format "VERTS_ISLAND: %\n" verts_island
 
-			this._filterOnlyMinZVerts (verts_island *  data[#VERTS])
+			this._filterOnlyMinZVerts (verts_island *  verts_data[#VERTS])
 		)
 
 		gc()
@@ -144,7 +165,7 @@ struct VertSelector_v
 	(
 		--format "\n"; print "VertSelector_v.selectVerts()"
 		if this.sel_modified.isEmpty then
-			this.sel_modified = deepCopy data[#VERTS]
+			this.sel_modified = deepCopy verts_data[#VERTS]
 
 		subObjectLevel = 1
 
@@ -219,14 +240,14 @@ struct VertSelector_v
 		--format "\n"; print "VertSelector_v._getVertsToProcess()"
 		--
 		--timer_GETDATA = timeStamp()
-		--data = MeshDataGetter.getData positions:true normals:normals colors:colors
+		--verts_data = MeshDataGetter.getVertexData positions:true normals:normals colors:colors
 		--format "\n GETDATA: % ms\n" (( timeStamp()) - timer_GETDATA)
 		--
-		--format "VERTS: %\n" data[#VERTS]
-		--format "POSITIONS: %\n" data[#POSITIONS]
-		--format "NORMALS: %\n" data[#NORMALS]
+		--format "VERTS: %\n" verts_data[#VERTS]
+		--format "POSITIONS: %\n" verts_data[#POSITIONS]
+		--format "NORMALS: %\n" verts_data[#NORMALS]
 		--
-		--verts_process = data[#VERTS]
+		--verts_process = verts_data[#VERTS]
 		--vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 		--verts_count	= getNumVerts obj.mesh
 		--verts_all	= #{1..(verts_count)}
@@ -236,7 +257,7 @@ struct VertSelector_v
 		--
 		--
 		--/* VERTEX POSITIONS */
-		--this.data[#POSITIONS] = meshop.getVerts obj.mesh verts_all node:obj
+		--this.verts_data[#POSITIONS] = meshop.getVerts obj.mesh verts_all node:obj
 		--
 		--/* PROCESS ALL OR ONLY SELECTED VERTS */
 		--this.verts_process = if vertex_sel.isEmpty then verts_all else vertex_sel
@@ -264,7 +285,7 @@ struct VertSelector_v
 		verts_per_faces	= #()
 
 
-		faces_by_verts = ( polyop.getFacesUsingVert obj  data[#VERTS]) as Array
+		faces_by_verts = ( polyop.getFacesUsingVert obj  verts_data[#VERTS]) as Array
 
 		verts_per_faces = for face_id in faces_by_verts collect polyop.getVertsUsingFace obj #{face_id}
 
@@ -335,7 +356,7 @@ struct VertSelector_v
 		--format "VERTS_PROCESS: %\n" verts_process
 		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
 		--pos_round = for vert in verts_process collect roundPoint3 (MeshDataGetter.getPosition(vert)) 0
-		verts_arr = data[#VERTS] as Array
+		verts_arr = verts_data[#VERTS] as Array
 
 		pos_by_axis = MeshDataGetter.getPositionsSplitByAxis()
 
@@ -351,7 +372,7 @@ struct VertSelector_v
 		/* FILL MATRIX */
 		for i = 1 to verts_arr.count do
 		(
-			vert_position = data[#POSITIONS][i]
+			vert_position = verts_data[#POSITIONS][i]
 
 			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
 			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1

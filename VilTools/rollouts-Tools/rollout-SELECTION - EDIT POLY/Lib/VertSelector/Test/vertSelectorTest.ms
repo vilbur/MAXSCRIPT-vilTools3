@@ -60,7 +60,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 
   --createSourceMesh segments:4
-  createSourceMesh vertex_color:orange segments:32
+  --createSourceMesh vertex_color:orange segments:32
   --createSourceMesh vertex_color:orange segments:64
  --createSourceMesh vertex_selection:#{1..100}
 
@@ -95,7 +95,7 @@ VertSelector.getLowestVerts();	VertSelector.selectVerts()
 
 
 /* LEFT ONLY LOWEST VERT IF MULTIPLE VERTS ARE ON ISLAND OF FACES */
-VertSelector.getSingleVertPerFaceIsland(); VertSelector.selectVerts()
+--VertSelector.getSingleVertPerFaceIsland(); VertSelector.selectVerts()
 
 
 --/* SELECT LOWEST VERTS ON OBJECT\SELECTION */

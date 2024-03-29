@@ -34,30 +34,58 @@ obj = selection[1]
 /*------------------------------------------------------------------------------
 	SET INSTANCE
 -------------------------------------------------------------------------------*/
-MeshDataGetter 	= MeshDataGetter_v( obj )
+global MeshDataGetter 	= MeshDataGetter_v( obj )
 
 
 /*------------------------------------------------------------------------------
 	SETUP
 --------------------------------------------------------------------------------*/
-MeshDataGetter.normals.absolute = true
 
-MeshDataGetter.normals.z = 20	-- get faces 0° - 20°
 
---MeshDataGetter.normals.z = [ 80, 100 ] 	-- get side faces 80° - 100°
+--MeshDataGetter.VertNormalLimits.z = [ 80, 100 ] 	-- get side faces 80° - 100°
 
 /*------------------------------------------------------------------------------
 	RUN TEST
 --------------------------------------------------------------------------------*/
 
---timer_test = timeStamp()
-data = MeshDataGetter.getData()
---format "\n test: % ms\n" (( timeStamp()) - timer_test)
+/** Select verts on bottom
+ */
+function selectVertsOnBottom =
+(
+	--format "\n"; print ".selectVertsOnBottom()"
+    MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]	-- get faces 0° - 20°
+
+	--timer_test = timeStamp()
+	verts_data = MeshDataGetter.getVertexData()
+	--format "\n test: % ms\n" (( timeStamp()) - timer_test)
+	subObjectLevel = 1
+	obj.EditablePoly.SetSelection #Vertex verts_data[#VERTS]
+)
+selectVertsOnBottom()
 
 
 
-/*------------------------------------------------------------------------------
-	SELECT RESULT
---------------------------------------------------------------------------------*/
-subObjectLevel = 4
-obj.EditablePoly.SetSelection #Face data[#FACES]
+/** SELECT FACES TOP AND BOTTOM
+ */
+function selectFacesTopAndBottom =
+(
+    MeshDataGetter.FaceNormalLimits.z = 45	-- get faces 0° - 20°
+	MeshDataGetter.FaceNormalLimits.absolute = true
+
+	face_data = MeshDataGetter.getFacesData()
+	format "FACE_DATA: %\n" face_data
+	--format "\n test: % ms\n" (( timeStamp()) - timer_test)
+	subObjectLevel = 4
+	obj.EditablePoly.SetSelection #Face face_data[#FACES]
+	--format "\n"; print ".selectFacesTopAndBottom()"
+)
+
+--selectFacesTopAndBottom()
+
+
+
+--/*------------------------------------------------------------------------------
+--	SELECT RESULT
+----------------------------------------------------------------------------------*/
+--subObjectLevel = 4
+--obj.EditablePoly.SetSelection #Face verts_data[#FACES]

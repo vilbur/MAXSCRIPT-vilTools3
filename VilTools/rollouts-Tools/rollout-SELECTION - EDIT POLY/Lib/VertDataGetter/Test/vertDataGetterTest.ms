@@ -14,7 +14,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	segment_size = 10
 
 	--obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
-	obj = Sphere radius:15 pos:[0,0, 50 ] segments:segments showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+	obj = Sphere radius:15 pos:[0,0, 50 ] segments:segments --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
 
 	select obj
 
