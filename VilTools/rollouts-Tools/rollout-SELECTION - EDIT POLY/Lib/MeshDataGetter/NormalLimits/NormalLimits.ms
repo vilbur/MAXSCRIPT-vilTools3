@@ -27,6 +27,6 @@ struct NormalLimits_v
 	),
 	/** Limits exists
 	 */
-	function limitsExists = for axis in #( #X, #Y, #Z ) where getProperty this axis != undefined do return true
+	function limitsExists = (for axis in #( #X, #Y, #Z ) where getProperty this axis != undefined collect axis).count > 0
 
 )

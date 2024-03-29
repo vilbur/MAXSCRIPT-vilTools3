@@ -26,36 +26,94 @@ struct MeshDataGetter_v
 	/* inhered */
 
 	/** Get data
+
+	  * @return Dictionary KEYS: #VERTS|#POSITIONS|#COLORS|#FACES|#NORMALS  VALUES:vertex_ids|vertex_positions|vertex_colors|faces_ids|faces_normals
 	 */
 	function getData verts: positions: colors: normals: =
 	(
-		format "\n"; print "MeshDataGetter_v.getData()"
-
+		--format "\n"; print "MeshDataGetter_v.getData()"
+		function pararmExists param = param != unsupplied and param
 		/* ALL APRAMS ARE TRUE IF ARE NOT DEFINED */
 		if positions == unsupplied and colors == unsupplied and normals == unsupplied then
 			positions = colors = normals = true
 
-		this._setVertsToProcess(verts)
+		data = Dictionary()
 
-		data[#VERTS] = this.verts_process
+		/* GET VERTS INDEXES */
+		data[#VERTS] = this._setVertsToProcess(verts)
 
-		if positions then
+		if this.Normals.limitsExists() then
+			this._filterVertsByNormals()
+
+		/* GET POSITIONS */
+		if pararmExists(positions) then
 			data[#POSITIONS] = this._getVertsPositions()
 
 
-		if colors then
+		/* GET COLORS */
+		if pararmExists(colors) then
 			data[#COLORS] = this._getVertexColors()
 
 
-		if normals then
-		(
-			data[#FACES] = polyop.getFacesUsingVert obj verts_process
-
+		/* GET NORMALS */
+		if pararmExists(normals) and data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByNormals()
 			data[#NORMALS] = this._getFaceNormals()
-		)
+
 
 		data --return
 	),
+
+	/** Get position
+
+	  * @param #X|#Y|#Z axis
+	 */
+	function getPosition vert axis: =
+	(
+		--format "\n"; print "VertDataGetter_v.getPosition()"
+		if ( pos = data[#POSITIONS][this.dataIndex(vert)] ) != undefined and axis != unsupplied then
+			getProperty pos axis
+		else
+			pos
+	),
+
+	/** Get positions of each vert splitted to XYZ
+	  * Usefull for gettin min and max values oe verts by each axis separatly
+	  *
+	  * @return #( #(X pos), #(Y pos), #(Z pos) )
+	 */
+	function getPositionsSplitByAxis =
+	(
+		--format "\n"; print "MeshDataGetter_v.getPositionsSplitted()"
+		x_positions = y_positions = z_positions = #()
+
+		for pos in data[#POSITIONS] do
+		(
+			append x_positions pos.x
+			append y_positions pos.y
+			append z_positions pos.z
+		)
+
+		#( x_positions, z_positions, z_positions  ) --return
+	),
+
+	/* Get index of data by vertex number in this.positions|normlas|colors|
+	*
+	* Bitarray way to accomplish : findItem (this.verts_arr) vertex_index
+	*
+	*/
+	function dataIndex vertex_index =
+	(
+		--format "\n"; print "VertDataGetter_v.dataIndex()"
+		--format "vertex_index: %\n" vertex_index
+		--format "verts: %\n" verts
+		--format "-verts: %\n" -verts
+		missing = -data[#VERTS] - #{vertex_index..(vertex_count)} -- find how many indexes is false before vertex_index
+		--format "missing: %\n" missing
+		--format "missing.numberSet: %\n" missing.numberSet
+
+		vertex_index - missing.numberSet
+	),
+
 
 	/*------------------------------------------------------------------------------
 		SETTERS
@@ -70,23 +128,29 @@ struct MeshDataGetter_v
 		meshop.getVerts obj.mesh this.verts_process node:obj
 	),
 
+	/** Filter verts by normals
+	 */
+	function _filterVertsByNormals =
+	(
+		--format "\n"; print "MeshDataGetter_v._filterVertsByNormals()"
+		this._getFaceNormals()
 
+		verts_of_valid_faces = polyop.getVertsUsingFace obj data[#FACES]
+
+		data[#VERTS] *= verts_of_valid_faces -- left only valid verts in BitArray
+	),
 
 	/** Get normals of faces which belongs to this.verts_process
-
-
-		NOTE:
-			abs (dot face_normal z_axis) returns float 0-1
-				where in case of Z axis
-					0: normal is parallel 	to axis ( facing side )
-					1: normal is perpendicular	to axis ( facing top or bottom )
-
 	 */
 	function _getFaceNormals =
 	(
 		format "\n"; print "MeshVertexGetter_v._getFaceNormals()"
 		local face_normal
-		face_normals = #()
+
+		local face_normals = #()
+
+		data[#FACES] = polyop.getFacesUsingVert obj data[#VERTS]
+
 
 		if Normals.limitsExists() then
 		(
@@ -128,6 +192,8 @@ struct MeshDataGetter_v
 			(unsupplied):	#{1..(vertex_count)}	-- get all verts if undefined
 			default:	verts_to_get	-- get given verts
 		)
+
+		this.verts_process --return
 
 		--format "this.verts: %\n" this.verts
 		--this.verts_arr = this.verts as Array

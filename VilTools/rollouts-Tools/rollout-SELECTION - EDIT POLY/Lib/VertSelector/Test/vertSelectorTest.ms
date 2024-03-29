@@ -16,10 +16,10 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 	--obj = Plane width:20 length:20 pos:[ 50, 20, 50 ] widthsegs:4 lengthsegs:4
 
-	--obj = Plane width:100 length:100 pos:[ 50, 20, 50 ] widthsegs:100 lengthsegs:100
-	--obj = Plane width:50 length:50 pos:[ 50, 20, 50 ] widthsegs:50 lengthsegs:50
 	--obj = Plane width:60 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10
 	--obj = Plane width:40 length:30 pos:[ 50, 20, 50 ] widthsegs:40 lengthsegs:30
+	--obj = Plane width:50 length:50 pos:[ 50, 20, 50 ] widthsegs:50 lengthsegs:50
+	--obj = Plane width:100 length:100 pos:[ 50, 20, 50 ] widthsegs:100 lengthsegs:100
 
 
 	--obj = Plane width:30 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10
@@ -60,10 +60,10 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 
   --createSourceMesh segments:4
-  --createSourceMesh vertex_color:orange segments:32
-  createSourceMesh vertex_color:orange segments:64
+  createSourceMesh vertex_color:orange segments:32
+  --createSourceMesh vertex_color:orange segments:64
+ --createSourceMesh vertex_selection:#{1..100}
 
- --createSourceMesh vertex_selection:#{2..3} vertex_color:green
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:32
   --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
@@ -81,7 +81,8 @@ VertSelector 	= VertSelector_v( objects[1] ) resolution:10
 
 
 --VertSelector.resolution = 5
-VertSelector.resolution = 10
+VertSelector.resolution = 8
+--VertSelector.resolution = 10
 
 --for points_in_square in VertSelector.points_grid do
 --	format "points_in_square: %\n" points_in_square
@@ -89,20 +90,22 @@ VertSelector.resolution = 10
 
 
 
---/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
---VertSelector.getLowestVerts();	VertSelector.selectVerts()
+/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
+VertSelector.getLowestVerts();	VertSelector.selectVerts()
+
+
+/* LEFT ONLY LOWEST VERT IF MULTIPLE VERTS ARE ON ISLAND OF FACES */
+VertSelector.getSingleVertPerFaceIsland(); VertSelector.selectVerts()
+
 
 --/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
 --VertSelector.getVertsByNormal();	VertSelector.selectVerts()
 
 
-/* LEFT ONLY LOWEST VERT IF MULTIPLE VERTS ARE ON ISLAND OF FACES */
---VertSelector.getSingleVertPerFaceIsland();--VertSelector.selectVerts()
---
 
 
 /* GET VERTEX IN CHECK BOARD PATTERN */
-VertSelector.getCheckerSelection invert_sel:false;  VertSelector.selectVerts()
+--VertSelector.getCheckerSelection invert_sel:false;  VertSelector.selectVerts()
 
 
 /*------------------------------------------------------------------------------

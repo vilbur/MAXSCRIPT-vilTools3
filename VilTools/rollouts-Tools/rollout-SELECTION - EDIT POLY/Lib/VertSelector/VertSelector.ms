@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../VertDataGetter/VertDataGetter.ms" )	--"./../VertDataGetter/VertDataGetter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../MeshDataGetter/MeshDataGetter.ms" )	--"./../MeshDataGetter/MeshDataGetter.ms"
 
 /** Get lowest verts in grid
 
@@ -21,23 +21,20 @@ struct VertSelector_v
 (
 	/* construct */
 	obj,
-	normal_limit = -0.5,
-	--normal_limit = 0.0,
 
 	/* properties */
 	--resolution = 5,
 	resolution = 10,
 
-	verts_process 	= #{}, -- source vertex to operate, selection or all verts if nothing selected
 	points_grid 	= #(), -- 2DMatrix of verts which share same cell in grid points_grid[X_CELL][Y_CELL]
 	sel_modified 	= #{}, -- modified selection for selecting
-	--face_normals 	= #(),
 
-	verts_data,
 	/* dependency */
-	VertDataGetter,
+	MeshDataGetter,
 
 	/* reference */
+	data,	-- MeshDataGetter.data
+
 	/* inhered */
 
 	/** Select lowest
@@ -45,16 +42,14 @@ struct VertSelector_v
 	function getLowestVerts =
 	(
 		format "\n"; print "VertSelector_v.selectLowestInts()"
-		this._getVertsToProcess()
 
-		--verts_process = this._filterVertsByNormal (verts_process)
-		format "VERTS_PROCESS: %\n" verts_process
+		MeshDataGetter.Normals.z = [ 135, 180 ]
+
+		data = MeshDataGetter.getData positions:true normals:true
 
 		this._getVertsInGrid()
 
-		this.sel_modified = copy verts_process
-		--format "verts_process: %\n" verts_process
-		--format "verts_process: %\n" verts_process.numberSet
+		this.sel_modified = copy data[#VERTS]
 
 		for x = 1 to points_grid.count do
 			for y = 1 to points_grid[x].count do
@@ -68,7 +63,7 @@ struct VertSelector_v
 	function getVertsByNormal =
 	(
 		--format "\n"; print "VertSelector_v.getVertsByNormal()"
-		this._getVertsToProcess()
+		this._getVertsToProcess normals:true
 
 		--normal_limit = 0
 		--normal_limit = 0.25
@@ -79,11 +74,11 @@ struct VertSelector_v
 		this.sel_modified = this._filterVertsByNormal(verts_process)
 
 
-		--for vert in verts_process_arr do
-				--format "vert: % NORMAL: %\n" vert (VertDataGetter.getNormal(vert))
+		--for vert in verts_arr do
+				--format "vert: % NORMAL: %\n" vert (MeshDataGetter.getNormal(vert))
 
 
-		--verts_process_arr --return
+		--verts_arr --return
 	),
 
 	/** Get checker apttern of selection
@@ -91,9 +86,10 @@ struct VertSelector_v
 	function getCheckerSelection invert_sel:false =
 	(
 		format "\n"; print "VertSelector_v.getCheckerSelection()"
-		this._getVertsToProcess()
+		--this._getVertsToProcess()
 
-		verts_process = this._filterVertsByNormal (verts_process)
+		--this._getVertsToProcess normals:false
+		data = MeshDataGetter.getData positions:true
 
 		timer_getVertsInGrid = timeStamp()
 		this._getVertsInGrid()
@@ -120,19 +116,23 @@ struct VertSelector_v
 	 */
 	function getSingleVertPerFaceIsland =
 	(
-		--format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
+		format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
 
-		this._getVertsToProcess()
-		--format "verts_process: %\n" verts_process
+		data = MeshDataGetter.getData verts:#SELECTION positions:true
 
-		if verts_process.numberSet == 0 then
-			return false
 
-		this.sel_modified = copy verts_process
+		--if  data[#VERTS].numberSet == 0 then
+		--	return false
+
+		this.sel_modified = copy data[#VERTS]
 
 		/* LOOP EACH ISLAND OF VERTS */
 		for verts_island in (verts_islands = this._sortVertsByIslands()) do
-			this._filterOnlyMinZVerts (verts_island * verts_process)
+		(
+			format "VERTS_ISLAND: %\n" verts_island
+
+			this._filterOnlyMinZVerts (verts_island *  data[#VERTS])
+		)
 
 		gc()
 	),
@@ -143,17 +143,13 @@ struct VertSelector_v
 	function selectVerts =
 	(
 		--format "\n"; print "VertSelector_v.selectVerts()"
-		--format "this.sel_modified.isEmpty: %\n" this.sel_modified.isEmpty
-
-		--format "sel_modified: %\n" sel_modified
-		--format "sel_modified: %\n" sel_modified.numberSet
-
 		if this.sel_modified.isEmpty then
-			this.sel_modified = deepCopy verts_process
-
+			this.sel_modified = deepCopy data[#VERTS]
 
 		subObjectLevel = 1
+
 		_mod = modPanel.getCurrentObject()
+
 		_mod.SetSelection #Vertex #{}
 
 		if classOf _mod == Edit_Poly then
@@ -161,107 +157,9 @@ struct VertSelector_v
 
 		else if classOf _mod  == Editable_Poly then
 			_mod.SetSelection #Vertex this.sel_modified
-
-
 	),
 
 	private
-	/** Get point in grid
-
-		return 2 matrix of cells on XY grid
-		#(
-			#( #{x1y1}, #{x1y2} )
-			#( #{x2y1}, #{x2y2} )
-			#( #{x3y1}, #{x3y2} )
-		)
-
-	 */
-	function _getVertsInGrid =
-	(
-		format "\n"; print "VertSelector_v._getVertsInGrid()"
-		fn roundPoint3 p3 dp =
-		(
-			--format "p3: %\n" p3
-			local tempArr = #(p3.x,p3.y,p3.z)
-			local mult = 10.00^(dp as float)
-			local rp3Arr = for c in tempArr collect ((floor ((c * mult)+0.5)) / mult)
-			point3 rp3Arr[1] rp3Arr[2] rp3Arr[3]
-		)
-
-
-		--verts_process_arr = verts_process as Array
-		--format "VERTS_PROCESS: %\n" verts_process
-		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
-		--pos_round = for vert in verts_process collect roundPoint3 (VertDataGetter.getPosition(vert)) 0
-
-		x_positions = #()
-		y_positions = #()
-		z_positions = #()
-
-		verts_process_arr = verts_process as Array
-
-		verts_pos = for vert in verts_process collect
-		(
-			pos = VertDataGetter.getPosition(vert)
-
-			append x_positions pos.x
-			append y_positions pos.y
-			append z_positions pos.z
-
-			pos --return
-		)
-
-		--pos_round = for vert in verts_process collect VertDataGetter.getPosition(vert)
-		--
-		--x_positions = for pos in verts_pos collect pos.x
-		--y_positions = for pos in verts_pos collect pos.y
-		--z_positions = for pos in verts_pos collect pos.z
-
-		x_min = amin x_positions
-		x_max = amax x_positions
-		y_min = amin y_positions
-		y_max = amax y_positions
-
-		--x_size = x_max - y_min
-		--y_size = y_max - y_min
-		/* CREATE EMPTY MATRIX */
-		this.points_grid = for x = x_min to x_max by resolution collect
-			for y = y_min to y_max by resolution collect #{} -- bitAarray to store verts which occupy cell of grid
-
-		--for vert in verts_process do
-		for i = 1 to verts_process_arr.count do
-		--for i = 1 to verts_data[#POSITIONS].count do
-		(
-			vert_position = verts_pos[i]
-
-			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
-			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1
-
-
-			points_grid[index_x][index_y][verts_process_arr[i]] = true
-		)
-
-		/* MARGE LAST TOP SQUARES - verts from last cell are on border of verts, they belongs to last cell */
-		for x = 1 to points_grid.count where points_grid[x].count > 1 do
-		(
-			last_cell_y = points_grid[x].count
-
-			 points_grid[x][last_cell_y - 1 ] += points_grid[x][last_cell_y]
-
-			deleteItem  points_grid[x] last_cell_y
-		)
-
-		/* MARGE LAST RIGHT SQUARE - verts from last cell are on border of verts, they belongs to last cell */
-		if (x_max = points_grid.count) > 1 and (y_max = points_grid[1].count ) > 1 then
-			for row = 1 to y_max  do
-				points_grid[x_max - 1][row] += points_grid[x_max][row]
-
-		deleteItem  points_grid points_grid.count
-
-		gc()
-		format "POINTS_GRID: %\n" points_grid
-		points_grid --return
-	),
 
 	/**  Left only single lowest vert of verts
 	  *   Verts above are removed from selection
@@ -269,20 +167,15 @@ struct VertSelector_v
 	function _filterOnlyMinZVerts verts =
 	(
 		--format "\n"; print "VertSelector_v._SelectOnlyMinZVerts()"
+		verts_to_remove = copy verts
 
-		--(verts as Array )[1] --return
-
+		/* REMOVE LOWEST VERT FORM VERTS */
 		if ( lowest_vert = this._getMinZposVert(verts) ) != undefined then
-		(
-			--format "LOWEST_VERT: %\n" lowest_vert
-			verts[lowest_vert] = false
+			verts_to_remove[lowest_vert] = false
 
-		)
-
-		/*  remove verts above from selection */
-		for vert in verts do
+		/* REMOVE OTHER VERTS FROM SELECTION */
+		for vert in verts_to_remove do
 			this.sel_modified[vert] = false
-
 	),
 
 	/** Get vert with min z pos
@@ -292,46 +185,12 @@ struct VertSelector_v
 	function _getMinZposVert verts =
 	(
 		--format "\n"; print "VertSelector_v.getMinZposVert()"
-		--verts_process_arr = verts as Array
-		--
-		--function normalLimit faces_of_vert =
-		--(
-		--	--average_normal = point3 0 0 0
-		--	--faces_normal = for face_id in faces_of_vert collect this.face_normals[face_id]
-		--
-		--	--for face_id in faces_of_vert do average_normal += VertDataGetter.face_normals[face_id]
-		--
-		--	--average_normal = normalize average_normal
-		--
-		--	--format "average_normal: %\n" average_normal
-		--	--format "average_normal.z < -0.25: %\n" (average_normal.z < -0.25)
-		--
-		--	 --average_normal.z < 0 -- return
-		--	 average_normal.z < 0.25 -- return
-		--	 --average_normal.z < -0.5 -- return
-		--	 --average_normal.z < -0.8 -- return
-		--
-		--)
-
-
-			--format "verts_process_arr: %\n" verts_process_arr
-		--normal_limit = 0
-		--normal_limit = 0.25
-		--normal_limit = -0.8
-		--
 		verts_arr = verts as Array
-		----if verts.count > 1 then
-		--	verts_process_arr = for vert in verts where (VertDataGetter.getNormal(vert)).z < normal_limit collect vert
-
-
 
 		/* GET LOWEST POINT IN CELL */
-		if verts.count > 1 then
+		if verts_arr.count > 1 then
 		(
-			--verts_process_arr = for vert in verts_process_arr where normalLimit( polyop.getFacesUsingVert obj vert) collect VertDataGetter.getPosition(vert) axis:#Z
-			--format "verts_process_arr: %\n" verts_process_arr
-
-			z_positions = for vert in verts_arr collect VertDataGetter.getPosition(vert) axis:#Z
+			z_positions = for vert in verts_arr collect MeshDataGetter.getPosition(vert) axis:#Z
 
 			if ( index = findItem z_positions (amin z_positions) ) > 0 then
 				verts_arr[index] --return
@@ -348,26 +207,26 @@ struct VertSelector_v
 	function _filterVertsByNormal verts =
 	(
 		--format "\n"; print "VertSelector_v._filterVertsByNormal()"
-		(for vert in verts where (VertDataGetter.getNormal(vert)).z < normal_limit collect vert) as BitArray
+		(for vert in verts where (MeshDataGetter.getNormal(vert)).z < normal_limit collect vert) as BitArray
 	),
 
+
+
 	/** Get verts to ocess
-
-
 	 */
-	function _getVertsToProcess =
+	function _getVertsToProcess normals:false colors:false =
 	(
-		format "\n"; print "VertSelector_v._getVertsToProcess()"
-
-		timer_GETDATA = timeStamp()
-		verts_data = VertDataGetter.getData positions:true normals:true colors:false
-		format "\n GETDATA: % ms\n" (( timeStamp()) - timer_GETDATA)
-
-		format "VERTS: %\n" verts_data[#VERTS]
-		format "POSITIONS: %\n" verts_data[#POSITIONS]
-		format "NORMALS: %\n" verts_data[#NORMALS]
-
-		verts_process = verts_data[#VERTS]
+		--format "\n"; print "VertSelector_v._getVertsToProcess()"
+		--
+		--timer_GETDATA = timeStamp()
+		--data = MeshDataGetter.getData positions:true normals:normals colors:colors
+		--format "\n GETDATA: % ms\n" (( timeStamp()) - timer_GETDATA)
+		--
+		--format "VERTS: %\n" data[#VERTS]
+		--format "POSITIONS: %\n" data[#POSITIONS]
+		--format "NORMALS: %\n" data[#NORMALS]
+		--
+		--verts_process = data[#VERTS]
 		--vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
 		--verts_count	= getNumVerts obj.mesh
 		--verts_all	= #{1..(verts_count)}
@@ -377,7 +236,7 @@ struct VertSelector_v
 		--
 		--
 		--/* VERTEX POSITIONS */
-		--this.verts_data[#POSITIONS] = meshop.getVerts obj.mesh verts_all node:obj
+		--this.data[#POSITIONS] = meshop.getVerts obj.mesh verts_all node:obj
 		--
 		--/* PROCESS ALL OR ONLY SELECTED VERTS */
 		--this.verts_process = if vertex_sel.isEmpty then verts_all else vertex_sel
@@ -395,7 +254,8 @@ struct VertSelector_v
 	 */
 	function _sortVertsByIslands =
 	(
-		--format "\n"; print "VertSelector_v.getAceIslandsByVerts()"
+		format "\n"; print "VertSelector_v.getAceIslandsByVerts()"
+
 		function facesShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
 
 		tested_pairs	= #{} -- store stringified array of face id used in loop already
@@ -404,7 +264,7 @@ struct VertSelector_v
 		verts_per_faces	= #()
 
 
-		faces_by_verts = ( polyop.getFacesUsingVert obj verts_process) as Array
+		faces_by_verts = ( polyop.getFacesUsingVert obj  data[#VERTS]) as Array
 
 		verts_per_faces = for face_id in faces_by_verts collect polyop.getVertsUsingFace obj #{face_id}
 
@@ -448,11 +308,89 @@ struct VertSelector_v
 			messageBox ("Object '"+obj.name+"' needs to be rexported.\n\nVertex needs to be reindexed" )title:"VertSelector_v"
 	),
 
+
+	/** Get point in grid
+
+		return 2 matrix of cells on XY grid
+			#(
+				#( #{x1y1}, #{x1y2} )
+				#( #{x2y1}, #{x2y2} )
+				#( #{x3y1}, #{x3y2} )
+			)
+	 */
+	function _getVertsInGrid =
+	(
+		--format "\n"; print "VertSelector_v._getVertsInGrid()"
+		fn roundPoint3 p3 dp =
+		(
+			--format "p3: %\n" p3
+			local tempArr = #(p3.x,p3.y,p3.z)
+			local mult = 10.00^(dp as float)
+			local rp3Arr = for c in tempArr collect ((floor ((c * mult)+0.5)) / mult)
+			point3 rp3Arr[1] rp3Arr[2] rp3Arr[3]
+		)
+
+
+		--verts_arr = verts_process as Array
+		--format "VERTS_PROCESS: %\n" verts_process
+		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
+		--pos_round = for vert in verts_process collect roundPoint3 (MeshDataGetter.getPosition(vert)) 0
+		verts_arr = data[#VERTS] as Array
+
+		pos_by_axis = MeshDataGetter.getPositionsSplitByAxis()
+
+		x_min = amin pos_by_axis[1]
+		x_max = amax pos_by_axis[1]
+		y_min = amin pos_by_axis[2]
+		y_max = amax pos_by_axis[2]
+
+		/* CREATE EMPTY MATRIX */
+		this.points_grid = for x = x_min to x_max by resolution collect
+			for y = y_min to y_max by resolution collect #{} -- bitAarray to store verts which occupy cell of grid
+
+		/* FILL MATRIX */
+		for i = 1 to verts_arr.count do
+		(
+			vert_position = data[#POSITIONS][i]
+
+			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
+			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1
+
+
+			points_grid[index_x][index_y][verts_arr[i]] = true
+		)
+
+		/* CODE BELLOW JOIN BORDERS OF TOP AND RIGHT CELLS TO PREVIUOS CELLS ( APPEARS ON ALIGNED PLANE )
+
+			--/* MARGE LAST TOP SQUARES - verts from last cell are on border of verts, they belongs to last cell
+			for x = 1 to points_grid.count where points_grid[x].count > 1 do
+			(
+				last_cell_y = points_grid[x].count
+
+				 points_grid[x][last_cell_y - 1 ] += points_grid[x][last_cell_y]
+
+				deleteItem  points_grid[x] last_cell_y
+			)
+
+			--/* MARGE LAST RIGHT SQUARE - verts from last cell are on border of verts, they belongs to last cell
+			if (x_max = points_grid.count) > 1 and (y_max = points_grid[1].count ) > 1 then
+				for row = 1 to y_max  do
+					points_grid[x_max - 1][row] += points_grid[x_max][row]
+
+			deleteItem  points_grid points_grid.count
+		*/
+
+
+		gc()
+		format "POINTS_GRID: %\n" points_grid
+		points_grid --return
+	),
+
 	/**
 	 */
 	on create do
 	(
 		--format "\n"; print "VertSelector.onCreate()"
-		VertDataGetter 	= VertDataGetter_v( obj )
+		MeshDataGetter 	= MeshDataGetter_v( obj )
 	)
 )
