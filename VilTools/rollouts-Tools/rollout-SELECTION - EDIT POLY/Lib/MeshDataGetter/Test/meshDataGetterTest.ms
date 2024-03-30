@@ -6,14 +6,17 @@ filein( getFilenamePath(getSourceFileName()) + "/../MeshDataGetter.ms" )	--"./..
 
 /**
   */
-function createSourceMesh segments:8 vertex_selection:#{}  =
+function createSourceMesh obj: segments:8 vertex_selection:#{}  =
 (
 	format "\n"; print "MeshVertexGetterTest.ms.createSourceMesh()"
 	delete objects
 
-	obj = Sphere radius:15 pos:[0,0, 50 ] segments:segments isSelected:on --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+	if  obj == unsupplied then
+		obj = Sphere radius:15 pos:[0,0, 50 ] segments:segments isSelected:on --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
 
 	macros.run "Modifier Stack" "Convert_to_Poly"
+
+	obj --return
 )
 
 
@@ -22,19 +25,18 @@ function createSourceMesh segments:8 vertex_selection:#{}  =
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
 --createSourceMesh()
-createSourceMesh segments:16
 --createSourceMesh segments:64
 --createSourceMesh segments:128
 --createSourceMesh segments:1024
 
 
-obj = selection[1]
+--obj = selection[1]
 
 
 /*------------------------------------------------------------------------------
 	SET INSTANCE
 -------------------------------------------------------------------------------*/
-global MeshDataGetter 	= MeshDataGetter_v( obj )
+--global MeshDataGetter 	= MeshDataGetter_v( obj )
 
 
 /*------------------------------------------------------------------------------
@@ -52,12 +54,16 @@ global MeshDataGetter 	= MeshDataGetter_v( obj )
  */
 function selectVertsOnBottom =
 (
+	obj = createSourceMesh segments:16
+
+    MeshDataGetter 	= MeshDataGetter_v( obj )
+
 	--format "\n"; print ".selectVertsOnBottom()"
     MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]	-- get faces 0° - 20°
 
-	--timer_test = timeStamp()
+	/* TEST */
 	verts_data = MeshDataGetter.getVertexData()
-	--format "\n test: % ms\n" (( timeStamp()) - timer_test)
+
 	subObjectLevel = 1
 	obj.EditablePoly.SetSelection #Vertex verts_data[#VERTS]
 )
@@ -69,6 +75,10 @@ selectVertsOnBottom()
  */
 function selectFacesTopAndBottom =
 (
+	obj = createSourceMesh segments:16
+
+    MeshDataGetter = MeshDataGetter_v( obj )
+
     MeshDataGetter.FaceNormalLimits.z = 45	-- get faces 0° - 20°
 	MeshDataGetter.FaceNormalLimits.absolute = true
 
@@ -81,6 +91,17 @@ function selectFacesTopAndBottom =
 )
 
 --selectFacesTopAndBottom()
+
+
+
+
+
+
+
+
+
+
+
 
 
 

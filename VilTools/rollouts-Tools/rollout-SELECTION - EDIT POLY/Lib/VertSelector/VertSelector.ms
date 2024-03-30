@@ -28,6 +28,7 @@ struct VertSelector_v
 
 	points_grid 	= #(), -- 2DMatrix of verts which share same cell in grid points_grid[X_CELL][Y_CELL]
 	sel_modified 	= #{}, -- modified selection for selecting
+	round_grid	= #( #(), #(), #() ), -- 3D matrix of points positions rounded into 3 grid - round_grid[AXIS][CELL][VERT]
 
 	/* dependency */
 	MeshDataGetter,
@@ -43,7 +44,7 @@ struct VertSelector_v
 	(
 		format "\n"; print "VertSelector_v.selectLowestInts()"
 
-		MeshDataGetter.VertNormals.z = [ 135, 180 ]
+		MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
 
 		verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
 
@@ -51,11 +52,11 @@ struct VertSelector_v
 
 		this.sel_modified = copy verts_data[#VERTS]
 
-		for x = 1 to points_grid.count do
-			for y = 1 to points_grid[x].count do
-				this._filterOnlyMinZVerts (points_grid[x][y])
+		--for x = 1 to points_grid.count do
+		--	for y = 1 to points_grid[x].count do
+		--		this._filterOnlyMinZVerts (points_grid[x][y])
 
-		gc()
+		--gc()
 	),
 
 	/** Select lowest
@@ -64,19 +65,20 @@ struct VertSelector_v
 	(
 		format "\n"; print "VertSelector_v.selectLowestInts()"
 
-		MeshDataGetter.VertNormals.z = [ 135, 180 ]
+		MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
 
-		verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
+		--verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
+		verts_data = MeshDataGetter.getVertexData positions:true normals:true
 
 		this._getVertsInGrid()
 
 		this.sel_modified = copy verts_data[#VERTS]
 
-		for x = 1 to points_grid.count do
-			for y = 1 to points_grid[x].count do
-				this._filterOnlyMinZVerts (points_grid[x][y])
+		--for x = 1 to points_grid.count do
+		--	for y = 1 to points_grid[x].count do
+		--		this._filterOnlyMinZVerts (points_grid[x][y])
 
-		gc()
+		--gc()
 	),
 
 	/** Get verts by normal
@@ -109,6 +111,11 @@ struct VertSelector_v
 		format "\n"; print "VertSelector_v.getCheckerSelection()"
 		--this._getVertsToProcess()
 
+		/** Is even
+		 */
+		function isEven n =  ( mod n 2 ) == 0
+
+
 		--this._getVertsToProcess normals:false
 		verts_data = MeshDataGetter.getVertexData positions:true
 
@@ -118,17 +125,78 @@ struct VertSelector_v
 
 		this.sel_modified = #{}
 
-		for x = 1 to points_grid.count do
-			for y = 1 to points_grid[x].count do
+		for x = 1 to round_grid[1].count where (slice_x = round_grid[1][x]).count > 0 do
+		(
+			for y = 1 to round_grid[2].count where (slice_y = round_grid[2][y]).count > 0 do
 			(
-				if  (( mod x 2 ) == 0 and ( mod y 2 ) != 0) \ -- if cell is odd on X and even on Y
-				or (( mod x 2 ) != 0 and ( mod y 2 ) == 0)   -- or vice versa
-				then
-					this.sel_modified +=  points_grid[x][y]
+				test_X = ( not isEven(x) and isEven(y))
+				test_Y = ( not isEven(y) and isEven(x))
+
+				for z = 1 to round_grid[3].count where (slice_z = round_grid[3][z]).count > 0 do
+				(
+					if     (isEven(z) and    (test_X or test_Y)) \
+					or (not isEven(z) and not (test_X or test_Y)) then
+						this.sel_modified +=( slice_x * slice_y * slice_z)
+
+					/* DEBUG
+						this.sel_modified = slice_x
+						this.sel_modified = slice_y
+						this.sel_modified = slice_z
+					*/
+
+				)
 			)
+		)
+
+		--for x = 1 to round_grid[1].count do
+		--(
+		--
+		--
+		--
+		--)
+
+		--format "TEST: %\n" this.round_grid[1][3]
+		--format "TEST: %\n" this.round_grid[2][3]
+		--format "TEST: %\n" this.round_grid[3][11]
+
+
+		--this.sel_modified =  round_grid[ 1 ][ 1 ]
+		----this.sel_modified =  round_grid[ 2 ][ 1 ]
+		----this.sel_modified =  round_grid[ 3 ][ 1 ]
+
+		--this.sel_modified =  round_grid[ 1 ][ 2 ]
+		--this.sel_modified *=  round_grid[ 2 ][ 1 ]
+		--this.sel_modified *=  round_grid[ 3 ][ 1 ]
+
+
+		--this.sel_modified =  round_grid[ 1 ][ 1 ] * round_grid[ 2 ][ 1 ]
+		--this.sel_modified =  round_grid[1][3] * round_grid[2][3] * round_grid[3][11]
+		--
+		--a = #{ 1..10 }
+		--b = #{ 5..100 }
+		--c = #{ 5..10 }
+		--reuslt = a*b*c
+		--format "reuslt: %\n" reuslt
+		--
+			--for y = 1 to round_grid[2].count do
+			--(
+			--	if  (( mod x 2 ) == 0 and ( mod y 2 ) != 0) \ -- if cell is odd on X and even on Y
+			--	or (( mod x 2 ) != 0 and ( mod y 2 ) == 0)   -- or vice versa
+			--	then
+			--	(
+			--
+			--
+			--		this.sel_modified +=  round_grid[1][y]
+			--
+			--
+			--	)
+			--)
 
 		--format "INVERT_SEL: %\n" invert_sel
-		this.sel_modified = if invert_sel then verts_process - sel_modified else sel_modified --return
+		--this.sel_modified = if invert_sel then verts_process - sel_modified else sel_modified --return
+
+		this.sel_modified
+		--return
 	),
 
 	/** Select sinlge vert per face island
@@ -342,6 +410,13 @@ struct VertSelector_v
 	function _getVertsInGrid =
 	(
 		--format "\n"; print "VertSelector_v._getVertsInGrid()"
+		/** Get cell by position
+		 */
+		function cellByPos vert_pos_on_axis axis_origin =
+		(
+			((( vert_pos_on_axis - axis_origin ) / this.resolution) as integer ) + 1
+		)
+
 		fn roundPoint3 p3 dp =
 		(
 			--format "p3: %\n" p3
@@ -352,58 +427,37 @@ struct VertSelector_v
 		)
 
 
-		--verts_arr = verts_process as Array
-		--format "VERTS_PROCESS: %\n" verts_process
-		/* ROUND POSTIONS TO TENS - [111.1589,12.856,85.5896] >>> [110,10,90] */
-		--pos_round = for vert in verts_process collect roundPoint3 (MeshDataGetter.getPosition(vert)) 0
+
 		verts_arr = verts_data[#VERTS] as Array
 
 		pos_by_axis = MeshDataGetter.getPositionsSplitByAxis()
 
-		x_min = amin pos_by_axis[1]
-		x_max = amax pos_by_axis[1]
-		y_min = amin pos_by_axis[2]
-		y_max = amax pos_by_axis[2]
+		min_pos = #( amin pos_by_axis[1], amin pos_by_axis[2], amin pos_by_axis[3])
 
-		/* CREATE EMPTY MATRIX */
-		this.points_grid = for x = x_min to x_max by resolution collect
-			for y = y_min to y_max by resolution collect #{} -- bitAarray to store verts which occupy cell of grid
-
-		/* FILL MATRIX */
+		/* FILL MATRIX
+			round_grid[AXIS][CELL][VERT]
+		*/
 		for i = 1 to verts_arr.count do
 		(
-			vert_position = verts_data[#POSITIONS][i]
+			vert	= verts_arr[i]
+			vert_pos	= verts_data[#POSITIONS][i]
 
-			index_x = ((( vert_position.x - x_min ) / resolution) as integer ) + 1
-			index_y = ((( vert_position.y - y_min ) / resolution) as integer ) + 1
+			for axis = 1 to 3 do
+			(
+				level = cellByPos(vert_pos[axis])(min_pos[axis])
 
+				if (round_grid[axis][level]) == undefined then
+					round_grid[axis][level] = #{}
 
-			points_grid[index_x][index_y][verts_arr[i]] = true
+				/* SET VERT TO BITARRAY OF CELL */
+				round_grid[axis][level][vert] = true
+			)
 		)
 
-		/* CODE BELLOW JOIN BORDERS OF TOP AND RIGHT CELLS TO PREVIUOS CELLS ( APPEARS ON ALIGNED PLANE )
+		--gc()
 
-			--/* MARGE LAST TOP SQUARES - verts from last cell are on border of verts, they belongs to last cell
-			for x = 1 to points_grid.count where points_grid[x].count > 1 do
-			(
-				last_cell_y = points_grid[x].count
+		--format "POINTS_GRID: %\n" points_grid
 
-				 points_grid[x][last_cell_y - 1 ] += points_grid[x][last_cell_y]
-
-				deleteItem  points_grid[x] last_cell_y
-			)
-
-			--/* MARGE LAST RIGHT SQUARE - verts from last cell are on border of verts, they belongs to last cell
-			if (x_max = points_grid.count) > 1 and (y_max = points_grid[1].count ) > 1 then
-				for row = 1 to y_max  do
-					points_grid[x_max - 1][row] += points_grid[x_max][row]
-
-			deleteItem  points_grid points_grid.count
-		*/
-
-
-		gc()
-		format "POINTS_GRID: %\n" points_grid
 		points_grid --return
 	),
 

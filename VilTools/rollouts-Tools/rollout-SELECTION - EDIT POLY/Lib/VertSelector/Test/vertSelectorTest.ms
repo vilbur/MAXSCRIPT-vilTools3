@@ -12,14 +12,19 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 	segment_size = 10
 
 	--obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
-	obj = Sphere radius:20 pos:[0,0, 50 ] segments:segments --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+	--obj = Sphere radius:20 pos:[0,0, 50 ] segments:segments --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+
 
 	--obj = Plane width:20 length:20 pos:[ 50, 20, 50 ] widthsegs:4 lengthsegs:4
 
 	--obj = Plane width:60 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10
 	--obj = Plane width:40 length:30 pos:[ 50, 20, 50 ] widthsegs:40 lengthsegs:30
 	--obj = Plane width:50 length:50 pos:[ 50, 20, 50 ] widthsegs:50 lengthsegs:50
-	--obj = Plane width:100 length:100 pos:[ 50, 20, 50 ] widthsegs:100 lengthsegs:100
+	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:5 lengthsegs:5 heightsegs:5
+	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:25 lengthsegs:25 heightsegs:25
+	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:35 lengthsegs:35 heightsegs:35
+	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:50 lengthsegs:50 heightsegs:50
+	obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:100 lengthsegs:100 heightsegs:100
 
 
 	--obj = Plane width:30 length:30 pos:[ 50, 20, 50 ] widthsegs:10 lengthsegs:10
@@ -27,9 +32,9 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 	select obj
 
-	modPanel.addModToSelection (Noisemodifier scale:8 strength:[0,0,10] ) ui:on
+	--modPanel.addModToSelection (Noisemodifier scale:8 strength:[0,0,10] ) ui:on
 
-	Rotate obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
+	--Rotate obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
 
 	modPanel.addModToSelection (smooth ()) ui:on
 
@@ -60,7 +65,7 @@ function createSourceMesh segments:8 vertex_selection:#{} test_shifted_pivot:fal
 
 
   --createSourceMesh segments:4
-  --createSourceMesh vertex_color:orange segments:32
+  createSourceMesh vertex_color:orange segments:32
   --createSourceMesh vertex_color:orange segments:64
  --createSourceMesh vertex_selection:#{1..100}
 
@@ -81,8 +86,9 @@ VertSelector 	= VertSelector_v( objects[1] ) resolution:10
 
 
 --VertSelector.resolution = 5
-VertSelector.resolution = 8
---VertSelector.resolution = 10
+--VertSelector.resolution = 8
+VertSelector.resolution = 10
+--VertSelector.resolution = 20
 
 --for points_in_square in VertSelector.points_grid do
 --	format "points_in_square: %\n" points_in_square
@@ -90,23 +96,25 @@ VertSelector.resolution = 8
 
 
 
-/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
-VertSelector.getLowestVerts();	VertSelector.selectVerts()
+--/* LOWEST VERTS - SELECT */
+--VertSelector.getLowestVerts();	VertSelector.selectVerts()
 
 
-/* LEFT ONLY LOWEST VERT IF MULTIPLE VERTS ARE ON ISLAND OF FACES */
+/* SINGLE VERTICAL PER ISLAND - SELECT */
 --VertSelector.getSingleVertPerFaceIsland(); VertSelector.selectVerts()
 
 
---/* SELECT LOWEST VERTS ON OBJECT\SELECTION */
+--/* VERTS BY NORMAL - SELECT */
 --VertSelector.getVertsByNormal();	VertSelector.selectVerts()
 
 
 
+/* CHECKBOARD PATTERN - SELECT */
+VertSelector.getCheckerSelection invert_sel:false;  VertSelector.selectVerts()
 
-/* GET VERTEX IN CHECK BOARD PATTERN */
---VertSelector.getCheckerSelection invert_sel:false;  VertSelector.selectVerts()
 
+/* GET CLIFF VERTICES - try find best points for 3D print support  */
+--VertSelector.getCliffVerts();	VertSelector.selectVerts()
 
 /*------------------------------------------------------------------------------
 

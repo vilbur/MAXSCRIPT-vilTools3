@@ -60,12 +60,12 @@ struct MeshDataGetter_v
 			--this._filterVertsByFaceNormalLimit()
 
 		/* GET POSITIONS */
-		--if pararmExists(positions) then
+		--if pararmExists(positions) and verts_data[#POSITIONS] == undefined  then
 		--	verts_data[#POSITIONS] = this._getVertsPositions()
 		--
 		--
 		--/* GET COLORS */
-		--if pararmExists(colors) then
+		--if pararmExists(colors) and verts_data[#COLORS] == undefined  then
 		--	verts_data[#COLORS] = this._getVertexColors()
 
 
@@ -142,7 +142,13 @@ struct MeshDataGetter_v
 	function getPositionsSplitByAxis =
 	(
 		--format "\n"; print "MeshDataGetter_v.getPositionsSplitted()"
-		x_positions = y_positions = z_positions = #()
+		if verts_data[#POSITIONS] == undefined then
+			verts_data[#POSITIONS] = this._getVertsPositions()
+
+
+		x_positions = #()
+		y_positions = #()
+		z_positions = #()
 
 		for pos in verts_data[#POSITIONS] do
 		(
@@ -151,7 +157,7 @@ struct MeshDataGetter_v
 			append z_positions pos.z
 		)
 
-		#( x_positions, z_positions, z_positions  ) --return
+		#( x_positions, y_positions, z_positions  ) --return
 	),
 
 	/* Get index of verts_data by vertex number in this.positions|normlas|colors|
