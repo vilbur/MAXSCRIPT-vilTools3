@@ -346,9 +346,10 @@ struct MeshDataGetter_v
 	 */
 	function _setVertsToProcess verts: faces: =
 	(
-		--format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
+		format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
 		this.vertex_count = getNumVerts obj.mesh
 		this.face_count   = polyop.getNumFaces obj
+		format "this.vertex_count: %\n" this.vertex_count
 
 		all_verts = #{1..(vertex_count)}
 		verts_sel	= getVertSelection obj.mesh

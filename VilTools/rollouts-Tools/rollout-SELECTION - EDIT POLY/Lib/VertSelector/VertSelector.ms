@@ -61,7 +61,9 @@ struct VertSelector_v
 	),
 
 
+
 	/*
+	  https://www.grasshopper3d.com/forum/topics/convex-or-concave-angle-between-faces?overrideMobileRedirect=1&id=2985220%3ATopic%3A954247&page=1
 		1) Loop each vert
 		2) Get Faces of vert
 		3) Get dot product of each pair from cache
@@ -86,14 +88,20 @@ struct VertSelector_v
 			 findItem this.face_data[#FACES] face_id
 		)
 
+		/** Get face center
+		 */
+		function getFaceCenter face_id =
+		(
+			--format "\n"; print "VertSelector_v.getFaceCenter()"
+			if ( face_center = polyop.getSafeFaceCenter obj face_id ) == undefined then
+				face_center = polyop.getFaceCenter obj face_id
+
+			face_center --return
+		)
+
 		function isCrossMinus cross_prod = cross_prod.x < 0 or cross_prod.y < 0 or cross_prod.z < 0
 
-		faces_angles = Dictionary #integer
-
 		this.sel_modified = #{}
-
-		all_verts = #{1..(getNumVerts obj.mesh)}
-		verts_sel	= getVertSelection obj.mesh
 
 
 		verts_data = MeshDataGetter.getVertexData normals:true
@@ -101,22 +109,29 @@ struct VertSelector_v
 
 		faces_of_verts = (polyop.getFacesUsingVert obj  verts_data[#VERTS]) as Array
 
-		faces_normals  = for face in faces_of_verts collect polyop.getFaceNormal obj face
+		faces_normals  = for face in faces_of_verts collect normalize ( polyop.getFaceNormal obj face)
 
-		for vert in verts_data[#VERTS] where (faces_of_vert = polyop.getFacesUsingVert obj vert).numberSet > 1 do
+		--for vert in verts_data[#VERTS] where (faces_of_vert = polyop.getFacesUsingVert obj vert).numberSet > 1 do
+		for vert in verts_data[#VERTS] do
 		(
+			faces_of_vert = polyop.getFacesUsingVert obj vert
+
 			vert_normal =  MeshDataGetter.getVertNormal vert
 
 			faces_angles_of_vert = #()
 			faces_angles_tested = #{}
 			format "\n-----------------------\nVERT: %\n" vert
+			format "faces_of_vert: %\n" faces_of_vert
 
 
 			/* Get dot product for each pair oof faces */
 			for face_A in faces_of_vert do
 			(
-				normal_A = faces_normals[dataIndexFaceNormal(face_A)]
-				--normal_A = faces_normals[ findItem ( faces_of_verts) face_A ]
+				--normal_A = faces_normals[dataIndexFaceNormal(face_A)]
+				normal_A = normalize ( polyop.getFaceNormal obj face_A )
+				--format "normal_A: %\n" normal_A
+				face_center_A = getFaceCenter face_A
+
 				edges_A	= polyop.getEdgesUsingFace obj face_A
 				--format "\nface_A: %\n" face_A
 
@@ -125,52 +140,74 @@ struct VertSelector_v
 				(
 					edges_B	= polyop.getEdgesUsingFace obj face_B
 
+					face_center_B = getFaceCenter face_A
+
+					vector_faces_centres = normalize ( face_center_A - (getFaceCenter face_B) )
+
 					if (edges_A*edges_B).numberSet > 0 then -- do not test faces wihtout shared edge
 					(
-						normal_B = faces_normals[ findItem ( faces_of_verts) face_B ]
+						--normal_B = faces_normals[ findItem ( faces_of_verts) face_B ]
+						normal_B = normalize ( polyop.getFaceNormal obj face_B )
 
-						local _dot_prod	= dot normal_A normal_B
+						dot_faces = dot normal_A normal_B
+						normal_angle = acos(dot normal_A normal_B)
+						angle_center = acos(dot vector_faces_centres normal_A)
+						dot_center = dot vector_faces_centres normal_A
 
-						angle_raw = acos(dot normal_A normal_B)
-
-						cross_prod	= cross(normal_B)(normal_A)
-
-						angle_A_B = case of
-							(
-								(isCrossMinus cross_prod): angle_raw + 180
-								(cross_prod == [0,0,0] ):	180 -- _dot_prod == 1.0 ALWAYS RETURN FALSE !?! -- workaround is used cross product
-								(_dot_prod < 0 ):	180 - angle_raw
-								default:	angle_raw
-							)
-
+						format "dot_faces: %\n" dot_faces
+						format "dot_center: %\n" dot_center
+						--format "normal_angle: %\n" normal_angle
+						--format "angle_center: %\n" angle_center
 						format "\n"
-						format "angle_raw: %\n" angle_raw
-						format "_dot_prod: %\n" _dot_prod
-						format "cross_prod: %\n" cross_prod
-						format "ANGLE % %: %\n"  face_A face_B angle_A_B
+						format "normal_angle: %\n" normal_angle
+						format "\n"
+
+
+						--format "TEST: %\n" ( dot_center == 0.0 )
+
+						if dot_center > 0 then
+						(
+							format "CONVEX: %\n" normal_angle
+							if dot_faces < 0 or  dot_faces == 1 then
+								normal_angle = abs(180 - normal_angle)
+						)
+						else if dot_center < 0 then
+						(
+							format "CONCAVE: %\n" normal_angle
+
+							if dot_faces >= 0 then
+								normal_angle = abs(180 + normal_angle)
+						)
+						--else
+						--	normal_angle = 180
+
+
+						format "\nANGLE % %: %\n"  face_A face_B normal_angle
+
 
 						faces_angles_tested[face_A * face_B] = true
 
-						append faces_angles_of_vert angle_A_B
+						--if normal_angle > 0 then
+						append faces_angles_of_vert normal_angle
 					)
 				)
 			)
 
-			convex_angles  = for angle_A_B in faces_angles_of_vert where angle_A_B < 180 collect angle_A_B
-			concave_angles = for angle_A_B in faces_angles_of_vert where angle_A_B > 180 collect angle_A_B
+			convex_angles  = for _angle in faces_angles_of_vert where _angle < 180 collect _angle
+			concave_angles = for _angle in faces_angles_of_vert where _angle > 180 collect _angle
 
 			format "\nconvex_angles: % \nconcave_angles: %\n\n" convex_angles concave_angles
 
 			if convex_angles.count > concave_angles.count then
 			(
-				format "VERT IS CONVEX\n\n"
-				--this.sel_modified[vert] = true
+				--format "VERT IS CONVEX\n\n"
+				this.sel_modified[vert] = true
 			)
 			else if convex_angles.count < concave_angles.count then
 			(
-				format "VERT IS CONCAVE\n\n"
+				--format "VERT IS CONCAVE\n\n"
 
-				this.sel_modified[vert] = true
+				--this.sel_modified[vert] = true
 			)
 
 			else
