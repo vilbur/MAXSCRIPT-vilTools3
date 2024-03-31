@@ -60,18 +60,18 @@ struct MeshDataGetter_v
 			--this._filterVertsByFaceNormalLimit()
 
 		/* GET POSITIONS */
-		--if pararmExists(positions) and verts_data[#POSITIONS] == undefined  then
-		--	verts_data[#POSITIONS] = this._getVertsPositions()
-		--
-		--
+		if pararmExists(positions) and verts_data[#POSITIONS] == undefined  then
+			verts_data[#POSITIONS] = this._getVertsPositions()
+
+
 		--/* GET COLORS */
 		--if pararmExists(colors) and verts_data[#COLORS] == undefined  then
 		--	verts_data[#COLORS] = this._getVertexColors()
-
+		--
 
 		/* GET NORMALS */
-		--if pararmExists(normals) and verts_data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByFaceNormalLimit()
-		--	verts_data[#NORMALS] = this._getVertsNormals()
+		if pararmExists(normals) and verts_data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByFaceNormalLimit()
+			verts_data[#NORMALS] = this._getVertsNormals()
 
 
 		verts_data --return
@@ -120,6 +120,17 @@ struct MeshDataGetter_v
 		face_data --return
 	),
 
+	/** Get vertex normal
+
+	  * @param #X|#Y|#Z axis
+	 */
+	function getVertNormal vert =
+	(
+		--format "\n"; print "VertDataGetter_v.getVertNormal()"
+		--format "this.dataIndexVert(vert): %\n" (this.dataIndexVert(vert))
+		--format "verts_data[#NORMALS]: %\n" verts_data[#NORMALS].count
+		verts_data[#NORMALS][this.dataIndexVert(vert)]  --return
+	),
 
 	/** Get position
 
@@ -280,7 +291,7 @@ struct MeshDataGetter_v
 	 */
 	function _getFaceNormals =
 	(
-		format "\n"; print "MeshVertexGetter_v._getFaceNormals()"
+		format "\n"; print "MeshDataGetter_v._getFaceNormals()"
 
 		if face_data[#FACES] == undefined then
 			this._setFaces()
@@ -291,7 +302,7 @@ struct MeshDataGetter_v
 	 */
 	function _getFaceNormalsByLimit =
 	(
-		--format "\n"; print "MeshVertexGetter_v._getFaceNormals()"
+		--format "\n"; print "MeshDataGetter_v._getFaceNormals()"
 		local face_normal
 
 		local face_normals = #()
@@ -335,18 +346,23 @@ struct MeshDataGetter_v
 	 */
 	function _setVertsToProcess verts: faces: =
 	(
-		--format "\n"; print "VertexGridSelector_v._setVertsToProcess()"
+		--format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
 		this.vertex_count = getNumVerts obj.mesh
-		this.face_count   = getNumFaces obj.mesh
+		this.face_count   = polyop.getNumFaces obj
+
+		all_verts = #{1..(vertex_count)}
+		verts_sel	= getVertSelection obj.mesh
 
 		if faces != unsupplied then
 			verts =  polyop.getVertsUsingFace obj faces
 
+
 		this.verts_process = case verts of
 		(
-			(#SELECTION):	getVertSelection obj.mesh -- get verts by current selecion
-			(unsupplied):	#{1..(vertex_count)}	-- get all verts if undefined
-			default:	verts	-- get given verts
+			(#ALL_OR_SELECTED): if verts_sel.count > 0 then verts_sel else all_verts
+			(#SELECTED):	verts_sel
+			(unsupplied):	all_verts
+			default:	verts
 		)
 
 		this.verts_process --return
@@ -374,7 +390,7 @@ struct MeshDataGetter_v
 	  */
 	function _getVertexColors =
 	(
-		format "\n"; print "MeshVertexGetter_v._getVertexColors()"
+		format "\n"; print "MeshDataGetter_v._getVertexColors()"
 		/** Loop map verts of single mesh vert
 		  *
 		  * Test if vertex color is new
@@ -383,7 +399,7 @@ struct MeshDataGetter_v
 		 */
 		function _searchNewVertexColor colors map_verts =
 		(
-			--format "\n"; print "MeshVertexGetter_v._searchNewVertexColor()"
+			--format "\n"; print "MeshDataGetter_v._searchNewVertexColor()"
 			--format "map_verts: %\n" map_verts
 			--format "this.colors: %\n" this.colors
 			--format "COLOR: %\n" (getvertcolor obj.mesh map_verts[1])

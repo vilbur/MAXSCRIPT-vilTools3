@@ -35,6 +35,7 @@ struct VertSelector_v
 
 	/* reference */
 	verts_data,	-- MeshDataGetter.verts_data
+	face_data,	-- MeshDataGetter.face_data
 
 	/* inhered */
 
@@ -46,7 +47,7 @@ struct VertSelector_v
 
 		MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
 
-		verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
+		verts_data = MeshDataGetter.getVertexData verts:#ALL_OR_SELECTED positions:true normals:true
 
 		this._getVertsInGrid()
 
@@ -59,24 +60,123 @@ struct VertSelector_v
 		--gc()
 	),
 
-	/** Select lowest
-	 */
-	function getCliffVerts =
+
+	/*
+		1) Loop each vert
+		2) Get Faces of vert
+		3) Get dot product of each pair from cache
+		4) Get new dot product if not exist in cache
+		5) If any or average angle is out of limit (dont know yet)
+		6) Then remove this vert from selection
+	*/
+	function getConcaveVerts =
 	(
-		format "\n"; print "VertSelector_v.selectLowestInts()"
+		format "\n"; print "VertSelector_v.getConcaveVerts()"
+		/* Get index of verts_data by vertex number in this.positions|normlas|colors|
+		*
+		* Bitarray way to accomplish : findItem (this.verts_arr) face_id
+		*/
+		function dataIndexFaceNormal face_id =
+		(
+			--format "\n"; print "VertDataGetter_v.dataIndexVert()"
+			--missing = -face_data[#FACES] - #{face_id..(face_data[#FACES].numberSet)} -- find how many indexes is false before vertex_index
 
-		MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
+			--face_id - missing.numberSet
 
-		--verts_data = MeshDataGetter.getVertexData verts:#SELECTION positions:true normals:true
-		verts_data = MeshDataGetter.getVertexData positions:true normals:true
+			 findItem this.face_data[#FACES] face_id
+		)
 
-		this._getVertsInGrid()
+		function isCrossMinus cross_prod = cross_prod.x < 0 or cross_prod.y < 0 or cross_prod.z < 0
 
-		this.sel_modified = copy verts_data[#VERTS]
+		faces_angles = Dictionary #integer
 
-		--for x = 1 to points_grid.count do
-		--	for y = 1 to points_grid[x].count do
-		--		this._filterOnlyMinZVerts (points_grid[x][y])
+		this.sel_modified = #{}
+
+		all_verts = #{1..(getNumVerts obj.mesh)}
+		verts_sel	= getVertSelection obj.mesh
+
+
+		verts_data = MeshDataGetter.getVertexData normals:true
+		face_data = MeshDataGetter.getFacesData()
+
+		faces_of_verts = (polyop.getFacesUsingVert obj  verts_data[#VERTS]) as Array
+
+		faces_normals  = for face in faces_of_verts collect polyop.getFaceNormal obj face
+
+		for vert in verts_data[#VERTS] where (faces_of_vert = polyop.getFacesUsingVert obj vert).numberSet > 1 do
+		(
+			vert_normal =  MeshDataGetter.getVertNormal vert
+
+			faces_angles_of_vert = #()
+			faces_angles_tested = #{}
+			format "\n-----------------------\nVERT: %\n" vert
+
+
+			/* Get dot product for each pair oof faces */
+			for face_A in faces_of_vert do
+			(
+				normal_A = faces_normals[dataIndexFaceNormal(face_A)]
+				--normal_A = faces_normals[ findItem ( faces_of_verts) face_A ]
+				edges_A	= polyop.getEdgesUsingFace obj face_A
+				--format "\nface_A: %\n" face_A
+
+				for face_B in faces_of_vert where face_A != face_B and not faces_angles_tested[face_A * face_B] do -- block to test same pair again
+				--for face_B in faces_of_vert where face_A != face_B  do
+				(
+					edges_B	= polyop.getEdgesUsingFace obj face_B
+
+					if (edges_A*edges_B).numberSet > 0 then -- do not test faces wihtout shared edge
+					(
+						normal_B = faces_normals[ findItem ( faces_of_verts) face_B ]
+
+						local _dot_prod	= dot normal_A normal_B
+
+						angle_raw = acos(dot normal_A normal_B)
+
+						cross_prod	= cross(normal_B)(normal_A)
+
+						angle_A_B = case of
+							(
+								(isCrossMinus cross_prod): angle_raw + 180
+								(cross_prod == [0,0,0] ):	180 -- _dot_prod == 1.0 ALWAYS RETURN FALSE !?! -- workaround is used cross product
+								(_dot_prod < 0 ):	180 - angle_raw
+								default:	angle_raw
+							)
+
+						format "\n"
+						format "angle_raw: %\n" angle_raw
+						format "_dot_prod: %\n" _dot_prod
+						format "cross_prod: %\n" cross_prod
+						format "ANGLE % %: %\n"  face_A face_B angle_A_B
+
+						faces_angles_tested[face_A * face_B] = true
+
+						append faces_angles_of_vert angle_A_B
+					)
+				)
+			)
+
+			convex_angles  = for angle_A_B in faces_angles_of_vert where angle_A_B < 180 collect angle_A_B
+			concave_angles = for angle_A_B in faces_angles_of_vert where angle_A_B > 180 collect angle_A_B
+
+			format "\nconvex_angles: % \nconcave_angles: %\n\n" convex_angles concave_angles
+
+			if convex_angles.count > concave_angles.count then
+			(
+				format "VERT IS CONVEX\n\n"
+				--this.sel_modified[vert] = true
+			)
+			else if convex_angles.count < concave_angles.count then
+			(
+				format "VERT IS CONCAVE\n\n"
+
+				this.sel_modified[vert] = true
+			)
+
+			else
+				format "VERT IS FLAT\n\n"
+
+		)
 
 		--gc()
 	),
@@ -231,21 +331,27 @@ struct VertSelector_v
 	 */
 	function selectVerts =
 	(
-		--format "\n"; print "VertSelector_v.selectVerts()"
-		if this.sel_modified.isEmpty then
-			this.sel_modified = deepCopy verts_data[#VERTS]
+		format "\n"; print "VertSelector_v.selectVerts()"
+		--if this.sel_modified.isEmpty then
+			--this.sel_modified = deepCopy verts_data[#VERTS]
+		format "this.sel_modified: %\n" this.sel_modified
 
-		subObjectLevel = 1
+		if not this.sel_modified.isEmpty then
+		(
+			max modify mode
 
-		_mod = modPanel.getCurrentObject()
+			subObjectLevel = 1
 
-		_mod.SetSelection #Vertex #{}
+			_mod = modPanel.getCurrentObject()
 
-		if classOf _mod == Edit_Poly then
-			_mod.Select #Vertex this.sel_modified
+			_mod.SetSelection #Vertex #{}
 
-		else if classOf _mod  == Editable_Poly then
-			_mod.SetSelection #Vertex this.sel_modified
+			if classOf _mod == Edit_Poly then
+				_mod.Select #Vertex this.sel_modified
+
+			else if classOf _mod  == Editable_Poly then
+				_mod.SetSelection #Vertex this.sel_modified
+		)
 	),
 
 	private
@@ -300,39 +406,6 @@ struct VertSelector_v
 	),
 
 
-
-	/** Get verts to ocess
-	 */
-	function _getVertsToProcess normals:false colors:false =
-	(
-		--format "\n"; print "VertSelector_v._getVertsToProcess()"
-		--
-		--timer_GETDATA = timeStamp()
-		--verts_data = MeshDataGetter.getVertexData positions:true normals:normals colors:colors
-		--format "\n GETDATA: % ms\n" (( timeStamp()) - timer_GETDATA)
-		--
-		--format "VERTS: %\n" verts_data[#VERTS]
-		--format "POSITIONS: %\n" verts_data[#POSITIONS]
-		--format "NORMALS: %\n" verts_data[#NORMALS]
-		--
-		--verts_process = verts_data[#VERTS]
-		--vertex_sel	= getVertSelection obj.mesh --else #{} -- ignore vertex selection if not suobject level active
-		--verts_count	= getNumVerts obj.mesh
-		--verts_all	= #{1..(verts_count)}
-		--
-		--/* CHECK INDEXES OF VERTS NEEDED */
-		----this._checkSelectionIngerity (vertex_sel as Array ) ( ( polyop.getVertSelection obj ) as Array )
-		--
-		--
-		--/* VERTEX POSITIONS */
-		--this.verts_data[#POSITIONS] = meshop.getVerts obj.mesh verts_all node:obj
-		--
-		--/* PROCESS ALL OR ONLY SELECTED VERTS */
-		--this.verts_process = if vertex_sel.isEmpty then verts_all else vertex_sel
-		--
-		--
-		--face_normals = for f = 1 to polyop.getNumFaces obj collect  polyop.getFaceNormal obj f
-	),
 
 
 	/** Get ace islands by verts
