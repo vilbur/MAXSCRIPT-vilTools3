@@ -13,7 +13,7 @@ struct ConvexVertFinder_v
 
 	_angles_by_vert = Dictionary(), --  #( #CONVEX, #() ) #( #CONCAVE, #() ) #( #FLAT, #() )  #( #CORNER, boolean ) -- store angles of single vert
 
-	faces_angles_tested = Dictionary #integer,
+	faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
 
 
 	/* private */
@@ -30,31 +30,40 @@ struct ConvexVertFinder_v
 		--format "\n"; print "ConvexVertFinder_obj.getVerts()"
 		for vert in verts do
 		(
-			format "\n-----------------------\nVERT: %\n" vert
-
+			--format "\n-----------------------\nVERT: %\n" vert
 			angles_by_vert = deepCopy this._angles_by_vert
-			faces_of_vert = polyop.getFacesUsingVert obj vert
+			faces_of_vert  = polyop.getFacesUsingVert obj vert
+
+			already_tested_faces = #{}
 
 			for face_A in faces_of_vert where faces_of_vert.numberSet > 1 do
 			(
 				--normal_A = faces_normals[dataIndexFaceNormal(face_A)]
 				normal_A = normalize ( polyop.getFaceNormal obj face_A )
+				edges_A	 = polyop.getEdgesUsingFace obj face_A
 
-				for face_B in faces_of_vert where face_A != face_B  do -- block to test same pair again
+				for face_B in faces_of_vert where face_A != face_B and not already_tested_faces[face_A * face_B] do -- block to test same pair again
 				(
+					edges_B	= polyop.getEdgesUsingFace obj face_B
 
-					--if ( angle_of_faces = faces_angles_tested[face_A * face_B] ) == undefined then       -- GET TESTED IF TESTED ALREADY
-					angle_of_faces =  this._getFacesAngle (face_A) (face_B) (normal_A) ( this._getFaceCenter face_A )
-
-					angle_type = case of
+					if (edges_A*edges_B).numberSet > 0 then -- do not test faces wihtout shared edge
 					(
-						(angle_of_faces < 180):	#CONVEX
-						(angle_of_faces > 180):	#CONCAVE
-						default:	#FLAT
+						/* GET ANGLE FROM CACHE OR GET ANGLE FOR NEW PAIR OF FACES */
+						if ( angle_of_faces = faces_angles[face_A * face_B] ) == undefined then
+							angle_of_faces =  this._getFacesAngle (face_A) (face_B) (normal_A) ( this._getFaceCenter face_A )
+
+						/* TESNST CONVEX\CONCAVE */
+						angle_type = case of
+						(
+							(angle_of_faces < 180):	#CONVEX
+							(angle_of_faces > 180):	#CONCAVE
+							default:	#FLAT
+						)
+
+						already_tested_faces[face_A * face_B] = true
+
+						append angles_by_vert[angle_type] angle_of_faces
 					)
-
-					append angles_by_vert[angle_type] angle_of_faces
-
 				) -- end loop face B
 			) -- end loop face A
 
@@ -89,6 +98,7 @@ struct ConvexVertFinder_v
 		angle_raw    = acos(dot_faces)
 		angle_center = acos(dot_center)
 
+		--format "\n"
 		--format "dot_faces: %\n" dot_faces
 		--format "dot_center: %\n" dot_center
 		--format "angle_center: %\n" angle_center
@@ -100,15 +110,15 @@ struct ConvexVertFinder_v
 		(
 			(dot_center > 0 and (dot_faces < 0 or  dot_faces == 1)):  abs(180 - angle_raw)
 
-			(dot_center < 0 and dot_faces >= 0 ):	 abs(180 + angle_raw) ---- if dot_faces >= 0 then --??? dont know if its needed actualy
+			(dot_center < 0  ):	 abs(180 + angle_raw) ---- if dot_faces >= 0 then --??? dont know if its needed actualy
 
 			default: angle_raw
 		)
 
-		format "ANGLE_FINAL: %\n" angle_final
+		--format "ANGLE % % : %\n" face_A face_B angle_final
 
 		/* MAK PAIR OF FACES AS TESTED  */
-		faces_angles_tested[face_A * face_B] = angle_final
+		faces_angles[face_A * face_B] = angle_final
 
 		angle_final --return
 	),
@@ -117,9 +127,9 @@ struct ConvexVertFinder_v
 	 */
 	function _saveVertByType vert angles_by_vert =
 	(
-		format "\n"; print "ConvexVertFinder_obj._saveVertByType()"
+		--format "\n"; print "ConvexVertFinder_obj._saveVertByType()"
 		--format "vert: %\n" vert
-		format "angles_by_vert: %\n" angles_by_vert
+		--format "angles_by_vert: %\n" angles_by_vert
 
 		convex_angles  = angles_by_vert[#CONVEX].count
 		concave_angles = angles_by_vert[#CONCAVE].count
@@ -132,10 +142,8 @@ struct ConvexVertFinder_v
 			default:	#FLAT
 		)
 
-		format "vert_type: %\n" vert_type
+		--format "vert_type: %\n" vert_type
 		verts_by_type[vert_type][vert] = true
-		--format "verts_by_type: %\n" verts_by_type
-
 	),
 
 	/* Get index of verts_data by vertex number in this.positions|normlas|colors|
