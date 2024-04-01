@@ -14,20 +14,28 @@ obj = if selection.count > 0 then  selection[1] else objects[1]
 ConvexVertFinder = ConvexVertFinder_v( obj )
 
 /*------------------------------------------------------------------------------
-	--OPTIONS
+	OPTIONS - which type of verts will be selected
 --------------------------------------------------------------------------------*/
---mode = #CONVEX
+mode = #CONVEX
 --mode = #CONCAVE
-mode = #FLAT
+--mode = #FLAT
 --mode = #CORNER
 
 
 /*------------------------------------------------------------------------------
 	RUN TEST
 --------------------------------------------------------------------------------*/
-verts = ConvexVertFinder.getVerts #{1..( getNumVerts obj.mesh)} mode:mode -- DEFAULT mode:#CONVEX
 
-format "verts: %\n" verts
+verts     = #{1..( getNumVerts obj.mesh)}
+
+verts_types = ConvexVertFinder.getConvexityTypes (verts)
+
+format "verts_types: %\n" verts_types
+
+verts_by_type = for i = 1 to verts_types.count where verts_types[i] == mode collect (verts as Array )[i]
+
+
+
 /*------------------------------------------------------------------------------
 	SELECT RESULT
 --------------------------------------------------------------------------------*/
@@ -37,4 +45,4 @@ format "verts: %\n" verts
 max modify mode
 subObjectLevel = 1
 obj.EditablePoly.SetSelection #Vertex #{}
-obj.EditablePoly.SetSelection #Vertex verts
+obj.EditablePoly.SetSelection #Vertex (verts_by_type as BitArray )

@@ -15,6 +15,7 @@ struct ConvexVertFinder_v
 
 	faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
 
+	verts_convexity = #(), -- store convex state of vert: #CONVEX|#CONCAVE|#FLAT|#CORNER -- keys are verts in parameter of "this.getVerts (verts)"
 
 	/* private */
 	/* dependency */
@@ -23,11 +24,17 @@ struct ConvexVertFinder_v
 
 	/** Get verts
 
-
+	 * @param BitArray verts to ge their convex or concave state
+	 *
+	 * @return Arrray
+	 *
 	 */
-	function getVerts verts mode:#CONVEX =
+	function getConvexityTypes verts =
 	(
 		--format "\n"; print "ConvexVertFinder_obj.getVerts()"
+
+		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
+
 		for vert in verts do
 		(
 			--format "\n-----------------------\nVERT: %\n" vert
@@ -49,20 +56,20 @@ struct ConvexVertFinder_v
 					if (edges_A*edges_B).numberSet > 0 then -- do not test faces wihtout shared edge
 					(
 						/* GET ANGLE FROM CACHE OR GET ANGLE FOR NEW PAIR OF FACES */
-						if ( angle_of_faces = faces_angles[face_A * face_B] ) == undefined then
-							angle_of_faces =  this._getFacesAngle (face_A) (face_B) (normal_A) ( this._getFaceCenter face_A )
+						if ( _angle = faces_angles[face_A * face_B] ) == undefined then
+							_angle =  this._getFacesAngle (face_A) (face_B) (normal_A) ( this._getFaceCenter face_A )
 
 						/* TESNST CONVEX\CONCAVE */
 						angle_type = case of
 						(
-							(angle_of_faces < 180):	#CONVEX
-							(angle_of_faces > 180):	#CONCAVE
+							(_angle < 180):	#CONVEX
+							(_angle > 180):	#CONCAVE
 							default:	#FLAT
 						)
 
 						already_tested_faces[face_A * face_B] = true
 
-						append angles_by_vert[angle_type] angle_of_faces
+						append angles_by_vert[angle_type] _angle
 					)
 				) -- end loop face B
 			) -- end loop face A
@@ -75,7 +82,7 @@ struct ConvexVertFinder_v
 
 		) -- END LOOP VERTS
 
-		verts_by_type[mode] --return
+		verts_convexity --return
 	),
 
 
@@ -143,7 +150,9 @@ struct ConvexVertFinder_v
 		)
 
 		--format "vert_type: %\n" vert_type
-		verts_by_type[vert_type][vert] = true
+		--verts_by_type[vert_type][vert] = true
+
+		append verts_convexity vert_type
 	),
 
 	/* Get index of verts_data by vertex number in this.positions|normlas|colors|

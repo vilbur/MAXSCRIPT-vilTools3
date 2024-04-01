@@ -65,18 +65,18 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 --createSourceMesh()
 
 
-  --createSourceMesh segments:4
-  --createSourceMesh segments:8
-  --createSourceMesh vertex_color:orange segments:16
-  --createSourceMesh vertex_color:orange segments:32
-  --createSourceMesh vertex_color:orange segments:64
- --createSourceMesh vertex_selection:#{1..100}
+--createSourceMesh segments:4
+--createSourceMesh segments:8
+--createSourceMesh vertex_color:orange segments:16
+--createSourceMesh vertex_color:orange segments:32
+--createSourceMesh vertex_color:orange segments:64
+--createSourceMesh vertex_selection:#{1..100}
 
-  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
-  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:32
-  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
-  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
-  --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
+--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
+--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:32
+--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
+--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
+--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
 
 
 
@@ -100,24 +100,34 @@ VertSelector.resolution = 10
 
 
 --/* LOWEST VERTS - SELECT */
---VertSelector.getLowestVerts();	VertSelector.selectVerts()
+--VertSelector.getLowestVerts()
 
 
 /* SINGLE VERTICAL PER ISLAND - SELECT */
---VertSelector.getSingleVertPerFaceIsland(); VertSelector.selectVerts()
+--VertSelector.getSingleVertPerFaceIsland()
 
 
 --/* VERTS BY NORMAL - SELECT */
---VertSelector.getVertsByNormal();	VertSelector.selectVerts()
+--VertSelector.getVertsByNormalLimit()
 
 
 
 /* CHECKBOARD PATTERN - SELECT */
---VertSelector.getCheckerSelection invert_sel:false;  VertSelector.selectVerts()
+--VertSelector.getCheckerSelection invert_sel:false
 
 
-/* GET CLIFF VERTICES - try find best points for 3D print support  */
-VertSelector.getConcaveVerts();	VertSelector.selectVerts()
+/* GET CONVEX VERTICES - try find best points for 3D print support  */
+--VertSelector.getConvexVerts()
+
+--/* GET CONCAVE VERTICES */
+VertSelector.getConvexVerts mode:#CONCAVE
+
+--/* GET FLAT VERTICES */
+--VertSelector.getConvexVerts mode:#FLAT
+
+/* GET CORNER VERTICES */
+--VertSelector.getConvexVerts mode:#CORNER
+
 
 /*------------------------------------------------------------------------------
 

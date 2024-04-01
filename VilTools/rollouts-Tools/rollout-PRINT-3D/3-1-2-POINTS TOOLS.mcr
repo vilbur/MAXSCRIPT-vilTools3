@@ -22,7 +22,7 @@ macroscript	_print_select_lowest_verts
 category:	"_Print-Points-Tools"
 buttonText:	"Lowest Points"
 toolTip:	"Get only signlge vertex of each face island"
-icon:	"MENU:false|across:4|height:24"
+icon:	"MENU:true|across:4|height:24"
 (
 	on execute do
 	if selection.count > 0 then
@@ -47,7 +47,7 @@ macroscript	_print_select_single_vert_of_faces
 category:	"_Print-Points-Tools"
 buttonText:	"1 vert face"
 toolTip:	"Get only signlge vertex of each face island"
-icon:	"MENU:false|across:4|height:24"
+icon:	"MENU:true|across:4|height:24"
 (
 	on execute do
 	if subObjectLevel == 1 then
@@ -90,3 +90,47 @@ icon:	"MENU:false|across:4|height:24"
 
 	)
 )
+
+
+/**
+  *
+  */
+macroscript	_print_select_convex_verts
+category:	"_Print-Points-Tools"
+buttonText:	"Convex"
+toolTip:	"Select Convex Verts"
+icon:	"MENU:true|across:4|height:24"
+(
+	on execute do
+	if subObjectLevel == 1 then
+	undo "Select Convex\Concave" on
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
+
+		--format "EventFired.val: %\n" EventFired.val
+		ctrl = keyboard.controlPressed
+		alt  = keyboard.altPressed
+		shift  = keyboard.shiftPressed
+
+
+		mode = case of
+		(
+			--( ctrl + shift ):	#( #FLAT, #CONCAVE)
+			--( alt + shift):	#( #FLAT, #CORNER)
+			( ctrl ):	#CONCAVE
+			( alt ):	#FLAT
+			--( shift ):	#( #FLAT, #CONVEX)
+
+			default:	#CONVEX
+		)
+
+		VertSelector 	= VertSelector_v( selection[1] )
+
+		VertSelector.getConvexVerts mode:mode
+
+	)
+)
+
+
+

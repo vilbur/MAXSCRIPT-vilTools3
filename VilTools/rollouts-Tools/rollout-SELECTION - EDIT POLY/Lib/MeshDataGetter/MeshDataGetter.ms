@@ -1,5 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/MeshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms" )	--"./MeshVertToColorVertexConvertor/MeshVertToColorVertexConvertor.ms"
 filein( getFilenamePath(getSourceFileName()) + "/NormalLimits/NormalLimits.ms" )	--"./NormalLimits/NormalLimits.ms"
+filein( getFilenamePath(getSourceFileName()) + "/ConvexVertFinder/ConvexVertFinder.ms" )	--"./ConvexVertFinder/ConvexVertFinder.ms"
 
 /**
  */
@@ -25,6 +26,7 @@ struct MeshDataGetter_v
 	FaceNormalLimits = NormalLimits_v(),
 
 	MeshVertToColorVertexConvert,
+	ConvexVertFinder,
 
 	/* reference */
 	/* inhered */
@@ -38,13 +40,13 @@ struct MeshDataGetter_v
 	  *
 	  * @return Dictionary KEYS: #VERTS|#POSITIONS|#COLORS|#FACES|#NORMALS  VALUES:vertex_ids|vertex_positions|vertex_colors|faces_ids|faces_normals
 	 */
-	function getVertexData verts: positions: colors: normals: =
+	function getVertexData verts: positions:false colors:false normals:false convexity:false =
 	(
 		--format "\n"; print "MeshDataGetter_v.getData()"
 		function pararmExists param = param != unsupplied and param
 		/* ALL APRAMS ARE TRUE IF ARE NOT DEFINED */
-		if positions == unsupplied and colors == unsupplied and normals == unsupplied then
-			positions = colors = normals = true
+		--if positions == unsupplied and colors == unsupplied and normals == unsupplied and convexity == unsupplied then
+		--	positions = colors = normals = convexity = true
 
 		/* RESET DATA */
 		verts_data = Dictionary()
@@ -62,6 +64,10 @@ struct MeshDataGetter_v
 		/* GET POSITIONS */
 		if pararmExists(positions) and verts_data[#POSITIONS] == undefined  then
 			verts_data[#POSITIONS] = this._getVertsPositions()
+
+		/* GET POSITIONS */
+		if pararmExists(convexity) and verts_data[#CONVEXITY] == undefined  then
+			verts_data[#CONVEXITY] = ConvexVertFinder.getConvexityTypes (verts_data[#VERTS])
 
 
 		--/* GET COLORS */
@@ -461,7 +467,9 @@ struct MeshDataGetter_v
 	(
 		--format "\n"; print "MeshDataGetter.onCreate()"
 
+		ConvexVertFinder	= ConvexVertFinder_v(obj)
 		MeshVertToColorVertexConvert	= MeshVertToColorVertexConvertor_v(obj)
+
 
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
