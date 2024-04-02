@@ -6,6 +6,8 @@ struct ConvexVertFinder_v
 	obj,
 
 	/* required */
+	faces_data = Dictionary(),
+
 	/* properties */
 	verts_types = #( #CONVEX, #CONCAVE, #FLAT, #CORNER ),
 
@@ -16,6 +18,8 @@ struct ConvexVertFinder_v
 	faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
 
 	verts_convexity = #(), -- store convex state of vert: #CONVEX|#CONCAVE|#FLAT|#CORNER -- keys are verts in parameter of "this.getVerts (verts)"
+
+
 
 	/* private */
 	/* dependency */
@@ -29,37 +33,48 @@ struct ConvexVertFinder_v
 	 * @return Arrray
 	 *
 	 */
-	function getConvexityTypes verts =
+	function getConvexityTypes verts faces_data: =
 	(
 		--format "\n"; print "ConvexVertFinder_obj.getVerts()"
-
 		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
 
+		this._setFaceData (verts)(faces_data)
+
+		face_normals = this.faces_data[#NORMALS]
+
+		--already_tested_edges = #{}
+
+		timer_CONVEXITY = timeStamp()
 		for vert in verts do
 		(
 			--format "\n-----------------------\nVERT: %\n" vert
+			--timer_vert = timeStamp()
 			angles_by_vert = deepCopy this._angles_by_vert
-			faces_of_vert  = polyop.getFacesUsingVert obj vert
 
-			already_tested_faces = #{}
 
-			for face_A in faces_of_vert where faces_of_vert.numberSet > 1 do
+			--for edge_of_vert in (edges_of_vert = polyop.getEdgesUsingVert obj vert) do
+				--for face in (faces_of_edge = polyop.getFacesUsingEdge obj face_A) do
+
+			if ( faces_of_vert  = polyop.getFacesUsingVert obj vert ).count > 1 then
 			(
-				--normal_A = faces_normals[dataIndexFaceNormal(face_A)]
-				normal_A = normalize ( polyop.getFaceNormal obj face_A )
-				edges_A	 = polyop.getEdgesUsingFace obj face_A
-
-				for face_B in faces_of_vert where face_A != face_B and not already_tested_faces[face_A * face_B] do -- block to test same pair again
+				for edge_of_vert in (edges_of_vert = polyop.getEdgesUsingVert obj vert) do
 				(
-					edges_B	= polyop.getEdgesUsingFace obj face_B
 
-					if (edges_A*edges_B).numberSet > 0 then -- do not test faces wihtout shared edge
+
+					/* GET ANGLE FROM CACHE OR GET ANGLE FOR NEW PAIR OF FACES */
+					if ( angle_type = faces_angles[edge_of_vert] ) == undefined then
 					(
-						/* GET ANGLE FROM CACHE OR GET ANGLE FOR NEW PAIR OF FACES */
-						if ( _angle = faces_angles[face_A * face_B] ) == undefined then
-							_angle =  this._getFacesAngle (face_A) (face_B) (normal_A) ( this._getFaceCenter face_A )
+						faces_of_edge = ( polyop.getFacesUsingEdge obj edge_of_vert) as Array
 
-						/* TESNST CONVEX\CONCAVE */
+						face_A = faces_of_edge[1]
+						face_B = faces_of_edge[2]
+
+						normal_A = face_normals[this.dataIndexFaceNormal(face_A)]
+						normal_B = face_normals[this.dataIndexFaceNormal(face_B)]
+
+						_angle =  this._getFacesAngle (face_A) (face_B) (normal_A) ( normal_B )  ( this._getFaceCenter face_A )
+
+						/* TEST CONVEX\CONCAVE */
 						angle_type = case of
 						(
 							(_angle < 180):	#CONVEX
@@ -67,20 +82,21 @@ struct ConvexVertFinder_v
 							default:	#FLAT
 						)
 
-						already_tested_faces[face_A * face_B] = true
-
-						append angles_by_vert[angle_type] _angle
+						faces_angles[edge_of_vert] = angle_type
 					)
-				) -- end loop face B
-			) -- end loop face A
 
-			/* GET CORNER VERT - if vert has only 1 face */
-			--if faces_of_vert.numberSet == 1 then  -- if vert has only 1 face
-			angles_by_vert[#CORNER] = faces_of_vert.numberSet == 1
+					angles_by_vert[angle_type][edge_of_vert] = true
+
+				)
+			)
+			else /* GET CORNER VERT - if vert has only 1 face */
+				angles_by_vert[#CORNER][1] = true
 
 			this._saveVertByType (vert) (angles_by_vert)
 
+			--format "\n VERT: % % ms\n" vert (( timeStamp()) - timer_vert)
 		) -- END LOOP VERTS
+		format "\n CONVEXITY: % ms\n" (( timeStamp()) - timer_CONVEXITY)
 
 		verts_convexity --return
 	),
@@ -88,16 +104,32 @@ struct ConvexVertFinder_v
 
 	private
 
+	/** Get face data
+	 */
+	function _setFaceData verts _faces_data =
+	(
+		--format "\n"; print "ConvexVertFinder_v._setFaceData()"
+		--format "verts: %\n" verts
+		--format "_faces_data: %\n" _faces_data
+		if _faces_data == unsupplied then
+		(
+			this.faces_data[#FACES] = polyop.getFacesUsingVert obj verts
 
+			this.faces_data[#NORMALS] = for face in this.faces_data[#FACES] collect polyop.getFaceNormal obj face
+		)
+		else
+			this.faces_data = _faces_data
+
+	),
 
 	/** Find angle between faces
 	 */
-	function _getFacesAngle face_A face_B normal_A face_center_A =
+	function _getFacesAngle face_A face_B normal_A normal_B face_center_A =
 	(
 		--format "\n"; print "ConvexVertFinder_obj._getFacesAngle()"
 		vector_faces_centres = normalize ( face_center_A - (this._getFaceCenter face_B) )
 
-		normal_B = normalize ( polyop.getFaceNormal obj face_B )
+
 
 		dot_faces  = dot normal_A normal_B
 		dot_center = dot vector_faces_centres normal_A
@@ -125,7 +157,7 @@ struct ConvexVertFinder_v
 		--format "ANGLE % % : %\n" face_A face_B angle_final
 
 		/* MAK PAIR OF FACES AS TESTED  */
-		faces_angles[face_A * face_B] = angle_final
+		--faces_angles[face_A * face_B] = angle_final
 
 		angle_final --return
 	),
@@ -138,12 +170,12 @@ struct ConvexVertFinder_v
 		--format "vert: %\n" vert
 		--format "angles_by_vert: %\n" angles_by_vert
 
-		convex_angles  = angles_by_vert[#CONVEX].count
-		concave_angles = angles_by_vert[#CONCAVE].count
+		convex_angles  = angles_by_vert[#CONVEX].numberSet
+		concave_angles = angles_by_vert[#CONCAVE].numberSet
 
 		vert_type = case of
 		(
-			(angles_by_vert[#CORNER] ):	#CORNER
+			(angles_by_vert[#CORNER][1] ):	#CORNER
 			(convex_angles > concave_angles):	#CONVEX
 			(convex_angles < concave_angles):	#CONCAVE
 			default:	#FLAT
@@ -161,12 +193,12 @@ struct ConvexVertFinder_v
 	*/
 	function dataIndexFaceNormal face_id =
 	(
-		--format "\n"; print "VertDataGetter_v.dataIndexVert()"
-		--missing = -face_data[#FACES] - #{face_id..(face_data[#FACES].numberSet)} -- find how many indexes is false before vertex_index
-
+		----format "\n"; print "VertDataGetter_v.dataIndexVert()"
+		--missing = -faces_data[#FACES] - #{face_id..(faces_data[#FACES].numberSet)} -- find how many indexes is false before vertex_index
+		--
 		--face_id - missing.numberSet
 
-		 findItem this.face_data[#FACES] face_id
+		 findItem this.faces_data[#FACES] face_id
 	),
 
 	/** Get face center
@@ -175,7 +207,7 @@ struct ConvexVertFinder_v
 	(
 		--format "\n"; print "VertSelector_v._getFaceCenter()"
 		if ( face_center = polyop.getSafeFaceCenter obj face_id ) == undefined then
-			face_center = polyop._getFaceCenter obj face_id
+			face_center = polyop.getFaceCenter obj face_id
 
 		face_center --return
 	),
@@ -187,9 +219,10 @@ struct ConvexVertFinder_v
 		--format "\n"; print "ConvexVertFinder.onCreate()"
 
 		/* PREFILL DICTIONARIES WITH KEYS AND EMPTY VALUES */
-		for vert_type in verts_types do this.verts_by_type[vert_type] = #{}
+		for vert_type in verts_types do this.verts_by_type[vert_type]   = #{}
+		for vert_type in verts_types do this._angles_by_vert[vert_type] = #{}
 
-		for vert_type in verts_types where vert_type != #CORNER do this._angles_by_vert[vert_type] = #()
+		--for vert_type in verts_types where vert_type != #CORNER do this._angles_by_vert[vert_type] = #()
 
 	)
 )
