@@ -8,7 +8,7 @@ if maxFileName != test_scene then
 	loadMaxFile ( getFilenamePath(getSourceFileName()) + "/" + test_scene ) quiet:true
 
 
-obj = if selection.count == 0 then  selection[1] else objects[1]
+obj = if selection.count > 0 then  selection[1] else objects[1]
 
 
 ConvexVertFinder = ConvexVertFinder_v( obj )
@@ -18,7 +18,7 @@ ConvexVertFinder = ConvexVertFinder_v( obj )
 --------------------------------------------------------------------------------*/
 mode = #CONVEX
 --mode = #CONCAVE
---mode = #FLAT
+--mode = #MIXED
 --mode = #CORNER
 
 
@@ -28,7 +28,8 @@ mode = #CONVEX
 
 verts     = #{1..( getNumVerts obj.mesh)}
 
-verts_by_type = ConvexVertFinder.getConvexityTypes (verts)
+--verts_by_type = ConvexVertFinder.getConvexityTypes (verts)
+verts_by_type = ConvexVertFinder.getConvexityTypesByPolyTools (verts)
 
 format "verts_by_type: %\n" verts_by_type
 
@@ -46,3 +47,5 @@ max modify mode
 subObjectLevel = 1
 obj.EditablePoly.SetSelection #Vertex #{}
 obj.EditablePoly.SetSelection #Vertex verts_by_type[#CONVEX]
+--obj.EditablePoly.SetSelection #Vertex verts_by_type[#CONCAVE]
+--obj.EditablePoly.SetSelection #Vertex verts_by_type[#MIXED]

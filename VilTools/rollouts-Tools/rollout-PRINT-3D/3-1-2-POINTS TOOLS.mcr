@@ -1,18 +1,45 @@
 filein( getFilenamePath(getSourceFileName()) + "/../rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms" )	--"./../rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms"
 
 
-/**  Export format
+
+/* COVEX AND CONCAVE VERTS
   *
- */
-macroscript	_print_select_vets_grid_resolution
+  */
+macroscript	_print_select_convex_verts
 category:	"_Print-Points-Tools"
-buttonText:	"Grid"
-toolTip:	"Get only signlge vertex of each face island"
-icon:	"MENU:false|id:#SPIN_grid_step|control:spinner|range:[1, 100, 10]|type:#integer|across:4|height:24|offset:[ -8, 4]"
+buttonText:	"Convex"
+toolTip:	"Select Convex Verts"
+icon:	"MENU:true|across:4|height:24|tooltip:CTRL:  #Concave\n:ALT:   #Flat\nSHIFT: #Convex and #Flat\n\nCTRL + SHIFT: #Convex and #Flat\nALT  +  SHIFT: #Corner and #Flat\n"
+
+
 (
 	on execute do
-		format "EventFired	= % \n" EventFired
+	--if subObjectLevel == 1 then
+	undo "Select Convex\Concave" on
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
 
+		ctrl = keyboard.controlPressed; alt = keyboard.altPressed; shift = keyboard.shiftPressed
+
+		mode = case of
+		(
+			( ctrl and shift ):	#( #CONCAVE, #MIXED	)
+			( alt and shift):	#( #CORNER,  #MIXED	)
+			( shift ):	#( #CONVEX,  #MIXED	)
+			( ctrl ):	#CONCAVE
+			( alt ):	#MIXED
+
+			default:	#CONVEX
+		)
+
+		VertSelector 	= VertSelector_v( selection[1] )
+
+		timer_CONVEX = timeStamp()
+		VertSelector.getConvexVerts mode:mode verts:#ALL
+		format "\n CONVEX: % ms\n" (( timeStamp()) - timer_CONVEX)
+
+	)
 )
 
 /**  Export format
@@ -87,50 +114,19 @@ icon:	"MENU:false|across:4|height:24"
 
 		VertSelector.selectVerts()
 
-
 	)
 )
 
-
-/**
+/**  Export format
   *
-  */
-macroscript	_print_select_convex_verts
+ */
+macroscript	_print_select_vets_grid_resolution
 category:	"_Print-Points-Tools"
-buttonText:	"Convex"
-toolTip:	"Select Convex Verts"
-icon:	"MENU:true|across:4|height:24"
+buttonText:	"Grid"
+toolTip:	"Get only signlge vertex of each face island"
+icon:	"MENU:false|id:#SPIN_grid_step|control:spinner|range:[1, 100, 10]|type:#integer|across:4|height:24|offset:[ -8, 4]"
 (
 	on execute do
-	if subObjectLevel == 1 then
-	undo "Select Convex\Concave" on
-	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-2-POINTS TOOLS.mcr"
+		format "EventFired	= % \n" EventFired
 
-		--format "EventFired.val: %\n" EventFired.val
-		ctrl = keyboard.controlPressed
-		alt  = keyboard.altPressed
-		shift  = keyboard.shiftPressed
-
-
-		mode = case of
-		(
-			--( ctrl + shift ):	#( #FLAT, #CONCAVE)
-			--( alt + shift):	#( #FLAT, #CORNER)
-			( ctrl ):	#CONCAVE
-			( alt ):	#FLAT
-			--( shift ):	#( #FLAT, #CONVEX)
-
-			default:	#CONVEX
-		)
-
-		VertSelector 	= VertSelector_v( selection[1] )
-
-		VertSelector.getConvexVerts mode:mode
-
-	)
 )
-
-
-

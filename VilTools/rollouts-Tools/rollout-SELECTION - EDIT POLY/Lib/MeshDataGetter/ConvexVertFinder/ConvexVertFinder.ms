@@ -9,15 +9,17 @@ struct ConvexVertFinder_v
 	faces_data = Dictionary(),
 
 	/* properties */
-	verts_types = #( #CONVEX, #CONCAVE, #FLAT, #CORNER ),
+	verts_types = #( #CONVEX, #CONCAVE, #MIXED, #CORNER ),
 
-	verts_by_type  = Dictionary(), --  #( #CONVEX, #{} ) #( #CONCAVE, #{} ) #( #FLAT, #{} )  #( #CORNER, #{} )     -- store verts by angle
+	verts_by_type  = Dictionary(), --  #( #CONVEX, #{} ) #( #CONCAVE, #{} ) #( #MIXED, #{} )  #( #CORNER, #{} )     -- store verts by angle
 
-	_angles_by_vert = Dictionary(), --  #( #CONVEX, #() ) #( #CONCAVE, #() ) #( #FLAT, #() )  #( #CORNER, boolean ) -- store angles of single vert
 
-	faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
+	/* PROPERTIES USED FOR METHOD: getConvexityTypes */
+	--_angles_by_vert = Dictionary(), --  #( #CONVEX, #() ) #( #CONCAVE, #() ) #( #MIXED, #() )  #( #CORNER, boolean ) -- store angles of single vert
 
-	verts_convexity = #(), -- store convex state of vert: #CONVEX|#CONCAVE|#FLAT|#CORNER -- keys are verts in parameter of "this.getVerts (verts)"
+	--faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
+
+	--verts_convexity = #(), -- store convex state of vert: #CONVEX|#CONCAVE|#MIXED|#CORNER -- keys are verts in parameter of "this.getVerts (verts)"
 
 
 	/* private */
@@ -25,7 +27,57 @@ struct ConvexVertFinder_v
 	/* reference */
 	/* inhered */
 
-	/** Get verts
+	/** Get convexity types by poly tools
+	 */
+	function getConvexityTypesByPolyTools verts =
+	(
+		format "\n"; print "ConvexVertFinder_v.getConvexityTypesByPolyTools()"
+		format "verts: %\n" verts
+
+		max modify mode
+		subObjectLevel = 1
+
+		with redraw off
+		(
+
+			--PolyToolsSelect.ConvexConcave -0.1 2 -- select onyl  convex
+			PolyToolsSelect.ConvexConcave 0.1 2 -- select convex and convex-concave
+
+			--PolyToolsSelect.ConvexConcave 0.01 2 -- select onyl  convex
+			--PolyToolsSelect.ConvexConcave 0.001 2 -- select onyl  convex
+			------PolyToolsSelect.ConvexConcave 0.0001 2 -- select convex + flat + corner
+
+			convex = getVertSelection obj.mesh
+			format "convex: %\n" convex
+
+			PolyToolsSelect.ConvexConcave 0.1 1 -- select concave and convex-concave
+			--PolyToolsSelect.ConvexConcave -0.1 1 -- select onyl concave
+
+
+			concave = getVertSelection obj.mesh
+			format "concave: %\n" concave
+
+			PolyToolsSelect.NumericVertex 2 1 false -- vertices with 2 edges
+			corner = getVertSelection obj.mesh
+
+
+			this._selectVerts (verts)
+		)
+
+
+		flat = convex * concave
+
+
+		verts_by_type[#MIXED]	= flat  - corner
+		verts_by_type[#CORNER]	= corner
+		verts_by_type[#CONVEX]	= convex - flat
+		verts_by_type[#CONCAVE]	= concave - flat
+
+		verts_by_type --return
+	),
+
+
+	/** Get verts OBSOLETE - VERY SLOW
 
 	 * @param BitArray verts to ge their convex or concave state
 	 *
@@ -50,7 +102,6 @@ struct ConvexVertFinder_v
 			--face_A = faces_of_verts[i]
 			normal_A = polyop.getFaceNormal obj face_A
 
-
 			for edge_of_face in (edges_of_face = polyop.getEdgesUsingFace obj face_A) where not tested_edges[edge_of_face] do
 			--for edge_of_face in (edges_of_face = polyop.getEdgesUsingFace obj face_A) do
 			(
@@ -68,184 +119,23 @@ struct ConvexVertFinder_v
 					(
 						(_angle < 180):	#CONVEX
 						(_angle > 180):	#CONCAVE
-						default:	#FLAT
+						default:	#MIXED
 					)
 
-
-					--if angle_type != undefined then
-					--(
-					--	if (verts_by_type[angle_type] * verts_of_edge).numberSet > 0 then
-					--		format "ADDED AGAIN: %\n" verts_of_edge
-					--
-						verts_by_type[angle_type] += verts_of_edge
-					--)
+					verts_by_type[angle_type] += verts_of_edge
 
 					tested_edges[edge_of_face] = true
 					--tested_faces[face_B] = true
 
-
-
 				)
 			)
-
 		)
 
-
-
-		format "\n CONVEXITY: % ms\n" (( timeStamp()) - timer_CONVEXITY)
-
-		this.verts_by_type --return
-
-	),
-
-	function getConvexityTypesByVert verts faces_data: =
-	(
-		format "\n"; print "ConvexVertFinder_obj.getConvexityTypesByVert()"
-		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
-
-		--this._setFaceData (verts)(faces_data)
-
-		--face_normals = this.faces_data[#NORMALS]
-
-		--already_tested_edges = #{}
-
-		timer_CONVEXITY = timeStamp()
-		for vert in verts do
-		(
-			--format "\n-----------------------\nVERT: %\n" vert
-			--timer_vert = timeStamp()
-			angles_by_vert = copy this._angles_by_vert
-
-			--for edge_of_vert in (edges_of_vert = polyop.getEdgesUsingVert obj vert) do
-				--for face in (faces_of_edge = polyop.getFacesUsingEdge obj face_A) do
-
-			if ( faces_of_vert  = polyop.getFacesUsingVert obj vert ).count > 1 then
-			(
-				for edge_of_vert in (edges_of_vert = polyop.getEdgesUsingVert obj vert) do
-				(
-
-					/* GET ANGLE FROM CACHE OR GET ANGLE FOR NEW PAIR OF FACES */
-					--if ( angle_type = faces_angles[edge_of_vert] ) == undefined then
-					if (faces_of_edge = ( polyop.getFacesUsingEdge obj edge_of_vert) as Array ).count > 1 then
-					(
-
-
-						face_A = faces_of_edge[1]
-						face_B = faces_of_edge[2]
-
-						--normal_B = face_normals[this.dataIndexFaceNormal(face_B)]
-						--normal_A = face_normals[this.dataIndexFaceNormal(face_A)]
-
-						normal_A = polyop.getFaceNormal obj face_A
-						normal_B = polyop.getFaceNormal obj face_B
-
-						_angle =  this._getFacesAngle (face_A) (face_B) (normal_A) ( normal_B )  ( this._getFaceCenter face_A )
-
-						/* TEST CONVEX\CONCAVE */
-						angle_type = case of
-						(
-							(_angle < 180):	#CONVEX
-							(_angle > 180):	#CONCAVE
-							default:	#FLAT
-						)
-
-					)
-					else /* IF BORDER EDGE - edge has only 1 face */
-						angle_type = #FLAT
-
-					--faces_angles[edge_of_vert] = angle_type
-
-					angles_by_vert[angle_type][edge_of_vert] = true
-
-				)
-
-
-			)
-			else /* GET CORNER VERT - if vert has only 1 face */
-				angles_by_vert[#CORNER][1] = true
-
-			this._saveVertByType (vert) (angles_by_vert)
-
-			--format "\n VERT: % % ms\n" vert (( timeStamp()) - timer_vert)
-		) -- END LOOP VERTS
 		format "\n CONVEXITY: % ms\n" (( timeStamp()) - timer_CONVEXITY)
 
 		this.verts_by_type --return
 	),
-	/** Get verts
 
-	 * @param BitArray verts to ge their convex or concave state
-	 *
-	 * @return Arrray
-	 *
-	 */
-	function getConvexityTypesByVertOld verts faces_data: =
-	(
-		--format "\n"; print "ConvexVertFinder_obj.getVerts()"
-		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
-
-		this._setFaceData (verts)(faces_data)
-
-		face_normals = this.faces_data[#NORMALS]
-
-		--already_tested_edges = #{}
-
-		timer_CONVEXITY = timeStamp()
-		for vert in verts do
-		(
-			--format "\n-----------------------\nVERT: %\n" vert
-			--timer_vert = timeStamp()
-			angles_by_vert = deepCopy this._angles_by_vert
-
-
-			--for edge_of_vert in (edges_of_vert = polyop.getEdgesUsingVert obj vert) do
-				--for face in (faces_of_edge = polyop.getFacesUsingEdge obj face_A) do
-
-			if ( faces_of_vert  = polyop.getFacesUsingVert obj vert ).count > 1 then
-			(
-				for edge_of_vert in (edges_of_vert = polyop.getEdgesUsingVert obj vert) do
-				(
-
-
-					/* GET ANGLE FROM CACHE OR GET ANGLE FOR NEW PAIR OF FACES */
-					if ( angle_type = faces_angles[edge_of_vert] ) == undefined then
-					(
-						faces_of_edge = ( polyop.getFacesUsingEdge obj edge_of_vert) as Array
-
-						face_A = faces_of_edge[1]
-						face_B = faces_of_edge[2]
-
-						normal_B = face_normals[this.dataIndexFaceNormal(face_B)]
-						normal_A = face_normals[this.dataIndexFaceNormal(face_A)]
-
-						_angle =  this._getFacesAngle (face_A) (face_B) (normal_A) ( normal_B )  ( this._getFaceCenter face_A )
-
-						/* TEST CONVEX\CONCAVE */
-						angle_type = case of
-						(
-							(_angle < 180):	#CONVEX
-							(_angle > 180):	#CONCAVE
-							default:	#FLAT
-						)
-
-						faces_angles[edge_of_vert] = angle_type
-					)
-
-					angles_by_vert[angle_type][edge_of_vert] = true
-
-				)
-			)
-			else /* GET CORNER VERT - if vert has only 1 face */
-				angles_by_vert[#CORNER][1] = true
-
-			this._saveVertByType (vert) (angles_by_vert)
-
-			--format "\n VERT: % % ms\n" vert (( timeStamp()) - timer_vert)
-		) -- END LOOP VERTS
-		format "\n CONVEXITY: % ms\n" (( timeStamp()) - timer_CONVEXITY)
-
-		verts_convexity --return
-	),
 	private
 
 	--/** Get face data
@@ -322,7 +212,7 @@ struct ConvexVertFinder_v
 			(angles_by_vert[#CORNER][1] ):	#CORNER
 			(convex_angles > concave_angles):	#CONVEX
 			(convex_angles < concave_angles):	#CONCAVE
-			default:	#FLAT
+			default:	#MIXED
 		)
 
 		--format "vert_type: %\n" vert_type
@@ -345,6 +235,32 @@ struct ConvexVertFinder_v
 		 findItem this.faces_data[#FACES] face_id
 	),
 
+	/** Select final selection
+	 */
+	function _selectVerts verts =
+	(
+		format "\n"; print "VertSelector_v.selectVerts()"
+		--if this.sel_modified.isEmpty then
+			--this.sel_modified = deepCopy data_verts[#VERTS]
+
+		--if not verts.isEmpty then
+		(
+			max modify mode
+
+			subObjectLevel = 1
+
+			_mod = modPanel.getCurrentObject()
+
+			_mod.SetSelection #Vertex #{}
+
+			if classOf _mod == Edit_Poly then
+				_mod.Select #Vertex verts
+
+			else if classOf _mod  == Editable_Poly then
+				_mod.SetSelection #Vertex verts
+		)
+	),
+
 	/** Get face center
 	 */
 	function _getFaceCenter face_id =
@@ -364,7 +280,7 @@ struct ConvexVertFinder_v
 
 		/* PREFILL DICTIONARIES WITH KEYS AND EMPTY VALUES */
 		for vert_type in verts_types do this.verts_by_type[vert_type]   = #{}
-		for vert_type in verts_types do this._angles_by_vert[vert_type] = #{}
+		--for vert_type in verts_types do this._angles_by_vert[vert_type] = #{}
 
 		--for vert_type in verts_types where vert_type != #CORNER do this._angles_by_vert[vert_type] = #()
 

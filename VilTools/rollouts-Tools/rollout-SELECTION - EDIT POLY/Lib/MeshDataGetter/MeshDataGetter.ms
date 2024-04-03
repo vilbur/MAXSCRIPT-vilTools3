@@ -42,7 +42,7 @@ struct MeshDataGetter_v
 	 */
 	function getVertexData verts: positions:false colors:false normals:false convexity:false =
 	(
-		--format "\n"; print "MeshDataGetter_v.getData()"
+		format "\n"; print "MeshDataGetter_v.getData()"
 		function pararmExists param = param != unsupplied and param
 
 		/* ALL APRAMS ARE TRUE IF ARE NOT DEFINED */
@@ -68,7 +68,7 @@ struct MeshDataGetter_v
 
 		/* GET POSITIONS */
 		if pararmExists(convexity) and verts_data[#CONVEXITY] == undefined  then
-			verts_data[#CONVEXITY] = this._getConvexityTypes()
+			verts_data[#CONVEXITY] = this._getVertsConvexity()
 
 		--/* GET COLORS */
 		--if pararmExists(colors) and verts_data[#COLORS] == undefined  then
@@ -206,15 +206,13 @@ struct MeshDataGetter_v
 
 	/** Get convexity types
 	 */
-	function _getConvexityTypes =
+	function _getVertsConvexity =
 	(
-		--format "\n"; print "MeshDataGetter_v._getConvexityTypes()"
-		--this._setFaces()
+		format "\n"; print "MeshDataGetter_v._getVertsConvexity()"
+		format "verts_data[#VERTS]: %\n" verts_data[#VERTS]
+		----ConvexVertFinder.getConvexityTypesByVert (verts_data[#VERTS]) -- VERY SLOW
 
-		--this._getFaceNormals()
-		--this.getFacesData()
-
-		ConvexVertFinder.getConvexityTypes (verts_data[#VERTS]) --face_data:this.face_data
+		ConvexVertFinder.getConvexityTypesByPolyTools (verts_data[#VERTS])
 	),
 
 	/** Set verts positions
@@ -371,6 +369,7 @@ struct MeshDataGetter_v
 	function _setVertsToProcess verts: faces: =
 	(
 		format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
+		format "verts: %\n" verts
 		this.vertex_count = getNumVerts obj.mesh
 		this.face_count   = polyop.getNumFaces obj
 		format "this.vertex_count: %\n" this.vertex_count
@@ -384,7 +383,7 @@ struct MeshDataGetter_v
 
 		this.verts_process = case verts of
 		(
-			(#ALL_OR_SELECTED): if verts_sel.count > 0 then verts_sel else all_verts
+			(#ALL_OR_SELECTED): if verts_sel.numberSet > 0 then verts_sel else all_verts
 			(#SELECTED):	verts_sel
 			(#ALL):	all_verts
 			(undefined ):	all_verts
