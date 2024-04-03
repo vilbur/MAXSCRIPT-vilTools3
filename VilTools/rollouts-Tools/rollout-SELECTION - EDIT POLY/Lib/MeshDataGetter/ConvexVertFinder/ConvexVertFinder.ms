@@ -37,6 +37,72 @@ struct ConvexVertFinder_v
 		format "\n"; print "ConvexVertFinder_obj.getConvexityTypes()"
 		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
 
+		faces_of_verts  = polyop.getFacesUsingVert obj verts
+
+		tested_edges	= #{}
+		tested_faces	= #{}
+		--for i = 1 to faces_of_verts.count do
+		timer_CONVEXITY = timeStamp()
+
+		--for i = faces_of_verts.count to 1 by -1 do
+		for face_A in faces_of_verts do
+		(
+			--face_A = faces_of_verts[i]
+			normal_A = polyop.getFaceNormal obj face_A
+
+
+			for edge_of_face in (edges_of_face = polyop.getEdgesUsingFace obj face_A) where not tested_edges[edge_of_face] do
+			--for edge_of_face in (edges_of_face = polyop.getEdgesUsingFace obj face_A) do
+			(
+				verts_of_edge  = polyop.getVertsUsingEdge obj edge_of_face
+
+				--for face_B in (faces_of_edge = polyop.getFacesUsingEdge obj edge_of_face) where face_A != face_B and not tested_faces[face_B] do
+				for face_B in (faces_of_edge = polyop.getFacesUsingEdge obj edge_of_face) where face_A != face_B  do
+				(
+					normal_B = polyop.getFaceNormal obj face_B
+
+					_angle =  this._getFacesAngle (face_A) (face_B) (normal_A) ( normal_B )  ( this._getFaceCenter face_A )
+
+					/* TEST CONVEX\CONCAVE */
+					angle_type = case of
+					(
+						(_angle < 180):	#CONVEX
+						(_angle > 180):	#CONCAVE
+						default:	#FLAT
+					)
+
+
+					--if angle_type != undefined then
+					--(
+					--	if (verts_by_type[angle_type] * verts_of_edge).numberSet > 0 then
+					--		format "ADDED AGAIN: %\n" verts_of_edge
+					--
+						verts_by_type[angle_type] += verts_of_edge
+					--)
+
+					tested_edges[edge_of_face] = true
+					--tested_faces[face_B] = true
+
+
+
+				)
+			)
+
+		)
+
+
+
+		format "\n CONVEXITY: % ms\n" (( timeStamp()) - timer_CONVEXITY)
+
+		this.verts_by_type --return
+
+	),
+
+	function getConvexityTypesByVert verts faces_data: =
+	(
+		format "\n"; print "ConvexVertFinder_obj.getConvexityTypesByVert()"
+		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
+
 		--this._setFaceData (verts)(faces_data)
 
 		--face_normals = this.faces_data[#NORMALS]
@@ -106,8 +172,6 @@ struct ConvexVertFinder_v
 
 		this.verts_by_type --return
 	),
-
-
 	/** Get verts
 
 	 * @param BitArray verts to ge their convex or concave state
@@ -115,7 +179,7 @@ struct ConvexVertFinder_v
 	 * @return Arrray
 	 *
 	 */
-	function getConvexityTypesOld verts faces_data: =
+	function getConvexityTypesByVertOld verts faces_data: =
 	(
 		--format "\n"; print "ConvexVertFinder_obj.getVerts()"
 		this.verts_convexity = #() -- reset for mutliple rounds of same isntance
