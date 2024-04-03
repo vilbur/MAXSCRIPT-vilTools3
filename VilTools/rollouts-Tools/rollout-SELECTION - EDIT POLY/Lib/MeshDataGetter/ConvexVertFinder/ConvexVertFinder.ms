@@ -1,3 +1,7 @@
+
+--if VERTS_CAVITY_CACHE == undefined then
+	global VERTS_CAVITY_CACHE = #() -- VERTS_CAVITY_CACHE[current_frame][object pointer][#VERTS|#POSITIONS|CONVEX|CONCAVE|MIXED|CORNER]
+
 /** Convex vert finder
  */
 struct ConvexVertFinder_v
@@ -31,49 +35,47 @@ struct ConvexVertFinder_v
 	 */
 	function getConvexityTypesByPolyTools verts =
 	(
-		format "\n"; print "ConvexVertFinder_v.getConvexityTypesByPolyTools()"
-		format "verts: %\n" verts
+		--format "\n"; print "ConvexVertFinder_v.getConvexityTypesByPolyTools()"
+		--format "verts: %\n" verts
 
-		max modify mode
-		subObjectLevel = 1
-
-		with redraw off
+		if ( verts_by_type_chache = this._getDataFromCache() ) == undefined then
 		(
+			format "\n"; print " !!!! ConvexVertFinder_v.getConvexityTypesByPolyTools()"
 
-			--PolyToolsSelect.ConvexConcave -0.1 2 -- select onyl  convex
-			PolyToolsSelect.ConvexConcave 0.1 2 -- select convex and convex-concave
+			max modify mode
+			subObjectLevel = 1
 
-			--PolyToolsSelect.ConvexConcave 0.01 2 -- select onyl  convex
-			--PolyToolsSelect.ConvexConcave 0.001 2 -- select onyl  convex
-			------PolyToolsSelect.ConvexConcave 0.0001 2 -- select convex + flat + corner
+			with redraw off
+			(
+				PolyToolsSelect.ConvexConcave 0.1 2 -- select convex and convex-concave
+				convex = getVertSelection obj.mesh
 
-			convex = getVertSelection obj.mesh
-			format "convex: %\n" convex
+				PolyToolsSelect.ConvexConcave 0.1 1 -- select concave and convex-concave
+				concave = getVertSelection obj.mesh
 
-			PolyToolsSelect.ConvexConcave 0.1 1 -- select concave and convex-concave
-			--PolyToolsSelect.ConvexConcave -0.1 1 -- select onyl concave
+				PolyToolsSelect.NumericVertex 2 1 false -- vertices with 2 edges
+				corner = getVertSelection obj.mesh
 
-
-			concave = getVertSelection obj.mesh
-			format "concave: %\n" concave
-
-			PolyToolsSelect.NumericVertex 2 1 false -- vertices with 2 edges
-			corner = getVertSelection obj.mesh
+				this._selectVerts (verts)
+			)
 
 
-			this._selectVerts (verts)
+			flat = convex * concave
+
+
+			verts_by_type[#CONVEX]	= convex	- flat
+			verts_by_type[#CONCAVE]	= concave	- flat
+			verts_by_type[#MIXED]	= flat	- corner
+			verts_by_type[#CORNER]	= corner
+
+
+			this._setDataToCache()
+			--format "verts_by_type: %\n" verts_by_type
+			verts_by_type --return
 		)
+		else
+			verts_by_type_chache --return
 
-
-		flat = convex * concave
-
-
-		verts_by_type[#MIXED]	= flat  - corner
-		verts_by_type[#CORNER]	= corner
-		verts_by_type[#CONVEX]	= convex - flat
-		verts_by_type[#CONCAVE]	= concave - flat
-
-		verts_by_type --return
 	),
 
 
@@ -272,6 +274,45 @@ struct ConvexVertFinder_v
 		face_center --return
 	),
 
+	/** Get data from cache
+	 */
+	function _getDataFromCache =
+	(
+		--format "\n"; print "ConvexVertFinder_v._getDataFromCache()"
+		--verts_by_type_cahced = undefined
+		curernt_frame = ( sliderTime as integer ) +1
+		obj_pointer	= (getHandleByAnim obj) as string
+
+		if ( cache_of_frame = VERTS_CAVITY_CACHE[curernt_frame] ) != undefined and ( verts_by_type_cahced = cache_of_frame[obj_pointer] ) != undefined then
+			verts_by_type_cahced --return
+	),
+
+	/** Set data to cache
+	 */
+	function _setDataToCache =
+	(
+		--format "\n"; print "ConvexVertFinder_v._setDataToCache()"
+		curernt_frame = ( sliderTime as integer ) +1
+		obj_pointer	= (getHandleByAnim obj) as string
+		vertex_count = getNumVerts obj.mesh
+		all_verts = #{1..(vertex_count)}
+
+
+		data_to_cache = copy verts_by_type
+
+		data_to_cache[#VERTS]	= all_verts
+		data_to_cache[#POSITIONS]	= meshop.getVerts obj.mesh all_verts node:obj
+
+
+
+		if ( cache_of_frame = VERTS_CAVITY_CACHE[curernt_frame] ) == undefined then
+				VERTS_CAVITY_CACHE[curernt_frame] = Dictionary #STRING
+
+
+		VERTS_CAVITY_CACHE[curernt_frame][obj_pointer] = data_to_cache
+
+	),
+
 	/**
 	 */
 	on create do
@@ -279,7 +320,7 @@ struct ConvexVertFinder_v
 		--format "\n"; print "ConvexVertFinder.onCreate()"
 
 		/* PREFILL DICTIONARIES WITH KEYS AND EMPTY VALUES */
-		for vert_type in verts_types do this.verts_by_type[vert_type]   = #{}
+		for vert_type in verts_by_type do verts_by_type[vert_type]   = #{}
 		--for vert_type in verts_types do this._angles_by_vert[vert_type] = #{}
 
 		--for vert_type in verts_types where vert_type != #CORNER do this._angles_by_vert[vert_type] = #()

@@ -209,7 +209,7 @@ struct MeshDataGetter_v
 	function _getVertsConvexity =
 	(
 		format "\n"; print "MeshDataGetter_v._getVertsConvexity()"
-		format "verts_data[#VERTS]: %\n" verts_data[#VERTS]
+		--format "verts_data[#VERTS]: %\n" verts_data[#VERTS]
 		----ConvexVertFinder.getConvexityTypesByVert (verts_data[#VERTS]) -- VERY SLOW
 
 		ConvexVertFinder.getConvexityTypesByPolyTools (verts_data[#VERTS])
@@ -369,14 +369,14 @@ struct MeshDataGetter_v
 	function _setVertsToProcess verts: faces: =
 	(
 		format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
-		format "verts: %\n" verts
+		--format "verts: %\n" verts
 		this.vertex_count = getNumVerts obj.mesh
 		this.face_count   = polyop.getNumFaces obj
-		format "this.vertex_count: %\n" this.vertex_count
+		--format "this.vertex_count: %\n" this.vertex_count
 
 		all_verts = #{1..(vertex_count)}
 		verts_sel	= getVertSelection obj.mesh
-
+		--format "verts_sel: %\n" verts_sel
 		if faces != unsupplied then
 			verts =  polyop.getVertsUsingFace obj faces
 

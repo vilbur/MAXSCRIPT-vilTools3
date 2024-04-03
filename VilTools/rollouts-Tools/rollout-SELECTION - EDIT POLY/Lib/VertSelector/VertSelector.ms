@@ -74,12 +74,15 @@ struct VertSelector_v
 
 		data_verts = MeshDataGetter.getVertexData convexity:true verts:verts
 
-		--verts = data_verts[#VERTS] as Array
+		this.sel_modified = #{}
 
 		verts_by_type = data_verts[#CONVEXITY]
+		format "verts_by_type: %\n" verts_by_type
 		--format "verts.count: %\n" verts.count
 		--format "verts_types.count: %\n" verts_types.count
 		--this.sel_modified = (for i = 1 to verts_types.count where findItem mode verts_types[i] > 0 collect verts[i]) as BitArray
+
+		format "mode: %\n" mode
 
 		for single_mode in mode do
 			this.sel_modified += verts_by_type[single_mode]
@@ -181,10 +184,10 @@ struct VertSelector_v
 		format "\n"; print "VertSelector_v.selectVerts()"
 		--if this.sel_modified.isEmpty then
 			--this.sel_modified = deepCopy data_verts[#VERTS]
-		format "this.sel_modified: %\n" this.sel_modified
+		--format "this.sel_modified: %\n" this.sel_modified
 
-		if not this.sel_modified.isEmpty then
-		(
+		--if not this.sel_modified.isEmpty then
+		--(
 			max modify mode
 
 			subObjectLevel = 1
@@ -198,7 +201,7 @@ struct VertSelector_v
 
 			else if classOf _mod  == Editable_Poly then
 				_mod.SetSelection #Vertex this.sel_modified
-		)
+		--)
 	),
 
 	private
