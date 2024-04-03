@@ -44,6 +44,7 @@ struct MeshDataGetter_v
 	(
 		--format "\n"; print "MeshDataGetter_v.getData()"
 		function pararmExists param = param != unsupplied and param
+
 		/* ALL APRAMS ARE TRUE IF ARE NOT DEFINED */
 		--if positions == unsupplied and colors == unsupplied and normals == unsupplied and convexity == unsupplied then
 		--	positions = colors = normals = convexity = true
@@ -67,8 +68,7 @@ struct MeshDataGetter_v
 
 		/* GET POSITIONS */
 		if pararmExists(convexity) and verts_data[#CONVEXITY] == undefined  then
-			verts_data[#CONVEXITY] = ConvexVertFinder.getConvexityTypes (verts_data[#VERTS])
-
+			verts_data[#CONVEXITY] = this._getConvexityTypes()
 
 		--/* GET COLORS */
 		--if pararmExists(colors) and verts_data[#COLORS] == undefined  then
@@ -98,7 +98,7 @@ struct MeshDataGetter_v
 
 		/* RESET DATA */
 
-		face_data = Dictionary()
+		this.face_data = Dictionary()
 
 		/* GET VERTS INDEXES */
 		verts_data[#VERTS] = this._setVertsToProcess faces:faces
@@ -150,6 +150,7 @@ struct MeshDataGetter_v
 		else
 			pos
 	),
+
 
 	/** Get positions of each vert splitted to XYZ
 	  * Usefull for gettin min and max values oe verts by each axis separatly
@@ -203,6 +204,18 @@ struct MeshDataGetter_v
 		SETTERS
 	--------------------------------------------------------------------------------*/
 
+	/** Get convexity types
+	 */
+	function _getConvexityTypes =
+	(
+		--format "\n"; print "MeshDataGetter_v._getConvexityTypes()"
+		--this._setFaces()
+
+		--this._getFaceNormals()
+		--this.getFacesData()
+
+		ConvexVertFinder.getConvexityTypes (verts_data[#VERTS]) --face_data:this.face_data
+	),
 
 	/** Set verts positions
 	 */
@@ -302,8 +315,13 @@ struct MeshDataGetter_v
 		if face_data[#FACES] == undefined then
 			this._setFaces()
 
-		 for face in face_data[#FACES] collect polyop.getFaceNormal obj face
+		timer_GET_NORMALS = timeStamp()
+		face_normals = for face in face_data[#FACES] collect polyop.getFaceNormal obj face
+		format "\n GET_NORMALS: % ms\n" (( timeStamp()) - timer_GET_NORMALS)
+
+		face_normals --return
 	),
+
 	/** Get normals of faces which belongs to this.verts_process
 	 */
 	function _getFaceNormalsByLimit =
@@ -368,6 +386,8 @@ struct MeshDataGetter_v
 		(
 			(#ALL_OR_SELECTED): if verts_sel.count > 0 then verts_sel else all_verts
 			(#SELECTED):	verts_sel
+			(#ALL):	all_verts
+			(undefined ):	all_verts
 			(unsupplied):	all_verts
 			default:	verts
 		)

@@ -70,6 +70,10 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 --createSourceMesh vertex_color:orange segments:16
 --createSourceMesh vertex_color:orange segments:32
 --createSourceMesh vertex_color:orange segments:64
+
+createSourceMesh vertex_color:orange segments:128
+--createSourceMesh vertex_color:orange segments:256
+
 --createSourceMesh vertex_selection:#{1..100}
 
 --createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
@@ -116,17 +120,21 @@ VertSelector.resolution = 10
 --VertSelector.getCheckerSelection invert_sel:false
 
 
+
+timer_CONVEXITY = timeStamp()
 /* GET CONVEX VERTICES - try find best points for 3D print support  */
 --VertSelector.getConvexVerts()
+VertSelector.getConvexityTypesOld()
 
 --/* GET CONCAVE VERTICES */
-VertSelector.getConvexVerts mode:#CONCAVE
+--VertSelector.getConvexVerts mode:#CONCAVE
 
 --/* GET FLAT VERTICES */
 --VertSelector.getConvexVerts mode:#FLAT
 
 /* GET CORNER VERTICES */
 --VertSelector.getConvexVerts mode:#CORNER
+format "\n TEST: % ms\n" (( timeStamp()) - timer_CONVEXITY)
 
 
 /*------------------------------------------------------------------------------

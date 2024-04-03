@@ -62,19 +62,25 @@ struct VertSelector_v
 
 	/* Get Convexity State
 	 *
-	 * @param name convex #CONVEX|#CONCAVE|#FLAT|#CORNER - type of verts to select
+	 * @param name|array convex #CONVEX|#CONCAVE|#FLAT|#CORNER - type of verts to select, can be single #NAME or Array of names e.g.: #( #CONVEX,  #FLAT	)
 	*/
-	function getConvexVerts mode:#CONVEX sel:true =
+	function getConvexVerts verts:#ALL mode:#CONVEX sel:true =
 	(
 		format "\n"; print "VertSelector_v.getConvexVerts()"
-		data_verts = MeshDataGetter.getVertexData convexity:true
+
+		if classOf mode != Array then
+			mode = #(mode)
+
+		data_verts = MeshDataGetter.getVertexData convexity:true verts:verts
 
 		verts = data_verts[#VERTS] as Array
 
-		verts_types = data_verts[#CONVEXITY]
+		verts_by_type = data_verts[#CONVEXITY]
 		--format "verts.count: %\n" verts.count
 		--format "verts_types.count: %\n" verts_types.count
-		this.sel_modified = (for i = 1 to verts_types.count where verts_types[i] == mode collect verts[i]) as BitArray
+		--this.sel_modified = (for i = 1 to verts_types.count where findItem mode verts_types[i] > 0 collect verts[i]) as BitArray
+		this.sel_modified = verts_by_type[mode[1]]
+
 
 		this._selectVertsAndReturn(sel) --return
 	),
