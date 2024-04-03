@@ -45,17 +45,19 @@ struct VertSelector_v
 	(
 		format "\n"; print "VertSelector_v.selectLowestInts()"
 
-		MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
+		--MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
 
-		data_verts = MeshDataGetter.getVertexData verts:#ALL_OR_SELECTED positions:true normals:true
+		data_verts = MeshDataGetter.getVertexData verts:#ALL_OR_SELECTED positions:true --normals:true
 
 		this._getVertsInGrid()
 
-		this.sel_modified = copy data_verts[#VERTS]
+		--this.sel_modified = copy data_verts[#VERTS]
+		this.sel_modified = #{}
 
-		--for x = 1 to points_grid.count do
-		--	for y = 1 to points_grid[x].count do
-		--		this._filterOnlyMinZVerts (points_grid[x][y])
+		for x = 1 to round_grid.count do
+			for y = 1 to round_grid[x].count do
+			--format "CELL %\n" (round_grid[x][y])
+				this._filterOnlyMinZVerts (round_grid[x][y])
 
 		this._selectVertsAndReturn(sel) --return
 	),
@@ -77,7 +79,7 @@ struct VertSelector_v
 		this.sel_modified = #{}
 
 		verts_by_type = data_verts[#CONVEXITY]
-		format "verts_by_type: %\n" verts_by_type
+		--format "verts_by_type: %\n" verts_by_type
 		--format "verts.count: %\n" verts.count
 		--format "verts_types.count: %\n" verts_types.count
 		--this.sel_modified = (for i = 1 to verts_types.count where findItem mode verts_types[i] > 0 collect verts[i]) as BitArray
@@ -107,7 +109,7 @@ struct VertSelector_v
 	 */
 	function getCheckerSelection invert_sel:false sel:true =
 	(
-		format "\n"; print "VertSelector_v.getCheckerSelection()"
+		--format "\n"; print "VertSelector_v.getCheckerSelection()"
 		--this._getVertsToProcess()
 
 		/** Is even
@@ -119,7 +121,7 @@ struct VertSelector_v
 
 		timer_getVertsInGrid = timeStamp()
 		this._getVertsInGrid()
-		format "\n getVertsInGrid: % ms\n" (( timeStamp()) - timer_getVertsInGrid)
+		--format "\n getVertsInGrid: % ms\n" (( timeStamp()) - timer_getVertsInGrid)
 
 		this.sel_modified = #{}
 
@@ -157,12 +159,14 @@ struct VertSelector_v
 	(
 		format "\n"; print "VertSelector_v.getSingleVertPerFaceIsland()"
 
-		data_verts = MeshDataGetter.getVertexData verts:#SELECTION positions:true
+		data_verts = MeshDataGetter.getVertexData verts:#SELECTED positions:true
 
 		------if  data_verts[#VERTS].numberSet == 0 then
 		------	return false
 
-		this.sel_modified = copy data_verts[#VERTS]
+		this.sel_modified = #{}
+
+		--this.sel_modified = copy data_verts[#VERTS]
 
 		/* LOOP EACH ISLAND OF VERTS */
 		for verts_island in (verts_islands = this._sortVertsByIslands()) do
@@ -212,15 +216,15 @@ struct VertSelector_v
 	function _filterOnlyMinZVerts verts =
 	(
 		--format "\n"; print "VertSelector_v._SelectOnlyMinZVerts()"
-		verts_to_remove = copy verts
 
-		/* REMOVE LOWEST VERT FORM VERTS */
-		if ( lowest_vert = this._getMinZposVert(verts) ) != undefined then
-			verts_to_remove[lowest_vert] = false
+		/* VERTS CAN BE UNDEFINED IF CELL IS EMPTY */
+		if verts != undefined and ( lowest_vert = this._getMinZposVert(verts) ) != undefined then
+			this.sel_modified[lowest_vert] = true
+
 
 		/* REMOVE OTHER VERTS FROM SELECTION */
-		for vert in verts_to_remove do
-			this.sel_modified[vert] = false
+		--for vert in verts_to_remove do
+			--this.sel_modified[vert] = false
 	),
 
 	/** Get vert with min z pos

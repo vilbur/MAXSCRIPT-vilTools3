@@ -1,6 +1,6 @@
 
 --if VERTS_CAVITY_CACHE == undefined then
-	global VERTS_CAVITY_CACHE = #() -- VERTS_CAVITY_CACHE[current_frame][object pointer][#VERTS|#POSITIONS|CONVEX|CONCAVE|MIXED|CORNER]
+	--global VERTS_CAVITY_CACHE = #() -- VERTS_CAVITY_CACHE[current_frame][object pointer][#VERTS|#POSITIONS|CONVEX|CONCAVE|MIXED|CORNER]
 
 /** Convex vert finder
  */
@@ -19,11 +19,11 @@ struct ConvexVertFinder_v
 
 
 	/* PROPERTIES USED FOR METHOD: getConvexityTypes */
-	--_angles_by_vert = Dictionary(), --  #( #CONVEX, #() ) #( #CONCAVE, #() ) #( #MIXED, #() )  #( #CORNER, boolean ) -- store angles of single vert
+	_angles_by_vert = Dictionary(), --  #( #CONVEX, #() ) #( #CONCAVE, #() ) #( #MIXED, #() )  #( #CORNER, boolean ) -- store angles of single vert
 
-	--faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
+	faces_angles = Dictionary #integer, -- #( face_A * face_B,  #( angles ) ) -- store angle between 2 faces
 
-	--verts_convexity = #(), -- store convex state of vert: #CONVEX|#CONCAVE|#MIXED|#CORNER -- keys are verts in parameter of "this.getVerts (verts)"
+	verts_convexity = #(), -- store convex state of vert: #CONVEX|#CONCAVE|#MIXED|#CORNER -- keys are verts in parameter of "this.getVerts (verts)"
 
 
 	/* private */
@@ -35,18 +35,20 @@ struct ConvexVertFinder_v
 	 */
 	function getConvexityTypesByPolyTools verts =
 	(
-		--format "\n"; print "ConvexVertFinder_v.getConvexityTypesByPolyTools()"
+		format "\n"; print "ConvexVertFinder_v.getConvexityTypesByPolyTools()"
 		--format "verts: %\n" verts
 
-		if ( verts_by_type_chache = this._getDataFromCache() ) == undefined then
+		--if ( verts_by_type_chache = this._getDataFromCache() ) == undefined then
 		(
-			format "\n"; print " !!!! ConvexVertFinder_v.getConvexityTypesByPolyTools()"
+			format "\n"; print " !!!! SET NEW CACHE"
 
 			max modify mode
 			subObjectLevel = 1
 
 			with redraw off
 			(
+				--polyop.unHideAllVerts obj
+
 				PolyToolsSelect.ConvexConcave 0.1 2 -- select convex and convex-concave
 				convex = getVertSelection obj.mesh
 
@@ -59,7 +61,6 @@ struct ConvexVertFinder_v
 				this._selectVerts (verts)
 			)
 
-
 			flat = convex * concave
 
 
@@ -68,16 +69,13 @@ struct ConvexVertFinder_v
 			verts_by_type[#MIXED]	= flat	- corner
 			verts_by_type[#CORNER]	= corner
 
-
-			this._setDataToCache()
+			--this._setDataToCache()
 			--format "verts_by_type: %\n" verts_by_type
 			verts_by_type --return
 		)
-		else
-			verts_by_type_chache --return
-
+		--else
+			--verts_by_type_chache --return
 	),
-
 
 	/** Get verts OBSOLETE - VERY SLOW
 
@@ -124,7 +122,7 @@ struct ConvexVertFinder_v
 						default:	#MIXED
 					)
 
-					verts_by_type[angle_type] += verts_of_edge
+					this.verts_by_type[angle_type] += verts_of_edge
 
 					tested_edges[edge_of_face] = true
 					--tested_faces[face_B] = true
@@ -241,7 +239,7 @@ struct ConvexVertFinder_v
 	 */
 	function _selectVerts verts =
 	(
-		format "\n"; print "VertSelector_v.selectVerts()"
+		format "\n"; print "ConvexVertFinder_v.selectVerts()"
 		--if this.sel_modified.isEmpty then
 			--this.sel_modified = deepCopy data_verts[#VERTS]
 
@@ -274,53 +272,55 @@ struct ConvexVertFinder_v
 		face_center --return
 	),
 
-	/** Get data from cache
-	 */
-	function _getDataFromCache =
-	(
-		--format "\n"; print "ConvexVertFinder_v._getDataFromCache()"
-		--verts_by_type_cahced = undefined
-		curernt_frame = ( sliderTime as integer ) +1
-		obj_pointer	= (getHandleByAnim obj) as string
-
-		if ( cache_of_frame = VERTS_CAVITY_CACHE[curernt_frame] ) != undefined and ( verts_by_type_cahced = cache_of_frame[obj_pointer] ) != undefined then
-			verts_by_type_cahced --return
-	),
-
-	/** Set data to cache
-	 */
-	function _setDataToCache =
-	(
-		--format "\n"; print "ConvexVertFinder_v._setDataToCache()"
-		curernt_frame = ( sliderTime as integer ) +1
-		obj_pointer	= (getHandleByAnim obj) as string
-		vertex_count = getNumVerts obj.mesh
-		all_verts = #{1..(vertex_count)}
-
-
-		data_to_cache = copy verts_by_type
-
-		data_to_cache[#VERTS]	= all_verts
-		data_to_cache[#POSITIONS]	= meshop.getVerts obj.mesh all_verts node:obj
-
-
-
-		if ( cache_of_frame = VERTS_CAVITY_CACHE[curernt_frame] ) == undefined then
-				VERTS_CAVITY_CACHE[curernt_frame] = Dictionary #STRING
-
-
-		VERTS_CAVITY_CACHE[curernt_frame][obj_pointer] = data_to_cache
-
-	),
+	--/** Get data from cache
+	-- */
+	--function _getDataFromCache =
+	--(
+	--	--format "\n"; print "ConvexVertFinder_v._getDataFromCache()"
+	--	--verts_by_type_cahced = undefined
+	--	curernt_frame = ( sliderTime as integer ) +1
+	--	obj_pointer	= (getHandleByAnim obj) as string
+	--
+	--	if ( cache_of_frame = VERTS_CAVITY_CACHE[curernt_frame] ) != undefined and ( verts_by_type_cahced = cache_of_frame[obj_pointer] ) != undefined then
+	--		verts_by_type_cahced --return
+	--),
+	--
+	--/** Set data to cache
+	-- */
+	--function _setDataToCache =
+	--(
+	--	--format "\n"; print "ConvexVertFinder_v._setDataToCache()"
+	--	curernt_frame = ( sliderTime as integer ) +1
+	--	obj_pointer	= (getHandleByAnim obj) as string
+	--	vertex_count = getNumVerts obj.mesh
+	--	all_verts = #{1..(vertex_count)}
+	--
+	--
+	--	data_to_cache = copy verts_by_type
+	--
+	--	data_to_cache[#VERTS]	= all_verts
+	--	data_to_cache[#POSITIONS]	= meshop.getVerts obj.mesh all_verts node:obj
+	--
+	--
+	--
+	--	if ( cache_of_frame = VERTS_CAVITY_CACHE[curernt_frame] ) == undefined then
+	--			VERTS_CAVITY_CACHE[curernt_frame] = Dictionary #STRING
+	--
+	--
+	--	VERTS_CAVITY_CACHE[curernt_frame][obj_pointer] = data_to_cache
+	--
+	--),
 
 	/**
 	 */
 	on create do
 	(
-		--format "\n"; print "ConvexVertFinder.onCreate()"
+		format "\n"; print "ConvexVertFinder.onCreate()"
 
 		/* PREFILL DICTIONARIES WITH KEYS AND EMPTY VALUES */
-		for vert_type in verts_by_type do verts_by_type[vert_type]   = #{}
+		for vert_type in verts_types do verts_by_type[vert_type]   = #{}
+
+
 		--for vert_type in verts_types do this._angles_by_vert[vert_type] = #{}
 
 		--for vert_type in verts_types where vert_type != #CORNER do this._angles_by_vert[vert_type] = #()

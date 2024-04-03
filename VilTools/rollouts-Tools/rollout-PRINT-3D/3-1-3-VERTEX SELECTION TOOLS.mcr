@@ -18,8 +18,8 @@ icon:	"MENU:false|id:#SPIN_grid_step|control:spinner|range:[1, 100, 10]|type:#in
  */
 macroscript	_print_select_lowest_verts
 category:	"_Print-Points-Tools"
-buttonText:	"Lowest Points"
-toolTip:	"Get only signlge vertex of each face island"
+buttonText:	"Lowest"
+toolTip:	"Get only single vertex of each face island.\n\Vert with lowest position on Z axis is selected"
 icon:	"MENU:true|across:4|height:24"
 (
 	on execute do
@@ -32,7 +32,7 @@ icon:	"MENU:true|across:4|height:24"
 
 		VertSelector 	= VertSelector_v( obj ) resolution:ROLLOUT_print_3d.SPIN_grid_step.value
 		VertSelector.getLowestVerts()
-		VertSelector.selectVerts()
+		--VertSelector.selectVerts()
 
 	)
 )
@@ -43,7 +43,7 @@ icon:	"MENU:true|across:4|height:24"
   */
 macroscript	_print_select_single_vert_of_faces
 category:	"_Print-Points-Tools"
-buttonText:	"1 vert face"
+buttonText:	"1 on island"
 toolTip:	"Get only signlge vertex of each face island"
 icon:	"MENU:true|across:4|height:24"
 (
@@ -61,6 +61,8 @@ icon:	"MENU:true|across:4|height:24"
 
 	)
 )
+
+
 
 /**  Checkerboard selection
   *
@@ -87,3 +89,37 @@ icon:	"MENU:false|across:4|height:24"
 
 	)
 )
+
+/**
+  *
+  */
+macroscript	_print_select_bottom_verts
+category:	"_Print-Points-Tools"
+buttonText:	"Bottom"
+toolTip:	"Select only bootom verts"
+icon:	"MENU:true|across:4|height:24"
+(
+	on execute do
+	if selection.count > 0 then
+	undo "Filter 1 vert per face" on
+	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-PRINT-3D\3-1-3-VERTEX SELECTION TOOLS.mcr"
+
+		PolyToolsSelect.Normal 3 100 false
+
+		--VertSelector 	= VertSelector_v( selection[1] )
+		--
+		--VertSelector.getSingleVertPerFaceIsland()
+		--VertSelector.selectVerts()]
+
+	)
+)
+
+
+
+
+
+
+
+

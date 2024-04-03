@@ -69,7 +69,7 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 --createSourceMesh segments:8
 --createSourceMesh vertex_color:orange segments:16
 --createSourceMesh vertex_color:orange segments:32
---createSourceMesh vertex_color:orange segments:64
+createSourceMesh vertex_color:orange segments:64
 
 --createSourceMesh vertex_color:orange segments:128
 --createSourceMesh vertex_color:orange segments:256
@@ -94,9 +94,10 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 VertSelector 	= VertSelector_v( selection[1] ) resolution:10
 
 
+VertSelector.resolution = 3
 --VertSelector.resolution = 5
 --VertSelector.resolution = 8
-VertSelector.resolution = 10
+--VertSelector.resolution = 10
 --VertSelector.resolution = 20
 
 --for points_in_square in VertSelector.points_grid do
@@ -106,11 +107,12 @@ VertSelector.resolution = 10
 
 
 --/* LOWEST VERTS - SELECT */
---VertSelector.getLowestVerts()
+VertSelector.getLowestVerts()
 
 
 /* SINGLE VERTICAL PER ISLAND - SELECT */
---VertSelector.getSingleVertPerFaceIsland()
+--VertSelector.getSingleVertPerFaceIsland() -- LOW RESOLUTION FOR TEST THIS WORKS BETTER. VertSelector.resolution = 3
+
 
 
 --/* VERTS BY NORMAL - SELECT */
@@ -123,7 +125,7 @@ VertSelector.resolution = 10
 
 
 
-timer_CONVEXITY = timeStamp()
+--timer_CONVEXITY = timeStamp()
 
 /* GET CONVEX VERTICES - try find best points for 3D print support  */
 --VertSelector.getConvexVerts()
@@ -135,8 +137,8 @@ timer_CONVEXITY = timeStamp()
 --VertSelector.getConvexVerts mode:#MIXED
 
 /* GET CORNER VERTICES */
-VertSelector.getConvexVerts mode:#CORNER
-format "\n getConvexVerts: % ms\n" (( timeStamp()) - timer_CONVEXITY)
+--VertSelector.getConvexVerts mode:#CORNER
+--format "\n getConvexVerts: % ms\n" (( timeStamp()) - timer_CONVEXITY)
 
 
 /*------------------------------------------------------------------------------

@@ -8,17 +8,19 @@ filein( getFilenamePath(getSourceFileName()) + "/../rollout-SELECTION - EDIT POL
 
 	CTRL:  Use all verts
 	SHIFT: Select convex\concave and mixed
+	ALT:	Hide other types of verts
 
  */
 function selectVertsByCavity mode =
 (
 	--format "\n"; print ".selectVertsByCavity()"
+		obj	= selection[1]
 
-		VertSelector 	= VertSelector_v( selection[1] )
+		VertSelector 	= VertSelector_v( obj )
 
-		ctrl = keyboard.controlPressed
-		alt = keyboard.altPressed
-		shift = keyboard.shiftPressed
+		ctrl	= keyboard.controlPressed
+		alt	= keyboard.altPressed
+		shift	= keyboard.shiftPressed
 
 		--mode = case of
 		--(
@@ -40,9 +42,24 @@ function selectVertsByCavity mode =
 		)
 
 		timer_CONVEX = timeStamp()
-		VertSelector.getConvexVerts mode:mode verts:verts
-		--format "\n CONVEX: % ms\n" (( timeStamp()) - timer_CONVEX)
 
+		verts_by_type = VertSelector.getConvexVerts mode:mode verts:verts
+
+		--format "verts_by_type: %\n" verts_by_type
+		--hideunselected
+		if alt then
+		(
+			print "ALT X"
+			--for single_mode in mode do
+			--	this.sel_modified += verts_by_type[single_mode]
+			--verts_to_hide = #{}
+
+			polyop.setHiddenVerts obj -verts_by_type
+
+			--for mode in verts_by_type.keys do verts_to_hide += verts_by_type[ mode]
+			--for mode in verts_by_type.keys do polyop.setHiddenVerts obj verts_by_type[ mode]
+
+		)
 )
 
 

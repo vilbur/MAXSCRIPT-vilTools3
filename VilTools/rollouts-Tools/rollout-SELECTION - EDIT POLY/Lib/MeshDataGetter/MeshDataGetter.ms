@@ -43,7 +43,7 @@ struct MeshDataGetter_v
 	function getVertexData verts: positions:false colors:false normals:false convexity:false =
 	(
 		format "\n"; print "MeshDataGetter_v.getData()"
-		function pararmExists param = param != unsupplied and param
+		function pararmExists param = param != unsupplied and param == true
 
 		/* ALL APRAMS ARE TRUE IF ARE NOT DEFINED */
 		--if positions == unsupplied and colors == unsupplied and normals == unsupplied and convexity == unsupplied then
@@ -146,9 +146,10 @@ struct MeshDataGetter_v
 	(
 		--format "\n"; print "VertDataGetter_v.getPosition()"
 		if ( pos = verts_data[#POSITIONS][this.dataIndexVert(vert)] ) != undefined and axis != unsupplied then
-			getProperty pos axis
-		else
-			pos
+			pos_z = getProperty pos axis
+
+		--format "pos_z: %\n" pos_z
+		pos_z --return
 	),
 
 
@@ -180,7 +181,7 @@ struct MeshDataGetter_v
 
 	/* Get index of verts_data by vertex number in this.positions|normlas|colors|
 	*
-	* Bitarray way to accomplish : findItem (this.verts_arr) vertex_index
+	* Bitarray way to accomplish : findItem (verts_data[#VERTS] as Array ) vertex_index
 	*/
 	function dataIndexVert vertex_index =
 	(
@@ -212,7 +213,12 @@ struct MeshDataGetter_v
 		--format "verts_data[#VERTS]: %\n" verts_data[#VERTS]
 		----ConvexVertFinder.getConvexityTypesByVert (verts_data[#VERTS]) -- VERY SLOW
 
-		ConvexVertFinder.getConvexityTypesByPolyTools (verts_data[#VERTS])
+		timer_getVertsConvexity = timeStamp()
+		--data = ConvexVertFinder.getConvexityTypes (verts_data[#VERTS])
+		data = ConvexVertFinder.getConvexityTypesByPolyTools (verts_data[#VERTS])
+
+		format "\n timer_getVertsConvexity: % ms\n" (( timeStamp()) - timer_getVertsConvexity)
+		data --return
 	),
 
 	/** Set verts positions
@@ -369,7 +375,7 @@ struct MeshDataGetter_v
 	function _setVertsToProcess verts: faces: =
 	(
 		format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
-		--format "verts: %\n" verts
+		format "verts: %\n" verts
 		this.vertex_count = getNumVerts obj.mesh
 		this.face_count   = polyop.getNumFaces obj
 		--format "this.vertex_count: %\n" this.vertex_count
@@ -388,8 +394,12 @@ struct MeshDataGetter_v
 			(#ALL):	all_verts
 			(undefined ):	all_verts
 			(unsupplied):	all_verts
-			default:	verts
+			default:	if classOf verts == BitArray then verts else all_verts
 		)
+		format "this.verts_process: %\n" this.verts_process
+
+		/* REMOVE HIDDEN VERTS */
+		this.verts_process -= polyop.getHiddenVerts obj
 
 		this.verts_process --return
 
