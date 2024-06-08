@@ -80,7 +80,7 @@ icon:	"MENU:true|across:3"
 	undo "Pass Vert Sel" on
 	(
 		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-EDIT-POLY\SELECTION.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-EDIT-POLY\SELECTION.mcr"
 
 		verts_baseobjects = passVertexSelectionToEditablePoly()
 

@@ -9,12 +9,14 @@ struct ExporterOBJ_v
 
 	/* properties */
 	Exporter = exporterPlugin.classes[findItem exporterPlugin.classes ObjExp],
+	Importer = importerPlugin.classes[findItem importerPlugin.classes ObjImp],
 
 	ini_file_path,
 
 	/* dependency */
 	/* reference */
 	/* inhered */
+	export_type,
 
 	/**  Export
 	  *
@@ -59,18 +61,18 @@ struct ExporterOBJ_v
 	 */
 	function setIni key val =
 	(
-		--format "\n"; print "ExporterOBJ_v._setIni()"
+		format "\n"; print "ExporterOBJ_v._setIni()"
 		--format "key	= % \n" key
+		this.ini_file_path = Exporter.getPresetIniName()
+
 		for section in getINISetting this.ini_file_path do
 			for _key in getINISetting this.ini_file_path section where key == _key do
 				 setINISetting this.ini_file_path section key (val as string )
 	),
 
-
-	private
 	/** Set preset file
 	 */
-	function _setPresetFile =
+	function setPresetFile file_name =
 	(
 		--format "\n"; print "MaxToZbrushSync_v.setPresetFile()"
 
@@ -78,7 +80,8 @@ struct ExporterOBJ_v
 
 		for Imp_or_Exp in #( Exporter, Importer) do
 			for target_file in #( Imp_or_Exp.getIniName(), Imp_or_Exp.getPresetIniName() ) do
-				if doesFileExist ( ini_preset_path = my_preset_dir + "\\" + filenameFromPath( target_file ) ) then
+				--if doesFileExist ( ini_preset_path = my_preset_dir + "\\" + filenameFromPath( target_file ) ) then
+				if doesFileExist ( ini_preset_path = my_preset_dir + "\\" + file_name + ".ini" ) then
 				(
 					deleteFile target_file
 
@@ -88,13 +91,15 @@ struct ExporterOBJ_v
 					messageBox ("Missing preset file\n\n`"+ini_preset_path+"\n\nFile is used in ExporterOBJ_v._setPresetFile()") title:"Missing preset file"  beep:false
 	),
 
+	private
+
 	/**
 	 */
 	on create do
 	(
 		format "\n"; print "ExporterOBJ.onCreate()"
 
-		this._setPresetFile()
+		--this._setPresetFile()
 	)
 
 )

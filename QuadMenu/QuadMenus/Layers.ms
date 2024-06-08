@@ -5,7 +5,7 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("L A Y E R S 1")
 
-	Layers1Menu	= Menu_v("_Layers-1")
+	Layers1Menu	= Menu_v("_Layers-1") 
 
 	Layers1Menu.addSeparator index:#( 2 )
 

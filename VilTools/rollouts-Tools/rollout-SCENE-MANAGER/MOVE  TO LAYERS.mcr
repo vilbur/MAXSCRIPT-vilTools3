@@ -7,7 +7,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#MOVE layer_type: #SOURCE
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#MOVE layer_type: #SOURCE
 	)
 )
 
@@ -20,7 +20,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#MOVE layer_type: #EDIT
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#MOVE layer_type: #EDIT
 	)
 )
 
@@ -33,7 +33,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#MOVE layer_type: #FINAL
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#MOVE layer_type: #FINAL
 	)
 )
 
@@ -46,7 +46,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#MOVE layer_type: #PRINT
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#MOVE layer_type: #PRINT
 	)
 )
 

@@ -8,8 +8,8 @@ filein( getFilenamePath(getSourceFileName()) + "/../SceneLayers.ms" )	--"./../Sc
 delete objects
 macros.run "Scene Explorer" "SERemoveEmptyLayers"
 
-_sphere = Sphere()
---_box = Box()
+--_sphere = Sphere()
+
 _box = Box name:"BoxFooBar"
 
 SceneLayers 	= SceneLayers_v()
@@ -17,7 +17,7 @@ LayersManager = LayersManager_v()
 
 
 /* CRETE TOP LAYERS */
-SceneLayers.createTopLayers()
+--SceneLayers.createTopLayers()
 
 
 /* MAKE LAYERS HIERARCHY */
@@ -28,9 +28,8 @@ objects_layer = LayersManager.newLayer "Foo-Obejcts"
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
-SceneLayers.moveToLayer( $Sphere001 ) layer_type:#EDIT
-layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere* )
-
+--SceneLayers.moveToLayerType( $Sphere001 ) layer_type:#EDIT
+--layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere* )
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
@@ -38,9 +37,9 @@ layer_box	= SceneLayers.moveToLayerByObject( $Box* )
 layer_box[1].setParent (objects_layer)
 
 
-SceneLayers.moveToLayer( $Box*[1] )	layer_type:(#SOURCE)
-SceneLayers.moveToLayer( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
-SceneLayers.moveToLayer( $'Box*-edit' )	layer_type:("FINAL")	mode:#COPY
+SceneLayers.moveToLayerType( $Box*[1] )	layer_type:(#SOURCE)
+SceneLayers.moveToLayerType( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
+SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:("FINAL")	mode:#COPY
 
 
 format "layer_edit: %\n" layer_edit

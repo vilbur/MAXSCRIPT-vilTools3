@@ -322,7 +322,40 @@ struct ModifierRenamer_v
 			"Smooth"
 	),
 
+	/** Symmetry
+	 */
+	function _symmetry =
+	(
+		--format "\n"; print "ModifierRenamer_v._tessellate()"
 
+		if this.modObject.SymmetryFormat == 0 then
+		(
+			mod_name = "Symmetry"
+
+			axises = #("X","Y","Z")
+
+			symmetry_axis = #( this.modObject.PlanarX, this.modObject.PlanarY, this.modObject.PlanarZ )
+
+			axises_used = for i = 1 to axises.count where symmetry_axis[i] collect axises[i]
+
+			axises_str = this._arrayToString axises_used ""
+
+			mod_name += " " + axises_str
+		)
+		else
+		(
+			mod_name = "Radial Sym "
+
+			mod_name += case this.modObject.RadialAxis of
+			(
+				1: "X"
+				2: "Y"
+				3: "Z"
+			)
+		)
+
+		mod_name --return
+	),
 
 	/** Tessellate
 	 */
@@ -386,6 +419,9 @@ struct ModifierRenamer_v
 		mod_name --return
 	),
 
+	/** Join array to string
+	 */
+	function _arrayToString arr delimeter = ( _string = ""; for item in arr do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count)),
 
 	/**
 	 */

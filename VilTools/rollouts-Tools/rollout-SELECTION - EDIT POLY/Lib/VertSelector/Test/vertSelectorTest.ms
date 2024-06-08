@@ -13,7 +13,7 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 
 	--obj = Plane length:( segment_size * segments ) width:( segment_size * segments ) pos:[ 0, 0, 300 ] widthsegs:segments lengthsegs:segments backfacecull: off
 
-	obj = Sphere radius:radius pos:[0,0, 50 ] segments:segments --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
+	--obj = Sphere radius:radius pos:[0,0, 50 ] segments:segments --showVertexColors:true	vertexColorsShaded:true -- diameter 3 cm
 
 	--obj = Plane width:20 length:20 pos:[ 50, 20, 50 ] widthsegs:4 lengthsegs:4
 
@@ -24,6 +24,7 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:25 lengthsegs:25 heightsegs:25
 	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:35 lengthsegs:35 heightsegs:35
 	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:50 lengthsegs:50 heightsegs:50
+	obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:100 lengthsegs:100 heightsegs:100
 	--obj = Box width:50 length:50 height:50 pos:[ 0, 0, 0 ] widthsegs:10 lengthsegs:10 heightsegs:1
 
 
@@ -32,8 +33,8 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 
 	select obj
 
-	noise_val = radius / 2
-	modPanel.addModToSelection (Noisemodifier scale:8 strength:[ noise_val, noise_val, noise_val] ) ui:on
+	noise_val = radius / 3
+	--modPanel.addModToSelection (Noisemodifier scale:8 strength:[ noise_val, noise_val, noise_val] ) ui:on
 
 	--Rotate obj ( AngleAxis 180 [1,0,0]) -- rotate object upside down
 
@@ -62,28 +63,31 @@ function createSourceMesh segments:8 radius:20 vertex_selection:#{} test_shifted
 /*--------------------------------------------------------------------
 	PREPARE TEST OBJECTS
 --------------------------------------------------------------------------------*/
---createSourceMesh()
+
+if selection.count == 0 then
+(
+	--createSourceMesh()
 
 
---createSourceMesh segments:4
---createSourceMesh segments:8
---createSourceMesh vertex_color:orange segments:16
---createSourceMesh vertex_color:orange segments:32
-createSourceMesh vertex_color:orange segments:64
+	--createSourceMesh segments:4
+	--createSourceMesh segments:8
+	--createSourceMesh vertex_color:orange segments:16
+	--createSourceMesh vertex_color:orange segments:32
+	createSourceMesh vertex_color:orange segments:64
 
---createSourceMesh vertex_color:orange segments:128
---createSourceMesh vertex_color:orange segments:256
---createSourceMesh vertex_color:orange segments:512
---createSourceMesh vertex_color:orange segments:1024
+	--createSourceMesh vertex_color:orange segments:128
+	--createSourceMesh vertex_color:orange segments:256
+	--createSourceMesh vertex_color:orange segments:512
+	--createSourceMesh vertex_color:orange segments:1024
 
---createSourceMesh vertex_selection:#{1..100}
+	--createSourceMesh vertex_selection:#{1..100}
 
---createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
---createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:32
---createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
---createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
---createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
-
+	--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:16
+	--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:32
+	--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:64
+	--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:128
+	--createSourceMesh vertex_selection:#{1..100}  vertex_color:orange segments:256
+)
 
 
 
@@ -94,10 +98,10 @@ createSourceMesh vertex_color:orange segments:64
 VertSelector 	= VertSelector_v( selection[1] ) resolution:10
 
 
-VertSelector.resolution = 3
+--VertSelector.resolution = 3
 --VertSelector.resolution = 5
 --VertSelector.resolution = 8
---VertSelector.resolution = 10
+VertSelector.resolution = 10
 --VertSelector.resolution = 20
 
 --for points_in_square in VertSelector.points_grid do

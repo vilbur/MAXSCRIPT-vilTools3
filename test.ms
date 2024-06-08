@@ -1,63 +1,59 @@
+/* ISLANDS VIA VERTS */
+clearListener(); print("Cleared in:\n"+getSourceFileName())
+
+
+--heap_before = heapSize
+--
+--bitarr = #{}
+--
+--
+--bitarr += #{1..1000000}
+--
+--
+--bitarr *= #{}
+--
+----format "bitarr[500]:	%\n" bitarr[500]
+--format "bitarr:	%\n" bitarr
+--format "bitarr.count:	%\n" bitarr.count
+--format "bitarr.numberSet:	%\n" bitarr.numberSet
+--format "bitarr.isEmpty:	%\n" bitarr.isEmpty
 --
 --
 --
---   theObj = selection[1]
---   convertToMesh theObj --convert to EMesh
---   theMeshCount = theObj.numfaces --get the number of faces in the object
---   selArray = #() --init. an array to collect faces
---   for f = 1 to theMeshCount do --loop through all faces
---   (
+--bitarr += #{100..110}
 --
---	tm = (eulerAngles 45 4 0 )as matrix3
+--format "\n---------------\n"
+----format "heap_before: %\n" heap_before
+----
+----cleared = bitarr - #{1..50000}
+----format "bitarr: %\n" bitarr
+----
+----for item in bitarr do
+----	bitarr[item] = false
 --
---     --in coordsys ( inverse ( viewport.GetTM() ) ) theFN = getFaceNormal theObj f
---     in coordsys (  tm ) theFN = getFaceNormal theObj f
+----format "bitarr[500]:	%\n" bitarr[500]
+--format "bitarr:	%\n" bitarr
+--format "bitarr as Array:	%\n" (bitarr as Array)
+--format "bitarr.count:	%\n" bitarr.count
+--format "bitarr.numberSet:	%\n" bitarr.numberSet
+--format "bitarr.isEmpty:	%\n" bitarr.isEmpty
+
+
+--format "\n"
 --
---     if theFN.z < 0 then append selArray f -- if Z is negative, add to array
---   )
---
---   subObjectLevel = 3 --go to Face SO level
---
---   setFaceSelection theObj selArray --set the face selection in the EMesh
---   --max modify mode --go to modify mode
---   --select theObj --select the mesh
---   --modPanel.addModToSelection (deleteMesh()) --add a delete mesh, preserving the SO selection
+--format "cleared:	%\n" cleared
+--format "cleared.count:	%\n" cleared.count
+--format "cleared.numberSet:	%\n" cleared.numberSet
 --
 --
---
+--format "heap_before: %\n" ( (heap_before - heapSize ) /1024 /1024 )
 
 
+arr = #{}
+
+bitarr = #{1618, 1624, 2408, 2547, 6407, 6690, 7783, 9356, 42379, 42393, 44424, 46925, 46989, 47162..47163, 47406, 47511, 48215, 48349, 48353, 48446, 48700, 50168, 52131, 52744, 52827, 52893, 53226, 53255, 53485, 54120, 54634..54635, 54650, 54652, 54774, 54808, 55177, 55182, 55332, 55706, 85514, 85518, 88180, 88187, 100906, 102615, 102940, 106648, 106706, 109566, 109675, 113011, 117789, 118113, 118509, 123109, 123516, 127821, 128501, 128670, 128875..128876, 129013, 129078, 129087}
 
 
+for i = 1 to 100 do
 
-
-   theObj = selection[1]
-   --convertToMesh theObj --convert to EMesh
-   theMeshCount = polyop.getNumFaces theObj --get the number of faces in the object
-   selArray = #() --init. an array to collect faces
-   for f = 1 to theMeshCount do --loop through all faces
-   (
-
-	tm = ( eulerAngles 0 0 0 ) as matrix3
-
-     --in coordsys ( inverse ( viewport.GetTM() ) ) theFN = getFaceNormal theObj f
-     --in coordsys (  Matrix3 0 ) theFN = polyop.getFaceNormal theObj f
-     theFN = polyop.getFaceNormal theObj f
-
-     --if theFN.z < 0 then append selArray f -- if Z is negative, add to array
-     --if theFN.z < -0.25 then append selArray f -- if Z is negative, add to array
-     --if theFN.z < -0.5 then append selArray f -- if Z is negative, add to array
-     if theFN.z < -0.85 then append selArray f -- if Z is negative, add to array
-   )
-
-   subObjectLevel = 4 --go to Face SO level
-	theObj.EditablePoly.SetSelection #Face (selArray as BitArray )
-
-   --setFaceSelection theObj selArray --set the face selection in the EMesh
-   --max modify mode --go to modify mode
-   --select theObj --select the mesh
-   --modPanel.addModToSelection (deleteMesh()) --add a delete mesh, preserving the SO selection
-
-
-
-
+append arr bitarr

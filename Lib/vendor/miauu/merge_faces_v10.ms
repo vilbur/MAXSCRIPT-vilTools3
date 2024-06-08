@@ -22,10 +22,14 @@ buttonText:"Merge Faces"
 			if faceSel01.numberSet > 2 then
 			(
 				local edgesOfFace = polyop.getEdgesUsingFace curobj faceSel01
+
 				curObj.EditablePoly.ConvertSelectionToBorder #Face #Edge
+
 				local outerEdges = polyop.getEdgeSelection curObj
 				local innerEdges = edgesOfFace-outerEdges
+
 				polyop.setEdgeSelection curObj innerEdges
+
 				curObj.EditablePoly.Remove selLevel:#Edge
 			)
 			else
@@ -35,5 +39,5 @@ buttonText:"Merge Faces"
 			messagebox "Go to Polygon/Element suboject level" title:"Merge Faces Error!!!"
 	)
 	else
-		messagebox "Select Editable poly object!" title:"Merge Faces Error!!!"		
+		messagebox "Select Editable poly object!" title:"Merge Faces Error!!!"
 )

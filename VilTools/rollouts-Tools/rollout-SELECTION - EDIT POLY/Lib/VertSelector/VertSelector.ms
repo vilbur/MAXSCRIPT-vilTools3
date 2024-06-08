@@ -43,7 +43,7 @@ struct VertSelector_v
 	 */
 	function getLowestVerts sel:true =
 	(
-		format "\n"; print "VertSelector_v.selectLowestInts()"
+		format "\n"; print "VertSelector_v.getLowestVerts()"
 
 		--MeshDataGetter.VertNormalLimits.z = [ 135, 180 ]
 
@@ -53,11 +53,31 @@ struct VertSelector_v
 
 		--this.sel_modified = copy data_verts[#VERTS]
 		this.sel_modified = #{}
+		surrounding_points = #{}
 
-		for x = 1 to round_grid.count do
-			for y = 1 to round_grid[x].count do
-			--format "CELL %\n" (round_grid[x][y])
-				this._filterOnlyMinZVerts (round_grid[x][y])
+
+
+		--for x = 1 to round_grid[1].count where (slice_x = round_grid[1][x]).count > 0 do
+		--	for y = 1 to round_grid[2].count where (slice_y = round_grid[2][y]).count > 0 do
+		--		this._filterOnlyMinZVerts ( slice_x * slice_y )
+
+		for x = 1 to round_grid[1].count where (slice_x = round_grid[1][x]).count > 0 do
+			for y = 1 to round_grid[2].count where (slice_y = round_grid[2][y]).count > 0 do
+				for z = 1 to round_grid[3].count where (slice_z = round_grid[3][z]) != undefined and slice_z.count > 0 do
+				(
+					verts_in_cell = slice_x * slice_y * slice_z
+					lowest_vert = this._filterOnlyMinZVerts ( verts_in_cell - surrounding_points )
+
+					if lowest_vert != undefined then
+					(
+						--format "surrounding_points: %\n" surrounding_points
+						faces_of_vert = polyop.getFacesUsingVert obj lowest_vert
+
+						surrounding_points +=  polyop.getVertsUsingFace obj faces_of_vert
+
+					)
+				)
+
 
 		this._selectVertsAndReturn(sel) --return
 	),
@@ -105,7 +125,9 @@ struct VertSelector_v
 		this._selectVertsAndReturn(sel) --return
 	),
 
-	/** Get checker apttern of selection
+	/** Get 3D checker pattern of verts
+	  *
+	  * SHOW HOW TO ACCES TO CELLS
 	 */
 	function getCheckerSelection invert_sel:false sel:true =
 	(
@@ -161,6 +183,8 @@ struct VertSelector_v
 
 		data_verts = MeshDataGetter.getVertexData verts:#SELECTED positions:true
 
+		hidden_verts = polyop.getHiddenVerts obj
+
 		------if  data_verts[#VERTS].numberSet == 0 then
 		------	return false
 
@@ -171,7 +195,7 @@ struct VertSelector_v
 		/* LOOP EACH ISLAND OF VERTS */
 		for verts_island in (verts_islands = this._sortVertsByIslands()) do
 		(
-			format "VERTS_ISLAND: %\n" verts_island
+			--format "VERTS_ISLAND: %\n" verts_island
 
 			this._filterOnlyMinZVerts (verts_island *  data_verts[#VERTS])
 		)
@@ -216,11 +240,13 @@ struct VertSelector_v
 	function _filterOnlyMinZVerts verts =
 	(
 		--format "\n"; print "VertSelector_v._SelectOnlyMinZVerts()"
+		--format "verts: %\n" verts
 
 		/* VERTS CAN BE UNDEFINED IF CELL IS EMPTY */
-		if verts != undefined and ( lowest_vert = this._getMinZposVert(verts) ) != undefined then
+		if verts.numberSet > 0 and ( lowest_vert = this._getLowestVertOnZaxis(verts) ) != undefined then
 			this.sel_modified[lowest_vert] = true
 
+		lowest_vert --return
 
 		/* REMOVE OTHER VERTS FROM SELECTION */
 		--for vert in verts_to_remove do
@@ -231,15 +257,16 @@ struct VertSelector_v
 	  *
 	  * @param BitArray verts
 	 */
-	function _getMinZposVert verts =
+	function _getLowestVertOnZaxis verts =
 	(
-		--format "\n"; print "VertSelector_v.getMinZposVert()"
+		--format "\n"; print "VertSelector_v._getLowestVertOnZaxis()"
 		verts_arr = verts as Array
 
 		/* GET LOWEST POINT IN CELL */
 		if verts_arr.count > 1 then
 		(
 			z_positions = for vert in verts_arr collect MeshDataGetter.getPosition(vert) axis:#Z
+			--z_positions = for pos in (meshop.getVerts obj.mesh verts node:obj) collect pos.z
 
 			if ( index = findItem z_positions (amin z_positions) ) > 0 then
 				verts_arr[index] --return
@@ -267,7 +294,7 @@ struct VertSelector_v
 	 */
 	function _sortVertsByIslands =
 	(
-		format "\n"; print "VertSelector_v.getAceIslandsByVerts()"
+		format "\n"; print "VertSelector_v._sortVertsByIslands()"
 
 		function facesShareVerts verts1 verts2 = not ( verts1 * verts2 ).isEmpty
 

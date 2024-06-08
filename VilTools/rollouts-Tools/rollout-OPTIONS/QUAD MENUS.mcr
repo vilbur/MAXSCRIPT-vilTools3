@@ -21,7 +21,7 @@ icon:	"MENU:true"
 
 		filein( getFilenamePath(getSourceFileName()) + "/../../../generateMacroscripts.ms" )	-- "./../../../generateMacroscripts.ms"
 
-		macros.run "_Options" "_options_quadmenu_reset"
+		--macros.run "_Options" "_options_quadmenu_reset"
 
 		/* IMPORT *.mcr files*/
 		filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"

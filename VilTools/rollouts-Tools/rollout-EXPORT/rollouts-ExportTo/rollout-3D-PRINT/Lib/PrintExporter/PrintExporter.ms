@@ -53,6 +53,7 @@ struct PrintExporter_v
 		this._holdMaxState()
 
 		try(
+
 			this._setExportKeyFrame()
 
 			this._fixExportPosition()
@@ -163,6 +164,8 @@ struct PrintExporter_v
 			"obj":  ExporterOBJ_v(#Print)
 			"stl":	ExporterSTL_v()
 		)
+
+		Exporter.setPresetFile("print")
 
 		Exporter.setExportScale(this.params[#EXPORT_SCALE])
 	),

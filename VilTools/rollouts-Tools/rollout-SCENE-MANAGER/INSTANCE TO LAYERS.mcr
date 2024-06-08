@@ -1,52 +1,52 @@
-/** Instaance to Source
+/** Instance to Source
  */
-macroscript scenelayers_Instaance_to_Source
+macroscript scenelayers_Instance_to_Source
 category:	"_SceneLayers-Instance"
-buttonText:	"Instaance to Source"
+buttonText:	"Instance to Source"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#INSTANCE layer_type: #SOURCE
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #SOURCE
 	)
 )
 
-/** Instaance to Edit
+/** Instance to Edit
  */
-macroscript scenelayers_Instaance_to_Edit
+macroscript scenelayers_Instance_to_Edit
 category:	"_SceneLayers-Instance"
-buttonText:	"Instaance to Edit"
+buttonText:	"Instance to Edit"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#INSTANCE layer_type: #EDIT
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #EDIT
 	)
 )
 
-/** Instaance to Final
+/** Instance to Final
  */
-macroscript scenelayers_Instaance_to_Final
+macroscript scenelayers_Instance_to_Final
 category:	"_SceneLayers-Instance"
-buttonText:	"Instaance to Final"
+buttonText:	"Instance to Final"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#INSTANCE layer_type: #FINAL
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #FINAL
 	)
 )
 
-/** Instaance to Print
+/** Instance to Print
  */
-macroscript scenelayers_Instaance_to_Print
+macroscript scenelayers_Instance_to_Print
 category:	"_SceneLayers-Instance"
-buttonText:	"Instaance to Print"
+buttonText:	"Instance to Print"
 icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayer( selection as Array ) mode:#INSTANCE layer_type: #PRINT
+		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #PRINT
 	)
 )
 

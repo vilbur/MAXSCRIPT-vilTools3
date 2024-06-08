@@ -56,8 +56,8 @@ struct MeshDataGetter_v
 		verts_data[#VERTS] = this._setVertsToProcess verts:verts
 
 
-		if this.VertNormalLimits.limitsExists() then
-			this._filterVertsByNormalLimit()
+		--if this.VertNormalLimits.limitsExists() then
+		--	this._filterVertsByNormalLimit()
 
 		--if this.FaceNormalLimits.limitsExists() then
 			--this._filterVertsByFaceNormalLimit()
@@ -70,10 +70,10 @@ struct MeshDataGetter_v
 		if pararmExists(convexity) and verts_data[#CONVEXITY] == undefined  then
 			verts_data[#CONVEXITY] = this._getVertsConvexity()
 
-		--/* GET COLORS */
-		--if pararmExists(colors) and verts_data[#COLORS] == undefined  then
-		--	verts_data[#COLORS] = this._getVertexColors()
-		--
+		/* GET COLORS */
+		if pararmExists(colors) and verts_data[#COLORS] == undefined  then
+			verts_data[#COLORS] = this._getVertexColors()
+
 
 		/* GET NORMALS */
 		if pararmExists(normals) and verts_data[#NORMALS] == undefined then -- if normals are not already set by this._filterVertsByFaceNormalLimit()
@@ -226,7 +226,7 @@ struct MeshDataGetter_v
 	function _getVertsPositions =
 	(
 		format "\n"; print "VertDataGetter_v._getVertsPositions()"
-		meshop.getVerts obj.mesh this.verts_process node:obj
+		in coordsys world  meshop.getVerts obj.mesh this.verts_process node:obj
 	),
 
 	/** Filter verts by normals
@@ -375,7 +375,7 @@ struct MeshDataGetter_v
 	function _setVertsToProcess verts: faces: =
 	(
 		format "\n"; print "MeshDataGetter_v._setVertsToProcess()"
-		format "verts: %\n" verts
+		--format "verts: %\n" verts
 		this.vertex_count = getNumVerts obj.mesh
 		this.face_count   = polyop.getNumFaces obj
 		--format "this.vertex_count: %\n" this.vertex_count
@@ -464,7 +464,7 @@ struct MeshDataGetter_v
 		(
 			MeshVertToColorVertexConvert.get_single_vert = false
 
-			verts_get_colors = copy verts
+			verts_get_colors = copy verts_data[#VERTS]
 
 			while not verts_get_colors.isEmpty do
 			(
@@ -476,15 +476,15 @@ struct MeshDataGetter_v
 
 				mesh_verts_by_color = meshop.getVertsByColor obj.mesh color_of_vert 0.01 0.01 0.01 	-- get all verts by thath color
 
-				this.colors[ color_of_vert as string ] = mesh_verts_by_color
+				colors[ color_of_vert as string ] = mesh_verts_by_color
 
 				verts_get_colors -= mesh_verts_by_color
 			)
 
 			/* REMOVE MULTI COLORED VERTS FROM WHITE - (if one of vert colors is not white, then vert is not white) */
 			if whiteVertsExists(colors) then
-				for clr in this.colors.keys  where clr != white_clr do
-					this.colors[white_clr] -= colors[clr]
+				for clr in colors.keys  where clr != white_clr do
+					colors[white_clr] -= colors[clr]
 		)
 
 		colors --return

@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ObjectRenamer/ObjectRenamer.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/ObjectRenamer/ObjectRenamer.ms" )	--"./Lib/ObjectRenamer/ObjectRenamer.ms"
 
 /*------------------------------------------------------------------------------
 	EDIT TEXT

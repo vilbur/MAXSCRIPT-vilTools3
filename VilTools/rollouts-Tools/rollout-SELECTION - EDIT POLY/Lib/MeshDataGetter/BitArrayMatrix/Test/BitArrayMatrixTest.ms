@@ -6,7 +6,8 @@ global max_count
 
 --max_count = 10
 --max_count = 1000
-max_count = 10000	-- 10.000
+--max_count = 10000	-- 10.000
+max_count = 4000	-- 10.000
 --max_count = 100000	-- 100.000
 --max_count = 100000	-- 1.000.000
 
@@ -115,5 +116,3 @@ for i = 1 to max_count do
 )
 
 format "\n BitArrayMatrix_READ: % ms\n" (( timeStamp()) - BitArrayMatrix_READ)
-
-

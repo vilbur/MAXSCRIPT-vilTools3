@@ -40,10 +40,9 @@ struct ConvexVertFinder_v
 
 		--if ( verts_by_type_chache = this._getDataFromCache() ) == undefined then
 		(
-			format "\n"; print " !!!! SET NEW CACHE"
+			--format "\n"; print " !!!! SET NEW CACHE"
 
 			max modify mode
-			subObjectLevel = 1
 
 			with redraw off
 			(

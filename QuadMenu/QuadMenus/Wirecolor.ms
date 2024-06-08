@@ -3,8 +3,11 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle(" W I R E C O L O R")
+	QuadMenu.setTitle("C O L O R")
 
+	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2, 7, 9 ) --title:"" flat:false
+	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2, 8, 11 ) --title:"" flat:false
+	QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2,  11 ) --title:"" flat:false
 
 	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
 
@@ -57,7 +60,3 @@ addQuad1( QUAD_MENU_INSTALL.Quads[1] )
 addQuad2( QUAD_MENU_INSTALL.Quads[2] )
 addQuad3( QUAD_MENU_INSTALL.Quads[3] )
 addQuad4( QUAD_MENU_INSTALL.Quads[4] )
-
-
-
-

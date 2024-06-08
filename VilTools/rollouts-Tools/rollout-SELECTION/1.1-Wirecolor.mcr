@@ -22,6 +22,9 @@ icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
 	--(Wirecolor_v()).randomize hue:10 brightness:128	saturation:164
 	--(Wirecolor_v()).randomize hue:10 brightness:#(64, 255)	saturation:#(64, 255)
 
+	/* https://help.autodesk.com/view/MAXDEV/2021/ENU/?guid=GUID-5A4580C6-B5CF-4104-898B-9313D1AAECD4 */
+	on isVisible return subObjectLevel==undefined or subObjectLevel == 0
+
 	on execute do
 	(
 		max create mode
@@ -49,7 +52,7 @@ icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
 macroscript	wirecolor_random_menu
 category:	"_Wirecolor"
 buttontext:	"Random color"
-toolTip:	"Color menuc"
+toolTip:	"Color menu"
 --icon:	"MENU:true"
 (
 	_Color 	= Color_v()
@@ -77,19 +80,26 @@ buttontext:	"&Select by wirecolor"
 toolTip:	"Select by wirecolor"
 icon:	"MENU:TRUE"
 (
-	fn compareNames obj_1 obj_2 = stricmp obj_1.name obj_2.name
+	on isVisible return subObjectLevel==undefined or subObjectLevel == 0
 
-	selection_colors = #()
+	on execute do
+	(
 
-	for o in selection do appendIfUnique selection_colors o.wirecolor
+		fn compareNames obj_1 obj_2 = stricmp obj_1.name obj_2.name
+
+		selection_colors = #()
+
+		for o in selection do appendIfUnique selection_colors o.wirecolor
 
 
-	--objects_by_color = (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+		--objects_by_color = (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
 
-	--objects_by_name = qsort objects_by_color compareNames
+		--objects_by_name = qsort objects_by_color compareNames
 
-	--for obj in objects_by_name do format "obj.name:	% \n" obj.name
-	select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+		--for obj in objects_by_name do format "obj.name:	% \n" obj.name
+		select (for o in objects where findItem selection_colors o.wirecolor > 0 and o.isNodeHidden == false and o.layer.on == true  collect o)
+
+	)
 
 )
 
@@ -104,6 +114,9 @@ buttontext:	"Color &By Last"
 toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
 icon:	"MENU:true"
 (
+	on isVisible return subObjectLevel==undefined or subObjectLevel == 0
+
+	on execute do
 	undo "Wirecolor By Last" on
 	(
 		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
