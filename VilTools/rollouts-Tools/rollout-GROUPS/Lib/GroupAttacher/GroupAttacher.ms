@@ -64,7 +64,6 @@ struct GroupAttacher_v
 	private
 
 
-
 	/** Find group
 
 		NEW METHOD QUICK ADD, FOR USE LATER
@@ -89,11 +88,6 @@ struct GroupAttacher_v
 
 		)
 	),
-
-
-
-
-
 
 
 	/** Get instances of group

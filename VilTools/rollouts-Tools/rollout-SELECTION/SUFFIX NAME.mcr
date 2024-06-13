@@ -42,15 +42,6 @@ icon:	"across:3"
 	)
 )
 
-
-
-
-
-
-
-
-
-
 /** REMOVE SUFIX
   */
 macroscript selection_remove_suffix

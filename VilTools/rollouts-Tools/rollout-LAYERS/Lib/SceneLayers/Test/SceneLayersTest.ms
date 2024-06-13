@@ -8,9 +8,9 @@ filein( getFilenamePath(getSourceFileName()) + "/../SceneLayers.ms" )	--"./../Sc
 delete objects
 macros.run "Scene Explorer" "SERemoveEmptyLayers"
 
---_sphere = Sphere()
-
-_box = Box name:"BoxFooBar"
+_sphere = Sphere()
+_box    = Box name:"BoxFooBar"
+_teapot = Teapot name:"Teapot"
 
 SceneLayers 	= SceneLayers_v()
 LayersManager = LayersManager_v()
@@ -24,25 +24,32 @@ LayersManager = LayersManager_v()
 top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
 
 objects_layer = LayersManager.newLayer "Foo-Obejcts"
---objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
+objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
 
 
-/* CREATE CUSTOM LAYER FOR OBJECT */
+--/* CREATE CUSTOM LAYER FOR OBJECT */
 --SceneLayers.moveToLayerType( $Sphere001 ) layer_type:#EDIT
---layer_sphere	= SceneLayers.moveToLayerByObject( $Sphere* )
+--layer_sphere	= SceneLayers.createLayerByObject( $Sphere* )
 
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
-layer_box	= SceneLayers.moveToLayerByObject( $Box* )
-layer_box[1].setParent (objects_layer)
+--layer_box	= SceneLayers.createLayerByObject( $Box* )
+--layer_box[1].setParent (objects_layer)
+
+--
+--SceneLayers.moveToLayerType( $Box*[1] )	layer_type:(#SOURCE)
+--SceneLayers.moveToLayerType( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
+--SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:("FINAL")	mode:#COPY
 
 
-SceneLayers.moveToLayerType( $Box*[1] )	layer_type:(#SOURCE)
-SceneLayers.moveToLayerType( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
-SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:("FINAL")	mode:#COPY
+/* GROUP TEST */
+objs_group = group objects name:"GROUP-ALL-OBJECTS"
+setGroupOpen objs_group true
 
 
 format "layer_edit: %\n" layer_edit
 
 
 actionMan.executeAction 0 "40021"  -- Selection: Select All
+
+

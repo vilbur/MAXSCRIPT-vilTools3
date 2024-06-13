@@ -9,6 +9,8 @@ struct SceneLayers_v
 	top_layer_names	= #( #SOURCE, #EDIT, #FINAL ),
 	top_layer_names_ext	= #( #HELP, #PRINT, #REFERENCE ),
 
+	new_nodes_all = #(),
+
 	dash_line = "——————",
 	delimeter = "-",
 
@@ -44,39 +46,27 @@ struct SceneLayers_v
 		--format "\n"; print "SceneLayers_v.moveToLayer()"
 		layer_type = layer_type as name
 
-		new_layers = #()
-		top_layer  = this._getOrCreateTopLayer(layer_type)
-		top_layers = this.getTopLayers()
+		--new_layers = #()
+		--top_layer  = this._getOrCreateTopLayer(layer_type)
+		--top_layers = this.getTopLayers()
 
-		objs = this._getObjectsArray (objs)
+		source_objects = this._getSourceObjects (objs)
 
 
-		for obj in objs do
+		for source_object in source_objects do
 		(
-			layers_tree =  this._getLayersTree (obj.layer)
+			objects_to_move =  if mode != #MOVE then
+									this._cloneNodes (source_object) (mode)
+								else
+									#(source_object)
 
-			/* REMOVE TOP LAYER FROM OLD TREE */
-			deleteItem layers_tree 1
-
-			layer_names_source = for layer in layers_tree collect layer.name
-			--format "LAYER_NAMES_SOURCE: %\n" layer_names_source
-
-			if layer_names_source.count > 0 then
-				layer = this._createTargetLayersHierarchy (top_layer) (layer_type) (layer_names_source)
-			else
-				/* IF OBJECT IS IN "Default" Layer */
-				layer = new_layers[1]  = top_layer
-
-
-			if mode != #MOVE then
-				obj = (this._cloneNodes #(obj) mode)[1]
-
-
-			this._moveNodeToLayer(layer)(obj)(layer_type)
-
+			for object_to_move in objects_to_move do
+				this._moveNodeToLayer(object_to_move)(layer_type)
 		)
 
 		 this._deleteEmptyLayers()
+
+		 select new_nodes_all
 
 		--if layer_type == #FINAL then
 		----	for i = new_layers.count to 1 by -1 do
@@ -89,25 +79,25 @@ struct SceneLayers_v
 
 	/** Create layer by object
 	 */
-	function moveToLayerByObject objs =
+	function createLayerByObject objs =
 	(
-		format "\n"; print "SceneLayers_v.moveToLayerByObject()"
+		--format "\n"; print "SceneLayers_v.createLayerByObject()"
 
 		/** Get layer key suffix
 		 */
 		function getLayerKeySuffix obj =
 		(
 			--format "\n"; print "SceneLayers_v.getLayerKeySuffix()"
-			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerKey layers_top[1].name) != undefined  then
+			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerSuffix layers_top[1].name) != undefined  then
 				delimeter + ( toLower layer_key)
 			else
 				""
 		)
 
 		layers = #()
-		format "OBJS: %\n" objs
-		objs = this._getObjectsArray objs
-		format "OBJS: %\n" objs
+		--format "OBJS: %\n" objs
+		objs = this._getSourceObjects (objs)
+		--format "OBJS: %\n" objs
 
 		for obj in objs do
 		(
@@ -130,7 +120,7 @@ struct SceneLayers_v
 		layers --return
 	),
 
-	/** Ssibility
+	/*
 	  *
 	  *
 	  * @param Boolean isolate TRUE:HIDE OTHER TOP LAYERS  FALSE: toggle visiblity
@@ -153,57 +143,47 @@ struct SceneLayers_v
 		--top_layers = this.getTopLayers()
 		--layers_tree =  this._getLayersTree (obj.layer)
 		--
-		--this.getTopLayerKey layers_tree[.].name
+		--this.getTopLayerSuffix layers_tree[.].name
 
 	),
 
 	private
 
-	/** Create target layers hierarchy
+	/** Clone nodes and remove default number suffix of new copy
 	  *
-	  * Return deepest layer in hierarchy
+	  * Children of object are copied too
 	 */
-	function _createTargetLayersHierarchy top_layer layer_type layer_names_source  =
+	function _cloneNodes obj mode =
 	(
-		--format "\n"; print "SceneLayers_v.createTargetLayersHierarchy()"
-		layer_key = this.getTopLayerKey top_layer.name
+		--format "\n"; print "SceneLayers_v._cloneNodes()"
+		--format "obj: %\n" obj
+		local new_nodes = #()
 
-		/* GET TARGET HIERARCHY OF LAYER NAMES */
-		layer_names_target = this._getTargetLayerNames(layer_names_source) (layer_type)
+		maxOps.CloneNodes #(obj) expandHierarchy:true cloneType:mode newNodes:&new_nodes
 
-		/* CREATE TARGET HIERARCHY OF LAYERS */
-		new_layers = LayersManager.createLayersTree(layer_names_target) parent_layer:top_layer
+		join this.new_nodes_all new_nodes
 
-		new_layers[new_layers.count] --return
-	),
-
-
-	/** Move or py obj to layer
-	 */
-	function _cloneNodes objs mode =
-	(
-		format "\n"; print "SceneLayers_v._cloneNodes()"
-
-		local new_nodes
-
-		maxOps.CloneNodes objs expandHierarchy:false cloneType:mode newNodes:&new_nodes
-
-		for i = 1 to new_nodes.count do
-			new_nodes[i].name = objs[i].name
+		for new_node in new_nodes do
+			new_node.name = this._removeNumberSuffix new_node.name
 
 		new_nodes --return
 	),
 
 	/** Move nodes to layers
 	 */
-	function _moveNodeToLayer layer obj type =
+	function _moveNodeToLayer obj layer_type =
 	(
 		format "\n"; print "SceneLayers_v._moveNodeToLayer()"
+		/** Get layers tree
+		 */
+		layer = this._createTargetLayersHierarchy(obj) (layer_type) (layer_names_source)
 
-
-		this._renameObjectBySuffix (obj) (type)
-
-		layer.addNodes #(obj)
+		--if classOf objs != Array then objs = #(objs)
+		--
+		--for obj in objs do
+			this._renameObjectBySuffix (obj) (layer_type)
+		--
+		layer.addNodes obj
 	),
 
 	/** Rename object by type
@@ -217,13 +197,45 @@ struct SceneLayers_v
 			obj.name += (delimeter + toLower(type_suffix as string ) )
 	),
 
-	/** Get layers tree
+	/** Create target layers hierarchy
+	  *
+	  * Return deepest layer in hierarchy
 	 */
-	function _getLayersTree layer =
+	function _createTargetLayersHierarchy obj layer_type layer_names_source  =
 	(
-		--format "\n"; print "SceneLayers_v._getLayersTree()"
-		for i = (layers_tree = LayersManager.getLayersTree layer).count to 1 by -1 collect layers_tree[i]
+		format "\n"; print "SceneLayers_v.createTargetLayersHierarchy()"
+		fn getLayersTree layer = for i = (layers_tree = LayersManager.getLayersTree layer).count to 1 by -1 collect layers_tree[i]
+
+		new_layers = #()
+
+		--layers_source = for layer in getLayersTree (obj.layer) collect layer
+		layer_names_source = for layer in getLayersTree (obj.layer) collect layer.name
+
+		deleteItem layer_names_source 1 -- remove  top layer
+
+		top_layer_target = this._getOrCreateTopLayer (layer_type)
+
+		if layer_names_source.count > 0 then
+		(
+			/* GET TARGET HIERARCHY OF LAYER NAMES */
+			layer_names_target = this._getTargetLayerNames(layer_names_source) (layer_type)
+
+			/* CREATE TARGET HIERARCHY OF LAYERS */
+			new_layers = LayersManager.createLayersTree(layer_names_target) parent_layer:top_layer_target
+
+			new_layers[new_layers.count] --return
+		)
+		else -- if object is in default layer
+			top_layer_target --return
 	),
+
+	--/** Get layers tree
+	-- */
+	--function getLayersTree layer =
+	--(
+	--	--format "\n"; print "SceneLayers_v._getLayersTree()"
+	--	for i = (layers_tree = LayersManager.getLayersTree layer).count to 1 by -1 collect layers_tree[i]
+	--),
 
 	/** Find top layer
 	 */
@@ -239,9 +251,9 @@ struct SceneLayers_v
 
 	/**
 	 */
-	function getTopLayerKey layer_name =
+	function getTopLayerSuffix layer_name =
 	(
-		--format "\n"; print "SceneLayers_v.getTopLayerKey()"
+		--format "\n"; print "SceneLayers_v.getTopLayerSuffix()"
 		matches = this.RegEx.matches layer_name ("[^A-Z]*("+this.type_suffix_pattern+")[^A-Z]*") this.IgnoreCase
 		--format "matches: %\n" matches.item[1].groups
 		result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
@@ -285,12 +297,12 @@ struct SceneLayers_v
 		(
 			layer_name = used_layers[i] as string
 
-			prefix = ""
+			whitespace = ""
 
 			for x = 1 to findItem used_layers_reverse (layer_name as name ) do -- too width 200px
-				prefix += " "
+				whitespace += " "
 
- 			top_layer_titles[ used_layers[i]] =  " " + prefix + dash_line + " "+ toUpper layer_name + " " + dash_line + dash_line + dash_line
+ 			top_layer_titles[ used_layers[i]] =  " " + whitespace + dash_line + " "+ toUpper layer_name + " " + dash_line + dash_line + dash_line
 		)
 
 
@@ -300,6 +312,8 @@ struct SceneLayers_v
 		top_layer_titles --return
 
 	),
+
+
 
 	/** Get source layer names
 	 */
@@ -320,6 +334,7 @@ struct SceneLayers_v
 		)
 	),
 
+
 	/** R replace
 	 */
 	function _regExReplace _string _search _replace =
@@ -336,20 +351,63 @@ struct SceneLayers_v
 		--format "\n"; print "SceneLayers_v._removeTypeSuffix()"
 		search_string = this.type_suffix_pattern
 
-		RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+search_string+")$") this.IgnoreCase )
+		--RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+search_string+")$") this.IgnoreCase )
+		RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+search_string+"[\d]*)$") this.IgnoreCase )
 
 		RegExR.Replace _string ""
 	),
 
-	/** Get obejcts array
+	/** Rmove layer type suffix
 	 */
-	function _getObjectsArray objs =
+	function _removeNumberSuffix _string =
 	(
-		--format "\n"; print "SceneLayers_v._getObjectsArray()"
+		--format "\n"; print "SceneLayers_v._removeNumberSuffix()"
+		--RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+search_string+")$") this.IgnoreCase )
+		RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("\d+$") this.IgnoreCase )
+
+		RegExR.Replace _string ""
+	),
+
+	/** Remove children from objects if array contains both, parents and its children
+	  *
+	  * @return Array
+	 */
+	function _getSourceObjects objs =
+	(
+		--format "\n"; print "SceneLayers_v._getSourceObjects()"
 		if classOf objs != Array then
 			objs = if classOf objs == PathName then objs = objs as Array else #(objs)
 
+		/* REMOVE CHILDREN FROM SELECTION - avoid mutliple duplicates when function maxOps.CloneNodes() whith expandHierarchy:TRUE is used */
+		if mode != #MOVE then
+		(
+			/* GET OBJECTS WITH CHILDREN */
+			parents = for obj in objs where obj.children.count > 0 collect obj
+
+			children = this._getGroupMembers (parents)
+
+			/* REMOVE CHILDREN FROM OBJECTS */
+			for child in children where (index = findItem objs child ) > 0 do
+				deleteItem objs index
+		)
+
 		objs --return
+	),
+
+	/** Get group members of closed group
+	 */
+	function _getGroupMembers groups =
+	(
+		if classOf groups != Array  then
+			groups = #(groups)
+
+		mapped function getAllChildren node &group_members = (if isValidNode node and isKindOf group_members Array do join group_members node.children)
+
+		group_members = #()
+
+		getAllChildren groups &group_members
+
+		group_members --return
 	),
 	/**
 	*

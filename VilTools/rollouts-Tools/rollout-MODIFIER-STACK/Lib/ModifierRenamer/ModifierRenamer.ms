@@ -156,7 +156,7 @@ struct ModifierRenamer_v
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._printModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		--format "subObjectLevel:	% \n" subObjectLevel
-		mod_name = "Select"
+		mod_name = "PolySel"
 
 		mod_name += case subObjectLevel of
 		(
@@ -170,7 +170,7 @@ struct ModifierRenamer_v
 		)
 
 		if (mat_id = this.modObject.materialID) > 1 then
-			mod_name += " Mat ID " + mat_id as string
+			mod_name += " Mat  " + mat_id as string
 
 		mod_name --return
 
@@ -184,7 +184,7 @@ struct ModifierRenamer_v
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._getModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		--format "subObjectLevel:	% \n" subObjectLevel
-		mod_name = "VolSel"
+		mod_name = "vSel"
 
 		/** Get texture name
 		  *
@@ -203,16 +203,23 @@ struct ModifierRenamer_v
 		)
 
 		/* STACK SELECTIONM LEVEL */
-
 		if this.modObject.volume != 3 then -- if not by object
 			mod_name += case modObject.level of
 			(
 				0: " Object"
 				1: " Vertex"
-				2: " Face"
+				2: "" -- FACE
 				default:	""
 			)
 
+		/* SELECTION METHOD */
+		mod_name += case modObject.method of
+		(
+			0: "" -- REPLACE
+			1: " add"
+			2: " substr"
+			default:	""
+		)
 
 		/* INVERT */
 		--mod_name += if this.modObject.invert then " not" else ""
@@ -222,9 +229,9 @@ struct ModifierRenamer_v
 		if modObject.level > 0 then -- if not "object" mode
 			mod_name += case modObject.volume of
 			(
-				0: " by Box"
-				1: " by Sphere"
-				2: " by Cylinder"
+				0: " Box"
+				1: " Sphere"
+				2: " Cylinder"
 				3: " by "    + modObject.node.name -- by object
 				4: " by "    + getTextureName(modObject.texture) + ( if modObject.mapChannel > 1 then " "+ modObject.mapChannel as string else "" )
 				5: " ID " + modObject.matID	as string
@@ -348,9 +355,9 @@ struct ModifierRenamer_v
 
 			mod_name += case this.modObject.RadialAxis of
 			(
-				1: "X"
-				2: "Y"
-				3: "Z"
+				0: "X"
+				1: "Y"
+				2: "Z"
 			)
 		)
 

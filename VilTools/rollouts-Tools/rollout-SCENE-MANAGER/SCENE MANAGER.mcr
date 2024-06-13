@@ -8,6 +8,6 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerTypeByObject( selection as Array )
+		(SceneLayers_v()).createLayerByObject( selection as Array )
 	)
 )
