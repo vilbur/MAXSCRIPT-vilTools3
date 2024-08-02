@@ -142,7 +142,7 @@ struct LayersManager_v
 		search_layers  = if search_only_top_layers then this.getTopLayers (all_layers) else all_layers
 
 		--top_layers = LayersManager.getTopLayers (pattern)
-		format "all_layers: %\n" all_layers
+		--format "all_layers: %\n" all_layers
 
 		found_layers = for layer in search_layers where matchPattern layer.name pattern:("*"+pattern+"*") collect layer
 		--format "found_layers: %\n" found_layers

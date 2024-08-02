@@ -2,6 +2,7 @@
  */
 function selectExportNodeInListCallback =
 (
+	format "\n"; print ".selectExportNodeInListCallback()"
 	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
 
 	NodeList.loadNodes()

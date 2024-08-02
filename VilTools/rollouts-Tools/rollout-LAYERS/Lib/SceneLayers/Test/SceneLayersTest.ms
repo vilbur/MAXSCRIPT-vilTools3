@@ -16,8 +16,8 @@ SceneLayers 	= SceneLayers_v()
 LayersManager = LayersManager_v()
 
 
-/* CRETE TOP LAYERS */
---SceneLayers.createTopLayers()
+/* CREATE TOP LAYERS */
+SceneLayers.createTopLayers()
 
 
 /* MAKE LAYERS HIERARCHY */
@@ -36,15 +36,36 @@ objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
 --layer_box	= SceneLayers.createLayerByObject( $Box* )
 --layer_box[1].setParent (objects_layer)
 
---
+
+
+/*------------------------------------------------------------------------------
+
+	MOVE|COPY|INSTANCE|REFERENCE
+
+	layer types "#FINAL" and "#PRINT" DOES NOT USE SUFFIX !
+
+--------------------------------------------------------------------------------*/
+
+
+/* MOVE OBJECT TO lAYER */
 --SceneLayers.moveToLayerType( $Box*[1] )	layer_type:(#SOURCE)
---SceneLayers.moveToLayerType( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
+
+
+/* COPY OBJECT TO lAYER */
 --SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:("FINAL")	mode:#COPY
 
 
+/* COPY OBJECT AS REFERENCE TO lAYER */
+--SceneLayers.moveToLayerType( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
+
+
+/* COPY OBJECT AS INSTANCE TO lAYER */
+SceneLayers.moveToLayerType( $Box* )	layer_type:(#PRINT)	mode:#INSTANCE
+
+
 /* GROUP TEST */
-objs_group = group objects name:"GROUP-ALL-OBJECTS"
-setGroupOpen objs_group true
+--objs_group = group objects name:"GROUP-ALL-OBJECTS"
+--setGroupOpen objs_group true
 
 
 format "layer_edit: %\n" layer_edit

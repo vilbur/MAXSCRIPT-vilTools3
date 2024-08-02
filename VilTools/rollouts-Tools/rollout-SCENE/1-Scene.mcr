@@ -38,7 +38,7 @@ category:	"_Scene"
 buttontext:	"Open Recent"
 toolTip:	"Open recent scene on Max start"
 --icon:	"control:checkButton|MENU:_Scene"
-icon:	"across:5|width:72|MENU:true"
+icon:	"across:5|width:72|MENU:Open &Recent"
 (
 	--on isVisible  return maxFileName == ""
 

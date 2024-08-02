@@ -337,8 +337,8 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 	/* SHOW LAYERS OF NODES CHILDREN */
 	LayersManager.setVisibility (layers_of_objects) (true)
 
-	/* UNHIDE DEFAULT LYER - Printer Dummy for 3d print is there */
-	LayersManager.setVisibility(default_Layer)(true)
+	/* UNHIDE DEFAULT LAYER - Printer Dummy for 3d print is there */
+	--LayersManager.setVisibility(default_Layer)(true)
 
 	/* SHOW OBLY OBJECTS OF NODES */
 	for obj in nodes_and_objects do

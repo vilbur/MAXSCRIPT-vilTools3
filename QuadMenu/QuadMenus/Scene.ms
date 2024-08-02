@@ -9,8 +9,9 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addSeparator()
 
-	QuadMenu.addMenu("_Scene")	separators:#( 3, 5 ) --flat:false --index:1
+	_SceneMenu = QuadMenu.addMenu("_Scene")	separators:#( 3, 5 ) --flat:false --index:1
 
+	--format "_SceneMenu: %\n" _SceneMenu
 	--QuadMenu.addSeparator index:1
 	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()

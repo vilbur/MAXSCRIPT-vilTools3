@@ -9,6 +9,8 @@ struct SceneLayers_v
 	top_layer_names	= #( #SOURCE, #EDIT, #FINAL ),
 	top_layer_names_ext	= #( #HELP, #PRINT, #REFERENCE ),
 
+	layers_without_suffix	= #( #FINAL, #PRINT ), -- objects name is not suffixed in these layer types
+
 	new_nodes_all = #(),
 
 	dash_line = "——————",
@@ -193,7 +195,7 @@ struct SceneLayers_v
 		--format "\n"; print "SceneLayers_v.renameObjectBySuffix()"
 		obj.name = (this._removeTypeSuffix obj.name)
 
-		if type_suffix != #FINAL then
+		if findItem layers_without_suffix type_suffix == 0 then
 			obj.name += (delimeter + toLower(type_suffix as string ) )
 	),
 
