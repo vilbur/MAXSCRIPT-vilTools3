@@ -115,15 +115,6 @@ autoUndoEnabled: true
 		sliderTime = if sliderTime != 1f then 1f else 0f
 )
 
-/**  LINK TO NODE
- */
-macroscript	_options_animation
-category:	"_Animation"
-buttontext:	"Animation keys"
-icon:	"control:spinner|type:#integer|range:[0,1000,100]|across:4"
-(
-	animationRange = Interval 0 (EventFired.val as integer )
-)
 
 /**
  *
@@ -1012,4 +1003,15 @@ toolTip:	""
 
 
 
+)
+
+
+/**  SET ANIMATION COUNT OF FRAMES
+ */
+macroscript	_options_animation
+category:	"_Animation"
+buttontext:	"Animation keys"
+icon:	"control:spinner|type:#integer|range:[0,1000,100]|across:4"
+(
+	animationRange = Interval 0 (EventFired.val as integer )
 )

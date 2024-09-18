@@ -10,14 +10,17 @@ function addQuad1 QuadMenu =
 	--FooMenu.clearSeparators()
 
 
-	--QuadMenu.addSeparator()
-	--QuadMenu.addSeparators #()
+	QuadMenu.addMenu("_SceneLayers-Select")	title:"Select"	flat:false --separators: #( 1 ) --index:--index:--index:
+
+	QuadMenu.addSeparator()
 
 	QuadMenu.addMenu("_SceneLayers-Move")	title:"Move To"	flat:false --separators: #( 1 ) --index:--index:--index:
 	QuadMenu.addMenu("_SceneLayers-Copy")	title:"Copy To"	flat:false --separators: #( 1 ) --index:--index:--index:
+
+	QuadMenu.addSeparator()
+
 	QuadMenu.addMenu("_SceneLayers-Instance")	title:"Instance To"	flat:false --separators: #( 1 ) --index:--index:--index:
 	QuadMenu.addMenu("_SceneLayers-Reference")	title:"Reference To"	flat:false --separators: #( 1 ) --index:--index:--index:
-
 )
 
 /*------------------------------------------------------------------------------

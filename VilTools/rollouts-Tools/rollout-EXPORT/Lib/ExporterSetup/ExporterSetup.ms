@@ -42,6 +42,8 @@ struct ExporterSetup_v
 		selectExportNodeInListCallbackRemove()
 
 		if( (this._getSelectedNodes()).count > 0 ) then
+		(
+			format "EXPORT_NODES: %\n" export_nodes
 
 			case export_type of
 			(
@@ -49,6 +51,8 @@ struct ExporterSetup_v
 				#Print:	this._exportPrint()
 				#Unreal:	this._exportUnreal()
 			)
+		)
+
 
 		else
 			messageBox "Please select node in list" title:"Export node is not selected"

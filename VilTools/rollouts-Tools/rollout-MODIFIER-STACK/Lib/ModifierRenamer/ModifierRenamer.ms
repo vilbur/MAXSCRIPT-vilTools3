@@ -156,7 +156,7 @@ struct ModifierRenamer_v
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._printModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
 		--format "subObjectLevel:	% \n" subObjectLevel
-		mod_name = "PolySel"
+		mod_name = "Select"
 
 		mod_name += case subObjectLevel of
 		(
@@ -166,14 +166,13 @@ struct ModifierRenamer_v
 			4: " Face"
 			5: " Element"
 
-			default:	""
+			default:	"All"
 		)
 
 		if (mat_id = this.modObject.materialID) > 1 then
 			mod_name += " Mat  " + mat_id as string
 
 		mod_name --return
-
 	),
 	/** Name based on subobject level selected and material if not ID 1
 	  * @return E.g.: "Select Face Mat 1"

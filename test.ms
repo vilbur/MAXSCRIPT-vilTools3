@@ -1,59 +1,132 @@
 /* ISLANDS VIA VERTS */
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
+    function getVisiblePolys theEditablePoly steps:0 =
+    (
+        local baVisibleFaces = #{}
 
---heap_before = heapSize
---
---bitarr = #{}
---
---
---bitarr += #{1..1000000}
---
---
---bitarr *= #{}
---
-----format "bitarr[500]:	%\n" bitarr[500]
---format "bitarr:	%\n" bitarr
---format "bitarr.count:	%\n" bitarr.count
---format "bitarr.numberSet:	%\n" bitarr.numberSet
---format "bitarr.isEmpty:	%\n" bitarr.isEmpty
---
---
---
---bitarr += #{100..110}
---
---format "\n---------------\n"
-----format "heap_before: %\n" heap_before
-----
-----cleared = bitarr - #{1..50000}
-----format "bitarr: %\n" bitarr
-----
-----for item in bitarr do
-----	bitarr[item] = false
---
-----format "bitarr[500]:	%\n" bitarr[500]
---format "bitarr:	%\n" bitarr
---format "bitarr as Array:	%\n" (bitarr as Array)
---format "bitarr.count:	%\n" bitarr.count
---format "bitarr.numberSet:	%\n" bitarr.numberSet
---format "bitarr.isEmpty:	%\n" bitarr.isEmpty
+        if ( (isValidNode theEditablePoly) and (classOf theEditablePoly == Editable_Poly) ) do
+        (
+            local fOffsetFactor = 0.01
+
+            local rmgi = RayMeshGridIntersect()
+            rmgi.initialize 10
+            rmgi.addNode theEditablePoly
+            rmgi.buildGrid()
+
+            local m3CameraW = inverse (getViewTM())
+            local p3CameraPosW = m3CameraW.row4
+            local p3CameraDirW = -m3CameraW.row3
+
+            local p3Offset = m3CameraW.row3 * fOffsetFactor
+
+            local bIsPerspective = viewport.isPerspView()
+
+            -- Test faces by vertices
+
+            local iNumVerts = polyop.getNumVerts theEditablePoly
+            local ap3VertsPosW = #()
+
+            local p3VertCameraDirW = -p3CameraDirW
+            for iVert = 1 to iNumVerts do
+            (
+                local p3VertPosW = polyOp.getVert theEditablePoly iVert
+                append ap3VertsPosW p3VertPosW
+
+                if (bIsPerspective) do
+                (
+                    p3VertCameraDirW = normalize (p3CameraPosW - p3VertPosW)
+                    p3Offset = p3VertCameraDirW * fOffsetFactor
+                )
+
+                local iNumHits = rmgi.intersectRay (p3VertPosW + p3Offset) p3VertCameraDirW true
+                if (iNumHits == 0) do
+                (
+                    baVisibleFaces += polyOp.getFacesUsingVert theEditablePoly iVert
+                )
+            )
+
+            -- Test faces center
+            -- Commented because not correct: To be fixed :)
+/*
+            local iNumFaces = polyOp.getNumFaces theEditablePoly
+            local baAllFaces = #{1..iNumFaces}
+            local baFacesToTest = baAllFaces - baVisibleFaces
+
+            local p3CenterCameraDirW = -p3CameraDirW
+            for iFace in baFacesToTest do
+            (
+                local p3FaceCenterPosW = polyop.getFaceCenter theEditablePoly iFace
+
+                if (bIsPerspective) do
+                (
+                    p3CenterCameraDirW = normalize (p3CameraPosW - p3FaceCenterPosW)
+                    p3Offset = p3CenterCameraDirW * fOffsetFactor
+                )
+
+                local iNumHits = rmgi.intersectRay (p3FaceCenterPosW + p3Offset) p3CenterCameraDirW true
+                if (iNumHits == 0) do
+                (
+                    baVisibleFaces[iFace] = true
+                )
+            )
+*/
+            -- Test faces sub-edges
+
+            if (steps > 0) do
+            (
+                baFacesToTest = baAllFaces - baVisibleFaces
+
+                local iNumEdges = polyop.getNumEdges theEditablePoly
+
+                local baAllEdges = #{1..iNumEdges}
+                local baEdgesToTest = baAllEdges - (polyOp.getEdgesUsingFace theEditablePoly baFacesToTest)
+
+                local p3PointCameraDirW = -p3CameraDirW
+                for iEdge in baEdgesToTest do
+                (
+                    local aiEdgeVerts = polyOp.getEdgeVerts theEditablePoly iEdge
+
+                    local p3VertPosW_1 = ap3VertsPosW[aiEdgeVerts[1]]
+                    local p3VertPosW_2 = ap3VertsPosW[aiEdgeVerts[2]]
+
+                    local p3EdgeVecW = p3VertPosW_2 - p3VertPosW_1
+
+                    local ap3TestPosW = for fParam = 0.0 to 1.0 by (1.0 / (steps + 1.0)) collect (p3VertPosW_1 + (p3EdgeVecW * fParam))
+
+                    local iNumHits = -1
+                    for iPoint = 2 to (ap3TestPosW.count-1) while (iNumHits != 0) do
+                    (
+                        if (bIsPerspective) do
+                        (
+                            p3PointCameraDirW = normalize (p3CameraPosW - ap3TestPosW[iPoint])
+                            p3Offset = p3PointCameraDirW * fOffsetFactor
+                        )
+
+                        iNumHits = rmgi.intersectRay (ap3TestPosW[iPoint] + p3Offset) p3PointCameraDirW true
+                        if (iNumHits == 0) do
+                        (
+                            baVisibleFaces += polyOp.getFacesUsingEdge theEditablePoly iEdge
+                        )
+                    )
+                )
+            )
+
+            -- Select Visible Faces
+
+            subObjectLevel = 4
+            polyOp.setFaceSelection theEditablePoly baVisibleFaces
+
+            rmgi.free()
+            gc light:true
+
+            return baVisibleFaces
+        )
+    )
+
+    theNode = (selection as Array)[1]
+    --getVisiblePolys theNode steps:0
+    getVisiblePolys theNode steps:1
 
 
---format "\n"
---
---format "cleared:	%\n" cleared
---format "cleared.count:	%\n" cleared.count
---format "cleared.numberSet:	%\n" cleared.numberSet
---
---
---format "heap_before: %\n" ( (heap_before - heapSize ) /1024 /1024 )
 
-
-arr = #{}
-
-bitarr = #{1618, 1624, 2408, 2547, 6407, 6690, 7783, 9356, 42379, 42393, 44424, 46925, 46989, 47162..47163, 47406, 47511, 48215, 48349, 48353, 48446, 48700, 50168, 52131, 52744, 52827, 52893, 53226, 53255, 53485, 54120, 54634..54635, 54650, 54652, 54774, 54808, 55177, 55182, 55332, 55706, 85514, 85518, 88180, 88187, 100906, 102615, 102940, 106648, 106706, 109566, 109675, 113011, 117789, 118113, 118509, 123109, 123516, 127821, 128501, 128670, 128875..128876, 129013, 129078, 129087}
-
-
-for i = 1 to 100 do
-
-append arr bitarr

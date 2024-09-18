@@ -3,7 +3,7 @@
  */
 macroscript	_options_install_menus
 category:	"_Options"
-buttontext:	"INSTALL MENUS"
+buttontext:	"INSTALL Menus"
 tooltip:	"Install Menus and Quad menus for VilTools3"
 icon:	"MENU:true"
 (
@@ -12,6 +12,8 @@ icon:	"MENU:true"
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
 		format "Macro:EventFired:	% \n" EventFired
+
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
 
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\ContentLoader\ContentSubrollouts\ContentRollout\ScriptFile\ScriptFile.ms"
 
@@ -54,21 +56,22 @@ icon:	"MENU:true"
  */
 macroscript	_options_quadmenu_reset
 category:	"_Options"
-buttontext:	"Reset Menus"
+buttontext:	"RESET Menus"
 tooltip:	"Load default quad menu and menus"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
 
 	--EMPTY_QUAD =  Menu_v("_Empty" ) quad:true
 
-	/* LAOD 3DS MAX DEFAULT .mnux FILE */
-	menuMan.loadMenuFile ( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/config-files/QuadMenu-default.mnux" )  -- "./../../../QuadMenu/config-files/QuadMenu-default.mnux"
+	if queryBox "REST ALL MENUS AND QUADMENUS ?" title:"RESET MENUS" then
+	(
+		/* LAOD 3DS MAX DEFAULT .mnux FILE */
+		menuMan.loadMenuFile ( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/config-files/QuadMenu-default.mnux" )  -- "./../../../QuadMenu/config-files/QuadMenu-default.mnux"
 
-   quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
-   if quadmenu != undefined do menuMan.setViewportRightClickMenu #nonePressed quadmenu
+	   quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
+	   if quadmenu != undefined do menuMan.setViewportRightClickMenu #nonePressed quadmenu
 
-   quadmenu = menuMan.findQuadMenu "Modeling 1 [Cntrl+RMB]"
-   if quadmenu != undefined do menuMan.setViewportRightClickMenu #controlPressed quadmenu
-
-
+	   quadmenu = menuMan.findQuadMenu "Modeling 1 [Cntrl+RMB]"
+	   if quadmenu != undefined do menuMan.setViewportRightClickMenu #controlPressed quadmenu
+	)
 )

@@ -1,5 +1,11 @@
 
 /** Scene layers
+
+  TODO:
+
+	REMNAME THIS STRUCT TO LayerTypesManager_v
+
+
  */
 struct SceneLayers_v
 (
@@ -43,26 +49,24 @@ struct SceneLayers_v
 	  *
 	  * @param name mode #MOVE|#COPY|#INSTANCE|#REFERENCE
 	 */
-	function moveToLayerType objs layer_type: mode:#MOVE =
+	function moveToLayerType _objects layer_type: mode:#MOVE =
 	(
 		--format "\n"; print "SceneLayers_v.moveToLayer()"
-		layer_type = layer_type as name
+		--layer_type = layer_type as name
 
 		--new_layers = #()
 		--top_layer  = this._getOrCreateTopLayer(layer_type)
 		--top_layers = this.getTopLayers()
 
-		source_objects = this._getSourceObjects (objs)
 
-
-		for source_object in source_objects do
+		for obj in (_objects = this._getSourceObjects (_objects)) do
 		(
-			objects_to_move =  if mode != #MOVE then
-									this._cloneNodes (source_object) (mode)
-								else
-									#(source_object)
+			obj_to_move =  if mode != #MOVE then
+								this._cloneNodes (obj) (mode)
+							else
+								#(obj)
 
-			for object_to_move in objects_to_move do
+			for object_to_move in obj_to_move do
 				this._moveNodeToLayer(object_to_move)(layer_type)
 		)
 
@@ -81,7 +85,7 @@ struct SceneLayers_v
 
 	/** Create layer by object
 	 */
-	function createLayerByObject objs =
+	function createLayerByObject _objects =
 	(
 		--format "\n"; print "SceneLayers_v.createLayerByObject()"
 
@@ -97,11 +101,11 @@ struct SceneLayers_v
 		)
 
 		layers = #()
-		--format "OBJS: %\n" objs
-		objs = this._getSourceObjects (objs)
-		--format "OBJS: %\n" objs
+		--format "OBJS: %\n" _objects
+		_objects = this._getSourceObjects (_objects)
+		--format "OBJS: %\n" _objects
 
-		for obj in objs do
+		for obj in _objects do
 		(
 			local obj_layer
 
@@ -120,6 +124,24 @@ struct SceneLayers_v
 		)
 
 		layers --return
+	),
+
+	/** Select layer type
+	 */
+	function selectLayerType select_more:false layer_type: =
+	(
+		--format "\n"; print "SceneLayers_v.selectLayerType()"
+
+		new_selection = #()
+
+		for obj in (_objects = this._getSourceObjects (_objects)) do
+		(
+
+
+
+		)
+
+
 	),
 
 	/*
@@ -180,9 +202,9 @@ struct SceneLayers_v
 		 */
 		layer = this._createTargetLayersHierarchy(obj) (layer_type) (layer_names_source)
 
-		--if classOf objs != Array then objs = #(objs)
+		--if classOf _objects != Array then _objects = #(_objects)
 		--
-		--for obj in objs do
+		--for obj in _objects do
 			this._renameObjectBySuffix (obj) (layer_type)
 		--
 		layer.addNodes obj
@@ -374,26 +396,26 @@ struct SceneLayers_v
 	  *
 	  * @return Array
 	 */
-	function _getSourceObjects objs =
+	function _getSourceObjects _objects =
 	(
 		--format "\n"; print "SceneLayers_v._getSourceObjects()"
-		if classOf objs != Array then
-			objs = if classOf objs == PathName then objs = objs as Array else #(objs)
+		if classOf _objects != Array then
+			_objects = if classOf _objects == PathName then _objects = _objects as Array else #(_objects)
 
 		/* REMOVE CHILDREN FROM SELECTION - avoid mutliple duplicates when function maxOps.CloneNodes() whith expandHierarchy:TRUE is used */
 		if mode != #MOVE then
 		(
 			/* GET OBJECTS WITH CHILDREN */
-			parents = for obj in objs where obj.children.count > 0 collect obj
+			parents = for obj in _objects where obj.children.count > 0 collect obj
 
 			children = this._getGroupMembers (parents)
 
 			/* REMOVE CHILDREN FROM OBJECTS */
-			for child in children where (index = findItem objs child ) > 0 do
-				deleteItem objs index
+			for child in children where (index = findItem _objects child ) > 0 do
+				deleteItem _objects index
 		)
 
-		objs --return
+		_objects --return
 	),
 
 	/** Get group members of closed group

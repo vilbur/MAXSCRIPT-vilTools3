@@ -47,6 +47,8 @@ struct PrintExporter_v
 		format "\n"; print "PrintExporter_v.export()"
 		format "\n-----------\nDICTIONARY:params:%\n" params; for data_pair in params do format "%:	%\n" data_pair.key data_pair.value
 
+		--if LayerManager.isDialogOpen() then
+		--	LayerManager.closeDialog()
 
 		this._setExporterOptions()
 
@@ -122,16 +124,20 @@ struct PrintExporter_v
 	function _exportNode export_node =
 	(
 		format "\n"; print "PrintExporter_v._exportNode()"
+		format "EXPORT_NODE: %\n" export_node
 
 		max create mode
 
 		export_path 	= this.getExportFilePath(export_node)
 		node_children	= export_node.getAllChildren()
 		export_objects	= node_children + this.fix_position_dummy
-		format "export_objects.count: %\n" export_objects.count
+		--format "EXPORT_OBJECTS: %\n" export_objects
+
+		--for obj in export_objects do
+		--format "export_object: %\n" obj
 
 		this._excludeObjects(export_objects)
-		format "export_objects.count: %\n" export_objects.count
+		--format "export_objects.count: %\n" export_objects.count
 
 		/* ENABLE MODIFIERS */
 		if this.params[#MESHSMOOTH] then

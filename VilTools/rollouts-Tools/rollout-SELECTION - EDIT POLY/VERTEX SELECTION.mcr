@@ -28,45 +28,6 @@ icon:	"MENU:false|across:3"
 
 )
 
-
-
---
---/**
---  *
---  */
---macroscript	epoly_select_lowest_point
---category:	"_Epoly-Selection"
---buttonText:	"Get lowest vert"
---toolTip:	"Select lowest on axis Z vertex of selected vertices"
---icon:	"MENU:true|across:3"
---(
---
---	on execute do
---	undo "Get lowest vert" on
---	(
---
---	)
---
---)
---
---/**
---  *
---  */
---macroscript	epoly_select_lowest_points_in_grid
---category:	"_Epoly-Selection"
---buttonText:	"Get lowest grid"
---toolTip:	"Select lowest verts in suqaures of xy"
---icon:	"MENU:true|across:3"
---(
---	on execute do
---	undo "Get lowest grid" on
---	(
---
---
---
---	)
---)
-
 /**
   *
   */
@@ -99,6 +60,7 @@ icon:	"MENU:true|across:3"
 		)
 	)
 )
+
 
 --global SAVE_LOAD_SELECTION
 

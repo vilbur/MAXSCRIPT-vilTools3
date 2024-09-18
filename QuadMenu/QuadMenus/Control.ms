@@ -25,9 +25,9 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addMenu("_Visibility-Hide")	--flat:false --index:1
 
-	QuadMenu.addSeparator()
-
-	QuadMenu.addMenu("_Selection-Visibility")	--flat:false --index:1
+	--QuadMenu.addSeparator()
+	--
+	--QuadMenu.addMenu("_Selection-Visibility")	--flat:false --index:1
 
 	QuadMenu.addSeparator()
 
@@ -48,7 +48,7 @@ function addQuad2 QuadMenu =
 
 	SelFilterMenu	= Menu_v("_Selection-Filter")
 
-	SelFilterMenu.addSeparators #( 4 )
+	--SelFilterMenu.addSeparators #( 4 )
 
 	QuadMenu.addMenu( SelFilterMenu )	--flat:false --index:1
 

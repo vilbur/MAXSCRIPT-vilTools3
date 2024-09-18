@@ -77,7 +77,10 @@ icon:	"pos:[ 246, 24 ]"
 
 				for obj in objects_to_link do object_names += "\n" + obj.name
 
-				messageBox ("OBJECTS: "+object_names+"\n\nNODE:\n" + _nodes[1].name ) title:"LINK TO NODE"  beep:false
+				if objects_to_link.count < 200 then
+					messageBox ("OBJECTS: "+object_names+"\n\nNODE:\n" + _nodes[1].name ) title:"LINK TO NODE"  beep:false
+				else
+					messageBox ( objects_to_link.count as string + " OBJECTS HAS BEEN LINKED TO NODE:\n" + _nodes[1].name ) title:"LINK TO NODE"  beep:false
 			)
 		)
 )

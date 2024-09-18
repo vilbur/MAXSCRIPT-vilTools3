@@ -2,19 +2,11 @@
 /*------------------------------------------------------------------------------
 	LAYERS MANGER DIALOGS
 ------------------------------------------------------------------------------*/
-/**
- */
-function showLayerManagerCallback =
-(
-	try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
 
-	if not LayerManager.isDialogOpen()  then
-		LayerManager.editLayerByName ""
-)
 
 /** OPEN LAYERS MANAGER
  */
-macroscript	layers_manager_autorun
+macroscript	layers_manager_keep_open_close
 category:	"_Layers-Dialogs"
 buttontext:	"Layer Manager"
 tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
@@ -22,17 +14,33 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 
 	on execute do
+	(
+		--format "EventFired: %\n" EventFired
 		if EventFired == undefined or ( EventFired.get #val ) then -- run on startup if no fire by event
 		(
 			--LayerManager.editLayerByName ""
-			showLayerManagerCallback()
+			/* OEPN LAYER MANAGER ON SCENE OPEN */
+			try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
+
+			/* TOGGLE LAYER MANAGER */
+			if LayerManager.isDialogOpen() then
+				LayerManager.closeDialog()
+			else
+				LayerManager.editLayerByName ""
+
+
+			/* SWITCH UI BUTTON STATE IF EXECUTED FROM QUAD MENU */
+			if EventFired == undefined and ROLLOUT_layers != undefined then
+				ROLLOUT_layers.CBXBTN_layer_manager.state = LayerManager.isDialogOpen()
+
 		)
-		else
+		else -- if checkbutton is unchecked
 		(
 			LayerManager.closeDialog()
 
 			try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
 		)
+	)
 )
 
 --/** SCENE EXPLORER

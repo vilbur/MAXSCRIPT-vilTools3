@@ -7,7 +7,7 @@ function addQuad1 QuadMenu =
 
 	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2, 7, 9 ) --title:"" flat:false
 	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2, 8, 11 ) --title:"" flat:false
-	QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2,  11 ) --title:"" flat:false
+	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2,  11 ) --title:"" flat:false
 
 	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
 
