@@ -46,21 +46,25 @@ objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
 
 --------------------------------------------------------------------------------*/
 
-
 /* MOVE OBJECT TO lAYER */
---SceneLayers.moveToLayerType( $Box*[1] )	layer_type:(#SOURCE)
+SceneLayers.moveToLayerType( $Box*[1] )	layer_type:#SOURCE
 
 
 /* COPY OBJECT TO lAYER */
---SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:("FINAL")	mode:#COPY
+SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:"FINAL"	mode:#COPY
+--
+--
+--/* COPY OBJECT AS REFERENCE TO lAYER */
+--SceneLayers.moveToLayerType( $Box* )	layer_type:#EDIT	mode:#REFERENCE
+--
+--
+--/* COPY OBJECT AS INSTANCE TO lAYER */
+--SceneLayers.moveToLayerType( $Box* )	layer_type:#PRINT	mode:#INSTANCE
 
 
-/* COPY OBJECT AS REFERENCE TO lAYER */
---SceneLayers.moveToLayerType( $Box* )	layer_type:(#EDIT)	mode:#REFERENCE
-
-
-/* COPY OBJECT AS INSTANCE TO lAYER */
-SceneLayers.moveToLayerType( $Box* )	layer_type:(#PRINT)	mode:#INSTANCE
+/* SELECT BY lAYER TYPE */
+SceneLayers.selectLayerType( $Box*[1] ) layer_type:#SOURCE
+SceneLayers.selectLayerType( $Box*[1] ) layer_type:#FINAL select_more:true
 
 
 /* GROUP TEST */
@@ -70,7 +74,5 @@ SceneLayers.moveToLayerType( $Box* )	layer_type:(#PRINT)	mode:#INSTANCE
 
 format "layer_edit: %\n" layer_edit
 
-
-actionMan.executeAction 0 "40021"  -- Selection: Select All
-
-
+/* SELECT ALL - help for debug */
+--actionMan.executeAction 0 "40021"  -- Selection: Select All

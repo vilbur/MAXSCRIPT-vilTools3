@@ -284,9 +284,9 @@ struct PrintExporter_v
     function _fixExportPosition =
 	(
 		--format "\n"; print "PrintExporter_v._fixExportPosition()"
-		--format "this.params[#FIX_POSITION]	= % \n" this.params[#FIX_POSITION]
-		--format "this.anim_keys[#position] > 0	= % \n" (this.anim_keys[#position] > 0)
-		this.fix_position_dummy = if this.params[#FIX_POSITION] or this.anim_keys[#position] > 0 then
+
+		--this.fix_position_dummy = if this.params[#FIX_POSITION] or this.anim_keys[#position] > 0 then
+		this.fix_position_dummy = if this.params[#FIX_POSITION] then
 			(PrinterVolume_v(this.params[#EXPORT_SCALE])).fixPositionionObjects()
 		else
 			#()

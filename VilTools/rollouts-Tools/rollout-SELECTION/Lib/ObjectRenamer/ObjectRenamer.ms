@@ -36,8 +36,8 @@ struct ObjectRenamer_v
 
 	/* dependency */
 	InstaceManager = InstaceManager_v(), 	-- "./../InstaceManager/InstaceManager.ms"
-	--ascii_lowercase = "abcdefghijklmnopqrstuvwxyz",
-	--ascii_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+	----ascii_lowercase = "abcdefghijklmnopqrstuvwxyz",
+	----ascii_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
 
 
 	public
@@ -47,20 +47,11 @@ struct ObjectRenamer_v
 	function rename _objects  =
 	(
 		--format "\n"; print "ObjectRenamer_v.rename()"
-
-		--format "this.prefix:	% \n" this.prefix
-		--format "this.sufix:	% \n" this.sufix
-
 		this._objects = if classOf _objects == ObjectSet then _objects as Array else _objects
 
 		this.sanitizeBaseName()
 
 		objects_to_rename	= this.InstaceManager.filterUnique(_objects)
-
-		 --format "\n"
-		 --for obj in _objects do format "obj:	%\n" obj.name
-		 --format "\n"
-		 --for obj in objects_to_rename do format "objects_to_rename:	%\n" obj.name
 
 		for i = 1 to objects_to_rename.count do
 			this._renameObject ( objects_to_rename[i] )( i )
@@ -71,6 +62,7 @@ struct ObjectRenamer_v
 	function getSufixNumber index objects_count =
 	(
 		--format "\n"; print "ObjectRenamer_v.getSufixNumber()"
+		--format "index: %\n" index
 		--format "objects_count:	% \n" objects_count
 
 		if objects_count > 1 then
@@ -87,7 +79,6 @@ struct ObjectRenamer_v
 		)
 		else
 			""
-
 	),
 
 	private
@@ -97,8 +88,10 @@ struct ObjectRenamer_v
 	function _renameObject obj index =
 	(
 		--format "\n-------------\n"; print "ObjectRenamer_v._renameObject()"
+		--format "index: %\n" index
 
 		main_name = (this._getPrefixSufix(obj)(#PREFIX)) + base_name + this._getPrefixSufix(obj)(#SUFIX) + (this.getSufixNumber (index) (objects_to_rename.count) )
+		--format "main_name: %\n" main_name
 
 		for data in ins_or_ref do
 			if (ins_or_ref_objects = this._getInstancesOrReferences (obj) data.key).count > 1 then
@@ -197,7 +190,7 @@ struct ObjectRenamer_v
 	 */
 	on create do
 	(
-		print("ObjectRenamer_v.onCreate()")
+		--print("ObjectRenamer_v.onCreate()")
 		--ConstructPropeties test:this
 	)
 )

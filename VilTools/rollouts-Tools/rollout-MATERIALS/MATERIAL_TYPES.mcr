@@ -36,7 +36,7 @@ buttonText:	"Standard Grey"
 tooltip:	"TURN ON"
 icon:	"MENU:true"
 (
-	mat = (Material_v()).StandartMat.create "Grey" diffuse:( color 200 200 200 )
+	mat = (Material_v()).StandartMat.create "Grey" diffuse:( color 128 128 128 )
 
 	selection.material = mat
 )
@@ -136,9 +136,3 @@ icon:	"menu:true"
 --		select _selection
 --	)
 --)
-
-
-
-
-
-

@@ -52,7 +52,7 @@ struct SceneLayers_v
 	function moveToLayerType _objects layer_type: mode:#MOVE =
 	(
 		--format "\n"; print "SceneLayers_v.moveToLayer()"
-		--layer_type = layer_type as name
+		layer_type = layer_type as name
 
 		--new_layers = #()
 		--top_layer  = this._getOrCreateTopLayer(layer_type)
@@ -109,7 +109,7 @@ struct SceneLayers_v
 		(
 			local obj_layer
 
-			obj_name_stripped = this._removeTypeSuffix obj.name
+			obj_name_stripped = this._removeTypeSuffix obj.na
 
 			obj_name_stripped = this._regExReplace obj_name_stripped "[_-]*\d+$" ""
 
@@ -128,19 +128,32 @@ struct SceneLayers_v
 
 	/** Select layer type
 	 */
-	function selectLayerType select_more:false layer_type: =
+	function selectLayerType _objects layer_type: select_more:false =
 	(
 		--format "\n"; print "SceneLayers_v.selectLayerType()"
+		layer_type = layer_type as name
+
+		function isLayerWithoutSuffix layer_type = findItem this.layers_without_suffix layer_type > 0
 
 		new_selection = #()
 
-		for obj in (_objects = this._getSourceObjects (_objects)) do
+		for obj in this._getSourceObjects (_objects) do
 		(
+			if isLayerWithoutSuffix(layer_type) then
+				 target_obj = getNodebyName (this._removeTypeSuffix obj.name)
 
+			if target_obj == undefined then
+				 target_obj = getNodebyName (this._replaceNameBySuffix obj (layer_type as string ))
 
+			format "obj: %\n" obj
+			format "target_obj: %\n" target_obj
 
+			if target_obj != undefined then
+				append new_selection target_obj
 		)
 
+		if new_selection.count > 0 then
+			(if select_more then selectmore else select) new_selection
 
 	),
 
@@ -153,6 +166,7 @@ struct SceneLayers_v
 	function setVisibility isolate:false layer_type: =
 	(
 		format "\n"; print "SceneLayers_v.setVisibility()"
+		layer_type = layer_type as name
 
 		top_layer  = this._getOrCreateTopLayer(layer_type)
 
@@ -205,20 +219,22 @@ struct SceneLayers_v
 		--if classOf _objects != Array then _objects = #(_objects)
 		--
 		--for obj in _objects do
-			this._renameObjectBySuffix (obj) (layer_type)
+		obj.name = this._replaceNameBySuffix (obj) (layer_type)
 		--
 		layer.addNodes obj
 	),
 
 	/** Rename object by type
+
+	* return string E.G.: ""
 	 */
-	function _renameObjectBySuffix obj type_suffix =
+	function _replaceNameBySuffix obj type_suffix =
 	(
 		--format "\n"; print "SceneLayers_v.renameObjectBySuffix()"
-		obj.name = (this._removeTypeSuffix obj.name)
+		obj_name = (this._removeTypeSuffix obj.name)
 
 		if findItem layers_without_suffix type_suffix == 0 then
-			obj.name += (delimeter + toLower(type_suffix as string ) )
+			obj_name += (delimeter + toLower(type_suffix as string ) )
 	),
 
 	/** Create target layers hierarchy
@@ -368,9 +384,9 @@ struct SceneLayers_v
 		RegExR.Replace _string _replace
 	),
 
-	/** Rmove layer type suffix
+	/** Remove layer type suffix
 	 */
-	function _removeTypeSuffix _string =
+	function _removeTypeSuffix source_name =
 	(
 		--format "\n"; print "SceneLayers_v._removeTypeSuffix()"
 		search_string = this.type_suffix_pattern
@@ -378,7 +394,7 @@ struct SceneLayers_v
 		--RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+search_string+")$") this.IgnoreCase )
 		RegExR = ( dotNetObject "System.Text.RegularExpressions.Regex" ("[-_]*("+search_string+"[\d]*)$") this.IgnoreCase )
 
-		RegExR.Replace _string ""
+		RegExR.Replace source_name ""
 	),
 
 	/** Rmove layer type suffix
@@ -456,6 +472,7 @@ struct SceneLayers_v
 
 		return counter
 	),
+
 
 	/**
 	 */

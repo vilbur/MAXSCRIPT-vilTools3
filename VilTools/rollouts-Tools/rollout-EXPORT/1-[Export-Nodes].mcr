@@ -169,7 +169,7 @@ icon:	"pos:[ 180, 72]"
 
 			on NODE_GROUP_NAME_ROLLOUT open do
 			(
-				TextBox.Text	= _nodes[1].name
+				TextBox.Text	= toUpper _nodes[1].name
 				TextBox.BackColor	= ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
 			)
 
@@ -246,7 +246,7 @@ macroscript	_export_nodes_list
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"control:multilistbox|across:2|event:#selectionEnd|height:20|width:160|offset:[ 0, -96]"
+icon:	"control:multilistbox|across:2|event:#selectionEnd|height:18|width:160|offset:[ 0, -128]"
 --icon:	"control:multilistbox|across:2|height:20|width:160|offset:[ 0, -96]"
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV

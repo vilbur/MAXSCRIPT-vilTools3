@@ -96,11 +96,13 @@ struct ExporterSetup_v
 		Exporter.params[#EXPORT_FORMAT]	= #("obj", "stl")[print_rollout.RB_export_format.state]
 		Exporter.params[#EXPORT_SCALE]	= ROLLOUT_export.SPIN_export_size.value
 		Exporter.params[#SUBDIR_BY_NODE]	= ROLLOUT_export.CBX_sub_directory_by_node_name.checked
-		Exporter.params[#FIX_POSITION]	= print_rollout.CBX_fix_position.state
+
+		Exporter.params[#FIX_POSITION]	= ROLLOUT_3d_print.CBX_fix_position.state
+		Exporter.params[#MESHSMOOTH]	= ROLLOUT_3d_print.CBX_meshsmooth.state
+
 		Exporter.params[#PROJECT_FILE_OPEN]	= print_rollout.CBX_project_file_open.state
 		Exporter.params[#CLOSE_INSTANCES]	= print_rollout.CBX_single_instance.state
 		Exporter.params[#OPEN_IN]	= print_rollout.RB_open_in_program.state
-		Exporter.params[#MESHSMOOTH]	= print_rollout.CBX_meshsmooth.state
 		Exporter.params[#EXCLUDE]	= print_rollout.ET_exclude.text
 
 		Exporter.export()

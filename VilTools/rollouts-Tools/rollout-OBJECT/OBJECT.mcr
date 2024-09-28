@@ -3,7 +3,7 @@
 macroscript	selection_link_to_last
 category:	"_Selection-Object"
 buttontext:	"Edit Properties"
-toolTip:	"Edi object properties"
+toolTip:	"Edit object properties"
 icon:	"MENU:true"
 (
 

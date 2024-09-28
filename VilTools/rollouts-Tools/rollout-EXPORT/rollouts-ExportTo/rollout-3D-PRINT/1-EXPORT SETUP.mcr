@@ -10,7 +10,7 @@ buttontext:	"Fix Position"
 toolTip:	"For objects to keep position on export\n\n(Create boxes in corners of print plane to keep exported position)"
 icon:	"control:checkbox|across:2|offset:[ 16, 0 ]"
 (
-	--format "EventFired	= % \n" EventFired
+	format "EventFired	= % \n" EventFired
 	--format "EventFired.Control.triState	= % \n" EventFired.Control.triState
 	----format "CBX_FIX_POSITION_TRISTATE	= % \n" CBX_FIX_POSITION_TRISTATE
 	----(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
@@ -33,4 +33,3 @@ icon:	"control:checkbox|across:2|offset:[ 16, 0 ]"
 	format "EventFired	= % \n" EventFired
 	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)
 )
-

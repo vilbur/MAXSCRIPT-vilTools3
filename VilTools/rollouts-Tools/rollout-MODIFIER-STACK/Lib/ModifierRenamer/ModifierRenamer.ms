@@ -113,9 +113,9 @@ struct ModifierRenamer_v
 
 		for val in #( selection_option, smooth_type, material_option  ) where val != "" do chamfer_name += " " + val
 
-		ammount = this.convertToDisplayUnits(this.modObject.amount)
+		amount = this.convertToDisplayUnits(this.modObject.amount)
 
-		chamfer_name +=  " " + (if ammount as integer == ammount then ammount as integer else ammount) as string
+		chamfer_name +=  " " + (if amount == ceil amount then amount as integer else (amount * 10)) as string
 		--format "chamfer_name:	% \n" chamfer_name
 
 		chamfer_name --return
@@ -163,7 +163,7 @@ struct ModifierRenamer_v
 			1: " Verts"
 			2: " Edge"
 			3: " Border"
-			4: " Face"
+			4: " Faces"
 			5: " Element"
 
 			default:	"All"
@@ -182,9 +182,6 @@ struct ModifierRenamer_v
 		--format "\n"; print "ModifierRenamer_v._Vol__Select()"
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" (mod_values = this._getModProperties()); for data_pair in mod_values do format "%:	%\n" data_pair.key data_pair.value
 
-		--format "subObjectLevel:	% \n" subObjectLevel
-		mod_name = "vSel"
-
 		/** Get texture name
 		  *
 		  */
@@ -201,24 +198,24 @@ struct ModifierRenamer_v
 				filenameFromPath(map.filename)
 		)
 
+		/* SELECTION METHOD */
+		mod_name = case modObject.method of
+		(
+			0: "vSel" -- REPLACE
+			1: "vSel Add"
+			2: "vUnselect"
+			default:	""
+		)
+
 		/* STACK SELECTIONM LEVEL */
 		if this.modObject.volume != 3 then -- if not by object
 			mod_name += case modObject.level of
 			(
 				0: " Object"
 				1: " Vertex"
-				2: "" -- FACE
+				2: " Faces" -- FACE
 				default:	""
 			)
-
-		/* SELECTION METHOD */
-		mod_name += case modObject.method of
-		(
-			0: "" -- REPLACE
-			1: " add"
-			2: " substr"
-			default:	""
-		)
 
 		/* INVERT */
 		--mod_name += if this.modObject.invert then " not" else ""
@@ -228,9 +225,9 @@ struct ModifierRenamer_v
 		if modObject.level > 0 then -- if not "object" mode
 			mod_name += case modObject.volume of
 			(
-				0: " Box"
-				1: " Sphere"
-				2: " Cylinder"
+				0: " by Box"
+				1: " by Sphere"
+				2: " by Cylinder"
 				3: " by "    + modObject.node.name -- by object
 				4: " by "    + getTextureName(modObject.texture) + ( if modObject.mapChannel > 1 then " "+ modObject.mapChannel as string else "" )
 				5: " ID " + modObject.matID	as string
@@ -294,18 +291,54 @@ struct ModifierRenamer_v
 		val --return
 	),
 
-	/**  meshsmooth
+
+	/*------------------------------------------------------------------------------
+		MODIFIER TYPES
+	--------------------------------------------------------------------------------*/
+
+	/**  MESHSMOOTH
 	  *
 	  */
 	function _Meshsmooth =
 	(
 		--format "\n"; print "ModifierRenamer_v._Meshsmooth()"
-		mod_name = "Meshsmooth " + this.modObject.iterations  as string
+		mod_name = "Meshsmooth"
+
+		if this.modObject.iterations > 1 then
+			mod_name += " "+this.modObject.iterations  as string
+
+
+		if this.modObject.sepBySmGroups then
+			mod_name += " by SG"
 
 		mod_name --return
 	),
 
-	/**  Smooth
+	/** SHELL
+	 */
+	function _shell =
+	(
+		--format "\n"; print "ModifierRenamer_v._shell()"
+		mod_name = "Shell"
+		suffix   = ""
+
+
+		if this.modObject.selectInnerFaces then
+			suffix   += " Inner"
+
+		if this.modObject.selectOuterFaces then
+			suffix   += " Outter"
+
+		if this.modObject.selectEdgeFaces then
+			suffix   += " Edge"
+
+		if suffix != "" then
+			mod_name += " Select" + suffix + " Faces"
+
+		mod_name --return
+	),
+
+	/**  SMOOTH
 	  */
 	function _Smooth =
 	(
@@ -328,7 +361,7 @@ struct ModifierRenamer_v
 			"Smooth"
 	),
 
-	/** Symmetry
+	/** SYMMETRY
 	 */
 	function _symmetry =
 	(
@@ -363,7 +396,7 @@ struct ModifierRenamer_v
 		mod_name --return
 	),
 
-	/** Tessellate
+	/** TESSELLATE
 	 */
 	function _tessellate =
 	(
@@ -374,7 +407,7 @@ struct ModifierRenamer_v
 		mod_name --return
 	),
 
-	/**  uvwmap
+	/**  UVWMAP
 	 */
 	function _Uvwmap =
 	(
@@ -401,7 +434,7 @@ struct ModifierRenamer_v
 	),
 
 
-	/**  spline offset
+	/**  SPLINE OFFSET
 	  *
 	  */
 	function _SplineOffset =
@@ -414,7 +447,7 @@ struct ModifierRenamer_v
 		mod_name --return
 	),
 
-	/** _UVW_Xform
+	/** UVW_XFORM
 	 */
 	function _UVW_Xform =
 	(

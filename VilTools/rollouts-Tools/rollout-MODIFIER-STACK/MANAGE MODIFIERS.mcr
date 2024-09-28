@@ -44,13 +44,9 @@ icon:	"MENU:true"
 		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
 		(
 
-			--modPanel.addModToSelection (copy curr_mod)  ui:on
+			modPanel.addModToSelection (copy curr_mod)  ui:on
 
-
-
-			--addModifierWithLocalData selection[1]  curr_mod selection[1] <modifier index in source stack>
-
-
+			----addModifierWithLocalData selection[1]  curr_mod selection[1] <modifier index in source stack>
 		)
 	)
 )
@@ -141,5 +137,61 @@ icon:	"MENU:true"
 
 		else
 			messageBox "There is no objects with this modifier instance" title:"MODIFIER INSTANCE"
+	)
+)
+
+macroscript	modifiers_select_modifiers_by_same_name
+category:	"_Modifiers-Manage"
+buttontext:	"Select By Name"
+toolTip:	"Select objects with modifier of same name as current modifier"
+--toolTip:	"Turn off \"Show end result\" on subobject edit"
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		max modify mode
+
+		objs_with_mods = #()
+
+		if ( _mod = modPanel.getCurrentObject() ) != undefined then
+		(
+			mod_name = _mod.name
+
+			for obj in objects where not obj.isHidden and obj.modifiers[mod_name] != undefined do
+				append objs_with_mods obj
+
+			if objs_with_mods.count > 0 then
+				select objs_with_mods
+		)
+
+	)
+)
+
+macroscript	modifiers_delete_modifiers_by_same_name
+category:	"_Modifiers-Manage"
+buttontext:	"Delete By Name"
+toolTip:	"Delete modifiers of same name as current modifier from visible objects"
+--toolTip:	"Turn off \"Show end result\" on subobject edit"
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		max modify mode
+
+		objs_with_mods = #()
+
+		if ( _mod = modPanel.getCurrentObject() ) != undefined \
+		and  queryBox ( "Delete modifier from visible objects ?\n\n" + (mod_name = _mod.name ) ) title:"DELETE MODIFIER" then
+		(
+			for obj in objects where not obj.isHidden and (mod_found = obj.modifiers[mod_name]) != undefined do
+				deleteModifier obj mod_found
+				--append objs_with_mods obj
+
+			--if objs_with_mods.count > 0 then
+			--	select objs_with_mods
+		)
+
 	)
 )
