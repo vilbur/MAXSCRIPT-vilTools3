@@ -23,7 +23,7 @@ struct LayersToogleDialog_v
 	tooltip_layer = "CRL: Select objects in layer. \nSHIFT:Select children layers. \nCRL + SHIFT: Select objects in all nested layers",
 
 	/* dependency */
-	LayersManager = LayersManager_v(),
+	LayersManager = LayersManager_v(), --"./../LayersManager/LayersManager.ms"
 
 	RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" ),
 
@@ -39,18 +39,44 @@ struct LayersToogleDialog_v
 	function create layers: =
 	(
 		format "\n"; print "LayersToogleDialog_v.create()"
+		format "LAYERS: %\n" layers
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 
-		if layers == unsupplied then
-			layers = this.getIniOrSelectedOrCurrent() -- after ini
+		--if layers == unsupplied then
+		--	this.layers = this.getIniOrSelected() -- after ini
+		--
+		--if layers == undefined then
+		--	this.layers = this.LayersManager.getAllLayers() -- after ini
+		----
+		--if (layers_ini = this.getLayersFromIni()).count == 0 then
+		--	LayersManager.getSelectedLayers()
+		--
+		--else
+		--	layers_ini --return
 
+		if layers == unsupplied then
+		(
+			this.layers = if (layers_ini = this.getLayersFromIni()).count > 0 then
+				layers_ini --return
+
+			else if (layers_selected = LayersManager.getSelectedLayers()) != undefined then
+				layers_selected
+
+			else
+				LayersManager.getAllLayers()
+		)
+
+		--this.layers = LayersManager.getAllLayers()
+		--this.layers = LayersManager.getSelectedLayers()
+
+		format "LAYERS: %\n" layers
 		this.saveLayerToIni()
 
 		--format "\n-----------\nARRAY:layers:\n";  for layer in layers do format "layer:	%\n" layer.name
 
-		top_layers = this.LayersManager.getTopLayers( layers ) -- get top layers for group control
+		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
 
-		this.layers = this.difference( layers )( top_layers )
+		this.layers = this.difference( this.layers )( top_layers )
 
 		--this.default_width = Dialog.width - 3
 
@@ -236,44 +262,35 @@ struct LayersToogleDialog_v
 	function getLayersFromIni =
 	(
 		format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
-		format "this.Ini:	% \n" this.Ini
+		--format "this.Ini:	% \n" this.Ini
 		layers = #()
 
 		if  Ini.isDefined() then
-		(
-			keys = this.Ini.keys "layers"
-
-
-			for key in keys do
-			(
-				split = filterString key "_"
-				--format "SPLIT:	% \n" SPLIT
-
-				if ( index = split[split.count] as integer ) != undefined and ( layer = LayerManager.getLayer (index)) != undefined then
+			for index in this.Ini.keys "layers" do
+				if ( layer = LayerManager.getLayer (index as integer )) != undefined then
 					appendIfUnique layers layer
-			)
 
-		)
+		format "LAYERS: % --return\n" layers
 
 		layers --return
 	),
 
-	/** Get selected layers
-	  *
-	  */
-	function getSelectedLayers =
-	(
-		--format "\n"; print "LayersToogleDialog_v.getSelectedLayers()"
-		LayersManager.getSelectedLayers() --return
-	),
+	--/** Get selected layers
+	--  *
+	--  */
+	--function getSelectedLayers =
+	--(
+	--	--format "\n"; print "LayersToogleDialog_v.getSelectedLayers()"
+	--	LayersManager.getSelectedLayers() --return
+	--),
 
 
 	/** Get selected layers
 	  *
 	  */
-	function getIniOrSelectedOrCurrent =
+	function getIniOrSelected =
 	(
-		--format "\n"; print "LayersToogleDialog_v.getIniOrSelectedOrCurrent()"
+		--format "\n"; print "LayersToogleDialog_v.getIniOrSelected()"
 		--format "this.Ini:	% \n" this.Ini
 		--format "layers_ini:	% \n" layers_ini
 
@@ -284,7 +301,6 @@ struct LayersToogleDialog_v
 			layers_ini --return
 
 	),
-
 
 	/** Differrence layer
 	  *
@@ -300,8 +316,11 @@ struct LayersToogleDialog_v
 	  */
 	function saveLayerToIni =
 	(
-		--format "\n"; print "LayersToogleDialog_v.saveLayerToIni()"
+		format "\n"; print "LayersToogleDialog_v.saveLayerToIni()"
+		this.Ini.delete "layers"
+
 		layers_index	= LayersManager.getLayersIndex(layers)
+		format "LAYERS_INDEX: %\n" layers_index
 
 		for i = 1 to layers.count do
 			this.Ini.save "layers" layers_index[i] layers[i].on
@@ -355,14 +374,13 @@ struct LayersToogleDialog_v
 	  */
 	function _getSceneBaseName =
 	(
-		if (file_name = maxFileName ) != "" then
+		if maxFileName != "" then
 		(
-			matches = this._rxGetMatch file_name "(.*[^0-9]+)(\d+)*\.max"
+			matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches maxFileName "(.*[^0-9]+)(\d+)*\.max" ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase
 
-			--format "matches:	% \n" matches
+			match	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value ))[1] --return
 
-			--trimRight match[2] "-"
-			"test"
+			trimRight match[2] "-" --return
 		)
 		else
 			"untitled"
