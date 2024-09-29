@@ -8,6 +8,7 @@ macroscript	selection_select_instances
 category:	"_Selection"
 buttontext:	"Select instances"
 toolTip:	"Select instances"
+icon:	"across:2"
 autoUndoEnabled: true
 (
 	on execute do

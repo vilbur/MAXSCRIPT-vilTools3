@@ -55,7 +55,7 @@ struct LayersManager_v
 	function getSelectedLayers =
 	(
 		--format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
-		if (selected_layers = this.getSelectedByManager()).count == 0 then
+		if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedByManager()).count == 0 then
 			selected_layers = this.getLayersByObjects( selection )
 
 		selected_layers --return
@@ -70,7 +70,7 @@ struct LayersManager_v
 	function getSelectedOrCurrent =
 	(
 		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
-		if (selected_layers = this.getSelectedLayers()).count == 0 then
+		if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedLayers()).count == 0 then
 			selected_layers = #(this.getCurrent())
 
 		selected_layers --return
@@ -318,7 +318,6 @@ struct LayersManager_v
 
 		--format "LayerManager.isDialogOpen():	% \n" (LayerManager.isDialogOpen())
 
-		SceneExplorerInstance = SceneExplorerManager.GetActiveExplorer()
 	),
 
 	/** Create layer
@@ -709,10 +708,9 @@ struct LayersManager_v
 	on create do
 	(
 		--format "\n"; print "LayersManager.onCreate()"
-		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
-		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
+
+		SceneExplorerInstance = SceneExplorerManager.GetActiveExplorer()
 
 		--this.openLayerManager()
 	)
-
 )

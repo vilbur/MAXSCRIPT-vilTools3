@@ -12,7 +12,7 @@ macroscript	selection_replace_baseobjects
 category:	"_Selection-Copy"
 buttontext:	"Replace Baseobjects"
 --toolTip:	"Replace baseobjects"
-icon:	"MENU:true|tooltip:Replace baseobjects of selection.\nLast object in selection is master object.\n"
+icon:	"MENU:true|across:2|tooltip:Replace baseobjects of selection.\nLast object in selection is master object.\n"
 (
 	on execute do
 	(

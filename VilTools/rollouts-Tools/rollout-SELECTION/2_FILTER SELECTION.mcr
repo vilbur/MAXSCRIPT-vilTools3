@@ -8,7 +8,7 @@ macroscript	selection_filter_select_geometry
 category:	"_Selection-Filter"
 buttontext:	"Select Geometry"
 toolTip:	"Toggle Select Geometry \ All. \n\nMenu Option:Filter only Geometry from current selection"
-icon:	"MENU:true"
+icon:	"MENU:true|across:3"
 autoUndoEnabled: true
 (
 	on isChecked do return GetSelectFilter() == 2
@@ -83,7 +83,7 @@ macroscript	selection_filter_unique_objects
 category:	"_Selection-Filter"
 buttontext:	"Unique"
 toolTip:	"Filter only unique objects in selection"
-icon:	"MENU:true"
+icon:	"MENU:true|across:2"
 autoUndoEnabled: true
 
 (

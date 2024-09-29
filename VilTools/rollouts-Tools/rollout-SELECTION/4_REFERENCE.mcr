@@ -11,7 +11,7 @@ macroscript	selection_select_references
 category:	"_Selection"
 buttontext:	"Select References"
 toolTip:	"Select References"
---icon:	"#(path, index)"
+icon:	"across:2"
 (
 	max create mode
 

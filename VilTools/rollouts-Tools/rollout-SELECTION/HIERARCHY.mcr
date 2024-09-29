@@ -4,7 +4,7 @@ macroscript	selection_link_to_last
 category:	"_Selection-Hierarchy"
 buttontext:	"Link to last"
 tooltip:	"Link to last selected object"
-icon:	"MENU:true"
+icon:	"MENU:true|across:3"
 autoUndoEnabled: true
 (
 	on execute do
@@ -65,7 +65,7 @@ autoUndoEnabled: true
 */
 macroscript	selection_deselect_children
 category:	"_Selection-Hierarchy"
-buttontext:	"Deselect Children"
+buttontext:	"Unselect Children"
 tooltip:	"Deselect children and objects in selection.\n\nselected only parents and objects without link."
 icon:	"MENU:true"
 autoUndoEnabled: true

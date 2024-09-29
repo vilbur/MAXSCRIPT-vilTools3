@@ -67,7 +67,7 @@ icon:	"across:3"
 					counter+=1
 				)
 
-			messageBox ( counter as string +  " object names has benn replaced") title:"SUCCESS"  beep:false
+			messageBox ( counter as string +  " object names has been replaced") title:"RENAME SUCCESS"  beep:false
 		)
 	)
 )
