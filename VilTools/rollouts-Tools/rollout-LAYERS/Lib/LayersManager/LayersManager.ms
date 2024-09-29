@@ -80,7 +80,10 @@ struct LayersManager_v
 	 */
 	function getSelectedByManager =
 	(
-		 for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
+		if SceneExplorerInstance != undefined then
+			for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
+		else
+			#()
 	),
 
 	/** Get layers by object selection

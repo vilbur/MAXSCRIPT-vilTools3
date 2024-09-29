@@ -10,7 +10,7 @@ macroscript	layers_manager_keep_open_close
 category:	"_Layers-Dialogs"
 buttontext:	"Layer Manager"
 tooltip:	"Show\Hide Layer Manager.\n\nIf checked, then manager is open on scene open"
-icon:	"control:checkbutton|MENU:true|autorun:true"
+icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 (
 
 	on execute do

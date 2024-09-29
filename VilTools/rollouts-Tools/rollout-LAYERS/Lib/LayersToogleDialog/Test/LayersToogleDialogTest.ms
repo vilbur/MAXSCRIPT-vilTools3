@@ -86,14 +86,14 @@ LayersManager = LayersManager_v()
 createLayersTree()
 
 
-
--- selectmore	$Top1
---selectmore	$Top1Child1
+/* SELECT OBJECT OF LAYERS TO SHOW */
+selectmore	$Top1
+selectmore	$Top1Child1
 selectmore	$Top1Child1Nested1
---
+
 selectmore	$Top2*
--- selectmore	$Top2Child2
--- selectmore	$Top2Child2Nested2
+selectmore	$Top2Child2
+selectmore	$Top2Child2Nested2
 
 
 LayersToogleDialog = LayersToogleDialog_v()

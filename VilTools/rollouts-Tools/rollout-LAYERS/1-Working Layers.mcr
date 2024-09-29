@@ -7,18 +7,15 @@
  */
 macroscript	layers_manager_toogle_dialog
 category:	"_Layers-Dialogs"
-buttontext:	"Working Layers"
-tooltip:	"Open Working Layers Dialog.\n\nCreate for each layer of selected layer or selected object"
+buttontext:	"Open Dialog"
+tooltip:	"OpenWorking Layers Dialog.\n\nCreate for each layer of selected layer or selected object"
 --icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
-icon:	"MENU:Working Layers Dialog"
+icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28"
 (
-	--format "EventFired:	% \n" EventFired
-
 	on execute do
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
 
 		LayersToogleDialog = LayersToogleDialog_v()
 
@@ -36,17 +33,14 @@ icon:	"MENU:Working Layers Dialog"
  */
 macroscript	layers_manager_toogle_dialog_resetini
 category:	"_Layers-Dialogs"
-buttontext:	"Working Layers"
+buttontext:	"Open Dialog"
 tooltip:	"Reload with new layers set"
 --icon:	"control:checkbutton"
 (
-	--format "EventFired:	% \n" EventFired
-
 	on execute do
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
+		--clearListener(); print("Cleared in:"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
 
 		LayersToogleDialog = LayersToogleDialog_v()
 
@@ -60,19 +54,16 @@ tooltip:	"Reload with new layers set"
  */
 macroscript	layers_manager_toogle_dialog_add_selected_layers
 category:	"_Layers-Dialogs"
-buttontext:	"Working Layers Add"
-tooltip:	"Add selected layer to Working Layers Dialog"
+buttontext:	"Add Layers"
+tooltip:	"Add selected layer toWorking Layers Dialog"
 --icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
 icon:	"MENU:true"
 (
 	--format "EventFired:	% \n" EventFired
-
 	on execute do
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-
+		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
 
 		LayersToogleDialog = LayersToogleDialog_v()
 
@@ -87,8 +78,8 @@ icon:	"MENU:true"
  */
 macroscript	layers_manager_toogle_dialog_remove_selected_layers
 category:	"_Layers-Dialogs"
-buttontext:	"Working Layers Remove"
-tooltip:	"Remove selected layer to Working Layers Dialog"
+buttontext:	"Remove Layers"
+tooltip:	"Remove selected layer toWorking Layers Dialog"
 icon:	"MENU:true"
 (
 	--format "EventFired:	% \n" EventFired
@@ -96,9 +87,7 @@ icon:	"MENU:true"
 	on execute do
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
-
+		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
 
 		LayersToogleDialog = LayersToogleDialog_v()
 
