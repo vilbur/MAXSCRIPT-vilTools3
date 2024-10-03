@@ -26,7 +26,10 @@ struct LayersManager_v
 	),
 
 	/** Get layers
+	  *
 	  * @param integer|string|<MixinInterface:LayerProperties>|ReferenceTarget:BaseLayer|Array layers index, name, properties, refaTarget or array of them
+	  *
+	  * @return array of <MixinInterface:LayerProperties>
 	  */
 	function getLayers layers =
 	(

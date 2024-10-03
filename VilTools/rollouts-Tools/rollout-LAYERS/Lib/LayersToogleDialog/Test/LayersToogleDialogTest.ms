@@ -9,8 +9,10 @@ filein( getFilenamePath(getSourceFileName()) + "/../LayersToogleDialog.ms" )	-- 
 /** Create layers tree
   *
   */
-function createLayersTree =
+function createObjectsAndLayers =
 (
+	box() -- object in default layer
+
 	for t = 1 to 4 do
 	(
 		title_top	= ("Top" + t as string )
@@ -20,8 +22,7 @@ function createLayersTree =
 
 		for c = 1 to 3 do
 		(
-			title_child	= title_top + "Child" + c as string
-
+			title_child	= "Child" + c as string + "-" + title_top
 
 			LayerManager.newLayerFromName ( title_child );
 			child_layer	= LayerManager.getLayerFromName title_child
@@ -30,7 +31,7 @@ function createLayersTree =
 
 			for n = 1 to 2 do
 			(
-				title_nested	= title_child +"Nested"+ n as string
+				title_nested	= "Nested"+ n as string + "-" + title_top
 
 				--title_nested	= title_child +"Nested"
 				LayerManager.newLayerFromName ( title_nested );
@@ -51,7 +52,7 @@ function prepareScene =
 	(
 		resetMaxFile #noPrompt
 
-		createLayersTree()
+		createObjectsAndLayers()
 
 		LayerManager.editLayerByName ""
 	)
@@ -64,34 +65,37 @@ function prepareScene =
 	)
 )
 
-/* PREPARE SCENE */
---prepareScene()
+-- /* PREPARE SCENE */
+-- prepareScene()
 
 
-LayersManager = LayersManager_v()
 
-/* DELETE ALL LAYERS */
---delete objects
---LayersManager.deleteLayers( LayersManager.getAllLayers() )
---
---
---/* CREATE LAYERS */
---createLayersTree()
+-- /* DELETE ALL LAYERS */
+-- delete objects
+-- LayersManager = LayersManager_v()
+-- LayersManager.deleteLayers( LayersManager.getAllLayers() )
+
+
+-- /* CREATE LAYERS */
+-- createObjectsAndLayers()
 
 
 /* SELECT OBJECT OF LAYERS TO SHOW */
---selectmore	$Top1
---selectmore	$Top1Child1
---selectmore	$Top1Child1Nested1
+-- selectmore	$box*
 
---selectmore	$Top2*
---selectmore	$Top2Child2
---selectmore	$Top2Child2Nested2
+-- selectmore	$Top1
 
+-- selectmore	$Child1*
+
+-- selectmore	$Nested*
+
+/*==============================================================================
+	RUN TEST
+================================================================================*/
+
+--LayersManager = LayersManager_v()
 
 LayersToogleDialog = LayersToogleDialog_v()
 
 
 LayersToogleDialog.create reset_layers:true
-
-

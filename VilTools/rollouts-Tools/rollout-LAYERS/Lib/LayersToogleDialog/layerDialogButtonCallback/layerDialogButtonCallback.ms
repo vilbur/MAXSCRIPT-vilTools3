@@ -11,14 +11,14 @@
 		Ctrl+Shift:	Select all children, layers and objects
 
   */
-function layerDialogButtonCallback val which =
+function layerDialogButtonCallback val index =
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
 	format "\n"; print "LayersToogleDialog_v.layerDialogButtonCallback()"
 	format "EventFired:	% \n" EventFired
 	format "val:	% \n" val
-	format "which:	% \n" which
-	--format "which:	% \n" (classOf which)
+	format "index:	% \n" index
+	--format "index:	% \n" (classOf index)
 
 	LayersManager = LayersManager_v()
     LayersToogleDialog = LayersToogleDialog_v()
@@ -27,13 +27,13 @@ function layerDialogButtonCallback val which =
     /* NO KEYBOARD SHORTCUT */
     if not keyboard.controlPressed and not keyboard.shiftPressed then
 	(
-		if classOf which == integer then
-			LayersManager.setVisibility( which ) (val)
+		if classOf index == integer then
+			LayersManager.setVisibility( index ) (val)
 
-		else if which == #dialog then
+		else if index == #dialog then
 			LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (val)
 
-		else if which == #others then
+		else if index == #others then
 			LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (val)
 
 	)
@@ -42,9 +42,9 @@ function layerDialogButtonCallback val which =
 	(
 		layers = case of
 		(
-			(classOf which == integer ): #( LayerManager.getLayer which )
-			(which == #dialog):			 LayersToogleDialog.getDialogLayers()
-			(which == #others):			 LayersManager.difference(  LayersManager.getAllLayers() ) ( LayersToogleDialog.getDialogLayers() )
+			(classOf index == integer ): #( LayerManager.getLayer index )
+			(index == #dialog):			 LayersToogleDialog.getDialogLayers()
+			(index == #others):			 LayersManager.difference(  LayersManager.getAllLayers() ) ( LayersToogleDialog.getDialogLayers() )
 		)
 
         --format "\n-----------\nARRAY:layers:%\n" layers; for layer in layers do format "layer:	%\n" layer.name
@@ -76,7 +76,7 @@ function layerDialogButtonCallback val which =
 
 
 		/* RESET "Dialog" & "Others" CHEKBUTTONS STATE */
-		----if classOf which == name and then
+		----if classOf index == name and then
 			--EventFired.control.state = not val
 
 	)
@@ -87,4 +87,20 @@ function layerDialogButtonCallback val which =
 
 	redrawViews()
 
+)
+
+
+/** Top layer button callback
+ */
+function topLayerButtonCallback val index =
+(
+	format "\n"; print ".topLayerButtonCallback()"
+	format "val: %\n" val
+	layer = LayerManager.getLayer index
+
+	layer.nodes &theNodes
+
+	for obj in theNodes do
+	--format "obj: %\n" obj.isHidden
+		obj.isHidden = not val
 )

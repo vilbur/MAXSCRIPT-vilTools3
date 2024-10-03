@@ -183,13 +183,13 @@ try(
 
 	/** LOAD CONTENT */
 	----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
-	ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName())
+	ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName()) width:400
 
 	/* CHANGE PROPERTIES oF ROLLOUTS */
 	ContentLoader.Dialog.title = "VilTools"
 
 	/* CREATE DIALOG */
-	VILTOOLS = ContentLoader.create width:420 height:1024
+	VILTOOLS = ContentLoader.create height:1024
 
 	VILTOOLS.register()
 

@@ -20,7 +20,8 @@ struct LayersToogleDialog_v
 	left_padding	= 8, -- less size of how nested buttonn
 	height_offset	= 2, -- less size of how nested buttonn
 
-	tooltip_layer = "CRL: Select objects in layer. \nSHIFT:Select children layers. \nCRL + SHIFT: Select objects in all nested layers",
+	tooltip_top_layer = "SHOW \ HIDE objects in top layer",
+	tooltip_layer     = "CRL: Select objects in layer. \nSHIFT:Select children layers. \nCRL + SHIFT: Select objects in all nested layers",
 
 	/* dependency */
 	LayersManager = LayersManager_v(), --"./../LayersManager/LayersManager.ms"
@@ -36,11 +37,13 @@ struct LayersToogleDialog_v
 	/** Layers toogle dialog
 	  --*
 	  */
-	function create layers: =
+	function create layers: reset_layers:false =
 	(
 		format "\n"; print "LayersToogleDialog_v.create()"
 		format "LAYERS: %\n" layers
 		--clearListener(); print("Cleared in:"+getSourceFileName())
+		if reset_layers then
+			this.resetLayers()
 
 		if layers == unsupplied then
 		(
@@ -70,12 +73,12 @@ struct LayersToogleDialog_v
 		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
 
 		this.layers = this.difference( this.layers )( top_layers )
-
+--
 		--this.default_width = Dialog.width - 3
 
-		this.default_width += 64
+		--this.default_width += 64
 
-		Dialog.width = this.default_width
+		--Dialog.width = this.default_width
 
 		/* MIAN CONTROLS */
 		this._createMainControls (Dialog.Controls())
@@ -90,7 +93,9 @@ struct LayersToogleDialog_v
 		/* DIALOG CREATE */
 		--Dialog.create height:undefined lockWidth:false
 		--format "THIS.DEFAULT_WIDTH: %\n" this.default_width
-		Dialog.create width:this.default_width height:undefined lockWidth:false
+		Dialog.create()
+		--Dialog.create width:Dialog.width --height:undefined lockWidth:false
+		--Dialog.create width:Dialog.width height:#AUTO lockWidth:false
 
 		Dialog.register()
 	),
@@ -132,7 +137,7 @@ struct LayersToogleDialog_v
 
 		_Controls.Default #across	buttons_count
 		--_Controls.Default #width	(this.default_width / buttons_count)
-		_Controls.Default #width	32
+		_Controls.Default #width	( this.default_width /2)
 
 		HideBtn = _Controls.Control	#checkbutton "DIALOG"	tooltip:(getTooltip("dialog"))
 		HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"Toggle all layers in dialog"
@@ -157,53 +162,63 @@ struct LayersToogleDialog_v
 		_Controls   = Dialog.Controls group:(this.sanitazeName(layer.name))
 
 		/* BUTTON FOR TOP LAYER */
-		this.addLayerButton (_Controls) (layer) width:(this.default_width - 16)
+		this.addLayerButton (_Controls) (layer) width:(this.default_width - 24 )
 
 		/* BUTTONS FOR NESTED LAYERS */
 		this._createButtonForNestedLayers (_Controls) (layer) level:2
 	),
 
-	/** Create rollout for top layer
+	/** CREATE ROLLOUTS
 	 */
 	function createRolloutForTopLayer top_layer _SubRollouts =
 	(
 		--format "\n"; print "LayersToogleDialog_v.createRolloutForTopLayer()"
+		layer_index = LayersManager.getLayerIndex(top_layer)
 
-		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name))
+		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on)
 
-		_SubRollout.Events.add #open	"print(\"Custom dialog event #open\")"
-		_SubRollout.Events.add #close	"print(\"Custom dialog event #close\")"
+		_SubRollout.Events.add #ROLLEDUP	 ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_layer --params:layer.name
+
+
+		--_SubRollout.Events.add #ROLLEDUP	"print(\"#ROLLEDUP\")"
+		--_SubRollout.Events.add #OPEN	"print(\"#OPEN\")"
+		--_SubRollout.Events.add #CLOSE	"print(\"#CLOSE\")"
 
 		_Controls   = _SubRollout.Controls() --group:(this.sanitazeName(top_layer.name))
 
 		/* BUTTON FOR TOP LAYER */
-		--this.addLayerButton (_Controls) (top_layer) width:(this.default_width - 16)
+		this.addLayerButton (_Controls) (top_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
 
 		/* BUTTONS FOR NESTED LAYERS */
-		this._createButtonForNestedLayers (_Controls) (top_layer) level:1
+		this._createButtonForNestedLayers (_Controls) (top_layer) --level:0
+
 	),
 
-	/** Create button for neste layers
+	/** ADD LAYER BUTTONS
 	  *
 	  */
-	function _createButtonForNestedLayers _Controls parent_layer level: =
+	function _createButtonForNestedLayers _Controls parent_layer level:1 =
 	(
 		--format "\n"; print "LayersToogleDialog_v._createButtonForNestedLayers()"
 		--format "parent_layer:	% \n" parent_layer
-		level +=1
+
+
+		btn_base_width = this.default_width - this.left_padding  - 20
 
 		if (children_layers = (LayersManager.getChildren(parent_layer))).count > 0 then
 		(
 			/* BUTTONS */
 			for child_layer in this.sortLayers (children_layers) do
 			(
+
+				offset = if level == 1 then [ 0, 6 ] else [ 0, 0 ]
 				--level +=1
 				--format "child_layer:	% \n" child_layer.name
 				--format "CHILD_LAYER:	% \n" child_layer
 				if ( findItem this.layers child_layer ) > 0 then
-					this.addLayerButton (_Controls) (child_layer) width:(this.default_width - (level * this.left_padding)) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer
+					this.addLayerButton (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset
 
-				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level)
+				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level + 1)
 			)
 		)
 	),
@@ -228,7 +243,7 @@ struct LayersToogleDialog_v
 	/** Add layer button
 	  *
 	  */
-	function addLayerButton _Controls layer parent_layer: width: height:this.button_height =
+	function addLayerButton _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false =
 	(
 		--format "\n"; print "LayersToogleDialog_v.addLayerButton()"
 		--format "LAYER.name:	% \n" layer.name
@@ -251,12 +266,16 @@ struct LayersToogleDialog_v
 		button_caption = if parent_layer == unsupplied then this.sanitazeName(layer.name) else removeParentLayerName(parent_layer)(layer.name)
 
 		layer_index = LayersManager.getLayerIndex(layer)
-		--format "LAYER_INDEX:	% \n" layer_index
 
-		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 width:(width - 16) height:height align:#right ini:false--offset:[0,0]
+		 if is_top_layer then
+			button_caption += " ✅"
 
-		--_Button.Event #changed ("layerDialogButtonCallback") params:layer_index tooltip:tooltip_layer --params:layer.name
-		_Button.Event #changed ("layerDialogButtonCallback val "+layer_index as string ) tooltip:tooltip_layer --params:layer.name
+		callback = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+
+		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT ini:false width:width offset:offset
+
+		_Button.Event #changed (callback + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
 
 		_Button --return
 	),
@@ -291,10 +310,14 @@ struct LayersToogleDialog_v
 			--format "LAYER_BY_INDEX: % %\n" layer_by_index.name layer_by_index
 			--format "TEST: %\n" (this.Ini.load "layers" layer_by_index.name)
 
-			 if this.Ini.load "layers" layer_by_index.name == undefined then
+			 if layer_by_index != undefined and this.Ini.load "layers" layer_by_index.name == undefined then
 				layer_by_index --return
 			else
+			(
 				format "LayersToogleDialog:LAYER NOT FOUND: %\n" layer_name
+
+				undefined --return
+			)
 
 		)
 
@@ -394,7 +417,7 @@ struct LayersToogleDialog_v
 		ini_file = ( getDir #temp + "\\ini_files\\LayersToogleDialog\\"+ (this._getSceneBaseName()) + ".ini" )
 
 		--format "ini_file:	% \n" ini_file
-		this.Dialog = Dialog_v ("Toogle Layers") ini:ini_file
+		this.Dialog = Dialog_v ("Toogle Layers") ini:ini_file width:this.default_width
 
 	 ),
 
