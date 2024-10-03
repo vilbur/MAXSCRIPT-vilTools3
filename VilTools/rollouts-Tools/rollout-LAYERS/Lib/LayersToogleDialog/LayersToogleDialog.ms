@@ -34,7 +34,7 @@ struct LayersToogleDialog_v
 	/* inhered */
 
 	/** Layers toogle dialog
-	  *
+	  --*
 	  */
 	function create layers: =
 	(
@@ -42,21 +42,9 @@ struct LayersToogleDialog_v
 		format "LAYERS: %\n" layers
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 
-		--if layers == unsupplied then
-		--	this.layers = this.getIniOrSelected() -- after ini
-		--
-		--if layers == undefined then
-		--	this.layers = this.LayersManager.getAllLayers() -- after ini
-		----
-		--if (layers_ini = this.getLayersFromIni()).count == 0 then
-		--	LayersManager.getSelectedLayers()
-		--
-		--else
-		--	layers_ini --return
-
 		if layers == unsupplied then
 		(
-			this.layers = if (layers_ini = this.getLayersFromIni()).count > 0 then
+			this.layers = if Ini.isDefined() and (layers_ini = this.getLayersFromIni()).count > 0 then
 				layers_ini --return
 
 			else if (layers_selected = LayersManager.getSelectedLayers()) != undefined then
@@ -66,8 +54,13 @@ struct LayersToogleDialog_v
 				LayersManager.getAllLayers()
 		)
 
-		--this.layers = LayersManager.getAllLayers()
+
+		--if selection.count > 0 then
+		----this.layers = LayersManager.getAllLayers()
 		--this.layers = LayersManager.getSelectedLayers()
+		--else
+		--this.layers = this.getLayersFromIni()
+
 
 		format "LAYERS: %\n" layers
 		this.saveLayerToIni()
@@ -80,15 +73,18 @@ struct LayersToogleDialog_v
 
 		--this.default_width = Dialog.width - 3
 
+		this.default_width += 64
+
 		Dialog.width = this.default_width
 
 		/* MIAN CONTROLS */
 		this._createMainControls (Dialog.Controls())
 
+		_SubRollouts	 = Dialog.Rollouts()
 
 		/* LAYER BUTTONS */
-		for layer in this.sortLayers(top_layers) do
-			this.createControlsGroupForLayers(layer)(Dialog)
+		for top_layer in this.sortLayers(top_layers) do
+			this.createRolloutForTopLayer(top_layer)(_SubRollouts)
 
 
 		/* DIALOG CREATE */
@@ -167,6 +163,26 @@ struct LayersToogleDialog_v
 		this._createButtonForNestedLayers (_Controls) (layer) level:2
 	),
 
+	/** Create rollout for top layer
+	 */
+	function createRolloutForTopLayer top_layer _SubRollouts =
+	(
+		--format "\n"; print "LayersToogleDialog_v.createRolloutForTopLayer()"
+
+		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name))
+
+		_SubRollout.Events.add #open	"print(\"Custom dialog event #open\")"
+		_SubRollout.Events.add #close	"print(\"Custom dialog event #close\")"
+
+		_Controls   = _SubRollout.Controls() --group:(this.sanitazeName(top_layer.name))
+
+		/* BUTTON FOR TOP LAYER */
+		--this.addLayerButton (_Controls) (top_layer) width:(this.default_width - 16)
+
+		/* BUTTONS FOR NESTED LAYERS */
+		this._createButtonForNestedLayers (_Controls) (top_layer) level:1
+	),
+
 	/** Create button for neste layers
 	  *
 	  */
@@ -237,7 +253,7 @@ struct LayersToogleDialog_v
 		layer_index = LayersManager.getLayerIndex(layer)
 		--format "LAYER_INDEX:	% \n" layer_index
 
-		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 width:width height:height align:#right
+		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 width:(width - 16) height:height align:#right ini:false--offset:[0,0]
 
 		--_Button.Event #changed ("layerDialogButtonCallback") params:layer_index tooltip:tooltip_layer --params:layer.name
 		_Button.Event #changed ("layerDialogButtonCallback val "+layer_index as string ) tooltip:tooltip_layer --params:layer.name
@@ -263,14 +279,38 @@ struct LayersToogleDialog_v
 	(
 		format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
 		--format "this.Ini:	% \n" this.Ini
+		/** Get layer by index
+		 */
+		function getLayerByIndex layer_name =
+		(
+			--format "\n"; print "LayersToogleDialog_v.getLayerByIndex()"
+			index	= this.Ini.load "layers" layer_name
+
+			layer_by_index = LayerManager.getLayer index
+
+			--format "LAYER_BY_INDEX: % %\n" layer_by_index.name layer_by_index
+			--format "TEST: %\n" (this.Ini.load "layers" layer_by_index.name)
+
+			 if this.Ini.load "layers" layer_by_index.name == undefined then
+				layer_by_index --return
+			else
+				format "LayersToogleDialog:LAYER NOT FOUND: %\n" layer_name
+
+		)
+
+
 		layers = #()
 
-		if  Ini.isDefined() then
-			for index in this.Ini.keys "layers" do
-				if ( layer = LayerManager.getLayer (index as integer )) != undefined then
-					appendIfUnique layers layer
+		for layer_name in this.Ini.keys "layers" do
+		(
+			if ( layer = LayerManager.getLayerFromName layer_name) == undefined then
+				layer = getLayerByIndex( layer_name )
 
-		format "LAYERS: % --return\n" layers
+			if layer != undefined then
+				appendIfUnique layers layer
+		)
+
+		--format "LAYERS: % --return\n" layers
 
 		layers --return
 	),
@@ -316,14 +356,14 @@ struct LayersToogleDialog_v
 	  */
 	function saveLayerToIni =
 	(
-		format "\n"; print "LayersToogleDialog_v.saveLayerToIni()"
+		--format "\n"; print "LayersToogleDialog_v.saveLayerToIni()"
 		this.Ini.delete "layers"
 
 		layers_index	= LayersManager.getLayersIndex(layers)
-		format "LAYERS_INDEX: %\n" layers_index
+		--format "LAYERS_INDEX: %\n" layers_index
 
 		for i = 1 to layers.count do
-			this.Ini.save "layers" layers_index[i] layers[i].on
+			this.Ini.save "layers" layers[i].name layers_index[i]
 	),
 
 	private

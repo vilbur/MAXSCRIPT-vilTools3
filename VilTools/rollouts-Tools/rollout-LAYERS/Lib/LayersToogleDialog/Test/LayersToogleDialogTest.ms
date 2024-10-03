@@ -43,60 +43,55 @@ function createLayersTree =
 	)
 )
 
---/** Prepare scene
---  */
---function prepareScene =
---(
---	resetMaxFile #noPrompt
---
-	--LayerManager.editLayerByName ""
---
---	createLayersTree()
---)
+/** Prepare scene
+  */
+function prepareScene =
+(
+	if objects.count == 0 then
+	(
+		resetMaxFile #noPrompt
+
+		createLayersTree()
+
+		LayerManager.editLayerByName ""
+	)
+	else
+	(
+		--fetchMaxFile  quiet:true
+		actionMan.executeAction 0 "277"  -- Tools: Unhide All
+
+		clearSelection
+	)
+)
 
 /* PREPARE SCENE */
-
-if objects.count == 0 then
-(
-	resetMaxFile #noPrompt
-	--print "RESET"
-
-
-	createLayersTree()
-
-	--prepareScene()
-	LayerManager.editLayerByName ""
-
-	--holdMaxFile()
-)
-else
-(
-	--fetchMaxFile  quiet:true
-	actionMan.executeAction 0 "277"  -- Tools: Unhide All
-
-	clearSelection
-
-)
+--prepareScene()
 
 
 LayersManager = LayersManager_v()
 
--- LayersManager.deleteLayers( LayersManager.getAllLayers() )
-
-createLayersTree()
+/* DELETE ALL LAYERS */
+--delete objects
+--LayersManager.deleteLayers( LayersManager.getAllLayers() )
+--
+--
+--/* CREATE LAYERS */
+--createLayersTree()
 
 
 /* SELECT OBJECT OF LAYERS TO SHOW */
-selectmore	$Top1
-selectmore	$Top1Child1
-selectmore	$Top1Child1Nested1
+--selectmore	$Top1
+--selectmore	$Top1Child1
+--selectmore	$Top1Child1Nested1
 
-selectmore	$Top2*
-selectmore	$Top2Child2
-selectmore	$Top2Child2Nested2
+--selectmore	$Top2*
+--selectmore	$Top2Child2
+--selectmore	$Top2Child2Nested2
 
 
 LayersToogleDialog = LayersToogleDialog_v()
 
 
 LayersToogleDialog.create reset_layers:true
+
+

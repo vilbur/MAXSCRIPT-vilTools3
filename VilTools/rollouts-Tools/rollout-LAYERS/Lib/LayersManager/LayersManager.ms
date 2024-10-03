@@ -54,7 +54,7 @@ struct LayersManager_v
 	 */
 	function getSelectedLayers =
 	(
-		--format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
+		format "\n"; print "LayersManager_v.getSelectedLayers()"
 		if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedByManager()).count == 0 then
 			selected_layers = this.getLayersByObjects( selection )
 
@@ -127,7 +127,7 @@ struct LayersManager_v
 	 */
 	function getTopLayers layers =
 	(
-		format "\n"; print "LayersManager_v.getTopLayers()"
+		--format "\n"; print "LayersManager_v.getTopLayers()"
 
 		layers = 	if layers == #ALL then this.getAllLayers() else this.getLayers(layers)
 
