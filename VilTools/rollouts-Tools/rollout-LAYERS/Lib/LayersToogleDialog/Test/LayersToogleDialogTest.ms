@@ -65,25 +65,23 @@ function prepareScene =
 	)
 )
 
--- /* PREPARE SCENE */
--- prepareScene()
+ /* PREPARE SCENE */
+ -- prepareScene()
+
+ /* DELETE ALL LAYERS */
+ -- delete objects
+ -- LayersManager = LayersManager_v()
+ -- LayersManager.deleteLayers( LayersManager.getAllLayers() )
 
 
-
--- /* DELETE ALL LAYERS */
--- delete objects
--- LayersManager = LayersManager_v()
--- LayersManager.deleteLayers( LayersManager.getAllLayers() )
-
-
--- /* CREATE LAYERS */
--- createObjectsAndLayers()
+ /* CREATE LAYERS */
+ -- createObjectsAndLayers()
 
 
 /* SELECT OBJECT OF LAYERS TO SHOW */
--- selectmore	$box*
+ -- selectmore	$box*
 
--- selectmore	$Top1
+ -- selectmore	$Top1
 
 -- selectmore	$Child1*
 

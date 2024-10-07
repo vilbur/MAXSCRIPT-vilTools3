@@ -106,13 +106,20 @@ buttontext:	"Trackbar Toggle"
  */
 macroscript	_options_toggle_keyframe_0_1
 category:	"_Animation"
-buttontext:	"Keyframe 0\1"
-tooltip:	"Toggle Keyframe 0\1"
+buttontext:	"Next Frame"
+tooltip:	"Set next frame on timeslider"
 --icon:	"control:label"
 autoUndoEnabled: true
 (
 	on execute do
-		sliderTime = if sliderTime != 1f then 1f else 0f
+	(
+		next_frame = sliderTime.frame + 1
+
+		if next_frame > (animationRange.end).frame then
+			next_frame = 0
+
+		sliderTime = next_frame
+	)
 )
 
 
@@ -1010,9 +1017,9 @@ toolTip:	""
  */
 macroscript	_options_animation
 category:	"_Animation"
-buttontext:	"Animation keys"
+buttontext:	"SliderTime"
 tooltip:	"Set number of frames of timeslider"
-icon:	"control:spinner|type:#integer|range:[2,1000,100]|across:4"
+icon:	"control:spinner|type:#integer|range:[2,1000,100]|across:4|offset:[ 10, 6 ]"
 (
 	animationRange = Interval 0 (EventFired.val as integer )
 )

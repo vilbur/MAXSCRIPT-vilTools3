@@ -1,3 +1,48 @@
+global CALLBACK_DELAY_TIMER
+
+
+/**
+  *
+  * Check dialog position, size and state
+  * Find out type of event based on change of dialog states
+  */
+function updateDialog sender evt =
+(
+	format "\n"; print "DefaultEvents_v.updateDialog()"
+	--sender.enabled = false
+	--
+	--dotNet.removeEventHandler sender "Elapsed" PerformDelayedTasks
+	--
+	--CALLBACK_DELAY_TIMER = undefined
+
+	(LayersToogleDialog_v()).refreshButtons()
+)
+
+
+/**
+  *
+  */
+function startUpdateDialogTimer =
+(
+	--format "\n"; print "DefaultEvents_v.startResizeEventTimer()"
+
+	if CALLBACK_DELAY_TIMER == undefined then
+	(
+		CALLBACK_DELAY_TIMER = dotNetObject "Windows.Forms.Timer"
+
+		--CALLBACK_DELAY_TIMER.Interval = 250
+		CALLBACK_DELAY_TIMER.Interval = 1000
+
+		dotNet.addEventHandler CALLBACK_DELAY_TIMER "Tick" updateDialog
+
+		CALLBACK_DELAY_TIMER.enabled = true
+
+		--DIALOG_GLOBAL_DATA[#RUNNING_EVENT_DIALOG_ID]	= dialog_id
+	)
+
+)
+
+
 /** Toggle layer visiblity
   *
   * CTRL: Select Layer members
@@ -83,7 +128,7 @@ function layerDialogButtonCallback val index =
 
 
 	/* UPDATE OTHER BUTTONS */
-	(LayersToogleDialog_v()).refreshButtons()
+	--LayersToogleDialog.refreshButtons()
 
 	redrawViews()
 
@@ -93,7 +138,7 @@ function layerDialogButtonCallback val index =
 /** Top layer button callback
  */
 function topLayerButtonCallback val index =
-(
+(s
 	format "\n"; print ".topLayerButtonCallback()"
 	format "val: %\n" val
 	layer = LayerManager.getLayer index
