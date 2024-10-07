@@ -15,11 +15,13 @@ icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28"
 	on execute do
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\1-Working Layers.mcr"
+		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\1-Working Layers.mcr"
+		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Dialog\Dialog.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 
-		LayersToogleDialog = LayersToogleDialog_v()
+		LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
-		LayersToogleDialog.create()
+		LAYERS_TOOGLE_DIALOG.create()
 	)
 
 	on altExecute type do
@@ -42,11 +44,11 @@ tooltip:	"Reload with new layers set"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
 
-		LayersToogleDialog = LayersToogleDialog_v()
+		LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
-		LayersToogleDialog.resetLayers()
+		LAYERS_TOOGLE_DIALOG.resetLayers()
 
-		LayersToogleDialog.create()
+		LAYERS_TOOGLE_DIALOG.create()
 	)
 )
 
@@ -63,14 +65,18 @@ icon:	"MENU:true"
 	on execute do
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
+		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\1-Working Layers.mcr"
+		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 
-		LayersToogleDialog = LayersToogleDialog_v()
+		--LayersToogleDialog = LayersToogleDialog_v()
 
-		old_layers = LayersToogleDialog.getLayersFromIni()
-		add_layers = LayersToogleDialog.getSelectedLayers()
+		--old_layers = LayersToogleDialog.getLayersFromIni()
+		add_layers = LAYERS_TOOGLE_DIALOG.LayersManager.getSelectedLayers()
 
-		LayersToogleDialog.create layers:( makeUniqueArray ( join old_layers add_layers)  )
+		--LayersToogleDialog.create layers:( makeUniqueArray ( join old_layers add_layers)  )
+
+		LAYERS_TOOGLE_DIALOG.addLayers (add_layers)
+
 	)
 )
 

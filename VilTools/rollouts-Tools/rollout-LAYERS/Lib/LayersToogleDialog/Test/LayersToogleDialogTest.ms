@@ -44,48 +44,59 @@ function createObjectsAndLayers =
 	)
 )
 
-/** Prepare scene
-  */
-function prepareScene =
+
+
+/** Create new test scene
+ */
+function createNewTestScene =
 (
-	if objects.count == 0 then
+	/** Prepare scene
+	  */
+	function prepareScene =
 	(
-		resetMaxFile #noPrompt
+		if objects.count == 0 then
+		(
+			resetMaxFile #noPrompt
 
-		createObjectsAndLayers()
+			createObjectsAndLayers()
 
-		LayerManager.editLayerByName ""
+			LayerManager.editLayerByName ""
+		)
+		else
+		(
+			--fetchMaxFile  quiet:true
+			actionMan.executeAction 0 "277"  -- Tools: Unhide All
+
+			clearSelection
+		)
 	)
-	else
-	(
-		--fetchMaxFile  quiet:true
-		actionMan.executeAction 0 "277"  -- Tools: Unhide All
 
-		clearSelection
-	)
+	prepareScene()
+
+	/* DELETE ALL LAYERS */
+	 delete objects
+	 LayersManager = LayersManager_v()
+	 LayersManager.deleteLayers( LayersManager.getAllLayers() )
+
+
+	/* CREATE LAYERS */
+	 createObjectsAndLayers()
+
+
+   /* SELECT OBJECT OF LAYERS TO SHOW */
+	 selectmore	$box*
+
+	 selectmore	$Top1
+
+    selectmore	$Child1*
+
+    selectmore	$Nested*
 )
 
- /* PREPARE SCENE */
- -- prepareScene()
 
- /* DELETE ALL LAYERS */
- -- delete objects
- -- LayersManager = LayersManager_v()
- -- LayersManager.deleteLayers( LayersManager.getAllLayers() )
+/* PREPARE SCENE */
 
-
- /* CREATE LAYERS */
- -- createObjectsAndLayers()
-
-
-/* SELECT OBJECT OF LAYERS TO SHOW */
- -- selectmore	$box*
-
- -- selectmore	$Top1
-
--- selectmore	$Child1*
-
--- selectmore	$Nested*
+createNewTestScene()
 
 /*==============================================================================
 	RUN TEST
@@ -93,7 +104,7 @@ function prepareScene =
 
 --LayersManager = LayersManager_v()
 
-LayersToogleDialog = LayersToogleDialog_v()
+LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
 
-LayersToogleDialog.create reset_layers:true
+LAYERS_TOOGLE_DIALOG.create reset_layers:true

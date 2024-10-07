@@ -2,7 +2,7 @@ filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/layer
 
 global DIALOG_toogle_layers -- define global for use in callbacks
 
-
+global LAYERS_TOOGLE_DIALOG
 
 /** Layers toogle dialog
  */
@@ -13,6 +13,7 @@ struct LayersToogleDialog_v
 	Dialog,
 
 	/* properties */
+	_SubRollouts,
 	Ini,
 
 	default_width	= 196,
@@ -92,7 +93,7 @@ struct LayersToogleDialog_v
 
 		/* LAYER BUTTONS */
 		for top_layer in this.sortLayers(top_layers) do
-			this.createRolloutForTopLayer(top_layer)(_SubRollouts)
+			this.createRolloutForTopLayer(top_layer)
 
 
 		/* DIALOG CREATE */
@@ -103,17 +104,44 @@ struct LayersToogleDialog_v
 		--startUpdateDialogTimer()
 	),
 
+	/** Add layers
+	 */
+	function addLayers add_layers =
+	(
+		format "\n"; print "LayersToogleDialog_v.addLayers()"
+		format "this.layers: %\n" this.layers
+		this.layers =  makeUniqueArray ( join this.layers add_layers)
+
+		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
+
+		--_subrollouts = DIALOG_toogle_layers.Subrollouts.Rollouts
+
+		--_subrollout_names = for _subrollout in _subrollouts collect _subrollout.name
+
+		format "top_layers: %\n" top_layers
+		--format "_subrollouts: %\n" _subrollouts
+		--format "_subrollout_names: %\n" _subrollout_names
+
+		for top_layer in this.sortLayers(top_layers)  do
+			this.createRolloutForTopLayer(top_layer)
+
+		for _SubRollout in _SubRollouts.Rollouts do
+		--format "_SubRollout: %\n" _SubRollout
+			Dialog.updateRollout(_SubRollout)
+
+	),
+
 	/** CREATE ROLLOUTS
 	 */
-	function createRolloutForTopLayer top_layer _SubRollouts =
+	function createRolloutForTopLayer top_layer =
 	(
 		format "\n"; print "LayersToogleDialog_v.createRolloutForTopLayer()"
-		format "top_layer: %\n" top_layer.name
+		--format "top_layer: %\n" top_layer.name
 
 		layer_index = LayersManager.getLayerIndex(top_layer)
 
 		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on)
-		format "_SubRollout: %\n" _SubRollout
+		--format "_SubRollout: %\n" _SubRollout
 
 		_SubRollout.Events.add #ROLLEDUP	 ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_layer --params:layer.name
 
@@ -261,7 +289,7 @@ struct LayersToogleDialog_v
 		callback = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 
-		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT ini:false width:width offset:offset
+		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
 
 		_Button.Event #changed (callback + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
 
