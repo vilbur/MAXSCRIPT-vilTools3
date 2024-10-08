@@ -342,7 +342,7 @@ struct SceneLayers_v
 			for x = 1 to findItem used_layers_reverse (layer_name as name ) do -- too width 200px
 				whitespace += " "
 
- 			top_layer_titles[ used_layers[i]] =  " " + whitespace + dash_line + " "+ toUpper layer_name + " " + dash_line + dash_line + dash_line
+ 			top_layer_titles[ used_layers[i]] =  " " + whitespace + dash_line + " "+ toUpper layer_name + " " + dash_line
 		)
 
 

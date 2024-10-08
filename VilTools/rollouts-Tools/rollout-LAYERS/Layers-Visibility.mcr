@@ -6,7 +6,7 @@
  *
  */
 macroscript	layers_all_on
-category:	"_Layers-4"
+category:	"_Layers-Visibility"
 buttontext:	"Hide\Unhide"
 toolTip:	"Unhide all layers"
 icon:	"MENU:UNHIDE ALL layers"
@@ -33,7 +33,7 @@ autoUndoEnabled:true
  *
  */
 macroscript	layers_unhide_selected
-category:	"_Layers-4"
+category:	"_Layers-Visibility"
 buttontext:	"On Selected"
 toolTip:	"Unhide selected layers, or layers of objects. \n\nMenu Option:Unhide objects also"
 icon:	"MENU:UNHIDE Selected"
@@ -80,7 +80,7 @@ autoUndoEnabled:true
   * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
  */
 macroscript	_layers_manager_toggle_same_prefix_off
-category:	"_Layers-4"
+category:	"_Layers-Visibility"
 buttontext:	"ON\OFF by prefix"
 tooltip:	"Hide by layer prefix"
 icon:	"MENU:Toggle by prefix|Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
@@ -121,7 +121,7 @@ autoUndoEnabled:true
 --  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
 -- */
 --macroscript	_layers_manager_toggle_same_prefix_off
---category:	"_Layers-4"
+--category:	"_Layers-Visibility"
 --buttontext:	"ON\OFF by prefix"
 --tooltip:	"Hide by layer prefix"
 --icon:	"Tooltip:Toggle layers with same prefix\n\nE.G.: _Name\prefix-\1-Name\n\n"
@@ -142,7 +142,7 @@ autoUndoEnabled:true
 --  * http://www.scriptspot.com/forums/3ds-max/general-scripting/select-layers
 -- */
 --macroscript	_layers_manager_toggle_same_prefix_on
---category:	"_Layers-4"
+--category:	"_Layers-Visibility"
 --buttontext:	"ON\OFF by prefix"
 --tooltip:	"Unhide by layer prefix"
 --(

@@ -1,4 +1,25 @@
 
+/**
+  */
+macroscript	selection_select_all
+category:	"_Selection-Edit"
+buttontext:	"Select All"
+toolTip:	"Select All - CLOSE LAYER MANAGER IF OPENED"
+--icon:	"#(path, index)"
+(
+	
+	on execute do
+	(
+		if (is_manager_open = LayerManager.isDialogOpen()) then
+			LayerManager.closeDialog()
+
+		actionMan.executeAction 0 "40021"  -- Selection: Select All
+
+		if is_manager_open then
+			LayerManager.editLayerByName ""
+	)
+)
+
 
 
 /**

@@ -47,7 +47,7 @@ struct LayersToogleDialog_v
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		if reset_layers then
 			this.resetLayers()
-		--
+
 		if layers == unsupplied then
 		(
 			this.layers = if Ini.isDefined() and (layers_ini = this.getLayersFromIni()).count > 0 then
@@ -67,6 +67,7 @@ struct LayersToogleDialog_v
 		--else
 		--this.layers = this.getLayersFromIni()
 
+		this.checkLayerNames()
 
 		format "LAYERS: %\n" layers
 		this.saveLayerToIni()
@@ -152,8 +153,6 @@ struct LayersToogleDialog_v
 
 		_Controls   = _SubRollout.Controls() --group:(this.sanitazeName(top_layer.name))
 
-		/* BUTTON FOR TOP LAYER */
-		this.addLayerButton (_Controls) (top_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
 
 		/* BUTTONS FOR NESTED LAYERS */
 		this._createButtonForNestedLayers (_Controls) (top_layer) --level:0
@@ -168,22 +167,27 @@ struct LayersToogleDialog_v
 		--format "parent_layer:	% \n" parent_layer
 		btn_base_width = this.default_width - this.left_padding  - 20
 
-		if (children_layers = (LayersManager.getChildren(parent_layer))).count > 0 then
+		children_layers = for child_layer in LayersManager.getChildren(parent_layer) where findItem this.layers child_layer > 0 collect  child_layer
+
+		if children_layers.count > 0 then
 		(
-			/* BUTTONS */
+			/* LAYER BUTTONS */
 			for child_layer in this.sortLayers (children_layers) do
 			(
-
 				offset = if level == 1 then [ 0, 6 ] else [ 0, 0 ]
 				--level +=1
 				--format "child_layer:	% \n" child_layer.name
 				--format "CHILD_LAYER:	% \n" child_layer
-				if ( findItem this.layers child_layer ) > 0 then
-					this.addLayerButton (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset
+				--if ( findItem this.layers child_layer ) > 0 then
+				this.addLayerButton (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset
 
 				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level + 1)
 			)
 		)
+		else if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
+			--format "PARENT_LAYER: %\n" parent_layer
+			this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+
 	),
 
 	/** Get dialog layers
@@ -283,20 +287,26 @@ struct LayersToogleDialog_v
 
 		layer_index = LayersManager.getLayerIndex(layer)
 
+		layer.nodes &theNodes
+
+		picker_visible = if theNodes.count >  0 then theNodes[1].displayByLayer else false
+
+
 		 if is_top_layer then
 			button_caption += " ✅"
 
 		callback = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 
-		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
+		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
+		--format "_BUTTON.ID: % %\n" _Button.id layer.name
+        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:[ 20, -38 ] width:24 height:height
 
-		_Button.Event #changed (callback + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
+		_Button.Event #CHANGED (callback + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
+		_Button.Event #RIGHTCLICK ("toggleDisplayAsLayer") params:#( layer_index )
 
-		_Button --return
+		_Picker.Event #CHANGED ("setLyerWirecolor") params:#( layer_index )
 	),
-
-
 
 	/** Reset selected layers
 	  *
@@ -323,24 +333,18 @@ struct LayersToogleDialog_v
 
 			layer_by_index = LayerManager.getLayer index
 
-			--format "LAYER_BY_INDEX: % %\n" layer_by_index.name layer_by_index
-			--format "TEST: %\n" (this.Ini.load "layers" layer_by_index.name)
-
-			 if layer_by_index != undefined and this.Ini.load "layers" layer_by_index.name == undefined then
-				layer_by_index --return
-			else
-			(
+			if not ( layer_by_index != undefined and this.Ini.load "layers" layer_by_index.name == undefined ) then
 				format "LayersToogleDialog:LAYER NOT FOUND: %\n" layer_name
 
-				undefined --return
-			)
-
+			layer_by_index --return
 		)
 
 
 		layers = #()
 
-		for layer_name in this.Ini.keys "layers" do
+		format "TEST: %\n" (this.Ini.keys "layers")
+
+		for layer_name in this.Ini.keys "layers" where layer_name != "" do
 		(
 			if ( layer = LayerManager.getLayerFromName layer_name) == undefined then
 				layer = getLayerByIndex( layer_name )
@@ -474,7 +478,6 @@ struct LayersToogleDialog_v
 		--format "\n"; print "LayersToogleDialog_v.getLayersArray()"
 
 		for i = 0 to LayerManager.count - 1 collect if (layer = LayerManager.getLayer i).on then layer else undefined
-
 	),
 
 	/** Get visible layers
@@ -483,6 +486,19 @@ struct LayersToogleDialog_v
 	(
 		--format "\n"; print "LayersToogleDialog_v._getVisibleLayers()"
 		(for i = 0 to LayerManager.count - 1 where (layer = LayerManager.getLayer i).on collect i) as BitArray --return
+	),
+
+	/** Check layer names
+	 */
+	function checkLayerNames =
+	(
+		--format "\n"; print "LayersToogleDialog_v.checkLayerNames()"
+		for i = this.layers.count to 1 by -1 where matchPattern this.layers[i].name pattern:("*=*") do
+		(
+			messageBox ("Layer name MUST NOT contain \"=\"\n\nWRONG LAYER NAME:\n\n"+this.layers[i].name) title:"LayersToogleDialog_v"
+
+			deleteItem this.layers i
+		)
 	),
 
 	/** Get scene base name without nuber suffix

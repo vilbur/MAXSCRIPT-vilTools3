@@ -11,7 +11,7 @@ tooltip:	"Toggle Wireframe \ Outline"
 	on execute do
 	(
 
-        ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( 1 )
+        ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( viewport.activeViewport )
         SelectionEffectImpl 	= NitrousGraphicsManager.GetSelectionSetting()
 
         if ViewportSettings.VisualStyleMode == #REALISTIC then
@@ -41,7 +41,7 @@ tooltip:	"Toggle Shaded \ Outline"
 	on execute do
 	(
 
-        ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( 1 )
+        ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( viewport.activeViewport )
         SelectionEffectImpl 	= NitrousGraphicsManager.GetSelectionSetting()
 
         if ViewportSettings.VisualStyleMode == #REALISTIC then

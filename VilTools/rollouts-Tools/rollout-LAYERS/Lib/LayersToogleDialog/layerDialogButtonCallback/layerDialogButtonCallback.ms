@@ -66,7 +66,7 @@ function layerDialogButtonCallback val index =
 	--format "index:	% \n" (classOf index)
 
 	LayersManager = LayersManager_v()
-    LayersToogleDialog = LayersToogleDialog_v()
+    LayersToogleDialog = LAYERS_TOOGLE_DIALOG
 
 
     /* NO KEYBOARD SHORTCUT */
@@ -138,7 +138,7 @@ function layerDialogButtonCallback val index =
 /** Top layer button callback
  */
 function topLayerButtonCallback val index =
-(s
+(
 	format "\n"; print ".topLayerButtonCallback()"
 	format "val: %\n" val
 	layer = LayerManager.getLayer index
@@ -149,3 +149,66 @@ function topLayerButtonCallback val index =
 	--format "obj: %\n" obj.isHidden
 		obj.isHidden = not val
 )
+
+/** Set lyer wirecolor
+ */
+function setLyerWirecolor clr index =
+(
+	--format "\n"; print ".setLyerWirecolor()"
+	if (layer = LayerManager.getLayer index) != undefined then
+	(
+		format "clr:    %\n" clr
+		format "layer: %\n" layer.wirecolor
+		layer.wirecolor = clr
+	)
+)
+
+
+/** Toggle display as layer
+ */
+function toggleDisplayAsLayer index =
+(
+	format "\n"; print ".toggleDisplayAsLayer()"
+	if (layer = LayerManager.getLayer index) != undefined then
+	(
+
+		--redrawViews()
+		layer.nodes &theNodes
+
+
+		format "theNodes.count: %\n" theNodes.count
+		--format "theNodes[1].displayByLayer: %\n" theNodes[1].displayByLayer
+		--
+		if theNodes.count >  0 then
+		(
+			--macros.run "Layers" "LayerPropertiesByLayer"
+			state = not theNodes[1].displayByLayer
+			format "state: %\n" state
+
+			_selection = for o in selection collect o
+
+			with redraw off
+			(
+				select theNodes
+
+				macros.run "Layers" "LayerPropertiesByLayer"
+
+				select _selection
+			)
+			redrawViews()
+
+
+			execute ( EventFired.Roll.name + ".CLR_layer_id_" + index as string + ".visible = " + state as string )
+
+
+			--for obj in theNodes do
+				--obj.displayByLayer = not state
+
+		)
+	)
+
+
+)
+
+
+

@@ -26,7 +26,13 @@ function hudObjectInfoCallback =
 	/*------ HUD ------*/
 	HUD = Hud_v pos:#( #LEFT, #CENTER ) callback:hudObjectInfoCallback
 
-	/* CURRENT LAYER */
+	if selection.count > 0 then
+		for i = 1 to selection.count while i <= 10 do
+		--for obj in selection do
+			HUD.row ( selection[i].name ) color: selection[i].wirecolor
+
+
+	/* LOCKED TRANSFORMS */
 	HUD.row ( getLockedTransfroms() ) color:orange
 
 	/* SET DATA TO HUD */

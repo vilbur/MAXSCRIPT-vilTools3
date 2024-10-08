@@ -11,7 +11,7 @@ struct ExportNode_v
 	_name,
 	_selection,
 
-	layer_name = " ===== EXPORT NODES =====",
+	layer_name = " ----- EXPORT NODES -----",
 	/** Create
 	 */
 	function create =
