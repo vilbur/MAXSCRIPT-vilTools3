@@ -1,4 +1,6 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Color/Color.ms" )	--"./Lib/Color/Color.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )	--"./Lib/Wirecolor/Wirecolor.ms"
+
 
 /*------------------------------------------------------------------------------
 	RANDOM WIRECOLOR
@@ -6,9 +8,9 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )
 
 macroscript	wirecolor_random
 category:	"_Wirecolor"
-buttontext:	"&Random color"
+buttontext:	"Random color"
 toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
-icon:	"MENU:true|tooltip:Random wirecolor to selected object\n"
+icon:	"MENU:true|across:3|tooltip:Random wirecolor to selected object\n"
 (
 	--(Wirecolor_v()).randomize brightness:128
 	--(Wirecolor_v()).randomize brightness:#(64, 255)
@@ -76,7 +78,7 @@ toolTip:	"Color menu"
 */
 macroscript	wirecolor_select_only_visible
 category:	"_Wirecolor"
-buttontext:	"&Select by wirecolor"
+buttontext:	"Select by wirecolor"
 toolTip:	"Select by wirecolor"
 icon:	"MENU:TRUE"
 (
@@ -110,7 +112,7 @@ icon:	"MENU:TRUE"
 
 macroscript	wirecolor_by_last
 category:	"_Wirecolor"
-buttontext:	"Color &By Last"
+buttontext:	"Color By Last"
 toolTip:	"Set wirecolor of selected obejct by last obejct in selection"
 icon:	"MENU:true"
 (

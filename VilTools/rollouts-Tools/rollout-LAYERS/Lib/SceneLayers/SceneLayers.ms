@@ -109,7 +109,7 @@ struct SceneLayers_v
 		(
 			local obj_layer
 
-			obj_name_stripped = this._removeTypeSuffix obj.na
+			obj_name_stripped = this._removeTypeSuffix obj.name
 
 			obj_name_stripped = this._regExReplace obj_name_stripped "[_-]*\d+$" ""
 

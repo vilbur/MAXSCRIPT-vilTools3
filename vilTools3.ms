@@ -122,7 +122,7 @@ if doesFileExist export_node_plugin_source then
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
---filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
 
 /* MANNUAL IMPORT */
 filein_files = #(

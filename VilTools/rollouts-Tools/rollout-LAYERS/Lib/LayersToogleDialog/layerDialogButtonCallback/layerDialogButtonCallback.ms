@@ -176,37 +176,18 @@ function toggleDisplayAsLayer index =
 		layer.nodes &theNodes
 
 
-		format "theNodes.count: %\n" theNodes.count
-		--format "theNodes[1].displayByLayer: %\n" theNodes[1].displayByLayer
-		--
 		if theNodes.count >  0 then
 		(
-			--macros.run "Layers" "LayerPropertiesByLayer"
-			state = not theNodes[1].displayByLayer
-			format "state: %\n" state
+			state = not theNodes[1].colorByLayer
 
-			_selection = for o in selection collect o
-
-			with redraw off
-			(
-				select theNodes
-
-				macros.run "Layers" "LayerPropertiesByLayer"
-
-				select _selection
-			)
-			redrawViews()
-
+			for obj in theNodes do
+				obj.colorByLayer = state
 
 			execute ( EventFired.Roll.name + ".CLR_layer_id_" + index as string + ".visible = " + state as string )
 
 
-			--for obj in theNodes do
-				--obj.displayByLayer = not state
-
 		)
 	)
-
 
 )
 

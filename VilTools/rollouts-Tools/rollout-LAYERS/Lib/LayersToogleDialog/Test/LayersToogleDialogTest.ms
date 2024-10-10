@@ -96,6 +96,7 @@ function createNewTestScene =
 
 /* PREPARE SCENE */
 
+if objects.count == 0 then
 createNewTestScene()
 
 /*==============================================================================

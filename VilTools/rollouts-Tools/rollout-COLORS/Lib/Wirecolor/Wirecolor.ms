@@ -1,5 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/../../../../../Lib/Color/Color.ms" )
-
 /** Set wirecolor to obejcts
   *
   * Instances has same wirecolor

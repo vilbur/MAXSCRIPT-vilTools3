@@ -45,6 +45,8 @@
 </livefolder>
 <livefolder id="77cb771b-dd3e-488b-bb63-74e27601b2cd" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-VISIBILITY" url="VilTools/rollouts-Tools/rollout-VISIBILITY/">
 </livefolder>
+<livefolder id="864330ad-cdf4-42e9-a14b-8de62f8e1fe3" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-COLORS" url="VilTools/rollouts-Tools/rollout-COLORS/">
+</livefolder>
 <folder id="8a134efe-cebc-4312-b65b-224e16215f50" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-EXPORT">
 </folder>
 <livefolder id="9a057ba5-c27b-4a24-892b-a0c1453b1e58" idref="b1d4b0d8-dea0-4ac6-983d-4db0614b264e" name="rollout-TOOLS" url="VilTools/rollouts-Tools/rollout-TOOLS/">

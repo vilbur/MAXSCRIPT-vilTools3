@@ -300,10 +300,10 @@ struct LayersToogleDialog_v
 
 		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
 		--format "_BUTTON.ID: % %\n" _Button.id layer.name
-        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:[ 20, -38 ] width:24 height:height
+        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:[ 20, -40 ] width:24 height:height
 
 		_Button.Event #CHANGED (callback + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
-		_Button.Event #RIGHTCLICK ("toggleDisplayAsLayer") params:#( layer_index )
+		_Button.Event #RIGHTCLICK ("toggleDisplayAsLayer") params:#( layer_index ) tooltip:"Toggle wireframe by OBJECT\LAYER"
 
 		_Picker.Event #CHANGED ("setLyerWirecolor") params:#( layer_index )
 	),
