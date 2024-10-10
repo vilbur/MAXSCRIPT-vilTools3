@@ -8,20 +8,21 @@
 macroscript	layers_manager_toogle_dialog
 category:	"_Layers-Dialogs"
 buttontext:	"D I A L O G"
-tooltip:	"OpenWorking Layers Dialog.\n\nCreate for each layer of selected layer or selected object"
+tooltip:	"Open Working Layers Dialog."
 --icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
-icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28"
+icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
 (
 	on execute do
 	(
-		--clearListener(); print("Cleared in:"+getSourceFileName())
+		clearListener(); print("Cleared in:"+getSourceFileName())
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersManager\LayersManager.ms"
 		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\1-Working Layers.mcr"
 		 filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Dialog\Dialog.ms"
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 
 		LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
-		LAYERS_TOOGLE_DIALOG.create()
+		LAYERS_TOOGLE_DIALOG.create chain: keyboard.controlPressed
 	)
 
 	on altExecute type do
@@ -36,7 +37,7 @@ icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28"
 macroscript	layers_manager_toogle_dialog_resetini
 category:	"_Layers-Dialogs"
 buttontext:	"D I A L O G"
-tooltip:	"Reload with new layers set"
+tooltip:	"Reload with new layers set.\n\nCTRL: USE LAYERS HIERARCHY"
 --icon:	"control:checkbutton"
 (
 	on execute do
@@ -48,7 +49,7 @@ tooltip:	"Reload with new layers set"
 
 		LAYERS_TOOGLE_DIALOG.resetLayers()
 
-		LAYERS_TOOGLE_DIALOG.create()
+		LAYERS_TOOGLE_DIALOG.create chain: keyboard.controlPressed
 	)
 )
 
@@ -75,7 +76,7 @@ icon:	"MENU:true"
 
 		--LayersToogleDialog.create layers:( makeUniqueArray ( join old_layers add_layers)  )
 
-		LAYERS_TOOGLE_DIALOG.addLayers (add_layers)
+		LAYERS_TOOGLE_DIALOG.addLayers (add_layers) chain: keyboard.controlPressed
 
 	)
 )

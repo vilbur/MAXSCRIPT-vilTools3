@@ -26,10 +26,13 @@ struct LayersToogleDialog_v
 	tooltip_top_layer = "SHOW \ HIDE objects in top layer",
 	tooltip_layer     = "CRL: Select objects in layer. \nSHIFT:Select children layers. \nCRL + SHIFT: Select objects in all nested layers",
 
+	--top_layer_suffix = "⬇", -- ▼
+	top_layer_suffix = "▼", -- ▼
+
 	/* dependency */
 	LayersManager = LayersManager_v(), --"./../LayersManager/LayersManager.ms"
 
-	RegEx	= ( dotNetClass "System.Text.RegularExpressions.RegEx" ),
+	RegEx = ( dotNetClass "System.Text.RegularExpressions.RegEx" ),
 
 	IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase,
 
@@ -38,9 +41,12 @@ struct LayersToogleDialog_v
 	/* inhered */
 
 	/** Layers toogle dialog
-	  --*
+	  *
+	  * @param array	layers used for dialog, if unsupplied, then layers are determine by layer manager or selected objects
+	  * @param boolean  	chain  FALSE:use only selected layers   TRUE: use whole chain up to top layer
+	  *
 	  */
-	function create layers: reset_layers:false =
+	function create layers: chain:false reset_layers:false =
 	(
 		format "\n"; print "LayersToogleDialog_v.create()"
 		format "LAYERS: %\n" layers
@@ -53,23 +59,18 @@ struct LayersToogleDialog_v
 			this.layers = if Ini.isDefined() and (layers_ini = this.getLayersFromIni()).count > 0 then
 				layers_ini --return
 
-			else if (layers_selected = LayersManager.getSelectedLayers()) != undefined then
+			else if (layers_selected = LayersManager.getSelectedLayers()).count > 0 then
 				layers_selected
 
 			else
 				LayersManager.getAllLayers()
 		)
 
-
-		--if selection.count > 0 then
-		--this.layers = LayersManager.getAllLayers()
-		--this.layers = LayersManager.getSelectedLayers()
-		--else
-		--this.layers = this.getLayersFromIni()
+		if chain then
+			this.layers = LayersManager.getLayersTree(this.layers)
 
 		this.checkLayerNames()
-
-		format "LAYERS: %\n" layers
+		format "LAYERS: %\n" this.layers
 		this.saveLayerToIni()
 
 		--format "\n-----------\nARRAY:layers:\n";  for layer in layers do format "layer:	%\n" layer.name
@@ -107,11 +108,16 @@ struct LayersToogleDialog_v
 
 	/** Add layers
 	 */
-	function addLayers add_layers =
+	function addLayers add_layers chain:false  =
 	(
 		format "\n"; print "LayersToogleDialog_v.addLayers()"
 		format "this.layers: %\n" this.layers
 		this.layers =  makeUniqueArray ( join this.layers add_layers)
+
+		if chain then
+			this.layers = LayersManager.getLayersTree(this.layers)
+
+		this.checkLayerNames()
 
 		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
 
@@ -169,6 +175,11 @@ struct LayersToogleDialog_v
 
 		children_layers = for child_layer in LayersManager.getChildren(parent_layer) where findItem this.layers child_layer > 0 collect  child_layer
 
+		if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
+			--format "PARENT_LAYER: %\n" parent_layer
+			this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+
+
 		if children_layers.count > 0 then
 		(
 			/* LAYER BUTTONS */
@@ -184,9 +195,9 @@ struct LayersToogleDialog_v
 				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level + 1)
 			)
 		)
-		else if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
-			--format "PARENT_LAYER: %\n" parent_layer
-			this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+		--else if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
+		--	--format "PARENT_LAYER: %\n" parent_layer
+		--	this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
 
 	),
 
@@ -236,10 +247,8 @@ struct LayersToogleDialog_v
 		HideOthersBtn.Event #changed	"layerDialogButtonCallback"	params:#others	tooltip:"Toggle all layers not in dialog"
 		HideOthersBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #others)	tooltip:"Hide all layers not in dialog"
 
-		BtnTest = _Controls.Control	#BUTTON "TEST"
-		BtnTest.Event #PRESSED "testPrint()"
-		--HideOthersBtn = _Controls.Control  #button "RELOAD"
-		--HideOthersBtn.Event #pressed	"macros.run \"_Layers-Dialogs\" \"layers_manager_toogle_dialog\"" tooltip:"Reload dialog with new selection"
+		--BtnTest = _Controls.Control	#BUTTON "T E S T"
+		--BtnTest.Event #PRESSED "testPrint()"
 	),
 
 	/** Create rollout for each top layer
@@ -260,7 +269,7 @@ struct LayersToogleDialog_v
 	),
 
 
-	/** Add layer button
+	/** ADD LAYER BUTTON
 	  *
 	  */
 	function addLayerButton _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false =
@@ -293,18 +302,28 @@ struct LayersToogleDialog_v
 
 
 		 if is_top_layer then
-			button_caption += " ✅"
+			button_caption += " " + top_layer_suffix
 
 		callback = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 
-		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
-		--format "_BUTTON.ID: % %\n" _Button.id layer.name
-        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:[ 20, -40 ] width:24 height:height
+		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, -40 ]
 
-		_Button.Event #CHANGED (callback + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
-		_Button.Event #RIGHTCLICK ("toggleDisplayAsLayer") params:#( layer_index ) tooltip:"Toggle wireframe by OBJECT\LAYER"
 
+
+		/* LAYER BUTTON  */
+		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) border:false checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
+
+		/* COLOR PICKER  */
+        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:picker_offset width:24 height:height
+
+
+
+		/* BUTTON EVENTS */
+        _Button.Event #CHANGED (callback + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
+        _Button.Event #RIGHTCLICK ("toggleDisplayAsLayer") params:#( layer_index )	tooltip:"Toggle wireframe by OBJECT\LAYER"
+
+		/* PICKER EVENTS */
 		_Picker.Event #CHANGED ("setLyerWirecolor") params:#( layer_index )
 	),
 
@@ -322,7 +341,7 @@ struct LayersToogleDialog_v
 	  */
 	function getLayersFromIni =
 	(
-		format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
+		--format "\n"; print "LayersToogleDialog_v.getLayersFromIni()"
 		--format "this.Ini:	% \n" this.Ini
 		/** Get layer by index
 		 */
@@ -342,7 +361,7 @@ struct LayersToogleDialog_v
 
 		layers = #()
 
-		format "TEST: %\n" (this.Ini.keys "layers")
+		--format "TEST: %\n" (this.Ini.keys "layers")
 
 		for layer_name in this.Ini.keys "layers" where layer_name != "" do
 		(
@@ -353,7 +372,7 @@ struct LayersToogleDialog_v
 				appendIfUnique layers layer
 		)
 
-		--format "LAYERS: % --return\n" layers
+		--format "layers.count: %\n" layers.count
 
 		layers --return
 	),

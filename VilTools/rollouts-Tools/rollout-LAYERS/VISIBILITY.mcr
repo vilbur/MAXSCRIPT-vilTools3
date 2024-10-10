@@ -7,7 +7,7 @@
  */
 macroscript	layers_all_on
 category:	"_Layers-Visibility"
-buttontext:	"Hide\Unhide"
+buttontext:	"Hide \ Unhide"
 toolTip:	"Unhide all layers"
 icon:	"MENU:UNHIDE ALL layers"
 autoUndoEnabled:true

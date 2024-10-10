@@ -57,9 +57,9 @@ struct LayersManager_v
 	 */
 	function getSelectedLayers =
 	(
-		format "\n"; print "LayersManager_v.getSelectedLayers()"
+		--format "\n"; print "LayersManager_v.getSelectedLayers()"
 		if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedByManager()).count == 0 then
-			selected_layers = this.getLayersByObjects( selection )
+			selected_layers = this.getLayersByObjects( selection as Array )
 
 		selected_layers --return
 	),
@@ -83,6 +83,7 @@ struct LayersManager_v
 	 */
 	function getSelectedByManager =
 	(
+		--format "\n"; print "LayersManager_v.getSelectedByManager()"
 		if SceneExplorerInstance != undefined then
 			for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
 		else
@@ -94,9 +95,14 @@ struct LayersManager_v
 	  */
 	function getLayersByObjects _objects =
 	(
-		makeUniqueArray (for obj in _objects collect obj.layer) --return
-	),
+		--format "\n"; print "LayersManager_v.getLayersByObjects()"
+		layers_by_obj	= #()
 
+		for obj in _objects do
+			appendIfUnique layers_by_obj obj.layer
+
+		layers_by_obj --return
+	),
 
 	/** Get layer by name
 	  * @param string|#(string) patterns for matchPattern
@@ -197,6 +203,9 @@ struct LayersManager_v
 
 	/** Get parent layers in hierarchy up to top layer
 	  *
+
+		TODO: rename this method to getLayersChain()
+
 	  */
 	function getLayersTree layers =
 	(
