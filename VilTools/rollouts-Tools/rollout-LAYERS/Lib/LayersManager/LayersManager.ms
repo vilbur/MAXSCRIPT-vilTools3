@@ -60,7 +60,7 @@ struct LayersManager_v
 		--format "\n"; print "LayersManager_v.getSelectedLayers()"
 		if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedByManager()).count == 0 then
 			selected_layers = this.getLayersByObjects( selection as Array )
-
+		--format "SELECTED_LAYERS: %\n" selected_layers[1].name
 		selected_layers --return
 	),
 
@@ -84,10 +84,12 @@ struct LayersManager_v
 	function getSelectedByManager =
 	(
 		--format "\n"; print "LayersManager_v.getSelectedByManager()"
-		if SceneExplorerInstance != undefined then
+		selected_layers = if SceneExplorerInstance != undefined then
 			for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
 		else
 			#()
+		--format "SELECTED IN MANAGER: %\n" selected_layers
+		selected_layers --return
 	),
 
 	/** Get layers by object selection
@@ -96,11 +98,12 @@ struct LayersManager_v
 	function getLayersByObjects _objects =
 	(
 		--format "\n"; print "LayersManager_v.getLayersByObjects()"
+		--format "_objects: %\n" _objects
 		layers_by_obj	= #()
 
 		for obj in _objects do
 			appendIfUnique layers_by_obj obj.layer
-
+		--format "LAYERS_BY_OBJ: %\n" layers_by_obj[1].name
 		layers_by_obj --return
 	),
 
@@ -204,7 +207,7 @@ struct LayersManager_v
 	/** Get parent layers in hierarchy up to top layer
 	  *
 
-		TODO: rename this method to getLayersChain()
+		TODO: RENAME THIS METHOD to getLayersInChain()
 
 	  */
 	function getLayersTree layers =

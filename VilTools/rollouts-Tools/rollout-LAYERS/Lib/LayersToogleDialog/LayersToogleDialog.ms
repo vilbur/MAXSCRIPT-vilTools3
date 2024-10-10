@@ -1,4 +1,7 @@
 filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/layerDialogButtonCallback.ms" )	--"./layerDialogButtonCallback/layerDialogButtonCallback.ms"
+filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/LayerToggleCallbacks.ms" )	--"./layerDialogButtonCallback/LayerToggleCallbacks.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/openLayerRcMenu.ms" )	--"./layerDialogButtonCallback/openLayerRcMenu.ms"
 
 global DIALOG_toogle_layers -- define global for use in callbacks
 
@@ -59,7 +62,7 @@ struct LayersToogleDialog_v
 			this.layers = if Ini.isDefined() and (layers_ini = this.getLayersFromIni()).count > 0 then
 				layers_ini --return
 
-			else if (layers_selected = LayersManager.getSelectedLayers()).count > 0 then
+			else if (layers_selected = LayersManager.getSelectedLayers()) != undefined and layers_selected.count > 0 then
 				layers_selected
 
 			else
@@ -71,14 +74,17 @@ struct LayersToogleDialog_v
 
 		this.checkLayerNames()
 		format "LAYERS: %\n" this.layers
+		format "LAYERS name: %\n" this.layers[1].name
 		this.saveLayerToIni()
 
 		--format "\n-----------\nARRAY:layers:\n";  for layer in layers do format "layer:	%\n" layer.name
 
 		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
+		format "top_layers name: %\n" top_layers[1].name
 
 		this.layers = this.difference( this.layers )( top_layers )
 
+		format "LAYERS name: %\n" this.layers[1].name
 
 		/* MIAN CONTROLS */
 		this._createMainControls (Dialog.Controls())
@@ -110,8 +116,8 @@ struct LayersToogleDialog_v
 	 */
 	function addLayers add_layers chain:false  =
 	(
-		format "\n"; print "LayersToogleDialog_v.addLayers()"
-		format "this.layers: %\n" this.layers
+		--format "\n"; print "LayersToogleDialog_v.addLayers()"
+		--format "this.layers: %\n" this.layers
 		this.layers =  makeUniqueArray ( join this.layers add_layers)
 
 		if chain then
@@ -125,7 +131,7 @@ struct LayersToogleDialog_v
 
 		--_subrollout_names = for _subrollout in _subrollouts collect _subrollout.name
 
-		format "top_layers: %\n" top_layers
+		--format "top_layers: %\n" top_layers
 		--format "_subrollouts: %\n" _subrollouts
 		--format "_subrollout_names: %\n" _subrollout_names
 
@@ -142,7 +148,7 @@ struct LayersToogleDialog_v
 	 */
 	function createRolloutForTopLayer top_layer =
 	(
-		format "\n"; print "LayersToogleDialog_v.createRolloutForTopLayer()"
+		--format "\n"; print "LayersToogleDialog_v.createRolloutForTopLayer()"
 		--format "top_layer: %\n" top_layer.name
 
 		layer_index = LayersManager.getLayerIndex(top_layer)
@@ -160,6 +166,7 @@ struct LayersToogleDialog_v
 		_Controls   = _SubRollout.Controls() --group:(this.sanitazeName(top_layer.name))
 
 
+
 		/* BUTTONS FOR NESTED LAYERS */
 		this._createButtonForNestedLayers (_Controls) (top_layer) --level:0
 	),
@@ -175,30 +182,31 @@ struct LayersToogleDialog_v
 
 		children_layers = for child_layer in LayersManager.getChildren(parent_layer) where findItem this.layers child_layer > 0 collect  child_layer
 
-		if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
-			--format "PARENT_LAYER: %\n" parent_layer
+		--if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
+		--	--format "PARENT_LAYER: %\n" parent_layer
+		--	this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+		--
+	/*------------------------------------------------------------------------------
+			BUTTON FOR TOP LAYER - if child any child layer exists
+		--------------------------------------------------------------------------------*/
+		if level == 1 then
 			this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
 
 
+		/*------------------------------------------------------------------------------
+			BUTTON FOR EACH LAYER
+		--------------------------------------------------------------------------------*/
 		if children_layers.count > 0 then
 		(
-			/* LAYER BUTTONS */
 			for child_layer in this.sortLayers (children_layers) do
 			(
 				offset = if level == 1 then [ 0, 6 ] else [ 0, 0 ]
-				--level +=1
-				--format "child_layer:	% \n" child_layer.name
-				--format "CHILD_LAYER:	% \n" child_layer
-				--if ( findItem this.layers child_layer ) > 0 then
+
 				this.addLayerButton (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset
 
 				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level + 1)
 			)
 		)
-		--else if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
-		--	--format "PARENT_LAYER: %\n" parent_layer
-		--	this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
-
 	),
 
 	/** Get dialog layers
@@ -221,57 +229,11 @@ struct LayersToogleDialog_v
 			control.state = layer.on
 	),
 
-	/** Create main controls
-	  *
-	  */
-	function _createMainControls _Controls =
-	(
-		--format "\n"; print "LayersToogleDialog_v._createMainControls()"
-
-		/** Get tooltip
-		  *
-		  */
-		function getTooltip button_type = "ON\OFF layer.\n\nCRL: Select displayed layers in "+button_type+".\n\nSHIFT:Select all layers in "+button_type+".\n\n"
-
-		buttons_count = 2
-
-		_Controls.Default #across	buttons_count
-		--_Controls.Default #width	(this.default_width / buttons_count)
-		_Controls.Default #width	( this.default_width /2)
-
-		HideBtn = _Controls.Control	#checkbutton "DIALOG"	tooltip:(getTooltip("dialog"))
-		HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"Toggle all layers in dialog"
-		HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
-
-		HideOthersBtn = _Controls.Control	#checkbutton "OTHERS"	tooltip:(getTooltip("not in dialog"))
-		HideOthersBtn.Event #changed	"layerDialogButtonCallback"	params:#others	tooltip:"Toggle all layers not in dialog"
-		HideOthersBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #others)	tooltip:"Hide all layers not in dialog"
-
-		--BtnTest = _Controls.Control	#BUTTON "T E S T"
-		--BtnTest.Event #PRESSED "testPrint()"
-	),
-
-	/** Create rollout for each top layer
-		*
-	*/
-	function createControlsGroupForLayers Layer _Rollout_parent =
-	(
-		--format "\n====================================\n"
-		--format "\n"; print "LayersToogleDialog_v.createControlsGroupForLayers()"
-
-		_Controls   = Dialog.Controls group:(this.sanitazeName(layer.name))
-
-		/* BUTTON FOR TOP LAYER */
-		this.addLayerButton (_Controls) (layer) width:(this.default_width - 24 )
-
-		/* BUTTONS FOR NESTED LAYERS */
-		this._createButtonForNestedLayers (_Controls) (layer) level:2
-	),
 
 
-	/** ADD LAYER BUTTON
-	  *
-	  */
+	/*------------------------------------------------------------------------------
+		ADD LAYER BUTTON
+	--------------------------------------------------------------------------------*/
 	function addLayerButton _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false =
 	(
 		--format "\n"; print "LayersToogleDialog_v.addLayerButton()"
@@ -304,8 +266,9 @@ struct LayersToogleDialog_v
 		 if is_top_layer then
 			button_caption += " " + top_layer_suffix
 
-		callback = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+		button_pressed = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+		button_pressed = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 
 		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, -40 ]
 
@@ -320,8 +283,8 @@ struct LayersToogleDialog_v
 
 
 		/* BUTTON EVENTS */
-        _Button.Event #CHANGED (callback + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
-        _Button.Event #RIGHTCLICK ("toggleDisplayAsLayer") params:#( layer_index )	tooltip:"Toggle wireframe by OBJECT\LAYER"
+        _Button.Event #CHANGED (button_pressed + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
+        _Button.Event #RIGHTCLICK ("openLayerRcMenu") params:#( layer_index )	tooltip:"Toggle wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
 		_Picker.Event #CHANGED ("setLyerWirecolor") params:#( layer_index )
@@ -377,16 +340,6 @@ struct LayersToogleDialog_v
 		layers --return
 	),
 
-	--/** Get selected layers
-	--  *
-	--  */
-	--function getSelectedLayers =
-	--(
-	--	--format "\n"; print "LayersToogleDialog_v.getSelectedLayers()"
-	--	LayersManager.getSelectedLayers() --return
-	--),
-
-
 	/** Get selected layers
 	  *
 	  */
@@ -432,7 +385,34 @@ struct LayersToogleDialog_v
 
 	private
 
+	/** Create main controls
+	  *
+	  */
+	function _createMainControls _Controls =
+	(
+		--format "\n"; print "LayersToogleDialog_v._createMainControls()"
 
+		/** Get tooltip
+		  *
+		  */
+		function getTooltip button_type = "ON\OFF layer.\n\nCRL: Select displayed layers in "+button_type+".\n\nSHIFT:Select all layers in "+button_type+".\n\n"
+
+		buttons_count = 2
+
+        _Controls.Default #across        buttons_count
+        --_Controls.Default #width	(this.default_width / buttons_count)
+        _Controls.Default #width	( this.default_width /2)
+
+        HideBtn = _Controls.Control	#checkbutton "DIALOG"	tooltip:(getTooltip("dialog"))
+
+        HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"Toggle all layers in dialog"
+        HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+
+        HideOthersBtn = _Controls.Control	#checkbutton "OTHERS" tooltip:(getTooltip("not in dialog"))
+
+        HideOthersBtn.Event #changed    "layerDialogButtonCallback" params:#others          	tooltip:"Toggle all layers not in dialog"
+        HideOthersBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #others)	tooltip:"Hide all layers not in dialog"
+	),
 
 	/** Remove
 	  * 	PREFIX: Anything then A-Z
@@ -592,5 +572,4 @@ struct LayersToogleDialog_v
 
 		this.Ini = this.Dialog.Ini
 	)
-
 )

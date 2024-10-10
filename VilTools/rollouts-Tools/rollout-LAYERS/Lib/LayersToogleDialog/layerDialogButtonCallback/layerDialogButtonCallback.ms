@@ -164,32 +164,4 @@ function setLyerWirecolor clr index =
 )
 
 
-/** Toggle display as layer
- */
-function toggleDisplayAsLayer index =
-(
-	format "\n"; print ".toggleDisplayAsLayer()"
-	if (layer = LayerManager.getLayer index) != undefined then
-	(
-
-		--redrawViews()
-		layer.nodes &theNodes
-
-
-		if theNodes.count >  0 then
-		(
-			state = not theNodes[1].colorByLayer
-
-			for obj in theNodes do
-				obj.colorByLayer = state
-
-			execute ( EventFired.Roll.name + ".CLR_layer_id_" + index as string + ".visible = " + state as string )
-
-
-		)
-	)
-
-)
-
-
 
