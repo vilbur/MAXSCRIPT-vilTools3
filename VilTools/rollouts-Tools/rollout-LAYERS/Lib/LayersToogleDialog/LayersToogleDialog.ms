@@ -100,9 +100,10 @@ struct LayersToogleDialog_v
 
 
 		/* DIALOG CREATE */
-		Dialog.create()
+		--Dialog.create()
+		Dialog.create height:#AUTO
 
-		--Dialog.register()
+		Dialog.register()
 
 		--startUpdateDialogTimer()
 	),
@@ -226,7 +227,9 @@ struct LayersToogleDialog_v
 	),
 
 	/*------------------------------------------------------------------------------
-		ADD LAYER BUTTON
+
+		ADD LAYER CONTROLS
+
 	--------------------------------------------------------------------------------*/
 	function addLayerControls _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false =
 	(
@@ -265,7 +268,7 @@ struct LayersToogleDialog_v
 
 		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, -40 ]
 
-
+		LayerToggleCallbacks = "(LayerToggleCallbacks_v(" + layer_index as string + "))"
 
 		/* LAYER BUTTON  */
 		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
@@ -277,10 +280,11 @@ struct LayersToogleDialog_v
 
 		/* BUTTON EVENTS */
         _Button.Event #CHANGED (button_pressed + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
-        _Button.Event #RIGHTCLICK ("openLayerRcMenu") params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
+
+        _Button.Event #RIGHTCLICK ("if not keyboard.controlPressed then openLayerRcMenu("+layer_index as string +")\n else\n "+LayerToggleCallbacks+".toggleDisplayAsLayer()" )-- params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
-		_Picker.Event #CHANGED ("::LayerToggleCallbacks_v.setLayerWirecolorOnPickerChanged") params:#( layer_index )
+		_Picker.Event #CHANGED (LayerToggleCallbacks+".setLayerWirecolorOnPickerChanged") --params:#( layer_index )
 	),
 
 	/** Reset selected layers

@@ -2,67 +2,97 @@
  */
 struct LayerToggleCallbacks_v
 (
+	/* construct */
+	layer_index,
 
+	/* properties */
+	layer,
+
+	/* dependency */
+	LayersManager = LayersManager_v(),
 
 	/** Toggle display as layer
 	 */
-	function toggleDisplayAsLayer index =
+	function toggleDisplayAsLayer hierarchy:false =
 	(
 		--format "\n"; print ".toggleDisplayAsLayer()"
-		if (layer = LayerManager.getLayer index) != undefined then
+
+		if layer != undefined then
 		(
-			layer.nodes &theNodes
+			state = _getDisplayWirecolorState(layer)
 
-			if theNodes.count >  0 then
-			(
-				state = not theNodes[1].colorByLayer
+			this._setColorPickerVisibility (child_layer) (state)
 
-				for obj in theNodes do
-					obj.colorByLayer = state
+			this._setColorByLayerState (layer) (state)
 
-				color_picker = ::LayerToggleCallbacks_v.getColorPicker index
+			if hierarchy then
+				this._setDisplayCoorStateToNestedLayers (layer) (state)
 
-				color_picker.visible = state
-			)
 		)
+	),
+
+	/** Set display coor state to nested layers
+	 */
+	function _setDisplayCoorStateToNestedLayers parent_layer state =
+	(
+		--format "\n"; print "LayerToggleCallbacks_v._setDisplayCoorStateToNestedLayers()"
+
+		for child_layer in LayersManager.getChildren(parent_layer) do
+		(
+			this._setColorPickerVisibility (child_layer) (state)
+
+			this._setColorByLayerState (child_layer) (state)
+
+			this._setDisplayCoorStateToNestedLayers (child_layer) (state)
+		)
+	),
+
+	/** Set color picker visibility
+	 */
+	function _setColorPickerVisibility layer state =
+	(
+		--format "\n"; print "LayerToggleCallbacks_v._setColorPickerVisibility()"
+		layer_index = LayersManager.getLayerIndex layer
+
+		color_picker = this._getColorPicker layer_index
+
+		color_picker.visible = state
 	),
 
 	/** Propagate wirecolor to children layers
 	 */
-	function propagateWirecolorToChildrenLayers index =
+	function propagateWirecolorToChildrenLayers =
 	(
 
 		format "\n"; print "LayerToggleCallbacks_v.propagateWirecolorToChildrenLayers()"
-		color_picker = ::LayerToggleCallbacks_v.getColorPicker index
-		--format "index: %\n" index
+		color_picker = this._getColorPicker layer_index
+		--format "layer_index: %\n" layer_index
 		--format "color_picker: %\n" color_picker
-		layer = LayerManager.getLayer index
-		format "layer: %\n" layer
 
-		if (layer = LayerManager.getLayer index) != undefined then
+		if layer != undefined then
 		(
 			--format "layer.wirecolor: %\n" layer.wirecolor
 			format "%: %\n" layer.name layer.wirecolor
 
 			color_picker.color = layer.wirecolor
 
-			::LayerToggleCallbacks_v.setWireColorToNestedLayer (layer) (copy layer.wirecolor)
+			this._setWireColorToNestedLayer (layer) (copy layer.wirecolor)
 
 			CompleteRedraw()
 		)
 
 	),
+
 	/** ADD LAYER BUTTONS
 	  *
 	  */
-	function setWireColorToNestedLayer parent_layer wirecolor level:1 =
+	function _setWireColorToNestedLayer parent_layer wirecolor level:1 =
 	(
-		format "\n"; print "LayersToogleDialog_v.setWireColorToNestedLayer()"
+		format "\n"; print "LayersToogleDialog_v._setWireColorToNestedLayer()"
 		format "parent_layer.name: %\n" parent_layer.name
 		format "wirecolor:	% \n" wirecolor
 		format "level: %\n" level
 
-		LayersManager = LayersManager_v()
 		/*------------------------------------------------------------------------------
 			BUTTON FOR EACH LAYER
 		--------------------------------------------------------------------------------*/
@@ -79,7 +109,7 @@ struct LayerToggleCallbacks_v
 
 			child_layer_index = LayersManager.getLayerIndex child_layer
 
-			color_picker = ::LayerToggleCallbacks_v.getColorPicker (child_layer_index)
+			color_picker = this._getColorPicker (child_layer_index)
 
 			child_layer.wirecolor = wirecolor
 			--child_layer.wirecolor = orange
@@ -89,17 +119,17 @@ struct LayerToggleCallbacks_v
 
 			--format "%: % hue: % brightness: % saturation: %\n" child_layer.name wirecolor wirecolor.hue wirecolor.value wirecolor.saturation
 
-			::LayerToggleCallbacks_v.setWireColorToNestedLayer (child_layer) (copy wirecolor) level:(level + 1)
-			--::LayerToggleCallbacks_v.setWireColorToNestedLayer (child_layer) (wirecolor) level:(level + 1)
+			this._setWireColorToNestedLayer (child_layer) (copy wirecolor) level:(level + 1)
+			--::LayerToggleCallbacks_v._setWireColorToNestedLayer (child_layer) (wirecolor) level:(level + 1)
 		)
 	),
 
 	/** Set lyer wirecolor
 	 */
-	function setLayerWirecolorOnPickerChanged clr index =
+	function setLayerWirecolorOnPickerChanged clr =
 	(
 		--format "\n"; print ".setLyerWirecolor()"
-		if (layer = LayerManager.getLayer index) != undefined then
+		if layer != undefined then
 		(
 			format "clr:    %\n" clr
 			format "layer: %\n" layer.wirecolor
@@ -109,11 +139,11 @@ struct LayerToggleCallbacks_v
 
 	/** Get color picker
 	 */
-	function getColorPicker  index =
+	function _getColorPicker layer_index =
 	(
-		--format "\n"; print "LayerToggleCallbacks_v.getColorPicker()"
+		--format "\n"; print "LayerToggleCallbacks_v._getColorPicker()"
 
-		picker_name = "CLR_layer_id_" + index as string
+		picker_name = "CLR_layer_id_" + layer_index as string
 
 		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
 			for ctrl in roll.controls where ctrl.name == picker_name do
@@ -124,9 +154,30 @@ struct LayerToggleCallbacks_v
 
 	private
 
+	/*
+	*/
+	function _getDisplayWirecolorState layer =
+	(
+		layer.nodes &theNodes
+
+		if theNodes.count > 0 then theNodes[1].colorByLayer else false
+	),
+
+	/*
+	*/
+	function _setColorByLayerState layer state =
+	(
+		layer.nodes &theNodes
+
+		for obj in theNodes do
+			obj.colorByLayer = state
+	),
 
 	/**
 	 */
-	on create do	()
-
+	on create do
+	(
+		if layer_index != undefined then
+			layer = LayerManager.getLayer layer_index
+	)
 )
