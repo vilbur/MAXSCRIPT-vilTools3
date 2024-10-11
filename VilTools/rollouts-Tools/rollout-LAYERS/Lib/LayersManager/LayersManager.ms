@@ -320,7 +320,6 @@ struct LayersManager_v
 	(
 		--format "\n"; print "LayersManager_v._getLayerIndex()"
 		for i = 0 to LayerManager.count - 1 where LayerManager.getLayer i == layer do return i
-
 	),
 
 	/*------------------------------------------------------------------------------

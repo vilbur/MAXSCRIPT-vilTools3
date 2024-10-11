@@ -107,7 +107,7 @@ struct LayersToogleDialog_v
 		/* DIALOG CREATE */
 		Dialog.create()
 
-		Dialog.register()
+		--Dialog.register()
 
 		--startUpdateDialogTimer()
 	),
@@ -225,11 +225,10 @@ struct LayersToogleDialog_v
 	function refreshButtons =
 	(
 		--format "\n"; print "LayersToogleDialog_v.refreshButtons()"
-		for control in DIALOG_toogle_layers.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
-			control.state = layer.on
+		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+			for control in roll.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
+				control.state = layer.on
 	),
-
-
 
 	/*------------------------------------------------------------------------------
 		ADD LAYER BUTTON
@@ -275,7 +274,7 @@ struct LayersToogleDialog_v
 
 
 		/* LAYER BUTTON  */
-		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) border:false checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
+		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
 
 		/* COLOR PICKER  */
         _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:picker_offset width:24 height:height
@@ -287,7 +286,7 @@ struct LayersToogleDialog_v
         _Button.Event #RIGHTCLICK ("openLayerRcMenu") params:#( layer_index )	tooltip:"Toggle wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
-		_Picker.Event #CHANGED ("setLyerWirecolor") params:#( layer_index )
+		_Picker.Event #CHANGED ("::LayerToggleCallbacks_v.setLayerWirecolorOnPickerChanged") params:#( layer_index )
 	),
 
 	/** Reset selected layers
@@ -374,7 +373,7 @@ struct LayersToogleDialog_v
 		--format "\n"; print "LayersToogleDialog_v.saveLayerToIni()"
 		this.Ini.delete "layers"
 
-		layers_index	= LayersManager.getLayersIndex(layers)
+	layers_index	= LayersManager.getLayersIndex(layers)
 		--format "LAYERS_INDEX: %\n" layers_index
 
 		for i = 1 to layers.count do
@@ -438,11 +437,9 @@ struct LayersToogleDialog_v
 	function _getLayerByControl _Control =
 	(
 		--format "\n"; print "LayersToogleDialog_v._getLayerByControl()"
-		--format "_Control:	% \n" _Control
 		id_split = filterString ( _Control as string ) "_"
-		--format "id_split:	% \n" id_split
+
 		layer_id =  id_split[id_split.count] as integer
-		--format "layer_id:	% \n" layer_id
 
 		if layer_id != undefined then
 			LayerManager.getLayer layer_id

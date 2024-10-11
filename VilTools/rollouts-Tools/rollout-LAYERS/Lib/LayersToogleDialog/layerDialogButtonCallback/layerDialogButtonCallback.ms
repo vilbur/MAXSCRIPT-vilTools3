@@ -128,7 +128,7 @@ function layerDialogButtonCallback val index =
 
 
 	/* UPDATE OTHER BUTTONS */
-	--LayersToogleDialog.refreshButtons()
+	LayersToogleDialog.refreshButtons()
 
 	redrawViews()
 
@@ -150,18 +150,6 @@ function topLayerButtonCallback val index =
 		obj.isHidden = not val
 )
 
-/** Set lyer wirecolor
- */
-function setLyerWirecolor clr index =
-(
-	--format "\n"; print ".setLyerWirecolor()"
-	if (layer = LayerManager.getLayer index) != undefined then
-	(
-		format "clr:    %\n" clr
-		format "layer: %\n" layer.wirecolor
-		layer.wirecolor = clr
-	)
-)
 
 
 
