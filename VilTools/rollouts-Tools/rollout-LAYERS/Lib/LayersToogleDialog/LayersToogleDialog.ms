@@ -256,6 +256,7 @@ struct LayersToogleDialog_v
 		button_caption = if parent_layer == unsupplied then this.sanitazeName(layer.name) else removeParentLayerName(parent_layer)(layer.name)
 
 		layer_index = LayersManager.getLayerIndex(layer)
+		--format "LAYER_INDEX: %\n" layer_index
 
 
 		 if is_top_layer then
@@ -281,7 +282,7 @@ struct LayersToogleDialog_v
 		/* BUTTON EVENTS */
         _Button.Event #CHANGED (button_pressed + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
 
-        _Button.Event #RIGHTCLICK ("if not keyboard.controlPressed then openLayerRcMenu("+layer_index as string +")\n else\n "+LayerToggleCallbacks+".toggleDisplayAsLayer()" )-- params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
+        _Button.Event #RIGHTCLICK ("if not keyboard.controlPressed then openLayerRcMenu("+layer_index as string +")\n else\n "+LayerToggleCallbacks+".toggleDisplayAsLayer HIERARCHY:keyboard.shiftPressed" )-- params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
 		_Picker.Event #CHANGED (LayerToggleCallbacks+".setLayerWirecolorOnPickerChanged") --params:#( layer_index )

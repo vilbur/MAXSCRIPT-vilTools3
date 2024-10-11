@@ -19,9 +19,9 @@ struct LayerToggleCallbacks_v
 
 		if layer != undefined then
 		(
-			state = _getDisplayWirecolorState(layer)
+			state = not this._getDisplayWirecolorState(layer)
 
-			this._setColorPickerVisibility (child_layer) (state)
+			this._setColorPickerVisibility (layer) (state)
 
 			this._setColorByLayerState (layer) (state)
 
@@ -52,8 +52,9 @@ struct LayerToggleCallbacks_v
 	function _setColorPickerVisibility layer state =
 	(
 		--format "\n"; print "LayerToggleCallbacks_v._setColorPickerVisibility()"
+		--format "layer: %\n" layer
 		layer_index = LayersManager.getLayerIndex layer
-
+		--format "layer_index: %\n" layer_index
 		color_picker = this._getColorPicker layer_index
 
 		color_picker.visible = state
@@ -64,7 +65,7 @@ struct LayerToggleCallbacks_v
 	function propagateWirecolorToChildrenLayers =
 	(
 
-		format "\n"; print "LayerToggleCallbacks_v.propagateWirecolorToChildrenLayers()"
+		--format "\n"; print "LayerToggleCallbacks_v.propagateWirecolorToChildrenLayers()"
 		color_picker = this._getColorPicker layer_index
 		--format "layer_index: %\n" layer_index
 		--format "color_picker: %\n" color_picker
@@ -72,7 +73,7 @@ struct LayerToggleCallbacks_v
 		if layer != undefined then
 		(
 			--format "layer.wirecolor: %\n" layer.wirecolor
-			format "%: %\n" layer.name layer.wirecolor
+			--format "%: %\n" layer.name layer.wirecolor
 
 			color_picker.color = layer.wirecolor
 
@@ -88,10 +89,10 @@ struct LayerToggleCallbacks_v
 	  */
 	function _setWireColorToNestedLayer parent_layer wirecolor level:1 =
 	(
-		format "\n"; print "LayersToogleDialog_v._setWireColorToNestedLayer()"
-		format "parent_layer.name: %\n" parent_layer.name
-		format "wirecolor:	% \n" wirecolor
-		format "level: %\n" level
+		--format "\n"; print "LayersToogleDialog_v._setWireColorToNestedLayer()"
+		--format "parent_layer.name: %\n" parent_layer.name
+		--format "wirecolor:	% \n" wirecolor
+		--format "level: %\n" level
 
 		/*------------------------------------------------------------------------------
 			BUTTON FOR EACH LAYER
@@ -142,13 +143,17 @@ struct LayerToggleCallbacks_v
 	function _getColorPicker layer_index =
 	(
 		--format "\n"; print "LayerToggleCallbacks_v._getColorPicker()"
+		--format "layer_index: %\n" layer_index
 
 		picker_name = "CLR_layer_id_" + layer_index as string
 
+		local color_picker
+
 		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
-			for ctrl in roll.controls where ctrl.name == picker_name do
-				return ctrl
-				--return roll.name +"."+ ctrl.name
+			for ctrl in roll.controls while color_picker == undefined where ctrl.name == picker_name do
+				color_picker = ctrl
+
+		color_picker --return
 	),
 
 
@@ -178,6 +183,6 @@ struct LayerToggleCallbacks_v
 	on create do
 	(
 		if layer_index != undefined then
-			layer = LayerManager.getLayer layer_index
+			this.layer = LayerManager.getLayer layer_index
 	)
 )
