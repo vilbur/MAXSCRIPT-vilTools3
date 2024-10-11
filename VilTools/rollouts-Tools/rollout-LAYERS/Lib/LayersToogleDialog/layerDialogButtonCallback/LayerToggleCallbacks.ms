@@ -11,10 +11,7 @@ struct LayerToggleCallbacks_v
 		--format "\n"; print ".toggleDisplayAsLayer()"
 		if (layer = LayerManager.getLayer index) != undefined then
 		(
-
-			--redrawViews()
 			layer.nodes &theNodes
-
 
 			if theNodes.count >  0 then
 			(

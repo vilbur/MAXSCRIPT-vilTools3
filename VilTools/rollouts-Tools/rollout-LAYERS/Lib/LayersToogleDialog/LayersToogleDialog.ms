@@ -91,13 +91,8 @@ struct LayersToogleDialog_v
 
 		_SubRollouts	 = Dialog.Rollouts()
 
-
-		--Dialog.addlocal ""
-		Dialog.addText "function testPrint = print@TEST@"
-
-
-		--Dialog.Events.add #open	"print @#OPEN@"
-		--Dialog.Events.add #close	"print @#CLOSE@"
+		--Dialog.Events.add #open  "print @#OPEN@"
+		--Dialog.Events.add #close "print @#CLOSE@"
 
 		/* LAYER BUTTONS */
 		for top_layer in this.sortLayers(top_layers) do
@@ -184,13 +179,13 @@ struct LayersToogleDialog_v
 
 		--if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
 		--	--format "PARENT_LAYER: %\n" parent_layer
-		--	this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+		--	this.addLayerControls (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
 		--
 	/*------------------------------------------------------------------------------
 			BUTTON FOR TOP LAYER - if child any child layer exists
 		--------------------------------------------------------------------------------*/
 		if level == 1 then
-			this.addLayerButton (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+			this.addLayerControls (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
 
 
 		/*------------------------------------------------------------------------------
@@ -202,7 +197,7 @@ struct LayersToogleDialog_v
 			(
 				offset = if level == 1 then [ 0, 6 ] else [ 0, 0 ]
 
-				this.addLayerButton (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset
+				this.addLayerControls (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset
 
 				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level + 1)
 			)
@@ -233,11 +228,13 @@ struct LayersToogleDialog_v
 	/*------------------------------------------------------------------------------
 		ADD LAYER BUTTON
 	--------------------------------------------------------------------------------*/
-	function addLayerButton _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false =
+	function addLayerControls _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false =
 	(
-		--format "\n"; print "LayersToogleDialog_v.addLayerButton()"
+		--format "\n"; print "LayersToogleDialog_v.addLayerControls()"
 		--format "LAYER.name:	% \n" layer.name
 		--format "LAYER.on:	% \n" layer.on
+
+		fn getDisplayWirecolorState layer =( layer.nodes &theNodes; if theNodes.count > 0 then theNodes[1].colorByLayer else false)
 
 		/** Get button caption
 		  *
@@ -257,17 +254,14 @@ struct LayersToogleDialog_v
 
 		layer_index = LayersManager.getLayerIndex(layer)
 
-		layer.nodes &theNodes
-
-		picker_visible = if theNodes.count >  0 then theNodes[1].displayByLayer else false
-
 
 		 if is_top_layer then
 			button_caption += " " + top_layer_suffix
 
+
 		button_pressed = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+
 		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
-		button_pressed = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 
 		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, -40 ]
 
@@ -277,13 +271,13 @@ struct LayersToogleDialog_v
 		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
 
 		/* COLOR PICKER  */
-        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:picker_visible across:1 align:#RIGHT offset:picker_offset width:24 height:height
+        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:(getDisplayWirecolorState layer) across:1 align:#RIGHT offset:picker_offset width:24 height:height
 
 
 
 		/* BUTTON EVENTS */
         _Button.Event #CHANGED (button_pressed + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
-        _Button.Event #RIGHTCLICK ("openLayerRcMenu") params:#( layer_index )	tooltip:"Toggle wireframe by OBJECT\LAYER"
+        _Button.Event #RIGHTCLICK ("openLayerRcMenu") params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
 		_Picker.Event #CHANGED ("::LayerToggleCallbacks_v.setLayerWirecolorOnPickerChanged") params:#( layer_index )

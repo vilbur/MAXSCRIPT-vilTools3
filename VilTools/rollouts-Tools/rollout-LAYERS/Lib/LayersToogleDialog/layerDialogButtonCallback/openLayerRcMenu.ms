@@ -6,7 +6,7 @@ function openLayerRcMenu index =
 	--format "\n"; print "openVertexColorSubmenu()"
 	--format "method: %\n" method
 	format "EventFired: %\n" EventFired
-	if not keyboard.controlPressed then
+	if not keyboard.altPressed then
 	(
 
 		/* FIRST ITEM */
@@ -35,7 +35,7 @@ function openLayerRcMenu index =
 		--if method != #SET then
 		--	Menu.item item_title	( "macros.run" + "\"" + category + "\"" + "\"" + macro_name + "\""	) -- macros.run "_Epoly-Vertex-Color" "color_set_by_selection"
 		--
-		Menu.item "&Show Layer wirecolor"	( "::LayerToggleCallbacks_v.toggleDisplayAsLayer " + index as string	)
+		Menu.item "&Show Layer wirecolor (Alt+RMB)"	( "::LayerToggleCallbacks_v.toggleDisplayAsLayer " + index as string	)
 		Menu.item "&Wirecolor to children layers"	( "::LayerToggleCallbacks_v.propagateWirecolorToChildrenLayers " + index as string	)
 		--Menu.item "&BLUE"	( call_method_by_vertex_color + " " + COLOR_NAMES[#BLUE] as string	)
 		--Menu.item "&ORANGE"	( call_method_by_vertex_color + "orange"	)
