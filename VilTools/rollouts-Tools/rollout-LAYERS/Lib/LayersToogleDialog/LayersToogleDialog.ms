@@ -270,7 +270,9 @@ struct LayersToogleDialog_v
 
 		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, (height * -1) - 4 ]
 
+
 		LayerToggleCallbacks = "(LayerToggleCallbacks_v(" + layer_index as string + "))"
+
 
 		/* LAYER CHECKBUTTON  */
 		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
