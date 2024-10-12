@@ -7,7 +7,7 @@
  */
 macroscript	layers_manager_toogle_dialog
 category:	"_Layers-Dialogs"
-buttontext:	"W O R K I N G"
+buttontext:	"⭐ W O R K I N G"
 tooltip:	"Open Working Layers Dialog."
 --icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
 icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
@@ -36,7 +36,7 @@ icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
  */
 macroscript	layers_manager_toogle_dialog_resetini
 category:	"_Layers-Dialogs"
-buttontext:	"W O R K I N G"
+buttontext:	"⭐ W O R K I N G"
 tooltip:	"Reload with new layers set.\n\nCTRL: USE LAYERS HIERARCHY"
 --icon:	"control:checkbutton"
 (

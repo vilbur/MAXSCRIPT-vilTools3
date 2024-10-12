@@ -12,6 +12,7 @@ function openLayerRcMenu layer_index =
 
 	Menu.item "&Show Layer wirecolor (Ctrl+RMB)"	( LayerToggleCallbacks + ".toggleDisplayAsLayer HIERARCHY:keyboard.shiftPressed" 	)
 	Menu.item "&Wirecolor to children layers"	( LayerToggleCallbacks + ".propagateWirecolorToChildrenLayers()" 	)
+	Menu.item "&Lock Wirecolor display"	( LayerToggleCallbacks + ".wirecolorLockToggle()" 	)
 
 	popUpMenu (Menu.create())
 

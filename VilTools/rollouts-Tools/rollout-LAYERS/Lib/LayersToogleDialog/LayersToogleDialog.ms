@@ -151,7 +151,7 @@ struct LayersToogleDialog_v
 		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on)
 		--format "_SubRollout: %\n" _SubRollout
 
-		_SubRollout.Events.add #ROLLEDUP	 ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_layer --params:layer.name
+        _SubRollout.Events.add #ROLLEDUP ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_button --params:layer.name
 
 
 		--_SubRollout.Events.add #ROLLEDUP	"print(\"#ROLLEDUP\")"
@@ -257,34 +257,35 @@ struct LayersToogleDialog_v
 		layer_index = LayersManager.getLayerIndex(layer)
 		--format "LAYER_INDEX: %\n" layer_index
 
-
-		 if is_top_layer then
-			button_caption += " " + top_layer_suffix
-
+		LayerToggleCallbacks = "(LayerToggleCallbacks_v(" + layer_index as string + "))"
 
 		button_pressed = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+		--button_pressed = if is_top_layer then (LayerToggleCallbacks + ".toggleDisplayAsLayer") else "layerDialogButtonCallback"
 
-		tooltip_top_layer = "SHOW \ HIDE objects in top layer"
+		tooltip_top_layer = "SHOW \ HIDE objects in "+button_caption
 
-        tooltip_layer     = " Toggle layer visibility\n\nCRL: Select objects in layer.\n\nSHIFT: Select children layers.\n\nCRL + SHIFT: Select objects in all nested layers"
+        tooltip_button     = "Toggle layer visibility.\n\nRemote All nested \n\nLMB+CRL: Select objects in layer."
+        tooltip_button_rc     = "Open Menu\n\nRMB+CTRL: Toggle wireframe object\Layer."
 
 		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, (height * -1) - 4 ]
 
 
-		LayerToggleCallbacks = "(LayerToggleCallbacks_v(" + layer_index as string + "))"
+
+		if is_top_layer then
+			button_caption += " " + top_layer_suffix
 
 
 		/* LAYER CHECKBUTTON  */
-		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
+		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset tooltip:"SHIFT: USE NESTED LAYERS IN TOOLS"
 
 		/* COLOR PICKER  */
         _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string ) params:#(#color, layer.wirecolor  ) visible:(getDisplayWirecolorState layer) across:1 align:#RIGHT offset:picker_offset width:24 height:height
 
 
 		/* BUTTON EVENTS */
-        _Button.Event #CHANGED (button_pressed + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
+        _Button.Event #CHANGED (button_pressed + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_button ) --params:layer.name
 
-        _Button.Event #RIGHTCLICK ("if not keyboard.controlPressed then openLayerRcMenu("+layer_index as string +")\n else\n "+LayerToggleCallbacks+".toggleDisplayAsLayer HIERARCHY:keyboard.shiftPressed" )-- params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
+        _Button.Event #RIGHTCLICK ("if not keyboard.controlPressed then openLayerRcMenu("+layer_index as string +")\n else\n "+LayerToggleCallbacks+".toggleDisplayAsLayer HIERARCHY:keyboard.shiftPressed" ) tooltip:tooltip_button_rc -- params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
 		--_Picker.Event #CHANGED (LayerToggleCallbacks+".setLayerWirecolorOnPickerChanged(val)") --params:#( layer_index )
@@ -397,20 +398,33 @@ struct LayersToogleDialog_v
 		/** Get tooltip
 		  *
 		  */
-		function getTooltip button_type = "ON\OFF layer.\n\nCRL: Select displayed layers in "+button_type+".\n\nSHIFT:Select all layers in "+button_type+".\n\n"
+		function getTooltip button_type = "ON\OFF layer.\n\nCRL: Select displayed layers in "+button_type+".\n\nSHIFT:Select all layers in "+button_type
 
-		buttons_count = 2
+		buttons_count = 3
 
-        _Controls.Default #across        buttons_count
-        --_Controls.Default #width	(this.default_width / buttons_count)
-        _Controls.Default #width	( this.default_width /2)
+		width = ( (this.default_width - 6)  / buttons_count) as integer
 
-        HideBtn = _Controls.Control	#checkbutton "DIALOG"	tooltip:(getTooltip("dialog"))
+        _Controls.Default #across buttons_count
 
-        HideBtn.Event #changed	"layerDialogButtonCallback"	params:#dialog	tooltip:"Toggle all layers in dialog"
-        HideBtn.Event #rightclick	"layerDialogButtonCallback"	params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+        --_Controls.Default #WIDTH width
+        _Controls.Default #HEIGHT 32
+        _Controls.Default #BORDER false
+        --_Controls.Default #OFFSET [ 0, -8 ]
 
-        HideOthersBtn = _Controls.Control	#checkbutton "OTHERS" tooltip:(getTooltip("not in dialog"))
+
+	    /* "LAYERS" BUTTON  */
+        LayerManagerBtn = _Controls.Control #BUTTON "LAYERS" width:width offset:[ -4, -8 ]
+
+        LayerManagerBtn.Event #PRESSED "if LayerManager.isDialogOpen() then LayerManager.closeDialog() else LayerManager.editLayerByName \"\"" tooltip:"Open Close Layer Manager"
+
+        /* "DIALOG" BUTTON  */
+        HideBtn = _Controls.Control #checkbutton "DIALOG"	tooltip:(getTooltip("dialog")) width:width offset:[ 0, -8 ]
+
+        HideBtn.Event #changed    "layerDialogButtonCallback" params:#dialog	tooltip:"Toggle all layers in dialog"
+        HideBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+
+        /* "OTHERS" BUTTON  */
+        HideOthersBtn = _Controls.Control #checkbutton "OTHERS" tooltip:(getTooltip("not in dialog")) width:width offset:[ 4, -8 ]
 
         HideOthersBtn.Event #changed    "layerDialogButtonCallback" params:#others          	tooltip:"Toggle all layers not in dialog"
         HideOthersBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #others)	tooltip:"Hide all layers not in dialog"

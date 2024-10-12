@@ -137,19 +137,22 @@ function layerDialogButtonCallback val index =
 
 /** Top layer button callback
  */
-function topLayerButtonCallback val index =
+function topLayerButtonCallback val layer_index =
 (
-	format "\n"; print ".topLayerButtonCallback()"
-	format "val: %\n" val
-	layer = LayerManager.getLayer index
+	--format "\n"; print ".topLayerButtonCallback()"
+	--format "val: %\n" val
+	format "EventFired: %\n" EventFired
+
+	layer = LayerManager.getLayer layer_index
 
 	layer.nodes &theNodes
 
 	for obj in theNodes do
-	--format "obj: %\n" obj.isHidden
 		obj.isHidden = not val
+
+	if keyboard.shiftPressed then
+		layer.on = val
+
+	LAYERS_TOOGLE_DIALOG.refreshButtons()
+
 )
-
-
-
-
