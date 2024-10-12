@@ -7,7 +7,7 @@
  */
 macroscript	layers_manager_toogle_dialog
 category:	"_Layers-Dialogs"
-buttontext:	"D I A L O G"
+buttontext:	"W O R K I N G"
 tooltip:	"Open Working Layers Dialog."
 --icon:	"control:checkbutton|MENU:true|title:LAYER TOOGLE"
 icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
@@ -36,7 +36,7 @@ icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
  */
 macroscript	layers_manager_toogle_dialog_resetini
 category:	"_Layers-Dialogs"
-buttontext:	"D I A L O G"
+buttontext:	"W O R K I N G"
 tooltip:	"Reload with new layers set.\n\nCTRL: USE LAYERS HIERARCHY"
 --icon:	"control:checkbutton"
 (
@@ -45,11 +45,16 @@ tooltip:	"Reload with new layers set.\n\nCTRL: USE LAYERS HIERARCHY"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Working Layers.mcr"
 
-		LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
+		ctrl_state = keyboard.controlPressed
 
-		LAYERS_TOOGLE_DIALOG.resetLayers()
+		if queryBox ("New set of layers ?") title:"WORKING LAYERS" then
+		(
+			LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
-		LAYERS_TOOGLE_DIALOG.create chain: keyboard.controlPressed
+			LAYERS_TOOGLE_DIALOG.resetLayers()
+
+			LAYERS_TOOGLE_DIALOG.create chain:ctrl_state
+		)
 	)
 )
 

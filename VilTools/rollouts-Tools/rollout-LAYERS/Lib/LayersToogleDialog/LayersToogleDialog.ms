@@ -23,11 +23,10 @@ struct LayersToogleDialog_v
 
 	button_height = 36,
 
-	left_padding	= 8, -- less size of how nested buttonn
+	--left_padding	= 8, -- less size of how nested buttonn
+	left_padding	= 10, -- less size of how nested buttonn
 	height_offset	= 2, -- less size of how nested buttonn
 
-	tooltip_top_layer = "SHOW \ HIDE objects in top layer",
-	tooltip_layer     = "CRL: Select objects in layer. \nSHIFT:Select children layers. \nCRL + SHIFT: Select objects in all nested layers",
 
 	--top_layer_suffix = "⬇", -- ▼
 	top_layer_suffix = "▼", -- ▼
@@ -265,27 +264,30 @@ struct LayersToogleDialog_v
 
 		button_pressed = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
 
-		tooltip = if is_top_layer then "topLayerButtonCallback" else "layerDialogButtonCallback"
+		tooltip_top_layer = "SHOW \ HIDE objects in top layer"
 
-		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, -40 ]
+        tooltip_layer     = " Toggle layer visibility\n\nCRL: Select objects in layer.\n\nSHIFT: Select children layers.\n\nCRL + SHIFT: Select objects in all nested layers"
+
+		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, (height * -1) - 4 ]
 
 		LayerToggleCallbacks = "(LayerToggleCallbacks_v(" + layer_index as string + "))"
 
-		/* LAYER BUTTON  */
+		/* LAYER CHECKBUTTON  */
 		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset
 
 		/* COLOR PICKER  */
-        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string )  params:#(#color, layer.wirecolor  ) visible:(getDisplayWirecolorState layer) across:1 align:#RIGHT offset:picker_offset width:24 height:height
-
+        _Picker = _Controls.control #COLORPICKER "" id:("CLR_layer_id_"+layer_index as string ) params:#(#color, layer.wirecolor  ) visible:(getDisplayWirecolorState layer) across:1 align:#RIGHT offset:picker_offset width:24 height:height
 
 
 		/* BUTTON EVENTS */
-        _Button.Event #CHANGED (button_pressed + " val "+layer_index as string )        	tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
+        _Button.Event #CHANGED (button_pressed + " val "+layer_index as string ) tooltip:( if is_top_layer then tooltip_top_layer else tooltip_layer ) --params:layer.name
 
         _Button.Event #RIGHTCLICK ("if not keyboard.controlPressed then openLayerRcMenu("+layer_index as string +")\n else\n "+LayerToggleCallbacks+".toggleDisplayAsLayer HIERARCHY:keyboard.shiftPressed" )-- params:#( layer_index )	tooltip:"Open Menu\n\nALT: Display wireframe by OBJECT\LAYER"
 
 		/* PICKER EVENTS */
+		--_Picker.Event #CHANGED (LayerToggleCallbacks+".setLayerWirecolorOnPickerChanged(val)") --params:#( layer_index )
 		_Picker.Event #CHANGED (LayerToggleCallbacks+".setLayerWirecolorOnPickerChanged") --params:#( layer_index )
+		--_Picker.Event #CHANGED ( "print ") params:#( layer_index )
 	),
 
 	/** Reset selected layers
