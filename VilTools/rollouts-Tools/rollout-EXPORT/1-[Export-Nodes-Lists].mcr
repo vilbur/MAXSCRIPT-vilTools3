@@ -21,7 +21,7 @@ macroscript	_export_node_create
 category:	"_Export"
 buttontext:	"Create"
 toolTip:	"Create Export Node\n\nNode name is exported filename\n\nSlected objects will be linked to new node"
-icon:	"across:3|width:64|height:48|pos:[ 180, 24 ]"
+icon:	"across:3|width:64|height:48|pos:[ 184, 24 ]"
 --icon:	"across:5|width:64|height:48"
 (
 	--format "eventFired.control	= % \n" eventFired.control
@@ -41,7 +41,7 @@ macroscript	_export_node_link_selection
 category:	"_Export"
 buttontext:	"Link"
 toolTip:	"LINK TO NODE:\n(link selected obgjects to selcted node)"
-icon:	"pos:[ 246, 24 ]"
+icon:	"pos:[ 250, 24 ]"
 (
 
 	/** Get selection without members of closed group
@@ -63,8 +63,6 @@ icon:	"pos:[ 246, 24 ]"
 	on execute do
 		undo "Link to node" on
 		(
-			filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
-
 			_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
 			if( _nodes.count > 0 ) then
@@ -132,10 +130,10 @@ macroscript	_export_node_load
 category:	"_Export"
 buttontext:	"Load"
 toolTip:	"Load nodes to list"
-icon:	"pos:[ 312, 24 ]"
+icon:	"pos:[ 316, 24 ]"
 
 (
-	format "eventFired	= % \n" eventFired
+	--format "eventFired	= % \n" eventFired
 
 	(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
 
@@ -149,7 +147,7 @@ macroscript	_export_group_nodes
 category:	"_Export"
 buttontext:	"Group"
 toolTip:	"Group selected nodes"
-icon:	"pos:[ 180, 72]"
+icon:	"pos:[ 184, 72]"
 (
 	_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
@@ -205,7 +203,7 @@ macroscript	_export_node_unify
 category:	"_Export"
 buttontext:	"Unify"
 toolTip:	"Set size and path of selected export nodes\n\n1st selected node is source object"
-icon:	"pos:[ 246, 72]"
+icon:	"pos:[ 250, 72]"
 (
 	_nodes = ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
 
@@ -246,15 +244,15 @@ macroscript	_export_nodes_list
 category:	"_Export"
 buttontext:	"Nodes"
 toolTip:	"Nodes to export"
-icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|offset:[ 8, -128]"
+icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|offset:[ 0, -120]"
 --icon:	"control:multilistbox|across:2|height:20|width:160|offset:[ 0, -96]"
 --icon:	"control:multilistbox|across:2"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
-	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+	----clearListener(); print("Cleared in:\n"+getSourceFileName())
 	--filein @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
-	print "SELECTED"
-	format "eventFired	= % \n" eventFired
+	--print "SELECTED"
+	--format "eventFired	= % \n" eventFired
 
 	selectExportNodeInListCallbackRemove()
 
@@ -307,13 +305,11 @@ buttontext:	"Nodes"
 toolTip:	"Isolate node children\n\nCtrl+LMB: Select node children."
 icon:	"control:multilistbox|across:2|event:#doubleClicked"
 (
+	--clearListener(); print("Cleared in:\n"+getSourceFileName())
 	--format "EventFired	= % \n" EventFired
 
-	clearListener(); print("Cleared in:\n"+getSourceFileName())
-	filein @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-EXPORT\1-[Export-Nodes].mcr"
-
-	print "DOUBLECLICKED"
-	format "eventFired	= % \n" eventFired
+	--print "DOUBLECLICKED"
+	--format "eventFired	= % \n" eventFired
 
 	LayersManager 	= LayersManager_v()
 
@@ -382,7 +378,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:9|width:160|offs
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
 	--clearListener()
-	format "eventFired	= % \n" eventFired
+	--format "eventFired	= % \n" eventFired
 	--format "eventFired.Control.items	= % \n" eventFired.Control.items
 	--format "eventFired.Control.selection	= % \n" (eventFired.Control.selection as array )
 

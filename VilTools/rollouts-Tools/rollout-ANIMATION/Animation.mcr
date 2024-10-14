@@ -107,18 +107,23 @@ buttontext:	"Trackbar Toggle"
 macroscript	_options_toggle_keyframe_0_1
 category:	"_Animation"
 buttontext:	"Next Frame"
-tooltip:	"Set next frame on timeslider"
+tooltip:	"Set next frame on timeslider\n\nCTRL: Last Frame"
 --icon:	"control:label"
 autoUndoEnabled: true
 (
 	on execute do
 	(
-		next_frame = sliderTime.frame + 1
+		if not keyboard.controlPressed then
+		(
+			next_frame = sliderTime.frame + 1
 
-		if next_frame > (animationRange.end).frame then
-			next_frame = 0
+			if next_frame > (animationRange.end).frame then
+				next_frame = 0
 
-		sliderTime = next_frame
+			sliderTime = next_frame
+		)
+		else
+			sliderTime = animationRange.end
 	)
 )
 

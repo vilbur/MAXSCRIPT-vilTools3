@@ -141,7 +141,7 @@ function topLayerButtonCallback val layer_index =
 (
 	--format "\n"; print ".topLayerButtonCallback()"
 	--format "val: %\n" val
-	format "EventFired: %\n" EventFired
+	--format "EventFired: %\n" EventFired
 
 	layer = LayerManager.getLayer layer_index
 
@@ -154,5 +154,89 @@ function topLayerButtonCallback val layer_index =
 		layer.on = val
 
 	LAYERS_TOOGLE_DIALOG.refreshButtons()
-
 )
+
+global LAYER_HUE_LAST_VAL
+
+/** Tune hue of layer recolor
+ */
+function tuneHueOfLayerRecolor val =
+(
+	--format "\n"
+	--format "\n"; print ".tuneHueOfLayerRecolor()"
+	format "val: %\n" val
+	--format "LAYER_HUE_LAST_VAL: %\n" LAYER_HUE_LAST_VAL
+
+	layers_selected = (LayersManager_v()).getSelectedLayers()
+
+	prop = case of
+	(
+		(keyboard.controlPressed): "saturation"
+		(keyboard.shiftPressed):   "value"
+		default: "hue"
+	)
+
+	if LAYER_HUE_LAST_VAL == undefined then
+		LAYER_HUE_LAST_VAL = val
+
+	increment = if val < LAYER_HUE_LAST_VAL then val - LAYER_HUE_LAST_VAL else val - LAYER_HUE_LAST_VAL
+
+	if (layers_selected) != undefined and layers_selected.count > 0 then
+	(
+
+		--format "layers_selected[1].name: %\n" layers_selected[1].name
+
+		for layer in layers_selected do
+		(
+			--format "layer.name: %\n" layer.name
+			color_picker = (LayerToggleCallbacks_v()).getColorPickerByLayer(layer)
+
+			wirecolor = layer.wirecolor
+
+			if val > 0 and val < 255 then
+			(
+				prop_val = (getProperty wirecolor prop) + increment
+
+				if prop == "hue" then
+				(
+					if prop_val < 0   then prop_val = 255 - prop_val
+					if prop_val > 255 then prop_val = prop_val - 255
+				)
+				else
+				(
+					if prop_val < 0   then prop_val = 0
+					if prop_val > 255 then prop_val = 255
+				)
+
+				if prop != "hue" then
+				(
+					if prop_val == 0   then EventFired.control.value = 0
+					if prop_val == 255 then EventFired.control.value = 255
+				)
+
+				format "prop_val: %\n" prop_val
+				setProperty wirecolor prop ( prop_val as integer )
+
+			)
+			else
+				setProperty wirecolor prop ( val as integer )
+
+
+			layer.wirecolor = wirecolor
+			--format "hue: %\n" layer.wirecolor.hue
+			color_picker.color = wirecolor
+		)
+
+		LAYER_HUE_LAST_VAL = val
+	)
+)
+
+
+
+
+
+
+
+
+
+

@@ -60,13 +60,14 @@ struct LayerToggleCallbacks_v
 		)
 	),
 
-
-
-	/** Propagate wirecolor to children layers
+	/** Pass wirecolor to children layers
 	 */
-	function propagateWirecolorToChildrenLayers =
+	function passWirecolorToChildrenLayers =
 	(
-		--format "\n"; print "LayerToggleCallbacks_v.propagateWirecolorToChildrenLayers()"
+		format "\n"; print "LayerToggleCallbacks_v.passWirecolorToChildrenLayers()"
+		format "layer_index: %\n" layer_index
+		format "layer.name: %\n" layer.name
+		format "layer.wirecolor: %\n" layer.wirecolor
 
 		/** Find which side of gradient from current value is bigger
 		 */
@@ -84,12 +85,21 @@ struct LayerToggleCallbacks_v
 			dir_saturation = getDirection (wirecolor.saturation)
 			dir_brightness = getDirection (wirecolor.value)
 
-			/* SET SANITIZIED COLOR TO LAYER & PICKER */
-			if wirecolor != layer.wirecolor then
-				this._setWirecolorToLayerAndColorPicker (layer) (wirecolor) layer_index:layer_index
 
-			if mod wirecolor.hue 40 < 20 then -- if yellow color
-				hue_direction = -1
+
+			/* SET SANITIZIED COLOR TO LAYER & PICKER */
+			--if wirecolor != layer.wirecolor then
+			this._setWirecolorToLayerAndColorPicker (layer) (wirecolor) layer_index:layer_index enabled:true
+
+			/* REVERSE HUE FIREVTION IF YELLOW -- go "yellow > red" rather then "yellow > blue" */
+			if wirecolor.hue > 20 and wirecolor.hue < 60 then -- if yellow color
+				hue_direction = -2
+
+
+			/* SET SIZE OF INCREMENT - set how strong color cange is */
+			--dir_saturation *= 2
+			--dir_brightness *= 2
+			--hue_direction  *= 2
 
 			--format "hue_direction: %\n" hue_direction
 			--format "wirecolor: %\n" wirecolor
@@ -101,7 +111,7 @@ struct LayerToggleCallbacks_v
 			--format "dir_brightness: %\n" dir_brightness
 
 			/* COLOR TO NESTED LAYERS */
-			this._setWireColorToNestedLayers (layer) (copy layer.wirecolor)
+			this._passWireColorToNestedLayers (layer) (copy layer.wirecolor)
 		)
 	),
 
@@ -129,6 +139,15 @@ struct LayerToggleCallbacks_v
 			--color_picker.enabled = not color_picker.enabled
 			color_picker.enabled = not color_picker.enabled
 
+	),
+
+
+	/** Get color picker
+	 */
+	function getColorPickerByLayer _layer =
+	(
+		--format "\n"; print "LayerToggleCallbacks_v._getColorPicker()"
+		this._getColorPicker (LayersManager.getLayerIndex (_layer)) --return
 	),
 
 	private
@@ -173,9 +192,9 @@ struct LayerToggleCallbacks_v
 	  *
 	  *
 	  */
-	function _setWireColorToNestedLayers parent_layer wirecolor level:1 =
+	function _passWireColorToNestedLayers parent_layer wirecolor level:1 =
 	(
-		--format "\n"; print "LayersToogleDialog_v._setWireColorToNestedLayers()"
+		--format "\n"; print "LayersToogleDialog_v._passWireColorToNestedLayers()"
 		--format "hue_direction: %\n" hue_direction
 
 		wirecolor.hue += hue_direction
@@ -186,9 +205,10 @@ struct LayerToggleCallbacks_v
 			wirecolor.saturation	= ( (level * 3) * dir_saturation) + wirecolor.saturation
 			wirecolor.value	= ( (level * 3) * dir_brightness) + wirecolor.value
 
+
 			/* FIT VALUES TO RANGE min_value - 255 */
-			if wirecolor.value      > 255 or wirecolor.value      < min_value then wirecolor.value      = min_value
-			if wirecolor.saturation > 255 or wirecolor.saturation < min_value then wirecolor.saturation = min_value
+			--if wirecolor.value      > 255 or wirecolor.value      < min_value then wirecolor.value      = min_value
+			--if wirecolor.saturation > 255 or wirecolor.saturation < min_value then wirecolor.saturation = min_value
 
 			/* MODIFY HUE */
 			wirecolor.hue = if wirecolor.hue > 255 then 0 else
@@ -198,20 +218,24 @@ struct LayerToggleCallbacks_v
 			while findItem wirecolors wirecolor > 0 do
 				wirecolor.hue += hue_direction
 
-			--format "\n"
+			format "\n"
 			--format "child_layer: %\n" child_layer.name
 			--format "wirecolor: %\n" wirecolor
-			format "wirecolor.hue: %\n" wirecolor.hue
-			--format "brightness: %\n" wirecolor.value
-			--format "saturation: %\n" wirecolor.saturation
+			--format "wirecolor.hue: %\n" wirecolor.hue
+			format "brightness: %\n" wirecolor.value
+			format "saturation: %\n" wirecolor.saturation
+			--color_picker = this.getColorPickerByLayer child_layer
+			--format "COLOR_PICKER: %\n" (this.getColorPickerByLayer child_layer)
 
+			if ( color_picker = this.getColorPickerByLayer child_layer ).enabled then
+				this._setColorByLayerStateToObjects child_layer true
 
 			/* MODIFY COLOR PICKER */
-			this._setWirecolorToLayerAndColorPicker (child_layer) (wirecolor)
+			this._setWirecolorToLayerAndColorPicker (child_layer) (wirecolor) color_picker:color_picker
 
 			--format "%: % hue: % brightness: % saturation: %\n" child_layer.name wirecolor wirecolor.hue wirecolor.value wirecolor.saturation
 			/* COLOR TO NESTED LAYERS */
-			this._setWireColorToNestedLayers (child_layer) (copy wirecolor) level:(level + 1)
+			this._passWireColorToNestedLayers (child_layer) (copy wirecolor) level:(level + 1)
 		)
 	),
 
@@ -235,19 +259,29 @@ struct LayerToggleCallbacks_v
 
 	/** Set wirecolor to layer and color picker
 	 */
-	function _setWirecolorToLayerAndColorPicker _layer wirecolor layer_index: =
+	function _setWirecolorToLayerAndColorPicker _layer wirecolor layer_index: color_picker: enabled: =
 	(
 		--format "\n"; print "LayerToggleCallbacks_v._setWirecolorToLayerAndColorPicker()"
+		--format "classof color_picker: %\n" (classof color_picker)
+		if classOf color_picker != ColorPickerControl then
+		(
+			if layer_index == unsupplied then
+				layer_index = LayersManager.getLayerIndex (_layer)
 
-		if layer_index == unsupplied then
-			layer_index = LayersManager.getLayerIndex (_layer)
+			/* COLOR PICKER */
+			color_picker = this._getColorPicker (layer_index)
+		)
 
-		/* COLOR PICKER */
-		color_picker = this._getColorPicker (layer_index)
 
 		color_picker.color    = wirecolor
-		color_picker.visible    = true
-		color_picker.enabled    = true
+
+		if enabled != unsupplied then
+			color_picker.enabled = enabled
+
+		if color_picker.enabled then
+			color_picker.visible = true
+
+		--color_picker.enabled    = true
 
 		/* SET LAYER WIRECOLOR */
 		_layer.wirecolor    = wirecolor

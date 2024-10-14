@@ -61,7 +61,7 @@ struct LayersToogleDialog_v
 			this.layers = if Ini.isDefined() and (layers_ini = this.getLayersFromIni()).count > 0 then
 				layers_ini --return
 
-			else if (layers_selected = LayersManager.getSelectedLayers()) != undefined and layers_selected.count > 0 then
+			else if (layers_selected = LayersManager.getSelectedLayers()) != undefined and layers_selected.count > 1 then
 				layers_selected
 
 			else
@@ -153,14 +153,11 @@ struct LayersToogleDialog_v
 
         _SubRollout.Events.add #ROLLEDUP ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_button --params:layer.name
 
-
 		--_SubRollout.Events.add #ROLLEDUP	"print(\"#ROLLEDUP\")"
 		--_SubRollout.Events.add #OPEN	"print(\"#OPEN\")"
 		--_SubRollout.Events.add #CLOSE	"print(\"#CLOSE\")"
 
 		_Controls   = _SubRollout.Controls() --group:(this.sanitazeName(top_layer.name))
-
-
 
 		/* BUTTONS FOR NESTED LAYERS */
 		this._createButtonForNestedLayers (_Controls) (top_layer) --level:0
@@ -186,7 +183,6 @@ struct LayersToogleDialog_v
 		--------------------------------------------------------------------------------*/
 		if level == 1 then
 			this.addLayerControls (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
-
 
 		/*------------------------------------------------------------------------------
 			BUTTON FOR EACH LAYER
@@ -219,7 +215,7 @@ struct LayersToogleDialog_v
 	  */
 	function refreshButtons =
 	(
-		--format "\n"; print "LayersToogleDialog_v.refreshButtons()"
+		format "\n"; print "LayersToogleDialog_v.refreshButtons()"
 		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
 			for control in roll.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
 				control.state = layer.on
@@ -236,7 +232,7 @@ struct LayersToogleDialog_v
 		--format "LAYER.name:	% \n" layer.name
 		--format "LAYER.on:	% \n" layer.on
 
-		fn getDisplayWirecolorState layer =( layer.nodes &theNodes; if theNodes.count > 0 then theNodes[1].colorByLayer else false)
+		fn getDisplayWirecolorState layer =( layer.nodes &theNodes; if theNodes.count > 0 then theNodes[1].colorByLayer else true )
 
 		/** Get button caption
 		  *
@@ -418,7 +414,7 @@ struct LayersToogleDialog_v
         LayerManagerBtn.Event #PRESSED "if LayerManager.isDialogOpen() then LayerManager.closeDialog() else LayerManager.editLayerByName \"\"" tooltip:"Open Close Layer Manager"
 
         /* "DIALOG" BUTTON  */
-        HideBtn = _Controls.Control #checkbutton "DIALOG"	tooltip:(getTooltip("dialog")) width:width offset:[ 0, -8 ]
+        HideBtn = _Controls.Control #checkbutton "DIALOG" tooltip:(getTooltip("dialog")) width:width offset:[ 0, -8 ]
 
         HideBtn.Event #changed    "layerDialogButtonCallback" params:#dialog	tooltip:"Toggle all layers in dialog"
         HideBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
@@ -428,6 +424,12 @@ struct LayersToogleDialog_v
 
         HideOthersBtn.Event #changed    "layerDialogButtonCallback" params:#others          	tooltip:"Toggle all layers not in dialog"
         HideOthersBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #others)	tooltip:"Hide all layers not in dialog"
+
+
+		/* HUE SLIDER */
+		HueSlider = _Controls.Control #SLIDER "[hue slider]" across:1 range:[0,255,0] width:this.default_width offset:[ -8, 0 ] ini:false type:#INTEGER ticks:0 tooltip:"Change `HUE` of selected layer`s wirecolor\n\nCTRL: Change `SATURATION`\n\nSHIFT: Change `BRIGHTNESS`"
+        HueSlider.Event #changed "tuneHueOfLayerRecolor"
+
 	),
 
 	/** Remove
@@ -508,7 +510,15 @@ struct LayersToogleDialog_v
 		--format "\n"; print "LayersToogleDialog_v.checkLayerNames()"
 		for i = this.layers.count to 1 by -1 where matchPattern this.layers[i].name pattern:("*=*") do
 		(
-			messageBox ("Layer name MUST NOT contain \"=\"\n\nWRONG LAYER NAME:\n\n"+this.layers[i].name) title:"LayersToogleDialog_v"
+			--messageBox ("Layer name MUST NOT contain \"=\"\n\nWRONG LAYER NAME:\n\n"+this.layers[i].name) title:"LayersToogleDialog_v"
+			if queryBox ("Layer name MUST NOT contain \"=\"\n\nWRONG LAYER NAME:\n\n"+this.layers[i].name+"\n\nREPLACE \"=\" with \"-\"") title:"LayersToogleDialog_v" then
+			(
+				layer = this.layers[i]
+
+				layer_renamed =  ( dotNetObject "System.Text.RegularExpressions.Regex" "=" ).Replace layer.name "—"
+
+				layer.setName layer_renamed
+			)
 
 			deleteItem this.layers i
 		)
