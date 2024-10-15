@@ -231,55 +231,133 @@ function tuneHueOfLayerRecolor val =
 	)
 )
 
+
+/** Get layer controls
+ */
+function getLayerButtons =
+(
+	--format "\n"; print ".getLayerButtons()"
+	/** Get layer id
+	 */
+	function _getLayerId ctrl_name = (trimLeft ctrl_name "layer_id_") as integer
+
+	layers_buttons	=  Dictionary #INTEGER -- KEY: layer id VALUE: button or rollout
+
+	/* GET LAYER BUTTONS */
+
+	for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		for control in roll.controls where classOf control == CheckButtonControl do
+			layers_buttons[_getLayerId control.name] = control
+
+	--for key in layers_buttons.keys do
+	--	format "layers_buttons[key]: %\n" layers_buttons[key]
+
+	layers_buttons --return
+)
+
+/** Get layers rollouts
+ */
+function getLayersRollouts =
+(
+	--format "\n"; print ".getLayersRollouts()"
+	function _getLayerId ctrl_name = (trimLeft ctrl_name "ROLLOUT_layer_id_") as integer
+
+	layers_rollouts	=  Dictionary #INTEGER -- KEY: layer id VALUE: button or rollout
+
+	for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		layers_rollouts[_getLayerId roll.name] = roll
+
+	layers_rollouts --return
+)
+
+
 /** Sync with layer manager
  */
-function syncWithLayerManager sync_direction =
+function syncDialogToScene =
 (
-	format "\n"; print ".syncWithLayerManager()"
-
-	/** Get layer by control
-	 */
-	function _getLayerByControl ctrl_name =
+	--format "\n"; print ".syncDialogToScene()"
+	--format "val: %\n" val
+	if queryBox ("Sync state of scene layers ?\n\nDIALOG > SCENE ") title:"SYNC LAYERS STATE" then
 	(
-		format "\n"; print "._getLayerByControl()"
-		format "ctrl_name: %\n" ctrl_name
-		ctrl_name_split	= filterString ctrl_name "_"
-		format "ctrl_name_split: %\n" ctrl_name_split
+		layers_buttons = getLayerButtons()
+		layers_rollouts = getLayersRollouts()
 
-		LayerManager.getLayer( ctrl_name_split[ctrl_name_split.count] as integer  )
-	)
-
-	if sync_direction == #DIALOG_TO_MANAGER then
-	(
-		--format "EventFired.control: %\n" EventFired.control
-		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		/* SET LAYERS STATE */
+		for i = 0 to LayerManager.count - 1 do
 		(
-			format "roll.name: %\n" roll.name
+			layer =  LayerManager.getLayer i
 
-			--roll_name = if roll.name == "ROLLOUT_default" then "ROLLOUT_0" else roll.name
+			layer.on = false
 
-			--layer = if roll.name == "ROLLOUT_default" then LayerManager.getLayer 0 else  _getLayerByControl(roll.name)
-			layer = _getLayerByControl(roll.name)
+			if layers_rollouts[i] != undefined then
+			format "roll: %\n" layers_rollouts[i]
 
-			roll.open = layer.on
+			if (roll = layers_rollouts[i]) != undefined then
+				layer.on = roll.open
 
-			if layer.on then
+			if layers_buttons[i] != undefined then
+			format "control: %\n" layers_buttons[i]
+			if (check_button = layers_buttons[i]) != undefined then
+				layer.on = check_button.state
 
-			--for ctrl in roll.controls do
-			for ctrl in roll.controls where classOf ctrl == #CHECKBUTTON do
-			(
-				layer = _getLayerByControl(ctrl.name)
-
-				ctrl.visible = layer.on
-				--format "ctrl.name: %\n" ctrl.name
-			)
+			/* TURN LAYER OF IF NOT IN DIALOG */
+			--if roll == undefined and check_button == undefined  then
+				--layer.on = false
 		)
-
 	)
-	else
-	(
-
-	)
-
-
 )
+
+/** Sync scene to dialog
+ */
+function syncSceneToDialog =
+(
+	--format "\n"; print ".syncSceneToDialog()"
+
+	if queryBox ("Sync state of scene layers ?\n\nSCENE > DIALOG") title:"SYNC LAYERS STATE" then
+	(
+		layers_buttons = getLayerButtons()
+		layers_rollouts = getLayersRollouts()
+
+
+		/* SET LAYERS STATE */
+		for i = 0 to LayerManager.count - 1 do
+		(
+			layer =  LayerManager.getLayer i
+
+			/* SET RLLOUT STATE */
+			if (roll = layers_rollouts[i]) != undefined then
+				roll.open = layer.on
+
+
+			/* SET CHECKBUTTON STATE */
+			if (check_button = layers_buttons[i]) != undefined then
+				check_button.state = layer.on -- CHECKBUTTON
+
+			/* TURN OFF LAYERS WHICH ARE NOT IN DIALOG */
+			if roll == undefined and check_button == undefined  then
+				layer.on = false
+		)
+	)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

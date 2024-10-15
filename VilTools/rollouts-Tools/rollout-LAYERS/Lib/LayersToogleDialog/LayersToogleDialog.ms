@@ -152,7 +152,7 @@ struct LayersToogleDialog_v
 
 		layer_index = LayersManager.getLayerIndex(top_layer)
 
-		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on) id:("layer_id_"+(this._getLayerId (top_layer) as string ))
+		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on) id:("ROLLOUT_layer_id_"+(this._getLayerId (top_layer) as string ))
 		--format "_SubRollout: %\n" _SubRollout
 
         _SubRollout.Events.add #ROLLEDUP ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_button --params:layer.name
@@ -239,8 +239,6 @@ struct LayersToogleDialog_v
 	function addLayerUiControls _Controls layer parent_layer: width: height:this.button_height offset:[0,0] is_top_layer:false add_suffix_arrow:false =
 	(
 		--format "\n"; print "LayersToogleDialog_v.addLayerUiControls()"
-		--format "LAYER.name:	% \n" layer.name
-		--format "LAYER.on:	% \n" layer.on
 
 		fn getDisplayWirecolorState layer =( layer.nodes &theNodes; if theNodes.count > 0 then theNodes[1].colorByLayer else true )
 
@@ -270,8 +268,8 @@ struct LayersToogleDialog_v
 
 		tooltip_top_layer = "SHOW \ HIDE objects in "+button_caption
 
-        tooltip_button     = "Toggle layer visibility.\n\nRemote All nested \n\nLMB+CRL: Select objects in layer."
-        tooltip_button_rc     = "Open Menu\n\nRMB+CTRL: Toggle wireframe object\Layer."
+        tooltip_button    = "Toggle layer visibility.\n\nRemote All nested \n\nLMB+CRL: Select objects in layer."
+        tooltip_button_rc = "Open Menu\n\nRMB+CTRL: Toggle wireframe object\Layer."
 
 		picker_offset = if is_top_layer then [ 20, -24 ] else [ 20, (height * -1) - 4 ]
 
@@ -423,10 +421,10 @@ struct LayersToogleDialog_v
         LayerManagerBtn.Event #PRESSED "if LayerManager.isDialogOpen() then LayerManager.closeDialog() else LayerManager.editLayerByName \"\"" tooltip:"Open Close Layer Manager"
 
 		/* "SYNC" BUTTON  */
-        sync_button = _Controls.Control #BUTTON "SYNC" width:width offset:[ 6, 0 ]
+        sync_button = _Controls.Control #BUTTON "SYNC" width:width offset:[ 6, 0 ] tooltip:"Sync layers state with wotking layers"
 
-        sync_button.Event #PRESSED    "syncWithLayerManager" params:#(#DIALOG_TO_MANAGER) tooltip:""
-        sync_button.Event #RIGHTCLICK "syncWithLayerManager" params:#(#MANAGER_TO_DIALOG) tooltip:""
+        sync_button.Event #PRESSED    "syncDialogToScene" tooltip:"DIALOG > SCENE"
+        sync_button.Event #RIGHTCLICK "syncSceneToDialog" tooltip:"SCENE > DIALOG"
 
         /* "DIALOG" BUTTON  */
         dialog_button = _Controls.Control #CHECKBUTTON "DIALOG" tooltip:(getTooltip("dialog")) width:width offset:[ -6, -6 ]
