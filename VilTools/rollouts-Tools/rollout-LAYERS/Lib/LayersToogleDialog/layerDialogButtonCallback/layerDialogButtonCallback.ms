@@ -231,12 +231,55 @@ function tuneHueOfLayerRecolor val =
 	)
 )
 
+/** Sync with layer manager
+ */
+function syncWithLayerManager sync_direction =
+(
+	format "\n"; print ".syncWithLayerManager()"
+
+	/** Get layer by control
+	 */
+	function _getLayerByControl ctrl_name =
+	(
+		format "\n"; print "._getLayerByControl()"
+		format "ctrl_name: %\n" ctrl_name
+		ctrl_name_split	= filterString ctrl_name "_"
+		format "ctrl_name_split: %\n" ctrl_name_split
+
+		LayerManager.getLayer( ctrl_name_split[ctrl_name_split.count] as integer  )
+	)
+
+	if sync_direction == #DIALOG_TO_MANAGER then
+	(
+		--format "EventFired.control: %\n" EventFired.control
+		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		(
+			format "roll.name: %\n" roll.name
+
+			--roll_name = if roll.name == "ROLLOUT_default" then "ROLLOUT_0" else roll.name
+
+			--layer = if roll.name == "ROLLOUT_default" then LayerManager.getLayer 0 else  _getLayerByControl(roll.name)
+			layer = _getLayerByControl(roll.name)
+
+			roll.open = layer.on
+
+			if layer.on then
+
+			--for ctrl in roll.controls do
+			for ctrl in roll.controls where classOf ctrl == #CHECKBUTTON do
+			(
+				layer = _getLayerByControl(ctrl.name)
+
+				ctrl.visible = layer.on
+				--format "ctrl.name: %\n" ctrl.name
+			)
+		)
+
+	)
+	else
+	(
+
+	)
 
 
-
-
-
-
-
-
-
+)

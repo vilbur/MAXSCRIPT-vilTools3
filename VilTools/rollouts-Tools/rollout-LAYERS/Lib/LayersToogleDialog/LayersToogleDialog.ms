@@ -38,6 +38,7 @@ struct LayersToogleDialog_v
 
 	IgnoreCase = ( dotNetClass "System.Text.RegularExpressions.RegexOptions" ).IgnoreCase,
 
+	layer_ids = #(),
 
 	/* reference */
 	/* inhered */
@@ -55,6 +56,8 @@ struct LayersToogleDialog_v
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		if reset_layers then
 			this.resetLayers()
+
+		this.setLayerIds()
 
 		if layers == unsupplied then
 		(
@@ -79,16 +82,17 @@ struct LayersToogleDialog_v
 		--format "\n-----------\nARRAY:layers:\n";  for layer in layers do format "layer:	%\n" layer.name
 
 		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
-		format "top_layers name: %\n" top_layers[1].name
+		--format "top_layers name: %\n" top_layers[1].name
 
 		this.layers = this.difference( this.layers )( top_layers )
 
-		format "LAYERS name: %\n" this.layers[1].name
+		--format "LAYERS name: %\n" this.layers[1].name
 
 		/* MIAN CONTROLS */
 		this._createMainControls (Dialog.Controls())
 
-		_SubRollouts	 = Dialog.Rollouts()
+        /* ADD ROLLOUT FOR EACH TOP LAYER */
+        _SubRollouts = Dialog.Rollouts()
 
 		--Dialog.Events.add #open  "print @#OPEN@"
 		--Dialog.Events.add #close "print @#CLOSE@"
@@ -148,7 +152,7 @@ struct LayersToogleDialog_v
 
 		layer_index = LayersManager.getLayerIndex(top_layer)
 
-		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on)
+		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on) id:("layer_id_"+(this._getLayerId (top_layer) as string ))
 		--format "_SubRollout: %\n" _SubRollout
 
         _SubRollout.Events.add #ROLLEDUP ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_button --params:layer.name
@@ -222,9 +226,9 @@ struct LayersToogleDialog_v
 	function refreshButtons =
 	(
 		format "\n"; print "LayersToogleDialog_v.refreshButtons()"
-		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
-			for control in roll.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
-				control.state = layer.on
+		--for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		--	for control in roll.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
+		--		control.state = layer.on
 	),
 
 	/*------------------------------------------------------------------------------
@@ -275,7 +279,7 @@ struct LayersToogleDialog_v
 		if is_top_layer or add_suffix_arrow then
 			button_caption += " " + top_layer_suffix
 
-			
+
 		/* LAYER CHECKBUTTON  */
 		_Button = _Controls.control #CHECKBUTTON button_caption id:("layer_id_"+layer_index as string ) checked:layer.on ini:false across:1 height:height align:#RIGHT width:width offset:offset tooltip:"SHIFT: USE NESTED LAYERS IN TOOLS"
 
@@ -401,11 +405,11 @@ struct LayersToogleDialog_v
 		  */
 		function getTooltip button_type = "ON\OFF layer.\n\nCRL: Select displayed layers in "+button_type+".\n\nSHIFT:Select all layers in "+button_type
 
-		buttons_count = 3
+		buttons_in_row = 2
 
-		width = ( (this.default_width - 6)  / buttons_count) as integer
+		width = ( (this.default_width - 6)  / buttons_in_row ) as integer
 
-        _Controls.Default #across buttons_count
+        _Controls.Default #across buttons_in_row
 
         --_Controls.Default #WIDTH width
         _Controls.Default #HEIGHT 32
@@ -414,26 +418,33 @@ struct LayersToogleDialog_v
 
 
 	    /* "LAYERS" BUTTON  */
-        LayerManagerBtn = _Controls.Control #BUTTON "LAYERS" width:width offset:[ -4, -8 ]
+        LayerManagerBtn = _Controls.Control #BUTTON "LAYERS" width:width offset:[ -6, 0 ]
 
         LayerManagerBtn.Event #PRESSED "if LayerManager.isDialogOpen() then LayerManager.closeDialog() else LayerManager.editLayerByName \"\"" tooltip:"Open Close Layer Manager"
 
-        /* "DIALOG" BUTTON  */
-        HideBtn = _Controls.Control #checkbutton "DIALOG" tooltip:(getTooltip("dialog")) width:width offset:[ 0, -8 ]
+		/* "SYNC" BUTTON  */
+        sync_button = _Controls.Control #BUTTON "SYNC" width:width offset:[ 6, 0 ]
 
-        HideBtn.Event #changed    "layerDialogButtonCallback" params:#dialog	tooltip:"Toggle all layers in dialog"
-        HideBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+        sync_button.Event #PRESSED    "syncWithLayerManager" params:#(#DIALOG_TO_MANAGER) tooltip:""
+        sync_button.Event #RIGHTCLICK "syncWithLayerManager" params:#(#MANAGER_TO_DIALOG) tooltip:""
+
+        /* "DIALOG" BUTTON  */
+        dialog_button = _Controls.Control #CHECKBUTTON "DIALOG" tooltip:(getTooltip("dialog")) width:width offset:[ -6, -6 ]
+
+        dialog_button.Event #CHANGED    "layerDialogButtonCallback" params:#dialog	tooltip:"Toggle all layers in dialog"
+        dialog_button.Event #RIGHTCLICK "layerDialogButtonCallback" params:#(false, #dialog)	tooltip:"Hide all layers in dialog"
+
 
         /* "OTHERS" BUTTON  */
-        HideOthersBtn = _Controls.Control #checkbutton "OTHERS" tooltip:(getTooltip("not in dialog")) width:width offset:[ 4, -8 ]
+        others_button = _Controls.Control #CHECKBUTTON "OTHERS" tooltip:(getTooltip("not in dialog")) width:width offset:[ 6, -6 ]
 
-        HideOthersBtn.Event #changed    "layerDialogButtonCallback" params:#others          	tooltip:"Toggle all layers not in dialog"
-        HideOthersBtn.Event #rightclick "layerDialogButtonCallback" params:#(false, #others)	tooltip:"Hide all layers not in dialog"
+        others_button.Event #CHANGED    "layerDialogButtonCallback" params:#others          	tooltip:"Toggle all layers not in dialog"
+        others_button.Event #RIGHTCLICK "layerDialogButtonCallback" params:#(false, #others)	tooltip:"Hide all layers not in dialog"
 
 
 		/* HUE SLIDER */
-		HueSlider = _Controls.Control #SLIDER "[hue slider]" across:1 range:[0,255,0] width:this.default_width offset:[ -8, 0 ] ini:false type:#INTEGER ticks:0 tooltip:"Change `HUE` of selected layer`s wirecolor\n\nCTRL: Change `SATURATION`\n\nSHIFT: Change `BRIGHTNESS`"
-        HueSlider.Event #changed "tuneHueOfLayerRecolor"
+		hue_slider = _Controls.Control #SLIDER "[hue slider]" across:1 range:[0,255,0] width:this.default_width offset:[ -8, 0 ] ini:false type:#INTEGER ticks:0 tooltip:"Change `HUE` of selected layer`s wirecolor\n\nCTRL: Change `SATURATION`\n\nSHIFT: Change `BRIGHTNESS`"
+        hue_slider.Event #CHANGED "tuneHueOfLayerRecolor"
 
 	),
 
@@ -461,7 +472,7 @@ struct LayersToogleDialog_v
 	function _getLayerByControl _Control =
 	(
 		--format "\n"; print "LayersToogleDialog_v._getLayerByControl()"
-		id_split = filterString ( _Control as string ) "_"
+		id_split = filterString ( _Control.name as string ) "_"
 
 		layer_id =  id_split[id_split.count] as integer
 
@@ -588,6 +599,23 @@ struct LayersToogleDialog_v
 		RegExReplace = if ignore_case then ( dotNetObject "System.Text.RegularExpressions.Regex" _search IgnoreCase ) else ( dotNetObject "System.Text.RegularExpressions.Regex" _search )
 
 		RegExReplace.Replace _string _replace
+	),
+
+
+	/** Set layer ids
+	 */
+	function setLayerIds =
+	(
+		--format "\n"; print "LayersToogleDialog_v.setLayerIds()"
+		layer_ids = for i = 0 to LayerManager.count - 1 collect (LayerManager.getLayer i ).name --return
+	),
+
+	/** Get layer id
+	 */
+	function _getLayerId layer =
+	(
+		--format "\n"; print "LayersToogleDialog_v._getLayerId()"
+		(findItem layer_ids (layer.name)) - 1
 	),
 
 	/**
