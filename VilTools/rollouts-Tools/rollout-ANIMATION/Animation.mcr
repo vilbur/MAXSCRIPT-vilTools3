@@ -120,10 +120,14 @@ autoUndoEnabled: true
 			if next_frame > (animationRange.end).frame then
 				next_frame = 0
 
-			sliderTime = next_frame
+			slider_time = next_frame
 		)
 		else
-			sliderTime = animationRange.end
+			slider_time = animationRange.end
+
+		format "FRAME: %\n" slider_time
+
+		sliderTime = slider_time
 	)
 )
 

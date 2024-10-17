@@ -165,7 +165,52 @@ struct LayersToogleDialog_v
 
 		/* BUTTONS FOR NESTED LAYERS */
 		this._createButtonForNestedLayers (_Controls) (top_layer) --level:0
+
+		--this._createSubrolloutsForNestedLayers (_Controls) (top_layer) --level:0
 	),
+
+--	/** ADD SUBROLLOUTS FOR LAYERS
+--	  *
+--	  */
+--	function _createSubrolloutsForNestedLayers _Controls parent_layer level:1 children_layers: =
+--	(
+--		--format "\n"; print "LayersToogleDialog_v._createSubrolloutsForNestedLayers()"
+--		--format "parent_layer:	% \n" parent_layer
+--
+--        function _getChildreLayers parent_layer = for child_layer in this.LayersManager.getChildren(parent_layer) where findItem this.layers child_layer > 0 collect child_layer
+--
+--		btn_base_width = this.default_width - this.left_padding  - 20
+--
+--		--if children_layers == unsupplied then
+--			children_layers = _getChildreLayers (parent_layer)
+--
+--		--if level == 1 then /* BUTTON FOR TOP LAYER - if child any child layer exists  */
+--		--	--format "PARENT_LAYER: %\n" parent_layer
+--		--	this.addLayerUiControls (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+--		--
+--		/*------------------------------------------------------------------------------
+--			BUTTON FOR TOP LAYER - if child any child layer exists
+--		--------------------------------------------------------------------------------*/
+--		if level == 1 then
+--			this.addLayerUiControls (_Controls) (parent_layer) width:(this.default_width - 32 ) height:20 offset:[ 0, -8 ] is_top_layer:true
+--
+--		/*------------------------------------------------------------------------------
+--			BUTTON FOR EACH LAYER
+--		--------------------------------------------------------------------------------*/
+--		if children_layers.count > 0 then
+--		(
+--			for child_layer in this.sortLayers (children_layers) do
+--			(
+--				offset = if level == 1 then [ 0, 6 ] else [ 0, 0 ]
+--
+--				children_layers = _getChildreLayers (child_layer)
+--
+--				this.addLayerUiControls (_Controls) (child_layer) width:(btn_base_width - (level * this.left_padding )) height:(this.button_height - (level * this.height_offset)) parent_layer:parent_layer offset:offset add_suffix_arrow:(children_layers.count  > 0)
+--
+--				this._createButtonForNestedLayers (_Controls) (child_layer) level:(level + 1) children_layers:children_layers
+--			)
+--		)
+--	),
 
 	/** ADD LAYER BUTTONS
 	  *

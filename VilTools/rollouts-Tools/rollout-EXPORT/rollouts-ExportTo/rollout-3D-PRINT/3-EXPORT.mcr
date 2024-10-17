@@ -11,8 +11,7 @@
 macroscript	_export_export_exclude
 category:	"_Export"
 buttontext:	"Exclude"
-toolTip:	"Do not export objects matching name.\n\nE.G.: 'do-no-export-this|or-this-object-name'"
-icon:	"control:editText|across:1|offset:[ 0, 4 ]|value:support-source"
+icon:	"control:editText|across:1|offset:[ 0, 4 ]|value:support-source|toolTip:Do not export object, if it`s name match this text"
 (
 	format "EventFired	= % \n" EventFired
 	--(PrinterVolume_v()).createVolume(#box)(ROLLOUT_export.SPIN_export_size.value)

@@ -1,4 +1,11 @@
+
+/*
+	TODO:
+	 WRAP METHODS IN THIS FILE TO STRUCT
+
+*/
 global CALLBACK_DELAY_TIMER
+
 
 
 /**
