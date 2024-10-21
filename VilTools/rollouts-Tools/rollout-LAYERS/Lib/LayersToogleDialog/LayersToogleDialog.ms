@@ -463,7 +463,10 @@ struct LayersToogleDialog_v
 	    /* "LAYERS" BUTTON  */
         LayerManagerBtn = _Controls.Control #BUTTON "LAYERS" width:width offset:[ -6, 0 ]
 
-        LayerManagerBtn.Event #PRESSED "if LayerManager.isDialogOpen() then LayerManager.closeDialog() else LayerManager.editLayerByName \"\"" tooltip:"Open Close Layer Manager"
+        LayerManagerBtn.Event #PRESSED    "if LayerManager.isDialogOpen() then LayerManager.closeDialog() else LayerManager.editLayerByName \"\"" tooltip:"Open Close Layer Manager"
+        LayerManagerBtn.Event #RIGHTCLICK "SceneExplorerInstance.collapseAll()" tooltip:"Collapse layers in Layer Manager"
+
+
 
 		/* "SYNC" BUTTON  */
         sync_button = _Controls.Control #BUTTON "SYNC" width:width offset:[ 6, 0 ] tooltip:"Sync layers state with wotking layers"

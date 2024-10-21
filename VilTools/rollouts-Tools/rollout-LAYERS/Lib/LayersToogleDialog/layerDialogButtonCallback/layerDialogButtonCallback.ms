@@ -296,15 +296,16 @@ function syncDialogToScene =
 
 			layer.on = false
 
-			if layers_rollouts[i] != undefined then
-			format "roll: %\n" layers_rollouts[i]
+			--if layers_rollouts[i] != undefined then
+			--format "roll: %\n" layers_rollouts[i]
 
 			if (roll = layers_rollouts[i]) != undefined then
 				layer.on = roll.open
 
-			if layers_buttons[i] != undefined then
-			format "control: %\n" layers_buttons[i]
-			if (check_button = layers_buttons[i]) != undefined then
+			--if layers_buttons[i] != undefined then
+			--format "control: %\n" layers_buttons[i]
+
+			if (check_button = layers_buttons[i]) != undefined and roll == undefined then
 				layer.on = check_button.state
 
 			/* TURN LAYER OF IF NOT IN DIALOG */
@@ -340,31 +341,10 @@ function syncSceneToDialog =
 			if (check_button = layers_buttons[i]) != undefined then
 				check_button.state = layer.on -- CHECKBUTTON
 
+
 			/* TURN OFF LAYERS WHICH ARE NOT IN DIALOG */
 			if roll == undefined and check_button == undefined  then
 				layer.on = false
 		)
 	)
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
