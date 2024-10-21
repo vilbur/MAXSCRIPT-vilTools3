@@ -150,7 +150,7 @@ struct LayersManager_v
 	 */
 	function findLayer pattern search_only_top_layers:false =
 	(
-		format "\n"; print "SceneLayers_v.findLayer()"
+		--format "\n"; print "SceneLayers_v.findLayer()"
 
 		all_layers = this.getAllLayers()
 

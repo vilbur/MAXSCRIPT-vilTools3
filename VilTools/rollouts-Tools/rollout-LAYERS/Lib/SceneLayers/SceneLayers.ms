@@ -38,10 +38,8 @@ struct SceneLayers_v
 	 */
 	function createTopLayers =
 	(
-		format "\n"; print "SceneLayers_v.create()"
---this._getTopLayerTitles()
+		--format "\n"; print "SceneLayers_v.create()"
 		for layer_name_data in (this._getTopLayerTitles()) do
-			--format "layer_name_data: %\n" layer_name_data
 			LayersManager.newLayer (layer_name_data.value)
 	),
 
@@ -212,15 +210,13 @@ struct SceneLayers_v
 	function _moveNodeToLayer obj layer_type =
 	(
 		format "\n"; print "SceneLayers_v._moveNodeToLayer()"
+
 		/** Get layers tree
 		 */
-		layer = this._createTargetLayersHierarchy(obj) (layer_type) (layer_names_source)
+		layer = this._createTargetLayersHierarchy(obj) (layer_type)
 
-		--if classOf _objects != Array then _objects = #(_objects)
-		--
-		--for obj in _objects do
 		obj.name = this._replaceNameBySuffix (obj) (layer_type)
-		--
+
 		layer.addNodes obj
 	),
 
@@ -228,32 +224,36 @@ struct SceneLayers_v
 
 	* return string E.G.: ""
 	 */
-	function _replaceNameBySuffix obj type_suffix =
+	function _replaceNameBySuffix obj layer_type =
 	(
-		--format "\n"; print "SceneLayers_v.renameObjectBySuffix()"
+		--format "\n"; print "SceneLayers_v._replaceNameBySuffix()"
 		obj_name = (this._removeTypeSuffix obj.name)
 
-		if findItem layers_without_suffix type_suffix == 0 then
-			obj_name += (delimeter + toLower(type_suffix as string ) )
+		if findItem layers_without_suffix layer_type == 0 then
+			obj_name += (delimeter + toLower(layer_type as string ) )
+
+		obj_name --return
 	),
 
 	/** Create target layers hierarchy
 	  *
 	  * Return deepest layer in hierarchy
 	 */
-	function _createTargetLayersHierarchy obj layer_type layer_names_source  =
+	function _createTargetLayersHierarchy obj layer_type  =
 	(
-		format "\n"; print "SceneLayers_v.createTargetLayersHierarchy()"
+		--format "\n"; print "SceneLayers_v.createTargetLayersHierarchy()"
 		fn getLayersTree layer = for i = (layers_tree = LayersManager.getLayersTree layer).count to 1 by -1 collect layers_tree[i]
 
 		new_layers = #()
 
 		--layers_source = for layer in getLayersTree (obj.layer) collect layer
 		layer_names_source = for layer in getLayersTree (obj.layer) collect layer.name
+		--format "LAYER_NAMES_SOURCE: %\n" layer_names_source
 
 		deleteItem layer_names_source 1 -- remove  top layer
 
 		top_layer_target = this._getOrCreateTopLayer (layer_type)
+		--format "TOP_LAYER_TARGET: %\n" top_layer_target
 
 		if layer_names_source.count > 0 then
 		(
