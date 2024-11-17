@@ -14,7 +14,7 @@ macroscript selection_name_include_layer_name
 category:	"_Object-Name"
 buttonText:	"       Layer Name"
 tooltip:	"Layer Name as sufix or prefix"
-icon:	"control:radiobuttons|items:#('Prefix','Sufix')||across:3|offset:[ -16, 0]"
+icon:	"control:radiobuttons|items:#('Prefix','Sufix')|unselect:true|across:3|offset:[ -16, 0]"
 (
 	format "EventFired:	% \n" EventFired
 )
@@ -25,7 +25,7 @@ macroscript selection_name_include_parent_name
 category:	"_Object-Name"
 buttonText:	"       Parent Name"
 tooltip:	"Parent Name as sufix or prefix"
-icon:	"control:radiobuttons|items:#('Prefix','Sufix')|across:3"
+icon:	"control:radiobuttons|items:#('Prefix','Sufix')|unselect:true|across:3"
 (
 	--format "EventFired:	% \n" EventFired
 )
@@ -36,7 +36,7 @@ macroscript selection_name_include_object_type
 category:	"_Object-Name"
 buttonText:	"       Object Type "
 tooltip:	"Object Type as sufix or prefix"
-icon:	"control:radiobuttons|items:#('Prefix','Sufix')|across:3|offset:[ 14, 0]"
+icon:	"control:radiobuttons|items:#('Prefix','Sufix')|unselect:true|across:3|offset:[ 14, 0]"
 (
 	--format "EventFired:	% \n" EventFired
 )
@@ -85,16 +85,17 @@ tooltip:	"Rename selected objects"
 icon:	"across:2|offset:[ 4, 8 ]|height:36|align:#right"
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\ObjectRenamer\ObjectRenamer.ms"
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Lib\ObjectRenamer\ObjectRenamer.ms"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\NAME GENERATE.mcr"
+	format "EventFired:	% \n" EventFired
 
 	ObjectRenamer = ObjectRenamer_v()
 
 	prefix_sufix_values = #( undefined, #PREFIX, #SUFIX )
 
-	by_type	= prefix_sufix_values[ROLLOUT_selection.RB_object_type.state + 1 ]
-	by_layer	= prefix_sufix_values[ROLLOUT_selection.RB_layer_name.state  + 1 ]
-	by_parent	= prefix_sufix_values[ROLLOUT_selection.RB_parent_name.state + 1 ]
+	by_type	= prefix_sufix_values[ROLLOUT_object_name.RB_object_type.state + 1 ]
+	by_layer	= prefix_sufix_values[ROLLOUT_object_name.RB_layer_name.state  + 1 ]
+	by_parent	= prefix_sufix_values[ROLLOUT_object_name.RB_parent_name.state + 1 ]
 
 	prefixes_sufixes = Dictionary #( #layer, by_layer ) #( #parent, by_parent ) #( #type, by_type ) -- #( #NameIncludes_v.prop, undefined|#PREFIX|#SUFIX )
 
@@ -105,28 +106,9 @@ icon:	"across:2|offset:[ 4, 8 ]|height:36|align:#right"
 		setProperty prop_prefixes_sufixes data.key true  -- sget E.G.: ObjectRenamer.prefix = true
 	)
 
-	base_name = ROLLOUT_selection.ET_base_name.text
+	base_name = ROLLOUT_object_name.ET_base_name.text
 
 	ObjectRenamer.base_name = 	if base_name == " " then selection[1].name else base_name
 
 	ObjectRenamer.rename( selection )
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -65,8 +65,11 @@ function selectExportNodeInListCallbackRemove =
  */
 function selectExportNodeInListCallbactAdd =
 (
-	--format "\n"; print ".selectExportNodeInListCallbactAdd()"
-	selectExportNodeInListCallbackRemove()
+	format "\n"; print ".selectExportNodeInListCallbactAdd()"
 
-	try( callbacks.addScript #selectionSetChanged "selectExportNodeInListCallback()" id:#selectExportNodeInListCallback )catch()
+	format "CALLBACK DISABLED IN selectExportNodeInListCallback.ms\n"
+
+	--selectExportNodeInListCallbackRemove()
+
+	--try( callbacks.addScript #selectionSetChanged "selectExportNodeInListCallback()" id:#selectExportNodeInListCallback )catch()
 )

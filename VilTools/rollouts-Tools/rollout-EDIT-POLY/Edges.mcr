@@ -20,10 +20,29 @@ icon:	"Menu:true"
 (
 	--filein (@"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-Edit-Poly\Edges.mcr")
 
-	on isEnabled return selection.count > 0
+	--on isEnabled return selection.count > 0
+	on isVisible do isEpoly() and isSubObject #( 2, 4 )
+
 	on execute do
 	(
-		_selection = for obj in selection where validModifier obj Edit_Poly collect obj
+
+		/*
+			SCRIPT DOES NOT RECOGNIZE RIGHT ID OF EDGE BY SELKECTED POLOGON
+
+			EDGE IS BETWEEN FACES, SCRIPT DONT KNOW WHICH FACE ID TO USE
+
+		*/
+
+		messageBox "THIS SCRIPT DOESN'T WORK PROPERLY" title:"WARNING"
+
+		--_selection = for obj in selection where validModifier obj Edit_Poly collect obj
+		_selection = for obj in selection collect
+		(
+			if not validModifier obj Edit_Poly then
+				addModifier obj (Edit_Poly())
+
+			obj -- collect
+		)
 
 		if _selection.count > 0 then
 		(
@@ -78,8 +97,13 @@ buttontext:	"Extend Borders"
 tooltip:	"Extend Borders"
 icon:	"Menu:true"
 (
+	on isVisible do isEpoly() and isSubObject #( 2, 3 )
 
-	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Edit-Poly/Extend_Borders_v1.2.mcr" )	-- "./../../../Lib/vendor/Edit-Poly/Extend_Borders_v1.2.mcr"
+	on execute do
+	(
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Edit-Poly/Extend_Borders_v1.2.mcr" )	-- "./../../../Lib/vendor/Edit-Poly/Extend_Borders_v1.2.mcr"
 
-	macros.run "RacoonScripts" "ExtendBorders"
+		macros.run "RacoonScripts" "ExtendBorders"
+	)
+
 )

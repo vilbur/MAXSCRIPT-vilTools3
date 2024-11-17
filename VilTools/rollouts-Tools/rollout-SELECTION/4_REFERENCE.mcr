@@ -40,7 +40,7 @@ icon:	"tooltip:Make references of selection.\nLast object in selection is master
 		if selection.count >= 2 then
 		(
 			if queryBox "Replace References ?" title:"Replace References"  then
-				undo "Replace Reference" on
+				--undo "Replace Reference" on
 				(
 					max create mode
 
@@ -49,11 +49,11 @@ icon:	"tooltip:Make references of selection.\nLast object in selection is master
 					for_replace = deleteItem ( selection as Array ) selection.count
 
 					for obj in for_replace do
-					(
 						maxOps.CollapseNodeTo obj 1 off
 
+
+					for obj in for_replace do
 						referenceReplace obj master_object
-					)
 
 					messageBox "References Replaced" title:"SUCCESS"
 

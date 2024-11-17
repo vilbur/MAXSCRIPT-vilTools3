@@ -60,6 +60,8 @@ struct SceneLayers_v
 			(
 				new_node = this._cloneNode (obj) (mode)
 
+				setUserPropBuffer new_node ""
+
 				this._renameObjectByTopLayer (obj)
 
 				obj = new_node

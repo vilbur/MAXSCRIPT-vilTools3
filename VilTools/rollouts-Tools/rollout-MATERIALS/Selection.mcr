@@ -44,46 +44,50 @@ tooltip:	"Select objects by current material in material editor"
 icon:	"MENU:true"
 (
 	-- <array>getObjectByMaterial - returns array of objects a material is assigned to
-	function getObjectByMaterial reqMatEditOpen materialIndex = (
-		objarr = #()
-
-		-- Select ALL objects with this material
-		if MatEditor.isOpen() or (reqMatEditOpen == false) then (
-			if materialIndex > 0 and materialIndex < 25 then (-- start index check
-				objarr = for o in objects where o.material == meditMaterials[materialIndex] collect o
-				-- Check if the obj is part of a group
-				for obj in objarr where isGroupMember obj and ( not isOpenGroupMember obj) do
-				(
-				  	par = obj.parent
-				  	while par != undefined do
-				  	(
-				  		if isGroupHead par then
-				  		(
-				  			setGroupOpen par true
-				  			par = undefined
-				  		)
-				  		else par = par.parent
-					)
-				)
-			) -- end index check
-		) else	-- Material Editor isn't open
-			messageBox "Material Editor is not open" beep:false
-
-		objarr
-	)
+	--function getObjectByMaterial reqMatEditOpen materialIndex =
+	--(
+	--	objarr = #()
+	--
+	--	-- Select ALL objects with this material
+	--	if MatEditor.isOpen() or (reqMatEditOpen == false) then (
+	--		if materialIndex > 0 and materialIndex < 25 then (-- start index check
+	--			objarr = for o in objects where o.material == meditMaterials[materialIndex] collect o
+	--			-- Check if the obj is part of a group
+	--			for obj in objarr where isGroupMember obj and ( not isOpenGroupMember obj) do
+	--			(
+	--			  	par = obj.parent
+	--			  	while par != undefined do
+	--			  	(
+	--			  		if isGroupHead par then
+	--			  		(
+	--			  			setGroupOpen par true
+	--			  			par = undefined
+	--			  		)
+	--			  		else par = par.parent
+	--				)
+	--			)
+	--		) -- end index check
+	--	) else	-- Material Editor isn't open
+	--		messageBox "Material Editor is not open" beep:false
+	--
+	--	objarr
+	--)
 
 	on execute do
 	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MATERIALS\Selection.mcr"
+
+
 		if not MatEditor.isOpen() then
 		(
-			materials_selection =  makeUniqueArray (for obj in selection where obj.material != undefined collect obj.material)
+			materials_selection =  makeUniqueArray (for obj in selection where obj.material != undefined collect obj.material )
 
-			objects_with_mat =  for obj in objects where findItem materials_selection obj.material > 1 collect obj
+			objects_with_mat =  for obj in objects where obj.material != undefined and findItem materials_selection obj.material > 0 collect obj
 
 			select objects_with_mat
 		)
-		else if (objs = getObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
-			select objs
+		--else if (objs = getObjectByMaterial true (medit.getActiveMtlSlot())) != undefined then
+		--	select objs
 	)
 
 	--on altexecute type do (

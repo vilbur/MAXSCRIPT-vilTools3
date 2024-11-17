@@ -7,18 +7,24 @@ buttontext:	"Select All"
 toolTip:	"Select All - CLOSE LAYER MANAGER IF OPENED"
 --icon:	"#(path, index)"
 (
-
 	on execute do
 	(
-		/* CLOSE LAYER MANAGER BEFORE SELECTION */
-		if (is_manager_open = LayerManager.isDialogOpen()) then
-			LayerManager.closeDialog()
+		if not ( subObjectLevel != undefined and subObjectLevel > 0 ) then
+		(
+			/* CLOSE LAYER MANAGER BEFORE SELECTION */
+			if (is_manager_open = LayerManager.isDialogOpen()) then
+				LayerManager.closeDialog()
 
-		actionMan.executeAction 0 "40021"  -- Selection: Select All
+			actionMan.executeAction 0 "40021"  -- Selection: Select All
 
-		/* REOPEN LAYER MANAGER */
-		if is_manager_open then
-			LayerManager.editLayerByName ""
+			/* REOPEN LAYER MANAGER */
+			if is_manager_open then
+				LayerManager.editLayerByName ""
+
+		)
+		else
+			actionMan.executeAction 0 "40021"  -- Selection: Select All
+
 	)
 )
 

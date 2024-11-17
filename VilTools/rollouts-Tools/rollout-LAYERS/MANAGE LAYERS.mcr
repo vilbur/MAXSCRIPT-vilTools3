@@ -1,44 +1,4 @@
 
-/* NEW LAYER
-*/
-macroscript	layers_new_layer
-category:	"_Layers-Manage"
-buttontext:	"New Layer"
---toolTip:	"Select Objects of selected layers, or layers of selected objects."
-icon:	"MENU:NEW Layer"
-(
-	undo "Select " on
-	(
-		LayersManager = LayersManager_v()
-
-		selected_layers = LayersManager.getSelectedOrCurrent()
-
-		parent_layer = selected_layers[1]
-
-		parent_layer_name = if parent_layer != undefined then parent_layer.name else ""
-
-		-- instantiate the object
-		--default_text	= "default_text"
-		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" parent_layer_name
-		_dialog_result	= dotNetClass "System.Windows.Forms.DialogResult"
-
-		_dotNet.ShowModal()
-
-		_ok 	= dotNet.comparEenums (_dotNet.DialogResult) ( _dialog_result.Ok )
-		_canel	= dotNet.comparEenums (_dotNet.DialogResult) ( _dialog_result.Cancel )
-		--_string	= _dotNet.InstanceName
-
-		if( _ok and (_string = _dotNet.InstanceName) != ""  ) then
-		(
-			newLayer = LayersManager.newLayer(_string) parent:parent_layer
-
-			newLayer.addNodes( selection )
-
-			newLayer.addNodes( selection )
-		)
-	)
-)
-
 /*------------------------------------------------------------------------------
 	EXPAND \ COLLAPSE
 --------------------------------------------------------------------------------*/
@@ -49,7 +9,7 @@ macroscript	_layers_expand_layers_of_selection
 category:	"_Layers-Manage"
 buttontext:	"Expand Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
-icon:	"MENU:EXPAND Layers"
+icon:	"MENU:EXPAND Layers|across:3"
 (
 	on execute do
 	(

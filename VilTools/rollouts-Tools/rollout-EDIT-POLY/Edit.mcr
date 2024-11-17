@@ -30,28 +30,36 @@ buttonText:	"Connect To Last vertex"
 toolTip:	"Connect To Last vertex"
 icon:	"MENU:true"
 (
-	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu_connecttolastselvert.mcr" )
 	--on IsVisible return Filters.Is_EPolySpecifyLevel #{2..3}
 	on IsVisible return Filters.Is_EPolySpecifyLevel #{2}
 
 	on execute do
+	(
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu_connecttolastselvert.mcr" )
+
 		macros.run "miauu" "miauu_ConnectToLastSelVertAlt"
+	)
 )
 
 
-/**
+/** CREDIT: miauu
+ *
+ * https://www.scriptspot.com/3ds-max/scripts/merge-faces
  *
  */
 macroscript	edit_poly_merge_faces
 category:	"_Epoly-Edit"
 buttontext:	"Merge Faces"
-toolTip:	"Merge Faces"
+toolTip:	"Merge Faces and remove inner edges"
 icon:	"MENU:true"
 (
-	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/merge_faces_v10.ms" )
+	on isVisible	do isEpoly() and isSubObject #( 1, 2 )
 
-	macros.run "miauu" "Merge_Faces_v10"
+	on execute do
+	(
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/merge_faces_v10.ms" )
+
+		macros.run "miauu" "Merge_Faces_v10"
+	)
+
 )
-
-
-

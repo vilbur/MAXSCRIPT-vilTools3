@@ -1,6 +1,6 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )	-- "./Lib/NodeList/NodeList.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	-- "./Lib/ExportNode/ExportNode.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/selectExportNodeInListCallback/selectExportNodeInListCallback.ms" )	-- "./Lib/selectExportNodeInListCallback/selectExportNodeInListCallback.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup.ms" )	-- "./Lib/ExporterSetup/ExporterSetup.ms"
 /*==============================================================================
 

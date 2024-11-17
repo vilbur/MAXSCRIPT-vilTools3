@@ -22,10 +22,10 @@ autoUndoEnabled: true
 (
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MODIFIERS NAME.mcr"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MODIFIERS NAME.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
 		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
-			(ModifierRenamer_v(curr_mod)).renameDialog generate: (if keyboard.controlPressed then true )
+			(ModifierRenamer_v(curr_mod)).renameDialog generate:keyboard.controlPressed
 	)
 )
 
@@ -40,8 +40,8 @@ autoUndoEnabled: true
 (
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MODIFIERS NAME.mcr"
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MODIFIERS NAME.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\Lib\ModifierRenamer\ModifierRenamer.ms"
 		if ( curr_mod = modPanel.getCurrentObject() ) != undefined then
 			curr_mod.name = (ModifierRenamer_v(curr_mod)).generateName()
 	)

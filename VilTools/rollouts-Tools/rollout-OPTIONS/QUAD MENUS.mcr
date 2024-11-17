@@ -16,7 +16,11 @@ icon:	"MENU:true"
 
 		filein( getFilenamePath(getSourceFileName()) + "/../../../../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../../../../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 
-		generateMacroscripts ( getFilenamePath(getSourceFileName()) + "/../" )	--"./../rollout-LAYERS/SELECT LAYERS.mcr"
+		--generateMacroscripts ( getFilenamePath(getSourceFileName()) + "/../" )	--"./../rollout-LAYERS/SELECT LAYERS.mcr"
+		filein( getFilenamePath(getSourceFileName()) + "/../../../generateMacroscripts.ms" )	--"./../../../generateMacroscripts.ms"
+
+
+		filein( getFilenamePath(getSourceFileName()) + "/../../../generateMacroscripts.ms" )	--"./../../../generateMacroscripts.ms"
 
 		/* IMPORT *.mcr files*/
 		filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"

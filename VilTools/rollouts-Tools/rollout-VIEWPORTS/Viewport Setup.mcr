@@ -151,16 +151,10 @@ tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolut
 --icon:	"width:72"
 (
 
-	spacings = #( 0.05, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
+	grid_spacings = #( 0.05, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
 
-	--unit_divider = case units.SystemType of
-	--(
-	--	#Centimeters:10
-	--	#Meters: 1000
-	--	default: 1
-	--)
+
 	display_units = case units.SystemType of -- convert to milimeters
-	--this.display_units = case units.MetricType of -- convert to dispaly units
 	(
 		#millimeters:	1
 		#centimeters:	10
@@ -169,13 +163,17 @@ tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolut
 		default:	1 -- non metric units
 	)
 
-	next_index = if ( index = findItem spacings (GetGridSpacing()) ) > 0 and index < spacings.count then index + 1 else 1
+	next_index = if ( index = findItem grid_spacings (GetGridSpacing()) ) > 0 and index < grid_spacings.count then index + 1 else 1
 
-	SetGridSpacing (spacings[next_index] / unit_divider )
+	format "grid_spacings[next_index]: %\n" grid_spacings[next_index]
+	format "display_units: %\n" display_units
+	grid_spacing = grid_spacings[next_index] / display_units
+
+	SetGridSpacing grid_spacing
 
 	SetGridMajorLines 10
 
-	format "\nGRID SPACING: %mm" spacings[next_index]
+	format "\nGRID SPACING: %mm" grid_spacing
 
 )
 

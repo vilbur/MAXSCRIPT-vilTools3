@@ -52,16 +52,15 @@ struct ModifierRenamer_v
 	  *
 	  * @param boolean generate modifier name, current name is used if false or default name
 	  */
-	function renameDialog generate:undefined =
+	function renameDialog generate:false =
 	(
 		--clearListener(); print("Cleared in:"+getSourceFileName())
-
 
 		format "THIS.MODOBJECT.NAME	= % \n" this.modObject.name
 		default_mod = execute ((classOf this.modObject) as string + "()")
 
 						/* IF GENERATE NAME IS FORCED TRUE              OR  GENERATE NAME IF NAME IS DEFAULKT AND PARAMENTER UNDEFINED */
-		default_text = if (generate != undefined and generate == true ) or  (generate == undefined and default_mod.name == modObject.name ) then this.generateName() else modObject.name
+		default_text = if generate then this.generateName() else modObject.name
 
 		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" default_text
 		_dialog_result	= dotNetClass "System.Windows.Forms.DialogResult"
