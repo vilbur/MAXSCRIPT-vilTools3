@@ -12,7 +12,7 @@ function addQuad1 QuadMenu =
 
 	/* EDIT SPLINE TOOLS MENU */
 
-	QuadMenu.addItem ("Editable Spline Object") ("Divide (Spline)")  group:"Main UI" --index:1
+	QuadMenu.addItem ("Editable Spline Object") ("Divide (Spline)")   group:"Main UI" --index:1
 	QuadMenu.addItem ("Editable Spline Object") ("Connect (Spline)")  group:"Main UI" --index:1
 
 	--SplineToolsMenu = menu_v("Context Spline Tools 4")
@@ -47,7 +47,8 @@ function addQuad2 QuadMenu =
 	--QuadMenu.addMenu("Context Spline Tools 2")
 	SplineToolsMenu = menu_v("Context Spline Tools 2")
 
-	SplineToolsMenu.removeItem #{4, 10..13}
+	--SplineToolsMenu.removeItem #{ 5, 7, 10..13 }
+	SplineToolsMenu.removeItem #{10..13}
 
 	QuadMenu.addMenu(SplineToolsMenu)
 
@@ -99,14 +100,18 @@ function addQuad4 QuadMenu =
 	QuadMenu.addMenu("_Epoly-PolyTools") separators: #( 1 )
 
 	/* EDIT SPLINE */
-	SplineToolsMenu = QuadMenu.addMenu("Context Spline Tools 1") separators: #( 1 )	--flat:false --index:1
+	SplineToolsMenu = QuadMenu.addMenu("Context Spline Tools 1") --separators: #( 1 )	--flat:false --index:1
+
+	--SplineToolsMenu.removeItem(1) -- remove submenu "Edit/Editable Spline Menu"
 
 	SplineToolsMenu.removeItem ("Divide")
 
 	--SplineToolsMenu.addSeparator index:1
 	--SplineToolsMenu.removeItem("Bind")
 	--SplineToolsMenu.removeItem("Unbind")
-	--SplineToolsMenu.clearSeparators()
+	SplineToolsMenu.clearSeparators()
+
+	--QuadMenu.clearSeparators()
 )
 
 

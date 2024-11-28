@@ -1,5 +1,8 @@
 clearListener(); print("Cleared in:"+getSourceFileName())
 
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 --RUN_ON_STARTUP = true
 
 content_dir = "VilTools"
@@ -7,124 +10,57 @@ content_dir = "VilTools"
 
 current_dir = getFilenamePath(getSourceFileName())
 
-
 global VILTOOLS_DIR = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 
 rollouts_path = "$userscripts/"+VILTOOLS_DIR+"/"+content_dir+"/rollouts-Tools"
 
-/** Import structures used in macroscripts on Max start
-  *
-  * These file must be imported before Max evaluates macrosctips
-  *
-  * 3Ds Max is importing files in order
-  * 	1) Std scripts
-  * 	2) Macroscripts
-  * 	3) Startup scripts
-  *
-  * TODO: CREATE STRUCT FOR THIS METHOD
-  *
- */
-function importStdScripts =
-(
 
-	filein_files = #(
+std_scripts = #(
 
-		( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+	( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 
-		"/CallBacks/CallbackManager/CallbackManager.ms", -- "./CallBacks/CallbackManager/CallbackManager.ms"
+	"/../../CallBacks/CallbackManager/CallbackManager.ms", -- "./CallBacks/CallbackManager/CallbackManager.ms"
+	
+	"/../../Lib/RegExer/RegExer.ms",
 
-		"/../../Lib/RegExer/RegExer.ms",
+	"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
 
-		"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
+	"/rollout-SPLINE/Lib/SplineConvertor/SplineConvertor.ms",
 
-		"/rollout-SPLINE/Lib/SplineConvertor/SplineConvertor.ms",
+	"/rollout-TOOLS/Lib/ToolMode.ms",
 
-		"/rollout-TOOLS/Lib/ToolMode.ms",
+	"/rollout-SCENE/RecentFile/RecentFile.ms",
 
-		"/rollout-SCENE/RecentFile/RecentFile.ms",
+	"/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
+	"/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms",
+	"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
+	"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
 
-		"/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
-		"/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms",
-		"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
-		"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
+	"/rollout-MATERIALS/Lib/MaterialIdAssigner/MaterialIdAssigner.ms",
 
-		"/rollout-MATERIALS/Lib/MaterialIdAssigner/MaterialIdAssigner.ms",
+	"/rollout-OBJECT/Lib/OnNewNodeCallback.ms",
 
-		"/rollout-OBJECT/Lib/OnNewNodeCallback.ms",
+	"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
+	"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
+	--"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
+	--"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
+	--"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
 
-		"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
-		"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
-		--"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
-		--"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
-		--"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
+	"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
+	"/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms"
+	"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
 
-		"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
-		"/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms"
-		"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
+	"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
+	"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
 
-		"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
-		"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
+	"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
+	"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
+	"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
 
-		"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
-		"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
-		"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
-
-		--"/rollout-PRINT-3D/Lib/SupportManager/SupportManager.ms",
-
-
-
-		"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
-	)
-
-	for i = 1 to filein_files.count do
-		filein_files[i] =  rollouts_path + filein_files[i]
-
-
-
-	insertItem ( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms") filein_files 1
-
-	stdscript_file_path = (getDir #maxroot)+ "/stdplugs/stdscripts/viltools-startup.ms" -- "C:/Program Files\Autodesk\3ds Max 2023\stdplugs\stdscripts\viltools-startup.ms"
-
-	--deleteFile stdscript_file_path
-
-	stdscript_file = createFile stdscript_file_path
-
-	for file_path in filein_files do
-		format "if doesFileExist \"%\" then\n\t%" file_path ("filein( \""+file_path+"\" )\n\n") to:stdscript_file
-
-	close stdscript_file
-
-	filein stdscript_file_path
+	--"/rollout-PRINT-3D/Lib/SupportManager/SupportManager.ms",
+	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 )
 
-if content != "/Rollouts-Test" then -- DEV
-	importStdScripts()
-
-/*------------------------------------------------------------------------------
-	INSTALL PLUGINS
---------------------------------------------------------------------------------*/
-
-export_node_plugin_source = rollouts_path + "\\rollout-EXPORT\\Lib\\ExportNode\\ExportNodePlugin.ms"
-export_node_plugin_target = (getDir #maxroot)+ "\\stdplugs\\stdscripts\\ExportNodePlugin.ms"
-
-if doesFileExist export_node_plugin_source then
-(
-	deleteFile export_node_plugin_target
-
-	copyFile (export_node_plugin_source) (export_node_plugin_target)
-
-	filein export_node_plugin_source
-)
-
-
-
-/*------------------------------------------------------------------------------
-	IMPORT FILES
---------------------------------------------------------------------------------*/
-
-filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
-
-/* MANNUAL IMPORT */
 filein_files = #(
 
 	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
@@ -139,6 +75,28 @@ filein_files = #(
 	"/VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms" -- "./VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms"
 
 )
+
+/*------------------------------------------------------------------------------
+	INSTALL START UP FILES
+--------------------------------------------------------------------------------*/
+(StdScriptImporter_v root:rollouts_path filename:content_dir files:std_scripts).createStartUpFile()
+
+
+/*------------------------------------------------------------------------------
+	INSTALL PLUGINS
+--------------------------------------------------------------------------------*/
+(PlugInImporter_v ( rollouts_path + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install()
+
+
+/*------------------------------------------------------------------------------
+	GENERATE MACROS
+--------------------------------------------------------------------------------*/
+generateMacroscripts( rollouts_path )
+
+
+/*------------------------------------------------------------------------------
+	IMPORT FILES
+--------------------------------------------------------------------------------*/
 
 
 /* CONVERT RELATIVE PATHS TO ABSOLUTE */
@@ -180,18 +138,24 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/C
 	START VilTools
 ------------------------------------------------------------------------------*/
 try(
-
 	/** LOAD CONTENT */
 	----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
+	
 	ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName()) width:400
 
 	/* CHANGE PROPERTIES oF ROLLOUTS */
 	ContentLoader.Dialog.title = "VilTools"
 
+	
 	/* CREATE DIALOG */
+
+	(
+
 	VILTOOLS = ContentLoader.create height:1024
 
 	VILTOOLS.register()
+	
+	)
 
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
