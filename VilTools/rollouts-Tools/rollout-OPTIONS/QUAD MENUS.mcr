@@ -1,3 +1,4 @@
+filein( getFilenamePath(getSourceFileName()) + "/../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms" )	--"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms"
 
 /**  SET CUSTOM QUADS
  */
@@ -13,24 +14,20 @@ icon:	"MENU:true"
 		clearListener(); print("Cleared in:"+getSourceFileName())
 		--format "Macro:EventFired:	% \n" EventFired
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
-
-		filein( getFilenamePath(getSourceFileName()) + "/../../../../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../../../../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
-
-		--generateMacroscripts ( getFilenamePath(getSourceFileName()) + "/../" )	--"./../rollout-LAYERS/SELECT LAYERS.mcr"
-		filein( getFilenamePath(getSourceFileName()) + "/../../../generateMacroscripts.ms" )	--"./../../../generateMacroscripts.ms"
-
-
-		filein( getFilenamePath(getSourceFileName()) + "/../../../generateMacroscripts.ms" )	--"./../../../generateMacroscripts.ms"
+		
+		/* GENERATE MACROSCRIPTS from all rollouts */ 
+		generateMacroscripts( getFilenamePath(getSourceFileName()) + "/../" ) -- "./../" use parent folder of this file
 
 		/* IMPORT *.mcr files*/
 		filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"
 
-		filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/installQuads.ms" ) -- "./../../../QuadMenu/installQuads.ms"
-		--filein( getFilenamePath(getSourceFileName()) + "/../../../QuadMenuOld/quadMenuConfig.ms" ) -- "./../../../QuadMenu/quadMenuConfig.ms"
+		/* ISNTALL QUAD MENUS */ 
+		QuadMenuInstall( "/../../../QuadMenu/QuadMenus" )	--"./../../../QuadMenu/QuadMenus"
 
+		
 		/* SET DEFAULT QUADMENU  TO CTRL+SHIFT+AL+RMB */
-	   quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
-		if quadmenu != undefined do menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu
+		if ( quadmenu_default = menuMan.findQuadMenu "Default Viewport Quad" ) != undefined do
+			menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu_default
 
 
 		menuMan.saveMenuFile ((getDir #ui)+"\\MaxStartUI.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\en-US\UI\MaxStartUI.mnux"

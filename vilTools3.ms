@@ -3,16 +3,19 @@ clearListener(); print("Cleared in:"+getSourceFileName())
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
+
+
 --RUN_ON_STARTUP = true
 
+/* DIRECTORY WHERE TO LOAD CONTENT */ 
 content_dir = "VilTools"
 --content_dir = "/Rollouts-Test" -- DEV
 
 current_dir = getFilenamePath(getSourceFileName())
 
-global VILTOOLS_DIR = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
+current_dir_name = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 
-rollouts_path = "$userscripts/"+VILTOOLS_DIR+"/"+content_dir+"/rollouts-Tools"
+rollouts_dir = "$userscripts/"+current_dir_name+"/"+content_dir+"/rollouts-Tools"
 
 
 std_scripts = #(
@@ -79,19 +82,19 @@ filein_files = #(
 /*------------------------------------------------------------------------------
 	INSTALL START UP FILES
 --------------------------------------------------------------------------------*/
-(StdScriptImporter_v root:rollouts_path filename:content_dir files:std_scripts).createStartUpFile()
+(StdScriptImporter_v root:rollouts_dir filename:content_dir files:std_scripts).createStartUpFile()
 
 
 /*------------------------------------------------------------------------------
 	INSTALL PLUGINS
 --------------------------------------------------------------------------------*/
-(PlugInImporter_v ( rollouts_path + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install()
+(PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install()
 
 
 /*------------------------------------------------------------------------------
 	GENERATE MACROS
 --------------------------------------------------------------------------------*/
-generateMacroscripts( rollouts_path )
+generateMacroscripts( rollouts_dir )
 
 
 /*------------------------------------------------------------------------------
@@ -118,11 +121,12 @@ try(
 			filein( file_path)
 	)
 
-)catch(
+)catch
+(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
 	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-	format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
 )
 
 
@@ -141,21 +145,16 @@ try(
 	/** LOAD CONTENT */
 	----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
 	
-	ContentLoader	= ContentLoader_v path:(current_dir+content_dir)  ini:( getSourceFileName()) width:400
+	ContentLoader	= ContentLoader_v path:(current_dir + content_dir)  ini:( getSourceFileName()) width:400
 
 	/* CHANGE PROPERTIES oF ROLLOUTS */
 	ContentLoader.Dialog.title = "VilTools"
 
 	
 	/* CREATE DIALOG */
-
-	(
-
 	VILTOOLS = ContentLoader.create height:1024
 
 	VILTOOLS.register()
-	
-	)
 
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())

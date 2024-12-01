@@ -9,20 +9,26 @@ toolTip:	"Select All - CLOSE LAYER MANAGER IF OPENED"
 (
 	on execute do
 	(
+		is_manager_open
+		max_visible_objects = 20
+		
+		/* IF NOT SUBOBJECT ACTIVE */ 
 		if not ( subObjectLevel != undefined and subObjectLevel > 0 ) then
 		(
+			visible_objects = (for obj in objects where not obj.isHidden collect obj).count
+			format "visible_objects: %\n" visible_objects
 			/* CLOSE LAYER MANAGER BEFORE SELECTION */
-			if (is_manager_open = LayerManager.isDialogOpen()) then
-				LayerManager.closeDialog()
+			if visible_objects > max_visible_objects and LayerManager.isDialogOpen() then
+				is_manager_open = LayerManager.closeDialog()
 
 			actionMan.executeAction 0 "40021"  -- Selection: Select All
-
+			format "is_manager_open: %\n" is_manager_open
 			/* REOPEN LAYER MANAGER */
-			if is_manager_open then
+			if is_manager_open != undefined then
 				LayerManager.editLayerByName ""
 
 		)
-		else
+		else /* SUBOBJECT LEVEL */ 
 			actionMan.executeAction 0 "40021"  -- Selection: Select All
 
 	)

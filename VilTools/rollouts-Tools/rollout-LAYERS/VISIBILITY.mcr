@@ -12,6 +12,7 @@ toolTip:	"Unhide all layers"
 icon:	"MENU:UNHIDE ALL layers"
 autoUndoEnabled:true
 (
+	/* UNHIDE ALL LAYERS */ 
 	on execute do
 	(
 		LayersManager = LayersManager_v()
@@ -20,9 +21,12 @@ autoUndoEnabled:true
 			LayersManager.setVisibility(LayersManager.getAllLayers())(true)
 	)
 
+	/* UNHIDE ALL LAYERS AND OBJECTS */ 
 	on altExecute type do
 	(
-		macros.run "_Layers-1" "layers_all_on"
+		print "ALL LAYERS AND OBJECTS UNHIDED"
+
+		macros.run "_Layers-Visibility" "layers_all_on"
 
 		for obj in objects where obj.isHidden do obj.isHidden = false
 	)
