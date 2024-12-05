@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms" )	--"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms" )	--"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms"
 
 /**  SET CUSTOM QUADS
  */
@@ -14,33 +14,15 @@ icon:	"MENU:true"
 		clearListener(); print("Cleared in:"+getSourceFileName())
 		--format "Macro:EventFired:	% \n" EventFired
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
-		
-		/* GENERATE MACROSCRIPTS from all rollouts */ 
-		generateMacroscripts( getFilenamePath(getSourceFileName()) + "/../" ) -- "./../" use parent folder of this file
-
+		current_dir = getFilenamePath(getSourceFileName())
+	
 		/* IMPORT *.mcr files*/
-		filein( getFilenamePath(getSourceFileName()) + "/../../../MacroscriptsAllFileIn.ms" ) -- "./../../../MacroscriptsAllFileIn.ms"
-
-		/* ISNTALL QUAD MENUS */ 
-		QuadMenuInstall( "/../../../QuadMenu/QuadMenus" )	--"./../../../QuadMenu/QuadMenus"
-
+		(QuadMenuManager_v()).createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
 		
-		/* SET DEFAULT QUADMENU  TO CTRL+SHIFT+AL+RMB */
-		if ( quadmenu_default = menuMan.findQuadMenu "Default Viewport Quad" ) != undefined do
-			menuMan.setViewportRightClickMenu #shiftAndAltAndControlPressed quadmenu_default
-
-
-		menuMan.saveMenuFile ((getDir #ui)+"\\MaxStartUI.mnux") -- "C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\en-US\UI\MaxStartUI.mnux"
-
-
-		/* OPEN HOTKEY EDITOR - for refresh quad menu keyboard shortcuts */
-		actionMan.executeAction 0 "59245"  -- Customize User Interface: Hotkey Editor
-
-		/* CLOSE HOTKEY EDITOR */
-		if (hotkey_dialog = (for hwnd in UIAccessor.GetPopupDialogs() where UIAccessor.GetWindowText hwnd == "Hotkey Editor" collect hwnd)[1]) != undefined then
-			UIAccessor.CloseDialog hotkey_dialog
-
-		format "\n\nQUAD MENU INSTALLED - Default Quad: Control + SHift + Alt + RMB"
+		 print "========================= SETUP MENUS ========================="
+	
+		/* SETUP QUAD MENUS */ 
+		(QuadMenuManager_v()).setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
 
 	)
 )
@@ -55,17 +37,6 @@ tooltip:	"Load default quad menu and menus"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
 
-	--EMPTY_QUAD =  Menu_v("_Empty" ) quad:true
-
-	if queryBox "REST ALL MENUS AND QUADMENUS ?" title:"RESET MENUS" then
-	(
-		/* LAOD 3DS MAX DEFAULT .mnux FILE */
-		menuMan.loadMenuFile ( getFilenamePath(getSourceFileName()) + "/../../../QuadMenu/config-files/QuadMenu-default.mnux" )  -- "./../../../QuadMenu/config-files/QuadMenu-default.mnux"
-
-	   quadmenu = menuMan.findQuadMenu "Default Viewport Quad"
-	   if quadmenu != undefined do menuMan.setViewportRightClickMenu #nonePressed quadmenu
-
-	   quadmenu = menuMan.findQuadMenu "Modeling 1 [Cntrl+RMB]"
-	   if quadmenu != undefined do menuMan.setViewportRightClickMenu #controlPressed quadmenu
-	)
+	if queryBox "RESET ALL MENUS AND QUADMENUS ?" title:"RESET MENUS" then
+		(QuadMenuManager_v()).resetMenusAndHotkeys()
 )

@@ -115,40 +115,16 @@ struct ModStackPreset_v
 	 */
 	function loadPreset =
 	(
-		--format "\n"; print "ModStackPreset_v.loadPreset()"
+		format "\n"; print "ModStackPreset_v.loadPreset()"
 		--format "preset_name	= % \n" preset_name
 
 		for data_pair in  this._getPresetValues() do
 			setProperty modObject data_pair.key data_pair.value
 
-		format "\nMODIFIER PRESET	% HAS BEEN LOADED\n" preset_name
+		format "\nMODIFIER PRESET	\"%\" HAS BEEN LOADED\n" preset_name
 		--(this.getPresetName()) = preset_name
 	),
 
-	/** Get preset values
-	  *
-	  */
-	function _getPresetValues =
-	(
-		--format "\n"; print "ModStackPreset_v._getPresetValues()"
-
-		preset_values	= Dictionary()
-
-		for prop in getPropNames modObject do
-		(
-			val	= getINISetting ini preset_name ( prop as string )
-			--format "\n"
-			--format "val:	% \n" val
-			--format "classof val:	% \n" (classof (execute val))
-
-			if val != "" then
-				preset_values[prop] = execute val
-		)
-
-		--format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
-
-		preset_values --return
-	),
 
 	/** Delete preset
 	 */
@@ -214,7 +190,11 @@ struct ModStackPreset_v
 	 */
 	function hasPreset =
 	(
-		--format "\n"; print "ModStackPreset_v.hasPreset()"
+		format "\n"; print "ModStackPreset_v.hasPreset()"
+		format "PRESET: \"%\"\n" this.preset_name
+		format "INI FILE: %\n" (this._iniFileExists())
+		format "HAS PRESET: %\n" (hasINISetting ini this.preset_name)
+		
 		( this._iniFileExists() ) and hasINISetting ini this.preset_name  --return
 	),
 
@@ -238,6 +218,31 @@ struct ModStackPreset_v
 	(
 		--format "\n"; print "ModStackPreset_v.getModName()"
 		( if superClassOf modObject == modifier then modObject.name else classOf modObject ) as string
+	),
+	
+	/** Get preset values
+	  *
+	  */
+	function _getPresetValues =
+	(
+		--format "\n"; print "ModStackPreset_v._getPresetValues()"
+
+		preset_values	= Dictionary()
+
+		for prop in getPropNames modObject do
+		(
+			val	= getINISetting ini preset_name ( prop as string )
+			--format "\n"
+			--format "val:	% \n" val
+			--format "classof val:	% \n" (classof (execute val))
+
+			if val != "" then
+				preset_values[prop] = execute val
+		)
+
+		--format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
+
+		preset_values --return
 	),
 
 	private

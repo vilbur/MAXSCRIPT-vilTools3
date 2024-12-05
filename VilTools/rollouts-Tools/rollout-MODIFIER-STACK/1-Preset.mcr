@@ -64,22 +64,8 @@ tooltip:	"Load preset menu"
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\1-Preset.mcr" )
 	max modify mode
 
-	--if classOf( current_modifier = ( modPanel.getCurrentObject() ) ) == currMod then
-
 	if ( currMod = modPanel.getCurrentObject() ) != undefined then
-	(
-		Menu = RcMenu_v name:"ManagePresetsMenu"
-
-
-		ModStackPreset = "(ModStackPreset_v("+ classOf currMod as string +"))"
-
-		Menu.item ("Save preset")	(ModStackPreset+".savePresetDialog()")
-		Menu.item ("Delete preset")	(ModStackPreset+".deletePreset()")
-		Menu.item ("Open ini file")	(ModStackPreset+".openIni()")
-
-		popUpMenu (Menu.create())
-	)
-
+		managePresetMenu( classOf currMod )
 )
 
 /*

@@ -1,9 +1,12 @@
+filein( getFilenamePath(getSourceFileName()) + "/../../../../../../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" )	--"./../../../../../../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms"
+
 
 /** Manage preset menu
  */
 function managePresetMenu modifier_class =
 (
-	--format "\n"; print ".managePresetMenu()"
+	format "\n"; print "managePresetMenu()"
+	format "modifier_class: %\n" modifier_class
 
 	if classOf( current_modifier = ( modPanel.getCurrentObject() ) ) == modifier_class then
 	(

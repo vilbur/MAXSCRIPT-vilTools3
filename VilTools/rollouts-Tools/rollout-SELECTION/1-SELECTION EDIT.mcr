@@ -5,7 +5,7 @@ macroscript	selection_select_all
 category:	"_Selection-Edit"
 buttontext:	"Select All"
 toolTip:	"Select All - CLOSE LAYER MANAGER IF OPENED"
---icon:	"#(path, index)"
+icon:	"across:3"
 (
 	on execute do
 	(
@@ -78,7 +78,7 @@ macroscript	_selection_copy_object_between_max
 category:	"_Selection-Edit"
 buttontext:	"Copy Selection"
 toolTip:	"Copy objects in selection with hierarchy"
-icon:	"MENU:true"
+icon:	"MENU:true|across:2"
 (
 	saveNodes selection (((GetDir #temp) as string ) + "\copy_paste_buffer.max")  quiet:true
 )

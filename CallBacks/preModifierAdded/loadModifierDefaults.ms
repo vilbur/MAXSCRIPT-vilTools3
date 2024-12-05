@@ -19,6 +19,6 @@ function loadModifierDefaults =
 		if ModStackPreset.hasPreset() then
 			ModStackPreset.loadPreset()
 
-		_modifier.name = (ModifierRenamer_v(_modifier)).generateName()
+		--_modifier.name = (ModifierRenamer_v(_modifier)).generateName()
 	)
 )

@@ -4,8 +4,15 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/S
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 
+--filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
 --RUN_ON_STARTUP = true
+
+
+global VILTOOLS
+global CALLBACKMANAGER = CallbackManager_v()
 
 /* DIRECTORY WHERE TO LOAD CONTENT */ 
 content_dir = "VilTools"
@@ -68,9 +75,6 @@ filein_files = #(
 
 	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
 
-	"/../MAXSCRIPT-UI-framework/Lib/Menus/RcMenu/RcMenu.ms" , -- Check if this is necessary to import, it should be imported with framework
-	--"/VilTools/rollouts-Tools/rollout-EDIT-POLY/Lib/Epoly.ms",
-
 	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
 
 	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms",
@@ -91,6 +95,7 @@ filein_files = #(
 (PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install()
 
 
+
 /*------------------------------------------------------------------------------
 	GENERATE MACROS
 --------------------------------------------------------------------------------*/
@@ -101,42 +106,37 @@ generateMacroscripts( rollouts_dir )
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
+--
+--/* CONVERT RELATIVE PATHS TO ABSOLUTE */
+--filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
+--
+--
+--/* ADD CALLBACK FILES from "./CallBacks/" */
+--for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:true do
+--	for callback_file in getFiles (callback_subdir + "/*.ms") do
+--		appendIfUnique filein_files callback_file
+--
+--
+--try(
+--	/* FILE IN FILES */
+--	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
+--	(
+--		--format "FILE IN: % \n" (file_path)
+--		if doesFileExist file_path then
+--			filein( file_path)
+--	)
+--
+--)catch
+--(
+--	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+--	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+--    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+--    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
+--)
+--
+--
 
-/* CONVERT RELATIVE PATHS TO ABSOLUTE */
-filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
 
-
-/* ADD CALLBACK FILES from "./CallBacks/" */
-for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:true do
-	for callback_file in getFiles (callback_subdir + "/*.ms") do
-		appendIfUnique filein_files callback_file
-
-
-try(
-	/* FILE IN FILES */
-	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
-	(
-		--format "FILE IN: % \n" (file_path)
-		if doesFileExist file_path then
-			filein( file_path)
-	)
-
-)catch
-(
-	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
-)
-
-
-
-
-
-global VILTOOLS
-global CALLBACKMANAGER = CallbackManager_v()
-
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
 /*------------------------------------------------------------------------------
 	START VilTools
@@ -162,6 +162,9 @@ try(
 	format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
 	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
 )
+
+
+
 
 
 
