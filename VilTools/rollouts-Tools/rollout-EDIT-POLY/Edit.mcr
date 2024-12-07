@@ -6,7 +6,7 @@ macroscript	edit_poly_insert_vertex
 category:	"_Epoly-Edit"
 buttonText:	"Insert vertex"
 tooltip:	"Insert vertex to selected edges\n\nPress Ctrl|Alt|Shift to add more vertices.\n\nEach pressed mod key adds 1 more vertex (E.G.: Ctrl+Alt+Shift = 4 vertices)"
-icon:	"MENU:true"
+icon:	"MENU:true|across:3"
 (
 	on isVisible	do isEpoly() and isSubObject #( 1, 2 )
 

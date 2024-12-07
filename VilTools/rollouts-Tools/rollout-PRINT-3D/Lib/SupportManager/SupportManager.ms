@@ -2,7 +2,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-VERTEX-COLOR/L
 
 filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-LAYERS/Lib/LayersManager/LayersManager.ms" )	--"./../../../rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-SELECTION - EDIT POLY/Lib/MeshDataGetter/MeshDataGetter.ms" )	--"./../../../rollout-SELECTION - EDIT POLY/Lib/MeshDataGetter/MeshDataGetter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../../../rollout-EDIT-POLY/Lib/MeshDataGetter/MeshDataGetter.ms" )	--"./../../../rollout-EDIT-POLY/Lib/MeshDataGetter/MeshDataGetter.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/ShapeKnotGetter/ShapeKnotGetter.ms" )	--"./ShapeKnotGetter/ShapeKnotGetter.ms"
 
@@ -35,7 +35,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../PinsGenerator/PinsGenerator.
   *  HIERARCHY OF OBJECTS:
   *
   *		1) SOURCE OBJECT: Mesh object from which are support points generated. Parent of all objects:
-  *					// Used vertices  1) SELECTED verts 2) ALL vertex with colors if nothing selected 3) ALL vertices if selection and colors not exists
+  *					// Used vertices  1) SELECTED verts 2) ALL vertex with colors if nothing selected 3) ALL vertices[ if selection and colors not exists
   *
   * 			2) MASTER POINT ON TOP OF PLAFTORM - Dispalyed as: #BOX and #CROSS - Main point synced with source object by user prop data.
   *					//  Master poin knows which source object and vert has been used.

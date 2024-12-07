@@ -10,6 +10,8 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addMenu("_Epoly-Tools-Options")
 
+	
+	
 	/* EDIT SPLINE TOOLS MENU */
 
 	QuadMenu.addItem ("Editable Spline Object") ("Divide (Spline)")   group:"Main UI" --index:1
@@ -25,7 +27,7 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addItem ("Modifier Stack") ("Convert To Editable Polygon") group:"Main UI" --index:1
 
-	QuadMenu.addMenu("_Object-ConvertTo")
+	QuadMenu.addMenu("_Object-ConvertTo") --"./../VilTools/rollouts-Tools/rollout-OBJECT/CONVERT TO.mcr"
 
 )
 

@@ -65,7 +65,7 @@ tooltip:	"Load preset menu"
 	max modify mode
 
 	if ( currMod = modPanel.getCurrentObject() ) != undefined then
-		managePresetMenu( classOf currMod )
+		managePresetMenu( currMod )
 )
 
 /*

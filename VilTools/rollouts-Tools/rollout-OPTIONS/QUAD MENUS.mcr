@@ -19,7 +19,8 @@ icon:	"MENU:true"
 		/* IMPORT *.mcr files*/
 		(QuadMenuManager_v()).createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
 		
-		 print "========================= SETUP MENUS ========================="
+		
+		format "\n\n"; print "========================= SETUP MENUS ========================="
 	
 		/* SETUP QUAD MENUS */ 
 		(QuadMenuManager_v()).setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"

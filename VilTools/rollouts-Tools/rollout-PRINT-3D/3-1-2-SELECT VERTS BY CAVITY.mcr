@@ -1,4 +1,5 @@
-filein( getFilenamePath(getSourceFileName()) + "/../rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms" )	--"./../rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/../rollout-EDIT-POLY/rollouts-EDIT-POLY-TOOLS/rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms" )	--"./../rollout-EDIT-POLY/rollouts-EDIT-POLY-TOOLS/rollout-SELECTION - EDIT POLY/Lib/VertSelector/VertSelector.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../rollout-EDIT-POLY/Lib/VertSelector/VertSelector.ms" )	--"./../rollout-EDIT-POLY/Lib/VertSelector/VertSelector.ms"
 
 /** Select verts by cavity
 	All verts are used if nothing selected

@@ -69,16 +69,6 @@ struct ModStackPreset_v
 		added_new --return
 	),
 
-	/** Test if modObject has default values
-	  *
-	  * Comnpare props values with default mod
-	 */
-	function _getModValues _mod =
-	(
-		--format "\n"; print "ModStackPreset_v._getModValues()"
-		for prop in getPropNames _mod collect (getProperty _mod prop)
-	),
-
 	/** Save preset
 	  *
 	  * @param	array	properties	names of mod to save
@@ -113,16 +103,23 @@ struct ModStackPreset_v
 
 	/** Load preset
 	 */
-	function loadPreset =
+	function loadPreset preset:undefined rename:true =
 	(
 		format "\n"; print "ModStackPreset_v.loadPreset()"
 		--format "preset_name	= % \n" preset_name
 
-		for data_pair in  this._getPresetValues() do
+		preset_name_load = if preset != undefined then preset else this.preset_name
+		format "preset_name_load: %\n" preset_name_load
+		for data_pair in  this._getPresetValues(preset_name_load) do
+		(
+			format "%\:%\n" data_pair.key data_pair.value
 			setProperty modObject data_pair.key data_pair.value
+		)
 
-		format "\nMODIFIER PRESET	\"%\" HAS BEEN LOADED\n" preset_name
+		format "\nMODIFIER PRESET	\"%\" HAS BEEN LOADED\n" preset_name_load
 		--(this.getPresetName()) = preset_name
+		if rename then
+			this.modObject.name = preset_name_load
 	),
 
 
@@ -197,18 +194,33 @@ struct ModStackPreset_v
 		
 		( this._iniFileExists() ) and hasINISetting ini this.preset_name  --return
 	),
+	
+	/** Save default preset
+	 */
+	function saveDefaultPreset =
+	(
+		--format "\n"; print "ModStackPreset_v.saveDefaultPreset()"
+		
+		default_mod = execute ((classOf this.modObject) as string + "()")
+		
+		ModStackPresetDefault = ModStackPreset_v( default_mod )
 
-	--/** Open ini
-	-- */
-	--function openIni =
-	--(
-	--	format "\n"; print "ModStackPreset_v.openIni()"
-	--	format "ini	= % \n" ini
-	--	--this._setIniPath()
-	--
-	--	if this._iniFileExists() then
-	--		DOSCommand ("start \"\" \""+ini+"\"")
-	--),
+		ModStackPresetDefault.savePreset()
+	),
+	
+	
+	private
+
+	
+	/** Test if modObject has default values
+	  *
+	  * Comnpare props values with default mod
+	 */
+	function _getModValues _mod =
+	(
+		--format "\n"; print "ModStackPreset_v._getModValues()"
+		for prop in getPropNames _mod collect (getProperty _mod prop)
+	),
 
 	/** Get mod name
 	  *
@@ -223,29 +235,34 @@ struct ModStackPreset_v
 	/** Get preset values
 	  *
 	  */
-	function _getPresetValues =
+	function _getPresetValues preset_name_load =
 	(
-		--format "\n"; print "ModStackPreset_v._getPresetValues()"
+		format "\n"; print "ModStackPreset_v._getPresetValues()"
 
 		preset_values	= Dictionary()
-
-		for prop in getPropNames modObject do
-		(
-			val	= getINISetting ini preset_name ( prop as string )
-			--format "\n"
-			--format "val:	% \n" val
-			--format "classof val:	% \n" (classof (execute val))
-
-			if val != "" then
-				preset_values[prop] = execute val
-		)
+		format "ini: %\n" ini
+		format "preset_name_load: %\n" preset_name_load
+		format "keys: %\n" (getINISetting ini preset_name_load)
+		
+		for key in getINISetting ini preset_name_load do
+			preset_values[key as name ] = this._formatDatatypeValue ( getINISetting ini preset_name_load key )
+		
+		--for prop in getPropNames modObject do
+		--(
+		--	val	= getINISetting ini preset_name_load ( prop as string )
+		--	--format "\n"
+		--	--format "val:	% \n" val
+		--	--format "classof val:	% \n" (classof (execute val))
+		--
+		--	if val != "" then
+		--		preset_values[prop] = execute val
+		--)
 
 		--format "\n-----------\nDICTIONARY:preset_values:%\n" preset_values; for data_pair in preset_values do format "%:	%\n" data_pair.key data_pair.value
-
+		format "preset_values: %\n" preset_values
 		preset_values --return
 	),
 
-	private
 
 	/** Format datatype of value
 	  *
@@ -280,11 +297,26 @@ struct ModStackPreset_v
 	(
 		(getFiles ini).count != 0
 	),
+	
+	/** Set mod object
+	 */
+	function _setModObject =
+	(
+		format "\n"; print "ModStackPreset_v._setModObject()"
+		format "classOf modObject	= % \n" ( superClassOf modObject)
+		format "test: %\n" (classOf modObject != modifier)
+	
+		if superClassOf modObject != modifier then
+			if classOf ( currMod = ( modPanel.getCurrentObject() ) ) == modObject then
+				modObject = currMod
+				--modObject =  modPanel.getCurrentObject()
+	),
 
 	on create do
 	(
-		--format "\n"; print "ModStackPreset_v.create()"
+		format "\n"; print "ModStackPreset_v.create()"
 
+		this._setModObject()
 		--format "modObject	= % \n" modObject
 		--format "classOf modObject	= % \n" ( classOf modObject)
 		--format "superClassOf modObject	= % \n" ( superClassOf modObject)
