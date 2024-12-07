@@ -3,14 +3,13 @@
 macroscript epoly_tools_Constraints_None
 category:	"_Epoly-Constraints"
 buttonText:	"N O N E"
-icon:	"MENU:true"
+icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_0|MENU:false"
 (
-	on isVisible	do return isEpoly()
+	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 0
-	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 0
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "ConstraintsNone"
+		toggleConstrainType 0 EventFired
 	)
 )
 
@@ -19,14 +18,13 @@ icon:	"MENU:true"
 macroscript epoly_tools_Constraints_Edge
 category:	"_Epoly-Constraints"
 buttonText:	"E D G E"
-icon:	"MENU:true"
+icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_1"
 (
-	on isVisible	do return isEpoly()
+	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 1
-	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 1
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "ConstraintsEdge"
+		toggleConstrainType 1 EventFired
 	)
 )
 
@@ -35,14 +33,13 @@ icon:	"MENU:true"
 macroscript epoly_tools_Constraints_Face
 category:	"_Epoly-Constraints"
 buttonText:	"F A C E"
-icon:	"MENU:true"
+icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_2"
 (
-	on isVisible	do return isEpoly()
+	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 2
-	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 2
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "ConstraintsFace"
+		toggleConstrainType 2 EventFired
 	)
 )
 
@@ -51,14 +48,13 @@ icon:	"MENU:true"
 macroscript epoly_tools_Constraints_Normal
 category:	"_Epoly-Constraints"
 buttonText:	"N O R M A L"
-icon:	"MENU:true"
+icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_3"
 (
-	on isVisible	do return isEpoly()
+	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 3
-	on isEnabled	do (modPanel.getCurrentObject()).constrainType != 3
 
 	on execute do (
-		macros.run "Ribbon - Modeling" "ConstraintsNormal"
+		toggleConstrainType 3 EventFired
 	)
 )
 

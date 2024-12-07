@@ -4,7 +4,7 @@ macroscript	epoly_explode_by_element
 category:	"_Epoly-Explode"
 buttonText:	"Elements"
 toolTip:	"Explode by Elements"
-icon:	"across:5|width:80|MENU:true"
+icon:	"across:5|width:76|MENU:true"
 (
 	--clearListener()
 	undo "Explode By Element" on

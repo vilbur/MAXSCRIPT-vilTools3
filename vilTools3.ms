@@ -55,6 +55,8 @@ std_scripts = #(
 	--"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
 	--"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
 	--"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
+	"/rollout-EDIT-POLY/Lib/toggleConstrainType.ms",
+	
 
 	"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
 	"/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms"

@@ -6,9 +6,9 @@ function addQuad1 QuadMenu =
 	QuadMenu.setTitle("Edit 1")
 
 	/* EDIT POLY */
-	QuadMenu.addMenu("_Epoly-Constraints")  separators: #( 1 )
+	QuadMenu.addMenu("_Epoly-Constraints")  --separators: #( 1 )
 
-	QuadMenu.addMenu("_Epoly-Tools-Options")
+	QuadMenu.addMenu("_Epoly-Tools-Options") separators: #( 1 )
 
 	
 	
@@ -18,7 +18,7 @@ function addQuad1 QuadMenu =
 	QuadMenu.addItem ("Editable Spline Object") ("Connect (Spline)")  group:"Main UI" --index:1
 
 	--SplineToolsMenu = menu_v("Context Spline Tools 4")
-	QuadMenu.addSeparator()
+	--QuadMenu.addSeparator()
 
 	QuadMenu.addMenu("Context Spline Tools 4")
 
@@ -27,7 +27,10 @@ function addQuad1 QuadMenu =
 
 	QuadMenu.addItem ("Modifier Stack") ("Convert To Editable Polygon") group:"Main UI" --index:1
 
-	QuadMenu.addMenu("_Object-ConvertTo") --"./../VilTools/rollouts-Tools/rollout-OBJECT/CONVERT TO.mcr"
+	QuadMenu.addMenu("_Object-ConvertTo") separators: #( 1 ) --"./../VilTools/rollouts-Tools/rollout-OBJECT/CONVERT_TO.mcr"
+	
+	--QuadMenu.clearSeparators()
+
 
 )
 
