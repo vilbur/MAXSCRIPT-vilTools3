@@ -1,3 +1,28 @@
+/*
+*/
+macroscript	selection_convert_to_editable_poly
+category:	"_Object-ConvertTo"
+buttontext:	"Convert To Editable Poly"
+tooltip:	"Convert To Editable Poly"
+icon:	"MENU:true"
+(
+	on isVisible return selection.count > 0 and classof $.baseobject != line
+
+	on execute do
+	(
+		macros.run "Modifier Stack" "Convert_to_Poly"
+
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OBJECT\CONVERT TO.mcr"
+		--
+		--for obj in selection where superClassOf obj.baseobject == shape do
+		--	case classOf obj.baseobject of
+		--	(
+		--		line:	macros.run "Modifier Stack" "Convert_to_Spline"
+		--		default:	(SplineConvertor_v()).convert(obj)
+		--	)
+	)
+)
+
 
 
 /*
@@ -12,7 +37,6 @@ icon:	"MENU:true"
 
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OBJECT\CONVERT TO.mcr"
 
 		for obj in selection where superClassOf obj.baseobject == shape do
 			case classOf obj.baseobject of
@@ -35,8 +59,6 @@ icon:	"MENU:true"
 
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OBJECT\CONVERT TO.mcr"
-
 		for obj in selection where getUserProp obj "original_shape" != undefined do
 			selectmore ((SplineConvertor_v()).revert(obj))
 

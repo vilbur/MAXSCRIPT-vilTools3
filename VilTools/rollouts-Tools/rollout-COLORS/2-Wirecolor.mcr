@@ -10,7 +10,7 @@ macroscript	wirecolor_random
 category:	"_Wirecolor"
 buttontext:	"Random color"
 toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
-icon:	"MENU:true|across:3|tooltip:Random wirecolor to selected object\n"
+icon:	"MENU:&Random color|across:3|tooltip:Random wirecolor to selected object\n"
 (
 	--(Wirecolor_v()).randomize brightness:128
 	--(Wirecolor_v()).randomize brightness:#(64, 255)
@@ -80,7 +80,7 @@ macroscript	wirecolor_select_only_visible
 category:	"_Wirecolor"
 buttontext:	"Select by wirecolor"
 toolTip:	"Select by wirecolor"
-icon:	"MENU:TRUE"
+icon:	"MENU:&Select by wirecolor"
 (
 	on isVisible return subObjectLevel==undefined or subObjectLevel == 0
 

@@ -195,3 +195,31 @@ icon:	"MENU:true"
 
 	)
 )
+
+
+macroscript	modifiers_instance_modifiers_on_obj_copy_callback
+category:	"_Modifiers-Manage"
+buttontext:	"Delete By Name"
+toolTip:	""
+icon:	"control:checkbox|across:1|autorun:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		max modify mode
+
+		objs_with_mods = #()
+
+		if ( _mod = modPanel.getCurrentObject() ) != undefined \
+		and  queryBox ( "Delete modifier from visible objects ?\n\n" + (mod_name = _mod.name ) ) title:"DELETE MODIFIER" then
+		(
+			for obj in objects where not obj.isHidden and (mod_found = obj.modifiers[mod_name]) != undefined do
+				deleteModifier obj mod_found
+				--append objs_with_mods obj
+
+			--if objs_with_mods.count > 0 then
+			--	select objs_with_mods
+		)
+
+	)
+)

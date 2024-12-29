@@ -8,11 +8,11 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/M
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
+
 --RUN_ON_STARTUP = true
 
-
 global VILTOOLS
-global CALLBACKMANAGER = CallbackManager_v()
 
 /* DIRECTORY WHERE TO LOAD CONTENT */ 
 content_dir = "VilTools"
@@ -75,14 +75,9 @@ std_scripts = #(
 
 filein_files = #(
 
-	"/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms", -- IMPORT UI FRAMEWORK
-
 	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
 
-	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms",
-
-	"/VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms" -- "./VilTools/rollouts-Tools/rollout-MODIFIER-STACK/Lib/ModStackPreset/ModStackPreset.ms"
-
+	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms"
 )
 
 /*------------------------------------------------------------------------------
@@ -108,35 +103,29 @@ generateMacroscripts( rollouts_dir )
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
 
---
---/* CONVERT RELATIVE PATHS TO ABSOLUTE */
---filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
---
---
---/* ADD CALLBACK FILES from "./CallBacks/" */
---for callback_subdir in  getDirectories (current_dir + "/CallBacks/*") recurse:true do
---	for callback_file in getFiles (callback_subdir + "/*.ms") do
---		appendIfUnique filein_files callback_file
---
---
---try(
---	/* FILE IN FILES */
---	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
---	(
---		--format "FILE IN: % \n" (file_path)
---		if doesFileExist file_path then
---			filein( file_path)
---	)
---
---)catch
---(
---	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
---	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
---    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
---    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
---)
---
---
+
+/* CONVERT RELATIVE PATHS TO ABSOLUTE */
+filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
+
+
+try(
+	/* FILE IN FILES */
+	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
+	(
+		format "FILE IN: % \n" (file_path)
+		if doesFileExist file_path then
+			filein( file_path)
+	)
+
+)catch
+(
+	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
+)
+
+
 
 
 
@@ -174,34 +163,56 @@ try(
 	START CALLBACKS
 --------------------------------------------------------------------------------*/
 
+	CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
+
+	CALLBACKMANAGER.start()
+
+/*------------------------------------------------------------------------------
+
+	IMPORT FILES
+
+--------------------------------------------------------------------------------*/
 
 /* import when UI exists */
---try
---(
---    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
---
---	--(NodeList_v()).loadNodes()
---
---	--selectExportNodeInListCallbactAdd()
---
---	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
---
---	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
---		--showLayerManagerCallback()
---
---
-	--CALLBACKMANAGER.add "setDefaultPropertiesToObject"	#nodeCreated
---
-	--CALLBACKMANAGER.add "loadModifierDefaults"	#preModifierAdded
---
---	--CALLBACKMANAGER.add "prependPolySelectModifier"	#postModifierAdded
---
---
---)
---catch(
---	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
---	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
---    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
---	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
---
---)
+try
+(
+    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+
+	--(NodeList_v()).loadNodes()
+
+	--selectExportNodeInListCallbactAdd()
+
+	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+
+	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
+		--showLayerManagerCallback()
+
+
+)
+catch
+(
+	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
