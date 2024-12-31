@@ -167,7 +167,7 @@ try(
 
 	--CALLBACKMANAGER.start(undefined)
 	
-	CALLBACKMANAGER.start("instanceModifiersOnCopy")
+	--CALLBACKMANAGER.start("instanceModifiersOnCopy")
 
 /*------------------------------------------------------------------------------
 

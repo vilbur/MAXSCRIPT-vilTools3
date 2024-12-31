@@ -2,7 +2,7 @@
  */
 function instanceModifiersOnCopy =
 (
-	print "instanceModifiersOnCopy()"
+	--print "instanceModifiersOnCopy()"
 	
 	/** Instance modifier
 	 */
@@ -25,8 +25,8 @@ function instanceModifiersOnCopy =
 	qsort nodes_old sortByName
 	qsort nodes_new sortByName
 
-	format "nodes_old: %\n" nodes_old
-	format "nodes_new: %\n" nodes_new
+	--format "nodes_old: %\n" nodes_old
+	--format "nodes_new: %\n" nodes_new
 	--format "type: %\n" type
 	
 	if type == #COPY and queryBox ("Instance modifiers to new nodes ?") then
@@ -37,9 +37,9 @@ function instanceModifiersOnCopy =
 		
 		for i = 1 to nodes_new.count do
 		(
-			format "\n"
-			format "source_node: %\n" (nodes_old[i].name)
-			format "dest_node: %\n" (nodes_new[i].name)
+			--format "\n"
+			--format "source_node: %\n" (nodes_old[i].name)
+			--format "dest_node: %\n" (nodes_new[i].name)
 			
 			for m = nodes_new[i].modifiers.count to 1 by -1 do
 				instanceModifier nodes_old[i] nodes_new[i] nodes_old[i].modifiers[m] m
