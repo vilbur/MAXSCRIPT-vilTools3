@@ -165,7 +165,9 @@ try(
 
 	CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
 
-	CALLBACKMANAGER.start()
+	--CALLBACKMANAGER.start(undefined)
+	
+	CALLBACKMANAGER.start("instanceModifiersOnCopy")
 
 /*------------------------------------------------------------------------------
 

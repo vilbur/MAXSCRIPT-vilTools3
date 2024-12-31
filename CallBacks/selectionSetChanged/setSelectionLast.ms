@@ -1,4 +1,12 @@
 
+/*------------------------------------------------------------------------------
+	
+	SAVE SELECTION TO VARIABLE
+	
+	GLOBAL_SELECTION_LAST is used ACROSS MULTIPLE SCRIPTS
+	
+--------------------------------------------------------------------------------*/
+
 
 global GLOBAL_SELECTION_LAST_ENABLED = true
 global GLOBAL_SELECTION_LAST
@@ -32,7 +40,7 @@ function setSelectionLast =
 (
 	if GLOBAL_SELECTION_LAST_ENABLED then
 	(
-		print "setSelectionLast()"
+		--print "setSelectionLast()"
 		GLOBAL_SELECTION_LAST = GLOBAL_SELECTION_LAST_BUFFER
 
 		if( selection.count > 0 ) then
@@ -42,5 +50,9 @@ function setSelectionLast =
 	)
 )
 
-
---setSelectionLastCallback()
+/*------------------------------------------------------------------------------
+	
+	START CALLBACK for default
+	
+--------------------------------------------------------------------------------*/
+setSelectionLastCallback()
