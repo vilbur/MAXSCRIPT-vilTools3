@@ -40,9 +40,15 @@ function autoRenameOnCopy =
 	nodes_new	= (callbacks.notificationParam())[2]
 	type_id	= (callbacks.notificationParam())[3]
 
+	--format "nodes_old.count: %\n" nodes_old.count
+	--format "nodes_new.count: %\n" nodes_new.count
+	
 	qsort nodes_old sortByName
 	qsort nodes_new sortByName
 
+	--format "nodes_old: %\n" nodes_old
+	--format "nodes_new: %\n" nodes_new
+	
 	for i = 1 to nodes_new.count do
 	(
 
@@ -67,10 +73,8 @@ function autoRenameOnCopy =
 				nodes_new[i].name = basename_new + delimeter + suffix_copy
 			)
 		)
-		
 		/* IF COPY HAS DIFERENT NAME THAN SOURCE */ 
-		else if not basenames_matching
-		then
+		else if not basenames_matching then
 		(
 			same_name_old = (execute ("$'"+basename_old + "'*") as Array )
 			same_name_new = (execute ("$'"+basename_new + "'*") as Array )
