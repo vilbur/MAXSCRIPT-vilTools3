@@ -1,6 +1,36 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/UnwrapModifier.ms" ) -- DEV
 
 
+/*------------------------------------------------------------------------------
+	EDITOR OPTIONS
+--------------------------------------------------------------------------------*/
+
+
+/**  
+ *	
+ */
+macroscript	unwrap_editor_auto_open
+category:	"_UVW"
+buttontext:	"AUTO OPEN EDITOR"
+--toolTip:	"Auto open Unwrap editor if:\n1) Object is selected\n2)Unwrap modifier is selected"
+toolTip:	"Auto open Unwrap editor if Unwrap modifier is selected"
+--icon:	"control:Radiobuttons|unselect:true|across:2|items:#('Object selected','Unwrap selected')|offset:[-64,0]"
+--icon:	"control:checkbox|offset:[48, 8]"
+icon:	"control:checkbox|across:1|offset:[ 0, 8 ]|align:#CENTER"
+(
+	on execute do
+	(
+		format "EventFired.val	= % \n" EventFired.val
+		
+		if EventFired.val == 1 then
+			CALLBACKMANAGER.start "openUnwrapEditor"
+			
+		else
+			CALLBACKMANAGER.kill "openUnwrapEditor"
+	)
+
+)
+
 
 
 /*------------------------------------------------------------------------------
@@ -58,32 +88,6 @@ icon:	"across:4|width:128|height:48|offset:[16, 8]"
 
 
 
-/*------------------------------------------------------------------------------
-	EDITOR OPTIONS
---------------------------------------------------------------------------------*/
-
-
-/**  
- *	
- */
-macroscript	unwrap_editor_auto_open
-category:	"_UVW"
-buttontext:	"Auto Open"
---toolTip:	"Auto open Unwrap editor if:\n1) Object is selected\n2)Unwrap modifier is selected"
-toolTip:	"Auto open Unwrap editor if Unwrap modifier is selected"
---icon:	"control:Radiobuttons|unselect:true|across:2|items:#('Object selected','Unwrap selected')|offset:[-64,0]"
---icon:	"control:checkbox|offset:[48, 8]"
-icon:	"control:checkbox|offset:[ 56, 24 ]"
-(
-	--format "EventFired.val	= % \n" EventFired.val
-	if EventFired.val == 1 then
-		openUnwrapEditorEvent()
-		
-	else
-		openUnwrapEditorKill()
-
-)
-
 /**  
  *	
  */
@@ -91,7 +95,7 @@ macroscript	unwrap_editor_option_grid
 category:	"_UVW"
 buttontext:	"Grid"
 toolTip:	"Show grid in editor"
-icon:	"control:checkbox|offset:[ 60, 24 ]|enabled:false"
+icon:	"control:checkbox|across:4|offset:[ 60, 24 ]|enabled:false"
 --icon:	"control:checkbox|across:4|enabled:false"
 (
 

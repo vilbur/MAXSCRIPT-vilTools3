@@ -8,7 +8,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/M
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
 
 --RUN_ON_STARTUP = true
 
@@ -27,9 +27,10 @@ rollouts_dir = "$userscripts/"+current_dir_name+"/"+content_dir+"/rollouts-Tools
 
 std_scripts = #(
 
-	( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 
-	"/../../CallBacks/CallbackManager/CallbackManager.ms", -- "./CallBacks/CallbackManager/CallbackManager.ms"
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"),	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
+	
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
@@ -150,7 +151,7 @@ try(
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
 	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-	format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
 	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
 )
 

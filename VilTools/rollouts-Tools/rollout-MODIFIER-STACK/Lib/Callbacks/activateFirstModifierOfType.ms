@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/../InstancedModifierFinder/InstancedModifierFinder.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/../InstancedModifierFinder/InstancedModifierFinder.ms" )	--"./../InstancedModifierFinder/InstancedModifierFinder.ms"
 
 /** Activate first top modifier in stack of given class
  */
@@ -11,7 +11,7 @@ function activateFirstModifierOfType class_of_modifier =
 	function multipleObjects class_of_modifier =
 	(
 		--format "\n"; print "multipleObjects()"
-		edit_poly_indexes = (InstancedModifierFinder nodes: selection ).getIndexesOfInstances ( class_of_modifier )
+		edit_poly_indexes = ( InstancedModifierFinder_v nodes: selection ).getIndexesOfInstances ( class_of_modifier )
 
 		first_edit_poly_index = edit_poly_indexes[1]
 		

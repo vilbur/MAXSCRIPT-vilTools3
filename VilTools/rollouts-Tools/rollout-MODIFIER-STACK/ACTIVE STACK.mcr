@@ -1,21 +1,13 @@
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstModifierOfType.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstEditPoly.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstUnwrap.ms" )
 
-
 filein( getFilenamePath(getSourceFileName()) + "/Lib/LastModifierSaver/LastModifierSaver.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/saveLastModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/openUnwrapEditor.ms" )
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Events/onSelectionChangedModPanel.ms" )
 
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/autoEndResult.ms" )	-- "./Lib/Callbacks/autoEndResult.ms"
-
-
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/onSelectionChangedModPanel.ms" )
 
 
 /*------------------------------------------------------------------------------
@@ -26,25 +18,29 @@ global AUTO_END_RESULT
 
 macroscript	modifiers_auto_end_result
 category:	"_Modifier-Stack"
-buttontext:	"Auto End Result"
+buttontext:	"SHOW END RESULT AUTO"
 toolTip:	"Enable\Disable show end result on Enter\Exit subobject"
-icon:	"control:checkbutton|MENU:true|across:1"
+icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 (
 	on IsChecked do AUTO_END_RESULT != undefined
 
 	on execute do
-		if AUTO_END_RESULT == undefined then
+	(
+		format "AUTO_END_RESULT: %\n" AUTO_END_RESULT
+		if AUTO_END_RESULT == undefined or ( EventFired != undefined and EventFired.val ) then
+		--if AUTO_END_RESULT == undefined then
 		(
-			callbacks.addScript #ModPanelSubObjectLevelChanged "autoEndResult()" id:#autoEndResult
+			CALLBACKMANAGER.start "autoEndResult" --"./../../../CallBacks/modPanelSubObjectLevelChanged/autoEndResult.ms"
 
 			AUTO_END_RESULT = true
 		)
 		else
 		(
-			try(callbacks.removeScripts #ModPanelSubObjectLevelChanged id:#autoEndResult)catch()
+			CALLBACKMANAGER.kill "autoEndResult"
 
 			AUTO_END_RESULT = undefined
 		)
+	)
 )
 
 
@@ -62,16 +58,16 @@ function keepActiveModifier which =
 
 	KEEP_ACTIVE_NODIFIER = which
 
-	onSelectionChangedModPanelKill ("onNewModPanelKill")
+	onSelectionChangedModPanelKill ("activateFirstEditPoly")
 	onSelectionChangedModPanelKill ("activateFirstUnwrap")
 	onSelectionChangedModPanelKill ("activateLastModifier")
 
-	saveLastModifierKill()
+	CALLBACKMANAGER.kill("saveLastModifier")
 
 
-	ROLLOUT_modifier_stack.CBXBTN_edit_poly.state	= false
-	ROLLOUT_modifier_stack.CBXBTN_unwrap.state	= false
-	ROLLOUT_modifier_stack.CBXBTN_last_modifier.state	= false
+	ROLLOUT_modifier_stack.CBTN_unwrap.state	= false
+	ROLLOUT_modifier_stack.CBTN_edit_poly.state	= false
+	ROLLOUT_modifier_stack.CBTN_last_modifier.state	= false
 
 
 	case which of
@@ -82,7 +78,16 @@ function keepActiveModifier which =
 
 			onSelectionChangedModPanel ("activateFirstEditPoly")
 
-			ROLLOUT_modifier_stack.CBXBTN_edit_poly.state	= true
+			ROLLOUT_modifier_stack.CBTN_edit_poly.state	= true
+		)
+
+		#LastModifier:
+		(
+			CALLBACKMANAGER.start("saveLastModifier")
+
+			onSelectionChangedModPanel ("activateLastModifier")
+
+			ROLLOUT_modifier_stack.CBTN_last_modifier.state	= true
 		)
 
 		#Unwrap:
@@ -91,19 +96,9 @@ function keepActiveModifier which =
 
 			onSelectionChangedModPanel ("activateFirstUnwrap")
 
-			ROLLOUT_modifier_stack.CBXBTN_unwrap.state	= true
-		)
-
-		#LastModifier:
-		(
-			saveLastModifierStart()
-
-			onSelectionChangedModPanel ("activateLastModifier")
-
-			ROLLOUT_modifier_stack.CBXBTN_last_modifier.state	= true
+			ROLLOUT_modifier_stack.CBTN_unwrap.state	= true
 		)
 	)
-
 )
 
 /*
@@ -113,7 +108,7 @@ macroscript	modifiers_keep_active_edit_poly
 category:	"_Modifier-Stack"
 buttonText:	"Edit Poly"
 tooltip:	"Select Edit Poly modifier when object is selected"
-icon:	"control:checkbutton|MENU:true|across:3"
+icon:	"control:checkbutton|MENU:true|autorun:true|across:3|offset:[0,4]"
 (
 
 	on execute do
@@ -135,7 +130,7 @@ category:	"_Modifier-Stack"
 buttonText:	"Last Modifier"
 tooltip:	"Select last modifier when object is selected"
 -- AUTORUN TEMPORARY DISABLED, IT IS FIRED UP ON HelperGenerator_v.generatePointHelpers reset_verts:true
-icon:	"control:checkbutton|MENU:true|autorun:false"
+icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 
 	on execute do
@@ -160,7 +155,7 @@ macroscript	modifiers_keep_active_unwrap
 category:	"_Modifier-Stack"
 buttonText:	"Unwrap"
 tooltip:	"Select last modifier when object is selected"
-icon:	"control:checkbutton|MENU:true"
+icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 
 	on execute do

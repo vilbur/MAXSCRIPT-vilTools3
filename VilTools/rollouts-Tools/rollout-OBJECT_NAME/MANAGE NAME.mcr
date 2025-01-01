@@ -1,13 +1,51 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/showObjectNames.ms" )	-- "./Lib/showObjectNames.ms"
 
 
+macroscript	selection_auto_rename_copy
+category:	"_Object-Name"
+buttontext:	"AUTO RENAME ON COPY"
+toolTip:	"Enable\Disable show end result on Enter\Exit subobject"
+icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
+(
+	--on IsChecked do AUTO_END_RESULT != undefined
+
+	on execute do
+	(
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\CallBacks\preNodesCloned\addSuffixBeforeFirstCopy.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\CallBacks\postNodesCloned\autoRenameOnCopy.ms"
+		
+		
+		--format "AUTO_END_RESULT: %\n" AUTO_END_RESULT
+		--if AUTO_END_RESULT == undefined or ( EventFired != undefined and EventFired.val ) then
+		if ( EventFired != undefined and EventFired.val ) then
+		(
+			--CALLBACKMANAGER.start "addSuffixBeforeFirstCopy" --"./../../../CallBacks/preNodesCloned/addSuffixBeforeFirstCopy.ms"
+			
+			CALLBACKMANAGER.start "autoRenameOnCopy" --"./../../../CallBacks/postNodesCloned/autoRenameOnCopy.ms"
+			
+		
+			AUTO_END_RESULT = true
+		)
+		else
+		(
+			--CALLBACKMANAGER.kill "addSuffixBeforeFirstCopy"
+			
+			CALLBACKMANAGER.kill "autoRenameOnCopy"
+		
+			AUTO_END_RESULT = undefined
+		)
+	)
+)
+
+
 /** RENAME BY LAST
   */
 macroscript selection_reneme_by_last
 category:	"_Object-Name"
 buttonText:	"Rename by last"
 tooltip:	"Rename by last selected object"
-icon:	"MENU:true"
+icon:	"MENU:true|offset:[0,8]"
 (
 
 	on execute do

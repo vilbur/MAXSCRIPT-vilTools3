@@ -137,7 +137,7 @@ autoUndoEnabled: true
 macroscript	selection_reinstancer
 category:	"_Selection-Instance"
 buttontext:	"Reinstance"
-toolTip:	"Reinstance selection.\n\nMaster object is last object in selection"
+toolTip:	"Reinstance selection.\n\nMASTER OBJECT is last object in selection"
 icon:	"MENU:true"
 autoUndoEnabled: true
 (

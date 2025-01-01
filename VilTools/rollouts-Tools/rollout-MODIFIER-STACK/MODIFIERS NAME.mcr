@@ -17,7 +17,7 @@ category:	"_Modifiers-Name"
 buttontext:	"Rename"
 --tooltip:	"Rename current modifier dialog. \n\nOption in menu: Open Dialog"
 tooltip:	"Rename current modifier dialog."
-icon:	"MENU:Rename • CTRL: Reset name"
+icon:	"MENU:Rename • CTRL: Reset name|across:3"
 autoUndoEnabled: true
 (
 	on execute do

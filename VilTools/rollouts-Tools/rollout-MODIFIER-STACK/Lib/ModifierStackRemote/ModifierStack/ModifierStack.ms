@@ -67,10 +67,10 @@ struct ModifierStack_v
 	  */
 	function goToIndex current_index index =
 	(
-		format "\n"; print "ModifierStack_v.goToIndex()"
-		format "current_index:	% \n" current_index
-		format "index:	% \n" index
-		format "pointers.count:	% \n" pointers.count
+		--format "\n"; print "ModifierStack_v.goToIndex()"
+		--format "current_index:	% \n" current_index
+		--format "index:	% \n" index
+		--format "pointers.count:	% \n" pointers.count
 
 		if current_index != undefined then
 		(
