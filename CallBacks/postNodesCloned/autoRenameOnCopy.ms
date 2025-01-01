@@ -2,7 +2,7 @@
  */
 function autoRenameOnCopy =
 (
-	--format "\n\n";	print "autoRenameOnCopy()"
+	format "\n\n";	print "autoRenameOnCopy()"
 	
 	/** Get suffix number
 	 */
@@ -55,51 +55,79 @@ function autoRenameOnCopy =
 		basename_old = getBaseName nodes_old[i].name
 		basename_new = getBaseName nodes_new[i].name
 
-		suffix_source = getSuffixNumber nodes_old[i].name
-		suffix_copy   = getSuffixNumber nodes_new[i].name
+		suffix_src = getSuffixNumber nodes_old[i].name
+		suffix_new = getSuffixNumber nodes_new[i].name
+		--format "suffix_src: %\n" suffix_src
+		--format "suffix_new: %\n" suffix_new
+		--basenames_matching = matchPattern nodes_old[i].name pattern:( basename_new + "*")
+		--format "basenames_matching: %\n" basenames_matching
+		--
+		suffix_new = trimLeft suffix_new "0"
 		
-		basenames_matching = matchPattern nodes_old[i].name pattern:( basename_new + "*")
-	
+		same_name_old = (execute ("$'"+basename_old + "'*") as Array )
+		same_name_new = (execute ("$'"+basename_new + "'*") as Array )
 		
-		/* IF FIRST COPY OF SAME NAME */ 
-		if suffix_source != undefined and suffix_copy != undefined and basenames_matching then
+		digits = if same_name_new.count > 99 then 3 else 2
+
+		if same_name_new.count > 1 then
 		(
-			suffix_copy = trimLeft suffix_copy "0"
+			append same_name_new nodes_new[i]
 			
-			if suffix_source.count > suffix_copy.count then
+			same_name_new = makeUniqueArray same_name_new
+			
+			
+			for c = 1 to same_name_new.count do
 			(
-				suffix_copy = getSuffix suffix_copy 2
+				suffix_new = getSuffix ( c as string ) digits
 				
-				nodes_new[i].name = basename_new + delimeter + suffix_copy
+				new_name = basename_new + delimeter + suffix_new
+				
+				same_name_new[c].name = new_name
+				
+				--same_name_new[c].name = basename_new + delimeter + "0" + c as string
 			)
 		)
-		/* IF COPY HAS DIFERENT NAME THAN SOURCE */ 
-		else if not basenames_matching then
-		(
-			same_name_old = (execute ("$'"+basename_old + "'*") as Array )
-			same_name_new = (execute ("$'"+basename_new + "'*") as Array )
-
-			if same_name_new.count > 1 then
-			(
-				append same_name_new nodes_new[i]
-				
-				same_name_new = makeUniqueArray same_name_new
-				
-				for c = 1 to same_name_new.count do
-				(
-					
-					suffix_copy = getSuffix ( c as string ) 2
-
-					
-					new_name = basename_new + delimeter + suffix_copy
-					
-					same_name_new[c].name = new_name
-					
-					
-					--same_name_new[c].name = basename_new + delimeter + "0" + c as string
-				)
-			)
-		)
+			
+		--/* IF FIRST COPY OF SAME NAME */ 
+		--if suffix_src == undefined and suffix_new != undefined and basenames_matching then
+		--(
+		--
+		--	
+		--	
+		--	--if suffix_src.count > suffix_new.count then
+		--	--(
+		--	--	suffix_new = getSuffix suffix_new 2
+		--	--	
+		--	--	nodes_new[i].name = basename_new + delimeter + suffix_new
+		--	--)
+		--)
+		--/* IF COPY HAS DIFERENT NAME THAN SOURCE */ 
+		--else if not basenames_matching then
+		--(
+		--	same_name_old = (execute ("$'"+basename_old + "'*") as Array )
+		--	same_name_new = (execute ("$'"+basename_new + "'*") as Array )
+		--
+		--	if same_name_new.count > 1 then
+		--	(
+		--		append same_name_new nodes_new[i]
+		--		
+		--		same_name_new = makeUniqueArray same_name_new
+		--		
+		--		for c = 1 to same_name_new.count do
+		--		(
+		--			
+		--			suffix_new = getSuffix ( c as string ) 2
+		--
+		--			
+		--			new_name = basename_new + delimeter + suffix_new
+		--			
+		--			same_name_new[c].name = new_name
+		--			
+		--			
+		--			--same_name_new[c].name = basename_new + delimeter + "0" + c as string
+		--		)
+		--	)
+		--)
 	)
 )
 
