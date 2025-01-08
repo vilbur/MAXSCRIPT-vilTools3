@@ -1,39 +1,57 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/showObjectNames.ms" )	-- "./Lib/showObjectNames.ms"
 
 
+/*
+	new_name = "same_name|same_name001| "
+
+	A) SUFFIX ADDED TO COPIES, if new name is empty string
+	B) SUFFIX ADDED TO ALL, if new name has number
+	C) SUFFIX NOT ADDED, if new name is same source
+
+*/ 
 macroscript	selection_auto_rename_copy
 category:	"_Object-Name"
-buttontext:	"AUTO RENAME ON COPY"
-toolTip:	"Enable\Disable show end result on Enter\Exit subobject"
-icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
+buttontext:	"COPY COUNTER SUFFIX"
+toolTip:	"Add suffix to copied objects.\n\nNAME OF COPIES ARE DRIVEN BY NEW NAME:\n\nA) SUFFIX ADDED TO COPIES\n  If new name is empty string\n\nB) SUFFIX ADDED TO ALL\n  If new name has number\n\nC) SUFFIX NOT ADDED\n  If new name is same source"
+icon:	"control:checkbox|MENU:true|across:2|offset:[0,8]|AUTORUN:TRUE"
 (
 	--on IsChecked do AUTO_END_RESULT != undefined
 
 	on execute do
 	(
 		--clearListener(); print("Cleared in:\n"+getSourceFileName())
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\CallBacks\preNodesCloned\addSuffixBeforeFirstCopy.ms"
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\CallBacks\postNodesCloned\autoRenameOnCopy.ms"
-		
-		
-		--format "AUTO_END_RESULT: %\n" AUTO_END_RESULT
 		--if AUTO_END_RESULT == undefined or ( EventFired != undefined and EventFired.val ) then
-		if ( EventFired != undefined and EventFired.val ) then
-		(
-			--CALLBACKMANAGER.start "addSuffixBeforeFirstCopy" --"./../../../CallBacks/preNodesCloned/addSuffixBeforeFirstCopy.ms"
-			
-			CALLBACKMANAGER.start "autoRenameOnCopy" --"./../../../CallBacks/postNodesCloned/autoRenameOnCopy.ms"
-			
 		
-			AUTO_END_RESULT = true
+		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then
+			CALLBACKMANAGER.start "autoRenameOnCopy" --"./../../../CallBacks/postNodesCloned/autoRenameOnCopy.ms"
+		else
+			CALLBACKMANAGER.kill "autoRenameOnCopy"
+	)
+)
+
+macroscript	selection_auto_on_create_and_delete
+category:	"_Object-Name"
+buttontext:	"AUTO MANAGE SUFFIX"
+toolTip:	"ADD \ REMOVE NUMBER SUFFIX\n\nWhen object is CREATED or DELETED"
+icon:	"control:checkbox|MENU:true|across:2|offset:[0,8]|AUTORUN:TRUE"
+(
+	--on IsChecked do AUTO_END_RESULT != undefined
+
+	on execute do
+	(
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+
+		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then
+		(
+			CALLBACKMANAGER.start "manageSuffixOnCreate" --"./../../../CallBacks/nodeCreated/manageSuffixOnCreate.ms"
+			
+			CALLBACKMANAGER.start "manageSuffixOnDelete" --"./../../../CallBacks/nodePreDelete/manageSuffixOnDelete.ms"
 		)
 		else
 		(
-			--CALLBACKMANAGER.kill "addSuffixBeforeFirstCopy"
-			
-			CALLBACKMANAGER.kill "autoRenameOnCopy"
+			CALLBACKMANAGER.kill "manageSuffixOnCreate"
 		
-			AUTO_END_RESULT = undefined
+			CALLBACKMANAGER.kill "manageSuffixOnDelete"
 		)
 	)
 )

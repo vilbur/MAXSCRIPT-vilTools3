@@ -92,11 +92,16 @@ filein_files = #(
 (PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install()
 
 
-
 /*------------------------------------------------------------------------------
 	GENERATE MACROS
 --------------------------------------------------------------------------------*/
 generateMacroscripts( rollouts_dir )
+
+
+/*------------------------------------------------------------------------------
+     IMPORTANT CALLBACKS
+--------------------------------------------------------------------------------*/
+CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
 
 
 /*------------------------------------------------------------------------------
@@ -130,7 +135,11 @@ try(
 
 
 /*------------------------------------------------------------------------------
-	START VilTools
+	
+	
+	CREATE VilTools DILAOG
+	
+	
 ------------------------------------------------------------------------------*/
 try(
 	/** LOAD CONTENT */
@@ -157,17 +166,6 @@ try(
 
 
 
-
-
-/*------------------------------------------------------------------------------
-	START CALLBACKS
---------------------------------------------------------------------------------*/
-
-	CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
-
-	--CALLBACKMANAGER.start(undefined)
-	
-	--CALLBACKMANAGER.start("instanceModifiersOnCopy")
 
 /*------------------------------------------------------------------------------
 

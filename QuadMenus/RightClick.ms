@@ -23,9 +23,9 @@ function addQuad1 QuadMenu =
 	QuadMenu.addMenu("Context Spline Tools 4")
 
 	/* CONVERT TO */
-	QuadMenu.addSeparator()
+	--QuadMenu.addSeparator()
 
-	QuadMenu.addItem ("Modifier Stack") ("Convert To Editable Polygon") group:"Main UI" --index:1
+	--QuadMenu.addItem ("Modifier Stack") ("Convert To Editable Polygon") group:"Main UI" --index:1
 
 	QuadMenu.addMenu("_Object-ConvertTo") separators: #( 1 ) --"./../VilTools/rollouts-Tools/rollout-OBJECT/CONVERT_TO.mcr"
 	

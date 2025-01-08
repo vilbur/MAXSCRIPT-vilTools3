@@ -19,7 +19,10 @@ function instanceModifiersOnCopy cloned_nodes clone_type =
 	)
 	
 	
-	if clone_type == #COPY and queryBox ("Instance modifiers to new nodes ?") then
+	objs_with_modifiers = for obj in cloned_nodes[1] where obj.modifiers.count > 0 collect obj
+	
+	
+	if objs_with_modifiers.count > 0 and clone_type == #COPY and queryBox ("Instance modifiers to new nodes ?") then
 	--if queryBox ("Instance modifiers to new nodes ?") then
 	(
 		current_panel = getCommandPanelTaskMode()
@@ -29,7 +32,6 @@ function instanceModifiersOnCopy cloned_nodes clone_type =
 		/* FOR EACH SOURCE OBJECT */ 
 		for y = 1 to cloned_nodes[1].count do
 		(
-			
 			source_node = cloned_nodes[1][y]
 			--format "\n-------------\n"
 			--format "source_node: %\n" (source_node.name)
