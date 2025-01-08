@@ -1,8 +1,8 @@
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstModifierOfType.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstEditPoly.ms" )
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstUnwrap.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateLastModifier.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstEditPoly.ms" )
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/activateFirstUnwrap.ms" )
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/LastModifierSaver/LastModifierSaver.ms" )
 
@@ -58,9 +58,9 @@ function keepActiveModifier which =
 
 	KEEP_ACTIVE_NODIFIER = which
 
-	onSelectionChangedModPanelKill ("activateFirstEditPoly")
-	onSelectionChangedModPanelKill ("activateFirstUnwrap")
-	onSelectionChangedModPanelKill ("activateLastModifier")
+	CALLBACKMANAGER.kill ("activateFirstEditPoly")
+	CALLBACKMANAGER.kill ("activateFirstUnwrap")
+	CALLBACKMANAGER.kill ("activateLastModifier")
 
 	CALLBACKMANAGER.kill("saveLastModifier")
 
@@ -76,7 +76,7 @@ function keepActiveModifier which =
 		(
 			activateFirstEditPoly()
 
-			onSelectionChangedModPanel ("activateFirstEditPoly")
+			CALLBACKMANAGER.start ("activateFirstEditPoly")
 
 			ROLLOUT_modifier_stack.CBTN_edit_poly.state	= true
 		)
@@ -85,7 +85,7 @@ function keepActiveModifier which =
 		(
 			CALLBACKMANAGER.start("saveLastModifier")
 
-			onSelectionChangedModPanel ("activateLastModifier")
+			CALLBACKMANAGER.start ("activateLastModifier")
 
 			ROLLOUT_modifier_stack.CBTN_last_modifier.state	= true
 		)
@@ -94,7 +94,7 @@ function keepActiveModifier which =
 		(
 			activateFirstUnwrap()
 
-			onSelectionChangedModPanel ("activateFirstUnwrap")
+			CALLBACKMANAGER.start ("activateFirstUnwrap")
 
 			ROLLOUT_modifier_stack.CBTN_unwrap.state	= true
 		)

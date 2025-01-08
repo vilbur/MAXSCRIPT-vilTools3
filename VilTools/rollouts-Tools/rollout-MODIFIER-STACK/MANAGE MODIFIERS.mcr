@@ -8,13 +8,14 @@ macroscript	modifiers_auto_instance
 category:	"_Modifiers-Manage"
 buttontext:	"ASK FOR INSTANCE MODIFIERS ON OBJECT COPY"
 toolTip:	"Ask for instance modifiers on object copy"
-icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
+--icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
+icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:FALSE"
 (
 	--on IsChecked do ASK_FOR_INSTANCE != undefined
 
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\CallBacks\postNodesCloned\instanceModifiersOnCopy.ms"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\CallBacks\postNodesCloned\instanceModifiersOnCopy.ms"
 		
 		--format "ASK_FOR_INSTANCE: %\n" ASK_FOR_INSTANCE
 		if ASK_FOR_INSTANCE == undefined or ( EventFired != undefined and EventFired.val ) then

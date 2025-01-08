@@ -53,9 +53,9 @@ std_scripts = #(
 
 	"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 	"/rollout-EDIT-POLY/Lib/SelectionConvertor.ms",
-	--"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
-	--"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
-	--"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
+	----"/rollout-EDIT-POLY/Lib/EpolySelection_v.ms",
+	----"/rollout-EDIT-POLY/Lib/executeEpolyLoopTool.ms",
+	----"/rollout-EDIT-POLY/Lib/executeEpolyMacroWithOptions.ms",
 	"/rollout-EDIT-POLY/Lib/toggleConstrainType.ms",
 	
 
@@ -70,7 +70,6 @@ std_scripts = #(
 	"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 	"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
 
-	--"/rollout-PRINT-3D/Lib/SupportManager/SupportManager.ms",
 	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 )
 

@@ -1,9 +1,15 @@
-global CLONED_NODES_TIMER
-global CLONED_NODES	-- 2d Matrix of nodes E.G.: #( #(source objects) #(copies 1) #(copies 2) #(copies 3) )
+--global CLONED_NODES_TIMER
+--global CLONED_NODES	-- 2d Matrix of nodes E.G.: #( #(source objects) #(copies 1) #(copies 2) #(copies 3) )
 
 /** Timer callback
+  *
+  * @param 2Dmatrix cloned_nodes of nodes E.G.: #( #(source objects) #(copies 1) #(copies 2) #(copies 3) )
+  *
+  * @param #COPY|#INSTANCE|#REFERENCE clone_type
+  *
+  *
   
-	LEGENDA: #( "Source-Object", "Copy 1", "Copy 2" )
+	cloned_nodes = #( "Source-Object", "Copy 1", "Copy 2" )
   
 	NAMES OF SOURCE AND COPIES	>>> RENAMED SOURCE AND COPIES
 		
@@ -16,9 +22,10 @@ global CLONED_NODES	-- 2d Matrix of nodes E.G.: #( #(source objects) #(copies 1)
   
   
  */
-function renameNodesTimerCallback =
+function autoRenameOnCopy cloned_nodes clone_type =
 (
-	--format "\n"; print "renameNodesTimerCallback()"
+	--format "\n\n";	print "autoRenameOnCopy()"
+	--format "cloned_nodes: %\n" cloned_nodes
 	
 	/** Get suffix number
 	 */
@@ -73,10 +80,10 @@ function renameNodesTimerCallback =
 		suffix_new = getSuffixNumber nodes_all[2].name
 		--suffix_new = trimLeft suffix_new "0"
 		
-		format "suffix_new: %\n" suffix_new
+		--format "suffix_new: %\n" suffix_new
 		
 		copy_renamed = basename_old != basename_new
-		format "copy_renamed: %\n" copy_renamed
+		--format "copy_renamed: %\n" copy_renamed
 		
 		new_name_is_empty = (trimLeft basename_new " ").count == 0
 		
@@ -112,39 +119,6 @@ function renameNodesTimerCallback =
 			
 		
 	)
-	
-	select cloned_nodes_all_used
-	
-	CLONED_NODES_TIMER.stop()
-		
-	CLONED_NODES = undefined
-	
-	CLONED_NODES_TIMER = undefined
 )
 
 
-/** 
- */
-function autoRenameOnCopy =
-(
-	--format "\n\n";	print "autoRenameOnCopy()"
-	
-	if CLONED_NODES_TIMER == undefined then
-	(
-		CLONED_NODES_TIMER	= dotNetObject "System.Windows.Forms.Timer"
-		
-		dotNet.addEventHandler CLONED_NODES_TIMER "tick" renameNodesTimerCallback
-		
-		CLONED_NODES_TIMER.interval = 500
-	)
-	else
-		CLONED_NODES_TIMER.stop()
-
-	
-	if CLONED_NODES == undefined then
-		CLONED_NODES = #( (callbacks.notificationParam())[1] ) -- append source nodes as first array
-
-	append CLONED_NODES (callbacks.notificationParam())[2]	
-	
-	CLONED_NODES_TIMER.start()
-)
