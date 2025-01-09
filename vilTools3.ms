@@ -1,14 +1,12 @@
 clearListener(); print("Cleared in:"+getSourceFileName())
 
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 
---filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuInstall/QuadMenuInstall.ms"
-
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
---filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
 
 --RUN_ON_STARTUP = true
 
@@ -24,7 +22,9 @@ current_dir_name = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 
 rollouts_dir = "$userscripts/"+current_dir_name+"/"+content_dir+"/rollouts-Tools"
 
-
+/*------------------------------------------------------------------------------
+	IMPORTED FILES
+--------------------------------------------------------------------------------*/
 std_scripts = #(
 
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
@@ -107,29 +107,32 @@ CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --
 /*------------------------------------------------------------------------------
 	IMPORT FILES
 --------------------------------------------------------------------------------*/
+(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" ).import()
+
+
 
 
 /* CONVERT RELATIVE PATHS TO ABSOLUTE */
-filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
+--filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
 
-
-try(
-	/* FILE IN FILES */
-	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
-	(
-		format "FILE IN: % \n" (file_path)
-		if doesFileExist file_path then
-			filein( file_path)
-	)
-
-)catch
-(
-	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
-)
-
+--
+--try(
+--	/* FILE IN FILES */
+--	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
+--	(
+--		format "FILE IN: % \n" (file_path)
+--		if doesFileExist file_path then
+--			filein( file_path)
+--	)
+--
+--)catch
+--(
+--	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+--	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+--    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+--    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
+--)
+--
 
 
 
