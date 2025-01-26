@@ -5,32 +5,37 @@
 macroscript	utilities_measure_floater
 category:	"_Utilities"
 buttonText:	"Measure"
-tooltip:	"OPen meassure floater"
+tooltip:	"Open meassure floater"
 icon:	"across:2|width:96|height:32"
 (
 	on execute do
 	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-UTILITIES\[Utilities].mcr"
+		
 		local mode = GetCommandPanelTaskMode()
 		local subobjlvl = subObjectLevel
 	 
 		UtilityPanel.OpenUtility Measure	
 		hwnd  = (windows.getChildHWND #max "Lock Selection")[1]
-		state = windows.sendMessage hwnd 0xF0 0 0 -- check if locked selection state is active
-	 
-		if state != 1 do
-		(
-			windows.sendMessage hwnd 0x201 1 0
-			windows.sendMessage hwnd 0x202 0 0
-		)
+		
+		win_pos	= getMAXWindowPos()
+		
+		--state = windows.sendMessage hwnd 0xF0 0 0 -- check if locked selection state is active
+		--
+		--if state != 1 do
+		--(
+		--	windows.sendMessage hwnd 0x201 1 0
+		--	windows.sendMessage hwnd 0x202 0 0
+		--)
 	 
 		UIAccessor.PressButton (windows.getChildHWND #max "New Floater")[1]
 	 
 			-- position Measure window at certain coord
-		(dotNetClass "Autodesk.Max.GlobalInterface").Instance.SlideWindow (for w in UIAccessor.GetPopupDialogs() collect w)[1] 100 100
+		(dotNetClass "Autodesk.Max.GlobalInterface").Instance.SlideWindow (for w in UIAccessor.GetPopupDialogs() collect w)[1] (win_pos.x + 100) (win_pos.y + 256)
 	 
 		SetCommandPanelTaskMode mode
+		
 		if subobjlvl != undefined do try ( subObjectLevel = subobjlvl )catch()
-	 
 	)
 )
 
@@ -40,7 +45,7 @@ icon:	"across:2|width:96|height:32"
  */
 macroscript	utilities_measure_and_select
 category:	"_Utilities"
-buttonText:	"Measure Dialog"
+buttonText:	"Measure & Select"
 tooltip:	"OPEN DIALOG\n\nSelect edges by its length or measure distance between VERTS, EDGES or OBJECTS"
 --icon:	"columns:8"
 (
@@ -57,7 +62,7 @@ tooltip:	"OPEN DIALOG\n\nSelect edges by its length or measure distance between 
  */
 macroscript	utilities_measure_and_select_tutorial
 category:	"_Utilities"
-buttonText:	"Measure Dialog"
+buttonText:	"Measure & Select"
 tooltip:	"OPEN VIDEO TUTORIAL"
 --icon:	"columns:8"
 (

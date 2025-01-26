@@ -1,67 +1,40 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
 
-TimerObject	= dotNetObject "System.Windows.Forms.Timer"
 
-/*------------------------------------------------------------------------------
-	TIMER A
---------------------------------------------------------------------------------*/
-_time_A = 1
+--print("Cleared in:\n"+getSourceFileName())
 
-/** Timer callback
- */
-function timerCallbackA =
-(
-	--format "\n"; print "timerCallbackA()"
-	format "timerCallbackA	= % \n" _time_A
+	grid_spacings = #( 0.05, 0.1, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
 	
-	_time_A += 1
+	display_units = case units.SystemType of -- convert to milimeters
+	(
+		#millimeters:	1
+		#centimeters:	10
+		#meters:	1000
+		#kilometers:	1000000
+		default:	1 -- non metric units
+	)
 	
-	if _time_A == 10 then 
-		TimerObject.stop()
-)
-
-
-dotNet.addEventHandler TimerObject "tick" timerCallbackA
-
-TimerObject.interval = 500
-
-TimerObject.start()
-
-
---	/** Get suffix number
---	 */
---	function getSuffixNumber _string =
---	(
---		--format "\n"; print ".getSuffixNumber()"
---		matches_suffix = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches _string "([\d]+)$"
---		format "matches: %\n" matches
---		
---		if matches_suffix.count > 0 then
---			suffix = matches_suffix.item[0].groups.item[0].value
---			
---		if suffix != undefined then
---		(
---			format "SUFFIX: %\n" suffix
---			matches = ( dotNetClass "System.Text.RegularExpressions.RegEx" ).matches _string ("(.*)-("+suffix+")$")
---
---			--format "ITEM: %\n" matches_suffix.item[0].groups.item[0].value
---			
---			result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
---			
---			format "result: %\n" result
---			if result.count > 0 then
---				result --return
---				--result[1][1] --return
---			
---			
---		)
---	)
---	
---
---trimRight "obj_A-0023" "-0123456789"
---
-----getSuffixNumber "obj_A-001"
-----getSuffixNumber "obj_A002"
-----getSuffixNumber "obj_A-3"
-----getSuffixNumber "asdfas"
+	format "units.SystemType: %\n" units.SystemType
+	format "display_units: %\n" display_units
+	format "grid_spacing: %\n" (GetGridSpacing())
+	
+	format "\n"
+	format "index: %\n" (findItem grid_spacings (GetGridSpacing()))
+	
+	index = findItem grid_spacings (GetGridSpacing())
+	
+	next_index = if index == grid_spacings.count then 1 else index + 1 
+	
+	format "next_index: %\n" next_index
+	
+	--format "grid_spacings[next_index]: %\n" grid_spacings[next_index]
+	--format "display_units: %\n" display_units
+	grid_spacing = grid_spacings[next_index] / display_units
+	
+	SetGridSpacing grid_spacing
+			if mod grid_spacing 1 == 0 then
+				grid_spacing = grid_spacing as integer
+		
+	--SetGridMajorLines 10
+	format "GRID SPACING: % mm\n" grid_spacing
