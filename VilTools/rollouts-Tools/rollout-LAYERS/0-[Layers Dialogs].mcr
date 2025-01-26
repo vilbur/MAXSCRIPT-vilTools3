@@ -4,6 +4,8 @@
 ------------------------------------------------------------------------------*/
 
 
+
+
 /** OPEN LAYERS MANAGER
  */
 macroscript	layers_manager_keep_open_close
@@ -31,7 +33,7 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 
 			/* SWITCH UI BUTTON STATE IF EXECUTED FROM QUAD MENU */
 			if EventFired == undefined and ROLLOUT_layers != undefined then
-				ROLLOUT_layers.CBXBTN_layer_manager.state = LayerManager.isDialogOpen()
+				ROLLOUT_layers.CBTN_layer_manager.state = LayerManager.isDialogOpen()
 
 		)
 		else -- if checkbutton is unchecked

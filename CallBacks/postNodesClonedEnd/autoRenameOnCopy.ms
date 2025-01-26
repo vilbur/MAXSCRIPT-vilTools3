@@ -1,4 +1,3 @@
---global CLONED_NODES_TIMER
 --global CLONED_NODES	-- 2d Matrix of nodes E.G.: #( #(source objects) #(copies 1) #(copies 2) #(copies 3) )
 
 /** Timer callback
@@ -24,7 +23,7 @@
  */
 function autoRenameOnCopy cloned_nodes clone_type =
 (
-	--format "\n\n";	print "autoRenameOnCopy()"
+	format "\n\n";	print "autoRenameOnCopy()"
 	--format "cloned_nodes: %\n" cloned_nodes
 	
 	/** Get suffix number
@@ -86,14 +85,14 @@ function autoRenameOnCopy cloned_nodes clone_type =
 		--format "copy_renamed: %\n" copy_renamed
 		
 		new_name_is_empty = (trimLeft basename_new " ").count == 0
-		
+		--format "new_name_is_empty: %\n" new_name_is_empty
 		/* DO NOT RENAME SOURCE OBJECT IF COPY HAS NEW NAME */ 
 		if copy_renamed then
 			deleteItem nodes_all 1
 	
 		
 		if new_name_is_empty then
-			basename_new = basename_old
+			basename_new = if CLONED_NODES.count >1 then basename_old else ♥source_obj.name
 		
 
 		same_name_old = (execute ("$'"+basename_old + "'*") as Array )

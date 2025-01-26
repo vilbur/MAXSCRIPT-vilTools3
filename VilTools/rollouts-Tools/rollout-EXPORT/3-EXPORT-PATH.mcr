@@ -5,7 +5,7 @@ macroscript	_export_path_2nd
 category:	"_Export"
 buttontext:	"[Open Export Path]"
 toolTip:	"Open Export Path"
-icon:	"across:10|width:16|offset:[ -18, 0 ]"
+icon:	"across:10|width:16|offset:[ -16, 0 ]"
 (
 	format "eventFired	= % \n" eventFired
 	--format "ROLLOUT_export.BP_export_path.text	= % \n" ROLLOUT_export.BP_export_path.text
@@ -24,7 +24,7 @@ macroscript	_export_path
 category:	"_Export"
 buttontext:	"[Export Path]"
 toolTip:	"Set\Get export dir of selected nodes"
-icon:	"Control:browsePath|initialDir:maxFilePath|across:1|offset:[ 4, -24 ]"
+icon:	"Control:browsePath|initialDir:maxFilePath|across:1|offset:[ 5, -24 ]|border:false"
 (
 	format "EventFired.val	= % \n" EventFired.val
 

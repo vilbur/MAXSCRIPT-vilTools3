@@ -147,6 +147,7 @@ icon:	"MENU:true"
 	)
 )
 
+
 /* SELECT MODIFIERS INSTANCES
 */ 
 macroscript	modifiers_select_instrances

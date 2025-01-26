@@ -12,8 +12,8 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/showObjectNames.ms" )	-- ".
 macroscript	selection_auto_rename_copy
 category:	"_Object-Name"
 buttontext:	"COPY COUNTER SUFFIX"
-toolTip:	"Add suffix to copied objects.\n\nNAME OF COPIES ARE DRIVEN BY NEW NAME:\n\nA) SUFFIX ADDED TO COPIES\n  If new name is empty string\n\nB) SUFFIX ADDED TO ALL\n  If new name has number\n\nC) SUFFIX NOT ADDED\n  If new name is same source"
-icon:	"control:checkbox|MENU:true|across:2|offset:[0,8]|AUTORUN:TRUE"
+toolTip:	"Add suffix to copied objects.\n\nNAME OF COPIES ARE DRIVEN BY NEW NAME:\n\n• SUFFIX ADDED TO COPIES\n  If new name is empty string\n\n• SUFFIX ADDED TO ALL\n  If new name has number\n\n• SUFFIX NOT ADDED\n A) If new name is same source\n	B) If new name is empty and number of copies is 1"
+icon:	"control:checkbox|MENU:true|checked:true|across:2|offset:[0,8]|AUTORUN:TRUE"
 (
 	--on IsChecked do AUTO_END_RESULT != undefined
 
@@ -23,7 +23,7 @@ icon:	"control:checkbox|MENU:true|across:2|offset:[0,8]|AUTORUN:TRUE"
 		--if AUTO_END_RESULT == undefined or ( EventFired != undefined and EventFired.val ) then
 		
 		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then
-			CALLBACKMANAGER.start "autoRenameOnCopy" --"./../../../CallBacks/postNodesCloned/autoRenameOnCopy.ms"
+			CALLBACKMANAGER.start "autoRenameOnCopy" --"./../../../CallBacks/postNodesClonedEnd/autoRenameOnCopy.ms"
 		else
 			CALLBACKMANAGER.kill "autoRenameOnCopy"
 	)
@@ -33,7 +33,7 @@ macroscript	selection_auto_on_create_and_delete
 category:	"_Object-Name"
 buttontext:	"AUTO MANAGE SUFFIX"
 toolTip:	"ADD \ REMOVE NUMBER SUFFIX\n\nWhen object is CREATED or DELETED"
-icon:	"control:checkbox|MENU:true|across:2|offset:[0,8]|AUTORUN:TRUE"
+icon:	"control:checkbox|MENU:true|checked:true|across:2|offset:[0,8]|AUTORUN:TRUE"
 (
 	--on IsChecked do AUTO_END_RESULT != undefined
 

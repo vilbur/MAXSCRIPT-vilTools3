@@ -89,8 +89,7 @@ filein_files = #(
 /*------------------------------------------------------------------------------
 	INSTALL PLUGINS
 --------------------------------------------------------------------------------*/
-(PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install()
-
+(PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install() --"./VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms"
 
 /*------------------------------------------------------------------------------
 	GENERATE MACROS

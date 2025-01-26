@@ -1,9 +1,3 @@
-
-
-if LAST_HIDDEN_NODES == undefined then
-	global LAST_HIDDEN_NODES = #()
-
-
 /*
 */
 macroscript	visibility_hide_unhide_selected
@@ -16,6 +10,9 @@ autoUndoEnabled: true
 (
 	on execute do undo "Hide Toggle" on
 	(
+		if LAST_HIDDEN_NODES == undefined then
+			global LAST_HIDDEN_NODES = #()
+
 		 --clearListener(); print("Cleared in:"+getSourceFileName())
 		 --filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VISIBILITY\OBJECTS HIDE UNHIDE.mcr"
 		/* CLEAN UP */
