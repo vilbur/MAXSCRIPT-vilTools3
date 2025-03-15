@@ -5,7 +5,7 @@ macroscript _pivot_selection_center_toggle
 category:	"_Pivot"
 buttonText:	"Use Selection\Object"
 toolTip:	"Toggle object and selection pivot"
-icon:	"MENU:true|title:buttonText"
+icon:	"MENU:true|title:buttonText|across:3"
 (
 	on isChecked do GetCoordCenter() != #system
 
@@ -68,7 +68,7 @@ macroscript _pivot_center_to_objects_in_selection
 category:	"_Pivot"
 buttonText:	"Center"
 toolTip:	"Center pivot to objects in selection"
-icon:	"across:4|menu:true"
+icon:	"menu:true"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM ⬇\Pivot.mcr"
 

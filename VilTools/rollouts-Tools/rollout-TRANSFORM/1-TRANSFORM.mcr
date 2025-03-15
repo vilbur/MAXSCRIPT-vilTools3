@@ -8,7 +8,7 @@ macroscript	_transform_set_angle_snap_value
 category:	"_Transform"
 buttontext:	"Angle Snap 1|5|45°"
 toolTip:	"Toggle snap between 1°, 5° and 45°"
-icon:	"MENU:true"
+icon:	"MENU:true|across:3"
 (
 	on execute do
 	(

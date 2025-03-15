@@ -12,6 +12,10 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/C
 
 global VILTOOLS
 
+global ROLLOUT_export
+global ROLLOUT_3d_print
+
+
 /* DIRECTORY WHERE TO LOAD CONTENT */ 
 content_dir = "VilTools"
 --content_dir = "/Rollouts-Test" -- DEV

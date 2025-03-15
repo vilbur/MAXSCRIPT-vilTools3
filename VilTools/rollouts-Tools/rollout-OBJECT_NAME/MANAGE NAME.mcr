@@ -26,7 +26,7 @@ icon:	"control:checkbox|MENU:true|checked:true|across:2|offset:[0,8]|AUTORUN:TRU
 			CALLBACKMANAGER.start "autoRenameOnCopy" --"./../../../CallBacks/postNodesClonedEnd/autoRenameOnCopy.ms"
 		else
 			CALLBACKMANAGER.kill "autoRenameOnCopy"
-	)
+    )
 )
 
 macroscript	selection_auto_on_create_and_delete
@@ -40,7 +40,9 @@ icon:	"control:checkbox|MENU:true|checked:true|across:2|offset:[0,8]|AUTORUN:TRU
 	on execute do
 	(
 		--clearListener(); print("Cleared in:\n"+getSourceFileName())
-
+		format "EventFired: %\n" EventFired
+		format "CALLBACKMANAGER: %\n" CALLBACKMANAGER
+		
 		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then
 		(
 			CALLBACKMANAGER.start "manageSuffixOnCreate" --"./../../../CallBacks/nodeCreated/manageSuffixOnCreate.ms"

@@ -197,7 +197,7 @@ macroscript	_scene_temp_open
 category:	"_Scene"
 buttontext:	"Open\Save Temp"
 toolTip:	"Open Temp File"
-icon:	"offset:[14, 0]|width:96|MENU:tooltip"
+icon:	"offset:[14, 0]|width:96|MENU:Open &Temp File"
 (
 	on execute do
 	(

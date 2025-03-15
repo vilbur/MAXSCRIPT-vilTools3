@@ -8,8 +8,8 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup
 
 ================================================================================*/
 global NODE_GROUP_NAME_ROLLOUT
-global ROLLOUT_export
-global ROLLOUT_3d_print
+--global ROLLOUT_export
+--global ROLLOUT_3d_print
 
 /**  CREATE EXPORT NODE
 

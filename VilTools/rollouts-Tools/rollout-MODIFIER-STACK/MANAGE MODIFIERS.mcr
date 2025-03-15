@@ -44,9 +44,9 @@ icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TR
  */
 macroscript	modifiers_toggle_selected
 category:	"_Modifiers-Manage"
-buttontext:	"Toggle"
+buttontext:	"ON\OFF"
 toolTip:	"Toggle selected modifiers. \n\nCTRL: Froce ENABLE modifiers. \n\nALT: Froce DIABLE modifiers"
-icon:	"MENU:true|across:3|offset:[0,8]|title:TOGGLE   Ctrl:on Alt:off"
+icon:	"MENU:true|across:4|offset:[0,8]|title:TOGGLE   Ctrl:on Alt:off"
 (
 	on execute do
 	(
@@ -95,7 +95,7 @@ icon:	"MENU:true|across:3|offset:[0,8]|title:TOGGLE   Ctrl:on Alt:off"
  */
 macroscript	modifiers_toggle_by_prefix
 category:	"_Modifiers-Manage"
-buttontext:	"Toggle by Prefix"
+buttontext:	"ON\OFF Prefix"
 toolTip:	"Toggle selected modifiers. \n\nCTRL: Froce ENABLE modifiers. \n\nALT: Froce DIABLE modifiers"
 icon:	"MENU:true|title:TOGGLE"
 (
@@ -147,78 +147,10 @@ icon:	"MENU:true"
 	)
 )
 
-
-/* SELECT MODIFIERS INSTANCES
-*/ 
-macroscript	modifiers_select_instrances
-category:	"_Modifiers-Manage"
-buttontext:	"Select Instances"
-toolTip:	"Select objects with instance of current modifier"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-	on execute do
-	(
-		max modify mode
-
-		filein( getFilenamePath(getSourceFileName()) + "/Lib/InstancedModifierFinder/InstancedModifierFinder.ms" )	-- "./Lib/InstancedModifierFinder/InstancedModifierFinder.ms"
-
-		objects_with_mod = (InstancedModifierFinder_v( objects )).getObjectsWithInstance ( modPanel.getCurrentObject() )
-
-		if objects_with_mod.count > 0 then
-			select objects_with_mod
-
-		else
-			messageBox "There is no objects with this modifier instance" title:"MODIFIER INSTANCE"
-	)
-)
-
-/* SELECT MODIFIERS INSTANCES
-*/ 
-macroscript	modifiers_reinstrance
-category:	"_Modifiers-Manage"
-buttontext:	"Reinstance"
-toolTip:	"Reinstance modifiers on selection.\n\nMASTER OBJECT is last object in selection"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"MENU:true"
-(
-	print "instanceModifiersOnCopy()"
-	
-	/** Instance modifier
-	 */
-	function instanceModifier source_node dest_node _modifier index =
-	(
-
-		deleteModifier dest_node index
-		
-		addModifierWithLocalData dest_node _modifier source_node _modifier before:(index - 1) -- instance the modifier
-	)
-
-	master_object	= selection[ selection.count ]
-
-	for_replace = deleteItem ( selection as Array ) selection.count
-
-	if queryBox ("Instance modifiers to nodes ?\n\nSOURCE: "+master_object.name) then
-	(
-		current_panel = getCommandPanelTaskMode()
-		
-		max create mode
-		
-		for i = 1 to for_replace.count do
-			for m = master_object.modifiers.count to 1 by -1 do
-				instanceModifier master_object for_replace[i] master_object.modifiers[m] m
-
-		setCommandPanelTaskMode mode:current_panel
-	)
-)
-
-
 macroscript	modifiers_select_modifiers_by_same_name
 category:	"_Modifiers-Manage"
 buttontext:	"Select By Name"
 toolTip:	"Select objects with modifier of same name as current modifier"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
 icon:	"MENU:true"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
@@ -241,6 +173,125 @@ icon:	"MENU:true"
 
 	)
 )
+
+
+/* SELECT MODIFIERS INSTANCES
+*/ 
+macroscript	modifiers_select_instrances
+category:	"_Modifiers-Manage"
+buttontext:	"Select INSTANCES"
+toolTip:	"Select objects with instance of current modifier"
+icon:	"MENU:true|across:3"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		max modify mode
+
+		filein( getFilenamePath(getSourceFileName()) + "/Lib/InstancedModifierFinder/InstancedModifierFinder.ms" )	-- "./Lib/InstancedModifierFinder/InstancedModifierFinder.ms"
+
+		objects_with_mod = (InstancedModifierFinder_v( objects )).getObjectsWithInstance ( modPanel.getCurrentObject() )
+
+		if objects_with_mod.count > 0 then
+			select objects_with_mod
+
+		else
+			messageBox "There is no objects with this modifier instance" title:"MODIFIER INSTANCE"
+	)
+)
+
+/* SELECT MODIFIERS INSTANCES
+*/ 
+macroscript	modifiers_reinstrance
+category:	"_Modifiers-Manage"
+buttontext:	"REINSTANCE"
+toolTip:	"Reinstance modifiers on selection by\n\n    LAST OBJECT"
+icon:	"MENU:true"
+(
+	print "instanceModifiersOnCopy()"
+	
+	on execute do
+	(
+		with redraw off
+		(
+		
+			master_object	= selection[ selection.count ]
+		
+			for_replace = deleteItem ( selection as Array ) selection.count
+			
+			--format "master_object: %\n" master_object
+			--format "for_replace: %\n" for_replace
+			if queryBox ("Instance modifiers to nodes ?\n\nSOURCE: "+master_object.name) then
+			(
+				current_panel = getCommandPanelTaskMode()
+				
+				max create mode
+				--max modify mode
+		
+				for dest_node in for_replace do 
+					for m = dest_node.modifiers.count to 1 by -1 do
+						deleteModifier dest_node m
+		
+		
+				
+				for i = 1 to for_replace.count do
+					for m = master_object.modifiers.count to 1 by -1 do
+						addModifier for_replace[i] master_object.modifiers[m] --before:(index - 1)
+		
+						--instanceModifier master_object for_replace[i] master_object.modifiers[m] m
+		
+				setCommandPanelTaskMode mode:current_panel
+			)
+			
+		)
+		
+		redrawViews()
+	)
+)
+
+macroscript	modifiers_modifiers_make_unique_group
+category:	"_Modifiers-Manage"
+buttontext:	"Make UNIQUE"
+toolTip:	"GROUP modifiers in selection"
+icon:	"MENU:true|tooltip:MAKE SELECTED MODIFIERS UNIQUE"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+		
+		ModifierStack = ModifierStackRemote_v()
+
+		modifiers = ModifierStack.getSelectedModifiers()
+
+		InstanceMgr.MakeModifiersUnique ( selection as Array ) modifiers #group -- {#prompt|#individual|#group}
+	)
+)
+
+macroscript	modifiers_modifiers_make_unique
+category:	"_Modifiers-Manage"
+buttontext:	"Make UNIQUE"
+toolTip:	"UNIQUE FOR EACH OBJECT"
+--toolTip:	"Turn off \"Show end result\" on subobject edit"
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+		
+		ModifierStack = ModifierStackRemote_v()
+
+		modifiers = ModifierStack.getSelectedModifiers()
+
+		format "MODIFIERS: %\n" MODIFIERS
+		
+		InstanceMgr.MakeModifiersUnique ( selection as Array ) modifiers #individual -- {#prompt|#individual|#group}
+
+	)
+)
+
+
 
 
 
