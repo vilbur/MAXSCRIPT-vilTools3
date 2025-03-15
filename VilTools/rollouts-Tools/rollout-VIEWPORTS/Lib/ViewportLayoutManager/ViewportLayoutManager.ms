@@ -1,5 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/ViewportData/ViewportData.ms" ) -- "./ViewportSceneLayouts/ViewportSceneLayouts.ms"
-
+filein( getFilenamePath(getSourceFileName()) + "/ViewportData/ViewportData.ms" ) --"./ViewportData/ViewportData.ms"
 /** Viewport layout manager
   *
   *

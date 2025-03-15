@@ -1,6 +1,11 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ScreenShooter/createScreenshotDialog.ms" )	--"./Lib/ScreenShooter/createScreenshotDialog.ms"
+global DIALOG_GifRecorder
+global GifRecorder
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ScreenShooter/ScreenShooter.ms" )	--"./Lib/ScreenShooter/ScreenShooter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/createGifRecorderDialog.ms" )	--"./Lib/GifRecorder/createGifRecorderDialog.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/GifRecorder.ms" )	--"./Lib/GifRecorder/GifRecorder.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/grabFrameTimer.ms" )	--"./Lib/GifRecorder/grabFrameTimer.ms"
 
 /** https://imagemagick.org/script/download.php
    
@@ -49,36 +54,24 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ScreenShooter/ScreenShooter
   -delay 100 would make it slower (100/100ths of a second). 
  */
 
-global ScreenShooter
 
 /*
  *	
  */
-macroscript	_viewport_screenshot_take
+macroscript	viewport_open_gifrecorder_dialog
 category:	"_Viewports"
-buttontext:	"Screenshot"
-toolTip:	"Screenshot of current viewport"
-icon:	"across:3"
+buttontext:	"GIF RECORDER"
+toolTip:	"Open GifRecorder"
+icon:	"across:2|height:32|menu:TRUE"
 (
-	filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\90-SCREENSHOT.mcr"
-	
-	--(ViewportSwitcher_v()).toggle(#view_persp_user)
-	
-	ScreenShooter = ScreenShooter_v()
-	
-	createScreenshotDialog()
-	
-	ScreenShooter.getScreenshotOfCurrentViewport()
-	
-	--screenshot_dir = substituteString maxFilePath "\\" "\\\\" + "SCREENSHOTS"
-	--
-	
-
-
-
-	
-	--magick convert -delay 20 -loop 0 *.jpg animated.gif
-	 
+	on execute do
+	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\90-SCREENSHOT.mcr"
+		
+		GifRecorder = GifRecorder_v()
+		
+		createGifRecorderDialog()
+	)
 )
 
 /*   
@@ -88,14 +81,14 @@ macroscript	_viewport_screenshot_open_dir
 category:	"_Viewports"
 buttontext:	"Screenshot"
 toolTip:	"Screenshot of current viewport"
-icon:	"across:3"
+--icon:	"across:3"
 (
 	on execute do
 	(
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\SCREENSHOT.mcr"
-		screenshot_dir = substituteString maxFilePath "\\" "\\\\" + "SCREENSHOTS"
+		--screenshot_dir = substituteString maxFilePath "\\" "\\\\" + "SCREENSHOTS"
 		
-		ShellLaunch  screenshot_dir ""
+		--ShellLaunch  screenshot_dir ""
 	
 	   --ShellLaunch "explorer.exe" "/e,/select,\"c:\\windows\\notepad.exe\""
 	
@@ -103,55 +96,55 @@ icon:	"across:3"
 	)
 )
 
-/*
- *	
- */
-macroscript	_viewport_screenshot_filename
-category:	"_Viewports"
-buttontext:	"[Screenshot filename]"
-toolTip:	""
-icon:	"across:3|control:edittext|offset:[ -8, 2]|width:164|tooltip:Filename of screenshot"
-(
-	on execute do
-	format "EventFired: %\n" EventFired
-
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\SCREENSHOT.mcr"
-	--(ViewportSwitcher_v()).toggle(#view_persp_user)
-	--img = gw.getViewportDib() --this grabs the viewport
-	--img.filename = "whatever" + ".jpg" --this will be the filename
-	--save img --grabs and saves the viewport, you could change up where it saves too
-	
-	--display img
-	
-	--magick convert -delay 20 -loop 0 *.jpg animated.gif
-
-	
-)
-
-
-/*
- *	
- */
-macroscript	_viewport_screenshot_format
-category:	"_Viewports"
-buttontext:	"[Screenshot format]"
-toolTip:	"Screenshot of current viewport"
-icon:	"across:3|control:radiobuttons|unselect:false|items:#( 'jpg', 'gif' )|offset:[ 32, 2 ]"
-(
-	
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\SCREENSHOT.mcr"
-	format "EventFired: %\n" EventFired
-	--(ViewportSwitcher_v()).toggle(#view_persp_user)
-	--img = gw.getViewportDib() --this grabs the viewport
-	--img.filename = "whatever" + ".jpg" --this will be the filename
-	--save img --grabs and saves the viewport, you could change up where it saves too
-	
-	--display img
-	
-	--magick convert -delay 20 -loop 0 *.jpg animated.gif
-
-	
-)
+--/*
+-- *	
+-- */
+--macroscript	_viewport_screenshot_filename
+--category:	"_Viewports"
+--buttontext:	"[Screenshot filename]"
+--toolTip:	""
+--icon:	"across:3|control:edittext|offset:[ -8, 2]|width:164|tooltip:Filename of screenshot"
+--(
+--	on execute do
+--	format "EventFired: %\n" EventFired
+--
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\SCREENSHOT.mcr"
+--	--(ViewportSwitcher_v()).toggle(#view_persp_user)
+--	--img = gw.getViewportDib() --this grabs the viewport
+--	--img.filename = "whatever" + ".jpg" --this will be the filename
+--	--save img --grabs and saves the viewport, you could change up where it saves too
+--	
+--	--display img
+--	
+--	--magick convert -delay 20 -loop 0 *.jpg animated.gif
+--
+--	
+--)
+--
+--
+--/*
+-- *	
+-- */
+--macroscript	_viewport_screenshot_format
+--category:	"_Viewports"
+--buttontext:	"[Screenshot format]"
+--toolTip:	"Screenshot of current viewport"
+--icon:	"across:3|control:radiobuttons|unselect:false|items:#( 'jpg', 'gif' )|offset:[ 32, 2 ]"
+--(
+--	
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\SCREENSHOT.mcr"
+--	format "EventFired: %\n" EventFired
+--	--(ViewportSwitcher_v()).toggle(#view_persp_user)
+--	--img = gw.getViewportDib() --this grabs the viewport
+--	--img.filename = "whatever" + ".jpg" --this will be the filename
+--	--save img --grabs and saves the viewport, you could change up where it saves too
+--	
+--	--display img
+--	
+--	--magick convert -delay 20 -loop 0 *.jpg animated.gif
+--
+--	
+--)
 
 --/** 
 -- */
