@@ -1,4 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportLayoutManager/ViewportLayoutManager.ms" ) -- "./Lib/ViewportLayoutManager/ViewportLayoutManager.ms"
 
 /*------------------------------------------------------------------------------
 	FLOATING VIEWPORT
@@ -7,12 +6,28 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportLayoutManager/Viewp
 */
 macroscript	viewport_open_float_1
 category:	"_Viewports-Manage"
-buttontext:	"Float Viewport"
+buttontext:	"FLOAT Viewport"
 tooltip:	"Open Float Viewport 1"
-icon:	"MENU:true"
+icon:	"MENU:true|across:3"
 (
 	on execute do
-		actionMan.executeAction -891545229 "0"  -- Floating Viewport: Floating Viewport - 1
+	(
+
+		type	= viewport.getType()
+		
+		actionMan.executeAction -891545229 "0"
+		--
+		--sleep 1
+		--
+		--if viewport.numViews > 1 then
+		--	actionMan.executeAction 0 "50026"  -- Tools: Maximize Viewport Toggle
+		--
+		--
+		--viewport.SetType (type)
+		--viewport.numViews 
+		
+				
+	)
 )
 
 /*------------------------------------------------------------------------------
@@ -43,3 +58,4 @@ icon:	"MENU:true"
 	--clearListener()
 	ViewportLayoutManager.resetCurrent()
 )
+

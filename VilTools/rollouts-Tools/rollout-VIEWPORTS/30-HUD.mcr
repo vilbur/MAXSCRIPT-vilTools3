@@ -48,7 +48,17 @@ macroscript	_viewport_hud_info
 category:	"_Viewports"
 buttontext:	"Viewport Info"
 --icon:	"control:checkbox|autorun:true|align:#left"
-icon:	"control:checkbutton|autorun:true"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
+icon:	"control:checkbutton|autorun:true|across:2"
 (
 	on execute do
 	(

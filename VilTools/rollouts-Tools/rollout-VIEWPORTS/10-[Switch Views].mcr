@@ -1,16 +1,16 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ViewportSwitcher/ViewportSwitcher.ms" )
 
 /*------------------------------------------------------------------------------
-	PERSPECTIVE \ ISO
+	PERSPECTIVE  \  ISO
 --------------------------------------------------------------------------------*/
  /**  
  *	
  */
 macroscript	main_switch_viewport_perspective
 category:	"_Viewports"
-buttontext:	"Persp\Iso"
+buttontext:	"PERSP \ USER"
 toolTip:	"Perspective view"
---icon:	"control:checkbox|columns:6"
+icon:	"width:92|height:32|border:false"
 (
 	(ViewportSwitcher_v()).toggle(#view_persp_user)
 )
@@ -20,7 +20,7 @@ toolTip:	"Perspective view"
  */
 macroscript	main_switch_viewport_iso
 category:	"_Viewports"
-buttontext:	"Persp\Iso"
+buttontext:	"PERSP \ USER"
 toolTip:	"Isometric view"
 --icon:	"control:checkbox|columns:6"
 (
@@ -29,7 +29,7 @@ toolTip:	"Isometric view"
 
 
 /*------------------------------------------------------------------------------
-	TOP \ BOTTOM
+	TOP  \  BOTTOM
 --------------------------------------------------------------------------------*/
 
 /**  
@@ -37,7 +37,7 @@ toolTip:	"Isometric view"
  */
 macroscript	main_switch_viewport_top
 category:	"_Viewports"
-buttontext:	"Top\Bottom"
+buttontext:	"TOP \ BOTTOM"
 toolTip:	"Top view"
 --icon:	"control:checkbox|columns:6"
 (
@@ -49,7 +49,7 @@ toolTip:	"Top view"
  */
 macroscript	main_switch_viewport_bottom
 category:	"_Viewports"
-buttontext:	"Top\Bottom"
+buttontext:	"TOP \ BOTTOM"
 toolTip:	"Bottom view"
 --icon:	"control:checkbox|columns:6"
 (
@@ -58,7 +58,7 @@ toolTip:	"Bottom view"
 
 
 /*------------------------------------------------------------------------------
-	FRONT \ BACK
+	FRONT  \  BACK
 --------------------------------------------------------------------------------*/
 
 /**  
@@ -66,7 +66,7 @@ toolTip:	"Bottom view"
  */
 macroscript	main_switch_viewport_front
 category:	"_Viewports"
-buttontext:	"Front\Back"
+buttontext:	"FRONT \ BACK"
 toolTip:	"Front view"
 --icon:	"control:checkbox|columns:6"
 (
@@ -77,7 +77,7 @@ toolTip:	"Front view"
  */
 macroscript	main_switch_viewport_back
 category:	"_Viewports"
-buttontext:	"Front\Back"
+buttontext:	"FRONT \ BACK"
 toolTip:	"Back view"
 --icon:	"control:checkbox|columns:6"
 (
@@ -85,7 +85,7 @@ toolTip:	"Back view"
 )
 
 /*------------------------------------------------------------------------------
-	LEFT \ RIGHT
+	LEFT  \  RIGHT
 --------------------------------------------------------------------------------*/
 
 /**  
@@ -93,7 +93,7 @@ toolTip:	"Back view"
  */
 macroscript	main_switch_viewport_left
 category:	"_Viewports"
-buttontext:	"Left\Right"
+buttontext:	"LEFT \ RIGHT"
 toolTip:	"Left view"
 --icon:	"control:checkbox|columns:6"
 (
@@ -105,7 +105,7 @@ toolTip:	"Left view"
  */
 macroscript	main_switch_viewport_right
 category:	"_Viewports"
-buttontext:	"Left\Right"
+buttontext:	"LEFT \ RIGHT"
 toolTip:	"Right view"
 --icon:	"control:checkbox|columns:6"
 (

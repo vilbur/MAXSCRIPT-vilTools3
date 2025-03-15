@@ -30,9 +30,10 @@ For $index, $layout_name in $layouts
 	$code	:= "(ViewportLayoutManager_v()).restoreLayout(#" $layout_name ")"
 
 	if( $index == 1 )
-		$icon .= $first_button_params
+		$icon .= $first_button_params + "|offset:[0,4]"""
+		
 	else
-		$icon .= "|offset:[" (A_Index - 1 )  ",0]"""
+		$icon .= "|offset:[" (A_Index - 1 )  ",4]"""
 
 
 	$macroscript := "`n`n" $macro_name "`n" $category "`n" $buttontext "`n" $tooltip "`n" $icon "`n(`n	" $code "`n)"

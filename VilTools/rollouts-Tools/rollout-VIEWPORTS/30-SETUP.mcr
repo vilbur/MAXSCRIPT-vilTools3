@@ -154,7 +154,7 @@ tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolut
 	(
 		--clearListener();
 
-		grid_spacings = #( 0.05, 0.05, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
+		grid_spacings = #( 0.05, 0.1, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
 		
 		display_units = case units.SystemType of -- convert to milimeters
 		(
