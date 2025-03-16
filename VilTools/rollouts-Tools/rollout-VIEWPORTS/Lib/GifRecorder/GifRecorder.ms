@@ -29,6 +29,8 @@ struct GifRecorder_v
 
 	--safe_frame = this.getViewportSafeFrameSize [gw.getWinSizeX(), gw.getWinSizeY()] [renderWidth, renderHeight],
 		
+	record_camera,
+	
 	record_viewport,
 	active_viewport,
 	
@@ -65,12 +67,11 @@ struct GifRecorder_v
 	(
 		--format "\n"; print "GifRecorder_v.grabGifFrame()"
 		
+		this._setRecordCameraView()
 
-		this._setRecordingViewport()
-		
 		this._toggleViewCube()
 
-		screenshot = gw.getViewportDib() --this grabs the viewport
+		screenshot = gw.getViewportDib index:record_viewport --this grabs the viewport
 					
 		this._toggleViewCube()
 	
@@ -105,7 +106,7 @@ struct GifRecorder_v
 		
 		this.showFrame(frames.count)
 		
-		this._restoreViewport()
+		--this._restoreViewport()
 
 
 		format "FRAME: % \n" GifRecorder.frames.count
@@ -118,6 +119,8 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder_v.startRecording()"
 		this.grabGifFrame()
 		
+		--this.createCamera()
+		
 		this.recording = true
 		
 		grabFrameTimerStart( true )
@@ -128,8 +131,10 @@ struct GifRecorder_v
 	function stopRecording =
 	(
 		format "\n"; print "GifRecorder_v.stopRecording()"
+		delete $GifRecorderCamera*
+
 		this._setSliderRange (frames.count)
-		
+
 		this.showFrame(1)
 		
 		this._setPreviewWindowSize()
@@ -202,7 +207,7 @@ struct GifRecorder_v
 		--ShellLaunch  gif_dir ""
 	),
 	
-	/** Show frame menu
+	/** SHOW RC MENU
 	 */
 	function showFrameMenu =
 	(
@@ -210,6 +215,9 @@ struct GifRecorder_v
 		Menu = RcMenu_v name:"FrameMenu"
 		
 		Menu.item	"Remove Frame"	"GifRecorder.removeFrame quiet:false"
+		Menu.item	"Remove Frames Right"	"GifRecorder.removeFrame quiet:false direction:#RIGHT"
+		Menu.item	"Remove Frames Left"	"GifRecorder.removeFrame quiet:false direction:#LEFT"
+		
 		
 		popUpMenu (Menu.create())
 		
@@ -217,7 +225,7 @@ struct GifRecorder_v
 
 	/** Remove frame
 	 */
-	function removeFrame quiet:true =
+	function removeFrame direction: quiet:true =
 	(
 		--format "\n"; print "GifRecorder_v.removeFrame()"
 		frame = DIALOG_GifRecorder.SLIDER_frames.value
@@ -225,14 +233,34 @@ struct GifRecorder_v
 		if quiet or queryBox ("Remove frame: "+frame as string +" ?") title:"Remove Frame" then
 		(
 			
-			show_frame = if frames[frame + 1] != undefined then frame + 1 else if frame > 1 then frame - 1 else 1
+			if direction == unsupplied then
+			(
+				show_frame = if frames[frame + 1] != undefined then frame + 1 else if frame > 1 then frame - 1 else 1
+	
+				--if show_frame != undefined then 
+					this.showFrame (show_frame)
+				
+				deleteItem frames frame
+				
+				this.updateSliderRange -1
+			)
+			else
+			(
+				case direction of
+				(
+					#LEFT:  for i = 1 to frame do deleteItem frames i
+					
+					#RIGHT: for i = frames.count to frame by -1 do deleteItem frames i
+				)
+					
+				this._setSliderRange (frames.count)
+				this.showFrame(frames.count)
 
-			--if show_frame != undefined then 
-				this.showFrame (show_frame)
+				
+				
+			)
 			
-			deleteItem frames frame
 			
-			this.updateSliderRange -1
 			--_slider.range.y -= 1
 			--_slider.ticks   -= 1
 			
@@ -307,6 +335,22 @@ struct GifRecorder_v
 		)		
 	),
 
+	
+	/** Create camera
+	 */
+	function createCamera =
+	(
+		format "\n"; print "GifRecorder_v.createCamera()"
+		viewTM=inverse ( viewport.gettm() )
+		
+		newcamName=uniquename "GifRecorderCamera"
+		
+		--record_camera = targetcamera transform:viewTM name:newcamName isHidden:true
+		record_camera = Freecamera transform:viewTM name:newcamName isHidden:true
+		
+		--viewport.setCamera record_camera
+	),
+	
 	private
 	
 	/** Clear temp dir
@@ -400,20 +444,23 @@ struct GifRecorder_v
 	),
 		
 
-	/** Set recording viewport
+	/** Set record camera view
 	 */
-	function _setRecordingViewport =
+	function _setRecordCameraView =
 	(
-		--format "\n"; print "GifRecorder_v.__setRecordingViewport()"
-		if record_viewport == undefined then
-			record_viewport = active_viewport = viewport.activeViewport 
+		--format "\n"; print "GifRecorder_v._setRecordCameraView()"
+		view_type = viewport.getType()
+
+		--if viewport.activeViewport != record_viewport then
+		--(
+		--	active_viewport = viewport.activeViewport 
+		--
+		--	viewport.activeViewport = record_viewport 
+		--)
 		
-		else if record_viewport != viewport.activeViewport then
-		(
-			active_viewport = viewport.activeViewport 
-			
-			viewport.activeViewport = record_viewport
-		)
+		viewport.setCamera record_camera
+
+		viewport.setType view_type
 	),
 	
 	/** Restore viewport
@@ -421,10 +468,8 @@ struct GifRecorder_v
 	function _restoreViewport =
 	(
 		--format "\n"; print "GifRecorder_v._restoreViewport()"
-		if active_viewport != record_viewport then 
-			viewport.activeViewport = active_viewport
+		viewport.activeViewport = record_viewport 
 	),
-
 	
 	/** Toggle view cube
 	 */
@@ -441,8 +486,9 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-		this._setRecordingViewport()
+		record_viewport = viewport.activeViewport 
 
+		this.createCamera()
 	)
 
 )

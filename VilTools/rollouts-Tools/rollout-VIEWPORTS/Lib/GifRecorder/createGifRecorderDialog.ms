@@ -97,7 +97,8 @@ across = 6
 	
 	/* SLIDER */ 
 	_slider.Event #CHANGED     "GifRecorder.showFrame(val)"
-	
+	_slider.Event #RIGHTCLICK "GifRecorder.showFrameMenu()" tooltip:"Show Menu"
+
 	/* BUTTONS */ 
 	btn_save.Event #PRESSED   "GifRecorder.saveGifFile()" tooltip:""
 	

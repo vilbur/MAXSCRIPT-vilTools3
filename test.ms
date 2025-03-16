@@ -1,40 +1,54 @@
 clearListener(); print("Cleared in:\n"+getSourceFileName())
 
 
+old_TM = getViewTM()
 
---print("Cleared in:\n"+getSourceFileName())
+format "old_TM: %\n" old_TM
 
-	grid_spacings = #( 0.05, 0.1, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
-	
-	display_units = case units.SystemType of -- convert to milimeters
-	(
-		#millimeters:	1
-		#centimeters:	10
-		#meters:	1000
-		#kilometers:	1000000
-		default:	1 -- non metric units
-	)
-	
-	format "units.SystemType: %\n" units.SystemType
-	format "display_units: %\n" display_units
-	format "grid_spacing: %\n" (GetGridSpacing())
-	
-	format "\n"
-	format "index: %\n" (findItem grid_spacings (GetGridSpacing()))
-	
-	index = findItem grid_spacings (GetGridSpacing())
-	
-	next_index = if index == grid_spacings.count then 1 else index + 1 
-	
-	format "next_index: %\n" next_index
-	
-	--format "grid_spacings[next_index]: %\n" grid_spacings[next_index]
-	--format "display_units: %\n" display_units
-	grid_spacing = grid_spacings[next_index] / display_units
-	
-	SetGridSpacing grid_spacing
-			if mod grid_spacing 1 == 0 then
-				grid_spacing = grid_spacing as integer
-		
-	--SetGridMajorLines 10
-	format "GRID SPACING: % mm\n" grid_spacing
+view = viewport.getType()
+
+viewport.setType #view_persp_user
+
+macros.run "Lights and Cameras" "StandardCamera_CreateFromView"
+cam = cameras[cameras.count - 1]
+cam.isHidden = true
+
+viewport.setType view
+
+
+
+
+
+viewport.pan 100 0 -- pan horizontally by ten pixel
+completeredraw() -- redraw the views to see the changes
+
+
+viewport.setCamera cam
+
+delete cam
+
+viewport.setType view
+
+
+
+
+old_TM = getViewTM()
+
+format "old_TM: %\n" old_TM
+
+
+
+
+--format "\n"
+--format "old_TM: %\n" old_TM
+--format "new_TM: %\n" new_TM
+----format "old_TM: %\n" old_TM.pos.x
+----format "new_TM: %\n" new_TM.pos.x
+--
+--
+--format "TEST: %\n" (distance (inverse old_TM)[4] new_TM.pos)
+----viewport.pan (old_TM - new_TM).pos.x (old_TM - new_TM).pos.y
+----completeredraw() -- redraw the views to see the changes
+--
+--
+--				--viewport.setTM old_TM

@@ -147,7 +147,7 @@ struct ViewportSwitcher_v
 		viewport.activeViewportEx index
 	),
 	
-	/** Activate similar viewport and change view
+	/** Activate similar viewport and change viewtest
 	 */
 	function _setViewType =
 	(
