@@ -17,25 +17,10 @@ function createGifRecorderDialog =
 	format "\n"; print "createScreenshotDialog()"
 
 	--getViewportHeight()
-	--format "DIALOG_slicer_slider == undefined	= % \n" (DIALOG_slicer_slider == undefined)
-	--if DIALOG_slicer_slider == undefined then
-
-	--SlicerCallbacks = "::SlicerCallbacks_v"
 
 	controls_height = 86
 
-	--format "VIEWPORT_SIZE: %\n" viewport_size
-	--slider_height = SLICER_SYSTEM.viewport_height - ( mod SLICER_SYSTEM.viewport_height 10 ) - 70 -- round viewport height to ceil 10 E.G.: 1789 >>> 1780
-	--slider_height = SLICER_SYSTEM.viewport_height - controls_height -- round viewport height to ceil 10 E.G.: 1789 >>> 1780
-
-	--if slider_height > slider_ticks then
-		--slider_ticks /= 10
-
-	--slider_ticks  = SLICER_SYSTEM.slice_count
-	--slider_ticks = (floor ( slider_ticks / 10 ) ) * 10
-	--slider_ticks = (ceil ( SLICER_SYSTEM.slice_count / 100 ) ) * 10
 	frames_count = 10
-	--slider_ticks = 100
 
 	--frame_delays = #( 0.1, 0.25, 0.5 )
 	frame_delays = #( 0.5 )
@@ -44,30 +29,42 @@ function createGifRecorderDialog =
 	
 	frame_delays = for delay in frame_delays collect delay as string
 	
-	--format "SLICER_SYSTEM.slice_count: %\n" SLICER_SYSTEM.slice_count
-	--format "SLICER_SYSTEM.viewport_height: %\n" SLICER_SYSTEM.viewport_height
-	--format "slider_height: %\n" slider_height
-	--format "slider_ticks: %\n" slider_ticks
 
-	/*------------------------------------------------------------------------------
+	/*------------------------------------------------------------------------------control 
 		DIALOG
 	--------------------------------------------------------------------------------*/
-	--min_size = [ 42, -1 ]
-	min_size = getViewSize()
+	min_size = viewport_size = [ 512, -1 ]
+	--min_size = [( getViewSize()).x, -1 ]
+	--min_size = getViewSize()
+	--viewport_size =  getViewSize()
+	--
+	--if min_size.x < 420 then
+	--	min_size.x = 420
 
+	format "min_size: %\n" min_size		
+	
     Dialog 	    = Dialog_v "GIF RECORDER" id:#DIALOG_GifRecorder width:min_size.x min_size:min_size ini:(getSourceFileName()) --min_size:[48, -1] max_size:[48, -1]
+    --Dialog 	    = Dialog_v "GIF RECORDER" id:#DIALOG_GifRecorder width:1024 --min_size:[48, -1] max_size:[48, -1]
 
 	_Controls   = Dialog.Controls() --group:"Main Controls"
 
 	/*------------------------------------------------------------------------------
 		CONTROLS
 	------------------------------------------------------------------------------*/
-	--tooltip_btn = "Shift slider 1 layer UP \ DOWN\n\nCTRL:  Go 10 layers UP \ DOWN\n\nSHIFT: Go 100 layers UP \ DOWN\n\nALT:  Go NEXT\PREVIOUS island"
+across = 6
+	
+	btn_record = _Controls.control #CHECKBUTTON	"R E C O R D"	across:across width:128 height:64 offset:[ 0, 0 ] ini:false checked:true --autorun:true
+	
+	btn_save   = _Controls.control #BUTTON	"Save Gif"	across:across width:128 height:64 offset:[ 64, 0 ] --ini:false checked:true --autorun:true
+	
+	_dropdown = _Controls.control #DROPDOWNLIST "DELAY" id:#DDL_delay across:across width:48 items:frame_delays offset:[ 112, 0 ] --ini:false --params:#( #UNSELECT, true ) across:across offset:[ 4, 2 ] --align:#center  --width:96
 
-	--btn_exit = _Controls.control #BUTTON "IN\OUT" width:42 height:24 offset:[ 12, -4 ] border:false tooltip:"Exit and remove slicer from all objects"
 
-	--btn_preview = _Controls.control #IMGTAG "PREVIEW " across:1  width:380 height:380 -- offset:[ -4, -4 ] tooltip:tooltip_btn
-
+	--_GroupBox = _Controls.control #GroupBox "Safe Frame" height:96 across:across align:#right
+	
+	--safe_frame = _Controls.control #CHECKBOX	"SAFE FRAME"	across:across width:128 height:64 offset:[ 96, 0 ] --groupbox:_GroupBox.caption
+	--spinner_height = _Controls.control #SPINNER "Height" type:#INTEGER across:across width:96 scale:1 range:[ 256, 8192, renderHeight ] offset:[ 128, 24 ] --groupbox:_GroupBox.caption
+	--spinner_with   = _Controls.control #SPINNER "Width"  type:#INTEGER across:across width:96 scale:1 range:[ 256, 8192, renderWidth  ] offset:[ 56, 0 ] --groupbox:_GroupBox.caption
 
 
     /*------ SLIDER ------*/
@@ -79,19 +76,14 @@ function createGifRecorderDialog =
                     ticks:	0	\
                     width:	min_size.x 	\
                     height:	24	\
-                    across:	2	\
+                    across:	1	\
                     offset:	[ -6, -4 ]	\
                     ini:	false
 
 	
-	--btn_screen = _Controls.control #BUTTON	"S C R E E N"	across:1 width:256 height:64 offset:[ 32, 0 ]
-	btn_record = _Controls.control #CHECKBUTTON	"R E C O R D"	across:3 width:128 height:64 offset:[ 0, 0 ] ini:false checked:true --autorun:true
 	
-	_dropdown = _Controls.control #DROPDOWNLIST "Delay" id:#DDL_delay across:3 align:#right width:48 items:frame_delays offset:[ 0, 16 ] --ini:false --params:#( #UNSELECT, true ) across:3 offset:[ 4, 2 ] --align:#center  --width:96
-	
-	btn_save   = _Controls.control #BUTTON	"Save Gif"	across:3 width:128 height:64 offset:[ 0, 0 ] --ini:false checked:true --autorun:true
-
-	btn_preview = _Controls.control #IMGTAG "PREVIEW " across:1  params:	#(#STYLE, #bmp_center ) -- offset:[ -4, -4 ] tooltip:tooltip_btn
+	/* PREVIEW WINDOW */ 
+	btn_preview = _Controls.control #IMGTAG "PREVIEW " across:1  params:	#(#STYLE, #bmp_stretch  /*#bmp_center*/ ) -- offset:[ -4, -4 ] tooltip:tooltip_btn
 
 	
 	/*------------------------------------------------------------------------------
@@ -99,26 +91,29 @@ function createGifRecorderDialog =
 	--------------------------------------------------------------------------------*/
 
 
-	
+	/* PREVIEW */ 
 	btn_preview.Event #RIGHTCLICK "GifRecorder.showFrameMenu()" tooltip:"Show Menu"
 	btn_preview.Event #DBLCLICK   "GifRecorder.generateGif()" tooltip:"Show Menu"
 	
+	/* SLIDER */ 
 	_slider.Event #CHANGED     "GifRecorder.showFrame(val)"
 	
+	/* BUTTONS */ 
 	btn_save.Event #PRESSED   "GifRecorder.saveGifFile()" tooltip:""
 	
 	btn_record.Event #CHANGED   "GifRecorder.recording = val == 1 ; grabFrameTimerStart( val == 1 )" tooltip:""
 	
-	
+	/* DIALOG EVENTS */ 
 	Dialog.Events.add #OPEN   "GifRecorder.startRecording()" tooltip:""
-	--Dialog.Events.add #CLOSE   "print \"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\"" tooltip:""
-
 
 	/*------------------------------------------------------------------------------
 		CREATE DIALOG
 	--------------------------------------------------------------------------------*/
-	Dialog.create()
-	--Dialog.create width:(viewport_size.x + 64 ) height:(viewport_size.y + 256)
+	--Dialog.create()
+	--Dialog.create lockWidth:false
+	Dialog.create width:(viewport_size.x + 32 ) --height:(viewport_size.y + 128)
+	--Dialog.create width:(viewport_size.x ) height:(viewport_size.y )
+	--Dialog.create width:(viewport_size.x as integer ) height:(viewport_size.y as integer )
 
 	--Dialog.dock #RIGHT
 

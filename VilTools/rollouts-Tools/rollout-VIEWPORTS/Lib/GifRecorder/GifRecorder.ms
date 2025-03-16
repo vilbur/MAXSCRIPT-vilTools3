@@ -34,6 +34,7 @@ struct GifRecorder_v
 	
 	safe_frame_enabled,
 	
+	preview_size = [128,128],
 	/* dependency */
 	/* reference */
 	/* inhered */
@@ -64,18 +65,39 @@ struct GifRecorder_v
 	(
 		--format "\n"; print "GifRecorder_v.grabGifFrame()"
 		
-		if record_viewport != (active_viewport = viewport.activeViewport)  then
-		(
-			active_viewport = viewport.activeViewport 
-			
-			viewport.activeViewport = record_viewport
-		)
+
+		this._setRecordingViewport()
 		
+		this._toggleViewCube()
+
 		screenshot = gw.getViewportDib() --this grabs the viewport
-				
+					
+		this._toggleViewCube()
+	
 		screenshot = this._cropSafeFrame(screenshot)
 
 		append frames screenshot
+
+		if frames.count == 1 then
+		(
+			display_info = (dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
+			
+			if screenshot.width > display_info.Width / 3 or screenshot.height > display_info.Height / 2  then
+			(
+				preview_size.x = (screenshot.width / 2 ) as integer
+				preview_size.y = (screenshot.height / 2 ) as integer
+			)
+			else
+			(
+				preview_size.x = screenshot.width
+				preview_size.y = screenshot.height
+			)
+
+			----preview_size.x = screenshot.width
+			----preview_size.y = screenshot.height
+
+			this._setPreviewWindowSize()
+		)
 		
 		this._setSliderRange(frames.count)
 		
@@ -83,8 +105,8 @@ struct GifRecorder_v
 		
 		this.showFrame(frames.count)
 		
-		if active_viewport != record_viewport then 
-			viewport.activeViewport = active_viewport
+		this._restoreViewport()
+
 
 		format "FRAME: % \n" GifRecorder.frames.count
 	),
@@ -95,8 +117,6 @@ struct GifRecorder_v
 	(
 		--format "\n"; print "GifRecorder_v.startRecording()"
 		this.grabGifFrame()
-		
-		this._setPreviewSize()
 		
 		this.recording = true
 		
@@ -112,7 +132,7 @@ struct GifRecorder_v
 		
 		this.showFrame(1)
 		
-		this._setPreviewSize()
+		this._setPreviewWindowSize()
 	),
 	
 	/** Save gif file
@@ -143,7 +163,7 @@ struct GifRecorder_v
 		
 		--DOSCommand ("start \"\" \""+gif_temp_path+"\"")
 		--DOSCommand ("start \"\" \""+gif_temp_path+"\"")
-		--DOSCommand ("\""+gif_temp_path+"\"")
+		DOSCommand ("\""+gif_temp_path+"\"")
 	),
 	
 	/** Save gif
@@ -262,20 +282,28 @@ struct GifRecorder_v
 	
 	/** Set preview size
 	 */
-	function _setPreviewSize =
+	function _setPreviewWindowSize =
 	(
-		--format "\n"; print "GifRecorder_v._setPreviewSize()"
+		--format "\n"; print "GifRecorder_v._setPreviewWindowSize()"
 		if frames.count > 0 then
 		(
 			width  = frames[1].width
 			height = frames[1].height
 			
-			DIALOG_GifRecorder.width	= width + 32
-			DIALOG_GifRecorder.height	= height + 128
-			
-			DIALOG_GifRecorder.IT_preview.width	= width
-			DIALOG_GifRecorder.IT_preview.height	= height
-			
+			/* SLIDER */ 
+			--if width > 420 then
+			--DIALOG_GifRecorder.SLIDER_frames.width	= width 
+--
+			/* PREVIEW BUTTON */ 
+			--DIALOG_GifRecorder.IT_preview.width	= width
+			--DIALOG_GifRecorder.IT_preview.height	= height
+			DIALOG_GifRecorder.IT_preview.width	= preview_size.x
+			DIALOG_GifRecorder.IT_preview.height	= preview_size.y
+			/* DIALOG */ 
+			--if width > 420 then
+			DIALOG_GifRecorder.width	= preview_size.x + 32
+			DIALOG_GifRecorder.height	= preview_size.y + 128
+						
 		)		
 	),
 
@@ -341,7 +369,7 @@ struct GifRecorder_v
 		
 		if this._isSafeFrameEnabled(screenshot) then
 		(
-			safe_frame = getViewportSafeFrameSize [gw.getWinSizeX(), gw.getWinSizeY()] [ renderWidth, renderHeight ]
+			safe_frame = getViewportSafeFrameSize [gw.getWinSizeX(), gw.getWinSizeY()] [ renderWidth , renderHeight ]
 	
 			screenshot_cropped = bitmap (safe_frame.w - 2) (safe_frame.h - 2) color:black-- filename:newTempName
 	
@@ -371,6 +399,41 @@ struct GifRecorder_v
 			safe_frame_enabled --return
 	),
 		
+
+	/** Set recording viewport
+	 */
+	function _setRecordingViewport =
+	(
+		--format "\n"; print "GifRecorder_v.__setRecordingViewport()"
+		if record_viewport == undefined then
+			record_viewport = active_viewport = viewport.activeViewport 
+		
+		else if record_viewport != viewport.activeViewport then
+		(
+			active_viewport = viewport.activeViewport 
+			
+			viewport.activeViewport = record_viewport
+		)
+	),
+	
+	/** Restore viewport
+	 */
+	function _restoreViewport =
+	(
+		--format "\n"; print "GifRecorder_v._restoreViewport()"
+		if active_viewport != record_viewport then 
+			viewport.activeViewport = active_viewport
+	),
+
+	
+	/** Toggle view cube
+	 */
+	function _toggleViewCube =
+	(
+		--format "\n"; print "GifRecorder_v._toggleViewCube()"
+		actionMan.executeAction 1920373763 "73"  -- ViewCube: Toggle ViewCube Visibility
+	),
+	
 	/**
 	 */
 	on create do
@@ -378,7 +441,7 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-		record_viewport = viewport.activeViewport 
+		this._setRecordingViewport()
 
 	)
 
