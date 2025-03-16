@@ -29,6 +29,11 @@ struct GifRecorder_v
 
 	--safe_frame = this.getViewportSafeFrameSize [gw.getWinSizeX(), gw.getWinSizeY()] [renderWidth, renderHeight],
 		
+	record_viewport,
+	active_viewport,
+	
+	safe_frame_enabled,
+	
 	/* dependency */
 	/* reference */
 	/* inhered */
@@ -58,8 +63,16 @@ struct GifRecorder_v
 	function grabGifFrame =
 	(
 		--format "\n"; print "GifRecorder_v.grabGifFrame()"
-		screenshot = gw.getViewportDib() --this grabs the viewport
 		
+		if record_viewport != (active_viewport = viewport.activeViewport)  then
+		(
+			active_viewport = viewport.activeViewport 
+			
+			viewport.activeViewport = record_viewport
+		)
+		
+		screenshot = gw.getViewportDib() --this grabs the viewport
+				
 		screenshot = this._cropSafeFrame(screenshot)
 
 		append frames screenshot
@@ -70,6 +83,9 @@ struct GifRecorder_v
 		
 		this.showFrame(frames.count)
 		
+		if active_viewport != record_viewport then 
+			viewport.activeViewport = active_viewport
+
 		format "FRAME: % \n" GifRecorder.frames.count
 	),
 	
@@ -321,15 +337,38 @@ struct GifRecorder_v
 			return box2 x y w h
 		)
 		
-		safe_frame = getViewportSafeFrameSize [gw.getWinSizeX(), gw.getWinSizeY()] [ renderWidth, renderHeight ]
-
-		screenshot_cropped = bitmap (safe_frame.w - 2) (safe_frame.h - 2) color:black-- filename:newTempName
-
-		pasteBitmap screenshot screenshot_cropped [ 1, safe_frame.y ] [0,0]	--src dest
-
-		free screenshot
 		
-		screenshot_cropped --return
+		
+		if this._isSafeFrameEnabled(screenshot) then
+		(
+			safe_frame = getViewportSafeFrameSize [gw.getWinSizeX(), gw.getWinSizeY()] [ renderWidth, renderHeight ]
+	
+			screenshot_cropped = bitmap (safe_frame.w - 2) (safe_frame.h - 2) color:black-- filename:newTempName
+	
+			pasteBitmap screenshot screenshot_cropped [ safe_frame.x + 1, safe_frame.y + 1 ] [0,0]	--src dest
+	
+			free screenshot
+			
+			screenshot_cropped --return
+		)
+		else
+			screenshot --return
+	),
+
+	/** Test if safe frame is on
+	  * Test if bottom right pixel of viewport is black
+	 */
+	function _isSafeFrameEnabled screenshot =
+	(
+		--format "\n"; print "GifRecorder_v._isSafeFrameEnabled()"
+		if safe_frame_enabled == undefined then
+		(
+			background_solor = (getPixels screenshot [ gw.getWinSizeX() - 1 , gw.getWinSizeY() - 1 ] 1 )[1]
+			
+			safe_frame_enabled = background_solor.r as integer == 0 and background_solor.g as integer == 0 and background_solor.b as integer == 0
+		)
+		else
+			safe_frame_enabled --return
 	),
 		
 	/**
@@ -339,6 +378,7 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
+		record_viewport = viewport.activeViewport 
 
 	)
 
