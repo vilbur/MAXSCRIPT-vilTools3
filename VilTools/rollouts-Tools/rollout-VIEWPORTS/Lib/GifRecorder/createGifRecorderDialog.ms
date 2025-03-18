@@ -33,15 +33,14 @@ function createGifRecorderDialog =
 	/*------------------------------------------------------------------------------control 
 		DIALOG
 	--------------------------------------------------------------------------------*/
-	min_size = viewport_size = [ 512, -1 ]
+	min_size = GifRecorder.preview_size
 	--min_size = [( getViewSize()).x, -1 ]
 	--min_size = getViewSize()
-	--viewport_size =  getViewSize()
+	--min_size =  getViewSize()
 	--
-	--if min_size.x < 420 then
-	--	min_size.x = 420
+	if min_size.x < 420 then
+		min_size.x = 420
 
-	format "min_size: %\n" min_size		
 	
     Dialog 	    = Dialog_v "GIF RECORDER" id:#DIALOG_GifRecorder width:min_size.x min_size:min_size ini:(getSourceFileName()) --min_size:[48, -1] max_size:[48, -1]
     --Dialog 	    = Dialog_v "GIF RECORDER" id:#DIALOG_GifRecorder width:1024 --min_size:[48, -1] max_size:[48, -1]
@@ -51,16 +50,23 @@ function createGifRecorderDialog =
 	/*------------------------------------------------------------------------------
 		CONTROLS
 	------------------------------------------------------------------------------*/
-across = 6
+    across = 3
+
+	--_GroupBox_gif = _Controls.control #GroupBox "CONTROLS" height:48 across:2 align:#LEFT orient:#HORIZONTAL
+
+	btn_record = _Controls.control #CHECKBUTTON	"R E C O R D"	across:4 width:128 height:64 offset:[ 0, 0 ] ini:false checked:true highlightColor:( color 120 0 50 ) --groupbox:_GroupBox_gif.caption --autorun:true
 	
-	btn_record = _Controls.control #CHECKBUTTON	"R E C O R D"	across:across width:128 height:64 offset:[ 0, 0 ] ini:false checked:true --autorun:true
+	btn_save   = _Controls.control #BUTTON	"Save Gif"	across:4 width:128 height:64 offset:[ -48, 0 ] --groupbox:_GroupBox_gif.caption
 	
-	btn_save   = _Controls.control #BUTTON	"Save Gif"	across:across width:128 height:64 offset:[ 64, 0 ] --ini:false checked:true --autorun:true
+	btn_ps   = _Controls.control #BUTTON	"Open in Photoshop "	across:4 width:128 height:64 offset:[ -96, 0 ] --groupbox:_GroupBox_gif.caption
 	
-	_dropdown = _Controls.control #DROPDOWNLIST "DELAY" id:#DDL_delay across:across width:48 items:frame_delays offset:[ 112, 0 ] --ini:false --params:#( #UNSELECT, true ) across:across offset:[ 4, 2 ] --align:#center  --width:96
+	_GroupBox = _Controls.control #GroupBox "[save options]" width:256 height:48 across:4 align:#right offset:[ -64, 0 ]
+	
+	filename = _Controls.control #EDITTEXT "Filename" width:256 across:2 offset:[ 0, 0 ] groupbox:_GroupBox.caption
+	
+	delay = _Controls.control #DROPDOWNLIST "[delay]" id:#DDL_delay across:2 width:48 items:frame_delays offset:[ 112, 0 ] groupbox:_GroupBox.caption
 
 
-	--_GroupBox = _Controls.control #GroupBox "Safe Frame" height:96 across:across align:#right
 	
 	--safe_frame = _Controls.control #CHECKBOX	"SAFE FRAME"	across:across width:128 height:64 offset:[ 96, 0 ] --groupbox:_GroupBox.caption
 	--spinner_height = _Controls.control #SPINNER "Height" type:#INTEGER across:across width:96 scale:1 range:[ 256, 8192, renderHeight ] offset:[ 128, 24 ] --groupbox:_GroupBox.caption
@@ -83,7 +89,7 @@ across = 6
 	
 	
 	/* PREVIEW WINDOW */ 
-	btn_preview = _Controls.control #IMGTAG "PREVIEW " across:1  params:	#(#STYLE, #bmp_stretch  /*#bmp_center*/ ) -- offset:[ -4, -4 ] tooltip:tooltip_btn
+	btn_preview = _Controls.control #IMGTAG "PREVIEW " across:1  params:	#(#STYLE, #bmp_stretch  /*#bmp_center*/ ) width:min_size.x height:min_size.y -- offset:[ -4, -4 ] tooltip:tooltip_btn
 
 	
 	/*------------------------------------------------------------------------------
@@ -100,21 +106,25 @@ across = 6
 	_slider.Event #RIGHTCLICK "GifRecorder.showFrameMenu()" tooltip:"Show Menu"
 
 	/* BUTTONS */ 
-	btn_save.Event #PRESSED   "GifRecorder.saveGifFile()" tooltip:""
+	btn_save.Event #PRESSED    "GifRecorder.saveGifFile browse:true" tooltip:""
+	btn_save.Event #RIGHTCLICK "GifRecorder.saveGifFile browse:true" tooltip:""
 	
 	btn_record.Event #CHANGED   "GifRecorder.recording = val == 1 ; grabFrameTimerStart( val == 1 )" tooltip:""
+	
+	btn_ps.Event #PRESSED   "GifRecorder.openInPhotoshop()" tooltip:""
 	
 	/* DIALOG EVENTS */ 
 	Dialog.Events.add #OPEN   "GifRecorder.startRecording()" tooltip:""
 
+	
 	/*------------------------------------------------------------------------------
 		CREATE DIALOG
 	--------------------------------------------------------------------------------*/
 	--Dialog.create()
 	--Dialog.create lockWidth:false
-	Dialog.create width:(viewport_size.x + 32 ) --height:(viewport_size.y + 128)
-	--Dialog.create width:(viewport_size.x ) height:(viewport_size.y )
-	--Dialog.create width:(viewport_size.x as integer ) height:(viewport_size.y as integer )
+	Dialog.create width:(min_size.x + 32 ) --height:(min_size.y + 128)
+	--Dialog.create width:(min_size.x ) height:(min_size.y )
+	--Dialog.create width:(min_size.x as integer ) height:(min_size.y as integer )
 
 	--Dialog.dock #RIGHT
 

@@ -75,10 +75,15 @@ toolTip:	"Open current texture in Photoshop\n*.psd file will be opened if exist"
 				)
 			)
 
+			Photoshop_exe = ROLLOUT_options.BP_Photoshop_exe.text
+
 			file_path = if psd_path != undefined and doesFileExist (psd_path) then psd_path else _bitmap.filename
+			
+			file_path = substituteString file_path "/" "\\"
+			Photoshop_exe = substituteString Photoshop_exe "/" "\\"
 
 			---format "file_path	= % \n" file_path
-			DOSCommand ("start \"\" \"" +	ROLLOUT_options.Photoshop_exe.text + "\" /open \"" +	file_path +	"\"" )
+			DOSCommand ("start \"\" \"" +	Photoshop_exe + "\" /open \"" +	file_path +	"\"" )
 		)
 	)
 )
