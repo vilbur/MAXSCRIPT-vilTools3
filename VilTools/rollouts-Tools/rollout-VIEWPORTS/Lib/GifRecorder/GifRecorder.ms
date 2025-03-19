@@ -22,7 +22,7 @@ struct GifRecorder_v
 	
 	maxfile_subdir = substituteString maxFilePath "\\" "/" + "_Screenshots",
 		
-	--gif_file,
+	gif_filename,
 	--gif_basename  = "untitled",
 	--gif_basename  = getFilenameFile( maxFileName ),
 	--gif_filename  = gif_basename + ".gif",
@@ -143,18 +143,45 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder_v.saveGifFile()"
 		format "gif_final_path: %\n" gif_final_path
 		
+		/** Browse gif save path
+		 */
+		function browseGifSavePath =
+		(
+			--format "\n"; print "GifRecorder_v.browseGifSavePath()"
+			user_save_path_browsed = getSaveFileName caption:"Browse" filename:gif_final_path  types:"GIF(*.gif)|*.*"  historyCategory:"GifRecorder"
+			
+			if user_save_path_browsed != undefined then -- use previous path if browsing is CANCELED
+				user_save_path = getFilenamePath(user_save_path_browsed) -- return 
+		)
+		
+		/** Remove empty dir
+		 */
+		function cancelBrowse save_dir =
+		(
+			if (getFiles ( save_dir + "\*.*" )).count == 0 then
+				HiddenDOSCommand ( "rmDir \"" + save_dir + "\""  )
+			
+			return false
+		)
+		
+		
 		allow_save = true
 		
 		this._setGifPaths()
 
+		save_dir = getFilenamePath(gif_final_path)
+		
+		makeDir save_dir all:true
+		
 		if not doesFileExist gif_temp_path then
 			this.generateGif()
 		
-		if browse and this._browseGifSavePath() == undefined then
-			return false -- cancel save if getSaveFileName was canceled
+		
+		if browse and browseGifSavePath() == undefined then
+			cancelBrowse(save_dir) -- cancel save if getSaveFileName was canceled
+		
 			
 		/*------ SAVE FILE ------*/
-		makeDir (getFilenamePath(gif_final_path)) all:true
 		
 		deleteFile gif_final_path
 		
@@ -589,76 +616,65 @@ struct GifRecorder_v
 		DIALOG_GifRecorder.SLIDER_frames.value
 	),
 
-	/** Get gif path
-	 */
-	function _getGifTempPath =
-	(
-		--format "\n"; print "GifRecorder_v._getGifPath()"
-		
-		gif_path = temp_dir + "/" + gif_filename
-		
-		substituteString gif_path "/" "\\" --return
-	),
-		/** Get gif path
-	 */
-	function _getGifSavePath temp_file:false =
-	(
-		--format "\n"; print "GifRecorder_v._getGifPath()"
-
-		used_path = if user_save_path != undefined then user_save_path else maxfile_subdir
-		
-		gif_path = used_path + "/" + gif_filename
-		
-		substituteString gif_path "/" "\\" --return
-	),
-	
-	/** Get filename
-	 */
-	function _getFilename =
-	(
-		--format "\n"; print "GifRecorder_v._getFilename()"
-		/** Get filename from edit text input
-		  * 
-		  * @return string|undefined 
-		 */
-		function getFilenameFromEditText =
-		(
-			--format "\n"; print "GifRecorder_v._getFilename()"
-			
-			user_basename = DIALOG_GifRecorder.ET_filename.text
-			
-			user_basename_is_empty = (( dotNetClass "System.Text.RegularExpressions.RegEx").match user_basename "^\s+$|^$" ).success
-	
-			if not user_basename_is_empty then
-				substituteString user_basename "*.gif" "" --return filename of gif without ".gif" extension
-		)
-		
-		
-		gif_basename  = if (user_basename = getFilenameFromEditText()) != undefined  then getFilenameFile( maxFileName ) else user_basename
-		
-		gif_basename + ".gif"
-	),
-
 
 	/** Set paths
 	 */
 	function _setGifPaths =
 	(
 		--format "\n"; print "GifRecorder_v._setGifPaths()"
-		
-		gif_temp_path  = this._getGifTempPath()
-		gif_final_path = this._getGifSavePath()
-	),
+		/** Get gif path
+		 */
+		function _getGifTempPath =
+		(
+			--format "\n"; print "GifRecorder_v._getGifPath()"
+			
+			gif_path = temp_dir + "/" + gif_filename
+			
+			substituteString gif_path "/" "\\" --return
+		)
+			/** Get gif path
+		 */
+		function _getGifSavePath temp_file:false =
+		(
+			--format "\n"; print "GifRecorder_v._getGifPath()"
 	
-	/** Browse gif save path
-	 */
-	function _browseGifSavePath =
-	(
-		--format "\n"; print "GifRecorder_v._browseGifSavePath()"
-		user_save_path_browsed = getSaveFileName caption:"Browse" filename:gif_final_path  types:"GIF(*.gif)|*.*"  historyCategory:"GifRecorder"
+			used_path = if user_save_path != undefined then user_save_path else maxfile_subdir
+			
+			gif_path = used_path + "/" + gif_filename
+			
+			substituteString gif_path "/" "\\" --return
+		)
 		
-		if user_save_path_browsed != undefined then -- use previous path if browsing is CANCELED
-			user_save_path = getFilenamePath(user_save_path_browsed) -- return 
+		/** Set filename
+		 */
+		function setFilename =
+		(
+			--format "\n"; print "GifRecorder_v._setFilename()"
+			/** Get filename from edit text input
+			  * 
+			  * @return string|undefined 
+			 */
+			function getFilenameFromEditText =
+			(
+				--format "\n"; print "GifRecorder_v._getFilename()"
+				
+				user_basename = DIALOG_GifRecorder.ET_filename.text
+				
+				user_basename_is_empty = (( dotNetClass "System.Text.RegularExpressions.RegEx").match user_basename "^\s+$|^$" ).success
+		
+				if not user_basename_is_empty then
+					substituteString user_basename "*.gif" "" --return filename of gif without ".gif" extension
+			)
+			
+			gif_basename  = if (user_basename = getFilenameFromEditText()) != undefined  then user_basename else getFilenameFile( maxFileName )
+			
+			this.gif_filename = gif_basename + ".gif"
+		)
+
+		setFilename()
+		
+		gif_temp_path  = _getGifTempPath()
+		gif_final_path = _getGifSavePath()
 	),
 	
 	/** Init screenshot size
