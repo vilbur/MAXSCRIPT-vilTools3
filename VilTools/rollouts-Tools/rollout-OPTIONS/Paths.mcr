@@ -21,7 +21,8 @@ icon:	"control:browsePath|mode:#getOpenFileName|across:1"
 	--format "EventFired	= % \n" EventFired
 
 	on execute do
-		if EventFired.val != "" then
+		--if EventFired.val != "" then
+		if EventFired.get #val != false then
 			if not matchPattern EventFired.val pattern:"*photoshop.exe*" then
 			(
 				messageBox ("This is not path to Photoshop.exe\n\n"+EventFired.val) title:"WRONG PATH TO PHOTOSHOP"  beep:true

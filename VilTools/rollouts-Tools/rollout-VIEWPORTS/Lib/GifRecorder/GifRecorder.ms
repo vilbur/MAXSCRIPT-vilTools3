@@ -61,12 +61,6 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder_v.getScreenshotOfCurrentViewport()"
 		screenshot = gw.getViewportDib() --this grabs the viewport
 
-
-		--screenshot.filename = screenshot_dir +"\\"+ filename + "-" + ".jpg" --this will be the filename
-
-		--save screenshot
-		
-		--display screenshot
 			
 		append frames screenshot
 		
@@ -78,12 +72,13 @@ struct GifRecorder_v
 	 */
 	function grabGifFrame =
 	(
-		format "\n"; print "GifRecorder_v.grabGifFrame()"
-		
+		--format "\n"; print "GifRecorder_v.grabGifFrame()"
+		--format "frames.count: %\n" frames.count
 		/* IF VIEW CHANGED */ 
 		if view_tm != viewport.getTM() then
 			this._setRecordCameraView()
 
+			
 		this._toggleViewCube(false)
 
 		screenshot = gw.getViewportDib index:record_viewport --this grabs the viewport
@@ -92,12 +87,12 @@ struct GifRecorder_v
 	
 		screenshot = this._cropSafeFrame(screenshot)
 
-		frame = this._getCurrentFrame() + 1
+		frame = if frames.count == 0 then 1 else this._getCurrentFrame() +1
 		
 		--append frames screenshot
 		insertItem screenshot frames frame
 		
-		this._setSliderRange(frame)
+		this._setSliderRange(frames.count)
 		
 		this.setSlider(frame)
 		
@@ -106,16 +101,16 @@ struct GifRecorder_v
 		this._restoreViewport()
 
 
-		format "FRAME: % \n" frame
+		--format "FRAME: % \n" frame
 	),
 	
 	/** Start recording
 	 */
 	function startRecording =
 	(
-		format "\n"; print "GifRecorder_v.startRecording()"
+		--format "\n"; print "GifRecorder_v.startRecording()"
+		deleteFile gif_temp_path
 
-		
 		this.recording = true
 		
 		if frames.count == 0 then
@@ -144,13 +139,18 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder_v.grabFrameOnLmbRelease()"
 		lmb_state_current = mouse.buttonStates[1]
 		
+		/* GRAB FRAME ON LMB RELEASE */ 
 		if lmb_last_state and not lmb_state_current then
 			this.grabGifFrame()
 		
 		lmb_last_state = lmb_state_current
 		
+		
+		/* STOP TIMER if not recording or dialog not exists */ 
 		if not this.recording or GetDialogPos DIALOG_GifRecorder == [0,0] then
 		(
+			--format "STOP TIMER\n"
+			
 			DotNetTimer.stop()
 			
 			this.stopRecording()
@@ -161,12 +161,11 @@ struct GifRecorder_v
 		
 	),
 	
-	
 	/** STOP RECORDING
 	 */
 	function stopRecording =
 	(
-		format "\n"; print "GifRecorder_v.stopRecording()"
+		--format "\n"; print "GifRecorder_v.stopRecording()"
 		--delete $GifRecorderCamera*
 		this.recording = false
 
@@ -182,8 +181,10 @@ struct GifRecorder_v
 	 */
 	function onCloseDialog =
 	(
-		--format "\n"; print "GifRecorder_v.onCloseDialog()"
-		stopRecording.stop()
+		format "\n"; print "GifRecorder_v.onCloseDialog()"
+		format "DotNetTimer: %\n" DotNetTimer
+		if DotNetTimer != undefined then 
+			DotNetTimer.stop()
 	),
 	
 	/** Save giff file
@@ -191,32 +192,26 @@ struct GifRecorder_v
 	function saveGifFile browse:false =
 	(
 		--format "\n"; print "GifRecorder_v.saveGifFile()"
-		format "gif_final_path: %\n" gif_final_path
+		makeDir (getFilenamePath(gif_final_path)) all:true
 		
-		
-		allow_save = true
-		
-		this._setGifPaths()
-
-		save_dir = getFilenamePath(gif_final_path)
-		
-		makeDir save_dir all:true
+		if browse and this._browseGifSavePath() == undefined then
+			this._cancelBrowse() -- cancel save if getSaveFileName was canceled
 		
 		if not doesFileExist gif_temp_path then
 			this.generateGif()
-		
-		
-		if browse and this._browseGifSavePath() == undefined then
-			this._cancelBrowse(save_dir) -- cancel save if getSaveFileName was canceled
-		
-			
-		/*------ SAVE FILE ------*/
-		
+		--format "gif_temp_path: %\n" gif_temp_path
+
+		/* DELETE OLD FINAL FILE */ 
 		deleteFile gif_final_path
 		
+		/* COPY TEMP FILE TO FINAL */ 
 		copyFile gif_temp_path gif_final_path
 		
-		format "GIF SAVED TO: %\n" gif_final_path
+		/* DELETE TEMP FILE */ 
+		deleteFile gif_temp_path
+
+		--format "GIF SAVED\nFROM: %\nTO:   %\n" gif_temp_path gif_final_path
+		format "GifRecorder.saveGifFile: %\n" gif_final_path
 	),
 	
 	/** Browse gif save path
@@ -227,33 +222,62 @@ struct GifRecorder_v
 		user_save_path_browsed = getSaveFileName caption:"Browse" filename:gif_final_path  types:"GIF(*.gif)|*.*"  historyCategory:"GifRecorder"
 		
 		if user_save_path_browsed != undefined then -- use previous path if browsing is CANCELED
-			user_save_path = getFilenamePath(user_save_path_browsed) -- return 
+		(
+			user_save_path_browsed = substituteString user_save_path_browsed "*.gif" "" --return filename of gif without ".gif" extension
+			
+			user_save_path_browsed += ".gif"
+			
+			/* UPDATE UI EDIT TEXT */ 
+			DIALOG_GifRecorder.ET_filename.text = getFilenameFile( user_save_path_browsed )
+			
+			/* UPDATE PATHS */ 
+			this.gif_filename = filenameFromPath( user_save_path_browsed )
+			
+			this.user_save_path = getFilenamePath(user_save_path_browsed) -- return
+			
+			this.setGifPaths()
+		)
+		--format "user_save_path: %\n" user_save_path
+			
 	),
 	
 	/** Remove empty dir
 	 */
-	function _cancelBrowse save_dir =
+	function _cancelBrowse =
 	(
-		if (getFiles ( save_dir + "\*.*" )).count == 0 then
-			HiddenDOSCommand ( "rmDir \"" + save_dir + "\""  )
+		if (getFiles ( gif_final_path + "\*.*" )).count == 0 then
+			HiddenDOSCommand ( "rmDir \"" + gif_final_path + "\""  )
 		
 		return false
 	),
 	
 	/** Generate gif
 	 */
-	function generateGif =
+	function generateGif open_in_viewer:false =
 	(
-		format "\n"; print "GifRecorder_v.generateGif()"
-		this._setGifPaths()
-
+		--format "\n"; print "GifRecorder_v.generateGif()"
+		/** Combine frames to gif
+		 */
+		function combineFramesToGif =
+		(
+			--format "\n"; print "GifRecorder_v.combineFramesToGif()"
+			delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as float * 100) 
+			
+			--format "DELAY OF FRAMES: %s\n" delay
+			
+			cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+			
+			--print ("GifRecorder.combineFramesToGif: "+cmd)
+			
+			DOSCommand cmd
+		)
+		
 		this.saveFrames()
 
-		this.combineFramesToGif()
+		combineFramesToGif()
 		
-		--DOSCommand ("start \"\" \""+gif_temp_path+"\"")
-		--DOSCommand ("start \"\" \""+gif_temp_path+"\"")
-		DOSCommand ("\""+gif_temp_path+"\"")
+		if open_in_viewer then
+			DOSCommand ("start \"\" \""+gif_temp_path+"\"")
 	),
 	
 
@@ -268,21 +292,14 @@ struct GifRecorder_v
 
 		Photoshop_exe = getPhotoshopPath()
 		
-		format "Photoshop_exe: %\n" Photoshop_exe
-		this._setGifPaths()
-
-		gif_path = if gif_final_path != undefined  and doesFileExist gif_final_path then gif_final_path else gif_temp_path
-		
 		if gif_final_path == undefined then
 			if this._browseGifSavePath() == undefined then
-				this._cancelBrowse(save_dir) -- cancel save if getSaveFileName was canceled
+				this._cancelBrowse() -- cancel save if getSaveFileName was canceled
 		
-		
-		if not doesFileExist gif_final_path then
-			this.generateGif()
+		this.saveGifFile()
 
 				
-		if (ps_existis = doesFileExist Photoshop_exe )then
+		if not (ps_existis = doesFileExist Photoshop_exe )then
 		(
 			format "PATH TO PHOTOSHOP DOES NOT EXISTS\n\nPLEAS EDIT\n\nViltools->Options->Photoshop path\n\nCURRENT PATH: %\n" Photoshop_exe
 		
@@ -302,46 +319,46 @@ struct GifRecorder_v
 			DOSCommand ("start \"\" \"" +	Photoshop_exe + "\" /open \"" +	gif_final_path +	"\"" )
 		)
 
-		
 	),
 
-	/** Save gif
+	/** SAVE FRAMES OF GIF 
 	 */
 	function saveFrames =
 	(
-		format "\n"; print "GifRecorder_v.saveFrames()"
-		format "temp_dir: %\n" temp_dir
+		--format "\n"; print "GifRecorder_v.saveFrames()"
 		
-		--makeDir maxfile_subdir  all:true
-		makeDir temp_dir all:true
+		if doesFileExist temp_dir then
+			this._clearTempDir()
+		else
+			makeDir temp_dir all:true
 		
-		this._clearTempDir()
+		suffix_length = ( frames.count as string ).count
 		
 		/* SAVE FRAMES */ 
 		for i = 1 to frames.count do 
 		(
 			frame = frames[i]
 			
-			frame.filename = temp_dir +"\\frame-" + i as string + ".jpg" --this will be the filename
+			suffix = i as string
+			
+			if suffix_length > suffix.count then
+				for i = 1 to suffix_length - suffix.count do
+					suffix = "0" + suffix
+			
+			frame.filename = temp_dir +"\\frame-" + suffix + ".jpg" --this will be the filename
 			
 			save frame
+
 			viewports
-			--free frame
 		)
-		
 	),
 	
 	/** Open dir
 	 */
 	function openDir =
 	(
-		format "\n"; print "GifRecorder_v.openDir()"
-		this._setGifPaths()
-
-		
-		gif_path = if gif_final_path != undefined  and doesFileExist gif_final_path then gif_final_path else gif_temp_path
-		
-		gif_dir = getFilenamePath(gif_path)
+		--format "\n"; print "GifRecorder_v.openDir()"
+		gif_dir = getFilenamePath(gif_final_path)
 
 		ShellLaunch  gif_dir ""
 		--ShellLaunch  maxfile_subdir ""
@@ -351,20 +368,20 @@ struct GifRecorder_v
 	 */
 	function showFrameMenu =
 	(
-		format "\n"; print "GifRecorder_v.showFrameMenu()"
+		--format "\n"; print "GifRecorder_v.showFrameMenu()"
 		frame = this._getCurrentFrame()
 
 		Menu = RcMenu_v name:"FrameMenu"
 		
-		Menu.item	"Remove Frame"	"GifRecorder.removeFrame quiet:false"
+		Menu.item	"Remove Frame"	"GIF_RECORDER.removeFrame quiet:false"
 		
 		
 		if frame < frames.count then
-			Menu.item	"Remove Frames Right"	"GifRecorder.removeFrame quiet:false direction:#RIGHT"
+			Menu.item	"Remove Frames Right"	"GIF_RECORDER.removeFrame quiet:false direction:#RIGHT"
 		
 		
 		if frame > 1 then
-			Menu.item	"Remove Frames Left"	"GifRecorder.removeFrame quiet:false direction:#LEFT"
+			Menu.item	"Remove Frames Left"	"GIF_RECORDER.removeFrame quiet:false direction:#LEFT"
 		
 		
 		popUpMenu (Menu.create())
@@ -408,12 +425,12 @@ struct GifRecorder_v
 		(
 			if direction == unsupplied then
 			(
-				show_frame = if frames[frame + 1] != undefined then frame + 1 else if frame > 1 then frame - 1 else 1
+				--show_frame = if frames[frame + 1] != undefined then frame + 1 else if frame > 1 then frame - 1 else 1
 	
 				--if show_frame != undefined then 
-					this.showFrame (show_frame)
+				deleteItem frames current_frame
 				
-				deleteItem frames frame
+				this.showFrame (current_frame)
 				
 				this.updateSliderRange -1
 			)
@@ -446,16 +463,16 @@ struct GifRecorder_v
 	 */
 	function showFrame frame =
 	(
-		format "\n"; print "GifRecorder_v.showFrame()"
-		format "frame: %\n" frame
+		--format "\n"; print "GifRecorder_v.showFrame()"
+		--format "frame: %\n" frame
 		--format "frames: %\n" frames
 		--format "preview_image: %\n" frames[frame]
 		
 		--preview_image = if (frame_bitmap = frames[frame]) != undefined then frame_bitmap else undefined
 		--format "preview_image: %\n" preview_image
-		if (preview_image = frames[frame]) != undefined then
+		if frame > 0 and (preview_image = frames[frame]) != undefined then
 		(
-			format "preview_image: %\n" preview_image
+			--format "preview_image: %\n" preview_image
 			background_img = bitmap preview_size.x preview_size.y color:(if recording then red else ( color 40 40 40  ) )
 			
 			pasteBitmap preview_image background_img [ 0, 0 ] [ border_width, border_width ]	--src dest
@@ -497,39 +514,6 @@ struct GifRecorder_v
 		_slider.ticks   += val
 	),
 	
---	/** Set preview size
---	 */
---	function setPreviewWindowSize =
---	(
---		format "\n"; print "GifRecorder_v.setPreviewWindowSize()"
---		format "preview_size: %\n" preview_size
---		--width  = screenshot.width
---		--height = screenshot.height
---		--format "DIALOG_GifRecorder.CBTN_record_indicator: %\n" DIALOG_GifRecorder.CBTN_record_indicator
---		/* SLIDER */ 
---		--if width > 420 then
---		--DIALOG_GifRecorder.SLIDER_frames.width	= width 
-----
---		/* PREVIEW BUTTON */ 
---		--DIALOG_GifRecorder.IT_preview.width	= width
---		--DIALOG_GifRecorder.IT_preview.height	= height
---		
---		--DIALOG_GifRecorder.IT_preview.pos.y	-= preview_size.y
---		
---		DIALOG_GifRecorder.IT_preview.width	= preview_size.x
---		DIALOG_GifRecorder.IT_preview.height	= preview_size.y
---		
---		DIALOG_GifRecorder.CBTN_record_indicator.width	= preview_size.x + 10
---		DIALOG_GifRecorder.CBTN_record_indicator.height	= (preview_size.y + 10) as integer
---		
---		/* DIALOG */ 
---		--if width > 420 then
---		DIALOG_GifRecorder.width	= preview_size.x + 32
---		DIALOG_GifRecorder.height	= preview_size.y + 128
---		
---	),
-
-	
 	/** Create camera
 	 */
 	function _saveCamera =
@@ -537,6 +521,9 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder_v._saveCamera()"
 		with redraw off
 		(
+			_selection = selection as Array
+
+			
 			/* SAVE DATA OF CURRENT VIEWPORT */ 
 			record_viewport = viewport.activeViewport
 	
@@ -548,7 +535,9 @@ struct GifRecorder_v
 			viewport.setType #view_persp_user
 	
 			macros.run "Lights and Cameras" "StandardCamera_CreateFromView"
-		
+			
+			select  _selection -- reselect after creation of camera 
+			
 			record_camera = cameras[cameras.count]
 			
 			/* SAVE CAMERA TRANSFORM */ 
@@ -558,12 +547,76 @@ struct GifRecorder_v
 			
 			/* RESTORE VIEW */ 
 			this._restoreViewport()
+			
 		)
 				
 		redrawViews()
 	),
 	
+
+	/** Set paths
+	 */
+	function setGifPaths =
+	(
+		--format "\n"
+		--format "\n"; print "GifRecorder_v.setGifPaths()"
+		/** Get gif path
+		 */
+		function getGifTempPath =
+		(
+			--format "\n"; print "GifRecorder_v._getGifPath()"
+			gif_path = temp_dir + "/" + gif_filename
+			
+			substituteString gif_path "/" "\\" --return
+		)
+			/** Get gif path
+		 */
+		function getGifSavePath temp_file:false =
+		(
+			--format "\n"; print "GifRecorder_v.getGifSavePath()"
+			used_path = if user_save_path != undefined then user_save_path else maxfile_subdir
+
+			file_path = used_path + "/" + gif_filename
+			
+			substituteString file_path "/" "\\" --return
+		)
+		
+		/** Set filename
+		 */
+		function setFilename =
+		(
+			--format "\n"; print "GifRecorder_v._setFilename()"
+			/** Get filename from edit text input
+			  * 
+			  * @return string|undefined 
+			 */
+			function getFilenameFromEditText =
+			(
+				--format "\n"; print "GifRecorder_v._getFilename()"
+				
+				user_basename = DIALOG_GifRecorder.ET_filename.text
+				
+				user_basename_is_empty = (( dotNetClass "System.Text.RegularExpressions.RegEx").match user_basename "^\s+$|^$" ).success
+		
+				if not user_basename_is_empty then
+					substituteString user_basename "*.gif" "" --return filename of gif without ".gif" extension
+			)
+			
+			gif_basename  = if (user_basename = getFilenameFromEditText()) != undefined  then user_basename else getFilenameFile( maxFileName )
+			
+			this.gif_filename = gif_basename + ".gif"
+		)
+
+		setFilename()
+		
+		gif_temp_path  = getGifTempPath()
+		gif_final_path = getGifSavePath()
+		--format "gif_temp_path: %\n" gif_temp_path
+		--format "gif_final_path: %\n" gif_final_path
+	),
+
 	private
+	
 	
 	/** Clear temp dir
 	 */
@@ -574,26 +627,6 @@ struct GifRecorder_v
 			deleteFile file
 	),
 
-	/** Combine frames to gif
-	 */
-	function combineFramesToGif =
-	(
-		--format "\n"; print "GifRecorder_v.combineFramesToGif()"
-		--format "gif_file: %\n" gif_file
-		--print("cd \""+temp_dir+"\"; magick -delay 100 -loop 0 *.jpg animated.gif")
-		--DOSCommand ("cd \""+temp_dir+"\" & magick -delay 300 -loop 0 *.jpg animated.gif")
-		
-		--delay = DIALOG_GifRecorder.DDL_delay.selection
-
-		delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as integer * 100) as integer
-		
-		format "DELAY: %\n" delay
-		
-		print      ("cd \""+temp_dir+"\" & magick -delay "+delay as string +" -loop 0 *.jpg \""+gif_filename+"\"")
-		DOSCommand ("cd \""+temp_dir+"\" & magick -delay "+delay as string +" -loop 0 *.jpg \""+gif_filename+"\"")
-		--DOSCommand ("start \"\" " + "cd \""+temp_dir+"\"; magick -delay 1000 -loop 0 *.jpg animated.gif")
-	),
-	
 	/** Crop safe frame
 	 */
 	function _cropSafeFrame screenshot =
@@ -714,65 +747,6 @@ struct GifRecorder_v
 	),
 
 
-	/** Set paths
-	 */
-	function _setGifPaths =
-	(
-		--format "\n"; print "GifRecorder_v._setGifPaths()"
-		/** Get gif path
-		 */
-		function getGifTempPath =
-		(
-			--format "\n"; print "GifRecorder_v._getGifPath()"
-			
-			gif_path = temp_dir + "/" + gif_filename
-			
-			substituteString gif_path "/" "\\" --return
-		)
-			/** Get gif path
-		 */
-		function getGifSavePath temp_file:false =
-		(
-			--format "\n"; print "GifRecorder_v._getGifPath()"
-	
-			used_path = if user_save_path != undefined then user_save_path else maxfile_subdir
-			
-			gif_path = used_path + "/" + gif_filename
-			
-			substituteString gif_path "/" "\\" --return
-		)
-		
-		/** Set filename
-		 */
-		function setFilename =
-		(
-			--format "\n"; print "GifRecorder_v._setFilename()"
-			/** Get filename from edit text input
-			  * 
-			  * @return string|undefined 
-			 */
-			function getFilenameFromEditText =
-			(
-				--format "\n"; print "GifRecorder_v._getFilename()"
-				
-				user_basename = DIALOG_GifRecorder.ET_filename.text
-				
-				user_basename_is_empty = (( dotNetClass "System.Text.RegularExpressions.RegEx").match user_basename "^\s+$|^$" ).success
-		
-				if not user_basename_is_empty then
-					substituteString user_basename "*.gif" "" --return filename of gif without ".gif" extension
-			)
-			
-			gif_basename  = if (user_basename = getFilenameFromEditText()) != undefined  then user_basename else getFilenameFile( maxFileName )
-			
-			this.gif_filename = gif_basename + ".gif"
-		)
-
-		setFilename()
-		
-		gif_temp_path  = getGifTempPath()
-		gif_final_path = getGifSavePath()
-	),
 	
 	/** Init screenshot size
 	 */
@@ -782,7 +756,7 @@ struct GifRecorder_v
 						
 		screenshot = this._cropSafeFrame(gw.getViewportDib())
 
-		display_info = (dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
+		display_info = ( dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
 		
 		if screenshot.width > display_info.Width / 3 or screenshot.height > display_info.Height / 2  then
 		(
@@ -810,10 +784,13 @@ struct GifRecorder_v
 		--format "\n"; print "GifRecorder.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
-
+		--format "selection: %\n" ( selection  as Array )
 		this._saveCamera()
-		
+		--format "selection: %\n" ( selection  as Array )
+
 		this._initScreenshotSize()
+		--format "selection: %\n" ( selection  as Array )
+		this.setGifPaths()
 	)
 
 )

@@ -1,11 +1,13 @@
 global DIALOG_GifRecorder
-global GIF_RECORDER
+
+if GIF_RECORDER == undefined then 
+	global GIF_RECORDER
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/createGifRecorderDialog.ms" )	--"./Lib/GifRecorder/createGifRecorderDialog.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/GifRecorder.ms" )	--"./Lib/GifRecorder/GifRecorder.ms"
 
-filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/grabFrameTimer.ms" )	--"./Lib/GifRecorder/grabFrameTimer.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/grabFrameTimer.ms" )	--"./Lib/GifRecorder/grabFrameTimer.ms"
 
 /** https://imagemagick.org/script/download.php
    
@@ -66,9 +68,12 @@ icon:	"across:2|height:32|menu:TRUE"
 (
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\90-SCREENSHOT.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\90-SCREENSHOT.mcr"
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		
-		if GIF_RECORDER == undefined then 
+		if GIF_RECORDER != undefined then
+			GIF_RECORDER.onCloseDialog()
+			
 			GIF_RECORDER = GifRecorder_v()
 		
 		createGifRecorderDialog()

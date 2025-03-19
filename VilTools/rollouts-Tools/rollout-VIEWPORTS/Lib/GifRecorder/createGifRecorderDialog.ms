@@ -25,10 +25,10 @@ function createGifRecorderDialog =
 	--rec_button_highlight_color = ( color 120 0 50 )
 	rec_button_highlight_color = red
 	
-	--frame_delays = #( 0.1, 0.25, 0.5 )
-	frame_delays = #( 0.5 )
+	frame_delays = #( 0.1, 0.25, 0.5, 0.75, 1, 2, 3, 5, 7 )
+	--frame_delays = #( 0.5 )
 	
-	for i = 1 to 10 do append frame_delays i
+	--for i = 1 to 10 do append frame_delays i
 	
 	frame_delays = for delay in frame_delays collect delay as string
 	
@@ -58,15 +58,15 @@ function createGifRecorderDialog =
 	--_GroupBox_gif = _Controls.control #GroupBox "CONTROLS" height:48 across:2 align:#LEFT orient:#HORIZONTAL
 
     --btn_record = _Controls.control #CHECKBUTTON	" ⬣ R E C O R D" across:4 width:128 height:64 offset:[ 0, 0 ] ini:false checked:true highlightColor:rec_button_highlight_color --groupbox:_GroupBox_gif.caption --autorun:true
-    btn_save   = _Controls.control #BUTTON "Save Gif" across:4 width:128 height:64 offset:[ -48, 0 ] --groupbox:_GroupBox_gif.caption
+    btn_save   = _Controls.control #BUTTON "Save Gif" across:4 width:128 height:64 offset:[ -24, 0 ] --groupbox:_GroupBox_gif.caption
 	
     btn_photoshop = _Controls.control #BUTTON "Open in Photoshop"	across:4 width:128 height:64 offset:[ -96, 0 ] --groupbox:_GroupBox_gif.caption
 	
 	--_GroupBox = _Controls.control #GroupBox "[save options]" width:256 height:48 across:4 align:#right offset:[ -64, 0 ]
 	
-	delay = _Controls.control #DROPDOWNLIST "Delay" id:#DDL_delay across:4 width:48 items:frame_delays offset:[ 112, 0 ] --groupbox:_GroupBox.caption
+	filename = _Controls.control #EDITTEXT "Filename" across:4  width:256 offset:[ -96, 20 ] --groupbox:_GroupBox.caption
 	
-	filename = _Controls.control #EDITTEXT "Filename" across:4  width:256 offset:[ 0, 20 ] --groupbox:_GroupBox.caption
+	delay = _Controls.control #DROPDOWNLIST "Delay" id:#DDL_delay across:4 width:48 items:frame_delays offset:[ -24, 0 ] --groupbox:_GroupBox.caption
 
 
 	
@@ -76,26 +76,27 @@ function createGifRecorderDialog =
 
 
     /*------ SLIDER ------*/
-    _slider = _Controls.control #SLIDER "Frames" \
-                    id:	#SLIDER_frames	\
-                    range:	[1, 1, 0]	\
-                    type:	#INTEGER	\
-                    params:	#(#orient, #horizontal  )	\
-                    ticks:	0	\
-                    width:	min_size.x 	\
-                    height:	24	\
-                    across:	1	\
-                    offset:	[ -6, -4 ]	\
-                    ini:	false
+    _slider = _Controls.control #SLIDER "[Frames]" \
+                    id:	 	#SLIDER_frames \
+                    range:  	[1, 1, 1] \
+                    type:   	#INTEGER \
+                    params: 	#(#orient, #horizontal  ) \
+                    ticks: 		0 \
+                    width:	 	min_size.x  \
+                    across: 	1 \
+                    height: 	64 \
+                    offset: 	[ 0, 4 ] \
+                    align: 		#CENTER \
+                    ini: 		false
 
-	
+ 
 	--btn_preview_rec = _Controls.control #CHECKBUTTON	"" id:"CBTN_record"	across:1 width:(min_size.x + 10 ) height:1 ini:false checked:true highlightColor:rec_button_highlight_color --groupbox:_GroupBox_gif.caption --autorun:true
 	--btn_preview_rec = _Controls.control #BITMAP "" id:"CBTN_record"	across:1 value:rec_button_highlight_color --groupbox:_GroupBox_gif.caption --autorun:true
 	--btn_preview_rec = _Controls.Control #IMGTAG "" id:"CBTN_record_indicator" color:red width:min_size.x height:1 across:1
 
 	
 	/* PREVIEW WINDOW */ 
-	img_preview = _Controls.control #IMGTAG "PREVIEW " across:1  params:	#(#STYLE, #bmp_stretch  /*#bmp_center*/ ) width:min_size.x height:min_size.y -- offset:[ -4, -4 ] tooltip:tooltip_btn
+    img_preview = _Controls.control #IMGTAG "PREVIEW" across:1 params: #(#STYLE, #bmp_stretch  /*#bmp_center*/ ) width:min_size.x height:min_size.y offset:[ 0, 8 ] --tooltip:tooltip_btn
 
 	
 	/*------------------------------------------------------------------------------
@@ -104,9 +105,9 @@ function createGifRecorderDialog =
 
 
 	/* PREVIEW */ 
-	img_preview.Event #CLICK "if GIF_RECORDER.recording then GIF_RECORDER.stopRecording() else GIF_RECORDER.startRecording()" tooltip:"START \ STOP RECORDING"
+	img_preview.Event #CLICK "if not keyboard.controlPressed then (if GIF_RECORDER.recording then GIF_RECORDER.stopRecording() else GIF_RECORDER.startRecording())" tooltip:"START \ STOP RECORDING"
 	img_preview.Event #RIGHTCLICK "GIF_RECORDER.showFrameMenu()" tooltip:"Show Menu"
-	img_preview.Event #DBLCLICK   "if keyboard.controlPressed then GIF_RECORDER.generateGif()" tooltip:" + CTRL: Show Gif Preview"
+	img_preview.Event #DBLCLICK   "if keyboard.controlPressed then GIF_RECORDER.generateGif open_in_viewer:true" tooltip:" + CTRL: Show Gif Preview"
 	
 	
 	/* SLIDER */ 
@@ -116,18 +117,19 @@ function createGifRecorderDialog =
 	
 	/*------ BUTTONS ------*/
 	/* save file or open dir */ 
-	btn_save.Event #PRESSED    "if keyboard.controlPressed then GIF_RECORDER.openDir() else GIF_RECORDER.saveGifFile browse:false" tooltip:""
+	btn_save.Event #PRESSED    "if keyboard.controlPressed then GIF_RECORDER.openDir() else GIF_RECORDER.saveGifFile browse:false" tooltip:"SAVE GIF\n\nLMB+CTRL: Open Dir"
 	/* browse file */ 
-	btn_save.Event #RIGHTCLICK "GIF_RECORDER.saveGifFile browse:true" tooltip:""
+	btn_save.Event #RIGHTCLICK "GIF_RECORDER.saveGifFile browse:true" tooltip:"BROWSE PATH"
 	
-	
+	/* FILENAME */ 
+	filename.Event #CHANGED     "GIF_RECORDER.setGifPaths()"
 	--btn_record.Event #CHANGED   "if val == 1 then GIF_RECORDER.startRecording() else GIF_RECORDER.stopRecording()" tooltip:""
 	
 	btn_photoshop.Event #PRESSED   "GIF_RECORDER.openInPhotoshop()" tooltip:""
 	
 	/* DIALOG EVENTS */ 
 	Dialog.Events.add #OPEN   "GIF_RECORDER.startRecording()" tooltip:""
-	Dialog.Events.add #CLOSE   "GIF_RECORDER.onCloseDialog()" tooltip:""
+	--Dialog.Events.add #CLOSE   "GIF_RECORDER.onCloseDialog()" tooltip:""
 
 	
 	/*------------------------------------------------------------------------------
