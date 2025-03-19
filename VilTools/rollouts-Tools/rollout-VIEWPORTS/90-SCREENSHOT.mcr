@@ -1,5 +1,5 @@
 global DIALOG_GifRecorder
-global GifRecorder
+global GIF_RECORDER
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/createGifRecorderDialog.ms" )	--"./Lib/GifRecorder/createGifRecorderDialog.ms"
 
@@ -68,7 +68,8 @@ icon:	"across:2|height:32|menu:TRUE"
 	(
 		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\90-SCREENSHOT.mcr"
 		
-		GifRecorder = GifRecorder_v()
+		if GIF_RECORDER == undefined then 
+			GIF_RECORDER = GifRecorder_v()
 		
 		createGifRecorderDialog()
 	)

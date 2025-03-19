@@ -18,15 +18,16 @@ buttontext:	"[Photoshop exe]"
 toolTip:	"Browse path to Photoshop.exe"
 icon:	"control:browsePath|mode:#getOpenFileName|across:1"
 (
-	format "EventFired	= % \n" EventFired
+	--format "EventFired	= % \n" EventFired
 
-	if EventFired.val != "" then
-		if not matchPattern EventFired.val pattern:"*photoshop.exe*" then
-		(
-			messageBox ("This is not path to Photoshop.exe\n\n"+EventFired.val) title:"WRONG PATH TO PHOTOSHOP"  beep:true
-
-			ROLLOUT_options.BP_photoshop_exe.text = ""
-
-			ROLLOUT_options.BP_photoshop_exe.tooltip = "Browse path to Photoshop.exe"
-		)
+	on execute do
+		if EventFired.val != "" then
+			if not matchPattern EventFired.val pattern:"*photoshop.exe*" then
+			(
+				messageBox ("This is not path to Photoshop.exe\n\n"+EventFired.val) title:"WRONG PATH TO PHOTOSHOP"  beep:true
+	
+				ROLLOUT_options.BP_photoshop_exe.text = ""
+	
+				ROLLOUT_options.BP_photoshop_exe.tooltip = "Browse path to Photoshop.exe"
+			)
 )
