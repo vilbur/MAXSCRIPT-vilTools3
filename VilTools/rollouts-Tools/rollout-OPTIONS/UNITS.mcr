@@ -4,6 +4,7 @@ macroscript	_options_units
 category:	"Units"
 buttontext:	"Set Custom Units"
 tooltip:	"Set Custom Display Units\n\n1|10 millimeters"
+icon:	"ACROSS:2"
 (
 	on execute do
 	(
@@ -31,4 +32,27 @@ tooltip:	"Set Custom Display Units\n\n1|10 millimeters"
 
 		format "1 CUSTOM UNIT == % \n" ( unit_name )
 	)
+)
+
+
+/*
+	"./../../../CallBacks/filePostOpen/checkWorldUnits.ms"
+*/ 
+macroscript	_options_units_check_on_file_open
+category:	"_3D-Print"
+buttontext:	"CHECK UNITS ON FILE OPEN"
+tooltip:	"_options_units"
+icon:	"ACROSS:2|control:checkbox|AUTORUN:true"
+(
+	/* https://help.autodesk.com/view/MAXDEV/2021/ENU/?guid=GUID-5A4580C6-B5CF-12104-898B-9313D1AAECD4 */
+	--on isEnabled return selection.count > 0
+
+	on execute do
+	(
+		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then 
+			CALLBACKMANAGER.start "checkWorldUnits"
+		else
+			CALLBACKMANAGER.kill "checkWorldUnits"
+	)
+	
 )

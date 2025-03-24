@@ -25,6 +25,5 @@ function checkWorldUnits =
 	
 	if findItem #(#Inches, #Feet, #Miles) units.SystemType > 0 then 
 		messageBox ( "System unit is set to "+ toUpper(units.SystemType as string) + "\n\nUnreal Engine may has problem with scale" ) title:"IMPERIAL UNITS WARNING"  beep:false
-
 	
 )

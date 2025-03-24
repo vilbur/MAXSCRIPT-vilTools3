@@ -21,7 +21,7 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("L A Y O U T")
 
-	for layout in #(#layout_restore_layout_4, #layout_restore_layout_2v, #layout_restore_layout_2h, #layout_restore_layout_3vl, #layout_restore_layout_4vl  ) do
+	for layout in #(#layout_restore_layout_4, #layout_restore_layout_2v, #layout_restore_layout_2h, #layout_restore_layout_3vl, #layout_restore_layout_3ht, #layout_restore_layout_4vl  ) do
 		QuadMenu.addItem ("_Viewports-Layout") ( layout as string )
 )
 

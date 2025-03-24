@@ -5,5 +5,11 @@ toolTip:	"Open vilTools3"
 (
 -- 	filein @"$userscripts\vilTools3\vilTools3-import-scripts.ms"
 	--filein @"$userscripts\vilTools3\includes.ms"
-	filein @"$userscripts\MAXSCRIPT-vilTools3\vilTools3.ms"
+	
+	if DIALOG_viltools != undefined and not keyboard.controlPressed then 
+		VILTOOLS.create()
+
+	else
+		filein @"$userscripts\MAXSCRIPT-vilTools3\vilTools3.ms"
+	
 )

@@ -37,14 +37,15 @@ function createGifRecorderDialog =
 		DIALOG
 	--------------------------------------------------------------------------------*/
 	min_size = GIF_RECORDER.preview_size
-	--min_size = [( getViewSize()).x, -1 ]
-	--min_size = getViewSize()
-	--min_size =  getViewSize()
-	--
+	
+	preview_size = copy min_size
+	
 	if min_size.x < 420 then
 		min_size.x = 420
 
-	
+	min_size.x += 24
+	min_size.y += 128
+
     Dialog 	    = Dialog_v "GIF RECORDER" id:#DIALOG_GifRecorder width:min_size.x min_size:min_size ini:(getSourceFileName()) --min_size:[48, -1] max_size:[48, -1]
     --Dialog 	    = Dialog_v "GIF RECORDER" id:#DIALOG_GifRecorder width:1024 --min_size:[48, -1] max_size:[48, -1]
 
@@ -58,9 +59,9 @@ function createGifRecorderDialog =
 	--_GroupBox_gif = _Controls.control #GroupBox "CONTROLS" height:48 across:2 align:#LEFT orient:#HORIZONTAL
 
     --btn_record = _Controls.control #CHECKBUTTON	" ⬣ R E C O R D" across:4 width:128 height:64 offset:[ 0, 0 ] ini:false checked:true highlightColor:rec_button_highlight_color --groupbox:_GroupBox_gif.caption --autorun:true
-    btn_save   = _Controls.control #BUTTON "Save Gif" across:4 width:128 height:64 offset:[ -24, 0 ] --groupbox:_GroupBox_gif.caption
+    btn_save   = _Controls.control #BUTTON "Save Gif" across:4 width:128 height:48 offset:[ -24, 4 ] --groupbox:_GroupBox_gif.caption
 	
-    btn_photoshop = _Controls.control #BUTTON "Open in Photoshop"	across:4 width:128 height:64 offset:[ -96, 0 ] --groupbox:_GroupBox_gif.caption
+    btn_photoshop = _Controls.control #BUTTON "Open in Photoshop"	across:4 width:128 height:48 offset:[ -96, 4 ] --groupbox:_GroupBox_gif.caption
 	
 	--_GroupBox = _Controls.control #GroupBox "[save options]" width:256 height:48 across:4 align:#right offset:[ -64, 0 ]
 	
@@ -82,7 +83,7 @@ function createGifRecorderDialog =
                     type:   	#INTEGER \
                     params: 	#(#orient, #horizontal  ) \
                     ticks: 		0 \
-                    width:	 	min_size.x  \
+                    width:	 	preview_size.x  \
                     across: 	1 \
                     height: 	64 \
                     offset: 	[ 0, 4 ] \
@@ -96,7 +97,7 @@ function createGifRecorderDialog =
 
 	
 	/* PREVIEW WINDOW */ 
-    img_preview = _Controls.control #IMGTAG "PREVIEW" across:1 params: #(#STYLE, #bmp_stretch  /*#bmp_center*/ ) width:min_size.x height:min_size.y offset:[ 0, 8 ] --tooltip:tooltip_btn
+    img_preview = _Controls.control #IMGTAG "PREVIEW" across:1 params: #(#STYLE, #bmp_stretch  /*#bmp_center*/ ) width:preview_size.x height:preview_size.y offset:[ 0, 8 ] --tooltip:tooltip_btn
 
 	
 	/*------------------------------------------------------------------------------
@@ -137,10 +138,11 @@ function createGifRecorderDialog =
 	--------------------------------------------------------------------------------*/
 	--Dialog.create()
 	--Dialog.create lockWidth:false
-	Dialog.create width:(min_size.x + 32 ) --height:(min_size.y + 128)
+	Dialog.create width:min_size.x height:min_size.y  lockWidth:true lockHeight:true
 	--Dialog.create width:(min_size.x ) height:(min_size.y )
 	--Dialog.create width:(min_size.x as integer ) height:(min_size.y as integer )
 
+	--Dialog.register()
 	--Dialog.dock #RIGHT
 
 	--GIF_RECORDER.setPreviewWindowSize()

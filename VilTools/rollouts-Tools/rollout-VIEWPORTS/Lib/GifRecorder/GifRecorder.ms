@@ -388,7 +388,7 @@ struct GifRecorder_v
 		
 	),
 
-	/** Remove frame
+	/** REMOVE FRAME
 	 */
 	function removeFrame direction: quiet:true =
 	(
@@ -459,21 +459,32 @@ struct GifRecorder_v
 	),
 	
 	
-	/** Show frame
+	/** SHOW FRAME
 	 */
 	function showFrame frame =
 	(
-		--format "\n"; print "GifRecorder_v.showFrame()"
-		--format "frame: %\n" frame
-		--format "frames: %\n" frames
-		--format "preview_image: %\n" frames[frame]
+		format "\n"; print "GifRecorder_v.showFrame()"
+		fn getSizeWithBorder size = size + (border_width * 2)
 		
-		--preview_image = if (frame_bitmap = frames[frame]) != undefined then frame_bitmap else undefined
-		--format "preview_image: %\n" preview_image
+
 		if frame > 0 and (preview_image = frames[frame]) != undefined then
 		(
-			--format "preview_image: %\n" preview_image
-			background_img = bitmap preview_size.x preview_size.y color:(if recording then red else ( color 40 40 40  ) )
+			format "preview_image: %\n" preview_image
+			background_img = bitmap (getSizeWithBorder preview_size.x) (getSizeWithBorder preview_size.y) color:( if recording then red else ( color 40 40 40  ) )
+			format "preview_image.width: %\n" preview_image.width
+			format "preview_size.x: %\n" preview_size.x
+			format "TEST: %\n" (preview_image.width > preview_size.x or preview_image.height > preview_size.y)
+			
+			if preview_image.width > preview_size.x or preview_image.height > preview_size.y then
+			(
+				downsized_image = bitmap preview_size.x preview_size.y  --the new bitmap size
+				
+				copy preview_image downsized_image
+				
+				preview_image = downsized_image
+				
+				--free downsized_image
+			)
 			
 			pasteBitmap preview_image background_img [ 0, 0 ] [ border_width, border_width ]	--src dest
 			
@@ -752,14 +763,20 @@ struct GifRecorder_v
 	 */
 	function _initScreenshotSize =
 	(
-		--format "\n"; print "GifRecorder_v._initScreenshotSize()"
+		format "\n"
+		format "\n"; print "GifRecorder_v._initScreenshotSize()"
 						
 		screenshot = this._cropSafeFrame(gw.getViewportDib())
 
 		display_info = ( dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
+		format "DISPLAY_INFO: %\n" display_info
+		format "screenshot.width:  %\n" screenshot.width
+		format "screenshot.height: %\n" screenshot.height
+		
 		
 		if screenshot.width > display_info.Width / 3 or screenshot.height > display_info.Height / 2  then
 		(
+			
 			preview_size.x = (screenshot.width  / 2 ) as integer
 			preview_size.y = (screenshot.height / 2 ) as integer
 		)
@@ -769,9 +786,9 @@ struct GifRecorder_v
 			preview_size.y = screenshot.height
 		)
 
-		preview_size.x += border_width * 2
-		preview_size.y += border_width * 2
-
+		--preview_size.x += border_width * 2
+		--preview_size.y += border_width * 2
+		format "PREVIEW_SIZE: %\n" preview_size
 		free screenshot
 		
 		--this.setPreviewWindowSize()
