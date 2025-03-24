@@ -6,7 +6,7 @@ macroscript	_options_install_menus
 category:	"_Options"
 buttontext:	"INSTALL Menus"
 tooltip:	"Install Menus and Quad menus for VilTools3"
-icon:	"MENU:true"
+icon:	"MENU:true|ACROSS:3"
 (
 
 	on execute do

@@ -9,6 +9,7 @@ function addQuad1 QuadMenu =
 	--FooMenu.removeItem()
 	--FooMenu.clearSeparators()
 
+	--Menu.moveItem ("ITEM") 1
 
 	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()
