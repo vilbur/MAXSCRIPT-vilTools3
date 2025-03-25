@@ -1,5 +1,5 @@
 /*
-
+	https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-3E389A4A-740A-4D64-888D-04A51EBA061A
 */ 
 macroscript	viewport_auto_quick_layout
 category:   "_Viewports-Layout"
@@ -7,7 +7,6 @@ buttontext:	"QUICK"
 tooltip:	"ctrl OR shift:  Split 3 viewports\n\nctrl AND shift: Split 4 viewports"
 icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size and ratio of viewport\n\nTOGGLE BETWEEN 2 and 4 views split"
 (
-	/* https://help.autodesk.com/view/MAXDEV/2021/ENU/?guid=GUID-5A4580C6-B5CF-12104-898B-9313D1AAECD4 */
 
 	/** Get size of maximized viewport
 	 */
@@ -51,6 +50,13 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 		layout_current = viewport.getLayout()
 		
 
+		if layout_current == #layout_1 then
+		(
+			(ViewportLayoutManager_v()).restoreLayout( #layout_4 )
+			
+			return true
+		)
+
 		--format "ctrl: %\n" ctrl
 		--format "shift: %\n" shift
 		/* GET SIZE OF VIEWPORT  */ 
@@ -74,22 +80,32 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 		--format "\n"
 		--format "TEST AND: %\n" (ctrl and shift)
 		--format "TEST OR:  %\n" (ctrl or shift)
-		num_of_splits = if shape_of_viewport != #SQUARE then
-			case of
+		num_of_splits = case of
 			(
 				( ctrl and shift ): 4
 				( ctrl or  shift ): 3
 				          default: 2 
 			)
-		else /* IF SQUARE */ 
-		(
-			display_info = ( dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
-			window_snapshot = windows.snapshot ( windows.getMAXHWND())
-			snapshot_width = window_snapshot.width
-			
-			if snapshot_width < (display_info.width * 0.7 ) then "1" else "4"
 		
-		)
+		--
+		--num_of_splits = if shape_of_viewport != #SQUARE then
+		--	case of
+		--	(
+		--		( ctrl and shift ): 4
+		--		( ctrl or  shift ): 3
+		--		          default: 2 
+		--	)
+		--else /* IF SQUARE */ 
+		--(
+		--	--display_info = ( dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
+		--	--window_snapshot = windows.snapshot ( windows.getMAXHWND())
+		--	--snapshot_width = window_snapshot.width
+		--	
+		--	--if snapshot_width < (display_info.width * 0.5 ) then 1 else 4
+		--	
+		--	4
+		--
+		--)
 		--format "NUM_OF_SPLITS: %\n" num_of_splits
 		split_direction = case shape_of_viewport of
 		(
@@ -97,7 +113,7 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 			(#HORIZONTAL):	"v"
 			(#SQUARE):	""
 		)
-		format "split_direction: %\n" split_direction
+		--format "split_direction: %\n" split_direction
 		
 		side_suffix = if ctrl or shift then
 			case shape_of_viewport of
@@ -117,16 +133,21 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 		
 		if layout_name == layout_current and split_direction == "v" and (num_of_splits == 2 or num_of_splits == 4) then
 		(
-			--num_of_splits = case num_of_splits of
-			--(
-			--	(2): 4
-			--	(4): 2
-			--	default: num_of_splits
-			--)
+			
 			num_of_splits = if num_of_splits == 2 then 4 else 2
 			--format "num_of_splits: %\n" num_of_splits
+			
+			
+			split_direction = case shape_of_viewport of
+				(
+					(#VERTICAL):	"h"
+					(#HORIZONTAL):	"v"
+					(#SQUARE):	""
+				)
+
 			if num_of_splits == 4 then split_direction = ""
 			--format "split_direction: %\n" split_direction
+			
 			layout_name = getLayoutName num_of_splits split_direction side_suffix
 			--layout_name = getLayoutName num_of_splits split_direction (if num_of_splits == 4 then "" else side_suffix)
 		--format "LAYOUT_NAME B: %\n" layout_name

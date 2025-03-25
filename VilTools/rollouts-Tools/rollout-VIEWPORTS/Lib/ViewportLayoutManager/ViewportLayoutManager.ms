@@ -10,6 +10,7 @@ struct ViewportLayoutManager_v
 
 	/* properties */
 	SceneLayouts = #(),
+	ini_file,
 
 	/* dependency */
 	/* reference */
@@ -36,70 +37,163 @@ struct ViewportLayoutManager_v
 	 */
 	function restoreLayout layout_name =
 	(
-		format "\n"; print "ViewData_v.restoreLayout()"
-
+		--format "\n"; print "ViewData_v.restoreLayout()"
+		
 		viewport.setLayout(layout_name)
 
 		ini_file = this._getIniFile( layout_name )
-
+		--format "doesFileExist ini_file: %\n" (doesFileExist ini_file)
+		
 		if not doesFileExist ini_file then
 			return false
 
-		for i = 1 to viewport.numViews do
+		for index = 1 to viewport.numViews do
+			this._configureViewport(index)
+			
+		--ViewPanelManager.SetSplitterBarPos
+	),
+
+	/** Restore split bars
+	 */
+	function restoreSplitBars =
+	(
+		format "\n"; print "ViewportLayoutManager_v.restoreSplitBars()"
+
+		/** Get view size
+		 */
+		function getViewportSize ViewportData x_y = ( getProperty ViewportData.view_size x_y ) --as integer
+
+		
+		local main_view
+		local splitter_position
+		
+
+		layout_name = viewport.getLayout()
+
+		ini_file = this._getIniFile( layout_name )
+		
+		views_num = viewport.numViews 
+
+		if not doesFileExist ini_file then
+			return false
+			
+		ViewportsData = for i = 1 to views_num collect this._loadIni(i)
+
+		split_dir  = (layout_name as string)[9] as name -- #V|#H
+		split_side = (layout_name as string)[10] as name -- #L|#R|#B|#T
+	
+		main_view = case of
 		(
-			ViewportData = this._loadIni (ini_file) (i)
+			(views_num == 2   ): 1
+			(split_side == #R ): 1
+			(split_side == #B ): 1
+			(split_side == #L ): views_num
+			(split_side == #T ): views_num
+		)
+		
+		other_views = for i = 1 to ViewportsData.count where i != main_view collect i
 
-			viewport.activeViewportEx i
+		
+		splitter_index = if ( views_num == 2 or views_num == 3 ) and split_dir == #V then 1 else 0
+		
+			
+		x_y = if split_dir == #H then #Y else #X
+		
 
-			viewport.SetType (ViewportData.type)
+		/* SET MAIN SPLITTER */
+		if viewport.numViews == 2 then
+		(
+			viewport_1 = getViewportSize ViewportsData[1] x_y 
+			viewport_2 = getViewportSize ViewportsData[2] x_y 
+			
+			splitter_position =  (viewport_1 / (viewport_2 + viewport_1))
 
-			viewport.SetRenderLevel(ViewportData.render_mode)
+		)
+		else
+		(
+			main_view_size  = getViewportSize ViewportsData[main_view] x_y 
+			
+			other_view_size = getViewportSize ViewportsData[other_views[1]] x_y
+			format "main_view_size: %\n" main_view_size
+			
+			splitter_position =  (other_view_size / (main_view_size + other_view_size))
+		)
+		
+		
 
-			view_type_split	= filterString ( ViewportData.type as string ) "_"
+		if split_side == #R then
+			splitter_position -= 1
+			
+		format "\n"
+		format "splitter_index: %\n" splitter_index
+		format "splitter_position: %\n" splitter_position
 
-			case view_type_split[view_type_split.count] as name of
+		
+		
+		format "SPLITTER_POSITION: %\n" splitter_position
+		ViewPanelManager.SetSplitterBarPos splitter_index (abs(splitter_position))
+	
+	),
+
+	private
+	
+	/** Configure viewport
+	 */
+	function _configureViewport index =
+	(
+		--format "\n"; print "ViewportLayoutManager_v._configureViewport()"
+		ViewportData = this._loadIni(index)
+
+		viewport.activeViewportEx index
+
+		viewport.SetType (ViewportData.type)
+
+		viewport.SetRenderLevel(ViewportData.render_mode)
+
+		view_type_split	= filterString ( ViewportData.type as string ) "_"
+		
+		
+		case view_type_split[view_type_split.count] as name of
+		(
+			#user:
 			(
-				#user:
+				viewport.setTM ViewportData.transform
+
+				if ViewportData.type == #view_persp_user then
 				(
-					viewport.setTM ViewportData.transform
+					viewport.SetFOV ViewportData.field_of_view
 
-					if ViewportData.type == #view_persp_user then
-					(
-						viewport.SetFOV ViewportData.field_of_view
-
-						viewport.SetFocalDistance ViewportData.focal_distance
-					)
-					else
-					(
-						viewport.ZoomToBounds off ViewportData.start_pos ViewportData.end_pos
-
-						viewport.zoom (ViewportData.field_of_view / (viewport.getFOV()))
-					)
+					viewport.SetFocalDistance ViewportData.focal_distance
 				)
-
-				#camera:
+				else
 				(
-					cams = for cam in cameras where cam.name == ViewportData.camera collect cam
+					viewport.ZoomToBounds off ViewportData.start_pos ViewportData.end_pos
 
-					if cams.count > 0 and isValidNode cams[1] and viewport.canSetToViewport cams[1] then
-						 viewport.setCamera cams[1]
-				)
-
-				default: -- ORTHO
-				(
-					viewport.ZoomToBounds off ( ViewportData.start_pos) ( ViewportData.end_pos )
-
-					viewport.zoom ((ViewportData.field_of_view) / ( viewport.getFOV()))
+					viewport.zoom (ViewportData.field_of_view / (viewport.getFOV()))
 				)
 			)
 
-			CompleteRedraw()
+			#camera:
+			(
+				cams = for cam in cameras where cam.name == ViewportData.camera collect cam
+
+				if cams.count > 0 and isValidNode cams[1] and viewport.canSetToViewport cams[1] then
+					 viewport.setCamera cams[1]
+			)
+
+			default: -- ORTHO
+			(
+				viewport.ZoomToBounds off ( ViewportData.start_pos) ( ViewportData.end_pos )
+
+				viewport.zoom ((ViewportData.field_of_view) / ( viewport.getFOV()))
+			)
 		)
 
+		CompleteRedraw()
 	),
-
-
-	private
+	
+	
+	
 
 	/** Collect viewport data
 	 */
@@ -139,7 +233,7 @@ struct ViewportLayoutManager_v
 
 	/** Load viewport data from ini
 	 */
-	function _loadIni ini_file index =
+	function _loadIni index =
 	(
 		--format "\n"; print "ViewportLayoutManager_v._loadIni()"
 		/** Convert ini value to valid data type
@@ -168,7 +262,7 @@ struct ViewportLayoutManager_v
 	function _getIniFile layout_name =
 	(
 		--format "\n"; print "ViewportSceneLayouts_v._getIniFile()"
-		getDir(#temp) + "/ViewportLayouts" + (this._getSceneName()) + "/" + (layout_name as string ) +".ini" --return
+		ini_file = getDir(#temp) + "/ViewportLayouts" + (this._getSceneName()) + "/" + (layout_name as string ) +".ini" --return
 	),
 
 	/** Get scene name
