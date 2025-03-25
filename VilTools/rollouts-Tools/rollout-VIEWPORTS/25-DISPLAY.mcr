@@ -1,85 +1,100 @@
+/** Toggle shade modes #REALISTIC|#SHADEDWIRE|#WIREFRAME
+  
+	 #WIREFRAME:
+		wire:	true
+		shade:	false
+		outline:	false
+	
+	 #SHADEDWIRE:
+		wire:	true
+		shade:	true
+		outline:	false
+		
+	 #SHADED:
+		wire:	false
+		shade:	true
+		outline:	true
+		
+	
+	execute:
+		toggleShadeModes #WIREFRAME
+		toggleShadeModes #SHADEDWIRE
+  
+ */
+function toggleShadeModes shade_mode index: =
+(
+	--format "\n"; print ".toggleShadeMode()"
+	
+	/** Toggle outline
+	 */
+	function toggleOutline state = (NitrousGraphicsManager.GetSelectionSetting()).SelectionOutlineEnabled = state
 
- /**
+		
+	/* GET VIEWPORTS TO SWITCH MODE */ 
+	viewports = if ( index ) != unsupplied then #(index) else for i = 1 to viewport.numViews collect i
+	
+	/* GET REFERENCE VIEWPORT */ 
+	if index == unsupplied then 
+		index = viewport.activeViewport
+
+	ViewportSettingsSource	= NitrousGraphicsManager.GetViewportSetting( index )
+	SelectionEffectImpl	= NitrousGraphicsManager.GetSelectionSetting()	
+
+	current_style = ViewportSettingsSource.VisualStyleMode
+
+	
+	
+	for index in viewports do
+	(
+		ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( index )
+		
+		/* SHADED MODE AS DEFAULT
+		*/ 	
+		ViewportSettings.VisualStyleMode = #REALISTIC
+	
+		if shade_mode == #WIREFRAME and current_style != #WIREFRAME then
+			ViewportSettings.VisualStyleMode = #WIREFRAME
+	
+		if shade_mode == #SHADEDWIRE then
+			ViewportSettings.ShowEdgedFacesEnabled = not ViewportSettings.ShowEdgedFacesEnabled
+	)
+	
+
+	/* ENABLE SLECTION OUTLINE IF NOT #WIREFRAME OR #SHADEDWIRE */ 
+	SelectionEffectImpl.SelectionOutlineEnabled =  ( ViewportSettingsSource.VisualStyleMode != #WIREFRAME and ViewportSettingsSource.ShowEdgedFacesEnabled == false)
+	
+	/* ENABLE PREVEW OUTLINE */ 
+    SelectionEffectImpl.PreviewOutlineEnabled = true
+)
+
+
+ /** TOGGLE WIREFRAME \ REALISTIC
  *
  */
-macroscript	viewport_wireframe_outline_toggle
+macroscript	viewport_wireframe_shade_toggle
 category:	"_Viewports-Setup"
-buttontext:	"Wire \ Outline"
-tooltip:	"Toggle Wireframe \ Outline"
+buttontext:	"Wire \ Shaded"
+tooltip:	"Toggle WIREFRAME \ SHADED in ALL VIEWPORTS"
 icon:	"ACROSS:2"
 (
 	on execute do
-		 for viewport_index = 1 to viewport.numViews do
-	(
-
-        --ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( viewport.activeViewport )
-        ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( viewport_index )
-        SelectionEffectImpl 	= NitrousGraphicsManager.GetSelectionSetting()
-
-        if ViewportSettings.VisualStyleMode == #REALISTIC then
-		(
-			ViewportSettings.VisualStyleMode = #WIREFRAME
-
-			SelectionEffectImpl.SelectionOutlineEnabled	= not ViewportSettings.ShowEdgedFacesEnabled
-			--SelectionEffectImpl.PreviewOutlineEnabled	= not ViewportSettings.ShowEdgedFacesEnabled
-			SelectionEffectImpl.PreviewOutlineEnabled	= true
-
-		)
-		else
-			ViewportSettings.VisualStyleMode = #REALISTIC
-
-
-	)
+		toggleShadeModes #WIREFRAME 
 )
 
-
-
-/**
+/** TOGGLE WIREFRAME \ REALISTIC
 *
 */
-macroscript	viewport_selection_bracets
+macroscript	viewport_wireframe_shade_toggle_current_viewport
 category:	"_Viewports-Setup"
-buttontext:	"Sel Brackets"
-tooltip:	"Toogle Selection Brackets"
-icon:	"MENU:true"
-(
-	current_state = (NitrousGraphicsManager.GetActiveViewportSetting()).ShowSelectionBracketsEnabled
-
-	 for i = 1 to viewport.numViews do
-		(NitrousGraphicsManager.GetViewportSetting i).ShowSelectionBracketsEnabled = not current_state
-
-)
-
-
- /**
- *
- */
-macroscript	viewport_shaded_outline_toggle
-category:	"_Viewports-Setup"
-buttontext:	"Shaded \ Outline"
-tooltip:	"Toggle Shaded \ Outline"
+buttontext:	"Wire \ Shaded"
+tooltip:	"Toggle WIREFRAME \ SHADED in ACTIVE VIEWPORT"
 (
 	on execute do
-	(
-
-        ViewportSettings	= NitrousGraphicsManager.GetViewportSetting( viewport.activeViewport )
-        SelectionEffectImpl 	= NitrousGraphicsManager.GetSelectionSetting()
-
-        if ViewportSettings.VisualStyleMode == #REALISTIC then
-		(
-			ViewportSettings.ShowEdgedFacesEnabled = not ViewportSettings.ShowEdgedFacesEnabled
-			SelectionEffectImpl.SelectionOutlineEnabled	= not ViewportSettings.ShowEdgedFacesEnabled
-
-		)
-		else
-			ViewportSettings.VisualStyleMode = #REALISTIC
-
-
-
-        --SelectionEffectImpl.PreviewOutlineEnabled	= not ViewportSettings.ShowEdgedFacesEnabled
-        SelectionEffectImpl.PreviewOutlineEnabled	= true
-    )
+		toggleShadeModes #WIREFRAME index:viewport.activeViewport
 )
+
+
+
 
 
 macroscript	viewport_show_face_index
@@ -143,3 +158,54 @@ toolTip:	"Show selected faces' index in the viewport"
 		updateToolbarbuttons()
 	)
 )
+
+
+
+
+
+/** TOGGLE SHADEDWIRE \ REALISTIC
+*
+*/
+macroscript	viewport_shade_shade_toggle
+category:	"_Viewports-Setup"
+buttontext:	"Shade \ Outline"
+tooltip:	"Toggle SHADEDWIRE \ SHADED in ALL VIEWPORTS"
+icon:	"ACROSS:2"
+(
+	on execute do
+		toggleShadeModes #SHADEDWIRE 
+)
+
+/** TOGGLE SHADEDWIRE \ REALISTIC
+*
+*/
+macroscript	viewport_shade_shade_toggle_current_viewport
+category:	"_Viewports-Setup"
+buttontext:	"Shade \ Outline"
+tooltip:	"Toggle SHADEDWIRE \ SHADED in ACTIVE VIEWPORT"
+(
+	on execute do
+	
+		toggleShadeModes #SHADEDWIRE index:viewport.activeViewport
+)
+
+
+
+
+
+/**
+*
+*/
+macroscript	viewport_selection_bracets
+category:	"_Viewports-Setup"
+buttontext:	"Sel Brackets"
+tooltip:	"Toogle Selection Brackets"
+icon:	"MENU:true"
+(
+	current_state = (NitrousGraphicsManager.GetActiveViewportSetting()).ShowSelectionBracketsEnabled
+
+	 for i = 1 to viewport.numViews do
+		(NitrousGraphicsManager.GetViewportSetting i).ShowSelectionBracketsEnabled = not current_state
+
+)
+
