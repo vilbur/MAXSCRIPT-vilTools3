@@ -30,34 +30,45 @@ struct ViewportLayoutManager_v
 	function resetCurrent =
 	(
 		--format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
-		this.restoreLayout ( viewport.getLayout() )
+		layout_name = viewport.getLayout()
+
+		this.restoreLayout ( layout_name )
+		
+		this.restoreSplitBars layout_name:layout_name
 	),
 
 	/** Restore Layout
 	 */
 	function restoreLayout layout_name =
 	(
-		--format "\n"; print "ViewData_v.restoreLayout()"
-		
+		format "\n"; print "ViewData_v.restoreLayout()"
+		format "layout_name: %\n" layout_name
+
 		viewport.setLayout(layout_name)
 
-		ini_file = this._getIniFile( layout_name )
+		this._setIniFile( layout_name )
 		--format "doesFileExist ini_file: %\n" (doesFileExist ini_file)
-		
+		format "ini_file: %\n" ini_file
+
 		if not doesFileExist ini_file then
 			return false
 
 		for index = 1 to viewport.numViews do
 			this._configureViewport(index)
-			
-		--ViewPanelManager.SetSplitterBarPos
+		
+		--sleep 1 
+		this.restoreSplitBars layout_name:layout_name
+		
+		CompleteRedraw()
 	),
 
 	/** Restore split bars
 	 */
-	function restoreSplitBars =
+	function restoreSplitBars layout_name: =
 	(
 		format "\n"; print "ViewportLayoutManager_v.restoreSplitBars()"
+		format "layout_name A: %\n" layout_name
+		format "ini_file: %\n" ini_file
 
 		/** Get view size
 		 */
@@ -68,72 +79,139 @@ struct ViewportLayoutManager_v
 		local splitter_position
 		
 
-		layout_name = viewport.getLayout()
-
-		ini_file = this._getIniFile( layout_name )
+		views_num = viewport.numViews
 		
-		views_num = viewport.numViews 
+		/* IN CASE THAT METHOD IS EXCECUTED ALONE */ 
+		if layout_name == unsupplied then
+		(
+			layout_name = viewport.getLayout()
+			format "layout_name: %\n" layout_name
+	
+			if ini_file == undefined then this._setIniFile( layout_name )
+			
+			
 
+		)
+		
 		if not doesFileExist ini_file then
 			return false
 			
+			
 		ViewportsData = for i = 1 to views_num collect this._loadIni(i)
 
-		split_dir  = (layout_name as string)[9] as name -- #V|#H
-		split_side = (layout_name as string)[10] as name -- #L|#R|#B|#T
-	
-		main_view = case of
-		(
-			(views_num == 2   ): 1
-			(split_side == #R ): 1
-			(split_side == #B ): 1
-			(split_side == #L ): views_num
-			(split_side == #T ): views_num
-		)
+		layout_name_str = layout_name as string
 		
-		other_views = for i = 1 to ViewportsData.count where i != main_view collect i
-
-		
-		splitter_index = if ( views_num == 2 or views_num == 3 ) and split_dir == #V then 1 else 0
-		
+		if layout_name_str.count >= 9 then
+			split_dir  = layout_name_str[9] as name -- #V|#H
 			
-		x_y = if split_dir == #H then #Y else #X
-		
+		if layout_name_str.count >= 10 then
+				split_side = layout_name_str[10] as name -- #L|#R|#B|#T
 
-		/* SET MAIN SPLITTER */
-		if viewport.numViews == 2 then
+			main_view = case of
+			(
+				(views_num == 2   ): 1
+				(layout_name == #layout_4 ): 1
+				
+				(split_side == #R ): 1
+				(split_side == #B ): 1
+				(split_side == #L ): views_num
+				(split_side == #T ): views_num
+			)
+			format "main_view: %\n" main_view
+			other_views = for i = 1 to ViewportsData.count where i != main_view collect i
+			format "other_views: %\n" other_views
+			format "\n"
+			
+			main_splitter = if ( views_num == 2 or views_num == 3 ) and split_dir == #V then 1 else 0
+			format "main_splitter: %\n" main_splitter
+			x_y = if split_dir == #H then #Y else #X
+			format "X_Y: %\n" x_y
+			x_y_flip = if x_y == #X then #Y else #X
+
+			/*------------------------------------------------------------------------------
+			
+				 SET MAIN SPLITTER
+			
+			--------------------------------------------------------------------------------*/
+			format "\nSET MAIN SPLITTER\n\n"
+			/* LAYOUT 2,4 */
+			if views_num == 2 or layout_name == #layout_4  then
+			(
+				other_view = if views_num == 2 then 2 else 3
+				format "other_view: %\n" other_view
+				x_or_Y = if views_num == 2 then x_y else x_y_flip 
+				
+				
+				viewport_1 = getViewportSize ViewportsData[1]          x_or_Y
+				viewport_2 = getViewportSize ViewportsData[other_view] x_or_Y
+				
+				splitter_position =  (viewport_1 / (viewport_2 + viewport_1))
+
+			)
+			else
+			(
+				main_view_size  = getViewportSize ViewportsData[main_view] x_y 
+				format "main_view_size: %\n" main_view_size
+				other_view_size = getViewportSize ViewportsData[other_views[1]] x_y
+				format "other_view_size: %\n" other_view_size
+				splitter_position =  (other_view_size / (main_view_size + other_view_size))
+				format "splitter_position: %\n" splitter_position
+			)
+	
+			if (views_num == 3 and split_side == #R) or ( views_num == 4 and split_side == #R ) then
+			--if (views_num == 3 and split_side == #R) then
+				splitter_position -= 1
+				
+			ViewPanelManager.SetSplitterBarPos main_splitter (abs(splitter_position))
+			
+	
+			/*------------------------------------------------------------------------------
+			
+				 SET OTHER SPLITTERS
+			
+			--------------------------------------------------------------------------------*/
+			
+			format "\n---------------------\nSET OTHER SPLITTERS\n\n"
+	
+		if views_num > 2 and layout_name != #layout_4 then
 		(
-			viewport_1 = getViewportSize ViewportsData[1] x_y 
-			viewport_2 = getViewportSize ViewportsData[2] x_y 
+			
+			other_sizes    = for other_view in other_views collect getViewportSize ViewportsData[other_view] x_y_flip
+			format "other_sizes: %\n" other_sizes
+			main_view_size = getViewportSize ViewportsData[main_view] x_y_flip 
+			format "main_view_size: %\n" main_view_size
+		
+			other_size_sum = 0
+		
+			splitter_positions = for other_size in other_sizes collect
+			(
+				other_size_sum += other_size
+				format "other_size: %\n" other_size
+				other_size_sum / main_view_size
+			)
+			
+			format "\n"
+			format "splitter_positions: %\n" splitter_positions
+			format "SPLITTER_POSITIONS: %\n" splitter_positions
+			splitters = for splitter = 0 to views_num - 2 where splitter != main_splitter collect splitter
+
+			
+			for i = 1 to splitters.count do
+				ViewPanelManager.SetSplitterBarPos splitters[i] (abs(splitter_positions[i]))
+		)
+		else if layout_name == #layout_4 then
+		(
+			
+			viewport_1 = getViewportSize ViewportsData[1] #X
+			viewport_2 = getViewportSize ViewportsData[2] #X
 			
 			splitter_position =  (viewport_1 / (viewport_2 + viewport_1))
 
-		)
-		else
-		(
-			main_view_size  = getViewportSize ViewportsData[main_view] x_y 
-			
-			other_view_size = getViewportSize ViewportsData[other_views[1]] x_y
-			format "main_view_size: %\n" main_view_size
-			
-			splitter_position =  (other_view_size / (main_view_size + other_view_size))
+			ViewPanelManager.SetSplitterBarPos 1 splitter_position
 		)
 		
-		
-
-		if split_side == #R then
-			splitter_position -= 1
-			
-		format "\n"
-		format "splitter_index: %\n" splitter_index
-		format "splitter_position: %\n" splitter_position
-
-		
-		
-		format "SPLITTER_POSITION: %\n" splitter_position
-		ViewPanelManager.SetSplitterBarPos splitter_index (abs(splitter_position))
-	
 	),
+	
 
 	private
 	
@@ -189,7 +267,7 @@ struct ViewportLayoutManager_v
 			)
 		)
 
-		CompleteRedraw()
+		--CompleteRedraw()
 	),
 	
 	
@@ -225,7 +303,7 @@ struct ViewportLayoutManager_v
 	function _saveIni ViewportData index =
 	(
 		--format "\n"; print "ViewportLayoutManager_v._saveIni()"
-		ini_file = this._getIniFile( viewport.getLayout() )
+		this._setIniFile( viewport.getLayout() )
 
 		for prop in (getPropNames (ViewportData)) do
 			setINISetting ini_file ( index as string ) ( prop as string ) ((getProperty ViewportData prop) as string)
@@ -259,19 +337,24 @@ struct ViewportLayoutManager_v
 
 	/** Get ini file "MaxTemp/VipeportLayouts/{Scene_name}/layout_name.ini"
 	 */
-	function _getIniFile layout_name =
+	function _setIniFile layout_name =
 	(
-		--format "\n"; print "ViewportSceneLayouts_v._getIniFile()"
-		ini_file = getDir(#temp) + "/ViewportLayouts" + (this._getSceneName()) + "/" + (layout_name as string ) +".ini" --return
+		--format "\n"; print "ViewportSceneLayouts_v._setIniFile()"
+		--format "layout_name: %\n" layout_name
+		ini_file = getDir(#temp) + "/ViewportLayouts/" + ( getFilenameFile( maxFileName ) ) + "/" + (layout_name as string ) +".ini" --return
+		--ini_file = getDir(#temp) + "/ViewportLayouts/" + ( this._getSceneName()) + "/" + (layout_name as string ) +".ini" --return
+		--format "ini_file:\n%\n" ini_file
 	),
 
-	/** Get scene name
-	 */
-	function _getSceneName =
-	(
-		 --format "\n"; print "ViewportLayoutManager_v.getSceneName()"
-		( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_\s]*\d+.max" ).Replace maxFileName "" --return
-	),
+	--/** Get scene name
+	-- */
+	--function _getSceneName =
+	--(
+	--	 --format "\n"; print "ViewportLayoutManager_v.getSceneName()"
+	--	 
+	--	 getFilenameFile(maxFileName)
+	--	--( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_\s]*\d+.max" ).Replace maxFileName "" --return
+	--),
 
 	function _minMaxSwap p3min p3max =
 	(

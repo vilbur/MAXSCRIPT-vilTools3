@@ -87,26 +87,7 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 				          default: 2 
 			)
 		
-		--
-		--num_of_splits = if shape_of_viewport != #SQUARE then
-		--	case of
-		--	(
-		--		( ctrl and shift ): 4
-		--		( ctrl or  shift ): 3
-		--		          default: 2 
-		--	)
-		--else /* IF SQUARE */ 
-		--(
-		--	--display_info = ( dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
-		--	--window_snapshot = windows.snapshot ( windows.getMAXHWND())
-		--	--snapshot_width = window_snapshot.width
-		--	
-		--	--if snapshot_width < (display_info.width * 0.5 ) then 1 else 4
-		--	
-		--	4
-		--
-		--)
-		--format "NUM_OF_SPLITS: %\n" num_of_splits
+
 		split_direction = case shape_of_viewport of
 		(
 			(#VERTICAL):	"h"
@@ -123,12 +104,8 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 				(#SQUARE):	""
 			)
 			else ""
-		
-		
-		
+	
 		layout_name = getLayoutName num_of_splits split_direction side_suffix
-		--format "layout_current: %\n" layout_current
-		--format "LAYOUT_NAME A: %\n" layout_name
 		
 		
 		if layout_name == layout_current and split_direction == "v" and (num_of_splits == 2 or num_of_splits == 4) then
@@ -149,17 +126,16 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 			--format "split_direction: %\n" split_direction
 			
 			layout_name = getLayoutName num_of_splits split_direction side_suffix
-			--layout_name = getLayoutName num_of_splits split_direction (if num_of_splits == 4 then "" else side_suffix)
-		--format "LAYOUT_NAME B: %\n" layout_name
 		)
-		--format "LAYOUT_NAME C: %\n" layout_name
 		
-		/* LOAD LAYOUT */
+		/*------------------------------------------------------------------------------
+			LOAD LAYOUT
+		--------------------------------------------------------------------------------*/
 		try(
 			
 			(ViewportLayoutManager_v()).restoreLayout( layout_name )
 			
-			)catch()
+		)catch()
 		
 		
 	)
