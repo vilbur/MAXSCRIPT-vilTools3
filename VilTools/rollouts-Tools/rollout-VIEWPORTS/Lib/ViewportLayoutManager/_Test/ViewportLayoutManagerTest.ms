@@ -6,7 +6,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../ViewportLayoutManager.ms" )	
 ViewportLayoutManager = ViewportLayoutManager_v()
 	
 	
---ViewportLayoutManager.restoreLayout(#layout_4)
+ViewportLayoutManager.loadAndConfigureLayout(#layout_4)
 
 --ViewportLayoutManager.restoreLayout(#layout_4vl)
 --ViewportLayoutManager.restoreLayout(#layout_4vr)
@@ -19,4 +19,4 @@ ViewportLayoutManager = ViewportLayoutManager_v()
 
 
 /* RESTORE LAYOUT */ 
-ViewportLayoutManager.restoreSplitBars()
+--ViewportLayoutManager.restoreSplitBars()

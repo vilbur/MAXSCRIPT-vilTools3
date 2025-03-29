@@ -27,14 +27,22 @@ struct ViewportLayoutManager_v
 	/** Reset current
 	  *
 	  */
-	function resetCurrent =
+	function resetCurrent reset_splitters:false =
 	(
-		--format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
-		layout_name = viewport.getLayout()
-
-		this.restoreLayout ( layout_name )
+		format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
+		format "reset_splitters: %\n" reset_splitters
 		
-		this.restoreSplitBars layout_name:layout_name
+		layout_name = viewport.getLayout()
+		
+		this._setIniFile( layout_name )
+		
+		if reset_splitters then
+			viewport.setLayout(#layout_1)
+
+		this.loadAndConfigureLayout ( layout_name )
+		
+		if not reset_splitters then
+			this.restoreSplitBars layout_name:layout_name
 	),
 
 	/** Restore Layout
@@ -44,31 +52,40 @@ struct ViewportLayoutManager_v
 		format "\n"; print "ViewData_v.restoreLayout()"
 		format "layout_name: %\n" layout_name
 
-		viewport.setLayout(layout_name)
-
 		this._setIniFile( layout_name )
-		--format "doesFileExist ini_file: %\n" (doesFileExist ini_file)
-		format "ini_file: %\n" ini_file
+		--format "ini_file: %\n" ini_file
 
-		if not doesFileExist ini_file then
-			return false
+		if doesFileExist ini_file then
+			this.loadAndConfigureLayout (layout_name)
+			
+		else
+			viewport.setLayout(layout_name)
+		--return false
 
-		for index = 1 to viewport.numViews do
-			this._configureViewport(index)
-		
-		--sleep 1 
-		this.restoreSplitBars layout_name:layout_name
 		
 		CompleteRedraw()
 	),
 
+	/** Load and configure layout
+	 */
+	function loadAndConfigureLayout layout_name =
+	(
+		--format "\n"; print "ViewportLayoutManager_v._loadAndConfigureLayout()"
+		if ini_file == undefined then this._setIniFile( layout_name )
+
+		viewport.setLayout(layout_name)
+
+		for index = 1 to viewport.numViews do
+			this._configureViewport(index)
+	),
+	
 	/** Restore split bars
 	 */
 	function restoreSplitBars layout_name: =
 	(
-		format "\n"; print "ViewportLayoutManager_v.restoreSplitBars()"
-		format "layout_name A: %\n" layout_name
-		format "ini_file: %\n" ini_file
+		--format "\n"; print "ViewportLayoutManager_v.restoreSplitBars()"
+		--format "layout_name A: %\n" layout_name
+		--format "ini_file: %\n" ini_file
 
 		/** Get view size
 		 */
@@ -85,7 +102,7 @@ struct ViewportLayoutManager_v
 		if layout_name == unsupplied then
 		(
 			layout_name = viewport.getLayout()
-			format "layout_name: %\n" layout_name
+			--format "layout_name: %\n" layout_name
 	
 			if ini_file == undefined then this._setIniFile( layout_name )
 			
@@ -117,15 +134,15 @@ struct ViewportLayoutManager_v
 				(split_side == #L ): views_num
 				(split_side == #T ): views_num
 			)
-			format "main_view: %\n" main_view
+			--format "main_view: %\n" main_view
 			other_views = for i = 1 to ViewportsData.count where i != main_view collect i
-			format "other_views: %\n" other_views
-			format "\n"
+			--format "other_views: %\n" other_views
+			--format "\n"
 			
 			main_splitter = if ( views_num == 2 or views_num == 3 ) and split_dir == #V then 1 else 0
-			format "main_splitter: %\n" main_splitter
+			--format "main_splitter: %\n" main_splitter
 			x_y = if split_dir == #H then #Y else #X
-			format "X_Y: %\n" x_y
+			--format "X_Y: %\n" x_y
 			x_y_flip = if x_y == #X then #Y else #X
 
 			/*------------------------------------------------------------------------------
@@ -133,12 +150,12 @@ struct ViewportLayoutManager_v
 				 SET MAIN SPLITTER
 			
 			--------------------------------------------------------------------------------*/
-			format "\nSET MAIN SPLITTER\n\n"
+			--format "\nSET MAIN SPLITTER\n\n"
 			/* LAYOUT 2,4 */
 			if views_num == 2 or layout_name == #layout_4  then
 			(
 				other_view = if views_num == 2 then 2 else 3
-				format "other_view: %\n" other_view
+				--format "other_view: %\n" other_view
 				x_or_Y = if views_num == 2 then x_y else x_y_flip 
 				
 				
@@ -151,11 +168,11 @@ struct ViewportLayoutManager_v
 			else
 			(
 				main_view_size  = getViewportSize ViewportsData[main_view] x_y 
-				format "main_view_size: %\n" main_view_size
+				--format "main_view_size: %\n" main_view_size
 				other_view_size = getViewportSize ViewportsData[other_views[1]] x_y
-				format "other_view_size: %\n" other_view_size
+				--format "other_view_size: %\n" other_view_size
 				splitter_position =  (other_view_size / (main_view_size + other_view_size))
-				format "splitter_position: %\n" splitter_position
+				--format "splitter_position: %\n" splitter_position
 			)
 	
 			if (views_num == 3 and split_side == #R) or ( views_num == 4 and split_side == #R ) then
@@ -171,28 +188,28 @@ struct ViewportLayoutManager_v
 			
 			--------------------------------------------------------------------------------*/
 			
-			format "\n---------------------\nSET OTHER SPLITTERS\n\n"
+			--format "\n---------------------\nSET OTHER SPLITTERS\n\n"
 	
 		if views_num > 2 and layout_name != #layout_4 then
 		(
 			
 			other_sizes    = for other_view in other_views collect getViewportSize ViewportsData[other_view] x_y_flip
-			format "other_sizes: %\n" other_sizes
+			--format "other_sizes: %\n" other_sizes
 			main_view_size = getViewportSize ViewportsData[main_view] x_y_flip 
-			format "main_view_size: %\n" main_view_size
+			--format "main_view_size: %\n" main_view_size
 		
 			other_size_sum = 0
 		
 			splitter_positions = for other_size in other_sizes collect
 			(
 				other_size_sum += other_size
-				format "other_size: %\n" other_size
+				--format "other_size: %\n" other_size
 				other_size_sum / main_view_size
 			)
 			
-			format "\n"
-			format "splitter_positions: %\n" splitter_positions
-			format "SPLITTER_POSITIONS: %\n" splitter_positions
+			--format "\n"
+			--format "splitter_positions: %\n" splitter_positions
+			--format "SPLITTER_POSITIONS: %\n" splitter_positions
 			splitters = for splitter = 0 to views_num - 2 where splitter != main_splitter collect splitter
 
 			
@@ -339,11 +356,22 @@ struct ViewportLayoutManager_v
 	 */
 	function _setIniFile layout_name =
 	(
-		--format "\n"; print "ViewportSceneLayouts_v._setIniFile()"
+		format "\n"; print "ViewportLayoutManager_v._setIniFile()"
 		--format "layout_name: %\n" layout_name
-		ini_file = getDir(#temp) + "/ViewportLayouts/" + ( getFilenameFile( maxFileName ) ) + "/" + (layout_name as string ) +".ini" --return
-		--ini_file = getDir(#temp) + "/ViewportLayouts/" + ( this._getSceneName()) + "/" + (layout_name as string ) +".ini" --return
-		--format "ini_file:\n%\n" ini_file
+		
+		max_file_name = if maxFileName == "" then "undefined" else getFilenameFile( maxFileName ) 
+		
+		ini_file = getDir(#temp) + "/ViewportLayouts/" + max_file_name + "/" + (layout_name as string ) +".ini" --return
+		
+		format "ini_file:\n%\n" ini_file
+		
+		
+		if not doesFileExist ini_file then
+		(
+			--format "\n"; format "ViewportLayoutManager_v._setIniFile()\n\nWARNING - INI FILE DOES NOT EXISTS\n\nINI FILE:%\n\n" ini_file
+			
+			return false
+		)
 	),
 
 	--/** Get scene name

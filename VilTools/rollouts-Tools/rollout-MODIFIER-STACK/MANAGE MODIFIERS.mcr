@@ -8,7 +8,7 @@ macroscript	modifiers_auto_instance
 category:	"_Modifiers-Manage"
 buttontext:	"INSTANCE MODIFIERS ON OBJECT COPY"
 toolTip:	"Ask for instance modifiers on object copy"
-icon:	"control:checkbox|MENU:true|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
+icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 (
 	--on IsChecked do ASK_FOR_INSTANCE != undefined
 
@@ -200,12 +200,56 @@ icon:	"MENU:true|across:3"
 	)
 )
 
+
+macroscript	modifiers_make_unique
+category:	"_Modifiers-Manage"
+buttontext:	"Make UNIQUE"
+toolTip:	"GROUP selected modifiers"
+icon:	"MENU:UNIQUE Modifiers • CTRL: Individual|tooltip:Make selected modifiers unique\n\nCTRL: Each instances"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+	on execute do
+	(
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+		mods_indexes = #()
+
+		ModifierStack = ModifierStackRemote_v()
+
+		group_mode = if keyboard.controlPressed then #INDIVIDUAL else #GROUP
+
+		modifiers = ModifierStack.getSelectedModifiers()
+		
+		sel = for o in selection collect o
+
+        /* SAVE INDEXS OF MODIFIERS FOR RENAMING */ 		
+		for obj in sel do
+			append mods_indexes (for i = 1 to obj.modifiers.count where findItem modifiers obj.modifiers[i] > 0 collect i)
+				
+			
+		mod_names = for _mod in modifiers collect _mod.name
+		
+		InstanceMgr.MakeModifiersUnique ( sel ) modifiers group_mode -- {#prompt|#individual|#group}
+		
+		for i = 1 to modifiers.count do modifiers[i].name = mod_names[i]
+		
+		objs_for_renamme_mod = if group_mode == #INDIVIDUAL then sel else #(sel[1])
+		
+		for o = 1 to objs_for_renamme_mod.count do
+			for m = 1 to mods_indexes[o].count do
+			(
+				index = mods_indexes[o][m]
+
+				objs_for_renamme_mod[o].modifiers[index].name = mod_names[m]
+			)
+	)
+)
+
 /* SELECT MODIFIERS INSTANCES
 */ 
 macroscript	modifiers_reinstrance
 category:	"_Modifiers-Manage"
 buttontext:	"REINSTANCE"
-toolTip:	"Reinstance modifiers on selection by\n\n    LAST OBJECT"
+toolTip:	"Reinstance all modifiers on selection by LAST OBJECT"
 icon:	"MENU:true"
 (
 	print "instanceModifiersOnCopy()"
@@ -249,49 +293,31 @@ icon:	"MENU:true"
 	)
 )
 
-macroscript	modifiers_modifiers_make_unique_group
-category:	"_Modifiers-Manage"
-buttontext:	"Make UNIQUE"
-toolTip:	"GROUP modifiers in selection"
-icon:	"MENU:true|tooltip:MAKE SELECTED MODIFIERS UNIQUE"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-	on execute do
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-		
-		ModifierStack = ModifierStackRemote_v()
 
-		modifiers = ModifierStack.getSelectedModifiers()
-
-		InstanceMgr.MakeModifiersUnique ( selection as Array ) modifiers #group -- {#prompt|#individual|#group}
-	)
-)
-
-macroscript	modifiers_modifiers_make_unique
-category:	"_Modifiers-Manage"
-buttontext:	"Make UNIQUE"
-toolTip:	"UNIQUE FOR EACH OBJECT"
---toolTip:	"Turn off \"Show end result\" on subobject edit"
-icon:	"MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-	on execute do
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
-		
-		ModifierStack = ModifierStackRemote_v()
-
-		modifiers = ModifierStack.getSelectedModifiers()
-
-		format "MODIFIERS: %\n" MODIFIERS
-		
-		InstanceMgr.MakeModifiersUnique ( selection as Array ) modifiers #individual -- {#prompt|#individual|#group}
-
-	)
-)
-
-
+--macroscript	 modifiers_make_unique
+--category:	"_Modifiers-Manage"
+--buttontext:	"Make UNIQUE"
+--toolTip:	"UNIQUE FOR EACH OBJECT"
+----toolTip:	"Turn off \"Show end result\" on subobject edit"
+--icon:	"MENU:true"
+--(
+--	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+--	on execute do
+--	(
+--		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-MODIFIER-STACK\MANAGE MODIFIERS.mcr"
+--		
+--		ModifierStack = ModifierStackRemote_v()
+--
+--		modifiers = ModifierStack.getSelectedModifiers()
+--
+--		format "MODIFIERS: %\n" MODIFIERS
+--		
+--		InstanceMgr.MakeModifiersUnique ( selection as Array ) modifiers #individual -- {#prompt|#individual|#group}
+--
+--	)
+--)
+--
+--
 
 
 

@@ -29,14 +29,7 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 	/** Get layout name
 	 */
 	--function getLayoutName num_of_splits split_direction side_suffix = ("layout_" + num_of_splits as string + split_direction + side_suffix) as name
-	function getLayoutName num_of_splits split_direction _side_suffix =
-	(
-		
-		--format "getLayoutName _side_suffix: %\n" _side_suffix
-		wtf = ("layout_" + num_of_splits as string + split_direction + _side_suffix) as name		
-		--format "WTF: %\n" wtf
-		wtf --return
-	)
+	function getLayoutName num_of_splits split_direction _side_suffix = ("layout_" + num_of_splits as string + split_direction + _side_suffix) as name		
 
 	
 	on execute do
@@ -108,23 +101,23 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 		layout_name = getLayoutName num_of_splits split_direction side_suffix
 		
 		
-		if layout_name == layout_current and split_direction == "v" and (num_of_splits == 2 or num_of_splits == 4) then
+		--if layout_name == layout_current and split_direction == "v" and (num_of_splits == 2 or num_of_splits == 4) then
+		
+		/* TOGGLE 2 AND 4 SPLIT */ 		
+		if layout_name == layout_current and (num_of_splits == 2 or num_of_splits == 4) then
 		(
-			
 			num_of_splits = if num_of_splits == 2 then 4 else 2
-			--format "num_of_splits: %\n" num_of_splits
-			
-			
-			split_direction = case shape_of_viewport of
-				(
-					(#VERTICAL):	"h"
-					(#HORIZONTAL):	"v"
-					(#SQUARE):	""
-				)
 
-			if num_of_splits == 4 then split_direction = ""
-			--format "split_direction: %\n" split_direction
-			
+			split_direction = if num_of_splits == 2 then
+				case shape_of_viewport of
+					(
+						(#VERTICAL):	"h"
+						(#HORIZONTAL):	"v"
+						(#SQUARE):	""
+					)
+			else
+				"" -- no split if 2 viewports
+
 			layout_name = getLayoutName num_of_splits split_direction side_suffix
 		)
 		
@@ -136,10 +129,7 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 			(ViewportLayoutManager_v()).restoreLayout( layout_name )
 			
 		)catch()
-		
-		
 	)
-	
 )
 
 
@@ -164,11 +154,16 @@ icon:	"MENU:SAVE Layout|id:BTN_save_layout"
 macroscript	viewport_layout_reset
 category:	"_Viewports-Manage"
 buttontext:	"RESET"
-tooltip:	"Reset Current Layout"
+tooltip:	"Reset Current Layout\n\nCTRL: Reset splitters"
 icon:	"MENU:RESET Layout|id:BTN_reset_layout"
 (
 	--clearListener()
-	ViewportLayoutManager.resetCurrent()
+	on execute do
+	(
+		ViewportLayoutManager.resetCurrent reset_splitters:keyboard.controlPressed
+	
+		print " *** RESET Layout: PRESS CTRL TO RESET SPLITTERS"	
+	)
 )
 
 /*------------------------------------------------------------------------------

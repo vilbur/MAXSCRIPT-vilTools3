@@ -22,13 +22,18 @@ function addQuad2 QuadMenu =
 	QuadMenu.setTitle("L A Y O U T   L O A D" )
 	
 	LayoutsMenu 	= QuadMenu.addMenu("_Viewports-Layout")
+	--LayoutsMenu 	= Menu_v("_Viewports-Layout")
+
+	LayoutsMenu.addSeparator()
+	
+	--LayoutsPresetMenu 	= QuadMenu.addMenu("_Viewports-Layout-Preset")
 	
 	for layout in #(#layout_restore_layout_4, #layout_restore_layout_2v, #layout_restore_layout_2h, #layout_restore_layout_3vl, #layout_restore_layout_3ht, #layout_restore_layout_4vl  ) do
-		QuadMenu.addItem ("_Viewports-Layout") ( layout as string )
+		LayoutsMenu.addItem ("_Viewports-Layout-Preset") ( layout as string )
 		
-	LayoutsMenu.moveItem ("QUICK Layout") 1
+	--LayoutsMenu.moveItem ("QUICK Layout") 1
 
-	LayoutsMenu.addSeparator index:2
+	--LayoutsMenu.addSeparator index:2
 )
 
 /*------------------------------------------------------------------------------
@@ -50,7 +55,7 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("VISIBILITY BY TYPEv")
+	QuadMenu.setTitle("VISIBILITY BY TYPE")
 
 )
 
