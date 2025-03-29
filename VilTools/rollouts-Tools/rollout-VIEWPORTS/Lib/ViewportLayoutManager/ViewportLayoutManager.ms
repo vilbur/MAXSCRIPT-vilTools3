@@ -29,39 +29,36 @@ struct ViewportLayoutManager_v
 	  */
 	function resetCurrent reset_splitters:false =
 	(
-		format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
-		format "reset_splitters: %\n" reset_splitters
+		--format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
+		--format "reset_splitters: %\n" reset_splitters
 		
-		layout_name = viewport.getLayout()
-		
-		this._setIniFile( layout_name )
-		
-		if reset_splitters then
-			viewport.setLayout(#layout_1)
-
-		this.loadAndConfigureLayout ( layout_name )
-		
-		if not reset_splitters then
-			this.restoreSplitBars layout_name:layout_name
+		this.restoreLayout ( viewport.getLayout() ) reset_splitters:reset_splitters
 	),
 
 	/** Restore Layout
 	 */
-	function restoreLayout layout_name =
+	function restoreLayout layout_name reset_splitters:false =
 	(
-		format "\n"; print "ViewData_v.restoreLayout()"
-		format "layout_name: %\n" layout_name
+		--format "\n"; print "ViewData_v.restoreLayout()"
+		--format "layout_name: %\n" layout_name
 
 		this._setIniFile( layout_name )
-		--format "ini_file: %\n" ini_file
 
+		/* TEMP LOAD LAYOUT TO FORCE RESET SPLITTERS */ 
+		if reset_splitters then
+			viewport.setLayout(#layout_1)
+		
+		/* LOAD SAVED LAYOUT */ 
 		if doesFileExist ini_file then
 			this.loadAndConfigureLayout (layout_name)
 			
+		/* SET DEFAULT LAYOUT */
 		else
 			viewport.setLayout(layout_name)
-		--return false
 
+		/* RESTORE VIEWPORT SPLITTERS */ 
+		if not reset_splitters then
+			this.restoreSplitBars layout_name:layout_name
 		
 		CompleteRedraw()
 	),

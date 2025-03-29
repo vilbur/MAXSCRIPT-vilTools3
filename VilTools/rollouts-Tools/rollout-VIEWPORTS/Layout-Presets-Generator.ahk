@@ -22,10 +22,10 @@ For $index, $layout_name in $layouts
 	$macro_name	:= "macroscript layout_restore_"  $layout_name
 	$category	:= "category:   ""_Viewports-Layout-Preset"""
 	$buttontext	:= "buttontext: """ + $layout_name_text """"
-	$tooltip	:= "tooltip:    ""Restore " + $layout_name_text """"
+	$tooltip	:= "tooltip:    ""Restore " + $layout_name_text "\n\nCTRL: Reset Viewport Spliters"""
 	$icon	:= "icon:       ""images: #('/Icons/Layouts.bmp',undefined,14, " A_Index ")|MENU:true"
 
-	$code	:= "(ViewportLayoutManager_v()).restoreLayout(#" $layout_name ")"
+	$code	:= "(ViewportLayoutManager_v()).restoreLayout(#" $layout_name ") reset_splitters: keyboard.controlPressed"
 
 	if( $index == 1 )
 		$icon .=  $first_button_params """"

@@ -125,7 +125,6 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 			LOAD LAYOUT
 		--------------------------------------------------------------------------------*/
 		try(
-			
 			(ViewportLayoutManager_v()).restoreLayout( layout_name )
 			
 		)catch()
@@ -160,7 +159,7 @@ icon:	"MENU:RESET Layout|id:BTN_reset_layout"
 	--clearListener()
 	on execute do
 	(
-		ViewportLayoutManager.resetCurrent reset_splitters:keyboard.controlPressed
+		ViewportLayoutManager.resetCurrent reset_splitters: keyboard.controlPressed
 	
 		print " *** RESET Layout: PRESS CTRL TO RESET SPLITTERS"	
 	)
