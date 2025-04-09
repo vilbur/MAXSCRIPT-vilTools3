@@ -35,7 +35,7 @@ icon:	"MENU:RESET Scene"
 macroscript	_scene_restart_max
 category:	"_Scene-Reset"
 buttontext:	"Restart"
-icon:	"MENU: RESTART 3Ds Max"
+icon:	"MENU:RESTART 3Ds Max"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
@@ -62,7 +62,7 @@ icon:	"MENU: RESTART 3Ds Max"
 macroscript	_scene_restart_max
 category:	"_Scene-Reset"
 buttontext:	"Restart"
-icon:	"MENU: RESTART 3Ds Max"
+icon:	"MENU:RESTART 3Ds Max"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
@@ -80,6 +80,31 @@ icon:	"MENU: RESTART 3Ds Max"
 
 			quitMax #noPrompt quiet:true
 
+		)
+
+	)
+)
+
+
+macroscript	_scene_open_maxstart_scene
+category:	"_Scene-Reset"
+buttontext:	"MaxStart Scene"
+icon:	"MENU:OPEN MaxStart"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\2-Manage Scene.mcr"
+
+		if queryBox "Open Max start scene ?\n\nmaxStart.max" title:"OPEN MASTART" then
+		(
+			--scene_dir = getDir #SCENE
+			max_file = (getDir #MAXSTART) + "\\maxstart.max"
+			
+			if not doesFileExist max_file then
+				saveMaxFile max_file quiet:true
+
+			loadMaxFile max_file quiet:false
 		)
 
 	)

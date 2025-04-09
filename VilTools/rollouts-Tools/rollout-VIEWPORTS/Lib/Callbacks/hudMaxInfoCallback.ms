@@ -1,6 +1,6 @@
 
 
-/** Hud max info callback
+/** GET DATA FOR 3DS MAX HUD
   *
   */
 function hudMaxInfoCallback =

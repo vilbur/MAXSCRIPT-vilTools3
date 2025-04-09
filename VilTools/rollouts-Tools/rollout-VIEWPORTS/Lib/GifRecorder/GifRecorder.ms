@@ -1,3 +1,13 @@
+--filein( getFilenamePath(getSourceFileName()) + "/../../../../../../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" )	--"./../../../../../../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+
+global DIALOG_GifRecorder
+
+--if GIF_RECORDER == undefined then 
+	global GIF_RECORDER
+
+
+
+
 /** Screen shooter
  */
 struct GifRecorder_v
@@ -78,6 +88,7 @@ struct GifRecorder_v
 		if view_tm != viewport.getTM() then
 			this._setRecordCameraView()
 
+		frame = if frames.count == 0 then 1 else this._getCurrentFrame() +1
 			
 		this._toggleViewCube(false)
 
@@ -87,7 +98,6 @@ struct GifRecorder_v
 	
 		screenshot = this._cropSafeFrame(screenshot)
 
-		frame = if frames.count == 0 then 1 else this._getCurrentFrame() +1
 		
 		--append frames screenshot
 		insertItem screenshot frames frame
@@ -463,17 +473,20 @@ struct GifRecorder_v
 	 */
 	function showFrame frame =
 	(
-		format "\n"; print "GifRecorder_v.showFrame()"
+		--format "\n"; print "GifRecorder_v.showFrame()"
 		fn getSizeWithBorder size = size + (border_width * 2)
+		--fn getSizeWithBorder size = size + border_width
 		
 
 		if frame > 0 and (preview_image = frames[frame]) != undefined then
 		(
-			format "preview_image: %\n" preview_image
+			--format "preview_image: %\n" preview_image
+			--background_img = bitmap ( getSizeWithBorder preview_image.width ) (getSizeWithBorder preview_image.height ) color:( if recording then red else ( color 40 40 40  ) )
 			background_img = bitmap (getSizeWithBorder preview_size.x) (getSizeWithBorder preview_size.y) color:( if recording then red else ( color 40 40 40  ) )
-			format "preview_image.width: %\n" preview_image.width
-			format "preview_size.x: %\n" preview_size.x
-			format "TEST: %\n" (preview_image.width > preview_size.x or preview_image.height > preview_size.y)
+			--background_img = bitmap preview_image.width preview_image.height color:( if recording then red else ( color 40 40 40  ) )
+			--format "preview_size.x:      %\n" preview_size.x
+			--format "preview_image.width: %\n" preview_image.width
+			--format "TEST: %\n" (preview_image.width > preview_size.x or preview_image.height > preview_size.y)
 			
 			if preview_image.width > preview_size.x or preview_image.height > preview_size.y then
 			(
@@ -605,7 +618,7 @@ struct GifRecorder_v
 			(
 				--format "\n"; print "GifRecorder_v._getFilename()"
 				
-				user_basename = DIALOG_GifRecorder.ET_filename.text
+				user_basename = if DIALOG_GifRecorder != undefined then  DIALOG_GifRecorder.ET_filename.text else ""
 				
 				user_basename_is_empty = (( dotNetClass "System.Text.RegularExpressions.RegEx").match user_basename "^\s+$|^$" ).success
 		
@@ -763,15 +776,22 @@ struct GifRecorder_v
 	 */
 	function _initScreenshotSize =
 	(
-		format "\n"
-		format "\n"; print "GifRecorder_v._initScreenshotSize()"
-						
-		screenshot = this._cropSafeFrame(gw.getViewportDib())
+		--format "\n"
+		--format "\n"; print "GifRecorder_v._initScreenshotSize()"
+		
+		screenshot = gw.getViewportDib index:record_viewport --this grabs the viewport
+		--format "screenshot.width:  %\n" screenshot.width
+		--format "screenshot.height: %\n" screenshot.height
+		
+		screenshot = this._cropSafeFrame(screenshot)
+		
+		--format "\n"
+		--screenshot = this._cropSafeFrame(gw.getViewportDib())
 
 		display_info = ( dotNetClass "System.Windows.Forms.Screen").PrimaryScreen.Bounds
-		format "DISPLAY_INFO: %\n" display_info
-		format "screenshot.width:  %\n" screenshot.width
-		format "screenshot.height: %\n" screenshot.height
+		--format "DISPLAY_INFO: %\n" display_info
+		--format "screenshot.width:  %\n" screenshot.width
+		--format "screenshot.height: %\n" screenshot.height
 		
 		
 		if screenshot.width > display_info.Width / 3 or screenshot.height > display_info.Height / 2  then
@@ -788,7 +808,7 @@ struct GifRecorder_v
 
 		--preview_size.x += border_width * 2
 		--preview_size.y += border_width * 2
-		format "PREVIEW_SIZE: %\n" preview_size
+		--format "PREVIEW_SIZE: %\n" preview_size
 		free screenshot
 		
 		--this.setPreviewWindowSize()

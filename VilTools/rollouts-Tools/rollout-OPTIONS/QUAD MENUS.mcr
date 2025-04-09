@@ -6,7 +6,7 @@ macroscript	_options_install_menus
 category:	"_Options"
 buttontext:	"INSTALL Menus"
 tooltip:	"Install Menus and Quad menus for VilTools3"
-icon:	"MENU:true|ACROSS:3|height:28"
+icon:	"MENU:true|ACROSS:3|ssheight:28"
 (
 
 	on execute do
@@ -34,10 +34,10 @@ icon:	"MENU:true|ACROSS:3|height:28"
 macroscript	_options_quadmenu_reset
 category:	"_Options"
 buttontext:	"RESET Menus"
-tooltip:	"Load default quad menu and menus"
+tooltip:	"MENU:true|Load default quad menu and menus"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
-
-	if queryBox "RESET ALL MENUS AND QUADMENUS ?" title:"RESET MENUS" then
-		(QuadMenuManager_v()).resetMenusAndHotkeys()
+	on execute do
+		if queryBox "RESET ALL MENUS AND QUADMENUS ?" title:"RESET MENUS" then
+			(QuadMenuManager_v()).resetMenusAndHotkeys()
 )

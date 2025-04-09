@@ -1,11 +1,11 @@
-global DIALOG_GifRecorder
-
-if GIF_RECORDER == undefined then 
-	global GIF_RECORDER
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/createGifRecorderDialog.ms" )	--"./Lib/GifRecorder/createGifRecorderDialog.ms"
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/GifRecorder.ms" )	--"./Lib/GifRecorder/GifRecorder.ms"
+--global DIALOG_GifRecorder
+--
+--if GIF_RECORDER == undefined then 
+--	global GIF_RECORDER
+--
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/createGifRecorderDialog.ms" )	--"./Lib/GifRecorder/createGifRecorderDialog.ms"
+--
+--filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/GifRecorder.ms" )	--"./Lib/GifRecorder/GifRecorder.ms"
 
 --filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/grabFrameTimer.ms" )	--"./Lib/GifRecorder/grabFrameTimer.ms"
 
@@ -61,7 +61,7 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/GifRecorder/GifRecorder.ms"
  *	
  */
 macroscript	viewport_open_gifrecorder_dialog
-category:	"_Viewports"
+category:	"_Viewports-Screenshot"
 buttontext:	"GIF RECORDER"
 toolTip:	"Open GifRecorder"
 icon:	"across:2|height:32|menu:TRUE"
@@ -69,7 +69,12 @@ icon:	"across:2|height:32|menu:TRUE"
 	on execute do
 	(
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\90-SCREENSHOT.mcr"
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Dialog\Dialog.ms"
+		
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\GifRecorder\GifRecorder.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\GifRecorder\createGifRecorderDialog.ms"
 		
 		if GIF_RECORDER != undefined then
 			GIF_RECORDER.onCloseDialog()
@@ -84,7 +89,7 @@ icon:	"across:2|height:32|menu:TRUE"
  *	
  */
 macroscript	_viewport_screenshot_open_dir
-category:	"_Viewports"
+category:	"_Viewports-Screenshot"
 buttontext:	"Screenshot"
 toolTip:	"Screenshot of current viewport"
 --icon:	"across:3"

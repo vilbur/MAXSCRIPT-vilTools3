@@ -1,7 +1,8 @@
 clearListener(); print("Cleared in:"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms"
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms"
+--filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 
@@ -27,14 +28,12 @@ current_dir_name = trimRight ( pathConfig.stripPathToLeaf(current_dir)) "\\"
 rollouts_dir = "$userscripts/"+current_dir_name+"/"+content_dir+"/rollouts-Tools"
 
 /*------------------------------------------------------------------------------
-	IMPORTED FILES
+	IMPORT FILES
 --------------------------------------------------------------------------------*/
 std_scripts = #(
 
-	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"),	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
-	
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
@@ -69,6 +68,7 @@ std_scripts = #(
 
 	"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
 	"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
+	"/rollout-VIEWPORTS/04-[Layout-Presets].mcr",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/04-[Layout-Presets].mcr" -- menu items has unicode arrows, import on startup make it work in quad menu
 
 	"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
 	"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
@@ -80,6 +80,16 @@ std_scripts = #(
 	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 )
 
+startup_scripts = #(
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ) -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+
+
+	--"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
+	--"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms" --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
+	
+	
+)
+
 filein_files = #(
 
 	"/VilTools/rollouts-Tools/rollout-SELECTION/Lib/Selection/Selection.ms",
@@ -87,11 +97,17 @@ filein_files = #(
 	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms"
 )
 
-/*------------------------------------------------------------------------------
-	INSTALL START UP FILES
---------------------------------------------------------------------------------*/
-(StdScriptImporter_v root:rollouts_dir filename:content_dir files:std_scripts).createStartUpFile()
+StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir
 
+/*------------------------------------------------------------------------------
+	INSTALL STD SCRIPTS
+--------------------------------------------------------------------------------*/
+StartUpScriptImporter.createStartUpFile(std_scripts) std:true
+
+/*------------------------------------------------------------------------------
+	INSTALL START SCRIPTS
+--------------------------------------------------------------------------------*/
+StartUpScriptImporter.createStartUpFile(startup_scripts)
 
 /*------------------------------------------------------------------------------
 	INSTALL PLUGINS

@@ -49,16 +49,6 @@ category:	"_Viewports"
 buttontext:	"Viewport Info"
 --icon:	"control:checkbox|autorun:true|align:#left"
 icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
-icon:	"control:checkbutton|autorun:true|across:2"
 (
 	on execute do
 	(
@@ -76,17 +66,17 @@ icon:	"control:checkbutton|autorun:true|across:2"
 	)
 )
 
-/**
+/** OBJECT INFO
  */
 macroscript	_viewport_hud_info_object
 category:	"_Viewports"
 buttontext:	"Object Info"
---icon:	"control:checkbox|autorun:true|align:#left"
+tooltip:	"Show info about selected objetcs in viewport"
 icon:	"control:checkbutton|autorun:true"
 (
 	on execute do
 	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\Callbacks\hudObjectInfoCallback.ms"
+		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Lib\Callbacks\hudObjectInfoCallback.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\HUD.mcr"
 
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then

@@ -61,14 +61,13 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 		differnece = abs ( viewport_size.x - viewport_size.y )
 		
 		/* GET NAME OF LAYOUT */ 
-		
 		shape_of_viewport = case of
 		(
 			(differnece < difference_treshold):  #SQUARE
 			(viewport_size.x > viewport_size.y): #HORIZONTAL
 			(viewport_size.x < viewport_size.y): #VERTICAL
 		)
-		--format "SHAPE_OF_VIEWPORT: %\n" shape_of_viewport
+		format "SHAPE_OF_VIEWPORT: %\n" shape_of_viewport
 		--ViewportLayoutManager = ViewportLayoutManager_v()
 		--format "\n"
 		--format "TEST AND: %\n" (ctrl and shift)

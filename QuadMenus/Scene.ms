@@ -32,10 +32,11 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("QUAD 3")
+	QuadMenu.setTitle("SCENE RESET")
 
 
-	QuadMenu.addMenu("_Scene-Reset")	--flat:false --index:1
+	QuadMenu.addMenu("_Scene-Reset") separators:#(3,4)	--flat:false --index:1
+	--QuadMenu.addSeparators #()
 
 )
 
@@ -47,6 +48,10 @@ function addQuad4 QuadMenu =
 	QuadMenu.setTitle("O P T I O N S")
 
 	QuadMenu.addMenu("_Options")	--flat:false --index:1
+	
+	QuadMenu.addSeparator()
+	
+	QuadMenu.addMenu("_Viewports-Screenshot")	--flat:false --index:1
 )
 
 

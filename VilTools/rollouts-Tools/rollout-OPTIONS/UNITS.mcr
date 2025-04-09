@@ -8,7 +8,7 @@ icon:	"ACROSS:2"
 (
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\UNITS.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\UNITS.mcr"
 
 		units.DisplayType = #CUSTOM
 
@@ -49,10 +49,13 @@ icon:	"ACROSS:2|control:checkbox|AUTORUN:true"
 
 	on execute do
 	(
-		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then 
-			CALLBACKMANAGER.start "checkWorldUnits"
-		else
-			CALLBACKMANAGER.kill "checkWorldUnits"
+		try(
+			if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then 
+				CALLBACKMANAGER.start "checkWorldUnits"
+			else
+				CALLBACKMANAGER.kill "checkWorldUnits"
+			
+		)catch()
 	)
 	
 )

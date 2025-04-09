@@ -26,14 +26,17 @@ function addQuad2 QuadMenu =
 
 	LayoutsMenu.addSeparator()
 	
-	--LayoutsPresetMenu 	= QuadMenu.addMenu("_Viewports-Layout-Preset")
+	/* ALL LAYER PRESETS */ 
+	----LayoutsPresetMenu 	= QuadMenu.addMenu("_Viewports-Layout-Preset")
 	
-	for layout in #(#layout_restore_layout_4, #layout_restore_layout_2v, #layout_restore_layout_2h, #layout_restore_layout_3vl, #layout_restore_layout_3ht, #layout_restore_layout_4vl  ) do
+	/* CHOOSE LAYER PRESETS */ 
+	for layout in #(# restore_layout_4, # restore_layout_2v, # restore_layout_2h, # restore_layout_3vl, # restore_layout_3ht, # restore_layout_4vl  ) do
 		LayoutsMenu.addItem ("_Viewports-Layout-Preset") ( layout as string )
 		
 	--LayoutsMenu.moveItem ("QUICK Layout") 1
 
-	--LayoutsMenu.addSeparator index:2
+	--LayoutsMenu.addSeparators #( 2, 3, 5, 7 )
+	LayoutsMenu.addSeparators #( 2, 4, 6, 8 )
 )
 
 /*------------------------------------------------------------------------------
