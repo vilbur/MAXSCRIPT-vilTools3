@@ -2,13 +2,29 @@
 global SAVED_TRANSFORMS_OF_SELECTION = Dictionary #string
 
 /**
+ */
+macroscript	_transform_type_in_close
+category:	"_Transform"
+buttontext:	"Type in"
+toolTip:	"Close dialog"
+--icon:	"MENU:true"
+(
+	on execute do
+	(
+		hwndMove = windows.getChildHWND 0 "Move Transform Type-In"
+
+		UIAccessor.CloseDialog hwndMove[1]
+	)
+
+)
+/**
  *
  */
 macroscript	_transfrom_save_load_transforms
 category:	"_Transform-Tools"
-buttontext:	"Save\Load Tranforms"
+buttontext:	"Save\Load Trans"
 toolTip:	"Save Tranforms - Ctrl: Load"
-icon:	"across:2|tooltip:Save transform of selected objects.\n\nCTRL: Load Transfroms"
+icon:	"tooltip:Save transform of selected objects.\n\nCTRL: Load Transfroms"
 (
 	on execute do
 	(
@@ -17,7 +33,7 @@ icon:	"across:2|tooltip:Save transform of selected objects.\n\nCTRL: Load Transf
 				SAVED_TRANSFORMS_OF_SELECTION[ (getHandleByAnim  obj) as string ] = obj.transform
 
 		else
-			undo "Select Vertex Color" on
+			undo "Restore Transforms" on
 				if ( transform_saved = SAVED_TRANSFORMS_OF_SELECTION[ (getHandleByAnim  obj) as string ] ) != undefined then
 					obj.transform = transform_saved
 
@@ -87,4 +103,30 @@ toolTip:	"Open Transform Randomizer Rollout"
 	else
 		messageBox "NOTHING SELECTED" title:"Get Dimensions"
 
+)
+/**
+ */
+macroscript	_transform_type_in
+category:	"_Transform"
+buttontext:	"Type in"
+toolTip:	"Mini Transform Type In\n\nDOUBLECLICK: Change window Postion"
+--icon:	"MENU:true"
+(
+	on execute do
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/Mini-Transform-Type-In.ms" )
+)
+
+/*------------------------------------------------------------------------------
+	DONT AFFECT CHILDREN
+--------------------------------------------------------------------------------*/
+/**
+ */
+macroscript	_transform_randomizer
+category:	"_Transform"
+buttontext:	"Randomizer"
+toolTip:	"Open Transform Randomizer Rollout"
+--icon:	"MENU:true"
+(
+	on execute do
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Random-Transform/random_transform_v1.ms" )
 )

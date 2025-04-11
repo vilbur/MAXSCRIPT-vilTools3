@@ -73,13 +73,18 @@ std_scripts = #(
 	"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
 	"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 	"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
-
+	
 	"/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms", 	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms"
 	
 	"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
 	"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
 	
-	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
+	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms", -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
+	
+	"./rollout-TRANSFORM/Lib/transformByArrow.ms", --"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
+	
+	
+	""
 )
 
 startup_scripts = #(

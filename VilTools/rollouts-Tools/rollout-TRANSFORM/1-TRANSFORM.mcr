@@ -78,39 +78,6 @@ buttontext:	"Rotate"
 		(Transform_v()).rotateSelection( (SnapManager_v()).getAngle() * -1 )
 )
 
-
-/**
- */
-macroscript	_transform_type_in
-category:	"_Transform"
-buttontext:	"Type in"
-toolTip:	"Mini Transform Type In\n\nDOUBLECLICK: Change window Postion"
---icon:	"MENU:true"
-(
-	on execute do
-		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/Mini-Transform-Type-In.ms" )
-)
-
-/**
- */
-macroscript	_transform_type_in_close
-category:	"_Transform"
-buttontext:	"Type in"
-toolTip:	"Close dialog"
---icon:	"MENU:true"
-(
-	on execute do
-	(
-
-		hwndMove = windows.getChildHWND 0 "Move Transform Type-In"
-		UIAccessor.CloseDialog hwndMove[1]
-	)
-
-)
-/*------------------------------------------------------------------------------
-	DONT AFFECT CHILDREN
---------------------------------------------------------------------------------*/
-
 /** ALIGN TO WORLD
 */
 macroscript _transfrom_dont_affect_children
@@ -133,15 +100,4 @@ icon:	"control:checkbox|MENU:true|across:1|align:#CENTER"
 	)
 )
 
-/**
- */
-macroscript	_transform_randomizer
-category:	"_Transform"
-buttontext:	"Randomizer"
-toolTip:	"Open Transform Randomizer Rollout"
---icon:	"MENU:true"
-(
-	on execute do
-		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Random-Transform/random_transform_v1.ms" )
-)
-F
+
