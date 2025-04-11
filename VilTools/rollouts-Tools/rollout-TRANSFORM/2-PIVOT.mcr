@@ -5,7 +5,7 @@ macroscript _pivot_selection_center_toggle
 category:	"_Pivot"
 buttonText:	"Use Selection\Object"
 toolTip:	"Toggle object and selection pivot"
-icon:	"MENU:true|title:buttonText|across:3"
+icon:	"MENU:true|title:buttonText|across:2|width:128"
 (
 	on isChecked do GetCoordCenter() != #system
 
@@ -28,6 +28,76 @@ icon:	"MENU:true|title:buttonText"
 		SetCoordCenter #system
 )
 
+
+/*------------------------------------------------------------------------------
+	ALIGN PIVOT TO DIRECTION
+--------------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+macroscript	_align_pivot_to_direction
+category:	"_Transform"
+buttontext:	"Privot To Dir"
+toolTip:	"Miauu align pivot to vector"
+icon:	"#across:3|width:96"
+(
+	on execute do
+   (
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms" ) -- "./../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms"
+
+		macros.run "miauu" "miauuAlignPivotToVector"
+	)
+)
+
+
+/*------------------------------------------------------------------------------
+	VISUAL PIVOT
+--------------------------------------------------------------------------------*/
+/** RUN MIAUU VISUAL PIVOT
+  *
+  * http://www.scriptspot.com/3ds-max/scripts/visual-pivot-placer
+*/
+macroscript _pivot_visual_pivot
+category:	"_Pivot"
+buttonText:	"Visual"
+toolTip:	"Run visual pivot tool"
+icon:	"menu:true"
+(
+
+	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/i_pivot_v15.mse" ) -- "./../../../Lib/vendor/miauu/i_pivot_v15.mse"
+)
+
+/* Round pivot position to tens
+  *
+  * E.G.: 123.456  >>> 120
+*/
+macroscript _pivot_round_position
+category:	"_Pivot"
+buttonText:	"Round Pivot Pos"
+toolTip:	"Round Pivot Position"
+icon:	"MENU:true"
+(
+	fn round val n = (floor ((val * (mult = 10.0 ^ n)) + 0.5)) / mult -- E.G.: round pi 0 as integer
+
+	on execute do
+		undo "Round pivot position" on
+		(
+			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Pivot.mcr"
+
+			for obj in selection do
+			(
+				obj.pivot.x = round obj.pivot.x -1
+				obj.pivot.y = round obj.pivot.y -1
+				obj.pivot.z = round obj.pivot.z -1
+			)
+		)
+)
+
+/*------------------------------------------------------------------------------
+	CENTER PIVOT
+--------------------------------------------------------------------------------*/
+
 /** Get selection without members of closed group
  */
 function getSelectionWithouGroupMembers =
@@ -44,31 +114,13 @@ function getSelectionWithouGroupMembers =
 )
 
 
-/*------------------------------------------------------------------------------
-	CENTER PIVOT
---------------------------------------------------------------------------------*/
-/** RUN MIAUU VISUAL PIVOT
-  *
-  * http://www.scriptspot.com/3ds-max/scripts/visual-pivot-placer
-*/
-macroscript _pivot_visual_pivot
-category:	"_Pivot"
-buttonText:	"Visual"
-toolTip:	"Run visual pivot tool"
-icon:	"menu:true"
-(
-
-	filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/i_pivot_v15.mse" ) -- "./../../../Lib/vendor/miauu/i_pivot_v15.mse"
-)
-
-
 /** CENTER TO OBJECT
   */
 macroscript _pivot_center_to_objects_in_selection
 category:	"_Pivot"
 buttonText:	"Center"
 toolTip:	"Center pivot to objects in selection"
-icon:	"menu:true"
+icon:	"menu:true|across:2"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM ⬇\Pivot.mcr"
 
@@ -103,32 +155,6 @@ icon:	   "MENU:true"
 
 )
 
-
-/* Round pivot position to tens
-  *
-  * E.G.: 123.456  >>> 120
-*/
-macroscript _pivot_round_position
-category:	"_Pivot"
-buttonText:	"Round Pivot Pos"
-toolTip:	"Round Pivot Position"
-icon:	"MENU:true"
-(
-	fn round val n = (floor ((val * (mult = 10.0 ^ n)) + 0.5)) / mult -- E.G.: round pi 0 as integer
-
-	on execute do
-		undo "Round pivot position" on
-		(
-			--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Pivot.mcr"
-
-			for obj in selection do
-			(
-				obj.pivot.x = round obj.pivot.x -1
-				obj.pivot.y = round obj.pivot.y -1
-				obj.pivot.z = round obj.pivot.z -1
-			)
-		)
-)
 
 
 --/** ALIGN TO WORLD

@@ -76,17 +76,14 @@ std_scripts = #(
 
 	"/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms", 	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms"
 	
+	"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
+	"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
 	
 	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms" -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 )
 
 startup_scripts = #(
-	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ) -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
-
-
-	--"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
-	--"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms" --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
-	
+	--( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ) -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 	
 )
 

@@ -30,7 +30,7 @@ function addQuad2 QuadMenu =
 	----LayoutsPresetMenu 	= QuadMenu.addMenu("_Viewports-Layout-Preset")
 	
 	/* CHOOSE LAYER PRESETS */ 
-	for layout in #(# restore_layout_4, # restore_layout_2v, # restore_layout_2h, # restore_layout_3vl, # restore_layout_3ht, # restore_layout_4vl  ) do
+	for layout in #( #restore_layout_4, #restore_layout_2v, #restore_layout_2h, #restore_layout_3vl, #restore_layout_3ht, #restore_layout_4vl  ) do
 		LayoutsMenu.addItem ("_Viewports-Layout-Preset") ( layout as string )
 		
 	--LayoutsMenu.moveItem ("QUICK Layout") 1

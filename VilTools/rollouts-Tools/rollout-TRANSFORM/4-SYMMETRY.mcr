@@ -15,6 +15,7 @@ macroscript	modifier_symmetry_mod_x
 category:	"_Modifiers"
 buttonText:	"Symmetry X"
 tooltip:	"Add modifier or load preset\nCtrl+LMB: Force adding of modifier."
+icon:	"across:3"
 (
 	--filein( @"C:\scripts\MAXSCRIPT-vilTools3\Rollouts\rollouts-Tools\rollout-MODIFIERS\Symmetry.mcr" ) -- DEV
 

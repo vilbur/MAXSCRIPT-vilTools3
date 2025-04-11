@@ -1,10 +1,10 @@
---filein( getFilenamePath(getSourceFileName()) + "/../../../../../../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" )	--"./../../../../../../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/../../../../../../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" )	--"./../../../../../../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 
 global DIALOG_GifRecorder
 
 --if GIF_RECORDER == undefined then 
 	global GIF_RECORDER
-
 
 
 
@@ -119,7 +119,8 @@ struct GifRecorder_v
 	function startRecording =
 	(
 		--format "\n"; print "GifRecorder_v.startRecording()"
-		deleteFile gif_temp_path
+		if gif_temp_path != undefined then 
+			deleteFile gif_temp_path
 
 		this.recording = true
 		
@@ -142,6 +143,35 @@ struct GifRecorder_v
 		--grabFrameTimerStart( true )
 	),
 	
+	/** Generate gif
+	 */
+	function generateGif open_in_viewer:false =
+	(
+		--format "\n"; print "GifRecorder_v.generateGif()"
+		/** Combine frames to gif
+		 */
+		function combineFramesToGif =
+		(
+			--format "\n"; print "GifRecorder_v.combineFramesToGif()"
+			delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as float * 100) 
+			
+			--format "DELAY OF FRAMES: %s\n" delay
+			
+			cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+			
+			--print ("GifRecorder.combineFramesToGif: "+cmd)
+			
+			DOSCommand cmd
+		)
+		
+		this.saveFrames()
+
+		combineFramesToGif()
+		
+		if open_in_viewer then
+			DOSCommand ("start \"\" \""+gif_temp_path+"\"")
+	),
+
 	/** Grab frame on lmb release
 	 */
 	function grabFrameOnLmbRelease =
@@ -261,36 +291,6 @@ struct GifRecorder_v
 		return false
 	),
 	
-	/** Generate gif
-	 */
-	function generateGif open_in_viewer:false =
-	(
-		--format "\n"; print "GifRecorder_v.generateGif()"
-		/** Combine frames to gif
-		 */
-		function combineFramesToGif =
-		(
-			--format "\n"; print "GifRecorder_v.combineFramesToGif()"
-			delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as float * 100) 
-			
-			--format "DELAY OF FRAMES: %s\n" delay
-			
-			cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
-			
-			--print ("GifRecorder.combineFramesToGif: "+cmd)
-			
-			DOSCommand cmd
-		)
-		
-		this.saveFrames()
-
-		combineFramesToGif()
-		
-		if open_in_viewer then
-			DOSCommand ("start \"\" \""+gif_temp_path+"\"")
-	),
-	
-
 	/** Open in photoshop
 	 */
 	function openInPhotoshop =
@@ -626,7 +626,12 @@ struct GifRecorder_v
 					substituteString user_basename "*.gif" "" --return filename of gif without ".gif" extension
 			)
 			
-			gif_basename  = if (user_basename = getFilenameFromEditText()) != undefined  then user_basename else getFilenameFile( maxFileName )
+			gif_basename  = if (user_basename = getFilenameFromEditText()) != undefined then user_basename
+				else if maxFileName != undefined then 
+					getFilenameFile( maxFileName )
+				
+				else
+					"undefined"
 			
 			this.gif_filename = gif_basename + ".gif"
 		)
@@ -720,7 +725,8 @@ struct GifRecorder_v
 	(
 		--format "\n"; print "GifRecorder_v._setRecordCameraView()"
 
-		viewport.activeViewport = record_viewport 
+		if viewport.numViews > 1 then
+			viewport.activeViewport = record_viewport 
 		
 		/* CREATE CAMERA FROM SAVED VIEW */ 
 		record_camera = Freecamera transform:camera_tm name:(uniquename "GifRecorderCamera") isHidden:true
@@ -738,8 +744,9 @@ struct GifRecorder_v
 	function _restoreViewport =
 	(
 		--format "\n"; print "GifRecorder_v._restoreViewport()"
-		viewport.activeViewport = record_viewport
-		
+		if viewport.numViews > 1 then
+			viewport.activeViewport = record_viewport 
+				
 		viewport.setType view_type
 		
 		viewport.setTM view_tm
@@ -818,7 +825,7 @@ struct GifRecorder_v
 	 */
 	on create do
 	(
-		--format "\n"; print "GifRecorder.onCreate()"
+		format "\n"; print "GifRecorder.onCreate()"
 		--for prop in #(  ) where getProperty this prop == undefined do -- CHECK CONSTRUCT PROPERTIES -- Array of this struct properties necessary to run
 		--	throw ("\n\n\nUNDEFINED CONSTRUCT PROPERTY\n\n\nSTRUCT:\n\n"+ ((filterString( classof this as string )"(:")[2]) +"\n\n\nPROPERTY:\n\n"+ prop )
 		--format "selection: %\n" ( selection  as Array )

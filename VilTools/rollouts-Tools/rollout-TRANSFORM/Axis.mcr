@@ -7,7 +7,7 @@ macroscript	_Transform_axis_XY
 category:	"_Transform"
 buttontext:	"Circle Single"
 toolTip:	"Circle active axis x|y"
---icon:	"#(path, index)"
+icon:	"across:2"
 (
 	(Gizmo_v()).circle #( #x, #y )
 )

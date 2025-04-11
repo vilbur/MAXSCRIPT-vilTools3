@@ -1,4 +1,4 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Transform.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/Transform.ms" )	--"./Lib/Transform.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SnapManager/SnapManager.ms" )	-- "./Lib/SnapManager/SnapManager.ms"
 
 
@@ -33,73 +33,6 @@ icon:	"MENU:true|across:3"
 	(
 		actionMan.executeAction 0 "40024"  -- Snaps: Grid and Snap Settings Toggle
 	)
-)
-
-/*------------------------------------------------------------------------------
-	DONT AFFECT CHILDREN
---------------------------------------------------------------------------------*/
-
-/** ALIGN TO WORLD
-*/
-macroscript _transfrom_dont_affect_children
-category:	"_Transform"
-buttonText:	"Not Affect Children"
---toolTip:	"Not afffect children"
-icon:	"control:checkbutton|MENU:true"
-(
-	on isChecked do not maxOps.affectChildren
-
-	on execute do
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Transform.mcr"
-
-		maxOps.affectChildren = not maxOps.affectChildren
-
-		if EventFired != undefined then
-			EventFired.control.state = not maxOps.affectChildren
-
-	)
-)
-
-
-
-
-
-
-/*------------------------------------------------------------------------------
-	ALIGN PIVOT TO DIRECTION
---------------------------------------------------------------------------------*/
-
-/**
- *
- */
-macroscript	_align_pivot_to_direction
-category:	"_Transform"
-buttontext:	"To Direction"
---toolTip:	"Open Transform Randomizer Rollout"
---icon: "#(path, index)"
-(
-	on execute do
-   (
-		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms" ) -- "./../../../Lib/vendor/miauu/miauualignpivottodiection_10.ms"
-
-		macros.run "miauu" "miauuAlignPivotToVector"
-	)
-)
-
-
-
-
-/**
- */
-macroscript	_transform_randomizer
-category:	"_Transform"
-buttontext:	"Randomizer"
-toolTip:	"Open Transform Randomizer Rollout"
---icon:	"MENU:true"
-(
-	on execute do
-		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Random-Transform/random_transform_v1.ms" )
 )
 
 /**
@@ -174,3 +107,41 @@ toolTip:	"Close dialog"
 	)
 
 )
+/*------------------------------------------------------------------------------
+	DONT AFFECT CHILDREN
+--------------------------------------------------------------------------------*/
+
+/** ALIGN TO WORLD
+*/
+macroscript _transfrom_dont_affect_children
+category:	"_Transform"
+buttonText:	"Not Affect Children"
+--toolTip:	"Not afffect children"
+icon:	"control:checkbox|MENU:true|across:1|align:#CENTER"
+(
+	on isChecked do not maxOps.affectChildren
+
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Transform.mcr"
+
+		maxOps.affectChildren = not maxOps.affectChildren
+
+		if EventFired != undefined then
+			EventFired.control.state = not maxOps.affectChildren
+
+	)
+)
+
+/**
+ */
+macroscript	_transform_randomizer
+category:	"_Transform"
+buttontext:	"Randomizer"
+toolTip:	"Open Transform Randomizer Rollout"
+--icon:	"MENU:true"
+(
+	on execute do
+		filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/Random-Transform/random_transform_v1.ms" )
+)
+F

@@ -1,12 +1,3 @@
---global DIALOG_GifRecorder
-
---if GIF_RECORDER == undefined then 
-	--global GIF_RECORDER
-
---filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\RolloutCreator\RolloutCreator.ms"
-
---filein( getFilenamePath(getSourceFileName()) + "/GifRecorder.ms" )	--"./GifRecorder.ms"
-
 /*------------------------------------------------------------------------------
 	DEV DESTROY
 --------------------------------------------------------------------------------*/
@@ -21,7 +12,7 @@
  */
 function createGifRecorderDialog =
 (
-	format "\n"; print "createScreenshotDialog()"
+	format "\n"; print "createGifRecorderDialog()"
 
 	--getViewportHeight()
 
@@ -77,7 +68,7 @@ function createGifRecorderDialog =
 	delay = _Controls.control #DROPDOWNLIST "Delay" id:#DDL_delay across:4 width:48 items:frame_delays offset:[ -24, 0 ] --groupbox:_GroupBox.caption
 
 
-	format "XXX PREVIEW_SIZE: %\n" preview_size
+	--format "XXX PREVIEW_SIZE: %\n" preview_size
 	--safe_frame = _Controls.control #CHECKBOX	"SAFE FRAME"	across:across width:128 height:64 offset:[ 96, 0 ] --groupbox:_GroupBox.caption
 	--spinner_height = _Controls.control #SPINNER "Height" type:#INTEGER across:across width:96 scale:1 range:[ 256, 8192, renderHeight ] offset:[ 128, 24 ] --groupbox:_GroupBox.caption
 	--spinner_with   = _Controls.control #SPINNER "Width"  type:#INTEGER across:across width:96 scale:1 range:[ 256, 8192, renderWidth  ] offset:[ 56, 0 ] --groupbox:_GroupBox.caption

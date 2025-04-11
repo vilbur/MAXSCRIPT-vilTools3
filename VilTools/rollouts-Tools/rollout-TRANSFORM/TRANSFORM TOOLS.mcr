@@ -8,7 +8,7 @@ macroscript	_transfrom_save_load_transforms
 category:	"_Transform-Tools"
 buttontext:	"Save\Load Tranforms"
 toolTip:	"Save Tranforms - Ctrl: Load"
-icon:	"tooltip:Save transform of selected objects.\n\nCTRL: Load Transfroms"
+icon:	"across:2|tooltip:Save transform of selected objects.\n\nCTRL: Load Transfroms"
 (
 	on execute do
 	(

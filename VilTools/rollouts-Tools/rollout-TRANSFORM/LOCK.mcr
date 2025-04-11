@@ -26,7 +26,7 @@ macroscript _transfrom_lock_toggle_all
 category:	"_Transform-Lock"
 buttonText:	"Lock\Unlock All"
 toolTip:	"Lock and save transforms of selection"
-icon:	"MENU:true"
+icon:	"MENU:true|across:2"
 (
 	on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
 
@@ -43,56 +43,6 @@ icon:	"MENU:true"
 				for obj in selection do
 					setUserProp obj "lock_transform" ( obj.transform as string )
 		)
-)
-
-/** TOGGLE POSITION LOCK
-  *
-  */
-macroscript _transfrom_lock_toggle_position
-category:	"_Transform-Lock"
-buttonText:	"Lock\Unlock Postion"
-toolTip:	"Lock Postion of selection"
-icon:	"MENU:true"
-(
-	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
-
-	on execute do
-		undo "Lock Position" on
-			lockObjectsTransforms (#MOVE)
-
-)
-
-
-/** TOGGLE SCALE LOCK
-  *
-  */
-macroscript _transfrom_lock_toggle_rotation
-category:	"_Transform-Lock"
-buttonText:	"Lock\Unlock Rotation"
-toolTip:	"Lock Postion of Rotation"
-icon:	"MENU:true"
-(
-	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
-
-	on execute do
-		undo "Lock Rotation" on
-			lockObjectsTransforms (#ROTATE)
-)
-
-/** TOGGLE ROTATION LOCK
-  *
-  */
-macroscript _transfrom_lock_toggle_scale
-category:	"_Transform-Lock"
-buttonText:	"Lock\Unlock Scale"
-toolTip:	"Lock Postion of Scale"
-icon:	"MENU:true"
-(
-	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
-
-	on execute do
-		undo "Lock Scale" on
-			lockObjectsTransforms (#SCALE)
 )
 
 /* Restore saved transforms
@@ -113,3 +63,54 @@ icon:	"MENU:true"
 
 		)
 )
+
+/** TOGGLE POSITION LOCK
+  *
+  */
+macroscript _transfrom_lock_toggle_position
+category:	"_Transform-Lock"
+buttonText:	"Postion"
+toolTip:	"Lock\Unlock Postion of selection"
+icon:	"MENU:true|across:3"
+(
+	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
+
+	on execute do
+		undo "Lock Position" on
+			lockObjectsTransforms (#MOVE)
+
+)
+
+
+/** TOGGLE SCALE LOCK
+  *
+  */
+macroscript _transfrom_lock_toggle_rotation
+category:	"_Transform-Lock"
+buttonText:	"Rotation"
+toolTip:	"Lock\Unlock Postion of Rotation"
+icon:	"MENU:true"
+(
+	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
+
+	on execute do
+		undo "Lock Rotation" on
+			lockObjectsTransforms (#ROTATE)
+)
+
+/** TOGGLE ROTATION LOCK
+  *
+  */
+macroscript _transfrom_lock_toggle_scale
+category:	"_Transform-Lock"
+buttonText:	"Scale"
+toolTip:	"Lock\Unlock Postion of Scale"
+icon:	"MENU:true"
+(
+	--on isChecked do selection.count == 1 and ((getTransformLockFlags  selection[1]) as Array ).count == 9 -- checked if single selected object is locked
+
+	on execute do
+		undo "Lock Scale" on
+			lockObjectsTransforms (#SCALE)
+)
+
