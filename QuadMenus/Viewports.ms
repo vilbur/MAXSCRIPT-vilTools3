@@ -51,6 +51,14 @@ function addQuad3 QuadMenu =
 	LayoutsMenu.addSeparators #( 3 )
 
 	QuadMenu.addMenu( LayoutsMenu )	--flat:true --index:1
+	
+	QuadMenu.addSeparator()
+
+	QuadMenu.addMenu( "_Viewports-HUD" )	--flat:true --index:1
+	
+	QuadMenu.addSeparator()
+	
+	QuadMenu.addMenu( "_Viewports-Setup" )	--flat:true --index:1
 )
 
 /*------------------------------------------------------------------------------

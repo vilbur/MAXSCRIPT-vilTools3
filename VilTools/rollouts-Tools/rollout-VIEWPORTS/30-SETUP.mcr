@@ -1,4 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Callbacks/viewportChangeCallback.ms" )	-- "./Lib/Callbacks/viewportChangeCallback.ms"
 
 /** SET GRID
  */
@@ -6,7 +5,7 @@ macroscript	viewport_set_grid_spacing
 category:	"_Viewports-Setup"
 buttontext:	"Set Grid"
 tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolution of 3D printer`s LCD Creality LD-006"
---icon:	"width:72"
+icon:	"MENU:true"
 (
 	on execute do
 	(

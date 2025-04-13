@@ -1,4 +1,7 @@
-/** Transform by arrow
+/** Move selection in active vieport in given direction
+  * 
+  * 
+  * 
   * 
   * @param #LEFT|#RIGHT|#UP|#DOWN arrow
  */
@@ -11,16 +14,18 @@ function transformByArrowKey arrow =
 	
 	/** View_name
 	 */
-	function view_name =
+	function viewType =
 	(
 		view_type = viewport.getType() as string
 		view_type	= substituteString view_type "view_" ""
 		view_type	= substituteString view_type "_user" ""
 		view_type	as name
-	)()
+	)
 	
 	if selection.count == 0 then
 		return false
+
+	view_type = viewType()	
 	
 	toolMode.commandmode = #MOVE
 	
@@ -31,7 +36,7 @@ function transformByArrowKey arrow =
 	is_perspective = view_type == #PERSP or view_type == #ISO
 	
 	/* SET NEGATIVE DIRECTION BY COMBINATION OF VIEW AND DIRECTION */ 
-	if  ( arrow == #LEFT  or arrow == #UP   ) and view_type == #BOTTOM                                           \
+	if  ( arrow == #LEFT  or arrow == #UP   ) and view_type == #BOTTOM                                          \
 	or ( arrow == #RIGHT or arrow == #DOWN ) and findItem #( #LEFT,  #BACK                      ) view_type > 0 \
 	or ( arrow == #LEFT  or arrow == #DOWN ) and findItem #( #RIGHT, #FRONT, #TOP, #PERSP, #ISO ) view_type > 0 \
 	then
@@ -60,7 +65,7 @@ function transformByArrowKey arrow =
 		
 		if axis == "Y" then increment *= -1
 	)
-	
+
 	/* SET VALUE TO MATRIX */ 
 	setProperty tm (axis as name ) increment
 	
