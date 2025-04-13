@@ -9,12 +9,9 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 (
 	on execute do
 	(
-		format "classOf Hud_v:    %\n" (classOf Hud_v)
-		format "classOf HUD_DATA: %\n" (classOf HUD_DATA)
-		format "classOf toggleHudCallback:  %\n" (classOf toggleHudCallback)
-		format "classOf hudMaxInfoCallback: %\n" (classOf hudMaxInfoCallback)
+		is_hud_on = HUD_DATA[#MAX_INFO] != undefined
 		
-		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
+		if not is_hud_on then
 		(
 			HUD = Hud_v callback: hudMaxInfoCallback
 		
@@ -22,6 +19,9 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 		)
 		else
 			toggleHudCallback #MAX_INFO
+		
+		/* TOGGLE BUTTON if executed from menu*/ 
+		try( ROLLOUT_viewports.CBTN_viewport_ivnfo.state = not is_hud_on )catch()
 	)
 )
 
@@ -35,12 +35,9 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 	on execute do
 	(
-		format "classOf Hud_v:    %\n" (classOf Hud_v)
-		format "classOf HUD_DATA: %\n" (classOf HUD_DATA)
-		format "classOf toggleHudCallback:  %\n" (classOf toggleHudCallback)
-		format "classOf hudMaxInfoCallback: %\n" (classOf hudMaxInfoCallback)
+		is_hud_on = HUD_DATA[#OBJ_INFO] != undefined
 		
-		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
+		if not is_hud_on then
 		(
 			HUD = Hud_v callback: hudObjectInfoCallback
 		
@@ -48,7 +45,8 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 		)
 		else
 			toggleHudCallback #OBJ_INFO
+
+		/* TOGGLE BUTTON if executed from menu*/ 
+		try( ROLLOUT_viewports.CBTN_object_info.state = not is_hud_on )catch()
 	)
 )
-
-

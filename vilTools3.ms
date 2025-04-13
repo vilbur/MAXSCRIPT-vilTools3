@@ -15,6 +15,7 @@ global VILTOOLS
 
 global ROLLOUT_export
 global ROLLOUT_3d_print
+global ROLLOUT_viewports
 
 
 /* DIRECTORY WHERE TO LOAD CONTENT */ 
@@ -76,7 +77,7 @@ std_scripts = #(
 	
 	"/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms", 	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms"
 	
-	"/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms"
+	"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
 	
 	"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
 	"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
@@ -92,7 +93,7 @@ std_scripts = #(
 startup_scripts = #(
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 	
-	--"/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms"
+	--"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
 	
 	"" -- last blank item to prevent errors on development
 )
