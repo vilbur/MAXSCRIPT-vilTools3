@@ -58,7 +58,7 @@ icon:	"MENU:OPEN MaxStart scene"
 macroscript	_scene_restart_max
 category:	"_Scene-Reset"
 buttontext:	"Restart"
-tooltip:	"Restart 3Ds Max\n\nCTRL: Quiet mode"
+--tooltip:	"Restart 3Ds Max\n\nCTRL: Quiet mode"
 icon:	"MENU:RESTART 3Ds Max"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
@@ -66,7 +66,8 @@ icon:	"MENU:RESTART 3Ds Max"
 	(
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\2-Manage Scene.mcr"
 
-		if keyboard.controlPressed and queryBox "Restart this instance of\n\n  3Ds Max ?" title:"RESTART" then
+		--if keyboard.controlPressed or queryBox "Restart this instance of\n\n  3Ds Max ?" title:"RESTART" then
+		if queryBox "Restart this instance of\n\n  3Ds Max ?" title:"RESTART" then
 		(
 
 			max_path = (getDir #maxroot) + "3dsmax.exe"

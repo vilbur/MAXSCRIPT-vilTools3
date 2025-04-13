@@ -9,9 +9,10 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 (
 	on execute do
 	(
-		format "classOf Hud_v: %\n" (classOf Hud_v)
+		format "classOf Hud_v:    %\n" (classOf Hud_v)
+		format "classOf HUD_DATA: %\n" (classOf HUD_DATA)
+		format "classOf toggleHudCallback:  %\n" (classOf toggleHudCallback)
 		format "classOf hudMaxInfoCallback: %\n" (classOf hudMaxInfoCallback)
-		format "classOf toggleHudCallback: %\n" (classOf toggleHudCallback)
 		
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
 		(
@@ -34,10 +35,10 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 (
 	on execute do
 	(
-		
-		format "classOf Hud_v: %\n" (classOf Hud_v)
+		format "classOf Hud_v:    %\n" (classOf Hud_v)
+		format "classOf HUD_DATA: %\n" (classOf HUD_DATA)
+		format "classOf toggleHudCallback:  %\n" (classOf toggleHudCallback)
 		format "classOf hudMaxInfoCallback: %\n" (classOf hudMaxInfoCallback)
-		format "classOf toggleHudCallback: %\n" (classOf toggleHudCallback)
 		
 		if EventFired == undefined or ( EventFired != undefined and EventFired.get #val ) then
 		(

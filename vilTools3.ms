@@ -1,9 +1,9 @@
 clearListener(); print("Cleared in:"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms"
---filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StdScriptImporter/StdScriptImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
+
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
@@ -92,7 +92,7 @@ std_scripts = #(
 startup_scripts = #(
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 	
-	"/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms"
+	--"/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/HudDisplay.ms"
 	
 	"" -- last blank item to prevent errors on development
 )
