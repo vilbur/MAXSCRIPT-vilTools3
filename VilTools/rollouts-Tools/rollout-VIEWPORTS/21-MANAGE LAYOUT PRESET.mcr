@@ -56,16 +56,29 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 
 		viewport_size = getSizeOfMaximizedViewport()
 		
-		difference_treshold = (viewport_size.x + viewport_size.y) / 2 / 3 -- get 1 third of average of viewport size
+		--difference_treshold = (viewport_size.x + viewport_size.y) / 2 / 4 -- get 1 third of average of viewport size
+		--difference_treshold = (viewport_size.x + viewport_size.y) / 2 / 4 -- get 1 third of average of viewport size
+		difference_treshold = 0.2
 		
-		differnece = abs ( viewport_size.x - viewport_size.y )
+		--differnece = abs ( viewport_size.x - viewport_size.y )
+		format "differnece: %\n" ( viewport_size.x / viewport_size.y )
+		differnece =  viewport_size.x / viewport_size.y 
+		format "HORIZONTAL: %\n" ( differnece > 1.2 )
+		format "VERTICAL:   %\n" ( differnece < 0.8 )
 		
 		/* GET NAME OF LAYOUT */ 
 		shape_of_viewport = case of
 		(
-			(differnece < difference_treshold):  #SQUARE
-			(viewport_size.x > viewport_size.y): #HORIZONTAL
-			(viewport_size.x < viewport_size.y): #VERTICAL
+			(differnece > 1.2): #HORIZONTAL
+			(differnece < 0.8): #VERTICAL
+			
+			default:  #SQUARE
+			
+			--(differnece < difference_treshold):  #SQUARE
+			--(viewport_size.x > viewport_size.y): #HORIZONTAL
+			--(viewport_size.x < viewport_size.y): #VERTICAL
+			
+			
 		)
 		format "SHAPE_OF_VIEWPORT: %\n" shape_of_viewport
 		--ViewportLayoutManager = ViewportLayoutManager_v()
@@ -80,12 +93,12 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 			)
 		
 
-		split_direction = case shape_of_viewport of
-		(
-			(#VERTICAL):	"h"
-			(#HORIZONTAL):	"v"
-			(#SQUARE):	""
-		)
+		--split_direction = case shape_of_viewport of
+		--(
+		--	(#VERTICAL):	"h"
+		--	(#HORIZONTAL):	"v"
+		--	(#SQUARE):	""
+		--)
 		--format "split_direction: %\n" split_direction
 		
 		side_suffix = if ctrl or shift then
@@ -97,15 +110,11 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 			)
 			else ""
 	
-		layout_name = getLayoutName num_of_splits split_direction side_suffix
+		--layout_name = getLayoutName num_of_splits split_direction side_suffix
 		
 		
 		--if layout_name == layout_current and split_direction == "v" and (num_of_splits == 2 or num_of_splits == 4) then
 		
-		/* TOGGLE 2 AND 4 SPLIT */ 		
-		if layout_name == layout_current and (num_of_splits == 2 or num_of_splits == 4) then
-		(
-			num_of_splits = if num_of_splits == 2 then 4 else 2
 
 			split_direction = if num_of_splits == 2 then
 				case shape_of_viewport of
@@ -116,10 +125,35 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 					)
 			else
 				"" -- no split if 2 viewports
+		--
+			layout_name = getLayoutName num_of_splits split_direction side_suffix
+		--)
 
+		/* TOGGLE 2 AND 4 SPLIT */ 		
+		if layout_name == layout_current and (num_of_splits == 2 or num_of_splits == 4) then
+		(
+			num_of_splits = if num_of_splits == 2 then 4 else 2
+			
+			split_direction = if num_of_splits == 2 then
+				case shape_of_viewport of
+					(
+						(#VERTICAL):	"h"
+						(#HORIZONTAL):	"v"
+						(#SQUARE):	""
+					)
+			else
+				"" -- no split if 2 viewports
+			
+			
 			layout_name = getLayoutName num_of_splits split_direction side_suffix
 		)
 		
+	
+
+		
+		format "layout_current: %\n" layout_current
+		format "layout_name:    %\n" layout_name
+
 		/*------------------------------------------------------------------------------
 			LOAD LAYOUT
 		--------------------------------------------------------------------------------*/

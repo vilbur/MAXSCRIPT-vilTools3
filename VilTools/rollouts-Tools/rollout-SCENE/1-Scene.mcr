@@ -196,7 +196,7 @@ icon:	"offset:[-2, 0]"
 macroscript	_scene_temp_open
 category:	"_Scene"
 buttontext:	"Open\Save Temp"
-toolTip:	"Open Temp File"
+toolTip:	"OPEN TEMP File"
 icon:	"offset:[14, 0]|width:96|MENU:Open &Temp File"
 (
 	on execute do
@@ -214,7 +214,7 @@ icon:	"offset:[14, 0]|width:96|MENU:Open &Temp File"
 macroscript	_scene_temp_save
 category:	"_Scene"
 buttontext:	"Open\Save Temp"
-toolTip:	"Save Temp File"
+toolTip:	"SAVE TEMP File"
 icon:	"MENU:tooltip"
 (
 	on isVisible return objects.count > 0

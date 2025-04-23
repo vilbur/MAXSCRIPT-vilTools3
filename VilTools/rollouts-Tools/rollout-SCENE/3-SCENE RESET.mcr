@@ -6,15 +6,15 @@ buttontext:	"Reload"
 toolTip:	"Reload current file"
 icon:	"MENU:RELOAD file"
 (
-	if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
-		loadMaxFile ( maxFilePath + maxFileName ) quiet:true
+	on execute do
+		if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
+			loadMaxFile ( maxFilePath + maxFileName ) quiet:true
 )
 
 
 macroscript	_scene_reset
 category:	"_Scene-Reset"
-buttontext:	"Reset Scene"
-
+buttontext:	"Re- zset Scene"
 icon:	"MENU:RESET Scene"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
