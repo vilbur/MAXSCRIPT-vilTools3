@@ -36,11 +36,9 @@ struct SupportOptions_v
 	chamfer_base = 2,
 	chamfer_top	= 5,	-- CHAMFER MIN: 0 - CHAMFER MAX: 10
 
-	--cross_section	= false, -- connect columns of platform with cross beams
-	--cross_section_max	= 20,	-- max distance between platforms
-	--cross_section_min_height	= 10,	-- generate cross section only if platform is higher than this number
-
+	use_max_distance = true,
 	max_distance	= 20,	-- max distance between platforms
+	
 	min_height	= 10,	-- generate cross section only if platform is higher than this number
 
 

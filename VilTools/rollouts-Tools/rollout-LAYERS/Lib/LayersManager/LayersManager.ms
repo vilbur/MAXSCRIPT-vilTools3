@@ -52,30 +52,31 @@ struct LayersManager_v
 	/** Get selected layers
 	  *  1) By slection in layer manager
 	  *  2) By current objects selection if nothing is selected in layer manager
-	  *
-	  * Return array of layers
-	 */
-	function getSelectedLayers =
-	(
-		--format "\n"; print "LayersManager_v.getSelectedLayers()"
-		if  (selected_layers = this.getSelectedByManager()).count == 0 then
-			selected_layers = this.getLayersByObjects( selection as Array )
-		--format "SELECTED_LAYERS: %\n" selected_layers
-		selected_layers --return
-	),
-
-	/** Get selected layers
-	  *  1) By slection in layer manager
-	  *  2) By current objects selection if nothing is selected in layer manager
 	  *  3) Get current layer if nothing is selected
 	  *
 	 */
 	function getSelectedOrCurrent =
 	(
-		--format "\n"; print "LayersManager_v.getSelectLayersOrBySelection()"
-		if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedLayers()).count == 0 then
+		format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
+		--if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedLayers()).count == 0 then
+		if  (selected_layers = this.getSelectedLayers()).count == 0 then
 			selected_layers = #(this.getCurrent())
 
+		selected_layers --return
+	),
+	
+	/** Get selected layers
+	  *  1) By slection in layer manager
+	  *  2) By current objects selection if nothing is selected in layer manager
+	  *
+	  * Return array of layers
+	 */
+	function getSelectedLayers =
+	(
+		format "\n"; print "LayersManager_v.getSelectedLayers()"
+		if  (selected_layers = this.getSelectedByManager()).count == 0 then
+			selected_layers = this.getLayersByObjects( selection as Array )
+		--format "SELECTED_LAYERS: %\n" selected_layers
 		selected_layers --return
 	),
 
@@ -83,11 +84,12 @@ struct LayersManager_v
 	 */
 	function getSelectedByManager =
 	(
-		--format "\n"; print "LayersManager_v.getSelectedByManager()"
-		selected_layers = if LayerManager.isDialogOpen() and SceneExplorerInstance != undefined then
+		format "\n"; print "LayersManager_v.getSelectedByManager()"
+		selected_layers = #()
+		
+		if LayerManager.isDialogOpen() and SceneExplorerInstance != undefined then
 			for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
-		else
-			#()
+			
 		--format "SELECTED IN MANAGER: %\n" selected_layers
 		selected_layers --return
 	),
@@ -97,7 +99,7 @@ struct LayersManager_v
 	  */
 	function getLayersByObjects _objects =
 	(
-		--format "\n"; print "LayersManager_v.getLayersByObjects()"
+		format "\n"; print "LayersManager_v.getLayersByObjects()"
 		--format "_objects: %\n" _objects
 		layers_by_obj	= #()
 

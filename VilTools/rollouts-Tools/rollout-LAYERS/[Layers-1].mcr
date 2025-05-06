@@ -46,10 +46,12 @@ icon:	"MENU:HIDE Selected|Tooltip:Turn off selected layers, or layers of objects
 
 		selected_layers = LayersManager.getSelectedOrCurrent()
 
-		format "\n-----------\nARRAY:selected_layers:%\n" selected_layers; for selected_layer in selected_layers do format "selected_layer:	%\n" selected_layer.name
+		format "selected_layers: %\n" selected_layers
+		
+		--format "\n-----------\nARRAY:selected_layers:%\n" selected_layers; for selected_layer in selected_layers do format "selected_layer:	%\n" selected_layer.name
 
-		undo "Hide selected layers" on
-			LayersManager.setVisibility( selected_layers )(false)
+		--undo "Hide selected layers" on
+			--LayersManager.setVisibility( selected_layers )(false)
 
 	)
 )
