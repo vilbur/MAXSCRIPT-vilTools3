@@ -1,45 +1,4 @@
 
-/** SET GRID
- */
-macroscript	viewport_set_grid_spacing
-category:	"_Viewports-Setup"
-buttontext:	"Set Grid"
-tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolution of 3D printer`s LCD Creality LD-006"
-icon:	"MENU:true"
-(
-	on execute do
-	(
-		--clearListener();
-
-		grid_spacings = #( 0.05, 0.1, 1.0, 10.0, 100.0  ) -- SPACING OF GRID IN mm units
-		
-		display_units = case units.SystemType of -- convert to milimeters
-		(
-			#millimeters:	1
-			#centimeters:	10
-			#meters:	1000
-			#kilometers:	1000000
-			default:	1 -- non metric units
-		)
-		
-		index = findItem grid_spacings (GetGridSpacing())
-		
-		next_index = if index == grid_spacings.count then 1 else index + 1 
-		
-		grid_spacing = grid_spacings[next_index] / display_units
-		
-		SetGridSpacing grid_spacing
-		
-		SetGridMajorLines 10
-
-		/* remove float zero "1.0" >>> "1" */ 			
-		if mod grid_spacing 1 == 0 then
-			grid_spacing = grid_spacing as integer
-
-		format "GRID SPACING: % mm\n" grid_spacing
-	)
-)
-
 
 /**
 *

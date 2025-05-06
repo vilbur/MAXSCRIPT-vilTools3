@@ -1,20 +1,50 @@
 
+/*------------------------------------------------------------------------------
+	FACES \ SMOOTH
+--------------------------------------------------------------------------------*/
+macroscript	viewport_faces_smooth_toggle
+category:	"_Viewports-Setup"
+buttontext:	"Faces \ Smooth"
+tooltip:	"Toggle FACES \ SMOOTH in ALL VIEWPORTS"
+icon:	"ACROSS:4|height:32"
+(
+	on execute do
+	(
+		render_levels = #(
+			#facethighlights,
+			--#wireFrame,
+			--#flat,
+			--#facet,
+			--#smooth,
+			#smoothhighlights
+		)
+		
+		current_level = viewport.GetRenderLevel()
+		
+		idx = findItem render_levels current_level
+		next_idx = if idx == 0 or idx == render_levels.count then 1 else idx + 1
+		
+		format "SET RENDER LEVEL: %\n" render_levels[next_idx]
+		
+		viewport.SetRenderLevel render_levels[next_idx]
+	)
+)
 
- /** TOGGLE WIREFRAME \ REALISTIC
- *
- */
+
+/*------------------------------------------------------------------------------
+	TOGGLE WIREFRAME \ REALISTIC
+--------------------------------------------------------------------------------*/
 macroscript	viewport_wireframe_shade_toggle
 category:	"_Viewports-Setup"
 buttontext:	"Wire \ Shaded"
 tooltip:	"Toggle WIREFRAME \ SHADED in ALL VIEWPORTS"
-icon:	"ACROSS:2"
+--icon:	"ACROSS:2"
 (
 	on execute do
 		toggleViewportShadeModes #WIREFRAME 
 )
 
-/** TOGGLE WIREFRAME \ REALISTIC
-*
+/** 
 */
 macroscript	viewport_wireframe_shade_toggle_current_viewport
 category:	"_Viewports-Setup"
@@ -26,15 +56,82 @@ tooltip:	"Toggle WIREFRAME \ SHADED in ACTIVE VIEWPORT"
 )
 
 
+/*------------------------------------------------------------------------------
+	SHADE \ OUTLINE
+--------------------------------------------------------------------------------*/
+macroscript	viewport_shade_wire_toggle
+category:	"_Viewports-Setup"
+buttontext:	"Shade \ Outline"
+tooltip:	"Toggle SHADEDWIRE \ SHADED in ALL VIEWPORTS"
+(
+	on execute do
+		toggleViewportShadeModes #SHADEDWIRE 
+)
+
+/** 
+*/
+macroscript	viewport_outline_wire_toggle_current_viewport
+category:	"_Viewports-Setup"
+buttontext:	"Shade \ Outline"
+tooltip:	"Toggle SHADEDWIRE \ SHADED in ACTIVE VIEWPORT"
+(
+	on execute do
+		toggleViewportShadeModes #SHADEDWIRE index:viewport.activeViewport
+)
 
 
 
+/*------------------------------------------------------------------------------
+	PERFORMANCE | HIGHQUALITY | STANDARD
+--------------------------------------------------------------------------------*/
+global VIEWPORT_LIGHTING_MODE_CURRENT
+
+/** 
+  *	
+  */
+macroscript	viewport_performance_highquality_standard
+category:	"_Viewports-Setup"
+buttontext:	"Stadard \ High"
+tooltip:	"Toggle STADARD \ PERFORMANCE \ HIGHQUALITY in ALL VIEWPORTS"
+icon:	"ACROSS:4"
+(
+	on execute do
+	(
+		render_levels = #( #PERFORMANCE, #STANDARD, #HIGHQUALITY )
+		
+	
+		idx = findItem render_levels VIEWPORT_LIGHTING_MODE_CURRENT
+		next_idx = if idx == 0 or idx == render_levels.count then 1 else idx + 1
+		
+		format "Viewport Lighting and Shadows: %\n" render_levels[next_idx]
+		
+		VIEWPORT_LIGHTING_MODE_CURRENT = render_levels[next_idx]
+		
+		case render_levels[next_idx] of
+		(
+			#PERFORMANCE: actionMan.executeAction -844228238 "14"  -- Viewport Lighting and Shadows: Performance
+	
+			--"standard":
+			#HIGHQUALITY: actionMan.executeAction -844228238 "12"  -- Viewport Lighting and Shadows: High Quality
+	
+	
+			default:
+			   actionMan.executeAction -844228238 "13"  -- Viewport Lighting and Shadows: Standard
+	
+		)
+	)
+)
+
+
+
+/*------------------------------------------------------------------------------
+	SHOW FACE ID
+--------------------------------------------------------------------------------*/
 macroscript	viewport_show_face_index
 category:	"_Viewports-Setup"
 buttontext:	"Show Face ID"
 toolTip:	"Show selected faces' index in the viewport"
---icon:	"width:72"
-
+icon:	"ACROSS:2"
 (
 	local FaceIndexShow = false
 	local lastviewport
@@ -95,39 +192,11 @@ toolTip:	"Show selected faces' index in the viewport"
 
 
 
-/** TOGGLE SHADEDWIRE \ REALISTIC
-*
-*/
-macroscript	viewport_shade_shade_toggle
-category:	"_Viewports-Setup"
-buttontext:	"Shade \ Outline"
-tooltip:	"Toggle SHADEDWIRE \ SHADED in ALL VIEWPORTS"
-icon:	"ACROSS:2"
-(
-	on execute do
-		toggleViewportShadeModes #SHADEDWIRE 
-)
-
-/** TOGGLE SHADEDWIRE \ REALISTIC
-*
-*/
-macroscript	viewport_shade_shade_toggle_current_viewport
-category:	"_Viewports-Setup"
-buttontext:	"Shade \ Outline"
-tooltip:	"Toggle SHADEDWIRE \ SHADED in ACTIVE VIEWPORT"
-(
-	on execute do
-	
-		toggleViewportShadeModes #SHADEDWIRE index:viewport.activeViewport
-)
 
 
-
-
-
-/**
-*
-*/
+/*------------------------------------------------------------------------------
+	Sel Brackets
+--------------------------------------------------------------------------------*/
 macroscript	viewport_selection_bracets
 category:	"_Viewports-Setup"
 buttontext:	"Sel Brackets"
