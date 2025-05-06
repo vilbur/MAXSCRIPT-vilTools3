@@ -4,7 +4,7 @@ macroscript	_scene_relaod
 category:	"_Scene-Reset"
 buttontext:	"Reload"
 toolTip:	"Reload current file"
-icon:	"MENU:RELOAD file"
+icon:	"across:3|MENU:RELOAD file"
 (
 	on execute do
 		if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
@@ -24,29 +24,7 @@ icon:	"MENU:RESET Scene"
 	)
 )
 
-macroscript	_scene_open_maxstart_scene
-category:	"_Scene-Reset"
-buttontext:	"MaxStart Scene"
-icon:	"MENU:OPEN MaxStart scene"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
-	on execute do
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\2-Manage Scene.mcr"
 
-		if queryBox "Open Max start scene ?\n\nmaxStart.max" title:"OPEN MASTART" then
-		(
-			--scene_dir = getDir #SCENE
-			max_file = (getDir #MAXSTART) + "\\maxstart.max"
-			
-			if not doesFileExist max_file then
-				saveMaxFile max_file quiet:true
-
-			loadMaxFile max_file quiet:false
-		)
-
-	)
-)
 /*------------------------------------------------------------------------------
 
 	RESTART MAX

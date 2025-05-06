@@ -7,7 +7,7 @@ macroscript	viewport_rotate_top_view
 category:	"_Viewports-Setup"
 buttontext:	"Rotate Top"
 tooltip:	"Keep top view rotated by 90°"
-icon:	"control:checkbox|offset:[ 4, 4 ]"
+icon:	"across:3|control:checkbox|offset:[ 0, 4 ]"
 (
 	if( EventFired.val ) then
 		viewportChangeCallback()
@@ -23,7 +23,7 @@ macroscript	viewport_background_color
 category:	"_Viewports-Setup"
 buttontext:	"Background"
 tooltip:	"Set Viewport Background Color"
-icon:	"control:colorpicker|value:[56,56,56]"
+icon:	"across:3|control:colorpicker|value:[56,56,56]"
 (
 	background_color = ROLLOUT_viewports.cp_background.color
 
@@ -46,7 +46,7 @@ macroscript	viewport_background_color_reset
 category:	"_Viewports-Setup"
 buttontext:	"Reset"
 tooltip:	"Reset Viewport Background Color"
-icon:	"offset:[ 4, 0 ]"
+icon:	"across:3|offset:[ 4, 0 ]"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\Viewport Setup.mcr"
 	--messageBox "Yupiii" title:"Title"  beep:false

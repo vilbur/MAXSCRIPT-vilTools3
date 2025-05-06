@@ -8,7 +8,7 @@ category:	"_Scene"
 buttontext:	"Open File"
 toolTip:	"Open File Dialog"
 --icon:	"control:checkButton|MENU:_Scene"
-icon:	"across:5|width:72|MENU:true"
+icon:	"across:3|MENU:true"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
@@ -35,10 +35,10 @@ icon:	"across:5|width:72|MENU:true"
  */
 macroscript	_scene_open_recent
 category:	"_Scene"
-buttontext:	"Open Recent"
+buttontext:	"Open RECENT"
 toolTip:	"Open recent scene on Max start"
 --icon:	"control:checkButton|MENU:_Scene"
-icon:	"across:5|width:72|MENU:Open &Recent"
+icon:	"MENU:Open &Recent"
 (
 	--on isVisible  return maxFileName == ""
 
@@ -104,6 +104,107 @@ icon:	"across:5|width:72|MENU:Open &Recent"
 	--	--messageBox "Open Recent"
 )
 
+
+
+/*------------------------------------------------------------------------------
+
+	SAVE \ OPEN RECENT FILE
+
+--------------------------------------------------------------------------------*/
+
+/**
+ */
+macroscript	_scene_temp_open
+category:	"_Scene"
+buttontext:	"Open\Save Temp"
+toolTip:	"OPen TEMP File"
+icon:	"MENU:Open &TEMP File"
+(
+	on execute do
+	(
+		if maxFilePath == "" or queryBox "Open Temp File ?" title:"Open Temp File"  beep:false then
+
+		--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
+			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+				loadMaxFile max_file quiet:false
+
+	)
+)
+/**
+ */
+macroscript	_scene_temp_save
+category:	"_Scene"
+buttontext:	"Open\Save Temp"
+toolTip:	"Save TEMP File"
+icon:	"MENU:tooltip"
+(
+	on isVisible return objects.count > 0
+
+	on execute do
+		if queryBox "Save Temp File ?" title:"Save Temp File"  beep:false then
+			--if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
+				--saveMaxFile max_file quiet:true
+				saveMaxFile ((getDir #temp) + "\\temp.max") quiet:true
+
+)
+
+/*------------------------------------------------------------------------------
+
+	 OPEN FILE DIALOG AT AUTOBACKUP DIR
+
+--------------------------------------------------------------------------------*/
+
+
+macroscript	_scene_open_autobackup
+category:	"_Scene"
+buttontext:	"Open Autobackup"
+toolTip:	"Open Autobackup File"
+--icon:	"control:checkButton|MENU:_Scene"
+--icon:	"across:5|width:72|MENU:true"
+icon:	"MENU:true|MENU:Open AUTOBACKUP"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+
+		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:( getDir( #autoback ) + "\\" ) historyCategory:"MAXScriptFileOpenSave"
+
+		if file_path != undefined then
+			loadMaxFile file_path quiet:true
+
+	)
+)
+/*------------------------------------------------------------------------------
+	OPEN MaxStart.max
+--------------------------------------------------------------------------------*/
+
+macroscript	_scene_open_maxstart_scene
+category:	"_Scene"
+buttontext:	"Open MaxStart.max"
+--icon:	"MENU:OPEN MaxStart.max"
+icon:	"MENU:true"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\2-Manage Scene.mcr"
+
+		if queryBox "Open Max start scene ?\n\nmaxStart.max" title:"OPEN MASTART" then
+		(
+			--scene_dir = getDir #SCENE
+			max_file = (getDir #MAXSTART) + "\\maxstart.max"
+			
+			if not doesFileExist max_file then
+				saveMaxFile max_file quiet:true
+
+			loadMaxFile max_file quiet:false
+		)
+
+	)
+)
+
+
+
 /*------------------------------------------------------------------------------
 	INCREMENTAL SAVE
 --------------------------------------------------------------------------------*/
@@ -115,7 +216,7 @@ macroscript	_scene_incremental_save_with_basename
 category:	"_Scene"
 buttontext:	"Save++"
 toolTip:	"Incremental save and copy basename file version"
-icon:	"offset:[-2, 0]"
+--icon:	"offset:[-2, 0]"
 (
 	on execute do
 	(
@@ -181,75 +282,5 @@ icon:	"offset:[-2, 0]"
 
 			)
 		)
-	)
-)
-
-
-/*------------------------------------------------------------------------------
-
-	SAVE \ OPEN RECENT FILE
-
---------------------------------------------------------------------------------*/
-
-/**
- */
-macroscript	_scene_temp_open
-category:	"_Scene"
-buttontext:	"Open\Save Temp"
-toolTip:	"OPEN TEMP File"
-icon:	"offset:[14, 0]|width:96|MENU:Open &Temp File"
-(
-	on execute do
-	(
-		if maxFilePath == "" or queryBox "Open Temp File ?" title:"Open Temp File"  beep:false then
-
-		--if queryBox "Open Temp File ?" title:"Fetch scene"  beep:false then
-			if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-				loadMaxFile max_file quiet:false
-
-	)
-)
-/**
- */
-macroscript	_scene_temp_save
-category:	"_Scene"
-buttontext:	"Open\Save Temp"
-toolTip:	"SAVE TEMP File"
-icon:	"MENU:tooltip"
-(
-	on isVisible return objects.count > 0
-
-	on execute do
-		if queryBox "Save Temp File ?" title:"Save Temp File"  beep:false then
-			--if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
-				--saveMaxFile max_file quiet:true
-				saveMaxFile ((getDir #temp) + "\\temp.max") quiet:true
-
-)
-
-/*------------------------------------------------------------------------------
-
-	 OPEN FILE DIALOG AT AUTOBACKUP DIR
-
---------------------------------------------------------------------------------*/
-
-
-macroscript	_scene_open_autobackup
-category:	"_Scene"
-buttontext:	"Open Autobackup"
-toolTip:	"Open Autobackup File"
---icon:	"control:checkButton|MENU:_Scene"
---icon:	"across:5|width:72|MENU:true"
-icon:	"MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
-	on execute do
-	(
-
-		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:( getDir( #autoback ) + "\\" ) historyCategory:"MAXScriptFileOpenSave"
-
-		if file_path != undefined then
-			loadMaxFile file_path quiet:true
-
 	)
 )
