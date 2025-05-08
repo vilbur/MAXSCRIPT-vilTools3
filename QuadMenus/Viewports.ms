@@ -67,7 +67,14 @@ function addQuad3 QuadMenu =
 function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("VISIBILITY BY TYPE")
+	
+	
+	/* REMOVE DEFAULT ITEMS FROM END OF MENU */ 
+	if (items_count = QuadMenu.numItems()) == 15 then
+		for i = items_count to items_count - 6 by -1 do
+			QuadMenu.removeItem(i)
 
+	QuadMenu.addMenu( "_Viewports-Setup-Grid" )	--flat:true --index:1
 )
 
 

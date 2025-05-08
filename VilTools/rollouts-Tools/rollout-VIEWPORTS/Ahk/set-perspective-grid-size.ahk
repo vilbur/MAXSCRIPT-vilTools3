@@ -11,63 +11,34 @@
 */ 
 
 $grid_size	= %1%
-;$grid_size	= 888
-;$grid_size	= 333
+
+$hwnd_max := WinExist("ahk_class Qt5151QWindowIcon" )
+
+$grid_size_spinner_pattern := ".*Perspective View Grid Extent.*"
+
+$wait := 100
+$wait_long := 300
+
+Sleep, %$wait_long%
 
 SetTitleMatchMode, 2 ; Partial title matching for 3ds Max window
 DetectHiddenText off
 
-$grid_size_spinner_pattern := ".*Perspective View Grid Extent.*"
 
-$hwnd_max := WinExist("ahk_class Qt5151QWindowIcon" )
-
-$wait := 100
-;$wait := 200
-
-
-/* GET 3DS MAX WINDOW
-*/ 
 if $hwnd_max != ""
 {
-	WinGet, $pid_max, PID, ahk_id %$hwnd_max%
-	
+	WinGet, $pid_max,  PID, ahk_id %$hwnd_max%
+
 	$settings_title := "Grid and Snap Settings ahk_pid " $pid_max
-	
+
 	$hwnd_grid := WinExist( $settings_title )
 
-		
-	/* OPEN GRID SETTINGS WINDOW
-		
-		'Grid and Snap Settings' via MENU: Max > Tools > Grids and Snaps > Grid and Snap Settings
-	*/ 
-	if not $hwnd_grid
-	{
-		BlockInput, on	
-	
-	    WinActivate, ahk_id %$hwnd_max%
-	    Sleep, %$wait%
-	    
-	    Send, !t ; OPEN MENU 'Tools'
-	    Sleep, %$wait%
-	
-	    Send, {up 4} ; Go to menu item
-	    Sleep, %$wait%
-	    Send, {right} ; Open submenu
-		
-	    Sleep, %$wait%
-	    Send, {Enter} ; Open "Grid and Snap Settings" window
-
-		BlockInput, off
-	}
 	
 	/** ACTIVATE "Grid and Snap Settings" window
 	  */
-	WinWaitActive, %$settings_title%,, 3
-	
-	if not ErrorLevel
-		$hwnd_grid := WinExist( $settings_title )
+	WinActivate, ahk_id %$hwnd_grid%
 
-	;msgBox %$hwnd_grid%
+	Sleep, %$wait%
 
 	/* GO TO 3rd TAB, find this tab by matching label of spinner
 	*/
@@ -80,8 +51,9 @@ if $hwnd_max != ""
 	
 		Send, ^{Tab} ; Ctrl+Tab usually cycles tabs; you may use {Right} if needed
 	
-	    Sleep, %$wait%
+		Sleep, %$wait%
 	}
+	
 	
 	/* SET VALUE TO SPINNER
 	*/ 
@@ -91,7 +63,6 @@ if $hwnd_max != ""
 	
 	WinClose, Grid and Snap Settings
 
-	BlockInput, off
 }
 
 exitApp

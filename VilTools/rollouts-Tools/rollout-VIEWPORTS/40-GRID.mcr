@@ -1,11 +1,32 @@
+/** SET GRID
+ */
+macroscript	viewport_grid_toggle
+category:	"_Viewports-Setup-Grid"
+buttontext:	"Grid ON \ OFF"
+tooltip:	"Toggle grid in all views"
+icon:	"across:3|MENU:true"
+(
+	on isChecked do viewport.getGridVisibility (viewport.activeViewport)
+	
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\40-GRID.mcr"
+		
+		grid_state = viewport.getGridVisibility (viewport.activeViewport)
+	
+		
+		for i = 1 to viewport.numViews do
+			viewport.setGridVisibility i (not grid_state)
+	)
+) 
 
 /** SET GRID
  */
 macroscript	viewport_set_grid_spacing
-category:	"_Viewports-Setup"
-buttontext:	"Grid Spacing"
+category:	"_Viewports-Setup-Grid"
+buttontext:	"Set Grid Spacing"
 tooltip:	"Set grid spacing in milimeters: 0.05 | 1 | 10 | 100\n\n0.05 is resolution of 3D printer`s LCD Creality LD-006"
-icon:	"across:2|MENU:true"
+icon:	"MENU:true"
 (
 	on execute do
 	(
@@ -54,10 +75,10 @@ icon:	"across:2|MENU:true"
 /**
  */
 macroscript	viewport_set_perspective_grid_size
-category:	"_3D-Print"
+category:	"_Viewports-Setup-Grid"
 buttontext:	"Set Grid Size"
 tooltip:	"Set grid size in perspective view.\n\nFit grid size to selected objects or all visible objects if nothing selected"
---icon:	"tooltip:"
+icon:	"MENU:true"
 (
 	/*
 		Get X and Y size of bounding box of all visible geometry
@@ -109,13 +130,28 @@ tooltip:	"Set grid size in perspective view.\n\nFit grid size to selected object
 	
 		[x_size, y_size] -- return as Point2
 	)
+	
+	/** Show grid in perspective view
+	 */
+	function showGridInPerspectiveView =
+	(
+		--format "\n"; print ".showGridInPerspectiveView()"
+		for i = 1 to viewport.numViews where viewport.getType index:i == #view_persp_user do persp_view = i
+
+		if persp_view != undefined then
+			viewport.setGridVisibility persp_view true
+	)
 
 	on execute do
 	(
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
 		--format "EventFired:	% \n" EventFired
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-VIEWPORTS\40-GRID.mcr"
 		
-		ahk_path = ( getFilenamePath(getSourceFileName()) + "/Ahk/set-perspective-grid-size.ahk" )	--"./Ahk/set-perspective-grid-size.ahk"
+		showGridInPerspectiveView()
+
+		
+		ahk_path = getDir #USERSCRIPTS + "\\MAXSCRIPT-viltools3\\VilTools\\rollouts-Tools\\rollout-VIEWPORTS\\Ahk\\set-perspective-grid-size.ahk"	--"./Ahk/set-perspective-grid-size.ahk"
 		
 		objects_input = if selection.count > 0 then selection as Array else for obj in geometry where not obj.isHidden collect obj
 		
@@ -124,15 +160,26 @@ tooltip:	"Set grid size in perspective view.\n\nFit grid size to selected object
 		if xy_size != undefined then
 		(
 			longer_side = amax xy_size[1] xy_size[2]
+			format "longer_side: %\n" longer_side
 			
 			/* GRID SIZE IS DEFINED BY ITS HALF SIZE */ 
 			grid_size = ( longer_side / 2 ) / GetGridSpacing()
+			format "grid_size: %\n" grid_size
 			
 			rounded_size = if grid_size > 100 then  floor((grid_size + 50) / 100.0) * 100 else floor((grid_size + 5) / 10.0) * 10
+			format "rounded_size: %\n" rounded_size
 			
-			ahk_path = "C:\\Users\\vilbur\\AppData\\Local\\Autodesk\\3dsMax\\2023 - 64bit\\ENU\\scripts\\MAXSCRIPT-viltools3\\VilTools\\rollouts-Tools\\rollout-VIEWPORTS\\Ahk\\set-perspective-grid-size.ahk"
+			hwnd_grid_settings = (for child in ( windows.getChildrenHWND 0 parent:#max) where child[5] == "Grid and Snap Settings" collect child[1])[1]
+			format "HWND_GRID_SETTINGS: %\n" hwnd_grid_settings
 			
-			DOSCommand ("start \"\" \""+ahk_path+"\" " + ((rounded_size as integer ) as string )  )
+			if hwnd_grid_settings == undefined then
+				actionMan.executeAction 0 "40024"  -- Snaps: Grid and Snap Settings Toggle
+			
+			command = "\""+ahk_path+"\"" 
+			--params = (hwnd_grid_settings  as string)+ " "+ ((rounded_size as integer ) as string ) 
+			params = (rounded_size as integer ) as string
+			
+			ShellLaunch command params
 		)
 	)
 )
