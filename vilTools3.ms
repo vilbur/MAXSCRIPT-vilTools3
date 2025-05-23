@@ -71,6 +71,9 @@ std_scripts = #(
 	"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
 	"/rollout-VIEWPORTS/04-[Layout-Presets].mcr",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/04-[Layout-Presets].mcr" -- menu items has unicode arrows, import on startup make it work in quad menu
 
+	"/rollouts-Tools/rollout-MATERIALS/Lib/MaterialId/MaterialId.ms",	--"./VilTools/rollouts-Tools/rollout-MATERIALS/Lib/MaterialId/MaterialId.ms"
+	
+	
 	"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
 	"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 	"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",

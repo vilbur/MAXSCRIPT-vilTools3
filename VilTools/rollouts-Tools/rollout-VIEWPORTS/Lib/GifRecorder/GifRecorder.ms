@@ -383,6 +383,8 @@ struct GifRecorder_v
 
 		Menu = RcMenu_v name:"FrameMenu"
 		
+		Menu.item	"Grab Frame"	"GIF_RECORDER.grabGifFrame()"
+		
 		Menu.item	"Remove Frame"	"GIF_RECORDER.removeFrame quiet:false"
 		
 		

@@ -7,7 +7,7 @@ icon:	"control:COLORPICKER|height:10|across:10|ini:false|offset:[0,-4]|value:(co
 (
 
 	on execute do (
-		 "colororange"
+		 print "colororange"
 	)
 )
 

@@ -1,7 +1,11 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/NodeList/NodeList.ms" )	-- "./Lib/NodeList/NodeList.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExportNode/ExportNode.ms" )	-- "./Lib/ExportNode/ExportNode.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/selectExportNodeInListCallback/selectExportNodeInListCallback.ms" )	-- "./Lib/selectExportNodeInListCallback/selectExportNodeInListCallback.ms"
+
+filein( getFilenamePath(getSourceFileName()) + "/Lib/whenExportNodeSelected/whenExportNodeSelected.ms" )	--"./Lib/whenExportNodeSelected/whenExportNodeSelected.ms"
+
 filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup.ms" )	-- "./Lib/ExporterSetup/ExporterSetup.ms"
+
+
 /*==============================================================================
 
 	NODES CONTROL
@@ -21,7 +25,7 @@ global NODE_GROUP_NAME_ROLLOUT
 macroscript	_export_node_create
 category:	"_Export"
 buttontext:	"Create"
-toolTip:	"Create Export Node\n\nNode name is exported filename\n\nSlected objects will be linked to new node"
+toolTip:	"Create Export Node\n\nNode name is exported filename\n\nSelected objects will be linked to new node"
 icon:	"across:3|width:64|height:48|pos:[ 184, 24 ]"
 --icon:	"across:5|width:64|height:48"
 (
@@ -136,9 +140,9 @@ icon:	"pos:[ 316, 24 ]"
 (
 	--format "eventFired	= % \n" eventFired
 
-	(NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
+	all_nodes_in_scene = (NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
 
-	selectExportNodeInListCallbactAdd()
+	whenExportNodeSelected(all_nodes_in_scene)
 )
 
 
@@ -193,7 +197,7 @@ icon:	"pos:[ 184, 72]"
 		setFocus NODE_GROUP_NAME_ROLLOUT.TextBox
 	)
 
-
+	format "_nodes.count: %\n" _nodes.count
 	if _nodes.count > 0 then
 		_createNodeDialog()
 
@@ -255,7 +259,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|off
 	--print "SELECTED"
 	--format "eventFired	= % \n" eventFired
 
-	selectExportNodeInListCallbackRemove()
+	whenExportNodeSelectedStop()
 
 	clearSelection()
 
@@ -268,7 +272,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|off
 
 	select selected_nodes
 
-	selectExportNodeInListCallbactAdd()
+	whenExportNodeSelectedStart()
 
 	/*------------------------------------------------------------------------------
 		DEPRECATED FOR UNREAL

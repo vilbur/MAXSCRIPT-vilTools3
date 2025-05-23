@@ -16,7 +16,11 @@ struct NodeList_v
 		--print "NodeList_v.loadNodes()"
 		--format "this.getAllNodesInScene()	= % \n" (this.getAllNodesInScene())
 		--format "this._getNodeNames (this.getAllNodesInScene())	= % \n" (this._getNodeNames (this.getAllNodesInScene()))
-		nodelist_control.items = sort(this._getNodeNames (this.getAllNodesInScene()))
+		all_nodes_in_scene = this.getAllNodesInScene()
+		
+		nodelist_control.items = sort(this._getNodeNames (all_nodes_in_scene))
+		
+		all_nodes_in_scene --return
 	),
 
 

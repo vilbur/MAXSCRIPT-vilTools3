@@ -39,7 +39,7 @@ struct ExporterSetup_v
 	(
 		format "\n"; print "ExporterSetup_v.export()"
 
-		selectExportNodeInListCallbackRemove()
+		whenExportNodeSelectedStart()
 
 		if( (this._getSelectedNodes()).count > 0 ) then
 		(
@@ -57,7 +57,7 @@ struct ExporterSetup_v
 		else
 			messageBox "Please select node in list" title:"Export node is not selected"
 
-		selectExportNodeInListCallbactAdd()
+		whenExportNodeSelectedStop()
 	),
 
 

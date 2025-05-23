@@ -30,8 +30,6 @@ struct ViewportLayoutManager_v
 	function resetCurrent reset_splitters:false =
 	(
 		--format "\n"; print "ViewportLayoutManager_v.resetCurrent()"
-		--format "reset_splitters: %\n" reset_splitters
-		
 		this.restoreLayout ( viewport.getLayout() ) reset_splitters:reset_splitters
 	),
 
@@ -59,7 +57,9 @@ struct ViewportLayoutManager_v
 		/* RESTORE VIEWPORT SPLITTERS */ 
 		if not reset_splitters then
 			this.restoreSplitBars layout_name:layout_name
-		
+			
+		actionMan.executeAction 0 "311"  -- Tools: Zoom Extents All Selected
+
 		CompleteRedraw()
 	),
 

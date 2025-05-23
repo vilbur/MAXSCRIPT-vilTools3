@@ -12,7 +12,7 @@ icon:	"across:2|height:32|menu:TRUE"
 		if GIF_RECORDER != undefined then
 			GIF_RECORDER.onCloseDialog()
 			
-		GIF_RECORDER = GifRecorder_v()
+		GIF_RECORDER = GifRecorder_v()  --"./Lib/GifRecorder/GifRecorder.ms"
 
 		createGifRecorderDialog()
 	)

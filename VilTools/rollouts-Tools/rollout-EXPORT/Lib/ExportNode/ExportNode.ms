@@ -251,15 +251,20 @@ struct ExportNode_v
 	function _getNewNodeName =
 	(
 		--format "\n"; print "ExportNode_v._getNewNodePosition()"
-		local node_name
+		--local node_name
 
-		if this._selection.count > 0 then
-			if (groups_in_selection = for obj in this._selection where isGroupHead obj collect obj).count > 0 then
-				node_name = groups_in_selection[1].name
-
-
-		if node_name == undefined then
-			node_name = if( maxFileName != "" ) then ( ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace ( getFilenameFile maxFileName ) "" ) else "Export_Node"
+		--if this._selection.count > 0 then
+		--	if (groups_in_selection = for obj in this._selection where isGroupHead obj collect obj).count > 0 then
+		--		node_name = groups_in_selection[1].name
+		
+		--node_name = if selection.count > 0 then selection[1].name
+		node_name = case of
+		(
+			( selection.count > 0): selection[1].name
+			( maxFileName != ""): ( dotNetObject "System.Text.RegularExpressions.Regex" @"[_-]\d+$" ).Replace ( getFilenameFile maxFileName ) ""
+			
+			default: "Export_Node"
+		)
 
 		node_name --return
 	),
