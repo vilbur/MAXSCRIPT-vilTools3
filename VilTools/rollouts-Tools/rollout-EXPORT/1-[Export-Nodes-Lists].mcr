@@ -114,10 +114,18 @@ buttontext:	"Group"
 toolTip:	"Group selected nodes"
 icon:	"pos:[ 184, 72]"
 (
+	function arrayToString arr delimeter = ( _string = ""; for item in arr do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count))
+	
 	_nodes =  (NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList()
 
-	--if( _nodes.count > 0 ) then
-		--for obj in selection do obj.parent = _nodes[1]
+	_node_names = for _node in _nodes collect _node.name
+	
+	group_name = ""
+	
+	group_name = if( _nodes.count > 0 ) then
+		arrayToString _node_names "_"
+	else
+		_nodes[1].name
 	--isGroupHead
 
 	/** Ask name dialog
@@ -132,7 +140,7 @@ icon:	"pos:[ 184, 72]"
 
 			on NODE_GROUP_NAME_ROLLOUT open do
 			(
-				TextBox.Text	= toUpper _nodes[1].name
+				TextBox.Text	= toUpper group_name
 				TextBox.BackColor	= ( dotNetClass "System.Drawing.Color").FromArgb 180 180 180
 			)
 
@@ -197,9 +205,7 @@ icon:	"pos:[ 250, 72]"
 
 /*==============================================================================
 
-
-		NODELIST
-
+		EXPORT NODE LIST
 
 ================================================================================*/
 
@@ -242,7 +248,7 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|off
 
 	/*------------------------------------------------------------------------------
 		DEPRECATED FOR UNREAL
-	--------------------------------------------------------------------------------*/
+
 	--/** Fillpaths
 	-- */
 	--function fillpaths _control prop_name =
@@ -263,6 +269,8 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|off
 	--macros.run "_Export" "_load_materials"
 	--
 	--select selected_nodes
+
+	--------------------------------------------------------------------------------*/
 )
 
 
@@ -276,8 +284,8 @@ buttontext:	"Nodes"
 toolTip:	"Isolate node children\n\nCtrl+LMB: Select node children."
 icon:	"control:multilistbox|across:2|event:#doubleClicked"
 (
-	--clearListener(); print("Cleared in:\n"+getSourceFileName())
-	--format "EventFired	= % \n" EventFired
+	clearListener(); print("Cleared in:\n"+getSourceFileName())
+	format "EventFired	= % \n" EventFired
 
 	LayersManager 	= LayersManager_v()
 
@@ -288,7 +296,8 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 	whenExportNodeSelectedStop()
 
 	selected_nodes = for obj in selection where classOf obj == Export_Node collect obj
-
+	format "selected_nodes.count: %\n" selected_nodes.count
+	format "selected_nodes: %\n" selected_nodes
 	/* OPEN PARENT GROUPS OF SELECTEDS NODES */
 	for selected_node in selected_nodes where selected_node.parent != undefined and isGroupHead selected_node.parent do setGroupOpen selected_node.parent true
 
@@ -296,8 +305,10 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 	for selected_node in selected_nodes do all_children += (selected_node.getAllChildren())
 	--format "\n-----------\nARRAY:selected_nodes:\n";  for selected_node in selected_nodes do format "selected_node:	%\n" selected_node.name
 
-	nodes_and_objects = all_children + selected_nodes + (LayersManager.getObjectsInLayers(default_Layer))
-
+	--nodes_and_objects = makeUniqueArray (all_children + selected_nodes + (LayersManager.getObjectsInLayers(default_Layer)))
+	nodes_and_objects = makeUniqueArray (all_children + selected_nodes )
+	format "nodes_and_objects.count: %\n" nodes_and_objects.count
+	format "nodes_and_objects: %\n" nodes_and_objects
 	layers_of_objects = LayersManager.getLayersByObjects( nodes_and_objects  )
 
 	--format "\n-----------\nARRAY:layers_of_objects:\n";  for layer in layers_of_objects do format "layer:	%\n" layer.name
@@ -337,6 +348,16 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 
 )
 
+
+/*==============================================================================
+
+		EXPORT GROUP LIST
+
+================================================================================*/
+
+
+
+
 /**  SELECT GROUPS OF NODES
  */
 macroscript	_export_nodes_groups_list_select
@@ -363,7 +384,8 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:9|width:160|offs
 )
 
 
-/**  NODE GROUPS LIST
+/**  	GROUP LIST DOUBLE CLICK
+
  */
 macroscript	_export_nodes_groups_list_isolate
 category:	"_Export"
@@ -386,7 +408,7 @@ icon:	"control:multilistbox|event:#doubleClicked"
 		append selected_groups _group
 	)
 
-	--macros.run "_Export" "_export_isolate_node_objects"
+	macros.run "_Export" "_export_isolate_node_objects"
 
 	--select selected_groups
 )
