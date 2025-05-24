@@ -1,5 +1,5 @@
 /** Methods for Lsitbox ROLLOUT_export.ML_nodes
-
+		
  */
 struct NodeList_v
 (
@@ -69,6 +69,36 @@ struct NodeList_v
 	function getAllNodesInScene =
 	(
 		for obj in shapes where classOf obj == Export_Node collect obj
+	),
+
+
+	/** Get groups of export nodes
+	 */
+	function getGroupsOfExportNodes export_nodes =
+	(
+		--format "\n"; print "NodeList_v.getGroupsOfExportNodes()"
+		groups_in_scene = makeUniqueArray( for obj in export_nodes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect obj.parent )
+		
+		group_names = for group_in_scene in groups_in_scene collect group_in_scene.name
+		
+		ROLLOUT_export.ML_Node_Groups.items = group_names
+	),
+
+	/** Get export path text
+	  * 
+	  * @return string text for browse path control
+	 */
+	function getExportPathText export_nodes =
+	(
+		--format "\n"; print "NodeList_v.getExportPathText()"
+		export_dirs = for export_node in export_nodes  collect export_node.export_dir
+
+		case (export_dirs_unique = (makeUniqueArray export_dirs)).count of
+			(
+				0: ""
+				1: export_dirs_unique[1]
+				default: "Multiple export paths"
+			)
 	),
 
 	/** _get node names

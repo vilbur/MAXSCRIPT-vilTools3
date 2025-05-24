@@ -26,19 +26,22 @@ buttontext:	"[Export Path]"
 toolTip:	"Set\Get export dir of selected nodes"
 icon:	"Control:browsePath|initialDir:maxFilePath|across:1|offset:[ 5, -24 ]|border:false"
 (
+	
 	format "EventFired.val	= % \n" EventFired.val
 
-	if (is_absolute = (( dotNetClass "System.Text.RegularExpressions.RegEx" ).match EventFired.val "[a-zA-Z]:[\\\/]" ).success) then
+	relative_path = if (is_absolute = (( dotNetClass "System.Text.RegularExpressions.RegEx" ).match EventFired.val "[a-zA-Z]:[\\\/]" ).success) then
+		 pathConfig.convertPathToRelativeTo EventFired.val maxFilePath
+	else
+		EventFired.val
+	
+	ROLLOUT_export.BP_export_path.text = relative_path
+
+	for selected_node in (NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInScene() do
 	(
-		relative_path = pathConfig.convertPathToRelativeTo EventFired.val maxFilePath
-		--format "relative_path	= % \n" relative_path
-
-		--relative_path = trimLeft relative_path "."
-		--format "relative_path	= % \n" relative_path
-		ROLLOUT_export.BP_export_path.text = relative_path
-
-		for selected_node in (NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInScene() do
-			selected_node.export_dir = (relative_path)
+		format "selected_node: %\n" selected_node
+	
+		selected_node.export_dir = (relative_path)
+		
 	)
 )
 

@@ -12,7 +12,8 @@ struct ExportNode_v
 	_selection,
 
 	layer_name = " ----- EXPORT NODES -----",
-	/** Create
+	
+	/** Create export node with dialog
 	 */
 	function create =
 	(
@@ -59,7 +60,10 @@ struct ExportNode_v
 			(
 				if e.KeyCode == e.KeyCode.Enter then
 				(
-					if( ThisExportNode._createNodeObject(TextBox.Text) ) then
+					/*------------------------------------------------------------------------------
+						CREATE EXPORT NODE
+					--------------------------------------------------------------------------------*/
+					if ( ThisExportNode._createNodeObject(TextBox.Text) ) then
 						destroyDialog NODE_NAME_ROLLOUT
 				)
 				else if e.KeyCode == e.KeyCode.Escape then
@@ -72,7 +76,7 @@ struct ExportNode_v
 		setFocus NODE_NAME_ROLLOUT.TextBox
 	),
 
-	/** Create
+	/** Create export node in scene
 	 */
 	function _createNodeObject _name =
 	(

@@ -12,8 +12,6 @@ filein( getFilenamePath(getSourceFileName()) + "/Lib/ExporterSetup/ExporterSetup
 
 ================================================================================*/
 global NODE_GROUP_NAME_ROLLOUT
---global ROLLOUT_export
---global ROLLOUT_3d_print
 
 /**  CREATE EXPORT NODE
 
@@ -88,47 +86,6 @@ icon:	"pos:[ 250, 24 ]"
 		)
 )
 
---/**  LINK TO GROUP
--- */
---macroscript	_export_node_link_to_group
---category:	"_Export"
---buttontext:	"Link"
---toolTip:	"LINK TO GROUP\n( Link nodes to selected group )"
---icon:	"pos:[ 246, 24 ]"
---(
---	undo "Link to group" on
---	(
---		_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
---
---		all_groups = makeUniqueArray( for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect  obj.parent)
---
---		group_names_in_selection = for index in ROLLOUT_export.ML_node_groups.selection as Array collect ROLLOUT_export.ML_node_groups.items[index]
---
---		selected_groups = for _group in all_groups where findItem group_names_in_selection _group.name > 0 collect _group
---
---		format "_NODES	= % \n" _nodes
---		--if( _nodes.count > 0 ) then
---			--for obj in selection do obj.parent = _nodes[1]
---		format "selected_groups	= % \n" selected_groups
---
---		if _nodes.count > 0 and selected_groups.count > 0 then
---		(
---
---			for _node in _nodes do
---				_node.parent = selected_groups[1]
---
---			node_names = ""
---
---			for _node in _nodes do node_names += "\n" + _node.name
---
---			messageBox ("NODES: "+node_names+"\n\nGROUP:\n" + selected_groups[1].name ) title:"GROUP NODES"  beep:false
---		)
---	)
---)
-
-
-
-
 /**  LOAD
  */
 macroscript	_export_node_load
@@ -139,9 +96,12 @@ icon:	"pos:[ 316, 24 ]"
 
 (
 	--format "eventFired	= % \n" eventFired
+	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
 
-	all_nodes_in_scene = (NodeList_v(ROLLOUT_export.ML_nodes)).loadNodes()
+	all_nodes_in_scene = NodeList.loadNodes()
 
+	NodeList.getGroupsOfExportNodes(all_nodes_in_scene)
+	
 	whenExportNodeSelected(all_nodes_in_scene)
 )
 
@@ -154,7 +114,7 @@ buttontext:	"Group"
 toolTip:	"Group selected nodes"
 icon:	"pos:[ 184, 72]"
 (
-	_nodes =  ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+	_nodes =  (NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList()
 
 	--if( _nodes.count > 0 ) then
 		--for obj in selection do obj.parent = _nodes[1]
@@ -162,7 +122,7 @@ icon:	"pos:[ 184, 72]"
 
 	/** Ask name dialog
 	 */
-	function _createNodeDialog =
+	function _createGroupDialog =
 	(
 		try(destroyDialog NODE_GROUP_NAME_ROLLOUT) catch()
 
@@ -186,6 +146,8 @@ icon:	"pos:[ 184, 72]"
 					_nodes[1].layer.addnode _group
 
 					destroyDialog NODE_GROUP_NAME_ROLLOUT
+					
+					macros.run "_Export" "_export_node_load"
 				)
 				else if e.KeyCode == e.KeyCode.Escape then
 					destroyDialog NODE_GROUP_NAME_ROLLOUT
@@ -199,9 +161,9 @@ icon:	"pos:[ 184, 72]"
 
 	format "_nodes.count: %\n" _nodes.count
 	if _nodes.count > 0 then
-		_createNodeDialog()
-
+		_createGroupDialog()
 )
+
 /**  Unify
  */
 macroscript	_export_node_unify
@@ -262,13 +224,17 @@ icon:	"control:multilistbox|across:2|event:#selectionEnd|height:19|width:160|off
 	whenExportNodeSelectedStop()
 
 	clearSelection()
-
-	selected_nodes = ((NodeList_v(ROLLOUT_export.ML_nodes)).getSelectedNodesInList())
+	
+	NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
+	
+	selected_nodes = NodeList.getSelectedNodesInList()
 
 	format "\n-----------\nARRAY:selected_nodes:\n";  for selected_node in selected_nodes do format "selected_node:	%\n" selected_node.name
 
 	/* OPEN PARENT GROUPS OF SELECTEDS NODES */
 	for selected_node in selected_nodes where selected_node.parent != undefined and isGroupHead selected_node.parent do setGroupOpen selected_node.parent true
+	
+	ROLLOUT_export.BP_export_path.text = NodeList.getExportPathText(selected_nodes)
 
 	select selected_nodes
 
@@ -313,15 +279,13 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 	--clearListener(); print("Cleared in:\n"+getSourceFileName())
 	--format "EventFired	= % \n" EventFired
 
-	--print "DOUBLECLICKED"
-	--format "eventFired	= % \n" eventFired
-
 	LayersManager 	= LayersManager_v()
 
 	all_children	= #()
 	default_Layer	= LayerManager.getLayerFromName "0"
 
-	selectExportNodeInListCallbackRemove()
+	/* DISABLE CALLBACK */
+	whenExportNodeSelectedStop()
 
 	selected_nodes = for obj in selection where classOf obj == Export_Node collect obj
 
@@ -369,7 +333,7 @@ icon:	"control:multilistbox|across:2|event:#doubleClicked"
 	select selected_nodes
 
 	/* ENABLE CALLBACK */
-	selectExportNodeInListCallbactAdd()
+	whenExportNodeSelectedStart()
 
 )
 
@@ -382,8 +346,8 @@ toolTip:	"Nodes to export"
 icon:	"control:multilistbox|across:2|event:#selectionEnd|height:9|width:160|offset:[ 0, 8 ]"
 --icon:	"control:multilistbox|across:2|items:#('1','2')" -- DEV
 (
-	--clearListener()
-	--format "eventFired	= % \n" eventFired
+	--clearListener(); print("Cleared in:\n"+getSourceFileName())
+	format "eventFired	= % \n" eventFired
 	--format "eventFired.Control.items	= % \n" eventFired.Control.items
 	--format "eventFired.Control.selection	= % \n" (eventFired.Control.selection as array )
 
@@ -409,20 +373,20 @@ icon:	"control:multilistbox|event:#doubleClicked"
 (
 	selected_groups = #()
 
-	all_groups = makeUniqueArray( for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect  obj.parent)
-
+	all_groups = makeUniqueArray( for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect obj.parent)
+	
 	group_names_in_selection = for index in eventFired.Control.selection as Array collect eventFired.Control.items[index]
-
+	
 	for _group in all_groups where findItem group_names_in_selection _group.name > 0 do
 	(
 		selectmore _group
-
+	
 		selectmore _group.children
-
+	
 		append selected_groups _group
 	)
 
-	macros.run "_Export" "_export_isolate_node_objects"
+	--macros.run "_Export" "_export_isolate_node_objects"
 
 	--select selected_groups
 )

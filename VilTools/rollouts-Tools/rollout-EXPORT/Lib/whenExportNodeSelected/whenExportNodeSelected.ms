@@ -7,7 +7,7 @@ global WHEN_EXPORT_NODE_SELECTED = #()
  */
 function whenExportNodeSelected objs =
 (
-	-- format "\n"; print whenExportNodeSelected()"
+	 --format "\n"; print "whenExportNodeSelected()"
 
 	if classOf objs == Array then
 		join WHEN_EXPORT_NODE_SELECTED objs
@@ -17,26 +17,29 @@ function whenExportNodeSelected objs =
 
 	deleteAllChangeHandlers id:#WHEN_EXPORT_NODE_SELECTED
 
+	
+	WHEN_EXPORT_NODE_SELECTED = makeUniqueArray WHEN_EXPORT_NODE_SELECTED
+	
+	WHEN_EXPORT_NODE_SELECTED = for export_node in WHEN_EXPORT_NODE_SELECTED where isValidNode export_node collect export_node
+
+	--format "WHEN_EXPORT_NODE_SELECTED.count: %\n" WHEN_EXPORT_NODE_SELECTED.count
+	
 	when select WHEN_EXPORT_NODE_SELECTED changes id:#WHEN_EXPORT_NODE_SELECTED obj do
 	(
-		--format "WHEN_EXPORT_NODE_SELECTED: %\n" obj
 
 		if obj.isSelected then
 		(
-			NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
-		
-			selected_nodes = NodeList.getSelectedNodesInScene()
+			format "WHEN_EXPORT_NODE_SELECTED: %\n" obj
 			
+			NodeList = NodeList_v(ROLLOUT_export.ML_nodes)
+			
+			/* GET SELECTED NODES IN SCENE */ 
+			selected_nodes = NodeList.getSelectedNodesInScene()
+			--format "selected_nodes: %\n" selected_nodes
+			/* SELECT ITEMS IN LIST */ 
 			NodeList.selectNodesInList(selected_nodes)
-	
-			export_dirs = for selected_node in selected_nodes  collect selected_node.export_dir
-	
-			ROLLOUT_export.BP_export_path.text = case (export_dirs_unique = (makeUniqueArray export_dirs)).count of
-			(
-				0: ""
-				1: export_dirs_unique[1]
-				default: "Multiple export paths"
-			)
+			
+			ROLLOUT_export.BP_export_path.text = NodeList.getExportPathText(selected_nodes)
 	
 			ROLLOUT_export.ML_node_groups.items = sort (makeUniqueArray(for obj in shapes where classOf obj == Export_Node and obj.parent != undefined and isGroupHead obj.parent collect obj.parent.name))
 		)
