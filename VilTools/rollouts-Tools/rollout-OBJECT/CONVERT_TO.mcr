@@ -6,7 +6,7 @@ buttontext:	"Convert To Editable Poly"
 tooltip:	"Convert To Editable Poly"
 icon:	"MENU:true"
 (
-	on isVisible return selection.count > 0 and classof $.baseobject != line
+	on isVisible return selection.count > 0 and classof selection[1].baseobject != line
 
 	on execute do
 	(
@@ -33,7 +33,7 @@ buttontext:	"Convert To Spline"
 tooltip:	"Convert To Ediable Spline"
 icon:	"MENU:true"
 (
-	on isVisible return selection.count > 0 and superClassOf $.baseobject == shape and classof $.baseobject != SplineShape
+	on isVisible return selection.count > 0 and superClassOf selection[1].baseobject == shape and classof selection[1].baseobject != SplineShape
 
 	on execute do
 	(

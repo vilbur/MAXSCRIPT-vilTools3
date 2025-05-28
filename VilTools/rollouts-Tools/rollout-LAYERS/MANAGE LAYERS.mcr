@@ -7,7 +7,7 @@
  */
 macroscript	_layers_expand_layers_of_selection
 category:	"_Layers-Manage"
-buttontext:	"Expand Layers"
+buttontext:	"EXPAND Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
 icon:	"MENU:EXPAND Layers|across:3"
 (
@@ -36,7 +36,7 @@ icon:	"MENU:EXPAND Layers|across:3"
  */
 macroscript	_layers_collapse_all_layers
 category:	"_Layers-Manage"
-buttontext:	"Collapse Layers"
+buttontext:	"COLLAPSE Layers"
 tooltip:	"Collapse Layers in manager"
 icon:	"MENU:COLLAPSE Layers"
 (
@@ -49,7 +49,7 @@ icon:	"MENU:COLLAPSE Layers"
  */
 macroscript	_layers_manager_clone_layers
 category:	"_Layers-Manage"
-buttontext:	"Clone Layers"
+buttontext:	"CLONE Layers"
 tooltip:	"Copy selected objects to new layers"
 icon:	"MENU:CLONE Layers"
 (

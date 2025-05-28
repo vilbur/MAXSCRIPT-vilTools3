@@ -4,7 +4,7 @@ macroscript	_layers_activate_curent_layer_of_selection
 category:	"_Layers-Select"
 buttontext:	"Set current"
 tooltip:	"Set current layer by selection"
-icon:	"MENU:Set Current"
+icon:	"across:3|MENU:Set Current"
 autoUndoEnabled:true
 (
 	on execute do

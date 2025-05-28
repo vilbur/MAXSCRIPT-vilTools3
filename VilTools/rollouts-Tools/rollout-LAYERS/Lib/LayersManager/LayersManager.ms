@@ -462,15 +462,18 @@ struct LayersManager_v
 
 		clearSelection()
 
-		auto_expand_state = SceneExplorerInstance.AutoExpand
+		if SceneExplorerInstance != undefined then
+		(
+			auto_expand_state = SceneExplorerInstance.AutoExpand
+			
+			SceneExplorerInstance.AutoExpand = true
 
-		SceneExplorerInstance.AutoExpand = true
-
-		select _objects
-
-		SceneExplorerInstance.SelectLayerOfSelection()
-
-		SceneExplorerInstance.AutoExpand = auto_expand_state
+			select _objects
+	
+			SceneExplorerInstance.SelectLayerOfSelection()
+	
+			SceneExplorerInstance.AutoExpand = auto_expand_state
+		)
 	),
 
 	/** Expand layers
@@ -569,6 +572,7 @@ struct LayersManager_v
 	function hideUnselected ISOLATE:false =
 	(
 		--format "\n"; print "LayersManager_v.hideUnselected()"
+		
 		layers_selected = this.getSelectedOrCurrent()
 		--format "layers_selected:	% \n" layers_selected
 		layers_in_tree = this.getLayersTree(layers_selected)
@@ -579,6 +583,9 @@ struct LayersManager_v
 		this.setVisibility (layers_selected) (true)
 
 		this._setVisibilityOthers (top_layers)(layers_selected)(layers_in_tree) STATE:false ISOLATE:ISOLATE
+		
+		for obj in objects where not obj.isHidden and not obj.isSelected do 
+			obj.isHidden = true
 	),
 
 	/** Set visibility others
