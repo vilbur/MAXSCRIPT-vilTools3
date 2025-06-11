@@ -11,22 +11,28 @@ function createLayersTree =
 	for t = 1 to 4 do
 	(
 		title_top	= ("Top" + t as string )
+		wirecolor = red
+		wirecolor.b += (t * 30 ) 
+		
 		LayerManager.newLayerFromName (title_top)
 		top_layer	= LayerManager.getLayerFromName title_top
-		top_layer.addNode (Teapot pos:[ (t * 100), 0, 0] name:title_top wirecolor:red )
+		top_layer.addNode (Teapot pos:[ (t * 100), 0, 0] name:title_top wirecolor:wirecolor )
 
 		for c = 1 to 3 do
 		(
 			title_child	= title_top + "Child" + c as string
-
+			wirecolor = green
+			wirecolor.r += (t * c * 30 ) 
 
 			LayerManager.newLayerFromName ( title_child );
 			child_layer	= LayerManager.getLayerFromName title_child
 			child_layer.setParent (top_layer)
-			child_layer.addNode (Teapot pos:[ (t * 100), (c * 100), 0] name:title_child wirecolor:green )
+			child_layer.addNode (Teapot pos:[ (t * 100), (c * 100), 0] name:title_child wirecolor:wirecolor )
 
 			for n = 1 to 2 do
 			(
+				wirecolor = blue
+				wirecolor.g += (t * c * n *30 ) 
 				title_nested	= title_child +"Nested"+ n as string
 
 				--title_nested	= title_child +"Nested"
@@ -34,7 +40,7 @@ function createLayersTree =
 				nested_layer	= LayerManager.getLayerFromName title_nested
 				nested_layer.setParent (child_layer)
 
-				nested_layer.addNode (Teapot pos:[ (t * 100), ( c * 100),  ( n * 100)] name:title_nested  wirecolor:blue)
+				nested_layer.addNode (Teapot pos:[ (t * 100), ( c * 100),  ( n * 100)] name:title_nested  wirecolor:wirecolor )
 			)
 		)
 	)
@@ -52,10 +58,9 @@ function createLayersTree =
 --)
 
 /* PREPARE SCENE */
-
 if objects.count == 0 then
 (
-	resetMaxFile #noPrompt
+	--resetMaxFile #noPrompt
 	--print "RESET"
 
 
@@ -103,7 +108,7 @@ selectmore	$Top1
 
 
 /* GET SELECTED LAYERS BY OBJECTS */
---for layer in (LayersManager.getLayersByObjects( selection )) do format "layer.name:	% \n" layer.name
+for layer in (LayersManager.getLayersByObjects( selection )) do format "layer.name:	% \n" layer.name
 
 /* GET SELECTED LAYERS IN MANAGER */
 --for layer in (LayersManager.getSelectedByManager()) do format "layer.name:	% \n" layer.name
@@ -115,7 +120,7 @@ selectmore	$Top1
 --for id in (LayersManager.getLayersIndex#( 0, "Top1", LayerManager.getLayer 1, (LayerManager.getLayer 1).layerAsRefTarg  )) do format "Layer id:	% \n" id
 
 /* GET ALL CHILDREN LAYERS */
-for layer in (LayersManager.getNestedLayers("Top1")) do format "layer.name:	% \n" layer.name
+--for layer in (LayersManager.getNestedLayers("Top1")) do format "layer.name:	% \n" layer.name
 
 
 /*

@@ -7,72 +7,90 @@ filein( getFilenamePath(getSourceFileName()) + "/../SceneLayers.ms" )	--"./../Sc
 
 delete objects
 macros.run "Scene Explorer" "SERemoveEmptyLayers"
+macros.run "Scene Explorer" "SELayerExplorer"
 
-_sphere = Sphere()
 _box    = Box name:"BoxFooBar"
-_teapot = Teapot name:"Teapot"
 
 SceneLayers 	= SceneLayers_v()
 LayersManager = LayersManager_v()
 
 
+
+
+
+
+/*==============================================================================
+	
+	MANAGE LAYERS
+	
+================================================================================*/
+
 /* CREATE TOP LAYERS */
 SceneLayers.createTopLayers()
 
 
-/* MAKE LAYERS HIERARCHY */
-top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
+/* FIND LAYERS */
+--top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
 
-objects_layer = LayersManager.newLayer "Foo-Obejcts"
-objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:top_layer_edit
+/* NEW LAYER */ 
+--objects_layer = LayersManager.newLayer "Foo-Obejcts"
+--objects_layer = LayersManager.newLayer "Foo-Obejcts" parent:(LayersManager.findLayer ("EDIT"))
 
-
---/* CREATE CUSTOM LAYER FOR OBJECT */
---SceneLayers.moveToLayerType( $Sphere001 ) layer_type:#EDIT
---layer_sphere	= SceneLayers.createLayerByObject( $Sphere* )
-
+/* MOVE TO LAYER OF TYPE */ 
+--SceneLayers.moveTo #EDIT $Sphere001
 
 /* CREATE CUSTOM LAYER FOR OBJECT */
---layer_box	= SceneLayers.createLayerByObject( $Box* )
---layer_box[1].setParent (objects_layer)
+--layer_sphere	= SceneLayers.createLayerByObject $Sphere*
+
+/* CREATE CUSTOM LAYER FOR OBJECT */
+--layer_box	= SceneLayers.createLayerByObject $Box*
+--layer_box[1].setParent objects_layer
 
 
 
-/*------------------------------------------------------------------------------
-
+/*==============================================================================
+	
 	MOVE|COPY|INSTANCE|REFERENCE
 
 	layer types "#FINAL" and "#PRINT" DOES NOT USE SUFFIX !
-
---------------------------------------------------------------------------------*/
+	
+================================================================================*/
 
 /* MOVE OBJECT TO lAYER */
-SceneLayers.moveToLayerType( $Box*[1] )	layer_type:#SOURCE
+--SceneLayers.moveTo #SOURCE $Box*[1]
 
+/* COPY OBJECT AS REFERENCE TO lAYER */
+--SceneLayers.moveTo #EDIT $Box*[1] mode:#REFERENCE
+
+
+/* COPY OBJECT AS INSTANCE TO lAYER */
+--SceneLayers.moveTo #PRINT $Box*[1]	mode:#INSTANCE
 
 /* COPY OBJECT TO lAYER */
-SceneLayers.moveToLayerType( $'Box*-source' )	layer_type:"FINAL"	mode:#COPY
---
---
---/* COPY OBJECT AS REFERENCE TO lAYER */
---SceneLayers.moveToLayerType( $Box* )	layer_type:#EDIT	mode:#REFERENCE
---
---
---/* COPY OBJECT AS INSTANCE TO lAYER */
---SceneLayers.moveToLayerType( $Box* )	layer_type:#PRINT	mode:#INSTANCE
-
+--SceneLayers.moveTo "FINAL" ( $'Box*' )	mode:#COPY
 
 /* SELECT BY lAYER TYPE */
-SceneLayers.selectLayerType( $Box*[1] ) layer_type:#SOURCE
-SceneLayers.selectLayerType( $Box*[1] ) layer_type:#FINAL select_more:true
+--SceneLayers.selectIn #SOURCE $Box*[1] 
+--SceneLayers.selectIn #FINAL $Box*[1] select_more:true
 
+/*==============================================================================
+	
+	GROUP TEST
+	
+================================================================================*/
 
-/* GROUP TEST */
---objs_group = group objects name:"GROUP-ALL-OBJECTS"
+/* */
+----objs_group = group objects name:"GROUP-ALL-OBJECTS"
+objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
 --setGroupOpen objs_group true
 
+SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS'
 
-format "layer_edit: %\n" layer_edit
+--format "layer_edit: %\n" layer_edit
 
 /* SELECT ALL - help for debug */
 --actionMan.executeAction 0 "40021"  -- Selection: Select All
+
+
+
+

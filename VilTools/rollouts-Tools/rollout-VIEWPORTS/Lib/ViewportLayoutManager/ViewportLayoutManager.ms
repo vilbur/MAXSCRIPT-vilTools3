@@ -57,8 +57,9 @@ struct ViewportLayoutManager_v
 		/* RESTORE VIEWPORT SPLITTERS */ 
 		if not reset_splitters then
 			this.restoreSplitBars layout_name:layout_name
-			
-		actionMan.executeAction 0 "311"  -- Tools: Zoom Extents All Selected
+		
+		if subObjectLevel == undefined or subObjectLevel == 0 then
+			actionMan.executeAction 0 "311"  -- Tools: Zoom Extents All Selected
 
 		CompleteRedraw()
 	),

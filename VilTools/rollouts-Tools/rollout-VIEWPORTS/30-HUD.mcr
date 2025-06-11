@@ -3,7 +3,7 @@
  */
 macroscript	_viewport_hud_info
 category:	"_Viewports-HUD"
-buttontext:	"Viewport Info"
+buttontext:	"VIEWPORT Info"
 --icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 (
@@ -29,7 +29,7 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
  */
 macroscript	_viewport_hud_info_object
 category:	"_Viewports-HUD"
-buttontext:	"Object Info"
+buttontext:	"OBJECT Info"
 tooltip:	"Show info about selected objetcs in viewport"
 icon:	"control:checkbutton|MENU:true|autorun:true"
 (

@@ -97,7 +97,7 @@ startup_scripts = #(
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 	
 	--"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
-	
+	"/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms",	--"./VilTools/rollouts-Tools/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms"
 	"" -- last blank item to prevent errors on development
 )
 

@@ -44,37 +44,57 @@ struct SceneLayers_v
 			LayersManager.newLayer (layer_name_data.value)
 	),
 
-	/** Move to layer
+	/** Move to layer of type
 	  *
 	  * @param name mode #MOVE|#COPY|#INSTANCE|#REFERENCE
 	 */
-	function moveToLayerType _objects layer_type: mode:#MOVE =
+	function moveTo layer_type _objects mode:#MOVE =
 	(
-		--format "\n"; print "SceneLayers_v.moveToLayer()"
+		format "\n"; print "SceneLayers_v.moveTo()"
+		format "mode: %\n" mode
 		layer_type = layer_type as name
-
 
 		for obj in (_objects = this._getSourceObjects (_objects)) do
 		(
+			/* #COPY | #INSTANCE | #REFERENCE */ 
 			if mode != #MOVE then
 			(
+				source_name = obj.name
+				
 				new_node = this._cloneNode (obj) (mode)
-
+				format "NEW_NODE: %\n" new_node
+				
+				/* CLEAR USER PROPS ON NE NODE */ 
 				setUserPropBuffer new_node ""
+				
+				/* MOVE COPY TO LAYER */ 
+				this._moveNodeToLayer(new_node)(layer_type)
 
+				/* RENAME SOURCE OBJECT */ 
 				this._renameObjectByTopLayer (obj)
-
+				
+				/* RENAME NEW NODE IF SOURCE OBJECT HAS NOT BEEN RENAMED - E.G.: if it is in default layer */ 
+				if obj.name == source_name then
+					this._renameObjectByTopLayer (new_node) force:true
+				
+				
 				obj = new_node
 			)
-
-			this._moveNodeToLayer(obj)(layer_type)
+			else
+			(
+				this._moveNodeToLayer(obj)(layer_type)
+				
+				this._renameObjectByTopLayer (obj)
+			)
 
 			append new_nodes_all obj
 		)
 
 		 this._deleteEmptyLayers()
+		 
+		 new_nodes_all --return
 
-		 select new_nodes_all
+		 --select new_nodes_all
 
 		--if layer_type == #FINAL then
 		----	for i = new_layers.count to 1 by -1 do
@@ -87,14 +107,18 @@ struct SceneLayers_v
 
 	/** Rename object by top layer
 	 */
-	function _renameObjectByTopLayer obj =
+	function _renameObjectByTopLayer obj force: =
 	(
-		--format "\n"; print "SceneLayers_v.renameObjectByTopLayer()"
+		format "-----------------------------------\n"
+		format "\n"; print "SceneLayers_v.renameObjectByTopLayer()"
+		format "obj.name: %\n" obj.name
 		top_layer_source = (LayersManager.getTopLayers(obj.layer))[1]
-
+		format "top_layer_source: %\n" top_layer_source.name
 		layer_type = this.getTopLayerSuffix (top_layer_source.name)
+		format "layer_type: %\n" layer_type
 
-		obj.name = this._getNameByLayerSuffix (obj) (layer_type as name )
+		if layer_type != undefined then -- undefined if "Default" layer
+			obj.name = this._getNameByLayerSuffix (obj) (layer_type as name ) force:force
 	),
 
 	/** Create layer by object
@@ -142,9 +166,9 @@ struct SceneLayers_v
 
 	/** Select layer type
 	 */
-	function selectLayerType _objects layer_type: select_more:false =
+	function selectIn layer_type _objects select_more:false =
 	(
-		--format "\n"; print "SceneLayers_v.selectLayerType()"
+		--format "\n"; print "SceneLayers_v.selectIn()"
 		layer_type = layer_type as name
 
 		function isLayerWithoutSuffix layer_type = findItem this.layers_without_suffix layer_type > 0
@@ -220,7 +244,7 @@ struct SceneLayers_v
 	 */
 	function _moveNodeToLayer obj layer_type =
 	(
-		--format "\n"; print "SceneLayers_v._moveNodeToLayer()"
+		format "\n"; print "SceneLayers_v._moveNodeToLayer()"
 		/** Get layers tree
 		 */
 		layer = this._createTargetLayersHierarchy(obj) (layer_type)
@@ -234,12 +258,31 @@ struct SceneLayers_v
 	 *
 	 * return string E.G.: ""
 	 */
-	function _getNameByLayerSuffix obj layer_type =
+	function _getNameByLayerSuffix obj layer_type force: =
 	(
-		--format "\n"; print "SceneLayers_v._getNameByLayerSuffix()"
+		format "\n"; print "SceneLayers_v._getNameByLayerSuffix()"
+		format "layer_type: %\n" layer_type
+		
+		/** Object with name exists
+		 */
+		function objectWithNameExists obj_name =
+		(
+			--format "\n"; print "TO.objectWithNameExists()"
+			pattern = obj_name + "*"
+			
+			matching_nodes = for obj in objects where matchPattern obj.name pattern:pattern ignoreCase:false collect obj
+			
+			matching_nodes.count > 0 --return
+		)
+		
 		obj_name = this._removeTypeSuffix obj.name
+		format "obj_name: %\n" obj_name
 
-		if findItem layers_without_suffix layer_type == 0 then
+		layer_has_suffix = findItem layers_without_suffix layer_type == 0
+		
+		--if findItem layers_without_suffix layer_type == 0 then
+		--if layer_has_suffix or ( not layer_has_suffix and objectWithNameExists obj_name ) then
+		if layer_has_suffix or force == true then
 			obj_name += (delimeter + toLower(layer_type as string ) )
 
 		obj_name --return
@@ -324,10 +367,11 @@ struct SceneLayers_v
 	 */
 	function getTopLayerSuffix layer_name =
 	(
-		--format "\n"; print "SceneLayers_v.getTopLayerSuffix()"
+		format "\n"; print "SceneLayers_v.getTopLayerSuffix()"
 		matches = this.RegEx.matches layer_name ("[^A-Z]*("+this.type_suffix_pattern+")[^A-Z]*") this.IgnoreCase
 		--format "matches: %\n" matches.item[1].groups
 		result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
+		format "result: %\n" result
 
 		if result.count > 0 then
 			result[1][2] --return
@@ -443,7 +487,8 @@ struct SceneLayers_v
 	 */
 	function _getSourceObjects _objects =
 	(
-		--format "\n"; print "SceneLayers_v._getSourceObjects()"
+		format "\n"; print "SceneLayers_v._getSourceObjects()"
+		format "_objects: %\n" _objects
 		if classOf _objects != Array then
 			_objects = if classOf _objects == PathName then _objects = _objects as Array else #(_objects)
 
@@ -460,6 +505,7 @@ struct SceneLayers_v
 				deleteItem _objects index
 		)
 
+		format "_objects: %\n" _objects
 		_objects --return
 	),
 
