@@ -116,18 +116,18 @@ SceneLayers.createTopLayers()
 	GROUP TEST
 	
 ================================================================================*/
---
+
 /* */
-objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
---setGroupOpen objs_group true
---setGroupOpen objs_group false
-
-select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
-
-select( SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*' )
-clearListener(); print("Cleared in:\n"+getSourceFileName())
-select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
-
+--objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
+----setGroupOpen objs_group true
+----setGroupOpen objs_group false
+--
+--select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
+--
+--select( SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*' )
+----clearListener(); print("Cleared in:\n"+getSourceFileName())
+--select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
+--
 
 /*==============================================================================
 	
@@ -135,16 +135,16 @@ select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
 	
 ================================================================================*/
 
---objs_child = group #( Cylinder() ) name:"GROUP-CHILD"
---
---objs_group_parent = group #( objs_child, Tube() ) name:"GROUP-PARENT"
---
---select ( SceneLayers.moveTo #SOURCE $'GROUP-PARENT' )
---
---select ( SceneLayers.instanceTo #EDIT $'GROUP-PARENT-source' )
-----clearListener(); print("Cleared in:\n"+getSourceFileName())
---
---select ( SceneLayers.referenceTo #FINAL $'GROUP-PARENT-source' )
+objs_child = group #( Cylinder() ) name:"GROUP-CHILD"
+
+objs_group_parent = group #( objs_child, Tube() ) name:"GROUP-PARENT"
+
+select ( SceneLayers.moveTo #SOURCE $'GROUP-PARENT' )
+
+select ( SceneLayers.instanceTo #EDIT $'GROUP-PARENT' )
+
+
+select ( SceneLayers.referenceTo #FINAL $'GROUP-PARENT-source' )
 
 
 /* SELECT ALL - help for debug */
