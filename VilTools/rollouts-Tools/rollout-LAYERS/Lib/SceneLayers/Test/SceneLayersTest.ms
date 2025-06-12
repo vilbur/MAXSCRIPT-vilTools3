@@ -22,7 +22,7 @@ function createHierarchy =
 
 	grandson = box name:"Grandson" pos:(point3 300 0 0)
 	grandson.parent = son
-
+	
 	great_grandson = box name:"Great_Grandson" pos:(point3 400 0 0)
 	great_grandson.parent = grandson
 	
@@ -50,7 +50,6 @@ SceneLayers.createTopLayers()
 	
 ================================================================================*/
 
---_box    = Box name:"BoxFooBar"
 
 /* FIND LAYERS */
 --top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
@@ -79,20 +78,21 @@ SceneLayers.createTopLayers()
 	
 ================================================================================*/
 
+--_box    = Box name:"BoxFooBar"
+
 /* MOVE OBJECT TO lAYER */
 --SceneLayers.moveTo #SOURCE $Box*[1]
 
-/* COPY OBJECT AS REFERENCE TO lAYER */
+--/* COPY OBJECT AS REFERENCE TO lAYER */
 --SceneLayers.referenceTo #EDIT $Box*[1]
-
-
-/* COPY OBJECT AS INSTANCE TO lAYER */
+--
+----/* COPY OBJECT AS INSTANCE TO lAYER */
 --SceneLayers.instanceTo #PRINT $Box*[1]
-
-/* COPY OBJECT TO lAYER */
---SceneLayers.copyTo "FINAL" ( $'Box*' )
-
-/* SELECT BY lAYER TYPE */
+----
+----/* COPY OBJECT TO lAYER */
+--SceneLayers.copyTo "FINAL" $Box*[1]
+--
+--/* SELECT BY lAYER TYPE */
 --SceneLayers.selectIn #SOURCE $Box*[1] 
 --SceneLayers.selectIn #FINAL $Box*[1] select_more:true
 
@@ -101,35 +101,32 @@ SceneLayers.createTopLayers()
 	HIEREARCHY TEST
 	
 ================================================================================*/
-grandfather = createHierarchy()
-
-select ( SceneLayers.moveTo #SOURCE grandfather )
-
-select( SceneLayers.copyTo #EDIT grandfather )
-
-select( SceneLayers.referenceTo #FINAL grandfather )
+--grandfather = createHierarchy()
+--
+--select ( SceneLayers.moveTo #SOURCE grandfather )
+--
+--select ( SceneLayers.copyTo #EDIT grandfather )
+--
+--select ( SceneLayers.InstanceTo #PRINT grandfather )
+--
+--select ( SceneLayers.referenceTo #FINAL grandfather )
 
 /*==============================================================================
 	
 	GROUP TEST
 	
 ================================================================================*/
-
+--
 /* */
-----objs_group = group objects name:"GROUP-ALL-OBJECTS"
---objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
+objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
 --setGroupOpen objs_group true
 --setGroupOpen objs_group false
 
---select $'GROUP-OBJECTS'
-----SceneLayers.moveTo #SOURCE ( selection as Array )
---
---
---select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
---
---select( SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*' )
---
---select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
+select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
+
+select( SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*' )
+clearListener(); print("Cleared in:\n"+getSourceFileName())
+select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
 
 
 /*==============================================================================
@@ -151,7 +148,7 @@ select( SceneLayers.referenceTo #FINAL grandfather )
 
 
 /* SELECT ALL - help for debug */
---actionMan.executeAction 0 "40021"  -- Selection: Select All
+actionMan.executeAction 0 "40021"  -- Selection: Select All
 
 
 
