@@ -65,26 +65,20 @@ struct SceneLayers_v
 						this._renameObject child layer_type
 			)
 			
+			select _objects
+			
 			_objects --return 
 		)
 		else
 			#() -- return fallback
 	),
-	
-	/** Get objects by name
-	 */
-	function _getObjectsByName obj_name =
-	(
-		--format "\n"; print "TO._getObjectsByName()"
-		 getNodeByName obj_name all:true
-	),
-	
+
 	/** Copy to
 	 */
 	function copyTo layer_type _objects =
 	(
 		--format "\n"; print "TO.copyTo()"
-		this._copyTo layer_type _objects mode:#COPY
+		select ( this._copyTo layer_type _objects mode:#COPY )
 	),
 	
 	/** Instance to
@@ -92,7 +86,7 @@ struct SceneLayers_v
 	function instanceTo layer_type _objects =
 	(
 		--format "\n"; print "TO.instanceTo()"
-		this._copyTo layer_type _objects mode:#INSTANCE
+		select ( this._copyTo layer_type _objects mode:#INSTANCE )
 	),
 	
 	/** Reference to
@@ -100,7 +94,7 @@ struct SceneLayers_v
 	function referenceTo layer_type _objects =
 	(
 		--format "\n"; print "TO.referenceTo()"
-		this._copyTo layer_type _objects mode:#REFERENCE
+		select ( this._copyTo layer_type _objects mode:#REFERENCE )
 	),
 	
 	/** Move to layer of type
@@ -144,7 +138,8 @@ struct SceneLayers_v
 				
 				--obj = new_nodes[1]
 				
-				append new_nodes_all obj
+				--append new_nodes_all obj
+				join new_nodes_all new_nodes
 			)
 	
 			 this._deleteEmptyLayers()
@@ -177,6 +172,14 @@ struct SceneLayers_v
 					this._renameObjectByTopLayer same_name_objs[i]
 			
 		)
+	),
+	
+	/** Get objects by name
+	 */
+	function _getObjectsByName obj_name =
+	(
+		--format "\n"; print "TO._getObjectsByName()"
+		 getNodeByName obj_name all:true
 	),
 	
 	/** Rename object by top layer

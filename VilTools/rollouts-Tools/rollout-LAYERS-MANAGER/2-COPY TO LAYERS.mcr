@@ -7,7 +7,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#COPY layer_type: #SOURCE
+		(SceneLayers_v()).copyTo #SOURCE ( selection as Array )
 	)
 )
 
@@ -20,7 +20,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#COPY layer_type: #EDIT
+		(SceneLayers_v()).copyTo #EDIT ( selection as Array )
 	)
 )
 
@@ -33,7 +33,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#COPY layer_type: #FINAL
+		(SceneLayers_v()).copyTo #FINAL ( selection as Array )
 	)
 )
 
@@ -46,7 +46,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#COPY layer_type: #Print
+		(SceneLayers_v()).copyTo #Print ( selection as Array )
 	)
 )
 

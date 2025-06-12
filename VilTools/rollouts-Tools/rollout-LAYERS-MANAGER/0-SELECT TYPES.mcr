@@ -7,7 +7,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).selectLayerType( selection as Array ) select_more:keyboard.controlPressed layer_type: #SOURCE
+		(SceneLayers_v()).selectIn #SOURCE ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
 
@@ -20,7 +20,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).selectLayerType( selection as Array ) select_more:keyboard.controlPressed layer_type: #EDIT
+		(SceneLayers_v()).selectIn #EDIT ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
 
@@ -33,7 +33,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).selectLayerType( selection as Array ) select_more:keyboard.controlPressed layer_type: #FINAL
+		(SceneLayers_v()).selectIn #FINAL ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
 
@@ -46,7 +46,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).selectLayerType( selection as Array ) select_more:keyboard.controlPressed layer_type: #PRINT
+		(SceneLayers_v()).selectIn #PRINT ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
 

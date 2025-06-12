@@ -7,7 +7,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #SOURCE
+		(SceneLayers_v()).InstanceTo #SOURCE ( selection as Array )
 	)
 )
 
@@ -20,7 +20,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #EDIT
+		(SceneLayers_v()).InstanceTo #EDIT ( selection as Array )
 	)
 )
 
@@ -33,7 +33,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #FINAL
+		(SceneLayers_v()).InstanceTo #FINAL ( selection as Array )
 	)
 )
 
@@ -46,7 +46,7 @@ icon:	"MENU:true"
 (
 
 	on execute do (
-		(SceneLayers_v()).moveToLayerType( selection as Array ) mode:#INSTANCE layer_type: #PRINT
+		(SceneLayers_v()).InstanceTo #PRINT ( selection as Array )
 	)
 )
 

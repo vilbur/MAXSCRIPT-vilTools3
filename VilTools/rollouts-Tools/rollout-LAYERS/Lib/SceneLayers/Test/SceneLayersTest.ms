@@ -101,15 +101,15 @@ SceneLayers.createTopLayers()
 	HIEREARCHY TEST
 	
 ================================================================================*/
---grandfather = createHierarchy()
+grandfather = createHierarchy()
 --
---select ( SceneLayers.moveTo #SOURCE grandfather )
+--SceneLayers.moveTo #SOURCE grandfather
 --
---select ( SceneLayers.copyTo #EDIT grandfather )
+--SceneLayers.copyTo #EDIT grandfather
 --
---select ( SceneLayers.InstanceTo #PRINT grandfather )
+--SceneLayers.InstanceTo #PRINT grandfather
 --
---select ( SceneLayers.referenceTo #FINAL grandfather )
+--SceneLayers.referenceTo #FINAL grandfather
 
 /*==============================================================================
 	
@@ -122,11 +122,11 @@ SceneLayers.createTopLayers()
 ----setGroupOpen objs_group true
 ----setGroupOpen objs_group false
 --
---select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
+--SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS'
 --
---select( SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*' )
+--SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*'
 ----clearListener(); print("Cleared in:\n"+getSourceFileName())
---select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
+--SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit'
 --
 
 /*==============================================================================
@@ -135,16 +135,16 @@ SceneLayers.createTopLayers()
 	
 ================================================================================*/
 
-objs_child = group #( Cylinder() ) name:"GROUP-CHILD"
-
-objs_group_parent = group #( objs_child, Tube() ) name:"GROUP-PARENT"
-
-select ( SceneLayers.moveTo #SOURCE $'GROUP-PARENT' )
-
-select ( SceneLayers.instanceTo #EDIT $'GROUP-PARENT' )
-
-
-select ( SceneLayers.referenceTo #FINAL $'GROUP-PARENT-source' )
+--objs_child = group #( Cylinder() ) name:"GROUP-CHILD"
+--
+--objs_group_parent = group #( objs_child, Tube() ) name:"GROUP-PARENT"
+--
+--SceneLayers.moveTo #SOURCE $'GROUP-PARENT'
+--
+--SceneLayers.instanceTo #EDIT $'GROUP-PARENT'
+--
+--
+--SceneLayers.referenceTo #FINAL $'GROUP-PARENT-source'
 
 
 /* SELECT ALL - help for debug */
