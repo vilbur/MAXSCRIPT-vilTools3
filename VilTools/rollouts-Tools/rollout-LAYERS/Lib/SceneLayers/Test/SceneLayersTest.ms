@@ -5,18 +5,43 @@ filein( getFilenamePath(getSourceFileName()) + "/../../LayersManager/LayersManag
 filein( getFilenamePath(getSourceFileName()) + "/../SceneLayers.ms" )	--"./../SceneLayers.ms"
 
 
+/* 
+Creates a linear family hierarchy of male members
+Each generation has one box object linked to the previous one
+*/
+
+function createHierarchy =
+(
+	grandfather = box name:"Grandfather" pos:(point3 0 0 0)
+
+	father = box name:"Father" pos:(point3 100 0 0)
+	father.parent = grandfather
+
+	son = box name:"Son" pos:(point3 200 0 0)
+	son.parent = father
+
+	grandson = box name:"Grandson" pos:(point3 300 0 0)
+	grandson.parent = son
+
+	great_grandson = box name:"Great_Grandson" pos:(point3 400 0 0)
+	great_grandson.parent = grandson
+	
+	grandfather --return
+) -- return
+
+
 delete objects
 macros.run "Scene Explorer" "SERemoveEmptyLayers"
 macros.run "Scene Explorer" "SELayerExplorer"
 
-_box    = Box name:"BoxFooBar"
+
+
 
 SceneLayers 	= SceneLayers_v()
 LayersManager = LayersManager_v()
 
-
-
-
+/* CREATE TOP LAYERS */
+SceneLayers.createTopLayers()
 
 
 /*==============================================================================
@@ -25,9 +50,7 @@ LayersManager = LayersManager_v()
 	
 ================================================================================*/
 
-/* CREATE TOP LAYERS */
-SceneLayers.createTopLayers()
-
+--_box    = Box name:"BoxFooBar"
 
 /* FIND LAYERS */
 --top_layer_edit =  LayersManager.findLayer ("EDIT") search_only_top_layers:true
@@ -75,21 +98,61 @@ SceneLayers.createTopLayers()
 
 /*==============================================================================
 	
+	HIEREARCHY TEST
+	
+================================================================================*/
+grandfather = createHierarchy()
+
+select ( SceneLayers.moveTo #SOURCE grandfather )
+
+/*==============================================================================
+	
 	GROUP TEST
 	
 ================================================================================*/
 
 /* */
 ----objs_group = group objects name:"GROUP-ALL-OBJECTS"
-objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
+--objs_group = group #( Sphere(), Teapot() ) name:"GROUP-OBJECTS"
 --setGroupOpen objs_group true
+--setGroupOpen objs_group false
 
-SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS'
+--select $'GROUP-OBJECTS'
+--SceneLayers.moveTo #SOURCE ( selection as Array )
 
---format "layer_edit: %\n" layer_edit
+
+--select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
+--
+--select( SceneLayers.moveTo #EDIT   $'GROUP-OBJECTS*' mode:#COPY )
+--
+--select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
+
+
+/*==============================================================================
+	
+	NESTED GROUP TEST
+	
+================================================================================*/
+
+--objs_child = group #( Cylinder() ) name:"GROUP-CHILD"
+--
+--objs_group_parent = group #( objs_child, Tube() ) name:"GROUP-PARENT"
+--
+--select ( SceneLayers.moveTo #SOURCE $'GROUP-PARENT' )
+--
+--select ( SceneLayers.moveTo #EDIT $'GROUP-PARENT-source' mode:#INSTANCE )
+----clearListener(); print("Cleared in:\n"+getSourceFileName())
+--
+--select ( SceneLayers.moveTo #FINAL $'GROUP-PARENT-source' mode:#REFERENCE )
+
 
 /* SELECT ALL - help for debug */
 --actionMan.executeAction 0 "40021"  -- Selection: Select All
+
+
+
+
+
 
 
 
