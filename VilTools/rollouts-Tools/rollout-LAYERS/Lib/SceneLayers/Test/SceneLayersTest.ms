@@ -83,14 +83,14 @@ SceneLayers.createTopLayers()
 --SceneLayers.moveTo #SOURCE $Box*[1]
 
 /* COPY OBJECT AS REFERENCE TO lAYER */
---SceneLayers.moveTo #EDIT $Box*[1] mode:#REFERENCE
+--SceneLayers.referenceTo #EDIT $Box*[1]
 
 
 /* COPY OBJECT AS INSTANCE TO lAYER */
---SceneLayers.moveTo #PRINT $Box*[1]	mode:#INSTANCE
+--SceneLayers.instanceTo #PRINT $Box*[1]
 
 /* COPY OBJECT TO lAYER */
---SceneLayers.moveTo "FINAL" ( $'Box*' )	mode:#COPY
+--SceneLayers.copyTo "FINAL" ( $'Box*' )
 
 /* SELECT BY lAYER TYPE */
 --SceneLayers.selectIn #SOURCE $Box*[1] 
@@ -105,6 +105,10 @@ grandfather = createHierarchy()
 
 select ( SceneLayers.moveTo #SOURCE grandfather )
 
+select( SceneLayers.copyTo #EDIT grandfather )
+
+select( SceneLayers.referenceTo #FINAL grandfather )
+
 /*==============================================================================
 	
 	GROUP TEST
@@ -118,12 +122,12 @@ select ( SceneLayers.moveTo #SOURCE grandfather )
 --setGroupOpen objs_group false
 
 --select $'GROUP-OBJECTS'
---SceneLayers.moveTo #SOURCE ( selection as Array )
-
-
+----SceneLayers.moveTo #SOURCE ( selection as Array )
+--
+--
 --select ( SceneLayers.moveTo #SOURCE $'GROUP-OBJECTS' )
 --
---select( SceneLayers.moveTo #EDIT   $'GROUP-OBJECTS*' mode:#COPY )
+--select( SceneLayers.copyTo #EDIT   $'GROUP-OBJECTS*' )
 --
 --select ( SceneLayers.moveTo #FINAL $'GROUP-OBJECTS-edit' )
 
@@ -140,10 +144,10 @@ select ( SceneLayers.moveTo #SOURCE grandfather )
 --
 --select ( SceneLayers.moveTo #SOURCE $'GROUP-PARENT' )
 --
---select ( SceneLayers.moveTo #EDIT $'GROUP-PARENT-source' mode:#INSTANCE )
+--select ( SceneLayers.instanceTo #EDIT $'GROUP-PARENT-source' )
 ----clearListener(); print("Cleared in:\n"+getSourceFileName())
 --
---select ( SceneLayers.moveTo #FINAL $'GROUP-PARENT-source' mode:#REFERENCE )
+--select ( SceneLayers.referenceTo #FINAL $'GROUP-PARENT-source' )
 
 
 /* SELECT ALL - help for debug */

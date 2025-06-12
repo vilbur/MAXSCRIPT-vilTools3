@@ -44,11 +44,44 @@ struct SceneLayers_v
 			LayersManager.newLayer (layer_name_data.value)
 	),
 
+	
+	/** Move to
+	 */
+	function moveTo layer_type _objects =
+	(
+		--format "\n"; print "TO.moveTo()"
+		this._moveTo layer_type _objects mode:#MOVE
+	),
+	
+	/** Copy to
+	 */
+	function copyTo layer_type _objects =
+	(
+		--format "\n"; print "TO.copyTo()"
+		this._moveTo layer_type _objects mode:#COPY
+	),
+	
+	/** Instance to
+	 */
+	function instanceTo layer_type _objects =
+	(
+		--format "\n"; print "TO.instanceTo()"
+		this._moveTo layer_type _objects mode:#INSTANCE
+	),
+	
+	/** Reference to
+	 */
+	function referenceTo layer_type _objects =
+	(
+		--format "\n"; print "TO.referenceTo()"
+		this._moveTo layer_type _objects mode:#REFERENCE
+	),
+	
 	/** Move to layer of type
 	  *
 	  * @param name mode #MOVE|#COPY|#INSTANCE|#REFERENCE
 	 */
-	function moveTo layer_type _objects mode:#MOVE =
+	function _moveTo layer_type _objects mode:#MOVE =
 	(
 		-- format "\n"; print "SceneLayers_v.moveTo()"
 		-- format "mode: %\n" mode
@@ -265,7 +298,8 @@ struct SceneLayers_v
 
 		this._renameObjBySuffix (obj) (layer_type)
 		
-		if isGroupHead obj then
+		--if isGroupHead obj then
+		if obj.children.count then
 			for child in this._getGroupMembers obj do 
 				this._moveNodeToLayer child layer_type
 	),
