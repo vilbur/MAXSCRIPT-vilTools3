@@ -97,6 +97,123 @@ struct SceneLayers_v
 		select ( this._copyTo layer_type _objects mode:#REFERENCE )
 	),
 	
+
+	/** Create layer by object
+	 */
+	function createLayerByObject _objects =
+	(
+		--format "\n"; print "SceneLayers_v.createLayerByObject()"
+
+		/** Get layer key suffix
+		 */
+		function getLayerKeySuffix obj =
+		(
+			--format "\n"; print "SceneLayers_v.getLayerKeySuffix()"
+			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerSuffix layers_top[1].name) != undefined  then
+				delimeter + ( toLower layer_key)
+			else
+				""
+		)
+
+		layers = #()
+		--format "OBJS: %\n" _objects
+		_objects = this._getSourceObjects (_objects)
+		--format "OBJS: %\n" _objects
+
+		for obj in _objects do
+		(
+			local obj_layer
+
+			obj_name_stripped = this._removeTypeSuffix obj.name
+
+			obj_name_stripped = this._regExReplace obj_name_stripped "[_-]*\d+$" ""
+
+			if not matchPattern obj.layer.name pattern:( obj_name_stripped + "*") then
+			(
+				obj_layer = LayersManager.newLayer (obj_name_stripped + getLayerKeySuffix(obj) ) parent:obj.layer
+
+				obj_layer.addNode obj
+
+				appendIfUnique layers obj_layer
+			)
+		)
+
+		layers --return
+	),
+
+	/** SELECT BY LAYER TYPE
+	 */
+	function selectIn layer_type _objects select_more:false =
+	(
+		--format "\n"; print "SceneLayers_v.selectIn()"
+		--format "_objects: %\n" _objects
+		layer_type = layer_type as name
+
+		function isLayerWithoutSuffix layer_type = findItem this.layers_without_suffix layer_type > 0
+
+		new_selection = #()
+
+		--for obj in this._getSourceObjects (_objects) do
+		for obj in _objects do
+		(
+			target_obj  = getNodebyName (this._getNameByLayerSuffix obj (layer_type as string ))
+			
+			
+			if target_obj == undefined then
+			(
+				target_obj_without_suffix = getNodebyName (this._removeTypeSuffix obj.name)
+				
+				if target_obj_without_suffix != undefined then
+				(
+					top_layer_name = this.getTopLayerSuffix target_obj_without_suffix.layer.name
+					
+					if matchPattern top_layer_name pattern:("*"+layer_type as string +"*") then
+						target_obj = target_obj_without_suffix
+				)
+				
+			)
+
+
+			if target_obj != undefined then
+				append new_selection target_obj
+		)
+
+		if new_selection.count > 0 then
+			(if select_more then selectmore else select) new_selection
+	),
+
+	/* SET VISIBILITY
+	  *
+	  * @param Boolean isolate TRUE:HIDE OTHER TOP LAYERS  FALSE: toggle visiblity
+	  *
+	 */
+	function setVisibility isolate:false layer_type: =
+	(
+		-- format "\n"; print "SceneLayers_v.setVisibility()"
+		layer_type = layer_type as name
+
+		top_layer  = this._getOrCreateTopLayer(layer_type)
+
+
+		if isolate then
+			for layer in top_layers = LayersManager.getTopLayers #ALL do
+				layer.on = layer == top_layer
+
+		else
+			top_layer.on = not top_layer.on
+
+		--top_layers = this.getTopLayers()
+		--layers_tree =  this._getLayersTree (obj.layer)
+		--
+		--this.getTopLayerSuffix layers_tree[.].name
+
+	),
+
+	
+	private
+	
+	
+	
 	/** Move to layer of type
 	  *
 	  * @param name mode #COPY|#INSTANCE|#REFERENCE
@@ -201,105 +318,6 @@ struct SceneLayers_v
 		if layer_type != undefined then -- undefined if "Default" layer
 			this._renameObjBySuffix obj layer_type
 	),
-
-	/** Create layer by object
-	 */
-	function createLayerByObject _objects =
-	(
-		--format "\n"; print "SceneLayers_v.createLayerByObject()"
-
-		/** Get layer key suffix
-		 */
-		function getLayerKeySuffix obj =
-		(
-			--format "\n"; print "SceneLayers_v.getLayerKeySuffix()"
-			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerSuffix layers_top[1].name) != undefined  then
-				delimeter + ( toLower layer_key)
-			else
-				""
-		)
-
-		layers = #()
-		--format "OBJS: %\n" _objects
-		_objects = this._getSourceObjects (_objects)
-		--format "OBJS: %\n" _objects
-
-		for obj in _objects do
-		(
-			local obj_layer
-
-			obj_name_stripped = this._removeTypeSuffix obj.name
-
-			obj_name_stripped = this._regExReplace obj_name_stripped "[_-]*\d+$" ""
-
-			if not matchPattern obj.layer.name pattern:( obj_name_stripped + "*") then
-			(
-				obj_layer = LayersManager.newLayer (obj_name_stripped + getLayerKeySuffix(obj) ) parent:obj.layer
-
-				obj_layer.addNode obj
-
-				appendIfUnique layers obj_layer
-			)
-		)
-
-		layers --return
-	),
-
-	/** Select layer type
-	 */
-	function selectIn layer_type _objects select_more:false =
-	(
-		--format "\n"; print "SceneLayers_v.selectIn()"
-		layer_type = layer_type as name
-
-		function isLayerWithoutSuffix layer_type = findItem this.layers_without_suffix layer_type > 0
-
-		new_selection = #()
-
-		for obj in this._getSourceObjects (_objects) do
-		(
-			if isLayerWithoutSuffix(layer_type) then
-				 target_obj = getNodebyName (this._removeTypeSuffix obj.name)
-
-			if target_obj == undefined then
-				 target_obj = getNodebyName (this._getNameByLayerSuffix obj (layer_type as string ))
-
-			if target_obj != undefined then
-				append new_selection target_obj
-		)
-
-		if new_selection.count > 0 then
-			(if select_more then selectmore else select) new_selection
-	),
-
-	/*
-	  *
-	  * @param Boolean isolate TRUE:HIDE OTHER TOP LAYERS  FALSE: toggle visiblity
-	  *
-	 */
-	function setVisibility isolate:false layer_type: =
-	(
-		-- format "\n"; print "SceneLayers_v.setVisibility()"
-		layer_type = layer_type as name
-
-		top_layer  = this._getOrCreateTopLayer(layer_type)
-
-
-		if isolate then
-			for layer in top_layers = LayersManager.getTopLayers #ALL do
-				layer.on = layer == top_layer
-
-		else
-			top_layer.on = not top_layer.on
-
-		--top_layers = this.getTopLayers()
-		--layers_tree =  this._getLayersTree (obj.layer)
-		--
-		--this.getTopLayerSuffix layers_tree[.].name
-
-	),
-
-	private
 
 	/** Clone nodes and remove default number suffix of new copy
 	  *

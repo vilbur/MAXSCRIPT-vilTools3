@@ -102,14 +102,17 @@ SceneLayers.createTopLayers()
 	
 ================================================================================*/
 grandfather = createHierarchy()
---
---SceneLayers.moveTo #SOURCE grandfather
---
---SceneLayers.copyTo #EDIT grandfather
---
+
+SceneLayers.moveTo #SOURCE grandfather
+
+SceneLayers.copyTo #EDIT grandfather
+
 --SceneLayers.InstanceTo #PRINT grandfather
 --
 --SceneLayers.referenceTo #FINAL grandfather
+
+
+SceneLayers.selectIn #SOURCE (selection as Array )
 
 /*==============================================================================
 	
@@ -147,8 +150,14 @@ grandfather = createHierarchy()
 --SceneLayers.referenceTo #FINAL $'GROUP-PARENT-source'
 
 
+/*==============================================================================
+
+	POST TEST
+
+================================================================================*/
+
 /* SELECT ALL - help for debug */
-actionMan.executeAction 0 "40021"  -- Selection: Select All
+--actionMan.executeAction 0 "40021"  -- Selection: Select All
 
 
 
