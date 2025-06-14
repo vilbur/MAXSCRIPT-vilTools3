@@ -61,7 +61,7 @@ struct SceneLayers_v
 				this._renameObject obj layer_type
 				
 				if obj.children.count > 0 then
-					for child in this._getAllChildren obj do
+					for child in this.getAllChildren obj do
 						this._renameObject child layer_type
 			)
 			
@@ -147,15 +147,48 @@ struct SceneLayers_v
 	(
 		--format "\n"; print "SceneLayers_v.selectIn()"
 		--format "_objects: %\n" _objects
+		/* 
+		Merges two arrays of nodes and removes duplicates
+		Returns a new array containing unique nodes from both inputs
+		*/
+		
+		function mergeNodeArraysUnique array_a array_b =
+		(
+			merged = array_a as array
+		
+			for node in array_b where not (findItem merged node > 0) do
+				append merged node
+		
+			merged -- return
+		)
+		/* 
+		Removes all items from source_array that are found in remove_array
+		Returns a new array with remaining items
+		*/
+		
+		function removeArrayItems source_array remove_array =
+		(
+			result = #()
+		
+			for item in source_array where not (findItem remove_array item > 0) do
+				append result item
+		
+			result -- return
+		)
 		layer_type = layer_type as name
+		
+		LayersManager = LayersManager_v()
+
 
 		function isLayerWithoutSuffix layer_type = findItem this.layers_without_suffix layer_type > 0
 
-		new_selection = #()
+		objs_found = #()
+		objs_not_found = #()
 
 		--for obj in this._getSourceObjects (_objects) do
 		for obj in _objects do
 		(
+			
 			target_obj  = getNodebyName (this._getNameByLayerSuffix obj (layer_type as string ))
 			
 			
@@ -172,14 +205,29 @@ struct SceneLayers_v
 				)
 				
 			)
-
-
-			if target_obj != undefined then
-				append new_selection target_obj
+			
+			
+			if target_obj == undefined then
+				append objs_not_found obj
+			else
+				append objs_found target_obj
+			
 		)
-
-		if new_selection.count > 0 then
-			(if select_more then selectmore else select) new_selection
+		--format "LAYERS: %\n" (LayersManager.getLayersByObjects _objects)
+		if objs_found.count > 0 then
+		(
+			found_and_not_found = mergeNodeArraysUnique objs_found objs_not_found
+			
+			LayersManager.setVisibility (LayersManager.getLayersByObjects (_objects)) false
+			LayersManager.setVisibility (LayersManager.getLayersByObjects found_and_not_found ) true
+			
+			(if select_more then selectmore else select) found_and_not_found 
+			
+			for obj in objs_not_found do
+                format "TYPE %	NOT FOUND FOR OBJECT:	%\n" layer_type obj.name
+		)
+		else
+			messageBox ("NOT ANY OBJECT FOUND IN\n\nLAYER: " + ( layer_type as string ))  title:"NOT FOUND"  beep:false
 	),
 
 	/* SET VISIBILITY
@@ -303,12 +351,12 @@ struct SceneLayers_v
 	 */
 	function _renameObjectByTopLayer obj force: =
 	(
-		  format "\n"; print "SceneLayers_v._renameObjectByTopLayer()"
+		  -- format "\n"; print "SceneLayers_v._renameObjectByTopLayer()"
 		 -- format "obj.name: %\n" obj.name
 		top_layer_source = (LayersManager.getTopLayers(obj.layer))[1]
 		-- format "top_layer_source: %\n" top_layer_source.name
 		layer_type = this.getTopLayerSuffix (top_layer_source.name)
-		  format "LAYER_TYPE: %\n" layer_type
+		  -- format "LAYER_TYPE: %\n" layer_type
 		--layer_has_suffix = findItem layers_without_suffix (layer_type as name ) > 0
 
 		--if layer_type != undefined and layer_has_suffix then -- undefined if "Default" layer
@@ -348,28 +396,26 @@ struct SceneLayers_v
 		layer.addNodes obj
 
 		if obj.children.count > 0 then
-			for child in this._getAllChildren obj do 
+			for child in this.getAllChildren obj do 
 				this._moveNodeToLayer child layer_type
 	),
 
-	
 	/** Get group members of closed group
 	 */
-	function _getAllChildren groups =
+	function getAllChildren groups =
 	(
 		if classOf groups != Array  then
 			groups = #(groups)
 
-        --mapped function getAllChildren _node &group_members = ( join group_members _node.children;	if _node.children.count > 0 then getAllChildren _node.children &group_members )
-        mapped function getAllChildren _node &group_members = ( join group_members _node.children;	if _node.children.count > 0 then getAllChildren _node.children &group_members else group_members )
-
 		group_members = #()
 
-		getAllChildren groups &group_members
+		this._getAllChildren groups &group_members
 
 		group_members --return
-	),
-	
+
+    ),
+
+    mapped function _getAllChildren _node &group_members = ( join group_members _node.children;	if _node.children.count > 0 then this._getAllChildren _node.children &group_members ),
 
 	/** Rename object by type
 	 *
@@ -529,7 +575,7 @@ struct SceneLayers_v
 		top_layer_titles --return
 
 	),
-
+	
 	/** Get source layer names
 	 */
 	function _getTargetLayerNames layer_names type_suffix =
@@ -550,7 +596,7 @@ struct SceneLayers_v
 	),
 
 
-	/** R replace
+	/** Replace
 	 */
 	function _regExReplace _string _search _replace =
 	(
@@ -589,8 +635,8 @@ struct SceneLayers_v
 	 */
 	function _getSourceObjects _objects =
 	(
-		 format "\n"; print "SceneLayers_v._getSourceObjects()"
-		 format "_objects: %\n" _objects
+		 -- format "\n"; print "SceneLayers_v._getSourceObjects()"
+		 -- format "_objects: %\n" _objects
 		if classOf _objects != Array then
 			_objects = if classOf _objects == PathName then _objects = _objects as Array else #(_objects)
 
@@ -600,32 +646,32 @@ struct SceneLayers_v
 			/* GET OBJECTS WITH CHILDREN */
 			parents = for obj in _objects where obj.children.count > 0 collect obj
 
-			children = this._getAllChildren (parents)
+			children = this.getAllChildren (parents)
 
 			/* REMOVE CHILDREN FROM OBJECTS */
 			for child in children where (index = findItem _objects child ) > 0 do
 				deleteItem _objects index
 		)
 
-		 format "_OBJECTS: %\n" _objects
+		 -- format "_OBJECTS: %\n" _objects
 		_objects --return
 	),
 
-	/** Get group members of closed group
-	 */
-	function _getAllChildren groups =
-	(
-		if classOf groups != Array  then
-			groups = #(groups)
-
-		mapped function getAllChildren node &group_members = (if isValidNode node and isKindOf group_members Array do join group_members node.children)
-
-		group_members = #()
-
-		getAllChildren groups &group_members
-
-		group_members --return
-	),
+	--/** Get group members of closed group
+	-- */
+	--function getAllChildren groups =
+	--(
+	--	if classOf groups != Array  then
+	--		groups = #(groups)
+	--
+	--	mapped function _getAllChildren node &group_members = (if isValidNode node and isKindOf group_members Array do join group_members node.children)
+	--
+	--	group_members = #()
+	--
+	--	_getAllChildren groups &group_members
+	--
+	--	group_members --return
+	--),
 	/**
 	*
 	*/

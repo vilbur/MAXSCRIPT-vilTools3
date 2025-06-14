@@ -57,7 +57,7 @@ struct LayersManager_v
 	 */
 	function getSelectedOrCurrent =
 	(
-		format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
+		-- format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
 		--if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedLayers()).count == 0 then
 		if  (selected_layers = this.getSelectedLayers()).count == 0 then
 			selected_layers = #(this.getCurrent())
@@ -73,7 +73,7 @@ struct LayersManager_v
 	 */
 	function getSelectedLayers =
 	(
-		format "\n"; print "LayersManager_v.getSelectedLayers()"
+		-- format "\n"; print "LayersManager_v.getSelectedLayers()"
 		if  (selected_layers = this.getSelectedByManager()).count == 0 then
 			selected_layers = this.getLayersByObjects( selection as Array )
 		--format "SELECTED_LAYERS: %\n" selected_layers
@@ -84,7 +84,7 @@ struct LayersManager_v
 	 */
 	function getSelectedByManager =
 	(
-		format "\n"; print "LayersManager_v.getSelectedByManager()"
+		-- format "\n"; print "LayersManager_v.getSelectedByManager()"
 		selected_layers = #()
 		
 		if LayerManager.isDialogOpen() and SceneExplorerInstance != undefined then
@@ -99,7 +99,7 @@ struct LayersManager_v
 	  */
 	function getLayersByObjects _objects =
 	(
-		format "\n"; print "LayersManager_v.getLayersByObjects()"
+		-- format "\n"; print "LayersManager_v.getLayersByObjects()"
 		--format "_objects: %\n" _objects
 		layers_by_obj	= #()
 
@@ -234,7 +234,7 @@ struct LayersManager_v
 	 */
 	function getLayersInHierarchy layers =
 	(
-		format "\n"; print "DEPRECATED:LayersManager_v.getLayersInHierarchy()"
+		-- format "\n"; print "DEPRECATED:LayersManager_v.getLayersInHierarchy()"
 		print "USE: getLayersTree()"
 		this.getLayersTree (layers)
 	),
@@ -444,7 +444,7 @@ struct LayersManager_v
 	  */
 	function selectLayers layers =
 	(
-		format "\n"; print "LayersManager_v.selectLayers()"
+		-- format "\n"; print "LayersManager_v.selectLayers()"
 
 		layers = this.getLayers(layers)
 
@@ -458,7 +458,7 @@ struct LayersManager_v
 	  */
 	function selectLayersByObjects _objects =
 	(
-		format "\n"; print "LayersManager_v.selectLayersByObjects()"
+		-- format "\n"; print "LayersManager_v.selectLayersByObjects()"
 
 		clearSelection()
 
@@ -542,8 +542,13 @@ struct LayersManager_v
 	 */
 	function setVisibility layers state =
 	(
-		--format "\n"; print "LayersManager_v.setVisibility()"
+		-- format "\n"; print "LayersManager_v.setVisibility()"
+		
+		if classOf layers != Array then
+			layers = #(layers)
+		-- format "layers: %\n" layers	
 		layers = this.getLayers(layers)
+		-- format "layers: %\n" layers
 
 		for layer in layers do
 		(
@@ -695,7 +700,7 @@ struct LayersManager_v
 	 */
 	function _getLayersNotInHierarchy layers layers_in_hierarchy &layers_not_in_hieararchy =
 	(
-		format "\n"; print "DEPRECATED: LayersManager_v._getLayersNotInHierarchy()"
+		-- format "\n"; print "DEPRECATED: LayersManager_v._getLayersNotInHierarchy()"
 
 		--for layer in layers  do
 		--	if findItem layers_in_hierarchy layer > 0 then
