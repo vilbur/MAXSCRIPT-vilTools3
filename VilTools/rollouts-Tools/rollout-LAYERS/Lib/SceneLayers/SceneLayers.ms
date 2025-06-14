@@ -109,7 +109,7 @@ struct SceneLayers_v
 		function getLayerKeySuffix obj =
 		(
 			--format "\n"; print "SceneLayers_v.getLayerKeySuffix()"
-			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerSuffix layers_top[1].name) != undefined  then
+			if ( layers_top = LayersManager.getTopLayers obj.layer ) != undefined and (layer_key = this.getTopLayerSuffix layers_top[1]) != undefined  then
 				delimeter + ( toLower layer_key)
 			else
 				""
@@ -189,24 +189,19 @@ struct SceneLayers_v
 		for obj in _objects do
 		(
 			
-			target_obj  = getNodebyName (this._getNameByLayerSuffix obj (layer_type as string ))
+			target_obj = getNodebyName (this._getNameByLayerSuffix obj (layer_type as string ))
 			
+			--format "----------------\n"
+			--format "target_obj: %\n" target_obj
 			
 			if target_obj == undefined then
-			(
-				target_obj_without_suffix = getNodebyName (this._removeTypeSuffix obj.name)
-				
-				if target_obj_without_suffix != undefined then
+				if (target_obj_without_suffix = getNodebyName (this._removeTypeSuffix obj.name)) != undefined and obj != target_obj_without_suffix then
 				(
-					top_layer_name = this.getTopLayerSuffix target_obj_without_suffix.layer.name
+					top_layer_name = this.getTopLayerSuffix target_obj_without_suffix.layer
 					
-					if matchPattern top_layer_name pattern:("*"+layer_type as string +"*") then
-						target_obj = target_obj_without_suffix
+					target_obj = target_obj_without_suffix
 				)
 				
-			)
-			
-			
 			if target_obj == undefined then
 				append objs_not_found obj
 			else
@@ -214,20 +209,24 @@ struct SceneLayers_v
 			
 		)
 		--format "LAYERS: %\n" (LayersManager.getLayersByObjects _objects)
+--		
+		--format "OBJS_FOUND: %\n" objs_found
+		--format "NOT_FOUND:  %\n" objs_not_found
+--		
 		if objs_found.count > 0 then
 		(
 			found_and_not_found = mergeNodeArraysUnique objs_found objs_not_found
-			
+			--format "found_and_not_found: %\n" found_and_not_found
 			LayersManager.setVisibility (LayersManager.getLayersByObjects (_objects)) false
 			LayersManager.setVisibility (LayersManager.getLayersByObjects found_and_not_found ) true
 			
 			(if select_more then selectmore else select) found_and_not_found 
 			
 			for obj in objs_not_found do
-                format "TYPE %	NOT FOUND FOR OBJECT:	%\n" layer_type obj.name
+                 (format "TYPE %	NOT FOUND FOR OBJECT:	%\n" layer_type obj.name)
 		)
 		else
-			messageBox ("NOT ANY OBJECT FOUND IN\n\nLAYER: " + ( layer_type as string ))  title:"NOT FOUND"  beep:false
+			messageBox ("NOT ANY OBJECT FOUND IN LAYER:\n\n" + toUpper ( this.getTopLayerTitle layer_type ))  title:"NOT FOUND"  beep:false
 	),
 
 	/* SET VISIBILITY
@@ -355,7 +354,7 @@ struct SceneLayers_v
 		 -- format "obj.name: %\n" obj.name
 		top_layer_source = (LayersManager.getTopLayers(obj.layer))[1]
 		-- format "top_layer_source: %\n" top_layer_source.name
-		layer_type = this.getTopLayerSuffix (top_layer_source.name)
+		layer_type = this.getTopLayerSuffix (top_layer_source)
 		  -- format "LAYER_TYPE: %\n" layer_type
 		--layer_has_suffix = findItem layers_without_suffix (layer_type as name ) > 0
 
@@ -503,19 +502,28 @@ struct SceneLayers_v
 	 */
 	function getTopLayers =
 	(
-		--format "\n"; print "SceneLayers_v.findTopLayer()"
+		format "\n"; print "SceneLayers_v.findTopLayer()"
 		all_top_layers = LayersManager.getTopLayers #ALL
+		--format "all_top_layers: %\n" all_top_layers
 
 		top_layers_titles = this._getTopLayerTitles flat:true
-
+		
 		for layer in all_top_layers where findItem top_layers_titles layer.name  > 0 collect layer
 	),
 
 	/**
 	 */
-	function getTopLayerSuffix layer_name =
+	function getTopLayerSuffix layer =
 	(
 		-- format "\n"; print "SceneLayers_v.getTopLayerSuffix()"
+		-- format "layer: %\n" layer
+		top_layer = LayersManager.getTopLayer(layer)
+		-- format "top_layer: %\n" top_layer
+		layer_name = top_layer.name
+		-- format "layer_name: %\n" layer_name
+		
+		
+		-- format "type_suffix_pattern: %\n" this.type_suffix_pattern
 		matches = this.RegEx.matches layer_name ("[^A-Z]*("+this.type_suffix_pattern+")[^A-Z]*") this.IgnoreCase
 		--format "matches: %\n" matches.item[1].groups
 		result	= (for matchIdx = 0 to matches.count-1 collect for groupIdx = 0 to matches.item[matchIdx].groups.count-1 collect ( matches.item[matchIdx].groups.item[groupIdx].value )) --return
@@ -524,7 +532,20 @@ struct SceneLayers_v
 		if result.count > 0 then
 			result[1][2] --return
 	),
+	
+	/** Get top layer title
+	 */
+	function getTopLayerTitle layer_type =
+	(
+		format "\n"; print "SceneLayers_v.getTopLayerTitle()"
+		top_layers_titles = this._getTopLayerTitles flat:true
+		format "top_layers_titles: %\n" top_layers_titles
 
+		top_layers_title = for top_layers_title in top_layers_titles where matchPattern top_layers_title pattern:("*"+ layer_type as string +"*") collect top_layers_title
+
+		top_layers_title[1] --return
+	),
+	
 	/** Join array to string
 	 */
 	function _arrayToString arr delimeter = ( local _string = ""; for item in arr do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count)),

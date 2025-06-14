@@ -147,6 +147,24 @@ struct LayersManager_v
 
 		for layer in this.getLayersTree(layers) where layer.getParent() == undefined collect layer
 	),
+	
+	/** Get top layers
+	  *
+	  * @return array of layers
+	 */
+	function getTopLayer layer =
+	(
+		-- format "\n"; print "LayersManager_v.getTopLayer()"
+
+		layers = this.getLayers (layer)
+		
+		layers_trees = this.getLayersTree (layers)
+		-- format "layers_trees: %\n" layers_trees
+
+		top_layers = for layer in layers_trees where layer.getParent() == undefined collect layer
+		-- format "top_layers: %\n" top_layers
+		top_layers[1] --return
+	),
 
 	/** Find top layer
 	 */
