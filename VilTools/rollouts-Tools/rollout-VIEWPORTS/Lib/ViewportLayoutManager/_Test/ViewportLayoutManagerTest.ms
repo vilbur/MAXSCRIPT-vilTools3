@@ -5,14 +5,15 @@ filein( getFilenamePath(getSourceFileName()) + "/../ViewportLayoutManager.ms" )	
 
 ViewportLayoutManager = ViewportLayoutManager_v()
 	
+--ViewportLayoutManager.resetCurrent()
 	
-ViewportLayoutManager.loadAndConfigureLayout(#layout_4)
+--ViewportLayoutManager.loadAndConfigureLayout(#layout_4)
 
 --ViewportLayoutManager.restoreLayout(#layout_4vl)
 --ViewportLayoutManager.restoreLayout(#layout_4vr)
 
 --ViewportLayoutManager.restoreLayout(#layout_3vl)
---ViewportLayoutManager.restoreLayout(#layout_3vr)
+--ViewportLayoutMa	nager.restoreLayout(#layout_3vr)
 
 /* LAYOUT MUST BE SAVED BEFORE RESTORE */ 
 --ViewportLayoutManager.saveCurrentLayout()

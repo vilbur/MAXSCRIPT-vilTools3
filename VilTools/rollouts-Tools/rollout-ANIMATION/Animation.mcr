@@ -90,7 +90,7 @@ function wireParamsCallback state_1 state_2 =
 macroscript	_options_trackbar_show
 category:	"_Animation"
 buttontext:	"Trackbar Toggle"
---icon:	"control:label"
+icon:	"ACROSS:3"
 (
 	on execute do
 	(

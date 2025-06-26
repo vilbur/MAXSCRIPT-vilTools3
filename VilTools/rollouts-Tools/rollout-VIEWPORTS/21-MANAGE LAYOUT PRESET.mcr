@@ -174,7 +174,7 @@ icon:	"ACROSS:3|MENU:QUICK Layout|height:32|tooltip:CHOOSE BEST LAYOUT for size 
 macroscript	viewport_layout_save
 category:	"_Viewports-Manage"
 buttontext:	"SAVE"
-tooltip:	"Save view types and positions of current layout.\n\nLayots are store for each scene name without number suffix separately"
+tooltip:	"SAVE CURRENT LAYOUT"
 icon:	"MENU:SAVE Layout|id:BTN_save_layout"
 (
 	--clearListener()
@@ -187,16 +187,18 @@ macroscript	viewport_layout_reset
 category:	"_Viewports-Manage"
 buttontext:	"RESET"
 tooltip:	"Reset Current Layout\n\nCTRL: Reset splitters"
-icon:	"MENU:RESET Layout|id:BTN_reset_layout"
+icon:	"MENU:RESET Layout CTRL:Splitters|id:BTN_reset_layout"
 (
 	--clearListener()
 	on execute do
 	(
-		ViewportLayoutManager.resetCurrent reset_splitters: keyboard.controlPressed
+		ViewportLayoutManager.resetCurrent reset_splitters:keyboard.controlPressed
 	
 		print " *** RESET Layout: PRESS CTRL TO RESET SPLITTERS"	
 	)
 )
+
+
 
 /*------------------------------------------------------------------------------
 	FLOATING VIEWPORT

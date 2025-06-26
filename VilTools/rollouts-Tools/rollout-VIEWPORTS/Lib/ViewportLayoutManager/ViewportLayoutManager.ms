@@ -68,7 +68,7 @@ struct ViewportLayoutManager_v
 	 */
 	function loadAndConfigureLayout layout_name =
 	(
-		--format "\n"; print "ViewportLayoutManager_v._loadAndConfigureLayout()"
+		format "\n"; print "ViewportLayoutManager_v._loadAndConfigureLayout()"
 		if ini_file == undefined then this._setIniFile( layout_name )
 
 		viewport.setLayout(layout_name)
@@ -359,6 +359,10 @@ struct ViewportLayoutManager_v
 		
 		max_file_name = if maxFileName == "" then "undefined" else getFilenameFile( maxFileName ) 
 		
+		max_file_name	= ( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_]*\d+" ).Replace max_file_name ""
+		
+		format "MAX_FILE_NAME: %\n" max_file_name
+		
 		ini_file = getDir(#temp) + "/ViewportLayouts/" + max_file_name + "/" + (layout_name as string ) +".ini" --return
 		
 		format "ini_file:\n%\n" ini_file
@@ -371,16 +375,6 @@ struct ViewportLayoutManager_v
 			return false
 		)
 	),
-
-	--/** Get scene name
-	-- */
-	--function _getSceneName =
-	--(
-	--	 --format "\n"; print "ViewportLayoutManager_v.getSceneName()"
-	--	 
-	--	 getFilenameFile(maxFileName)
-	--	--( dotNetObject "System.Text.RegularExpressions.Regex" @"[-_\s]*\d+.max" ).Replace maxFileName "" --return
-	--),
 
 	function _minMaxSwap p3min p3max =
 	(

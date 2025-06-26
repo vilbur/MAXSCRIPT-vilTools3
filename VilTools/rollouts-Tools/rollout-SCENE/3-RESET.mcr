@@ -14,7 +14,7 @@ icon:	"across:3|MENU:RELOAD file"
 
 macroscript	_scene_reset
 category:	"_Scene-Reset"
-buttontext:	"Re- zset Scene"
+buttontext:	"Reset Scene"
 icon:	"MENU:RESET Scene"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
@@ -36,7 +36,7 @@ icon:	"MENU:RESET Scene"
 macroscript	_scene_restart_max
 category:	"_Scene-Reset"
 buttontext:	"Restart"
---tooltip:	"Restart 3Ds Max\n\nCTRL: Quiet mode"
+tooltip:	"Restart 3Ds Max\n\nCTRL: Quiet mode"
 icon:	"MENU:RESTART 3Ds Max"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"

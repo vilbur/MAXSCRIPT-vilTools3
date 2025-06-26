@@ -24,7 +24,7 @@ function addQuad1 QuadMenu =
 	--QuadMenu.addMenu("_Animation")	--flat:false --index:1
 	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1
 	
-	QuadMenu.addItem ("_Animation") ("_options_toggle_keyframe_0_1") index:1 title:"Next Frame | CTRL: Last Frame"
+	QuadMenu.addItem ("_Animation") ("_options_toggle_keyframe_0_1") index:1 title:"Next Frame • CTRL: Last Frame"
 	QuadMenu.addItem ("_Animation") ("_options_trackbar_show")
 	QuadMenu.addItem ("_Animation") ("_animation_set_animation_range") title:"Set animation range"
 	

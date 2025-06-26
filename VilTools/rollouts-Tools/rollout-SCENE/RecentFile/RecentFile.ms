@@ -27,9 +27,9 @@ struct RecentFile_v
 	),
 
 	/** Get recent file not matching mask in blacklist
-	  * @param Array dir_blacklist aray of directories which not should be opened
+	  * @param Array blacklist aray of directories which not should be opened
 	  */
-	function getRecentFileNotMatching dir_blacklist =
+	function getRecentFileNotMatching blacklist:#() =
 	(
 		--format "\n"; print "RecentFile_v.getRecentFileNotBackup()"
 
@@ -43,7 +43,7 @@ struct RecentFile_v
 
 			find_in_blacklist = false
 
-			for mask in dir_blacklist where matchPattern file_path  pattern:( "*\\" + mask + "\\*" ) do
+			for mask in blacklist where matchPattern file_path  pattern:( "*\\" + mask + "\\*" ) do
 				find_in_blacklist = true
 
 			if not find_in_blacklist then
