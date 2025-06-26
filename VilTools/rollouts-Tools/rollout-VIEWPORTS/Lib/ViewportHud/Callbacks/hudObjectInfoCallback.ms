@@ -16,13 +16,18 @@ function hudObjectInfoCallback =
 		for _line in user_prop_buffer do
 		(
 			key_val_pair = filterString _line " = "
-
-			if key_val_pair[2].count > 30 then
+			
+			val	= getUserPropVal $ ( key_val_pair[1] )
+			
+			--format "val: %\n" val
+			--if key_val_pair[2].count > 30 then
+			if (val as string ).count > 50 then
 			(
-				val	= getUserPropVal $ ( key_val_pair[1] )
+				--_line = key_val_pair[1] + substring ( val[1] as string ) 1 50 + " ..."
+				if classOf val == Array or classOf val == BitArray then
+					_line = key_val_pair[1] + " = "+ val[1] as string + " ..."
 				
-				if classOf ( val ) == Array then
-					_line = key_val_pair[1] + " = Array:" + val.count as string
+					--_line = key_val_pair[1] + " = "+ (classOf val) as string +":" + val.count as string
 				
 			)
 			

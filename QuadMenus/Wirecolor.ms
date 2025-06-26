@@ -7,8 +7,18 @@ function addQuad1 QuadMenu =
 
 	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2, 7, 9 ) --title:"" flat:false
 	--QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2, 8, 11 ) --title:"" flat:false
-	QuadMenu.addMenu("_Epoly-Vertex-Color")	separators: #( 2,  11 ) flat:true
+	--QuadMenu.addItem ("Vertex-Color-Manage") ("epoly_vertex_color_set_by_last_color") -- add item to qaud
+	
+	QuadMenu.addMenu("Vertex-Color-Manage-Set")	--separators: #( 2 ) flat:true
+	QuadMenu.addSeparator()
+	
+	QuadMenu.addMenu("Vertex-Color-Set")	--separators: #( 2 ) flat:true
+	
+	QuadMenu.addSeparator()
+	
+	QuadMenu.addMenu("Vertex-Color-Manage")	--separators: #( 2,  11 ) flat:true
 
+	
 	QuadMenu.addMenu("_Wirecolor")	--flat:false --index:1
 
 	--FooMenu	= Menu_v("Selection")
@@ -16,7 +26,6 @@ function addQuad1 QuadMenu =
 	--FooMenu.clearSeparators()
 
 
-	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()
 
 	--QuadMenu.addMenu("Selection")	separators: #( 1 )	--title:"" --index: --flat:false

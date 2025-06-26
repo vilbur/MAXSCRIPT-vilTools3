@@ -21,10 +21,14 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("A N I M A T I O N")
 
-	--QuadMenu.addMenu("MenuName")	--flat:false --index:1
+	--QuadMenu.addMenu("_Animation")	--flat:false --index:1
 	--QuadMenu.addMenu(DefaulQuadtMenu.menu)	--flat:false --index:1
+	
 	QuadMenu.addItem ("_Animation") ("_options_toggle_keyframe_0_1") index:1 title:"Next Frame | CTRL: Last Frame"
-	QuadMenu.addItem ("_Animation") ("_options_trackbar_show") index:2
+	QuadMenu.addItem ("_Animation") ("_options_trackbar_show")
+	QuadMenu.addItem ("_Animation") ("_animation_set_animation_range") title:"Set animation range"
+	
+	
 	--QuadMenu.addSeparator index:2
 	QuadMenu.addSeparator index:#(2,3)
 )

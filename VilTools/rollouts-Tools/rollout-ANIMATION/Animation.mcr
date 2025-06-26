@@ -60,7 +60,7 @@ function wireParamsCallback state_1 state_2 =
 		format "param_2	= % \n" param_2
 		format "classOf param_1	= % \n" (classOf param_1)
 		format "classOf param_2	= % \n" (classOf param_2)
-
+ 
 		--global WIRE_PARAMS_LABELS = undefined
 
 		try(
@@ -92,14 +92,18 @@ category:	"_Animation"
 buttontext:	"Trackbar Toggle"
 --icon:	"control:label"
 (
-	state = trackbar.visible
-
-	trackbar.visible = not state
-
-	timeSlider.setVisible (not state)
-
-	if state == trackbar.visible then
-		messageBox "Toggle does not work because of 3Ds Max Bug.\n\nWORKAROUND:\n\nRight-click on an empty area of the top Toolbar to bring up the drop-down menu, and click on the Time Slider checkbox." title:"SHOW TIMESLIDDE"
+	on execute do
+	(
+		state = trackbar.visible
+	
+		trackbar.visible = not state
+	
+		timeSlider.setVisible (not state)
+	
+		if state == trackbar.visible then
+			messageBox "Toggle does not work because of 3Ds Max Bug.\n\nWORKAROUND:\n\nRight-click on an empty area of the top Toolbar to bring up the drop-down menu, and click on the Time Slider checkbox." title:"SHOW TIMESLIDDE"
+		
+	)
 )
 
 /**  TOGGLE TRACKBAR
@@ -1019,16 +1023,4 @@ toolTip:	""
 
 
 
-)
-
-
-/**  SET ANIMATION COUNT OF FRAMES
- */
-macroscript	_options_animation
-category:	"_Animation"
-buttontext:	"SliderTime"
-tooltip:	"Set number of frames of timeslider"
-icon:	"control:spinner|type:#integer|range:[2,1000,100]|across:4|offset:[ 10, 6 ]"
-(
-	animationRange = Interval 0 (EventFired.val as integer )
 )
