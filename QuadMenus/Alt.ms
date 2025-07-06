@@ -60,7 +60,7 @@ QUAD_MENU = QuadMenu_v( getFilenameFile( getSourceFileName() ) )
 
 /** ADD QUAD MENUS
   */
---addQuad1( QUAD_MENU.Quads[1] )
---addQuad2( QUAD_MENU.Quads[2] )
---addQuad3( QUAD_MENU.Quads[3] )
---addQuad4( QUAD_MENU.Quads[4] )
+addQuad1( QUAD_MENU.Quads[1] )
+addQuad2( QUAD_MENU.Quads[2] )
+addQuad3( QUAD_MENU.Quads[3] )
+addQuad4( QUAD_MENU.Quads[4] )

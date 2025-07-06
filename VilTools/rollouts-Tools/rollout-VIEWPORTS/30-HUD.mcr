@@ -13,8 +13,8 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 		
 		if not is_hud_on then
 		(
-			HUD = Hud_v callback: hudMaxInfoCallback
-		
+			HUD = Hud_v callback: hudMaxInfoCallback --"./Lib/ViewportHud/Callbacks/hudMaxInfoCallback.ms"
+
 			toggleHudCallback #MAX_INFO data:HUD
 		)
 		else
@@ -39,7 +39,7 @@ icon:	"control:checkbutton|MENU:true|autorun:true"
 		
 		if not is_hud_on then
 		(
-			HUD = Hud_v callback: hudObjectInfoCallback
+			HUD = Hud_v callback: hudObjectInfoCallback --"./Lib/ViewportHud/Callbacks/hudObjectInfoCallback.ms"
 		
 			toggleHudCallback #OBJ_INFO data:HUD
 		)

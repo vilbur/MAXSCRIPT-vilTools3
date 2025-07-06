@@ -247,7 +247,7 @@ icon:	"MENU:true|across:3"
  *
  */
 macroscript	maxtoprint_select_verts_by_camera_angle
-category:	"maxtoprint"
+category:	"_Epoly-Selection"
 buttontext:	"Verts by camera"
 toolTip:	""
 --icon:	"tooltip:CTRL: Reset selection"
@@ -258,4 +258,6 @@ toolTip:	""
 		getVisiblePolys theNode steps:0
 	)
 )
+
+
 

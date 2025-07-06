@@ -44,27 +44,34 @@ function hudObjectInfoCallback =
 	function getLockedTransfroms =
 	(
 		--format "\n"; print "hudObjectInfoCallback.ms.getLockedTransfroms()"
-		state = if selection.count > 0 then "L O C K E D" else ""
+		state = if selection.count > 0 then "L O C K E D Transform" else ""
 
-		for obj in selection where ((getTransformLockFlags obj) as Array ).count != 9  do
+		--for obj in selection where ((getTransformLockFlags obj) as Array ).count != 9  do
+		for obj in selection where not (getTransformLockFlags obj).numberSet > 0  do
 			state = ""
 
 		state --return
 	)
 
 
-	/*------ HUD ------*/
-	HUD = Hud_v pos:#( #LEFT, #CENTER ) callback:hudObjectInfoCallback
+	/*==============================================================================
+		
+		CREATE HUD
+		
+	================================================================================*/
+	
+	HUD = Hud_v pos:#( #LEFT, #TOP ) offset:[ 0, 32 ] callback:hudObjectInfoCallback
 
+	
 	if selection.count > 0 then
 	(
+		/* OBJECT NAMES */ 	
 		for i = 1 to selection.count while i <= 10 do
-		--for obj in selection do
 			HUD.row ( selection[i].name ) color: selection[i].wirecolor
-			
+		
+		/* SHOW USER PROPS */ 
 		if selection.count == 1 then
 			splitUserProps(HUD)
-			
 	)
 
 
