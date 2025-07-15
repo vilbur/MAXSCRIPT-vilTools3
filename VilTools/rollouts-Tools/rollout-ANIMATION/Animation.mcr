@@ -285,11 +285,11 @@ toolTip:	""
 		obj, cnt=0, names=#(), sAs=#(), sAPs=#(), conts=#(), contsM=#(), classes=#(),
 		indentStr = "      ",
 
-		fn addSubAnim sub par name indent var =
+		function addSubAnim sub par name indent var =
 		(
 				-- Check in case there are regular subAnims...
 			if sub.numSubs > 0 then
-				(
+			(
 				ind = "";
 				for i = 1 to indent do
 					ind += indentStr;
@@ -308,9 +308,9 @@ toolTip:	""
 					sName = getSubAnimName sub i as string;
 					var.addSubAnim sub[i] sub sName (indent+1) var;			-- recurse
 					)
-				)
+			)
 			else	-- leaf node!
-				(
+			(
 				ind = "";
 				for i = 1 to indent do
 					ind += indentStr;
@@ -363,11 +363,11 @@ toolTip:	""
 						)
 					)
 
-				)
+			)
 
 				-- Also if there are CA's go through those as well
 			try
-				(
+			(
 					-- see if this subAnim or Obj has a Custom_Attributes definition.
 				caCnt = custAttributes.count sub;
 
@@ -400,10 +400,10 @@ toolTip:	""
 							)
 						)
 					)
-				)
+			)
 			catch
-				(
-				)
+			(
+			)
 
 
 
@@ -582,7 +582,7 @@ toolTip:	""
 					)
 				)
 			else if (item == 2) then	-- *New* entry
-				(
+			(
 				mi = wcDlg.selMaster;
 				et_script.text = (removeLeadingWS wcMasterData.names[mi]+";");
 				et_script.enabled = true;
@@ -590,9 +590,9 @@ toolTip:	""
 				spn_to.value = 10000;
 				spn_from.enabled = true;
 				spn_to.enabled = true;
-				)
+			)
 			else	-- otherwise it's the data from a previous wire
-				(
+			(
 					-- get the index into the array from the slave list
 					-- We do a -1 since for us 1 is "*new*" and then 2 is really #1....
 					--
@@ -608,7 +608,7 @@ toolTip:	""
 				spn_to.value = range.end;
 				spn_from.enabled = true;
 				spn_to.enabled = true;
-				)
+			)
 		)
 
 
@@ -617,7 +617,7 @@ toolTip:	""
 			item = ddl_script.selection;	-- which item are we editing?
 
 			if (item == 1) then		-- See if it is a Script Controller
-				(
+			(
 				mi = wcDlg.selMaster;
 				cont = wcMasterData.conts[mi];
 				contC = classOf cont;
@@ -637,11 +637,11 @@ toolTip:	""
 					)
 				)
 			else if (item == 2) then	  -- if it is item "*new*" then don't have to do anything
-				(
+			(
 
-				)
+			)
 			else
-				(
+			(
 				if (expr != "" and expr != undefined) then
 					(
 					idx = wcDlg.selSlave[(item-2)];
@@ -741,7 +741,7 @@ toolTip:	""
 			mi = item;
 
 			if (wcMasterData.classes[mi] != UndefinedClass and wcMasterData.classes[mi] != undefined) then
-				(
+			(
 				mlb_slave.selection = #();
 				mlb_slave.enabled = true;
 
@@ -767,14 +767,14 @@ toolTip:	""
 
 
 				buildExpList();
-				)
+			)
 			else
-				(
+			(
 				mlb_slave.selection = #();
 				mlb_slave.enabled = false;
 
 				buildExpList();
-				)
+			)
 		) -- end of MASTER select
 
 
@@ -784,7 +784,7 @@ toolTip:	""
 
 				-- If it is 0 then we gotta add
 			if (idx == 0) then
-				(
+			(
 				-- ** Add CLASS CHECK here **
 				mi = wcDlg.selMaster;
 				si = item;
@@ -793,17 +793,17 @@ toolTip:	""
 				rightClass = wcSlaveData.classes[si];
 
 				if (canWire leftClass rightClass == true) then
-					(
+				(
 					wcDlg.selSlave[(wcDlg.selSlave.count+1)] = item;
 		--			format "-- Added %\n" item;
 
 					if (wcDlg.selMaster != undefined) then
-						(
+					(
 						mi = wcDlg.selMaster;
 						si = item;
 
 						if (wcMasterData.classes[mi] != UndefinedClass and wcMasterData.classes[mi] != undefined) then
-							(
+						(
 							format "-- Connecting %.% to %.%\n" wcDlg.master.name (removeLeadingWS wcMasterData.names[mi]) wcDlg.slave.name (removeLeadingWS wcSlaveData.names[si]);
 							paramWire.connect (wcMasterData.sAs[mi]) (wcSlaveData.sAs[si]) (et_script.text);
 
@@ -823,11 +823,11 @@ toolTip:	""
 							wcMasterData.conts[mi] = sM.controller;
 
 							setTimeRange cont spn_from.value spn_to.value;
-							)
 						)
-					) -- end of can wire.
+					)
+				) -- end of can wire.
 				else
-					(
+				(
 					msg = "";
 					msg += "-- ERROR: You cannot wire these two types of controllers together.\n";
 					msg += "-- For example a Quat has 4 dimensions, a Color has 3, a Bezier Float has 1.\n";
@@ -843,20 +843,20 @@ toolTip:	""
 					format "%" msg;
 					messageBox msg title:"Cannot Wire Incompatible Controllers" beep:true;
 					mlb_slave.selection = wcDlg.selSlave;	-- put back to what is valid only
-					)
 				)
+			)
 			else
-				(
+			(
 				deleteItem wcDlg.selSlave idx;
 	--			format "-- Removed %\n" item;
 
 				if (wcDlg.selMaster != undefined) then
-					(
+				(
 					mi = wcDlg.selMaster;
 					si = item;
 
 					if (wcMasterData.classes[mi] != undefined) then
-						(
+					(
 						format "-- Disconnecting %.%\n" wcDlg.slave.name (removeLeadingWS wcSlaveData.names[si]);
 						paramWire.disconnect (wcSlaveData.conts[si])
 
@@ -864,10 +864,9 @@ toolTip:	""
 						cont = wcSlaveData.sAs[si].controller;
 						wcSlaveData.conts[si] = cont;
 						wcSlaveData.contsM[si] = undefined;
-						)
 					)
 				)
-
+			)
 
 				-- Now update dropdown to remove item
 			buildExpList();
