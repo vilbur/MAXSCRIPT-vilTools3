@@ -175,7 +175,7 @@ toolTip:	""
 	-- --------------------------------------------------------------------------
 	--			Basic String Procs
 	-- --------------------------------------------------------------------------
-	fn toupper instring =
+	fn toupperFn instring =
 	(
 		local upper, lower, outstring       -- declare variables as local
 
@@ -208,7 +208,7 @@ toolTip:	""
 
 	-- --------------------------------------------------------------------------
 
-	fn tolower instring =
+	fn tolowerFn instring =
 	(
 		local upper, lower, outstring       -- declare variables as local
 
@@ -296,7 +296,7 @@ toolTip:	""
 	--			format ">> %% <<\n" ind name;
 
 				cnt+=1;
-				names[cnt] = (toupper (ind+"( "+name+" )") );
+				names[cnt] = (toupperFn (ind+"( "+name+" )") );
 				sAs[cnt] = sub;
 				sAPs[cnt] = par;
 				conts[cnt] = undefined;
@@ -338,9 +338,9 @@ toolTip:	""
 					(
 					cnt+=1;
 					if (sub.value == undefined) then	-- see if it's just a master node with no childern....
-						names[cnt] = (toupper (ind+"( "+name+" )"));
+						names[cnt] = (toupperFn (ind+"( "+name+" )"));
 					else
-						names[cnt] = (tolower (ind+name));
+						names[cnt] = (tolowerFn (ind+name));
 					sAs[cnt] = sub;
 					sAPs[cnt] = par;
 					conts[cnt] = sub.controller;
@@ -383,7 +383,7 @@ toolTip:	""
 	--				format ">> %%: % <<\n" ind name theName;
 
 					cnt+=1;
-					names[cnt] = (toupper (ind+"( "+name+": "+theName+" )"));
+					names[cnt] = (toupperFn (ind+"( "+name+": "+theName+" )"));
 					sAs[cnt] = ca;
 					sAPs[cnt] = sub;
 					conts[cnt] = undefined;
