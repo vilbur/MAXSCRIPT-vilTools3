@@ -142,7 +142,7 @@ autoUndoEnabled: true
 macroscript	_animation_wire_params
 category:	"_Animation"
 buttontext:	"Wire Params"
-toolTip:	""
+toolTip:	"Open Wire Prams Dialog.\n\nIF SELECTION:\n  MASTER = 1st selected object\n  SLAVE = 1st selected object"
 --icon:	"#(path, index)"
 (
 
@@ -495,15 +495,15 @@ toolTip:	""
 
 	rollout wireCControlRoll "Wiring"
 	(
-		pickbutton pb_master "Pick Master Object" width:250 toolTip:"Choose Master Object" across:2;
-		pickbutton pb_slave "Pick Slave" width:250 toolTip:"Choose Slave Object";
+		pickbutton pb_master "Pick Master Object"	width:250 toolTip:"Choose Master Object" across:2;
+		pickbutton pb_slave "Pick Slave"       	width:250 toolTip:"Choose Slave Object";
 
-		listbox lb_master items:#() height:20 across:2;
-		multilistbox mlb_slave items:#() enabled:false height:20;
+		listbox	lb_master items:#() height:20 across:2;
+		multilistbox	mlb_slave items:#() enabled:false height:20 toolTip:"Selected parameters will be wired.\n\nCTR: unselect and UNWIRE";
 
-		dropdownlist ddl_script items:#() enabled:false width:250 offset:[1,0] across:3;
-		spinner spn_from "Wire Time Range FROM:" enabled:false type:#integer range:[-1000,10000,-1000] fieldWidth:50 offset:[90,2];
-		spinner spn_to "TO:" type:#integer enabled:false range:[-1000,10000, 10000] fieldWidth:50 offset:[0,2];
+		dropdownlist	ddl_script items:#()	enabled:false width:250 offset:[1,0] across:3;
+		spinner	spn_from "Wire Time Range FROM:"	enabled:false type:#integer range:[-1000,10000,-1000] fieldWidth:50 offset:[90,2];
+		spinner	spn_to "TO:"	type:#integer enabled:false range:[-1000,10000, 10000] fieldWidth:50 offset:[0,2];
 
 		edittext et_script text:"" height:126 offset:[-2,0];
 
@@ -1006,20 +1006,24 @@ toolTip:	""
 			addRollout wireCAboutRoll wireCDialog rolledUp:true
 
 			)
-
-
 	)
 
-	-- --------------------------------------------------------------------------
-
-
-	--wcData = wireCData obj:$teapot01;
-	--wcData.buildList var:wcData;
+	/*------------------------------------------------------------------------------
+		CREATE DIALOG
+	--------------------------------------------------------------------------------*/
 
 	wcDlg = wireConnect();
+	
+	
 	wcDlg.create();
 
-
-
-
+	if selection.count > 0 then
+	(
+	    wireCControlRoll.pb_master.picked selection[1]
+			
+	    if selection.count > 1 then
+			wireCControlRoll.pb_slave.picked selection[2]
+			
+		select selection[1]
+	)
 )
