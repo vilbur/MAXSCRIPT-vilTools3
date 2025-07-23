@@ -1027,3 +1027,4 @@ toolTip:	"Open Wire Prams Dialog.\n\nIF SELECTION:\n  MASTER = 1st selected obje
 		select selection[1]
 	)
 )
+

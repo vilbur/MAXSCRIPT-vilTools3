@@ -45,7 +45,6 @@ icon:	"MENU:Open &Recent"
 	on execute do
 	(
 		recent_file = (RecentFile_v()).getRecentFileNotMatching blacklist:#( "autoback", "maxstart", "temp" )
-
 		if recent_file != undefined and doesFileExist recent_file then
 		(
 			if  maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_file))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
@@ -54,6 +53,7 @@ icon:	"MENU:Open &Recent"
 
 				loadMaxFile recent_file quiet:true
 
+				format "RECENT_FILE: %\n" recent_file
 				format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
 			)
 		)
@@ -139,7 +139,7 @@ icon:	"MENU:Open &TEMP File"
 macroscript	_scene_open_maxstart_scene
 category:	"_Scene"
 buttontext:	"MaxStart"
---icon:	"MENU:OPEN MaxStart.max"
+toolTip:	"Open MaxStart"
 icon:	"ACROSS:2|MENU:true"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"

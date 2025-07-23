@@ -97,7 +97,7 @@ startup_scripts = #(
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 	
 	--"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
-	"/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms",	--"./VilTools/rollouts-Tools/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms"
+	--"/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms",	--"./VilTools/rollouts-Tools/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms"
 	"" -- last blank item to prevent errors on development
 )
 
@@ -123,7 +123,7 @@ StartUpScriptImporter.createStartUpFile(startup_scripts)
 /*------------------------------------------------------------------------------
 	INSTALL PLUGINS
 --------------------------------------------------------------------------------*/
-(PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install() --"./VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms"
+--(PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install() --"./VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms"
 
 /*------------------------------------------------------------------------------
 	GENERATE MACROS

@@ -6,15 +6,35 @@ macroscript	_scene_temp_save
 category:	"_Scene"
 buttontext:	"Save Temp"
 toolTip:	"Save TEMP File"
-icon:	"ACROSS:3|MENU:tooltip"
+icon:	"ACROSS:3|MENU:Save File • CTRL: Save As"
 (
 	on isVisible return objects.count > 0
 
 	on execute do
-		if queryBox "Save Temp File ?" title:"Save Temp File"  beep:false then
+	(
+		if keyboard.controlPressed then
+		(
+			
+			file_path = getSaveFileName caption:"Save Script As" types:"Max File (*.max)|All Files (*.*)|*.*" initialDir:(getFilenamePath( maxFilePath ))
+			
+			if file_path != undefined then
+			(
+				saveMaxFile file_path quiet:true
+
+			)
+
+			
+		)
+		else
+		(
+			
+			if queryBox "Save Temp File ?" title:"Save Temp File"  beep:false then
 			--if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
 				--saveMaxFile max_file quiet:true
 				saveMaxFile ((getDir #temp) + "\\temp.max") quiet:true
+		)
+		
+	)
 
 )
 

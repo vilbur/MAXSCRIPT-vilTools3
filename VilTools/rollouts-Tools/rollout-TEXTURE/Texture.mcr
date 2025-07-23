@@ -162,3 +162,120 @@ icon:	"control:edittext|across:5|offset:[16,0]"
 (
 
 )
+
+
+
+/**
+ */
+macroscript	_texture_import_image_strip
+category:	"_Texture"
+buttontext:	"Import Image Strip"
+toolTip:	""
+icon:	"ACROSS:2"
+(
+	/* 
+	Browse image strip, create plane, apply UVW_Xform modifier and animate U offset by scene frame 
+	*/
+		
+	function createAnimatedStripPlaneUVW =
+	(
+		img_file = getOpenFileName caption:"Select image strip" types:"Image Files (*.jpg;*.png;*.bmp)|*.jpg;*.png;*.bmp|All Files (*.*)|*.*"
+	
+		if img_file != undefined and doesFileExist img_file then
+		(
+			
+	
+	
+			bitmap_img = openBitmap img_file
+			full_width = bitmap_img.width
+			height = bitmap_img.height
+			
+			
+			num_frames	= ( ceil ( full_width / height )) as integer
+	
+			
+			
+			dialog	= dotNetObject "MaxCustomControls.RenameInstanceDialog" (num_frames as string)
+			dialog.text	= "Title"
+			modal	= dialog.Showmodal()
+			input	= dialog.InstanceName as integer
+			
+			if input != undefined then 
+				num_frames = input
+			
+
+			frame_width = full_width / num_frames
+			aspect_ratio = frame_width as float / height
+	
+			plane_width = 100.0
+			plane_length = plane_width / aspect_ratio
+	
+			new_plane = plane width:plane_width length:plane_length widthsegs:1 lengthsegs:1 showFrozenInGray:false
+	
+			
+			
+			-- Align to current viewport
+			view_tm = viewport.getTM()
+			view_pos = view_tm.row4
+			view_rot = inverse (matrix3 view_tm.row1 view_tm.row2 view_tm.row3 [0,0,0])
+	
+			new_plane.transform = view_rot
+			--new_plane.pos = view_pos + (normalize view_tm.row3) * -200 -- push it into view
+			
+			
+			-- Create material with full-strip bitmap (no tiling)
+			bmp = bitmaptexture filename:img_file
+			mat = standardMaterial name:"Strip_Material"
+			mat.diffuseMap = bmp
+			mat.showInViewport = true
+			new_plane.material = mat
+	
+			-- Assign UVW_Xform modifier
+			uvmod = UVW_Xform ()
+			addModifier new_plane uvmod
+	
+			-- Set initial tiling
+			uvmod.U_Tile = 1.0 / num_frames
+			uvmod.V_Tile = 1.0
+	
+			-- Assign animatable controller
+			uvmod.u_offset.controller = bezier_float()
+	
+			--start_frame = animationRange.start.frame
+			start_frame = 1
+			
+			--start_range = start_frame
+			end_range = num_frames + start_frame
+			
+			animationRange = Interval 0 end_range
+
+			for f = start_frame to end_range do
+			(
+				frame_index = f - start_frame + 1
+				frame_index = amin frame_index num_frames
+	
+				offset_val = ((frame_index - 1) as float) / num_frames
+	--format "offset_val: %\n" offset_val
+	
+				new_key = addNewKey uvmod.u_offset.controller f
+				
+				at time f animate on uvmod.u_offset.controller.value = offset_val
+				
+			)
+	
+			close bitmap_img
+			select new_plane
+	
+			format "Applied UVW_Xform animation on % frames.\n" num_frames
+		)
+		else
+		(
+			messageBox "No image file selected or file doesn't exist."
+		)
+	)
+
+	
+	on execute do
+		createAnimatedStripPlaneUVW() -- call function
+	
+)

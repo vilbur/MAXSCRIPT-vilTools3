@@ -37,13 +37,13 @@ struct RecentFile_v
 
 		file_paths = xml_doc.GetElementsByTagName "FilePath"
 
-		for i = 0 to file_paths.count - 1 where (file_path_xml = (file_paths.item i)) != undefined  do
+		for i = 0 to file_paths.count - 1 where ( file_path_xml = (file_paths.item i)) != undefined  do
 		(
 			file_path = file_path_xml.InnerXML
-
+			
 			find_in_blacklist = false
 
-			for mask in blacklist where matchPattern file_path  pattern:( "*\\" + mask + "\\*" ) do
+			for mask in blacklist while not find_in_blacklist where matchPattern file_path  pattern:( "*\\" + mask + ".max" ) do
 				find_in_blacklist = true
 
 			if not find_in_blacklist then

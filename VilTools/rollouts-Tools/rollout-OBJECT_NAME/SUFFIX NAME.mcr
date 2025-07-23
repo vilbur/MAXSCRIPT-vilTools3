@@ -9,7 +9,7 @@ tooltip:	"Text of suffix added to objects in selection"
 icon:	"control:editText|across:3"
 --icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 (
-	--format "EventFired	= % \n" EventFired
+	format "EventFired	= % \n" EventFired
 	--search_text = ROLLOUT_selection.search_in_name.text
 
 	--format "search_text	= % \n" search_text
@@ -27,9 +27,9 @@ icon:	"across:3"
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 	on execute do
 	(
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\SUFFIX NAME.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\SUFFIX NAME.mcr"
 		--trailing_number = "[^\s]*\d+$" -- match suffix number without delimeter E.G.: "trailing-number002"
-		suffix_text  = ROLLOUT_selection.ET_suffix_text.text
+		suffix_text  = ROLLOUT_object_name.ET_suffix_text.text
 
 		undo "Add sufix" on
 			for obj in selection do
