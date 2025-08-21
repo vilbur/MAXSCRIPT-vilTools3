@@ -50,22 +50,32 @@ struct SceneLayers_v
 	function moveTo layer_type _objects =
 	(
 		--format "\n"; print "TO.moveTo()"
+		target_layers = #()
 
 		if _objects != undefined then
 		(
 			for obj in (_objects = this._getSourceObjects (_objects)) do
 			(
-				this._moveNodeToLayer(obj)(layer_type)
+				target_layer = this._moveNodeToLayer(obj)(layer_type)
+
+				appendIfUnique target_layers target_layer
 				
-				--this.renameObjectsAndChildren obj layer_type
+				/* RENAME OBJECT */ 
 				this._renameObject obj layer_type
-				
+
+				/* RENAME CHILDREN */ 
 				if obj.children.count > 0 then
 					for child in this.getAllChildren obj do
 						this._renameObject child layer_type
 			)
 			
+			
+			/* TURN ON LAYER */
+			if not target_layers[1].on and queryBox ( "ENABLE LAYER ?\n\nTOP LAYER:\n  "+ layer_type as string + "\n\nLAYER:\n  "+target_layers[1].name +" " ) title:"TUNR ON LAYER" then
+				LayersManager.setVisibility target_layers true 
+			
 			select _objects
+			
 			
 			_objects --return 
 		)
@@ -380,23 +390,26 @@ struct SceneLayers_v
 		#( actual_node_list, new_nodes ) --return
 	),
 
-	/** Move nodes to layers
+	/** MOVE NODES TO LAYERS
 	 */
 	function _moveNodeToLayer obj layer_type =
 	(
-		-- format "\n---------------------------------------------\n"
-		-- format "\n"; print "SceneLayers_v._moveNodeToLayer()"
+		 --format "\n---------------------------------------------\n"
+		 --format "\n"; print "SceneLayers_v._moveNodeToLayer()"
 		
 		/** Get layers tree
 		 */
 		layer = this._createTargetLayersHierarchy(obj) (layer_type)
-		-- format "layer: %\n" layer
+		 --format "layer: %\n" layer.name
 
 		layer.addNodes obj
 
+		/* MOVE CHILDREN TO LAYER */ 
 		if obj.children.count > 0 then
 			for child in this.getAllChildren obj do 
 				this._moveNodeToLayer child layer_type
+		
+		layer --return
 	),
 
 	/** Get group members of closed group

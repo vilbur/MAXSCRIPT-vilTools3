@@ -47,7 +47,7 @@ icon:	"MENU:Open &Recent"
 		recent_file = (RecentFile_v()).getRecentFileNotMatching blacklist:#( "autoback", "maxstart", "temp" )
 		if recent_file != undefined and doesFileExist recent_file then
 		(
-			if  maxFilePath == "" or queryBox ("Laod last file ?\n\n"+(getFilenameFile (recent_file))+" ?" ) title:"LAOD RECENT FILE"  beep:false then
+			if  maxFilePath == "" or queryBox ("Load recent file ?\n\n"+(getFilenameFile (recent_file))+" ?" ) title:"LOAD RECENT FILE"  beep:false then
 			(
 				start_time = timestamp()
 

@@ -48,9 +48,9 @@ icon:	"across:3"
 	on execute do
 	(
 		--format "EventFired	= % \n" EventFired
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\SEARCH AND REPLACE NAME.mcr"
-		search_text  = ROLLOUT_selection.ET_search_in_name.text
-		replace_text = ROLLOUT_selection.ET_replace_in_name.text
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\SEARCH AND REPLACE NAME.mcr"
+		search_text  = ROLLOUT_object_name.ET_search_in_name.text
+		replace_text = ROLLOUT_object_name.ET_replace_in_name.text
 
 		objects_replace =	if selection.count == 0 then objects else selection --return
 

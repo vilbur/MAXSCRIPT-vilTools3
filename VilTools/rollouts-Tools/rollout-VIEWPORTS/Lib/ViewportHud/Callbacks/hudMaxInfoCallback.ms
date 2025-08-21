@@ -97,7 +97,7 @@ function hudMaxInfoCallback =
 
 	/* CURENT KEY FRAME */
 	if sliderTime > 0 then
-		HUD.row ( "------------------ KEYFRAME: "+ trimRight (sliderTime as string ) "f" + " ------------------" ) color:red height:row_height_big
+		HUD.row ( "FRAME: "+ (( sliderTime.frame as integer) as string ) ) color:red height:row_height_big
 
 
 	/* DONT AFFECT CHILDRE */

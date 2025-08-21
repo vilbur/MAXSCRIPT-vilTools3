@@ -93,11 +93,11 @@ icon:	"control:spinner|type:#integer|ACROSS:2|align:#LEFT|fieldwidth:64|range:[1
 )
 /**  SET ANIMATION COUNT OF FRAMES
  */
-macroscript	_animation_remove_all_frames_after_vurrenttime
+macroscript	_animation_remove_all_frames_after_currenttime
 category:	"_Animation"
-buttontext:	"Remove Keys"
-tooltip:	"Remove all keys at current time from selected objects afcurrent time"
-icon:	"ACROSS:2"
+buttontext:	"Remove Current Frame"
+tooltip:	"REMOVE ANIMIMATION KEYS CURRENT TIME TO RIGHT"
+icon:	"ACROSS:2|width:128"
 (
 	on execute do
 	(
@@ -106,7 +106,7 @@ icon:	"ACROSS:2"
 		if selection.count > 0 then
 		(
 			-- Create a message that includes the exact current frame number.
-			local prompt_message = "Are you sure you want to delete all keyframes AFTER frame " + (currentTime as string) + "?"
+			local prompt_message = "REMOVE KEYS\n\nFROM: " + (currentTime as string) + " TO RIGHT ?"
 		
 			-- Show the confirmation dialog. The script only proceeds if you click "Yes".
 			if queryBox prompt_message title:"Confirm Keyframe Deletion" then
@@ -146,8 +146,8 @@ icon:	"ACROSS:2"
  */
 macroscript	_animation_remove_all_frames
 category:	"_Animation"
-buttontext:	"Remove All Keys"
-tooltip:	"Remove all keys at current time from selected objects afcurrent time"
+buttontext:	"Remove All Frames"
+tooltip:	"REMOVE ANIMIMATION KEYS ALL FRAMES"
 icon:	"ACROSS:2"
 (
 	on execute do
@@ -157,7 +157,7 @@ icon:	"ACROSS:2"
 		if selection.count > 0 then
 		(
 			-- Format the confirmation message with the current time
-			local prompt_message = "Delete all keyframes ?"
+			local prompt_message = "DELETE ALL KEYFRAMES ?"
 		
 			-- Display a yes/no confirmation box to the user
 			if queryBox prompt_message title:"Confirm Keyframe Deletion" then

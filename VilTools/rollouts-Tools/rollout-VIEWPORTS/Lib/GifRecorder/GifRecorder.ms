@@ -6,6 +6,8 @@ global DIALOG_GifRecorder
 --if GIF_RECORDER == undefined then 
 	global GIF_RECORDER
 
+global ROLLOUT_options
+
 
 
 /** Screen shooter
@@ -30,7 +32,7 @@ struct GifRecorder_v
 	private
 	
 	/* private */
-	temp_dir = getDir #TEMP + "/GifRecorder/gif-frames",
+	temp_dir = getDir #TEMP + "\\GifRecorder\\gif-frames",
 	
 	maxfile_subdir = substituteString maxFilePath "\\" "/" + "_Screenshots",
 		
@@ -147,7 +149,7 @@ struct GifRecorder_v
 	 */
 	function generateGif open_in_viewer:false =
 	(
-		--format "\n"; print "GifRecorder_v.generateGif()"
+		format "\n"; print "GifRecorder_v.generateGif()"
 		/** Combine frames to gif
 		 */
 		function combineFramesToGif =
@@ -155,11 +157,13 @@ struct GifRecorder_v
 			--format "\n"; print "GifRecorder_v.combineFramesToGif()"
 			delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as float * 100) 
 			
-			--format "DELAY OF FRAMES: %s\n" delay
+			format "DELAY OF FRAMES: %s\n" delay
 			
 			cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
 			
-			--print ("GifRecorder.combineFramesToGif: "+cmd)
+			cmd = substituteString cmd "/" "\\" --return
+
+			print ("GifRecorder.combineFramesToGif:\n\n"+cmd+"\n")
 			
 			DOSCommand cmd
 		)
@@ -231,7 +235,9 @@ struct GifRecorder_v
 	 */
 	function saveGifFile browse:false =
 	(
-		--format "\n"; print "GifRecorder_v.saveGifFile()"
+		format "\n"; print "GifRecorder_v.saveGifFile()"
+		format "GifRecorder.saveGifFile: %\n" gif_final_path
+
 		makeDir (getFilenamePath(gif_final_path)) all:true
 		
 		if browse and this._browseGifSavePath() == undefined then
@@ -239,7 +245,7 @@ struct GifRecorder_v
 		
 		if not doesFileExist gif_temp_path then
 			this.generateGif()
-		--format "gif_temp_path: %\n" gif_temp_path
+		format "gif_temp_path: %\n" gif_temp_path
 
 		/* DELETE OLD FINAL FILE */ 
 		deleteFile gif_final_path
@@ -250,8 +256,7 @@ struct GifRecorder_v
 		/* DELETE TEMP FILE */ 
 		deleteFile gif_temp_path
 
-		--format "GIF SAVED\nFROM: %\nTO:   %\n" gif_temp_path gif_final_path
-		format "GifRecorder.saveGifFile: %\n" gif_final_path
+		format "GIF SAVED\nFROM: %\nTO:   %\n" gif_temp_path gif_final_path
 	),
 	
 	/** Browse gif save path
@@ -584,16 +589,20 @@ struct GifRecorder_v
 	 */
 	function setGifPaths =
 	(
+		
 		--format "\n"
 		--format "\n"; print "GifRecorder_v.setGifPaths()"
 		/** Get gif path
 		 */
 		function getGifTempPath =
 		(
-			--format "\n"; print "GifRecorder_v._getGifPath()"
+			format "\n"; print "GifRecorder_v._getGifPath()"
 			gif_path = temp_dir + "/" + gif_filename
-			
+			--format "GIF_PATH: %\n" gif_path
+			--gif_path = ( dotNetObject "System.Text.RegularExpressions.Regex" @"[\\/]+" ).Replace gif_path "\\"
+			--format "GIF_PATH: %\n" gif_path
 			substituteString gif_path "/" "\\" --return
+			--gif_path --return
 		)
 			/** Get gif path
 		 */

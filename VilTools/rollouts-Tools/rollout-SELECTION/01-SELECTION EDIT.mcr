@@ -17,6 +17,8 @@ icon:	"across:3"
 		(
 			visible_objects = (for obj in objects where not obj.isHidden collect obj).count
 
+s				return false
+			
 			/* GET LAYER MANAGER AUTO EXPAND STATE */
 			if visible_objects > max_visible_objects and ( layer_manager_dialog = SceneExplorerManager.GetActiveExplorer() ) != undefined and ( auto_expand = layer_manager_dialog.AutoExpand ) then
 				layer_manager_dialog.AutoExpand = false
@@ -119,4 +121,38 @@ toolTip:	"Paste object to scene"
 icon:	"MENU:true"
 (
 	mergeMaxFile (((GetDir #temp) as string ) + "\copy_paste_buffer.max") #select
+)
+
+/**
+  */
+macroscript	selection_select_same_suffix
+category:	"_Selection-Edit"
+buttontext:	"Select by suffix"
+toolTip:	"Select by suffix"
+icon:	"MENU:true|across:1|width:96"
+(
+	on execute do
+	(
+		
+		/** Get suffix
+		 */
+		function getSuffix obj_name =
+		(
+			--format "\n"; print ".getSuffix()"
+			string_split	= filterString obj_name "-_ "
+			
+			 string_split[string_split.count] --return
+		)
+		
+		selected_names = #()
+	
+		for obj in selection do
+			appendIfUnique selected_names (getSuffix obj.name)
+			
+		same_name_objs = for obj in objects where not obj.isHidden and findItem selected_names (getSuffix obj.name) > 0 collect obj
+	
+		if same_name_objs.count > 0 then
+			select same_name_objs
+	
+	) -- return
 )
