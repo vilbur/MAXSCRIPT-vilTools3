@@ -1,4 +1,4 @@
-
+filein( getFilenamePath(getSourceFileName()) + "/Lib/animateAlign.ms" )	--"./Lib/animateAlign.ms"
 
 global WIRE_PARAMS_LABELS = undefined
 
@@ -1027,4 +1027,30 @@ toolTip:	"Open Wire Prams Dialog.\n\nIF SELECTION:\n  MASTER = 1st selected obje
 		select selection[1]
 	)
 )
+
+
+/*
+*/ 
+macroscript	_options_animate_align
+category:	"_Animation"
+buttontext:	"Animate Align"
+--icon:	"ACROSS:3"
+(
+	/** Aim range string
+	 */
+	function getAnimRangeString = ((animationRange.start.frame as integer ) as string )+" - "+((animationRange.end.frame as integer ) as string )
+	
+	on execute do
+		if selection.count > 1 then
+		(
+			if queryBox ("Animate master object by slave object ?\n\nFRAMES: "+ getAnimRangeString() +"\n\nMASTER OBJECT:\n    "+ selection[2].name+"\n\n SLAVE OBJECT:\n    "+ selection[1].name ) title:"ANIMATE ALIGN" then
+				animateAlign selection[2] selection[1] animationRange
+		)
+		else
+			messageBox "SELECT 2 OBJECTS\n\n1st aligns to 2nd" title:"ANIMATE ALIGN" 
+	
+)
+
+
+
 

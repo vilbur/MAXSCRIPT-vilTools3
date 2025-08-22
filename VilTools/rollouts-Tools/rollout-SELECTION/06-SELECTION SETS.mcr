@@ -9,7 +9,11 @@ icon:	"across:2|width:128|height:28"
 (
 	on execute do
 	(
-		ini = getDir #TEMP + "\\selectionSets-copy.ini"
+		ini = getDir #TEMP + "\\selectionSets-copyXXX.ini"
+	format "doesFileExist ini: %\n" (doesFileExist ini)
+	
+		if doesFileExist ini then
+			deleteFile ini
 	
 		nsm = NamedSelectionSetManager -- get the interface
 		setsData = #()
@@ -26,18 +30,27 @@ icon:	"across:2|width:128|height:28"
 			append setsData #(setName, objs)
 		)
 	
-		for setInfo in setsData do
+		for setInfo in setsData where (setName = setInfo[1]) != undefined do
 		(
-			setName = setInfo[1]
 			
+			--format "setName: %\n" setName
 			objs = setInfo[2]
 
 			for obj in objs where obj != undefined do
 				setINISetting ini setName obj.name ""
+
+			--format "obj.name: %\n" obj.name
+
+				--setINISetting ini "setName" "X" "X"
+
 			
 		)
+		msg = "Named Selection Sets\n\nHas been saved to file"
 		
-		messageBox "Named Selection Sets\n\nHas been saved to file" title:"SAVE SETS" 
+		format "%:\n%\n" msg ini
+		
+		--messageBox msg title:"SAVE SETS"
+		
 	)
 )
 
@@ -52,14 +65,14 @@ icon:	""
 (
 	on execute do
 	(
-		ini = getDir #TEMP + "\\selectionSets-copy.ini"
+		ini = getDir #TEMP + "\\selectionSets-copyXXX.ini"
 		
 		if doesFileExist ini then
 		(
 			nsm = NamedSelectionSetManager
 			
 			for s = 1 to nsm.GetNumNamedSelSets() do
-				RemoveNamedSelSetByIndex s
+				nsm.RemoveNamedSelSetByIndex s
 			
 			for set_name in getINISetting ini do
 				(

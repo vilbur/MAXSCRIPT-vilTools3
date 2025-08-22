@@ -17,7 +17,8 @@ icon:	"across:3"
 		(
 			visible_objects = (for obj in objects where not obj.isHidden collect obj).count
 
-s				return false
+			if visible_objects.count == 0 then
+				return false
 			
 			/* GET LAYER MANAGER AUTO EXPAND STATE */
 			if visible_objects > max_visible_objects and ( layer_manager_dialog = SceneExplorerManager.GetActiveExplorer() ) != undefined and ( auto_expand = layer_manager_dialog.AutoExpand ) then
@@ -82,7 +83,8 @@ buttontext:	"Copy Selection"
 toolTip:	"Copy objects in selection with hierarchy"
 icon:	"MENU:true|across:2"
 (
-	saveNodes selection (((GetDir #temp) as string ) + "\copy_paste_buffer.max")  quiet:true
+	on execute do
+		saveNodes selection (((GetDir #temp) as string ) + "\copy_paste_buffer.max")  quiet:true
 )
 
 /** COPY UNLINK PARENTS
@@ -94,19 +96,22 @@ buttontext:	"Copy Selection"
 toolTip:	"Copy objects in selection"
 icon:	"across:5|width:72|MENU:true"
 (
-
-	objects_with_unselected_parent = for o in selection where o.parent != undefined and findItem ( selection as Array ) o.parent == 0 collect o -- get obejcts which parent is not selected
-	format "objects_with_unselected_parent	= % \n" objects_with_unselected_parent
-	parents = for o in objects_with_unselected_parent collect o.parent
-	format "parents	= % \n" parents
-	/* UNLINK */
-	for child_obj in objects_with_unselected_parent do child_obj.parent = undefined
-
-	saveNodes selection (((GetDir #temp) as string ) + "\copy_paste_buffer.max")  quiet:true
-
-	/* RELINK */
-	for i = 1 to objects_with_unselected_parent.count do
-		 objects_with_unselected_parent[i].parent = parents[i]
+	on execute do
+	(
+		objects_with_unselected_parent = for o in selection where o.parent != undefined and findItem ( selection as Array ) o.parent == 0 collect o -- get obejcts which parent is not selected
+		format "objects_with_unselected_parent	= % \n" objects_with_unselected_parent
+		parents = for o in objects_with_unselected_parent collect o.parent
+		format "parents	= % \n" parents
+		/* UNLINK */
+		for child_obj in objects_with_unselected_parent do child_obj.parent = undefined
+	
+		saveNodes selection (((GetDir #temp) as string ) + "\copy_paste_buffer.max")  quiet:true
+	
+		/* RELINK */
+		for i = 1 to objects_with_unselected_parent.count do
+			 objects_with_unselected_parent[i].parent = parents[i]
+		
+	)
 
 )
 
