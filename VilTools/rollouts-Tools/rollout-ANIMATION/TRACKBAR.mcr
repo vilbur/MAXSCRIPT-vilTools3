@@ -156,7 +156,7 @@ icon:	"ACROSS:2"
 		-- Check if any objects are selected
 		if selection.count > 0 then
 		(
-			-- Format the confirmation message with the current time
+			-- Format  directionthe confirmation message with the current time
 			local prompt_message = "DELETE ALL KEYFRAMES ?"
 		
 			-- Display a yes/no confirmation box to the user
@@ -186,3 +186,54 @@ icon:	"ACROSS:2"
 		
 	)
 )
+
+/** Shift current time in loop E.g.: Last Frame >>  First Frame
+ */
+function shiftCurrentTime direction =
+(
+	--format "\n"; print ".shiftCurrentTime()"
+	
+	/* Is in range */
+	function isInRange frame =
+	(
+		frame >= animationRange.start.frame and frame <= animationRange.end.frame
+	)
+	
+	shift_to_frame = sliderTime + ( 1 * direction )
+	
+	
+	if not isInRange shift_to_frame then
+		shift_to_frame = if shift_to_frame < animationRange.start.frame then animationRange.end.frame else animationRange.start.frame
+		
+	
+	sliderTime = shift_to_frame
+	
+)
+
+
+/**  SET ANIMATION COUNT OF FRAMES
+ */
+macroscript	_animation_set_frame_next
+category:	"_Animation"
+buttontext:	"Shift Frame"
+tooltip:	"Set Next Anim Frame"
+icon:	"ACROSS:2"
+(
+	on execute do
+		shiftCurrentTime 1
+
+)
+
+/**  SET ANIMATION COUNT OF FRAMES
+ */
+macroscript	_animation_set_frame_prev
+category:	"_Animation"
+buttontext:	"Shift Frame"
+tooltip:	"Set Previous Anim Frame"
+icon:	"ACROSS:2"
+(
+	on execute do
+		shiftCurrentTime -1
+
+)
+

@@ -1043,7 +1043,7 @@ buttontext:	"Animate Align"
 	on execute do
 		if selection.count > 1 then
 		(
-			if queryBox ("Animate master object by slave object ?\n\nFRAMES: "+ getAnimRangeString() +"\n\nMASTER OBJECT:\n    "+ selection[2].name+"\n\n SLAVE OBJECT:\n    "+ selection[1].name ) title:"ANIMATE ALIGN" then
+			if queryBox ("Animate master object by slave object ?\n\nFRAMES: "+ getAnimRangeString() +"\n\nMASTER OBJECT:\n    "+ selection[2].name+"\n\n ANIMATED OBJECT:\n    "+ selection[1].name ) title:"ANIMATE ALIGN" then
 				animateAlign selection[2] selection[1] animationRange
 		)
 		else
