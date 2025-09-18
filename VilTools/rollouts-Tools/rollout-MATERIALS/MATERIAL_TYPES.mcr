@@ -1,4 +1,4 @@
---filein( getFilenamePath(getSourceFileName()) + "/Lib/MaterialId/MaterialId.ms" ) -- "./Lib/MaterialId/MaterialId.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/MaterialId/MaterialId.ms" ) -- "./Lib/MaterialId/MaterialId.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Callback/setModelingMaterial.ms" )
 

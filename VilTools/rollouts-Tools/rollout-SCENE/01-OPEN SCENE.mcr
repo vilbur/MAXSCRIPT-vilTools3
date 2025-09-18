@@ -1,44 +1,14 @@
 filein( getFilenamePath(getSourceFileName()) + "/RecentFile/RecentFile.ms" ) -- "./RecentFile/RecentFile.ms"
 
-/** OPEN FILE DIALOG
- *
- */
-macroscript	_scene_open_file
-category:	"_Scene"
-buttontext:	"OPEN File"
-toolTip:	"Open File Dialog"
---icon:	"control:checkButton|MENU:_Scene"
-icon:	"across:3|MENU:true"
-(
-	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
-	on execute do
-	(
-		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\1-Scene.mcr"
-
-		init_dir = if (last_file = (RecentFile_v()).getRecentFileNotMatching blacklist:#( "temp", "autoback" )) != undefined then getFilenamePath( last_file ) else unsupplied
-
-		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:(init_dir) historyCategory:"MAXScriptFileOpenSave"
-
-		if file_path != undefined then
-		(
-			start_time = timestamp()
-
-			loadMaxFile file_path quiet:true
-
-			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
-		)
-
-	)
-)
 /**
  *
  */
 macroscript	_scene_open_recent
-category:	"_Scene"
+category:	"_Scene-Open"
 buttontext:	"RECENT"
 toolTip:	"Open recent scene on Max start"
 --icon:	"control:checkButton|MENU:_Scene"
-icon:	"MENU:Open &Recent"
+icon:	"across:3|MENU:Open &RECENT"
 (
 	--on isVisible  return maxFileName == ""
 
@@ -105,6 +75,36 @@ icon:	"MENU:Open &Recent"
 )
 
 
+/** OPEN FILE DIALOG
+ *
+ */
+macroscript	_scene_open_file
+category:	"_Scene-Open"
+buttontext:	"FILE"
+toolTip:	"Open File Dialog"
+--icon:	"control:checkButton|MENU:_Scene"
+icon:	"MENU:Open FILE"
+(
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
+	on execute do
+	(
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\1-Scene.mcr"
+
+		init_dir = if (last_file = (RecentFile_v()).getRecentFileNotMatching blacklist:#( "temp", "autoback" )) != undefined then getFilenamePath( last_file ) else unsupplied
+
+		file_path = getOpenFileName caption:"Open File" types:"3ds Max(*.max)" filename:(init_dir) historyCategory:"MAXScriptFileOpenSave"
+
+		if file_path != undefined then
+		(
+			start_time = timestamp()
+
+			loadMaxFile file_path quiet:true
+
+			format "SCENE OPEN TIME % s\n" ( ((timestamp()) - start_time) / 1000.0 )
+		)
+
+	)
+)
 
 /*------------------------------------------------------------------------------
 
@@ -115,7 +115,7 @@ icon:	"MENU:Open &Recent"
 /**
  */
 macroscript	_scene_temp_open
-category:	"_Scene"
+category:	"_Scene-Open"
 buttontext:	"TEMP"
 toolTip:	"Open TEMP File"
 icon:	"MENU:Open &TEMP File"
@@ -137,10 +137,10 @@ icon:	"MENU:Open &TEMP File"
 --------------------------------------------------------------------------------*/
 
 macroscript	_scene_open_maxstart_scene
-category:	"_Scene"
+category:	"_Scene-Open"
 buttontext:	"MaxStart"
 toolTip:	"Open MaxStart"
-icon:	"ACROSS:2|MENU:true"
+icon:	"ACROSS:2|MENU:tooltip"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
@@ -170,7 +170,7 @@ icon:	"ACROSS:2|MENU:true"
 
 
 macroscript	_scene_open_autobackup
-category:	"_Scene"
+category:	"_Scene-Open"
 buttontext:	"Autobackup"
 toolTip:	"Open Autobackup File"
 --icon:	"control:checkButton|MENU:_Scene"

@@ -127,7 +127,7 @@ function createGifRecorderDialog =
 	btn_photoshop.Event #PRESSED   "GIF_RECORDER.openInPhotoshop()" tooltip:""
 	
 	/* DIALOG EVENTS */ 
-	Dialog.Events.add #OPEN   "GIF_RECORDER.startRecording()" tooltip:""
+	Dialog.Event #OPEN   "GIF_RECORDER.startRecording()" tooltip:""
 	--Dialog.Events.add #CLOSE   "GIF_RECORDER.onCloseDialog()" tooltip:""
 
 	

@@ -145,37 +145,111 @@ struct GifRecorder_v
 		--grabFrameTimerStart( true )
 	),
 	
-	/** Generate gif
-	 */
+	/*------------------------------------------------------------------------------
+	
+		GENERATE GIF
+	  
+		USED: magick library
+	
+	--------------------------------------------------------------------------------*/
 	function generateGif open_in_viewer:false =
 	(
 		format "\n"; print "GifRecorder_v.generateGif()"
-		/** Combine frames to gif
+		/** COMBINE FRAMES TO GIF
 		 */
 		function combineFramesToGif =
 		(
-			--format "\n"; print "GifRecorder_v.combineFramesToGif()"
+			format "\n"; print "GifRecorder_v.combineFramesToGif()"
 			delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as float * 100) 
 			
 			format "DELAY OF FRAMES: %s\n" delay
 			
-			cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+			--cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+			cmd = "cd \""+temp_dir+"\" & magick.exe -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+			--cmd = "c:\GoogleDrive\ProgramsData\Core\Autohotkey\Lib\Test.ahk"
 			
-			cmd = substituteString cmd "/" "\\" --return
+			--cmd = substituteString cmd "/" "\\\\" 
+			cmd = substituteString cmd "/" "\\" 
+			--cmd = substituteString cmd "\\" "\\" 
+			cmd = substituteString cmd "\\" "\\\\" 
+			--cmd = substituteString cmd "\"" "\\\"" --return
+			
+			format "CMD: %\n" cmd
 
 			print ("GifRecorder.combineFramesToGif:\n\n"+cmd+"\n")
 			
+			--ShellLaunch cmd "" 
+
 			DOSCommand cmd
 		)
 		
 		this.saveFrames()
 
-		combineFramesToGif()
+		--combineFramesToGif()
+			delay = (DIALOG_GifRecorder.DDL_delay.items[ DIALOG_GifRecorder.DDL_delay.selection as integer ] as float * 100) 
+
+			cmd = "cd \""+temp_dir+"\" & magick.exe -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+
+		--
+		--format "DELAY OF FRAMES: %s\n" delay
+		--
+		----cmd = "cd \""+temp_dir+"\" & magick -delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+		--cmd = "magick.exe"
+		args = "-delay "+ (delay as integer ) as string +" -loop 0 *.jpg \""+gif_filename+"\""
+		--
+		----cmd = substituteString cmd "/" "\\\\" 
+		--cmd = substituteString cmd "/" "\\" 
+		----cmd = substituteString cmd "\\" "\\" 
+		----cmd = substituteString cmd "\\" "\\\\" 
+		--
+		--this.runCommandAndGetOutput cmd ""
 		
-		if open_in_viewer then
-			DOSCommand ("start \"\" \""+gif_temp_path+"\"")
+		--result = DOSCommand "magick -version"
+		----format "Result: %\n" result
+		--_output = this.runCommandAndGetOutput "magick.exe" "-version"
+		--_output = this.runCommandAndGetOutput ( "cd \""+temp_dir+"\" & magick.exe") "-version"
+		
+		--format "_OUTPUT: %\n" _output
+		_output = this.runCommandAndGetOutput "magick.exe" args temp_dir
+		
+		--if open_in_viewer then
+			--DOSCommand ("start \"\" \""+gif_temp_path+"\"")
 	),
 
+	--/*
+	--*/ 
+	--function runCommandAndGetOutput command arguments =
+	--(
+	--	p = dotNetObject "System.Diagnostics.Process"
+	--	si = p.StartInfo
+	--	si.FileName = command
+	--	--si.Arguments = arguments
+	--	si.RedirectStandardOutput = true
+	--	si.UseShellExecute = false
+	--	si.CreateNoWindow = true
+	--	p.Start()
+	--	output = p.StandardOutput.ReadToEnd()
+	--	p.WaitForExit()
+	--	output
+	--),
+function runCommandAndGetOutput command arguments working_dir =
+(
+    p = dotNetObject "System.Diagnostics.Process"
+    si = p.StartInfo
+    si.FileName = command
+    si.Arguments = arguments
+    si.WorkingDirectory = working_dir
+    si.RedirectStandardOutput = true
+    si.UseShellExecute = false
+    si.CreateNoWindow = true
+    p.Start()
+    output = p.StandardOutput.ReadToEnd()
+    p.WaitForExit()
+    output
+) ,
+
+	
+	
 	/** Grab frame on lmb release
 	 */
 	function grabFrameOnLmbRelease =
@@ -231,7 +305,7 @@ struct GifRecorder_v
 			DotNetTimer.stop()
 	),
 	
-	/** Save giff file
+	/** SAVE GIF FILE
 	 */
 	function saveGifFile browse:false =
 	(
@@ -247,16 +321,16 @@ struct GifRecorder_v
 			this.generateGif()
 		format "gif_temp_path: %\n" gif_temp_path
 
-		/* DELETE OLD FINAL FILE */ 
-		deleteFile gif_final_path
-		
-		/* COPY TEMP FILE TO FINAL */ 
-		copyFile gif_temp_path gif_final_path
-		
-		/* DELETE TEMP FILE */ 
-		deleteFile gif_temp_path
-
-		format "GIF SAVED\nFROM: %\nTO:   %\n" gif_temp_path gif_final_path
+		--/* DELETE OLD FINAL FILE */ 
+		--deleteFile gif_final_path
+		--
+		--/* COPY TEMP FILE TO FINAL */ 
+		--copyFile gif_temp_path gif_final_path
+		--
+		--/* DELETE TEMP FILE */ 
+		--deleteFile gif_temp_path
+		--
+		--format "GIF SAVED\nFROM: %\nTO:   %\n" gif_temp_path gif_final_path
 	),
 	
 	/** Browse gif save path
@@ -270,7 +344,7 @@ struct GifRecorder_v
 		(
 			user_save_path_browsed = substituteString user_save_path_browsed "*.gif" "" --return filename of gif without ".gif" extension
 			
-			user_save_path_browsed += ".gif"
+			--user_save_path_browsed += ".gif"
 			
 			/* UPDATE UI EDIT TEXT */ 
 			DIALOG_GifRecorder.ET_filename.text = getFilenameFile( user_save_path_browsed )
@@ -340,14 +414,16 @@ struct GifRecorder_v
 	 */
 	function saveFrames =
 	(
-		--format "\n"; print "GifRecorder_v.saveFrames()"
+		format "\n"; print "GifRecorder_v.saveFrames()"
 		
 		if doesFileExist temp_dir then
 			this._clearTempDir()
 		else
 			makeDir temp_dir all:true
 		
+		
 		suffix_length = ( frames.count as string ).count
+		
 		
 		/* SAVE FRAMES */ 
 		for i = 1 to frames.count do 
@@ -357,9 +433,9 @@ struct GifRecorder_v
 			suffix = i as string
 			
 			if suffix_length > suffix.count then
-				for i = 1 to suffix_length - suffix.count do
+				for j = 1 to suffix_length - suffix.count do
 					suffix = "0" + suffix
-			
+			--format "suffix: %\n" suffix
 			frame.filename = temp_dir +"\\frame-" + suffix + ".jpg" --this will be the filename
 			
 			save frame
@@ -644,7 +720,10 @@ struct GifRecorder_v
 				else
 					"undefined"
 			
-			this.gif_filename = gif_basename + ".gif"
+			this.gif_filename = gif_basename
+			
+			if not matchPattern gif_basename pattern:("*.gif") then
+				this.gif_filename += gif_basename + ".gif"
 		)
 
 		setFilename()

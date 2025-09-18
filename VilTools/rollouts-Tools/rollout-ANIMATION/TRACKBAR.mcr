@@ -91,51 +91,150 @@ icon:	"control:spinner|type:#integer|ACROSS:2|align:#LEFT|fieldwidth:64|range:[1
 	)
 	
 )
+
+
+/*
+  Function to delete animation keys to the right of current frame on selection
+*/
+function trimKeysRightFromCurrentFrame includeCurrentFrame =
+(
+	current_time = currentTime
+	
+	start_time = if includeCurrentFrame then current_time else (current_time + 1)
+	format "start_time: %\n" start_time
+	
+	-- helper to safely delete keys from any controller
+	function deleteKeysAfterTime ctrl start_time =
+	(
+		
+		format "deleteKeysAfterTime: %\n" ctrl
+		
+		--if isProperty ctrl #numKeys then
+		--FORMAT "% : %\n" ctrl ( numKeys ctrl)
+
+		--if isController ctrl and isProperty ctrl #numKeys and ctrl.numKeys > 0 then
+		if isController ctrl and ( numKeys ctrl ) > 0 then
+		(
+			--for k = ( numKeys ctrl ) - 1 to 1 by -1 do
+			for k = ( numKeys ctrl )  to 1 by -1 do
+			(
+				
+				key_time = getKeyTime ctrl k
+				
+				format "key_time: %\n" key_time
+				
+				if key_time >= start_time then deleteKey ctrl k
+			)
+		)
+	)
+
+	for obj in selection where isValidNode obj do
+	(
+		-- transform controllers: position, rotation, scale
+		track_list = #(obj.position.controller, obj.rotation.controller, obj.scale.controller)
+
+		for ctrl in track_list do
+		(
+			if isController ctrl then
+			(
+				format "\n"
+				format "isProperty ctrl #numSubs: %\n" (isProperty ctrl #numSubs)
+				format "ctrl.numSubs: %\n" ctrl.numSubs
+				
+				if isProperty ctrl #numSubs and ctrl.numSubs > 0 then
+				(
+					for i = 1 to ctrl.numSubs do
+					(
+						sub_ctrl = getSubAnim ctrl i
+						format "sub_ctrl: %\n" sub_ctrl
+						deleteKeysAfterTime sub_ctrl start_time
+					)
+				)
+				else
+				(
+					deleteKeysAfterTime ctrl start_time
+				)
+				deleteKeysAfterTime ctrl start_time
+			)
+		)
+
+		-- optional: other animatable subAnims (modifiers, custom attributes)
+		--if isProperty obj #numSubs and obj.numSubs > 0 then
+		--(
+		--	for i = 1 to obj.numSubs do
+		--	(
+		--		sub_anim = getSubAnim obj i
+		--		
+		--		format "\n"
+		--		format "% isController : %\n" sub_anim (isController sub_anim)
+		--		
+		--		if isController sub_anim then
+		--		(
+		--			if isProperty sub_anim #numSubs and sub_anim.numSubs > 0 then
+		--			(
+		--				for j = 1 to sub_anim.numSubs do
+		--				(
+		--					sub_ctrl = getSubAnim sub_anim j
+		--					deleteKeysAfterTime sub_ctrl start_time
+		--				)
+		--			)
+		--			else
+		--			(
+		--				deleteKeysAfterTime sub_anim start_time
+		--			)
+		--		)
+		--	)
+		--)
+	)
+) -- return
+
+
 /**  SET ANIMATION COUNT OF FRAMES
  */
 macroscript	_animation_remove_all_frames_after_currenttime
 category:	"_Animation"
-buttontext:	"Remove Current Frame"
+buttontext:	"Remove from Current Frame"
 tooltip:	"REMOVE ANIMIMATION KEYS CURRENT TIME TO RIGHT"
 icon:	"ACROSS:2|width:128"
 (
 	on execute do
 	(
-		
-		-- First, ensure at least one object is selected to avoid errors.
-		if selection.count > 0 then
-		(
-			-- Create a message that includes the exact current frame number.
-			local prompt_message = "REMOVE KEYS\n\nFROM: " + (currentTime as string) + " TO RIGHT ?"
-		
-			-- Show the confirmation dialog. The script only proceeds if you click "Yes".
-			if queryBox prompt_message title:"Confirm Keyframe Deletion" then
-			(
-				-- THIS IS THE CRUCIAL PART:
-				-- We define a time range. It starts at the frame IMMEDIATELY AFTER
-				-- the current one (currentTime + 1f) and ends at a very high frame
-				-- number to include all future keys.
-				local time_range_to_delete = interval (currentTime + 1f) 999999
-		
-				-- The 'in time' expression forces the 'deleteKeys' command to ONLY
-				-- operate within the 'time_range_to_delete' defined above.
-				-- It will NOT touch any keys at or before the current time.
-				--deleteKeys selection #allKeys in time time_range_to_delete 
-				deleteKeys selection #allKeys #leftToRight
-		
-				-- Let the user know the operation is complete.
-				print "Future keyframes have been deleted."
-			)
-			else
-			(
-				print "Operation cancelled."
-			)
-		)
-		else
-		(
-			-- If nothing is selected, show this message.
-			messageBox "Please select one or more objects first." title:"No Selection"
-		)
+			trimKeysRightFromCurrentFrame true   -- delete keys at and after current frame
+
+		---- First, ensure at least one object is selected to avoid errors.
+		--if selection.count > 0 then
+		--(
+		--	-- Create a message that includes the exact current frame number.
+		--	local prompt_message = "REMOVE KEYS\n\nFROM: " + (currentTime as string) + " TO RIGHT ?"
+		--
+		--	-- Show the confirmation dialog. The script only proceeds if you click "Yes".
+		--	if queryBox prompt_message title:"Confirm Keyframe Deletion" then
+		--	(
+		--		-- THIS IS THE CRUCIAL PART:
+		--		-- We define a time range. It starts at the frame IMMEDIATELY AFTER
+		--		-- the current one (currentTime + 1f) and ends at a very high frame
+		--		-- number to include all future keys.
+		--		local time_range_to_delete = interval (currentTime + 1f) 999999
+		--
+		--		-- The 'in time' expression forces the 'deleteKeys' command to ONLY
+		--		-- operate within the 'time_range_to_delete' defined above.
+		--		-- It will NOT touch any keys at or before the current time.
+		--		--deleteKeys selection #allKeys in time time_range_to_delete 
+		--		deleteKeys selection #allKeys #leftToRight
+		--
+		--		-- Let the user know the operation is complete.
+		--		print "Future keyframes have been deleted."
+		--	)
+		--	else
+		--	(
+		--		print "Operation cancelled."
+		--	)
+		--)
+		--else
+		--(
+		--	-- If nothing is selected, show this message.
+		--	messageBox "Please select one or more objects first." title:"No Selection"
+		--)
 		
 	)
 )

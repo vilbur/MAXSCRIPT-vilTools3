@@ -5,14 +5,14 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("M O D - S T A C K  1")
 
-	_ModifiersManage = QuadMenu.addMenu("_Modifiers-Manage")	--flat:false --index:1
+	--_ModifiersManage = QuadMenu.addMenu("_Modifiers-Manage")	--flat:false --index:1
 
 
 	--QuadMenu.addMenu("")
 
 	--QuadMenu.addSeparator index:1
 	--QuadMenu.addSeparator()
-	_ModifiersManage.addSeparators #(3,5)
+	--_ModifiersManage.addSeparators #(3,5)
 )
 
 /*------------------------------------------------------------------------------

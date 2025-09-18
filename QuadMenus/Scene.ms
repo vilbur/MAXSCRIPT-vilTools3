@@ -5,15 +5,20 @@ function addQuad1 QuadMenu =
 (
 	QuadMenu.setTitle("S A V E")
 
-	QuadMenu.addItem "File" "Save File" title:"&Save File" group:"Main UI"
+	--QuadMenu.addItem "File" "Save File" title:"&Save File" group:"Main UI"
 
 	QuadMenu.addSeparator()
 
-	_SceneMenu = QuadMenu.addMenu("_Scene")	separators:#( 3, 5 ) --flat:false --index:1
+	
+	_SaveSceneMenu = QuadMenu.addMenu("_Scene-Save")	--separators:#( 3, 5 ) --flat:false --index:1 --"./../VilTools/rollouts-Tools/rollout-SCENE/02-SAVE SCENE.mcr"
+	
+	QuadMenu.addSeparator()
+	
+	_OpenSceneMenu = QuadMenu.addMenu("_Scene-Open")	separators:#( 3, 4 ) --flat:false --index:1 --"./../VilTools/rollouts-Tools/rollout-SCENE/01-OPEN SCENE.mcr"
+	
 
-	--format "_SceneMenu: %\n" _SceneMenu
+	--format "_OpenSceneMenu: %\n" _OpenSceneMenu
 	--QuadMenu.addSeparator index:1
-	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()
 )
 
@@ -32,7 +37,7 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("SCENE RESET")
+	QuadMenu.setTitle("S C E N E  R E S E T")
 
 
 	QuadMenu.addMenu("_Scene-Reset") separators:#(3,4)	--flat:false --index:1
@@ -45,7 +50,7 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("O P T I O N S")
+	QuadMenu.setTitle("OTHERS")
 
 	QuadMenu.addMenu("_Options")	--flat:false --index:1
 	

@@ -1,38 +1,69 @@
-
-
 /**
  */
-macroscript	_scene_temp_save
-category:	"_Scene"
-buttontext:	"Save Temp"
+macroscript	_scene_save
+category:	"_Scene-Save"
+buttontext:	"Save File"
 toolTip:	"Save TEMP File"
-icon:	"ACROSS:3|MENU:Save File • CTRL: Save As"
+icon:	"ACROSS:2|MENU:&Save File"
 (
 	on isVisible return objects.count > 0
 
 	on execute do
 	(
-		if keyboard.controlPressed then
+		if maxFileName == "" or keyboard.controlPressed then
 		(
 			
 			file_path = getSaveFileName caption:"Save Script As" types:"Max File (*.max)|All Files (*.*)|*.*" initialDir:(getFilenamePath( maxFilePath ))
 			
 			if file_path != undefined then
-			(
 				saveMaxFile file_path quiet:true
 
-			)
-
-			
 		)
 		else
 		(
+			format "\nPress CTRL in menu to 'Save As'"
 			
+			saveMaxFile ( maxFilePath + maxFileName ) --quiet:true
+		)
+		
+	)
+)
+
+
+/** SAVE TEMP FILE
+ */
+macroscript	_scene_temp_save
+category:	"_Scene-Save"
+buttontext:	"Save TEMP"
+toolTip:	"Save TEMP File"
+icon:	"MENU:true"
+(
+	on isVisible return objects.count > 0
+
+	on execute do
+	(
 			if queryBox "Save Temp File ?" title:"Save Temp File"  beep:false then
 			--if doesFileExist (max_file = (getDir #temp) + "\\temp.max") then
 				--saveMaxFile max_file quiet:true
 				saveMaxFile ((getDir #temp) + "\\temp.max") quiet:true
-		)
+				
+		--if keyboard.controlPressed then
+		--(
+		--	
+		--	file_path = getSaveFileName caption:"Save Script As" types:"Max File (*.max)|All Files (*.*)|*.*" initialDir:(getFilenamePath( maxFilePath ))
+		--	
+		--	if file_path != undefined then
+		--	(
+		--		saveMaxFile file_path quiet:true
+		--
+		--	)
+		--
+		--	
+		--)
+		--else
+		--(
+		--	
+		--)
 		
 	)
 
@@ -46,7 +77,7 @@ icon:	"ACROSS:3|MENU:Save File • CTRL: Save As"
  *
  */
 macroscript	_scene_incremental_save_with_basename
-category:	"_Scene"
+category:	"_Scene-Save"
 buttontext:	"Save++"
 toolTip:	"Incremental save and copy basename file version"
 --icon:	"offset:[-2, 0]"
@@ -129,7 +160,7 @@ toolTip:	"Incremental save and copy basename file version"
  *
  */
 macroscript	_scene_hold
-category:	"_Scene"
+category:	"_Scene-Save"
 buttontext:	"Hold\Fetch"
 toolTip:	"Hold scene"
 --icon:	"#(path, index)"
@@ -142,7 +173,7 @@ toolTip:	"Hold scene"
  *
  */
 macroscript	_scene_fetch
-category:	"_Scene"
+category:	"_Scene-Save"
 buttontext:	"Hold\Fetch"
 toolTip:	"Fetch scene"
 --icon:	"#(path, index)"
