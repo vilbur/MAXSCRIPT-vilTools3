@@ -14,6 +14,8 @@ struct SelectionSetsManager_v
 
 	sel_sets, --Dictionary #STRING key:"set_name" value:index
 	
+	ini = getDir #TEMP + "\\named-selection-sets.ini",
+
 	/* private */
 	/* dependency */
 	/* reference */
@@ -26,6 +28,7 @@ struct SelectionSetsManager_v
 		--format "\n"; print "SelectionSetsManager_v.openDialog()"
 		macros.run "Edit" "namedSelSets"
 	),
+	
 	/** Add object to set
 	 */
 	function addObj objs set_name replace:false =
@@ -43,12 +46,96 @@ struct SelectionSetsManager_v
 			this.updateObjectsInSet objs set_name replace:replace
 	),
 	
-	/** Get selection set
+	/** Delete set
 	 */
-	function getSelectionSet set_name =
+	function deleteSet set_name =
 	(
-		--format "\n"; print "SelectionSetsManager_v.getSelectionSet()"
+		--format "\n"; print "SelectionSetsManager_v.deleteSet()"
+		if sel_sets[set_name] != undefined then
+			nsm.RemoveNamedSelSetByIndex sel_sets[set_name]
+	),
+	
+	/** Delete sets
+	 */
+	function deleteSets =
+	(
+		--format "\n"; print "SelectionSetsManager_v.deleteSets()"
+		for set_name in sel_sets.keys do
+			nsm.RemoveNamedSelSetByIndex sel_sets[set_name]
+	),
+	
+	/** Load from ini
+	 */
+	function loadFromIni =
+	(
+		format "\n"; print "SelectionSetsManager_v.loadFromIni()"
+		for set_name in getINISetting ini do
+		(
+			--set_index = selection_sets[set_name]
+			format "set_index: % set_name: %\n\n" set_index set_name
+			objs = for obj_name in getINISetting ini set_name \
+						where (obj = getNodeByName obj_name ) != undefined \
+							collect obj
+			
+			this.addObj objs set_name replace:false
+		)
+	),
+	
+	/** Save to ini
+	 */
+	function saveToIni only_selected:false =
+	(
+		format "\n"; print "SelectionSetsManager_v.saveToIni()"
+		if doesFileExist ini then
+			deleteFile ini
 		
+		for set_name in sel_sets.keys do
+		(
+			format "set_name: %\n" set_name
+			objs_in_set = this.getObjectsInSet set_name
+
+			--for obj in objs_in_set where obj != undefined do
+			for obj in objs_in_set do
+				if not only_selected \	-- collect all objects if nothing selectded
+				or ( only_selected and obj.isSelected ) then
+					setINISetting ini set_name obj.name ""
+			
+		)
+		--format "ini: %\n" ini
+
+		msg = "Named Selection Sets\n\nHas been saved"
+		
+		format "%:\n%\n" msg ini
+	),
+	
+	/** Get sets by objects
+	 */
+	function getSetsByObjects objs =
+	(
+		--format "\n"; print "SelectionSetsManager_v.getSetsByObjects()"
+		if classOf objs != Array then objs = #(objs)
+
+		sel_sets_by_obj	= Dictionary #STRING -- KEY:set_name VALUE:index
+		
+		
+		for set_name in sel_sets.keys while sel_sets_by_obj[set_name] == undefined do
+		(
+			objs_in_set = this.getObjectsInSet set_name
+			
+			for obj in objs while sel_sets_by_obj[set_name] == undefined do 
+				sel_sets_by_obj[set_name] = sel_sets[set_name] -- assign index of set
+			
+		)
+		
+		sel_sets_by_obj --return
+	),
+	
+	/** Open ini le
+	 */
+	function openIniLe =
+	(
+		--format "\n"; print "SelectionSetsManager_v.openIniLe()"
+		ShellLaunch ini ""
 	),
 	
 	/** Get objects in set
@@ -56,8 +143,13 @@ struct SelectionSetsManager_v
 	function getObjectsInSet set_name =
 	(
 		--format "\n"; print "SelectionSetsManager_v.getObjectsInSet()"
-		for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] collect
-			nsm.GetNamedSelSetItem sel_sets[set_name] n 
+		--for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] collect
+			--nsm.GetNamedSelSetItem sel_sets[set_name] n
+			
+		for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] \
+			where ( obj = nsm.GetNamedSelSetItem sel_sets[set_name] n ) != undefined \
+				collect obj
+			
 	),
 	
 	private

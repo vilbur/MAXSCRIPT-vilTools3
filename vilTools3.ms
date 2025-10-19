@@ -38,6 +38,8 @@ std_scripts = #(
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
+	"/rollout-ANIMATION/Lib/shiftCurrentTime.ms", --"./VilTools/rollouts-Tools/rollout-ANIMATION/Lib/shiftCurrentTime.ms"
+	
 	"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
 
 	"/rollout-SPLINE/Lib/SplineConvertor/SplineConvertor.ms",
@@ -88,6 +90,8 @@ std_scripts = #(
 	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms", -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 	
 	"/rollout-TRANSFORM/Lib/transformByArrow.ms", --"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
+	
+	"/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms",	--"./VilTools/rollouts-Tools/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms"
 	
 	
 	"" -- last blank item to prevent errors on development

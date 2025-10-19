@@ -14,7 +14,7 @@
 */
 macroscript edges_seelct_material_borders
 category:	"_Epoly-Selection"
-buttontext:	"Select Edges By Mat ID"
+buttontext:	"Mat Id Edges"
 tooltip:	"Select borders edges of material ID"
 icon:	"MENU:true|across:3"
 (
@@ -92,7 +92,7 @@ icon:	"MENU:true|across:3"
   */
 macroscript	epoly_selection_select_by_clipboard
 category:	"_Epoly-Selection"
-buttonText:	"Sel by cliboard"
+buttonText:	"by CLIPBOARD"
 toolTip:	"Set selection of current subObject from clipboard.\n\nE.G.: If clipboard text is '#{1..5}' and current suboject is #FACE then faces 1-5 will be selected. "
 icon:	"MENU:true|across:3"
 (

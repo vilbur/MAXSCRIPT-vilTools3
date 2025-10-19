@@ -155,7 +155,7 @@ struct LayersToogleDialog_v
 		_SubRollout    = _SubRollouts.Roll ( this.sanitazeName(top_layer.name)) rolledUp:( not top_layer.on) id:("ROLLOUT_layer_id_"+(this._getLayerId (top_layer) as string ))
 		--format "_SubRollout: %\n" _SubRollout
 
-        _SubRollout.Events.add #ROLLEDUP ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_button --params:layer.name
+        _SubRollout.Event #ROLLEDUP ("layerDialogButtonCallback val "+layer_index as string ) --tooltip:tooltip_button --params:layer.name
 
 		--_SubRollout.Events.add #ROLLEDUP	"print(\"#ROLLEDUP\")"
 		--_SubRollout.Events.add #OPEN	"print(\"#OPEN\")"
@@ -535,7 +535,7 @@ struct LayersToogleDialog_v
 		--format "this._getSceneBaseName():	% \n" (this._getSceneBaseName())
 		ini_file = ( getDir #temp + "\\ini_files\\LayersToogleDialog\\"+ (this._getSceneBaseName()) + ".ini" )
 
-		--format "ini_file:	% \n" ini_file
+		format "this.default_width: %\n" this.default_width
 		this.Dialog = Dialog_v ("Toogle Layers") ini:ini_file width:this.default_width
 	 ),
 

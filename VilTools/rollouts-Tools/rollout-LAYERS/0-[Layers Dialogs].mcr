@@ -17,7 +17,8 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 
 	on execute do
 	(
-		--format "EventFired: %\n" EventFired
+		clearListener(); print("Cleared in:\n"+getSourceFileName())
+		format "EventFired: %\n" EventFired
 		if EventFired == undefined or ( EventFired.get #val ) then -- run on startup if no fire by event
 		(
 			--LayerManager.editLayerByName ""

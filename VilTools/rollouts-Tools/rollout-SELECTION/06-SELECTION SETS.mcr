@@ -1,56 +1,63 @@
 
+
+/**
+  */
+macroscript	selection_sets_open_dialog
+category:	"_Selection-Sets"
+buttontext:	"OPEN SETS"
+toolTip:	"Open Selection sets dialog"
+icon:	"across:4|width:96|height:28"
+(
+	on execute do
+	(
+		macros.run "Edit" "namedSelSets"
+
+	)
+)
+
+/**
+  */
+macroscript	selection_sets_open_dialog
+category:	"_Selection-Sets"
+buttontext:	"SELECT"
+toolTip:	"Select objects in selection sets by current selection"
+--icon:	"across:4|width:96|height:28"
+(
+	on execute do
+	(
+		--macros.run "Edit" "namedSelSets"
+		objs = #()
+		
+		SelSets = SelectionSetsManager_v()
+
+		sel_sets = SelSets.getSetsByObjects ( selection as Array )
+		
+		for set_name in sel_sets.keys do
+			objs += SelSets.getObjectsInSet (set_name)
+		
+		if objs.count > 0 then
+			select objs
+	)
+)
+
 /**
   */
 macroscript	selection_sets_save
 category:	"_Selection-Sets"
-buttontext:	"SAVE"
-toolTip:	"Save Named Selection Sets to ini"
-icon:	"across:3|width:96|height:28"
+buttontext:	"SAVE \ LOAD"
+toolTip:	"SAVE Named Selection Sets"
+icon:	""
 (
 	on execute do
 	(
-		ini = getDir #TEMP + "\\selectionSets-copy.ini"
+		SelSets = SelectionSetsManager_v()
 
-		if queryBox ("SAVE SELECTION SETS ?") title:"SAVE SETS" then
-		(
-			if doesFileExist ini then
-				deleteFile ini
+		selection_exists = selection.count > 0
 		
-			nsm = NamedSelectionSetManager -- get the interface
-			setsData = #()
-			numSets = nsm.GetNumNamedSelSets()    -- correct method
+		by_selection = if selection_exists then "OF SELECTED" else "OF ALL"
 		
-			for s = 1 to numSets do
-			(
-				setName = nsm.GetNamedSelSetName s
-				--nodes = nsm.GetSelNodesFromSet s
-				
-				 objs = for n = 0 to nsm.GetNamedSelSetItemCount s collect
-					nsm.GetNamedSelSetItem s n 
-		
-				append setsData #(setName, objs)
-			)
-		
-			for setInfo in setsData where (setName = setInfo[1]) != undefined do
-			(
-				
-				--format "setName: %\n" setName
-				objs = setInfo[2]
-	
-				for obj in objs where obj != undefined do
-					setINISetting ini setName obj.name ""
-	
-				--format "obj.name: %\n" obj.name
-	
-					--setINISetting ini "setName" "X" "X"
-	
-				
-			)
-			msg = "Named Selection Sets\n\nHas been saved"
-			
-			format "%:\n%\n" msg ini
-			
-		)
+		if queryBox ("SAVE SELECTION SETS\n\n " +by_selection+ " OBJECTS ?") title:"SAVE SETS" then
+			 SelSets.saveToIni only_selected:selection_exists
 	)
 )
 
@@ -59,35 +66,33 @@ icon:	"across:3|width:96|height:28"
   */
 macroscript	selection_sets_laod
 category:	"_Selection-Sets"
-buttontext:	"LOAD"
-toolTip:	"Load Named Selection Sets from ini"
+buttontext:	"SAVE \ LOAD"
+toolTip:	"LOAD Named Selection Sets"
 icon:	""
 (
+	/** Join array to string
+	 */
+	function arrayToString arr delimeter = ( _string = ""; for item in arr do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count))
+	
 	on execute do
 	(
-		ini = getDir #TEMP + "\\selectionSets-copy.ini"
+		SelSets = SelectionSetsManager_v()
 		
-		if queryBox ("LOAD SELECTION SETS ?") title:"LOAD SETS" then
+		selection_sets = getNamedSelSetDict()
+		
+		if queryBox ("LOAD SELECTION SETS ?\n\n"+arrayToString selection_sets.keys "\n" ) title:"LOAD SETS" then
 				
 			if doesFileExist ini then
 			(
-				nsm = NamedSelectionSetManager
 				
+				
+				format "selection_sets: %\n" selection_sets
 				/* DELETE OLD SETS */ 
-				for s = nsm.GetNumNamedSelSets() - 1 to 0 by -1 do 
-					nsm.RemoveNamedSelSetByIndex s
+				if queryBox ("DELETE OLD SELECTION SETS ?") title:"DELETE SETS" then
+					SelSets.deleteSets()
 				
-				
-				/* LOAD FROM FILE */ 
-				for set_name in getINISetting ini do
-				(
-					objs = for obj_name in getINISetting ini set_name collect getNodeByName obj_name
-			
-					nsm.AddNewNamedSelSet objs set_name
-				)
-			
-				messageBox "Named Selection Sets\n\nhas been loaded" title:"LOAD SETS" 
-				
+				SelSets.loadFromIni()
+
 			)
 			else
 				messageBox "Ini file does not exists.\n\nNamed Selection Sets\n\nMust be saved before" title:"LOAD SETS" 

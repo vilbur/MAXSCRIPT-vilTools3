@@ -55,6 +55,10 @@ function addQuad3 QuadMenu =
 function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("T E M P A L T E 4")
+	
+	--QuadMenu.addMenu("Vertex-Color-Manage")	--separators: #( 2,  11 ) flat:true
+	QuadMenu.addItem ("Vertex-Color-Manage") ("epoly_vertex_color_property_toggle") -- add item to qaud
+
 )
 
 

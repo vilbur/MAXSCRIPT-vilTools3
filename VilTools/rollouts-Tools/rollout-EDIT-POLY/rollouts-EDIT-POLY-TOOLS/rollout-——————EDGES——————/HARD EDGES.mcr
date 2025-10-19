@@ -6,7 +6,7 @@ macroscript	edges_select_hard_edges
 category:	"_Epoly-Hard-Edges"
 buttontext:	"Select"
 tooltip:	"Select Hard Edges"
-icon:	"MENU:true"
+icon:	"MENU:tooltip"
 (
 	on isVisible return Filters.Is_EPoly()
 
@@ -38,7 +38,7 @@ macroscript	edges_show_hard_edges
 category:	"_Epoly-Hard-Edges"
 buttontext:	"Show"
 tooltip:	"Show Hard Edges"
-icon:	"MENU:true"
+icon:	"MENU:tooltip"
 (
 	--on isEnabled return Filters.Is_EPolySpecifyLevel #{2..3}
 	--on isVisible return Filters.Is_EPolySpecifyLevel #{2..3}
