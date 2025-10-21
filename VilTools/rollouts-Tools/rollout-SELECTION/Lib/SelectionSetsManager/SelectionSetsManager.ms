@@ -143,13 +143,9 @@ struct SelectionSetsManager_v
 	function getObjectsInSet set_name =
 	(
 		--format "\n"; print "SelectionSetsManager_v.getObjectsInSet()"
-		--for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] collect
-			--nsm.GetNamedSelSetItem sel_sets[set_name] n
-			
 		for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] \
 			where ( obj = nsm.GetNamedSelSetItem sel_sets[set_name] n ) != undefined \
 				collect obj
-			
 	),
 	
 	private

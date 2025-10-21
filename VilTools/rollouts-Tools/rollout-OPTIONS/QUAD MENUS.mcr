@@ -13,7 +13,7 @@ icon:	"MENU:true|ACROSS:3|ssheight:28"
 	(
 		clearListener(); print("Cleared in:"+getSourceFileName())
 		--format "Macro:EventFired:	% \n" EventFired
-		filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
 		current_dir = getFilenamePath(getSourceFileName())
 	
 		/* IMPORT *.mcr files*/
