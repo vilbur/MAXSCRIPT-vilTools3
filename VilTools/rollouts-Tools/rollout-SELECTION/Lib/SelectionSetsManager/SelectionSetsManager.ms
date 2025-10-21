@@ -1,3 +1,5 @@
+filein( getFilenamePath(getSourceFileName()) + "/addSelectionSetsToQuadMenu.ms" )	--"./addSelectionSetsToQuadMenu.ms"
+
 /** Selection sets manager
   
   https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-6CC6500C-FD5C-4646-A880-BC34E852CA2B
@@ -112,7 +114,7 @@ struct SelectionSetsManager_v
 	 */
 	function getSetsByObjects objs =
 	(
-		--format "\n"; print "SelectionSetsManager_v.getSetsByObjects()"
+		format "\n"; print "SelectionSetsManager_v.getSetsByObjects()"
 		if classOf objs != Array then objs = #(objs)
 
 		sel_sets_by_obj	= Dictionary #STRING -- KEY:set_name VALUE:index
@@ -120,11 +122,14 @@ struct SelectionSetsManager_v
 		
 		for set_name in sel_sets.keys while sel_sets_by_obj[set_name] == undefined do
 		(
+			format "set_name: %\n" set_name
+			/* GET OBJECTS IN SET */ 
 			objs_in_set = this.getObjectsInSet set_name
+			format "objs_in_set: %\n" objs_in_set
 			
-			for obj in objs while sel_sets_by_obj[set_name] == undefined do 
-				sel_sets_by_obj[set_name] = sel_sets[set_name] -- assign index of set
-			
+			for obj in objs while sel_sets_by_obj[set_name] == undefined do
+				if findItem objs_in_set obj > 0 then
+					sel_sets_by_obj[set_name] = objs_in_set
 		)
 		
 		sel_sets_by_obj --return
