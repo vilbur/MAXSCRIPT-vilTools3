@@ -9,6 +9,7 @@ function addQuad1 QuadMenu =
 	--FooMenu.removeItem()
 	--FooMenu.clearSeparators()
 
+	--Menu.addItem category macro_script_name title: group: index:
 	--Menu.moveItem ("ITEM") 1
 
 	--QuadMenu.addSeparator()

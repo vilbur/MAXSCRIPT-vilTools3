@@ -9,9 +9,12 @@ function addQuad1 QuadMenu =
 	--FooMenu.removeItem()
 	--FooMenu.clearSeparators()
 
+	QuadMenu.addItem "_Selection-Sets" "selection_sets_select" title:"&SELECT"
+
+	QuadMenu.addSeparator()
+	
 	--Menu.moveItem ("ITEM") 1
 
-	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()
 
 
@@ -24,7 +27,10 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("SELECTION SETS")
 	
-	--QuadMenu.addMenu("_Selection-Sets")	--separators: #( 1 )	--title:"" --index: --flat:false
+	SelectionSetsMenu = QuadMenu.addMenu("_Selection-Sets")	separators: #(  4, 6 )	--title:"" --index: --flat:false
+	
+	SelectionSetsMenu.removeItem 1
+
 )
 
 /*------------------------------------------------------------------------------
@@ -33,6 +39,8 @@ function addQuad2 QuadMenu =
 function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("T E M P A L T E 3")
+	
+	_SceneStatesMenu = QuadMenu.addMenu("_Scene-States")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
 )
 
 /*------------------------------------------------------------------------------
@@ -41,6 +49,9 @@ function addQuad3 QuadMenu =
 function addQuad4 QuadMenu =
 (
 	QuadMenu.setTitle("T E M P A L T E 4")
+	
+
+	
 )
 
 

@@ -1,9 +1,9 @@
 
-/** Add selection sets to quad menu
+/** Add scene states to quad menu
  */
-function addSelectionSetsToQuadMenu =
+function addSceneStatesToQuadMenu =
 (
-	format "\n"; print ".addSelectionSetsToQuadMenu()"
+	format "\n"; print ".addSceneStatesToQuadMenu()"
 	/*
 	Function to generate and save a macroscript file
 	Creates file in user macros directory
@@ -40,7 +40,7 @@ function addSelectionSetsToQuadMenu =
 		format "\nMacroScripts created in:\n%\n"  file_path
 	)
 	
-	quad_name	= "_SelectionSets"
+	quad_name	= "_SceneStates"
 	mcr_category	= "_Selection_Set"
 	
 	file_path = (getDir #userMacros) + "\\" + mcr_category + ".mcr"
@@ -50,7 +50,7 @@ function addSelectionSetsToQuadMenu =
 	rx = "System.Text.RegularExpressions.Regex"
 	
 	
-	SelSets = SelectionSetsManager_v()
+	SelSets = SceneStatesManager_v()
 	
 	if SelSets.sel_sets.count == 0 then
 		return false
@@ -76,7 +76,7 @@ function addSelectionSetsToQuadMenu =
 		
 		prefix = if counter < 10 then "&" + counter as string + " - " else ""
 		
-		macro_code = "\n\t\tselect ( ( SelectionSetsManager_v() ).getObjectsInSet \""+set_name+"\" )"
+		macro_code = "\n\t\tselect ( ( SceneStatesManager_v() ).getObjectsInSet \""+set_name+"\" )"
 		
 		file_content += "\n" + generateMacroScript (mcr_category) (macro_name) (prefix + set_name)  macro_code file_path
 	)

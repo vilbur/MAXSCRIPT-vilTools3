@@ -35,8 +35,8 @@ struct SelectionSetsManager_v
 	 */
 	function addObj objs set_name replace:false =
 	(
-		format "\n---------------------------------------------\n"
-		format "\n"; print "SelectionSetsManager_v.addObj()"
+		--format "\n---------------------------------------------\n"
+		--format "\n"; print "SelectionSetsManager_v.addObj()"
 		
 		if classOf objs != Array then objs = #(objs)
 		
@@ -70,11 +70,11 @@ struct SelectionSetsManager_v
 	 */
 	function loadFromIni =
 	(
-		format "\n"; print "SelectionSetsManager_v.loadFromIni()"
+		--format "\n"; print "SelectionSetsManager_v.loadFromIni()"
 		for set_name in getINISetting ini do
 		(
 			--set_index = selection_sets[set_name]
-			format "set_index: % set_name: %\n\n" set_index set_name
+			--format "set_index: % set_name: %\n\n" set_index set_name
 			objs = for obj_name in getINISetting ini set_name \
 						where (obj = getNodeByName obj_name ) != undefined \
 							collect obj
@@ -87,13 +87,16 @@ struct SelectionSetsManager_v
 	 */
 	function saveToIni only_selected:false =
 	(
-		format "\n"; print "SelectionSetsManager_v.saveToIni()"
+		--format "\n"; print "SelectionSetsManager_v.saveToIni()"
 		if doesFileExist ini then
 			deleteFile ini
 		
-		for set_name in sel_sets.keys do
+		/* GET NAME OF SELECTED SETS OR SINGLE SET IT IS SELECTED */ 
+		sets_names = if ( selected_set = this.getSelectedSet() ) != undefined then #(selected_set) else sel_sets.keys
+		
+		for set_name in sets_names do
 		(
-			format "set_name: %\n" set_name
+			--format "set_name: %\n" set_name
 			objs_in_set = this.getObjectsInSet set_name
 
 			--for obj in objs_in_set where obj != undefined do
@@ -107,14 +110,14 @@ struct SelectionSetsManager_v
 
 		msg = "Named Selection Sets\n\nHas been saved"
 		
-		format "%:\n%\n" msg ini
+		--format "%:\n%\n" msg ini
 	),
 	
 	/** Get sets by objects
 	 */
 	function getSetsByObjects objs =
 	(
-		format "\n"; print "SelectionSetsManager_v.getSetsByObjects()"
+		--format "\n"; print "SelectionSetsManager_v.getSetsByObjects()"
 		if classOf objs != Array then objs = #(objs)
 
 		sel_sets_by_obj	= Dictionary #STRING -- KEY:set_name VALUE:index
@@ -122,10 +125,10 @@ struct SelectionSetsManager_v
 		
 		for set_name in sel_sets.keys while sel_sets_by_obj[set_name] == undefined do
 		(
-			format "set_name: %\n" set_name
+			--format "set_name: %\n" set_name
 			/* GET OBJECTS IN SET */ 
 			objs_in_set = this.getObjectsInSet set_name
-			format "objs_in_set: %\n" objs_in_set
+			--format "objs_in_set: %\n" objs_in_set
 			
 			for obj in objs while sel_sets_by_obj[set_name] == undefined do
 				if findItem objs_in_set obj > 0 then
@@ -133,6 +136,19 @@ struct SelectionSetsManager_v
 		)
 		
 		sel_sets_by_obj --return
+	),
+	
+	/** Get selected set
+	  * set is selected if all objects of set are selected
+	 */
+	function getSelectedSet =
+	(
+		--format "\n"; print "SelectionSetsManager_v.getSelectedSet()"
+		for set_name in sel_sets.keys where _selection.count == sel_sets[set_name].count do
+			if compareArrays _selection sel_sets[set_name] then
+				selected_set = set_name
+		
+		selected_set --return
 	),
 	
 	/** Open ini le
@@ -169,7 +185,7 @@ struct SelectionSetsManager_v
 	 */
 	function updateObjectsInSet objs set_name replace:false =
 	(
-		format "\n"; print "SelectionSetsManager_v.updateObjectsInSet()"
+		--format "\n"; print "SelectionSetsManager_v.updateObjectsInSet()"
 
 		if not replace then
 		(
