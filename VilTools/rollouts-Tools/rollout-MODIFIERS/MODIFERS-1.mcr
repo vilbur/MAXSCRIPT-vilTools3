@@ -2,11 +2,12 @@
  */
 macroscript epoly_tools_EditPolyMod
 category:	"_Modifiers-1"
-buttonText:	"EditPolyMod"
 icon:	"MENU:true"
+buttonText:	"EditPolyMod"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "EditPolyMod"
 	)
 )
@@ -15,11 +16,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Face_Extrude
 category:	"_Modifiers-1"
-buttonText:	"EXTRUDE"
 icon:	"MENU:true|#id:extrude_face"
+buttonText:	"EXTRUDE"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Face_Extrude"
 	)
 )
@@ -28,11 +30,12 @@ icon:	"MENU:true|#id:extrude_face"
  */
 macroscript epoly_tools_ChamferMod
 category:	"_Modifiers-1"
-buttonText:	"CHAMFER"
 icon:	"MENU:true"
+buttonText:	"CHAMFER"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "ChamferMod"
 	)
 )
@@ -41,11 +44,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Extrude_Faces_Poly
 category:	"_Modifiers-1"
-buttonText:	"Extrude Faces Poly"
 icon:	"MENU:true"
+buttonText:	"Extrude Faces Poly"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Extrude_Faces_Poly"
 	)
 )
@@ -54,11 +58,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Extrude_Edges_Poly
 category:	"_Modifiers-1"
-buttonText:	"Extrude Edges Poly"
 icon:	"MENU:true"
+buttonText:	"Extrude Edges Poly"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Extrude_Edges_Poly"
 	)
 )
@@ -67,11 +72,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Inset_Faces
 category:	"_Modifiers-1"
-buttonText:	"Inset Faces"
 icon:	"MENU:true"
+buttonText:	"Inset Faces"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Inset_Faces"
 	)
 )
@@ -80,11 +86,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Outline_Faces_Poly
 category:	"_Modifiers-1"
-buttonText:	"Outline Faces Poly"
 icon:	"MENU:true"
+buttonText:	"Outline Faces Poly"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Outline_Faces_Poly"
 	)
 )
@@ -93,11 +100,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_select_by_Face_Size
 category:	"_Modifiers-1"
-buttonText:	"select by Face Size"
 icon:	"MENU:true"
+buttonText:	"select by Face Size"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "select_by_Face_Size"
 	)
 )
@@ -106,11 +114,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Select_Faces_By_Mat_Id
 category:	"_Modifiers-1"
-buttonText:	"Select Faces By Mat Id"
 icon:	"MENU:true"
+buttonText:	"Select Faces By Mat Id"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Select_Faces_By_Mat_Id"
 	)
 )

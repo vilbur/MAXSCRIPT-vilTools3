@@ -2,11 +2,12 @@
  */
 macroscript epoly_tools_FFDBox
 category:	"_Modifiers-3"
-buttonText:	"FFDBox"
 icon:	"MENU:true"
+buttonText:	"FFDBox"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "FFDBox"
 	)
 )
@@ -15,11 +16,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_FFD_2x2x2
 category:	"_Modifiers-3"
-buttonText:	"FFD 2x2x2"
 icon:	"MENU:true"
+buttonText:	"FFD 2x2x2"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "FFD_2x2x2"
 	)
 )
@@ -28,11 +30,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_PathDeform
 category:	"_Modifiers-3"
-buttonText:	"PathDeform"
 icon:	"MENU:true"
+buttonText:	"PathDeform"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "PathDeform"
 	)
 )
@@ -41,11 +44,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Bend
 category:	"_Modifiers-3"
-buttonText:	"Bend"
 icon:	"MENU:true"
+buttonText:	"Bend"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Bend"
 	)
 )
@@ -54,11 +58,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Noise
 category:	"_Modifiers-3"
-buttonText:	"Noise"
 icon:	"MENU:true"
+buttonText:	"Noise"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Noise"
 	)
 )
@@ -67,11 +72,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Taper
 category:	"_Modifiers-3"
-buttonText:	"Taper"
 icon:	"MENU:true"
+buttonText:	"Taper"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Taper"
 	)
 )
@@ -80,11 +86,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Twist
 category:	"_Modifiers-3"
-buttonText:	"Twist"
 icon:	"MENU:true"
+buttonText:	"Twist"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Twist"
 	)
 )
@@ -93,11 +100,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Spherify
 category:	"_Modifiers-3"
-buttonText:	"Spherify"
 icon:	"MENU:true"
+buttonText:	"Spherify"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Spherify"
 	)
 )
@@ -106,11 +114,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Cap_Holes
 category:	"_Modifiers-3"
-buttonText:	"Cap Holes"
 icon:	"MENU:true"
+buttonText:	"Cap Holes"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Cap_Holes"
 	)
 )

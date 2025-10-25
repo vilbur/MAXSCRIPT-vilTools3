@@ -2,12 +2,13 @@
  */
 macroscript epoly_tools_Spin_Edge
 category:	"_Epoly-PolyTools"
-buttonText:	"Spin Edge"
 icon:	"MENU:true"
+buttonText:	"Spin Edge"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "SpinEdge"
 	)
 )
@@ -16,12 +17,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Build_Loop_End
 category:	"_Epoly-PolyTools"
-buttonText:	"Build Loop End"
 icon:	"MENU:true"
+buttonText:	"Build Loop End"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "BuildLoopEnd"
 	)
 )
@@ -30,12 +32,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Build_Loop_Corner
 category:	"_Epoly-PolyTools"
-buttonText:	"Build Loop Corner"
 icon:	"MENU:true"
+buttonText:	"Build Loop Corner"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "BuildLoopCorner"
 	)
 )
@@ -44,12 +47,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Build_Loop_End
 category:	"_Epoly-PolyTools"
-buttonText:	"Build Loop End"
 icon:	"MENU:true"
+buttonText:	"Build Loop End"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "BuildLoopEnd"
 	)
 )
@@ -58,12 +62,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Geo_Poly
 category:	"_Epoly-PolyTools"
-buttonText:	"Geo Poly"
 icon:	"MENU:true"
+buttonText:	"Geo Poly"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 4 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "GeoPoly"
 	)
 )

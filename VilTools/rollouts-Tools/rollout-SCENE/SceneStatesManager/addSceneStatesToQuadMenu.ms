@@ -4,85 +4,54 @@
 function addSceneStatesToQuadMenu =
 (
 	format "\n"; print ".addSceneStatesToQuadMenu()"
-	/*
-	Function to generate and save a macroscript file
-	Creates file in user macros directory
-	*/
-	function generateMacroScript category macro_name buttontext script_body file_path =
-	(
-		macro_text = ""
-		macro_text += "\nmacroscript	"	+ macro_name
-		macro_text += "\ncategory:	\""	+ category + "\""
-		macro_text += "\nbuttontext:	\""	+ buttontext + "\""
-		macro_text += "\nicon:	\"MENU:true\""
-		
-		macro_text += "\n(\n"
-		macro_text += "	" + script_body + "\n"
-		macro_text += ")\n"
-		
-		macro_text -- return
-	)
-
-	/** Write to mcr file
-	 */
-	function writeToMcrFile file_content file_path =
-	(
-		--format "\n"; print ".writeToMcrFile()"
-		if doesFileExist file_path then
-			deleteFile file_path
-			
-		file_stream = createFile file_path
-
-		format "%" file_content to:file_stream
-
-		close file_stream
-		
-		format "\nMacroScripts created in:\n%\n"  file_path
-	)
+	macroscripts = #()
 	
-	quad_name	= "_SceneStates"
-	mcr_category	= "_Selection_Set"
+	quad_name	= "_SelectionSets"
+	category	= "_Scene-State"
 	
-	file_path = (getDir #userMacros) + "\\" + mcr_category + ".mcr"
-	
-	file_content = ""
+	file_path = (getDir #userMacros) + "\\" + category + ".mcr"
 
 	rx = "System.Text.RegularExpressions.Regex"
 	
 	
-	SelSets = SceneStatesManager_v()
+	SceneStates = SceneStatesManager_v()
 	
-	if SelSets.sel_sets.count == 0 then
+	scene_states = SceneStates.getSceneStates()
+	format "scene_states: %\n" scene_states
+	if scene_statescount == 0 then
 		return false
 	
 	/* GET MENU OF NAMED SELECTION SET */ 
-	MenuSets 	= Menu_v (mcr_category)
+	MenuSets 	= Menu_v (category)
 	
 	MenuSets.clearMenu()
 	
 	counter = 0
 	
-	/* CREATE EACH MACROSCRIPT */ 
-	for set_name in SelSets.sel_sets.keys do
-	--for set_name in SelSets.sel_sets.keys do
+	--/* CREATE EACH MACROSCRIPT */ 
+	for state_name in scene_states do
 	(
-		--format "set_name: %\n" set_name
+		format "state_name: %\n" state_name
 		counter += 1
 	
-		sanitized_set_name = ( dotNetObject rx "[^0-9A-Za-z]" ).Replace ( toLower(set_name) ) "_"
+		sanitized_set_name = ( dotNetObject rx "[^0-9A-Za-z]" ).Replace ( toLower(state_name) ) "_"
 		sanitized_set_name = ( dotNetObject rx "[_]+" ).Replace sanitized_set_name "_"
 		
 		macro_name	= "selection_sets_use_set_" + sanitized_set_name
 		
-		prefix = if counter < 10 then "&" + counter as string + " - " else ""
+		--prefix = if counter < 10 then "&" + counter as string + " - " else ""
+		prefix = ""
 		
-		macro_code = "\n\t\tselect ( ( SceneStatesManager_v() ).getObjectsInSet \""+set_name+"\" )"
+		macro_code = "\n\t\t( SceneStatesManager_v() ).loadState \""+state_name+"\""
+		--macro_code = "\n\t\tmessageBox \""+state_name+"\""
 		
-		file_content += "\n" + generateMacroScript (mcr_category) (macro_name) (prefix + set_name)  macro_code file_path
+		MacroData = MacroData_v macro_name category buttontext:(prefix + state_name) exe:macro_code icon:"MENU:true"
+		
+		append macroscripts MacroData
 	)
-	
+	format "FILE_PATH: %\n" file_path
 	/* WRITE TO MCR FILE */ 
-	writeToMcrFile (file_content) (file_path)
+	MacroscriptGenerator.generateMcrFile (macroscripts) (file_path)
 	
 	/* PARSE MCR FILE TO MENU */ 
 	(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
@@ -90,12 +59,10 @@ function addSceneStatesToQuadMenu =
 	
 	/* GET QUAD */ 
 	SelSetsQuadMenu 	= QuadMenu_v( quad_name )
-	format "SelSetsQuadMenu: %\n" SelSetsQuadMenu
+	--format "SelSetsQuadMenu: %\n" SelSetsQuadMenu
 	
 	
 	/* ADD SETS TO QUAD */
-	SelSetsQuadMenu.Quads[1].addMenu( mcr_category )	
-	
-		
+	SelSetsQuadMenu.Quads[4].addMenu( category )	
 		
 )

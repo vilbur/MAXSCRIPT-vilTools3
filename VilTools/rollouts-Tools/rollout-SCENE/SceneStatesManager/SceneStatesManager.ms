@@ -1,4 +1,4 @@
---filein( getFilenamePath(getSourceFileName()) + "/addSceneStatesToQuadMenu.ms" )	--"./addSceneStatesToQuadMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/addSceneStatesToQuadMenu.ms" )	--"./addSceneStatesToQuadMenu.ms"
 
 /** Selection sets manager
   
@@ -38,8 +38,8 @@ struct SceneStatesManager_v
 		format "\n"; print "SceneStatesManager_v.saveState()"
 		state_bits = this.getSceneStateBits LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
 
-
 		format "state_bits: %\n" state_bits
+
 		if ( index = sceneStateMgr.FindSceneState state_name) == 0 then
 			sceneStateMgr.Capture state_name state_bits
 	),
@@ -48,11 +48,21 @@ struct SceneStatesManager_v
 	 */
 	function loadState state_name LightProperties:false LightTransforms:false ObjectProperties:false CameraTransforms:false CameraProperties:false LayerProperties:false LayerAssignment:false Materials:false Environment:false AnimLayerProperties:false =
 	(
-		--format "\n"; print "SceneStatesManager_v.loadState()"
+		format "\n"; print "SceneStatesManager_v.loadState()"
 		state_bits = this.getSceneStateBits LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
-
+		
+		format "INDEX: %\n" (sceneStateMgr.FindSceneState state_name)
+		
 		if ( index = sceneStateMgr.FindSceneState state_name) > 0 then
+		(
+			
+			format "state_bits: %\n" state_bits
+			if state_bits.count == 0 then
+				state_bits = sceneStateMgr.GetParts state_name
+			format "state_bits: %\n" state_bits
+			
 			sceneStateMgr.Restore state_name state_bits
+		)
 	),
 	
 	/** Delete set
@@ -62,6 +72,20 @@ struct SceneStatesManager_v
 		--format "\n"; print "SceneStatesManager_v.deleteState()"
 		if ( index = sceneStateMgr.FindSceneState state_name) > 0 then
 			sceneStateMgr.Delete state_name
+	),
+	
+	/** Get scene states
+	 */
+	function getSceneStates =
+	(
+		format "\n"; print "SceneStatesManager_v.getSceneStates()"
+		format "sceneStateMgr.GetCount(): %\n" (sceneStateMgr.GetCount())
+		scene_states = #()
+		
+		for i = 1 to sceneStateMgr.GetCount() do
+			append scene_states ( sceneStateMgr.GetSceneState i )
+			
+		scene_states --return
 	),
 	
 	/* 

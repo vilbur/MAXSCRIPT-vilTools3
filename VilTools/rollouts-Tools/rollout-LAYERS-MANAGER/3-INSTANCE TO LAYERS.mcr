@@ -2,11 +2,12 @@
  */
 macroscript scenelayers_Inst_Source
 category:	"_SceneLayers-Instance"
-buttonText:	"Inst Source"
 icon:	"MENU:true"
+buttonText:	"Inst Source"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).InstanceTo #SOURCE ( selection as Array )
 	)
 )
@@ -15,11 +16,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Inst_Edit
 category:	"_SceneLayers-Instance"
-buttonText:	"Inst Edit"
 icon:	"MENU:true"
+buttonText:	"Inst Edit"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).InstanceTo #EDIT ( selection as Array )
 	)
 )
@@ -28,11 +30,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Inst_Final
 category:	"_SceneLayers-Instance"
-buttonText:	"Inst Final"
 icon:	"MENU:true"
+buttonText:	"Inst Final"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).InstanceTo #FINAL ( selection as Array )
 	)
 )
@@ -41,11 +44,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Inst_Print
 category:	"_SceneLayers-Instance"
-buttonText:	"Inst Print"
 icon:	"MENU:true"
+buttonText:	"Inst Print"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).InstanceTo #PRINT ( selection as Array )
 	)
 )

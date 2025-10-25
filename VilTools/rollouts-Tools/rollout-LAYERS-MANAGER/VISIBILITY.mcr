@@ -2,12 +2,13 @@
  */
 macroscript scenelayers_Vis_Source
 category:	"_SceneLayers-Visibility"
-buttonText:	"Vis Source"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
+buttonText:	"Vis Source"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).setVisibility isolate:keyboard.controlPressed layer_type: #SOURCE
 	)
 )
@@ -16,12 +17,13 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Vis_Edit
 category:	"_SceneLayers-Visibility"
-buttonText:	"Vis Edit"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
+buttonText:	"Vis Edit"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).setVisibility isolate:keyboard.controlPressed layer_type: #EDIT
 	)
 )
@@ -30,12 +32,13 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Vis_Final
 category:	"_SceneLayers-Visibility"
-buttonText:	"Vis Final"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
+buttonText:	"Vis Final"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).setVisibility isolate:keyboard.controlPressed layer_type: #FINAL
 	)
 )
@@ -44,12 +47,13 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Vis_Print
 category:	"_SceneLayers-Visibility"
-buttonText:	"Vis Print"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
+buttonText:	"Vis Print"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).setVisibility isolate:keyboard.controlPressed layer_type: #PRINT
 	)
 )

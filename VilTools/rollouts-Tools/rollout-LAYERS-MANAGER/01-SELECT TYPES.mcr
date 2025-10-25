@@ -2,11 +2,12 @@
  */
 macroscript scenelayers_Select_Source
 category:	"_SceneLayers-Select"
-buttonText:	"Select Source"
 icon:	"MENU:true"
+buttonText:	"Select Source"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).selectIn #SOURCE ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
@@ -15,11 +16,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Select_Edit
 category:	"_SceneLayers-Select"
-buttonText:	"Select Edit"
 icon:	"MENU:true"
+buttonText:	"Select Edit"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).selectIn #EDIT ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
@@ -28,11 +30,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Select_Final
 category:	"_SceneLayers-Select"
-buttonText:	"Select Final"
 icon:	"MENU:true"
+buttonText:	"Select Final"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).selectIn #FINAL ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )
@@ -41,11 +44,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Select_Print
 category:	"_SceneLayers-Select"
-buttonText:	"Select Print"
 icon:	"MENU:true"
+buttonText:	"Select Print"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).selectIn #PRINT ( selection as Array ) select_more:keyboard.controlPressed
 	)
 )

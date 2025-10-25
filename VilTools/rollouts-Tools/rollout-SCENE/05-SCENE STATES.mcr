@@ -1,4 +1,5 @@
-
+/*------ DEV IMPORT ------*/
+filein( getFilenamePath(getSourceFileName()) + "/SceneStatesManager/SceneStatesManager.ms" )	--"./SceneStatesManager/SceneStatesManager.ms"
 /**
   */
 macroscript	scene_states_save
@@ -19,35 +20,38 @@ icon:	"id:BTN_save_scene_state|Menu:true"
 			dialog	= dotNetObject "MaxCustomControls.RenameInstanceDialog" ""
 			dialog.text	= "SELECTION SET NAME"
 			modal	= dialog.Showmodal()
-			set_name	= dialog.InstanceName
+			state_name	= dialog.InstanceName
 			
 			/* CREATE SELECTION SET */ 
-			if (trimLeft(set_name)).count > 0 then
-				(SceneStatesManager_v()).saveState set_name
-			
+			if (trimLeft(state_name)).count > 0 then
+			(
+				(SceneStatesManager_v()).saveState state_name ObjectProperties:true LayerProperties:true
+				
+				addSceneStatesToQuadMenu()
+			)
 		)
 	)
 )
 
-/**
-  */
-macroscript	scene_states_laod
-category:	"_Scene-States"
-buttontext:	"LOAD"
-toolTip:	"LOAD Scene States"
-icon:	"id:BTN_load_scene_state|MENU:toolTip"
-(
-	on execute do
-	(
-		--SceneStates = SceneStatesManager_v()
-		
-		--scene_states = loadState.getNamedSelSetDict()
-		
-		--if queryBox ("LOAD SELECTION SETS ?\n\n"+arrayToString loadState.sel_sets.keys "\n" ) title:"LOAD SETS" then
-		--SceneStates.loadState()
-
-	)
-)
+--/**
+--  */
+--macroscript	scene_states_laod
+--category:	"_Scene-States"
+--buttontext:	"LOAD"
+--toolTip:	"LOAD Scene States"
+--icon:	"id:BTN_load_scene_state|MENU:toolTip"
+--(
+--	on execute do
+--	(
+--		--SceneStates = SceneStatesManager_v()
+--		
+--		--scene_states = loadState.getNamedSelSetDict()
+--		
+--		--if queryBox ("LOAD SELECTION SETS ?\n\n"+arrayToString loadState.sel_sets.keys "\n" ) title:"LOAD SETS" then
+--		--SceneStates.loadState()
+--
+--	)
+--)
 
 /**
   */

@@ -6,6 +6,8 @@ filein( getFilenamePath(getSourceFileName()) + "/../SceneStatesManager.ms" )	--"
 	PREPARE SCENE
 --------------------------------------------------------------------------------*/
 
+
+--format "\n"; print ".prepareScene()"
 delete objects
 
 -- create a test object
@@ -24,7 +26,7 @@ _box = box name:"SceneStateTestBox"
 --saveSceneState "State_B"
 --
 ---- now restore first state
---loadSceneState "State_A"
+--loadSceneState "State_A"ww
 --
 ---- check position
 --format "Current Position: %\n" _box.pos
@@ -35,22 +37,25 @@ _box = box name:"SceneStateTestBox"
 ---- check position
 --format "Current Position: %\n" _box.pos
 --
---
 
-
-
+/*------------------------------------------------------------------------------
+	TEST SCENE STATES MANAGER
+--------------------------------------------------------------------------------*/
 StateMgr = SceneStatesManager_v()
 
 --StateMgr.openDialog()
 
 
 
-StateMgr.saveState "position_A" Transform:true
+StateMgr.saveState "Layer Visible" LayerProperties:true
 
-_box.pos = [100,0,0]
+--_box.pos = [100,0,0]
 
-StateMgr.saveState "position_B" Transform:true
+_box.layer.on = false
 
+StateMgr.saveState "Layer Hidden" LayerProperties:true
+
+_box.layer.on = true
 
 --sceneStateMgr.CaptureAllParts "TEST STATE"
 

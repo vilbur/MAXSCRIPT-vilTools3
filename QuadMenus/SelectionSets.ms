@@ -38,7 +38,7 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("T E M P A L T E 3")
+	QuadMenu.setTitle("S C E N E   S T A T E S")
 	
 	_SceneStatesMenu = QuadMenu.addMenu("_Scene-States")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
 )

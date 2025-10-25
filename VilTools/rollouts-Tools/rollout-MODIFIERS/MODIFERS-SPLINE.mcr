@@ -2,11 +2,12 @@
  */
 macroscript epoly_tools_Edit_Spline
 category:	"_Modifiers-Spline"
-buttonText:	"Edit Spline"
 icon:	"MENU:true"
+buttonText:	"Edit Spline"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Edit_Spline"
 	)
 )
@@ -15,11 +16,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Normalize_Spline
 category:	"_Modifiers-Spline"
-buttonText:	"Normalize Spline"
 icon:	"MENU:true"
+buttonText:	"Normalize Spline"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Normalize_Spline"
 	)
 )
@@ -28,11 +30,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_SweepMod
 category:	"_Modifiers-Spline"
-buttonText:	"Sweep"
 icon:	"MENU:true"
+buttonText:	"Sweep"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "SweepMod"
 	)
 )
@@ -41,11 +44,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Lathe
 category:	"_Modifiers-Spline"
-buttonText:	"Lathe"
 icon:	"MENU:true"
+buttonText:	"Lathe"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Lathe"
 	)
 )
@@ -54,11 +58,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Extrude
 category:	"_Modifiers-Spline"
-buttonText:	"Extrude"
 icon:	"MENU:true"
+buttonText:	"Extrude"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Extrude"
 	)
 )
@@ -67,11 +72,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Bevel
 category:	"_Modifiers-Spline"
-buttonText:	"Bevel"
 icon:	"MENU:true"
+buttonText:	"Bevel"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Bevel"
 	)
 )
@@ -80,11 +86,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_CrossSection
 category:	"_Modifiers-Spline"
-buttonText:	"CrossSection"
 icon:	"MENU:true"
+buttonText:	"CrossSection"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "CrossSection"
 	)
 )
@@ -93,11 +100,12 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Surface
 category:	"_Modifiers-Spline"
-buttonText:	"Surface"
 icon:	"MENU:true"
+buttonText:	"Surface"
 (
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Modifiers" "Surface"
 	)
 )

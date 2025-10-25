@@ -2,12 +2,13 @@
  */
 macroscript epoly_tools_Remove
 category:	"_Epoly-Tools-Main"
-buttonText:	"Remove"
 icon:	"MENU:true"
+buttonText:	"Remove"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "EdgeRemove"
 	)
 )
@@ -16,12 +17,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Split
 category:	"_Epoly-Tools-Main"
-buttonText:	"Split"
 icon:	"MENU:true"
+buttonText:	"Split"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "EdgeSplit"; print"SPLITX"
 	)
 )
@@ -30,12 +32,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Vertex_Break
 category:	"_Epoly-Tools-Main"
-buttonText:	"Vertex Break"
 icon:	"MENU:true"
+buttonText:	"Vertex Break"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "VertexBreak"
 	)
 )
@@ -44,12 +47,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Cut
 category:	"_Epoly-Tools-Main"
-buttonText:	"Cut"
 icon:	"MENU:true"
+buttonText:	"Cut"
 (
 	on isVisible	do return isEpoly()
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "CutsCut"
 	)
 )
@@ -58,12 +62,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Quick_Slice
 category:	"_Epoly-Tools-Main"
-buttonText:	"Quick Slice"
 icon:	"MENU:true"
+buttonText:	"Quick Slice"
 (
 	on isVisible	do return isEpoly()
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "CutsQuickSlice"
 	)
 )
@@ -72,12 +77,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Collapse
 category:	"_Epoly-Tools-Main"
-buttonText:	"Collapse"
 icon:	"MENU:true"
+buttonText:	"Collapse"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2, 3, 4 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "GeometryCollapse"
 	)
 )
@@ -86,12 +92,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Cap
 category:	"_Epoly-Tools-Main"
-buttonText:	"Cap"
 icon:	"MENU:true"
+buttonText:	"Cap"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 3 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "Cap"
 	)
 )
@@ -100,12 +107,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Cap_Poly
 category:	"_Epoly-Tools-Main"
-buttonText:	"Cap Poly"
 icon:	"MENU:true"
+buttonText:	"Cap Poly"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "CreatePolygon"
 	)
 )
@@ -114,12 +122,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Create_Polygon
 category:	"_Epoly-Tools-Main"
-buttonText:	"Create Polygon"
 icon:	"MENU:true"
+buttonText:	"Create Polygon"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "CreatePolygon"
 	)
 )
@@ -128,12 +137,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Target_Weld
 category:	"_Epoly-Tools-Main"
-buttonText:	"Target Weld"
 icon:	"MENU:true"
+buttonText:	"Target Weld"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Editable Polygon Object" "EPoly_TargetWeld"
 	)
 )
@@ -142,12 +152,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Edit_Triangulation
 category:	"_Epoly-Tools-Main"
-buttonText:	"Edit Triangulation"
 icon:	"MENU:true"
+buttonText:	"Edit Triangulation"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "EditTriangulation"
 	)
 )
@@ -156,12 +167,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Turn_Edge
 category:	"_Epoly-Tools-Main"
-buttonText:	"Turn Edge"
 icon:	"MENU:true"
+buttonText:	"Turn Edge"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "TurnEdge"
 	)
 )

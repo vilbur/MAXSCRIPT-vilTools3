@@ -2,13 +2,14 @@
  */
 macroscript epoly_tools_Loop_Tools
 category:	"_Epoly-Loop-Tools"
-buttonText:	"LOOP TOOLS"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
+buttonText:	"LOOP TOOLS"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool #LoopTools
 	)
 )
@@ -17,13 +18,14 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Center_Loop
 category:	"_Epoly-Loop-Tools"
-buttonText:	"Center"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
+buttonText:	"Center"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool "CenterLoop"
 	)
 )
@@ -32,13 +34,14 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Space_Loop
 category:	"_Epoly-Loop-Tools"
-buttonText:	"Space"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
+buttonText:	"Space"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool "SpaceLoop"
 	)
 )
@@ -47,13 +50,14 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Straigh_Loop
 category:	"_Epoly-Loop-Tools"
-buttonText:	"Straigh"
 toolTip:	"Ctrl: Autoloop \nAlt: Space vertices on loop evenly"
 icon:	"MENU:true"
+buttonText:	"Straigh"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool "StraighLoop"
 	)
 )
@@ -62,13 +66,14 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Curve_Loop
 category:	"_Epoly-Loop-Tools"
-buttonText:	"Curve"
 toolTip:	"Ctrl: Autoloop \nAlt: Space vertices on loop evenly"
 icon:	"MENU:true"
+buttonText:	"Curve"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool "CurveLoop"
 	)
 )
@@ -77,13 +82,14 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Circle_Loop
 category:	"_Epoly-Loop-Tools"
-buttonText:	"Circle"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
+buttonText:	"Circle"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool "CircleLoop"
 	)
 )
@@ -92,13 +98,14 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Relax_Loop
 category:	"_Epoly-Loop-Tools"
-buttonText:	"Relax"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true|#id:#Relax_loop"
+buttonText:	"Relax"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		execute EpolyLoopTool "RelaxLoop"
 	)
 )

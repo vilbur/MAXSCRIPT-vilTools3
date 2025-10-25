@@ -17,3 +17,4 @@ SelSets.openDialog()
 SelSets.addObj _box	"first_set"
 SelSets.addObj _teapot	"first_set" 
 SelSets.addObj _shpere	"first_set" replace:true
+SelSets.addObj _teapot	"second_set" 

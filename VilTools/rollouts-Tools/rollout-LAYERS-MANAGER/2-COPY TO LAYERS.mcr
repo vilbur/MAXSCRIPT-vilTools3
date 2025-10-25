@@ -2,11 +2,12 @@
  */
 macroscript scenelayers_Copy_Source
 category:	"_SceneLayers-Copy"
-buttonText:	"Copy Source"
 icon:	"MENU:true"
+buttonText:	"Copy Source"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).copyTo #SOURCE ( selection as Array )
 	)
 )
@@ -15,11 +16,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Copy_Edit
 category:	"_SceneLayers-Copy"
-buttonText:	"Copy Edit"
 icon:	"MENU:true"
+buttonText:	"Copy Edit"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).copyTo #EDIT ( selection as Array )
 	)
 )
@@ -28,11 +30,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Copy_Final
 category:	"_SceneLayers-Copy"
-buttonText:	"Copy Final"
 icon:	"MENU:true"
+buttonText:	"Copy Final"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).copyTo #FINAL ( selection as Array )
 	)
 )
@@ -41,11 +44,12 @@ icon:	"MENU:true"
  */
 macroscript scenelayers_Copy_Print
 category:	"_SceneLayers-Copy"
-buttonText:	"Copy Print"
 icon:	"MENU:true"
+buttonText:	"Copy Print"
 (
 
-	on execute do (
+	on execute do
+	(
 		(SceneLayers_v()).copyTo #Print ( selection as Array )
 	)
 )

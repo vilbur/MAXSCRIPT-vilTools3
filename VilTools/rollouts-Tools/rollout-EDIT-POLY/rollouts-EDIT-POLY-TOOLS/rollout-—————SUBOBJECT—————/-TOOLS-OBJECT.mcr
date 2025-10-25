@@ -2,12 +2,13 @@
  */
 macroscript epoly_tools_Dot_Loop
 category:	"_Epoly-Object"
-buttonText:	"Dot Loop"
 icon:	"MENU:true"
+buttonText:	"Dot Loop"
 (
 	on isVisible	do isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "DotLoop"
 	)
 )
@@ -16,12 +17,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Dot_Ring
 category:	"_Epoly-Object"
-buttonText:	"Dot Ring"
 icon:	"MENU:true"
+buttonText:	"Dot Ring"
 (
 	on isVisible	do isEpoly()	and	isSubObject( 2 )
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "DotRing"
 	)
 )
@@ -30,12 +32,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Attach
 category:	"_Epoly-Object"
-buttonText:	"Attach"
 icon:	"MENU:true"
+buttonText:	"Attach"
 (
 	on isVisible	do isEpoly()
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Ribbon - Modeling" "AttachMode"
 	)
 )
@@ -44,12 +47,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Remove_Isolated_Verts
 category:	"_Epoly-Object"
-buttonText:	"Remove Isolated Verts"
 icon:	"MENU:true"
+buttonText:	"Remove Isolated Verts"
 (
 	on isVisible	do isEpoly()
 
-	on execute do (
+	on execute do
+	(
 		macros.run "Editable Polygon Object" "EPoly_RemoveIsolatedVerts"
 	)
 )
@@ -58,12 +62,13 @@ icon:	"MENU:true"
  */
 macroscript epoly_tools_Random_Select
 category:	"_Epoly-Object"
-buttonText:	"Random Select"
 icon:	"MENU:true"
+buttonText:	"Random Select"
 (
 	on isVisible	do isEpoly()
 
-	on execute do (
+	on execute do
+	(
 		macros.run "PolyTools" "RandomDialog"
 	)
 )

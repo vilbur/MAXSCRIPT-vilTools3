@@ -1,4 +1,5 @@
-
+/*------ DEV IMPORT ------*/
+filein( getFilenamePath(getSourceFileName()) + "/Lib/SelectionSetsManager/SelectionSetsManager.ms" )	--"./Lib/SelectionSetsManager/SelectionSetsManager.ms"
 
 /**
   */
@@ -243,7 +244,7 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 
 	on execute do
 	(
-		format "NAMED_SELECTION_SETS_QUADMENU: %\n" NAMED_SELECTION_SETS_QUADMENU
+		--format "NAMED_SELECTION_SETS_QUADMENU: %\n" NAMED_SELECTION_SETS_QUADMENU
 		if NAMED_SELECTION_SETS_QUADMENU != true or ( EventFired != undefined and EventFired.val ) then
 		----if NAMED_SELECTION_SETS_QUADMENU == undefined then
 		(

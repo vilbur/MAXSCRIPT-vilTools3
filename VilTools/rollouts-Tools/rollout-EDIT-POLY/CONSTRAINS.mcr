@@ -2,13 +2,14 @@
  */
 macroscript epoly_tools_Constraints_None
 category:	"_Epoly-Constraints"
-buttonText:	"N O N E"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_0|MENU:false"
+buttonText:	"N O N E"
 (
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 0
 
-	on execute do (
+	on execute do
+	(
 		toggleConstrainType 0 EventFired
 	)
 )
@@ -17,13 +18,14 @@ icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_0|MENU:false"
  */
 macroscript epoly_tools_Constraints_Edge
 category:	"_Epoly-Constraints"
-buttonText:	"E D G E"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_1"
+buttonText:	"E D G E"
 (
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 1
 
-	on execute do (
+	on execute do
+	(
 		toggleConstrainType 1 EventFired
 	)
 )
@@ -32,13 +34,14 @@ icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_1"
  */
 macroscript epoly_tools_Constraints_Face
 category:	"_Epoly-Constraints"
-buttonText:	"F A C E"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_2"
+buttonText:	"F A C E"
 (
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 2
 
-	on execute do (
+	on execute do
+	(
 		toggleConstrainType 2 EventFired
 	)
 )
@@ -47,13 +50,14 @@ icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_2"
  */
 macroscript epoly_tools_Constraints_Normal
 category:	"_Epoly-Constraints"
-buttonText:	"N O R M A L"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_3"
+buttonText:	"N O R M A L"
 (
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
 	on isChecked	do (modPanel.getCurrentObject()).constrainType == 3
 
-	on execute do (
+	on execute do
+	(
 		toggleConstrainType 3 EventFired
 	)
 )
