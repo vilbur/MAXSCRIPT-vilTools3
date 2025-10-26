@@ -1,9 +1,9 @@
 /** EditPolyMod
  */
 macroscript epoly_tools_EditPolyMod
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"EditPolyMod"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ buttonText:	"EditPolyMod"
 /** EXTRUDE
  */
 macroscript epoly_tools_Face_Extrude
-category:	"_Modifiers-1"
 icon:	"MENU:true|#id:extrude_face"
 buttonText:	"EXTRUDE"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ buttonText:	"EXTRUDE"
 /** CHAMFER
  */
 macroscript epoly_tools_ChamferMod
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"CHAMFER"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ buttonText:	"CHAMFER"
 /** Extrude Faces Poly
  */
 macroscript epoly_tools_Extrude_Faces_Poly
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"Extrude Faces Poly"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -57,9 +57,9 @@ buttonText:	"Extrude Faces Poly"
 /** Extrude Edges Poly
  */
 macroscript epoly_tools_Extrude_Edges_Poly
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"Extrude Edges Poly"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -71,9 +71,9 @@ buttonText:	"Extrude Edges Poly"
 /** Inset Faces
  */
 macroscript epoly_tools_Inset_Faces
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"Inset Faces"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -85,9 +85,9 @@ buttonText:	"Inset Faces"
 /** Outline Faces Poly
  */
 macroscript epoly_tools_Outline_Faces_Poly
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"Outline Faces Poly"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -99,9 +99,9 @@ buttonText:	"Outline Faces Poly"
 /** select by Face Size
  */
 macroscript epoly_tools_select_by_Face_Size
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"select by Face Size"
+category:	"_Modifiers-1"
 (
 
 	on execute do
@@ -113,9 +113,9 @@ buttonText:	"select by Face Size"
 /** Select Faces By Mat Id
  */
 macroscript epoly_tools_Select_Faces_By_Mat_Id
-category:	"_Modifiers-1"
 icon:	"MENU:true"
 buttonText:	"Select Faces By Mat Id"
+category:	"_Modifiers-1"
 (
 
 	on execute do

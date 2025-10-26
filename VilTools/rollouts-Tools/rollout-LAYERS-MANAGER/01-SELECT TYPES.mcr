@@ -1,9 +1,9 @@
 /** Select Source
  */
 macroscript scenelayers_Select_Source
-category:	"_SceneLayers-Select"
 icon:	"MENU:true"
 buttonText:	"Select Source"
+category:	"_SceneLayers-Select"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ buttonText:	"Select Source"
 /** Select Edit
  */
 macroscript scenelayers_Select_Edit
-category:	"_SceneLayers-Select"
 icon:	"MENU:true"
 buttonText:	"Select Edit"
+category:	"_SceneLayers-Select"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ buttonText:	"Select Edit"
 /** Select Final
  */
 macroscript scenelayers_Select_Final
-category:	"_SceneLayers-Select"
 icon:	"MENU:true"
 buttonText:	"Select Final"
+category:	"_SceneLayers-Select"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ buttonText:	"Select Final"
 /** Select Print
  */
 macroscript scenelayers_Select_Print
-category:	"_SceneLayers-Select"
 icon:	"MENU:true"
 buttonText:	"Select Print"
+category:	"_SceneLayers-Select"
 (
 
 	on execute do

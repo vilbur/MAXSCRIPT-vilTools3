@@ -1,9 +1,9 @@
 /** Dot Loop
  */
 macroscript epoly_tools_Dot_Loop
-category:	"_Epoly-Object"
 icon:	"MENU:true"
 buttonText:	"Dot Loop"
+category:	"_Epoly-Object"
 (
 	on isVisible	do isEpoly()	and	isSubObject( 2 )
 
@@ -16,9 +16,9 @@ buttonText:	"Dot Loop"
 /** Dot Ring
  */
 macroscript epoly_tools_Dot_Ring
-category:	"_Epoly-Object"
 icon:	"MENU:true"
 buttonText:	"Dot Ring"
+category:	"_Epoly-Object"
 (
 	on isVisible	do isEpoly()	and	isSubObject( 2 )
 
@@ -31,9 +31,9 @@ buttonText:	"Dot Ring"
 /** Attach
  */
 macroscript epoly_tools_Attach
-category:	"_Epoly-Object"
 icon:	"MENU:true"
 buttonText:	"Attach"
+category:	"_Epoly-Object"
 (
 	on isVisible	do isEpoly()
 
@@ -46,9 +46,9 @@ buttonText:	"Attach"
 /** Remove Isolated Verts
  */
 macroscript epoly_tools_Remove_Isolated_Verts
-category:	"_Epoly-Object"
 icon:	"MENU:true"
 buttonText:	"Remove Isolated Verts"
+category:	"_Epoly-Object"
 (
 	on isVisible	do isEpoly()
 
@@ -61,9 +61,9 @@ buttonText:	"Remove Isolated Verts"
 /** Random Select
  */
 macroscript epoly_tools_Random_Select
-category:	"_Epoly-Object"
 icon:	"MENU:true"
 buttonText:	"Random Select"
+category:	"_Epoly-Object"
 (
 	on isVisible	do isEpoly()
 

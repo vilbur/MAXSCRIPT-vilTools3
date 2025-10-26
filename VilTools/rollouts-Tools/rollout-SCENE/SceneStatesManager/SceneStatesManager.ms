@@ -117,7 +117,6 @@ struct SceneStatesManager_v
 	
 		bits -- return
 	),
-		
 
 	private
 

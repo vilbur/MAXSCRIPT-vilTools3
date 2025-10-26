@@ -1,9 +1,9 @@
 /** Ignore Backfacing
  */
 macroscript epoly_tools_Ignore_Backfacing
-category:	"_Epoly-Options"
 icon:	"MENU:true"
 buttonText:	"Ignore Backfacing"
+category:	"_Epoly-Options"
 (
 	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getcurrentObject()).ignoreBackfacing == true
@@ -17,9 +17,9 @@ buttonText:	"Ignore Backfacing"
 /** Ignore Occluded
  */
 macroscript epoly_tools_Ignore_Occluded
-category:	"_Epoly-Options"
 icon:	"MENU:true"
 buttonText:	"Ignore Occluded"
+category:	"_Epoly-Options"
 (
 	on isVisible	do return isEpoly()	and	( not matchPattern ((viewport.getType index:viewport.activeViewport) as string) pattern:@"*persp*" ) -- if not perspective view
 	on isChecked	do (modPanel.getcurrentObject()).ignoreOccluded == true
@@ -33,9 +33,9 @@ buttonText:	"Ignore Occluded"
 /** Select By Angle
  */
 macroscript epoly_tools_Select_By_Angle
-category:	"_Epoly-Options"
 icon:	"MENU:true"
 buttonText:	"Select By Angle"
+category:	"_Epoly-Options"
 (
 	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getCurrentObject()).SelectByAngle == true

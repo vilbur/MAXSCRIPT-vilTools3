@@ -1,9 +1,9 @@
 /** Copy Source
  */
 macroscript scenelayers_Copy_Source
-category:	"_SceneLayers-Copy"
 icon:	"MENU:true"
 buttonText:	"Copy Source"
+category:	"_SceneLayers-Copy"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ buttonText:	"Copy Source"
 /** Copy Edit
  */
 macroscript scenelayers_Copy_Edit
-category:	"_SceneLayers-Copy"
 icon:	"MENU:true"
 buttonText:	"Copy Edit"
+category:	"_SceneLayers-Copy"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ buttonText:	"Copy Edit"
 /** Copy Final
  */
 macroscript scenelayers_Copy_Final
-category:	"_SceneLayers-Copy"
 icon:	"MENU:true"
 buttonText:	"Copy Final"
+category:	"_SceneLayers-Copy"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ buttonText:	"Copy Final"
 /** Copy Print
  */
 macroscript scenelayers_Copy_Print
-category:	"_SceneLayers-Copy"
 icon:	"MENU:true"
 buttonText:	"Copy Print"
+category:	"_SceneLayers-Copy"
 (
 
 	on execute do

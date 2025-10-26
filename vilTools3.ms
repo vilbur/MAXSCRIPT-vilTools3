@@ -35,6 +35,8 @@ std_scripts = #(
 
 
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"),	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms"
+	
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
@@ -92,7 +94,7 @@ std_scripts = #(
 	"/rollout-TRANSFORM/Lib/transformByArrow.ms", --"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
 	
 	"/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms",	--"./VilTools/rollouts-Tools/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms"
-	
+	"/rollout-SCENE/SceneStatesManager/SceneStatesManager.ms",	--"./VilTools/rollouts-Tools/rollout-SCENE/SceneStatesManager/SceneStatesManager.ms"
 	
 	"" -- last blank item to prevent errors on development
 )

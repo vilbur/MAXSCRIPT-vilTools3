@@ -1,9 +1,9 @@
 /** Inst Source
  */
 macroscript scenelayers_Inst_Source
-category:	"_SceneLayers-Instance"
 icon:	"MENU:true"
 buttonText:	"Inst Source"
+category:	"_SceneLayers-Instance"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ buttonText:	"Inst Source"
 /** Inst Edit
  */
 macroscript scenelayers_Inst_Edit
-category:	"_SceneLayers-Instance"
 icon:	"MENU:true"
 buttonText:	"Inst Edit"
+category:	"_SceneLayers-Instance"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ buttonText:	"Inst Edit"
 /** Inst Final
  */
 macroscript scenelayers_Inst_Final
-category:	"_SceneLayers-Instance"
 icon:	"MENU:true"
 buttonText:	"Inst Final"
+category:	"_SceneLayers-Instance"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ buttonText:	"Inst Final"
 /** Inst Print
  */
 macroscript scenelayers_Inst_Print
-category:	"_SceneLayers-Instance"
 icon:	"MENU:true"
 buttonText:	"Inst Print"
+category:	"_SceneLayers-Instance"
 (
 
 	on execute do

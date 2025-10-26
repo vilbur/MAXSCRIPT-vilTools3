@@ -1,9 +1,9 @@
 /** Move Source
  */
 macroscript scenelayers_Move_Source
-category:	"_SceneLayers-Move"
 icon:	"MENU:true"
 buttonText:	"Move Source"
+category:	"_SceneLayers-Move"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ buttonText:	"Move Source"
 /** Move Edit
  */
 macroscript scenelayers_Move_Edit
-category:	"_SceneLayers-Move"
 icon:	"MENU:true"
 buttonText:	"Move Edit"
+category:	"_SceneLayers-Move"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ buttonText:	"Move Edit"
 /** Move Final
  */
 macroscript scenelayers_Move_Final
-category:	"_SceneLayers-Move"
 icon:	"MENU:true"
 buttonText:	"Move Final"
+category:	"_SceneLayers-Move"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ buttonText:	"Move Final"
 /** Move Print
  */
 macroscript scenelayers_Move_Print
-category:	"_SceneLayers-Move"
 icon:	"MENU:true"
 buttonText:	"Move Print"
+category:	"_SceneLayers-Move"
 (
 
 	on execute do

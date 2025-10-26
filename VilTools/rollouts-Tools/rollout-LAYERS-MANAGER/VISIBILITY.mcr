@@ -1,10 +1,10 @@
 /** Vis Source
  */
 macroscript scenelayers_Vis_Source
-category:	"_SceneLayers-Visibility"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
 buttonText:	"Vis Source"
+category:	"_SceneLayers-Visibility"
 (
 
 	on execute do
@@ -16,10 +16,10 @@ buttonText:	"Vis Source"
 /** Vis Edit
  */
 macroscript scenelayers_Vis_Edit
-category:	"_SceneLayers-Visibility"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
 buttonText:	"Vis Edit"
+category:	"_SceneLayers-Visibility"
 (
 
 	on execute do
@@ -31,10 +31,10 @@ buttonText:	"Vis Edit"
 /** Vis Final
  */
 macroscript scenelayers_Vis_Final
-category:	"_SceneLayers-Visibility"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
 buttonText:	"Vis Final"
+category:	"_SceneLayers-Visibility"
 (
 
 	on execute do
@@ -46,10 +46,10 @@ buttonText:	"Vis Final"
 /** Vis Print
  */
 macroscript scenelayers_Vis_Print
-category:	"_SceneLayers-Visibility"
 toolTip:	"CTRL:Isolate"
 icon:	"MENU:true"
 buttonText:	"Vis Print"
+category:	"_SceneLayers-Visibility"
 (
 
 	on execute do

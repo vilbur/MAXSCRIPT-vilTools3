@@ -1,9 +1,9 @@
 /** Spin Edge
  */
 macroscript epoly_tools_Spin_Edge
-category:	"_Epoly-PolyTools"
 icon:	"MENU:true"
 buttonText:	"Spin Edge"
+category:	"_Epoly-PolyTools"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -16,9 +16,9 @@ buttonText:	"Spin Edge"
 /** Build Loop End
  */
 macroscript epoly_tools_Build_Loop_End
-category:	"_Epoly-PolyTools"
 icon:	"MENU:true"
 buttonText:	"Build Loop End"
+category:	"_Epoly-PolyTools"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -31,9 +31,9 @@ buttonText:	"Build Loop End"
 /** Build Loop Corner
  */
 macroscript epoly_tools_Build_Loop_Corner
-category:	"_Epoly-PolyTools"
 icon:	"MENU:true"
 buttonText:	"Build Loop Corner"
+category:	"_Epoly-PolyTools"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -46,9 +46,9 @@ buttonText:	"Build Loop Corner"
 /** Build Loop End
  */
 macroscript epoly_tools_Build_Loop_End
-category:	"_Epoly-PolyTools"
 icon:	"MENU:true"
 buttonText:	"Build Loop End"
+category:	"_Epoly-PolyTools"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -61,9 +61,9 @@ buttonText:	"Build Loop End"
 /** Geo Poly
  */
 macroscript epoly_tools_Geo_Poly
-category:	"_Epoly-PolyTools"
 icon:	"MENU:true"
 buttonText:	"Geo Poly"
+category:	"_Epoly-PolyTools"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 4 )
 

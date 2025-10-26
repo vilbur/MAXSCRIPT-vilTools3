@@ -6,7 +6,7 @@ macroscript	scene_states_save
 category:	"_Scene-States"
 buttontext:	"SAVE"
 --toolTip:	"Open Selection sets dialog"
-icon:	"id:BTN_save_scene_state|Menu:true"
+icon:	"id:BTN_save_scene_state|Menu:true|across:3"
 (
 	on IsVisible do selection.count > 0
 

@@ -1,9 +1,9 @@
 /** Remove
  */
 macroscript epoly_tools_Remove
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Remove"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
@@ -16,9 +16,9 @@ buttonText:	"Remove"
 /** Split
  */
 macroscript epoly_tools_Split
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Split"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -31,9 +31,9 @@ buttonText:	"Split"
 /** Vertex Break
  */
 macroscript epoly_tools_Vertex_Break
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Vertex Break"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
@@ -46,9 +46,9 @@ buttonText:	"Vertex Break"
 /** Cut
  */
 macroscript epoly_tools_Cut
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Cut"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()
 
@@ -61,9 +61,9 @@ buttonText:	"Cut"
 /** Quick Slice
  */
 macroscript epoly_tools_Quick_Slice
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Quick Slice"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()
 
@@ -76,9 +76,9 @@ buttonText:	"Quick Slice"
 /** Collapse
  */
 macroscript epoly_tools_Collapse
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Collapse"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2, 3, 4 )
 
@@ -91,9 +91,9 @@ buttonText:	"Collapse"
 /** Cap
  */
 macroscript epoly_tools_Cap
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Cap"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 3 )
 
@@ -106,9 +106,9 @@ buttonText:	"Cap"
 /** Cap Poly
  */
 macroscript epoly_tools_Cap_Poly
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Cap Poly"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
@@ -121,9 +121,9 @@ buttonText:	"Cap Poly"
 /** Create Polygon
  */
 macroscript epoly_tools_Create_Polygon
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Create Polygon"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
@@ -136,9 +136,9 @@ buttonText:	"Create Polygon"
 /** Target Weld
  */
 macroscript epoly_tools_Target_Weld
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Target Weld"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 1 )
 
@@ -151,9 +151,9 @@ buttonText:	"Target Weld"
 /** Edit Triangulation
  */
 macroscript epoly_tools_Edit_Triangulation
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Edit Triangulation"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -166,9 +166,9 @@ buttonText:	"Edit Triangulation"
 /** Turn Edge
  */
 macroscript epoly_tools_Turn_Edge
-category:	"_Epoly-Tools-Main"
 icon:	"MENU:true"
 buttonText:	"Turn Edge"
+category:	"_Epoly-Tools-Main"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 

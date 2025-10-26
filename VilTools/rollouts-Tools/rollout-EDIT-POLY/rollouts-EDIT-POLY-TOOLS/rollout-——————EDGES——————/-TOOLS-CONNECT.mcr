@@ -1,9 +1,9 @@
 /** S W I F T loop
  */
 macroscript epoly_tools_Swift_Loop
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"S W I F T loop"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 0, 1, 2, 3, 4, 5 )
 
@@ -16,9 +16,9 @@ buttonText:	"S W I F T loop"
 /** C O N N E C T
  */
 macroscript epoly_tools_Connect_Edges
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"C O N N E C T"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -31,9 +31,9 @@ buttonText:	"C O N N E C T"
 /** D I S T A N C E Connect
  */
 macroscript epoly_tools_Distance_Connect
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"D I S T A N C E Connect"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -46,9 +46,9 @@ buttonText:	"D I S T A N C E Connect"
 /** C O N N E C T VERTEX
  */
 macroscript epoly_tools_Connect_Vertex
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"C O N N E C T VERTEX"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject ( 1 )
 
@@ -61,9 +61,9 @@ buttonText:	"C O N N E C T VERTEX"
 /** F L O W Connect
  */
 macroscript epoly_tools_Flow_Connect
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"F L O W Connect"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -76,9 +76,9 @@ buttonText:	"F L O W Connect"
 /** Set Flow
  */
 macroscript epoly_tools_Set_Flow
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"Set Flow"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
@@ -91,9 +91,9 @@ buttonText:	"Set Flow"
 /** PAINT Connect
  */
 macroscript epoly_tools_Paint_Connect
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"PAINT Connect"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()
 
@@ -106,9 +106,9 @@ buttonText:	"PAINT Connect"
 /** I N S E R T Edge
  */
 macroscript epoly_tools_Insert_Loop
-category:	"_Epoly-Connect"
 icon:	"MENU:true"
 buttonText:	"I N S E R T Edge"
+category:	"_Epoly-Connect"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 

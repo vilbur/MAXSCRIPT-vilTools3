@@ -1,10 +1,10 @@
 /** Chamfer
  */
 macroscript epoly_tools_Chamfer
-category:	"_Epoly-Tools-Options"
 toolTip:	"Ctrl: Open Options"
 icon:	"MENU:true"
 buttonText:	"Chamfer"
+category:	"_Epoly-Tools-Options"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2, 3, 4 )
 
@@ -17,10 +17,10 @@ buttonText:	"Chamfer"
 /** Extrude
  */
 macroscript epoly_tools_Extrude
-category:	"_Epoly-Tools-Options"
 toolTip:	"Ctrl: Open Options"
 icon:	"MENU:true"
 buttonText:	"Extrude"
+category:	"_Epoly-Tools-Options"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2, 3, 4 )
 
@@ -33,10 +33,10 @@ buttonText:	"Extrude"
 /** Bevel
  */
 macroscript epoly_tools_Bevel
-category:	"_Epoly-Tools-Options"
 toolTip:	"Ctrl: Open Options"
 icon:	"MENU:true"
 buttonText:	"Bevel"
+category:	"_Epoly-Tools-Options"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 4 )
 
@@ -49,10 +49,10 @@ buttonText:	"Bevel"
 /** Bridge
  */
 macroscript epoly_tools_Bridge
-category:	"_Epoly-Tools-Options"
 toolTip:	"Ctrl: Open Options"
 icon:	"MENU:true"
 buttonText:	"Bridge"
+category:	"_Epoly-Tools-Options"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2, 3 )
 
@@ -65,10 +65,10 @@ buttonText:	"Bridge"
 /** Relax
  */
 macroscript epoly_tools_Relax
-category:	"_Epoly-Tools-Options"
 toolTip:	"Ctrl: Open Options"
 icon:	"MENU:true"
 buttonText:	"Relax"
+category:	"_Epoly-Tools-Options"
 (
 	on isVisible	do return isEpoly()
 
@@ -81,10 +81,10 @@ buttonText:	"Relax"
 /** Weld
  */
 macroscript epoly_tools_Weld
-category:	"_Epoly-Tools-Options"
 toolTip:	"Ctrl: Open Options"
 icon:	"MENU:true|id:#epoly_weld"
 buttonText:	"Weld"
+category:	"_Epoly-Tools-Options"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
