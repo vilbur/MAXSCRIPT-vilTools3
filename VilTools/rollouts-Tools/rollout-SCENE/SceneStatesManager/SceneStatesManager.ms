@@ -1,4 +1,6 @@
-filein( getFilenamePath(getSourceFileName()) + "/addSceneStatesToQuadMenu.ms" )	--"./addSceneStatesToQuadMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/addSceneStatesToQuadMenu.ms" )	--"./addSceneStatesToQuadMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/createSceneStatesPartsMenu.ms" )	--"./createSceneStatesPartsMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateBit.ms" )	--"./setSceneStateBit.ms"
 
 /** Selection sets manager
   
