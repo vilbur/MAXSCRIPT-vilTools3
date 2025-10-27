@@ -1,9 +1,9 @@
 /** FFDBox
  */
 macroscript epoly_tools_FFDBox
-icon:	"MENU:true"
-buttonText:	"FFDBox"
 category:	"_Modifiers-3"
+buttonText:	"FFDBox"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ category:	"_Modifiers-3"
 /** FFD 2x2x2
  */
 macroscript epoly_tools_FFD_2x2x2
-icon:	"MENU:true"
-buttonText:	"FFD 2x2x2"
 category:	"_Modifiers-3"
+buttonText:	"FFD 2x2x2"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ category:	"_Modifiers-3"
 /** PathDeform
  */
 macroscript epoly_tools_PathDeform
-icon:	"MENU:true"
-buttonText:	"PathDeform"
 category:	"_Modifiers-3"
+buttonText:	"PathDeform"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ category:	"_Modifiers-3"
 /** Bend
  */
 macroscript epoly_tools_Bend
-icon:	"MENU:true"
-buttonText:	"Bend"
 category:	"_Modifiers-3"
+buttonText:	"Bend"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -57,9 +57,9 @@ category:	"_Modifiers-3"
 /** Noise
  */
 macroscript epoly_tools_Noise
-icon:	"MENU:true"
-buttonText:	"Noise"
 category:	"_Modifiers-3"
+buttonText:	"Noise"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -71,9 +71,9 @@ category:	"_Modifiers-3"
 /** Taper
  */
 macroscript epoly_tools_Taper
-icon:	"MENU:true"
-buttonText:	"Taper"
 category:	"_Modifiers-3"
+buttonText:	"Taper"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -85,9 +85,9 @@ category:	"_Modifiers-3"
 /** Twist
  */
 macroscript epoly_tools_Twist
-icon:	"MENU:true"
-buttonText:	"Twist"
 category:	"_Modifiers-3"
+buttonText:	"Twist"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -99,9 +99,9 @@ category:	"_Modifiers-3"
 /** Spherify
  */
 macroscript epoly_tools_Spherify
-icon:	"MENU:true"
-buttonText:	"Spherify"
 category:	"_Modifiers-3"
+buttonText:	"Spherify"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -113,9 +113,9 @@ category:	"_Modifiers-3"
 /** Cap Holes
  */
 macroscript epoly_tools_Cap_Holes
-icon:	"MENU:true"
-buttonText:	"Cap Holes"
 category:	"_Modifiers-3"
+buttonText:	"Cap Holes"
+icon:	"MENU:true"
 (
 
 	on execute do

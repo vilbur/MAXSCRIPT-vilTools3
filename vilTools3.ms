@@ -198,6 +198,8 @@ try(
 	VILTOOLS = ContentLoader.create height:1024
 
 	VILTOOLS.register()
+	
+	createSceneStatesPartsMenu()
 
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())

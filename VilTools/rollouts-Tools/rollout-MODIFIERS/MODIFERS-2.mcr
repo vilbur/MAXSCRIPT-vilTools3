@@ -1,9 +1,9 @@
 /** Poly Select
  */
 macroscript epoly_tools_Poly_Select
-icon:	"MENU:true"
-buttonText:	"Poly Select"
 category:	"_Modifiers-2"
+buttonText:	"Poly Select"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ category:	"_Modifiers-2"
 /** Volume Select
  */
 macroscript epoly_tools_Volume_Select
-icon:	"MENU:true"
-buttonText:	"Volume Select"
 category:	"_Modifiers-2"
+buttonText:	"Volume Select"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ category:	"_Modifiers-2"
 /** Slice
  */
 macroscript epoly_tools_Slice
-icon:	"MENU:true"
-buttonText:	"Slice"
 category:	"_Modifiers-2"
+buttonText:	"Slice"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ category:	"_Modifiers-2"
 /** Material ID
  */
 macroscript epoly_tools_Material_ID
-icon:	"MENU:true"
-buttonText:	"Material ID"
 category:	"_Modifiers-2"
+buttonText:	"Material ID"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -57,9 +57,9 @@ category:	"_Modifiers-2"
 /** Normal
  */
 macroscript epoly_tools_Normalmodifier
-icon:	"MENU:true"
-buttonText:	"Normal"
 category:	"_Modifiers-2"
+buttonText:	"Normal"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -71,9 +71,9 @@ category:	"_Modifiers-2"
 /** SHELL
  */
 macroscript epoly_tools_Shell
-icon:	"MENU:true"
-buttonText:	"SHELL"
 category:	"_Modifiers-2"
+buttonText:	"SHELL"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -85,9 +85,9 @@ category:	"_Modifiers-2"
 /** Symmetry
  */
 macroscript epoly_tools_Symmetry
-icon:	"MENU:true"
-buttonText:	"Symmetry"
 category:	"_Modifiers-2"
+buttonText:	"Symmetry"
+icon:	"MENU:true"
 (
 
 	on execute do

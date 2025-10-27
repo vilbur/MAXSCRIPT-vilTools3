@@ -4,17 +4,17 @@ filein( getFilenamePath(getSourceFileName()) + "/SceneStatesManager/SceneStatesM
   */
 macroscript	scene_states_save
 category:	"_Scene-States"
-buttontext:	"SAVE"
---toolTip:	"Open Selection sets dialog"
+buttontext:	"CREATE"
+toolTip:	"Create Scene state"
 icon:	"id:BTN_save_scene_state|Menu:true|across:3"
 (
-	on IsVisible do selection.count > 0
+	--on IsVisible do selection.count > 0
 
 	
 	on execute do
 	(
 		--macros.run "Edit" "namedSelSets"
-		if selection.count > 0 then
+		--if selection.count > 0 then
 		(
 			/* ASK FOR NAME OF SET */ 
 			dialog	= dotNetObject "MaxCustomControls.RenameInstanceDialog" ""
@@ -25,7 +25,7 @@ icon:	"id:BTN_save_scene_state|Menu:true|across:3"
 			/* CREATE SELECTION SET */ 
 			if (trimLeft(state_name)).count > 0 then
 			(
-				(SceneStatesManager_v()).saveState state_name ObjectProperties:true LayerProperties:true
+				(SceneStatesManager_v()).saveState state_name SCENE_STATE_BITS
 				
 				addSceneStatesToQuadMenu()
 			)
@@ -52,28 +52,28 @@ icon:	"id:BTN_save_scene_state|Menu:true|across:3"
 --
 --	)
 --)
-
-/**
-  */
-macroscript	scene_states_delete_all
-category:	"_Scene-States"
-buttontext:	"DELETE"
-toolTip:	"DELETE ALL Named Scene States From Scene"
-icon:	"id:BTN_delete_scene_state|MENU:true"
-(
-	on execute do
-	(
-		
-		--if queryBox ("DELETE SELECTION SETS ?") title:"DELETE SETS" then
-		--	(
-		--		--nsm = NamedSelectionSetManager
-		--		
-		--		/* DELETE OLD SETS */ 
-		--		--for s = nsm.GetNumNamedSelSets() - 1 to 0 by -1 do 
-		--			--nsm.RemoveNamedSelSetByIndex s
-		--	)
-	)
-)
+--
+--/**
+--  */
+--macroscript	scene_states_delete_all
+--category:	"_Scene-States"
+--buttontext:	"DELETE"
+--toolTip:	"DELETE ALL Named Scene States From Scene"
+--icon:	"id:BTN_delete_scene_state|MENU:true"
+--(
+--	on execute do
+--	(
+--		
+--		--if queryBox ("DELETE SELECTION SETS ?") title:"DELETE SETS" then
+--		--	(
+--		--		--nsm = NamedSelectionSetManager
+--		--		
+--		--		/* DELETE OLD SETS */ 
+--		--		--for s = nsm.GetNumNamedSelSets() - 1 to 0 by -1 do 
+--		--			--nsm.RemoveNamedSelSetByIndex s
+--		--	)
+--	)
+--)
 
 
 
@@ -83,7 +83,7 @@ icon:	"id:BTN_delete_scene_state|MENU:true"
   */
 macroscript	scene_states_open_dialog
 category:	"_Scene-States"
-buttontext:	"Dialog"
+buttontext:	"DIALOG"
 toolTip:	"Open Scene states dialog"
 icon:	"MENU:true"
 (
@@ -125,6 +125,7 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 			CALLBACKMANAGER.start "addSceneStatesToQuadMenu"
 
 			addSceneStatesToQuadMenu()
+			createSceneStatesPartsMenu()
 			
 		)
 		else

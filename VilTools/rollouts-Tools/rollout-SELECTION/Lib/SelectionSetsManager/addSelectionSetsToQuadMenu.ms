@@ -49,7 +49,7 @@ function addSelectionSetsToQuadMenu =
 	)
 	
 	/* WRITE TO MCR FILE */ 
-	MacroscriptGenerator.generateMcrFile (macroscripts) (file_path)
+	(MacroscriptGenerator_v()).generateMcrFile (macroscripts) (file_path)
 	
 	/* PARSE MCR FILE TO MENU */ 
 	(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()

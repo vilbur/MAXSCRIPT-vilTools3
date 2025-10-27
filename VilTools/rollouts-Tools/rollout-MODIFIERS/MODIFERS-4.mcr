@@ -1,9 +1,9 @@
 /** MeshSmooth
  */
 macroscript epoly_tools_MeshSmooth
-icon:	"MENU:true"
-buttonText:	"MeshSmooth"
 category:	"_Modifiers-4"
+buttonText:	"MeshSmooth"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ category:	"_Modifiers-4"
 /** Smooth
  */
 macroscript epoly_tools_Smooth
-icon:	"MENU:true"
-buttonText:	"Smooth"
 category:	"_Modifiers-4"
+buttonText:	"Smooth"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ category:	"_Modifiers-4"
 /** Relax
  */
 macroscript epoly_tools_Relax
-icon:	"MENU:true"
-buttonText:	"Relax"
 category:	"_Modifiers-4"
+buttonText:	"Relax"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ category:	"_Modifiers-4"
 /** Push
  */
 macroscript epoly_tools_Push
-icon:	"MENU:true"
-buttonText:	"Push"
 category:	"_Modifiers-4"
+buttonText:	"Push"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -57,9 +57,9 @@ category:	"_Modifiers-4"
 /** Tessellate
  */
 macroscript epoly_tools_Tessellate
-icon:	"MENU:true"
-buttonText:	"Tessellate"
 category:	"_Modifiers-4"
+buttonText:	"Tessellate"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -71,9 +71,9 @@ category:	"_Modifiers-4"
 /** Vertex Weld
  */
 macroscript epoly_tools_Vertex_Weld
-icon:	"MENU:true"
-buttonText:	"Vertex Weld"
 category:	"_Modifiers-4"
+buttonText:	"Vertex Weld"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -85,9 +85,9 @@ category:	"_Modifiers-4"
 /** Delete Mesh
  */
 macroscript epoly_tools_Delete_Mesh
-icon:	"MENU:true"
-buttonText:	"Delete Mesh"
 category:	"_Modifiers-4"
+buttonText:	"Delete Mesh"
+icon:	"MENU:true"
 (
 
 	on execute do

@@ -1,9 +1,9 @@
 /** Ref Source
  */
 macroscript scenelayers_Ref_Source
-icon:	"MENU:true"
-buttonText:	"Ref Source"
 category:	"_SceneLayers-Reference"
+buttonText:	"Ref Source"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ category:	"_SceneLayers-Reference"
 /** Ref Edit
  */
 macroscript scenelayers_Ref_Edit
-icon:	"MENU:true"
-buttonText:	"Ref Edit"
 category:	"_SceneLayers-Reference"
+buttonText:	"Ref Edit"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ category:	"_SceneLayers-Reference"
 /** Ref Final
  */
 macroscript scenelayers_Ref_Final
-icon:	"MENU:true"
-buttonText:	"Ref Final"
 category:	"_SceneLayers-Reference"
+buttonText:	"Ref Final"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ category:	"_SceneLayers-Reference"
 /** Ref Print
  */
 macroscript scenelayers_Ref_Print
-icon:	"MENU:true"
-buttonText:	"Ref Print"
 category:	"_SceneLayers-Reference"
+buttonText:	"Ref Print"
+icon:	"MENU:true"
 (
 
 	on execute do

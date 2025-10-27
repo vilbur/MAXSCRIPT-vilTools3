@@ -1,9 +1,9 @@
 /** Edit Spline
  */
 macroscript epoly_tools_Edit_Spline
-icon:	"MENU:true"
-buttonText:	"Edit Spline"
 category:	"_Modifiers-Spline"
+buttonText:	"Edit Spline"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ category:	"_Modifiers-Spline"
 /** Normalize Spline
  */
 macroscript epoly_tools_Normalize_Spline
-icon:	"MENU:true"
-buttonText:	"Normalize Spline"
 category:	"_Modifiers-Spline"
+buttonText:	"Normalize Spline"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ category:	"_Modifiers-Spline"
 /** Sweep
  */
 macroscript epoly_tools_SweepMod
-icon:	"MENU:true"
-buttonText:	"Sweep"
 category:	"_Modifiers-Spline"
+buttonText:	"Sweep"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ category:	"_Modifiers-Spline"
 /** Lathe
  */
 macroscript epoly_tools_Lathe
-icon:	"MENU:true"
-buttonText:	"Lathe"
 category:	"_Modifiers-Spline"
+buttonText:	"Lathe"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -57,9 +57,9 @@ category:	"_Modifiers-Spline"
 /** Extrude
  */
 macroscript epoly_tools_Extrude
-icon:	"MENU:true"
-buttonText:	"Extrude"
 category:	"_Modifiers-Spline"
+buttonText:	"Extrude"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -71,9 +71,9 @@ category:	"_Modifiers-Spline"
 /** Bevel
  */
 macroscript epoly_tools_Bevel
-icon:	"MENU:true"
-buttonText:	"Bevel"
 category:	"_Modifiers-Spline"
+buttonText:	"Bevel"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -85,9 +85,9 @@ category:	"_Modifiers-Spline"
 /** CrossSection
  */
 macroscript epoly_tools_CrossSection
-icon:	"MENU:true"
-buttonText:	"CrossSection"
 category:	"_Modifiers-Spline"
+buttonText:	"CrossSection"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -99,9 +99,9 @@ category:	"_Modifiers-Spline"
 /** Surface
  */
 macroscript epoly_tools_Surface
-icon:	"MENU:true"
-buttonText:	"Surface"
 category:	"_Modifiers-Spline"
+buttonText:	"Surface"
+icon:	"MENU:true"
 (
 
 	on execute do

@@ -1,9 +1,9 @@
 /** S W I F T loop
  */
 macroscript epoly_tools_Swift_Loop
-icon:	"MENU:true"
-buttonText:	"S W I F T loop"
 category:	"_Epoly-Connect"
+buttonText:	"S W I F T loop"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 0, 1, 2, 3, 4, 5 )
 
@@ -16,9 +16,9 @@ category:	"_Epoly-Connect"
 /** C O N N E C T
  */
 macroscript epoly_tools_Connect_Edges
-icon:	"MENU:true"
-buttonText:	"C O N N E C T"
 category:	"_Epoly-Connect"
+buttonText:	"C O N N E C T"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -31,9 +31,9 @@ category:	"_Epoly-Connect"
 /** D I S T A N C E Connect
  */
 macroscript epoly_tools_Distance_Connect
-icon:	"MENU:true"
-buttonText:	"D I S T A N C E Connect"
 category:	"_Epoly-Connect"
+buttonText:	"D I S T A N C E Connect"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -46,9 +46,9 @@ category:	"_Epoly-Connect"
 /** C O N N E C T VERTEX
  */
 macroscript epoly_tools_Connect_Vertex
-icon:	"MENU:true"
-buttonText:	"C O N N E C T VERTEX"
 category:	"_Epoly-Connect"
+buttonText:	"C O N N E C T VERTEX"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject ( 1 )
 
@@ -61,9 +61,9 @@ category:	"_Epoly-Connect"
 /** F L O W Connect
  */
 macroscript epoly_tools_Flow_Connect
-icon:	"MENU:true"
-buttonText:	"F L O W Connect"
 category:	"_Epoly-Connect"
+buttonText:	"F L O W Connect"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -76,9 +76,9 @@ category:	"_Epoly-Connect"
 /** Set Flow
  */
 macroscript epoly_tools_Set_Flow
-icon:	"MENU:true"
-buttonText:	"Set Flow"
 category:	"_Epoly-Connect"
+buttonText:	"Set Flow"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 
@@ -91,9 +91,9 @@ category:	"_Epoly-Connect"
 /** PAINT Connect
  */
 macroscript epoly_tools_Paint_Connect
-icon:	"MENU:true"
-buttonText:	"PAINT Connect"
 category:	"_Epoly-Connect"
+buttonText:	"PAINT Connect"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()
 
@@ -106,9 +106,9 @@ category:	"_Epoly-Connect"
 /** I N S E R T Edge
  */
 macroscript epoly_tools_Insert_Loop
-icon:	"MENU:true"
-buttonText:	"I N S E R T Edge"
 category:	"_Epoly-Connect"
+buttonText:	"I N S E R T Edge"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject #( 1, 2 )
 

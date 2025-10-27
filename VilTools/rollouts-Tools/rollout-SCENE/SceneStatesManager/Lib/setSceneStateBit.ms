@@ -1,7 +1,4 @@
 
---global SCENE_STATE_BITS = BitArray 10
-global SCENE_STATE_BITS
-
 /** Set scene state bit
   
    Callback for 

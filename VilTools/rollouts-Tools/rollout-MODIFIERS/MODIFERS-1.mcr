@@ -1,9 +1,9 @@
 /** EditPolyMod
  */
 macroscript epoly_tools_EditPolyMod
-icon:	"MENU:true"
-buttonText:	"EditPolyMod"
 category:	"_Modifiers-1"
+buttonText:	"EditPolyMod"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -15,9 +15,9 @@ category:	"_Modifiers-1"
 /** EXTRUDE
  */
 macroscript epoly_tools_Face_Extrude
-icon:	"MENU:true|#id:extrude_face"
-buttonText:	"EXTRUDE"
 category:	"_Modifiers-1"
+buttonText:	"EXTRUDE"
+icon:	"MENU:true|#id:extrude_face"
 (
 
 	on execute do
@@ -29,9 +29,9 @@ category:	"_Modifiers-1"
 /** CHAMFER
  */
 macroscript epoly_tools_ChamferMod
-icon:	"MENU:true"
-buttonText:	"CHAMFER"
 category:	"_Modifiers-1"
+buttonText:	"CHAMFER"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -43,9 +43,9 @@ category:	"_Modifiers-1"
 /** Extrude Faces Poly
  */
 macroscript epoly_tools_Extrude_Faces_Poly
-icon:	"MENU:true"
-buttonText:	"Extrude Faces Poly"
 category:	"_Modifiers-1"
+buttonText:	"Extrude Faces Poly"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -57,9 +57,9 @@ category:	"_Modifiers-1"
 /** Extrude Edges Poly
  */
 macroscript epoly_tools_Extrude_Edges_Poly
-icon:	"MENU:true"
-buttonText:	"Extrude Edges Poly"
 category:	"_Modifiers-1"
+buttonText:	"Extrude Edges Poly"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -71,9 +71,9 @@ category:	"_Modifiers-1"
 /** Inset Faces
  */
 macroscript epoly_tools_Inset_Faces
-icon:	"MENU:true"
-buttonText:	"Inset Faces"
 category:	"_Modifiers-1"
+buttonText:	"Inset Faces"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -85,9 +85,9 @@ category:	"_Modifiers-1"
 /** Outline Faces Poly
  */
 macroscript epoly_tools_Outline_Faces_Poly
-icon:	"MENU:true"
-buttonText:	"Outline Faces Poly"
 category:	"_Modifiers-1"
+buttonText:	"Outline Faces Poly"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -99,9 +99,9 @@ category:	"_Modifiers-1"
 /** select by Face Size
  */
 macroscript epoly_tools_select_by_Face_Size
-icon:	"MENU:true"
-buttonText:	"select by Face Size"
 category:	"_Modifiers-1"
+buttonText:	"select by Face Size"
+icon:	"MENU:true"
 (
 
 	on execute do
@@ -113,9 +113,9 @@ category:	"_Modifiers-1"
 /** Select Faces By Mat Id
  */
 macroscript epoly_tools_Select_Faces_By_Mat_Id
-icon:	"MENU:true"
-buttonText:	"Select Faces By Mat Id"
 category:	"_Modifiers-1"
+buttonText:	"Select Faces By Mat Id"
+icon:	"MENU:true"
 (
 
 	on execute do

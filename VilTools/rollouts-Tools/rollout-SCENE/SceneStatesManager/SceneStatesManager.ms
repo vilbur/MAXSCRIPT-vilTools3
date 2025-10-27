@@ -1,6 +1,11 @@
+
+
 filein( getFilenamePath(getSourceFileName()) + "/Lib/addSceneStatesToQuadMenu.ms" )	--"./addSceneStatesToQuadMenu.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/createSceneStatesPartsMenu.ms" )	--"./createSceneStatesPartsMenu.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateBit.ms" )	--"./setSceneStateBit.ms"
+
+--global SCENE_STATE_BITS = BitArray 10
+global SCENE_STATE_BITS
 
 /** Selection sets manager
   
@@ -21,9 +26,28 @@ struct SceneStatesManager_v
 	ini = getDir #TEMP + "\\named-scene-states.ini",
 
 	/* private */
+	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties ),
+
 	/* dependency */
 	/* reference */
 	/* inhered */
+	
+	/** Process state
+	 */
+	function processStateCallback state_name =
+	(
+		format "\n"; print "SceneStatesManager_v.processState()"
+		if SCENE_STATE_BITS == undefined then
+			setSceneStateBit (undefined) 
+		
+		
+		if keyboard.controlPressed then
+			this.saveState state_name SCENE_STATE_BITS
+		
+		else
+			this.loadState state_name SCENE_STATE_BITS
+		 
+	),
 	
 	/** Open dialog
 	 */
@@ -35,10 +59,10 @@ struct SceneStatesManager_v
 	
 	/** Save state
 	 */
-	function saveState state_name LightProperties:false LightTransforms:false ObjectProperties:false CameraTransforms:false CameraProperties:false LayerProperties:false LayerAssignment:false Materials:false Environment:false AnimLayerProperties:false =
+	function saveState state_name state_bits =
 	(
 		format "\n"; print "SceneStatesManager_v.saveState()"
-		state_bits = this.getSceneStateBits LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
+		--state_bits = this.getSceneStateBits LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
 
 		format "state_bits: %\n" state_bits
 
@@ -48,22 +72,34 @@ struct SceneStatesManager_v
 	
 	/** Load state
 	 */
-	function loadState state_name LightProperties:false LightTransforms:false ObjectProperties:false CameraTransforms:false CameraProperties:false LayerProperties:false LayerAssignment:false Materials:false Environment:false AnimLayerProperties:false =
+	function loadState state_name load_bits =
 	(
 		format "\n"; print "SceneStatesManager_v.loadState()"
-		state_bits = this.getSceneStateBits LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
-		
+		--load_bits = this.getSceneStateBits LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
+		--format "LOAD BITS: %\n" load_bits
+
 		format "INDEX: %\n" (sceneStateMgr.FindSceneState state_name)
 		
 		if ( index = sceneStateMgr.FindSceneState state_name) > 0 then
 		(
 			
-			format "state_bits: %\n" state_bits
-			if state_bits.count == 0 then
-				state_bits = sceneStateMgr.GetParts state_name
-			format "state_bits: %\n" state_bits
+			--if load_bits.count == 0 then
+			saved_bits = sceneStateMgr.GetParts state_name
 			
-			sceneStateMgr.Restore state_name state_bits
+			format "SAVED BITS: %\n" load_bits
+			
+			--load_bits *= saved_bits
+			
+			SCENE_STATE_BITS = saved_bits
+			
+			format "LOAD BITS: %\n" saved_bits
+			
+			format "\n--------------------- SCENE STATE LOADED PARTS ---------------------\n"
+			for load_bit in saved_bits do
+				format "LOADED PART: %\n" scene_state_bit_names[load_bit]
+			
+			
+			sceneStateMgr.Restore state_name saved_bits
 		)
 	),
 	

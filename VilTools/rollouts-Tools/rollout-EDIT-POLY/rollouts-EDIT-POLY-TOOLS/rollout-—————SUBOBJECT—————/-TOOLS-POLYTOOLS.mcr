@@ -1,9 +1,9 @@
 /** Spin Edge
  */
 macroscript epoly_tools_Spin_Edge
-icon:	"MENU:true"
-buttonText:	"Spin Edge"
 category:	"_Epoly-PolyTools"
+buttonText:	"Spin Edge"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -16,9 +16,9 @@ category:	"_Epoly-PolyTools"
 /** Build Loop End
  */
 macroscript epoly_tools_Build_Loop_End
-icon:	"MENU:true"
-buttonText:	"Build Loop End"
 category:	"_Epoly-PolyTools"
+buttonText:	"Build Loop End"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -31,9 +31,9 @@ category:	"_Epoly-PolyTools"
 /** Build Loop Corner
  */
 macroscript epoly_tools_Build_Loop_Corner
-icon:	"MENU:true"
-buttonText:	"Build Loop Corner"
 category:	"_Epoly-PolyTools"
+buttonText:	"Build Loop Corner"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -46,9 +46,9 @@ category:	"_Epoly-PolyTools"
 /** Build Loop End
  */
 macroscript epoly_tools_Build_Loop_End
-icon:	"MENU:true"
-buttonText:	"Build Loop End"
 category:	"_Epoly-PolyTools"
+buttonText:	"Build Loop End"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 2 )
 
@@ -61,9 +61,9 @@ category:	"_Epoly-PolyTools"
 /** Geo Poly
  */
 macroscript epoly_tools_Geo_Poly
-icon:	"MENU:true"
-buttonText:	"Geo Poly"
 category:	"_Epoly-PolyTools"
+buttonText:	"Geo Poly"
+icon:	"MENU:true"
 (
 	on isVisible	do return isEpoly()	and	isSubObject( 4 )
 

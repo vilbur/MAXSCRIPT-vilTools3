@@ -1,10 +1,10 @@
 /** LOOP TOOLS
  */
 macroscript epoly_tools_Loop_Tools
+category:	"_Epoly-Loop-Tools"
+buttonText:	"LOOP TOOLS"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
-buttonText:	"LOOP TOOLS"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
@@ -17,10 +17,10 @@ category:	"_Epoly-Loop-Tools"
 /** Center
  */
 macroscript epoly_tools_Center_Loop
+category:	"_Epoly-Loop-Tools"
+buttonText:	"Center"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
-buttonText:	"Center"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
@@ -33,10 +33,10 @@ category:	"_Epoly-Loop-Tools"
 /** Space
  */
 macroscript epoly_tools_Space_Loop
+category:	"_Epoly-Loop-Tools"
+buttonText:	"Space"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
-buttonText:	"Space"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
@@ -49,10 +49,10 @@ category:	"_Epoly-Loop-Tools"
 /** Straigh
  */
 macroscript epoly_tools_Straigh_Loop
+category:	"_Epoly-Loop-Tools"
+buttonText:	"Straigh"
 toolTip:	"Ctrl: Autoloop \nAlt: Space vertices on loop evenly"
 icon:	"MENU:true"
-buttonText:	"Straigh"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
@@ -65,10 +65,10 @@ category:	"_Epoly-Loop-Tools"
 /** Curve
  */
 macroscript epoly_tools_Curve_Loop
+category:	"_Epoly-Loop-Tools"
+buttonText:	"Curve"
 toolTip:	"Ctrl: Autoloop \nAlt: Space vertices on loop evenly"
 icon:	"MENU:true"
-buttonText:	"Curve"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
@@ -81,10 +81,10 @@ category:	"_Epoly-Loop-Tools"
 /** Circle
  */
 macroscript epoly_tools_Circle_Loop
+category:	"_Epoly-Loop-Tools"
+buttonText:	"Circle"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true"
-buttonText:	"Circle"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
@@ -97,10 +97,10 @@ category:	"_Epoly-Loop-Tools"
 /** Relax
  */
 macroscript epoly_tools_Relax_Loop
+category:	"_Epoly-Loop-Tools"
+buttonText:	"Relax"
 toolTip:	"Ctrl: Autoloop"
 icon:	"MENU:true|#id:#Relax_loop"
-buttonText:	"Relax"
-category:	"_Epoly-Loop-Tools"
 (
 	on isVisible	do isEpoly() and isSubObject( 2 )
 
