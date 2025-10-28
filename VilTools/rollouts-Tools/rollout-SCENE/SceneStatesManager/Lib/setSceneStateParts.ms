@@ -3,9 +3,9 @@
   
    Callback for 
  */
-function setSceneStateBit _bit =
+function setSceneStateParts _bit =
 (
-	format "\n"; print ".setSceneStateBit()"
+	format "\n"; print ".setSceneStateParts()"
 	format "_bit: %\n" _bit
 	ini = Ini_v(getDir #TEMP + "\\ini_files\\SCENE_STATE_BITS.ini" )
 	format "INI: %\n" (Ini.getPath())

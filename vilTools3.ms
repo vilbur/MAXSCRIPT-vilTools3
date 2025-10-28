@@ -199,7 +199,7 @@ try(
 
 	VILTOOLS.register()
 	
-	createSceneStatesPartsMenu()
+	sceneStatesPartsMenu()
 
 )catch(
 	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())

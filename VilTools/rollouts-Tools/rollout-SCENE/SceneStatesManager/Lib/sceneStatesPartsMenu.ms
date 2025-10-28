@@ -3,14 +3,15 @@
   
   https://help.autodesk.com/view/3DSMAX/2025/ENU/?guid=GUID-AD55B6B0-CACF-4581-AB09-688E0014DB6A#GUID-AD55B6B0-CACF-4581-AB09-688E0014DB6A__IMAGE_045012F838DB47FD9583C2E33C1C93AC
  */
-function createSceneStatesPartsMenu =
+function sceneStatesPartsMenu =
 (
-	format "\n"; print ".createSceneStatesPartsMenu()"
+	format "\n"; print ".sceneStatesPartsMenu()"
 	macroscripts = #()
 	
 	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties )
 	
-	scene_state_bit_order = #(
+	scene_state_bit_order =
+	#(
 		#ObjectProperties,
 		#LayerProperties,
 		#LayerAssignment,
@@ -41,7 +42,7 @@ function createSceneStatesPartsMenu =
 		
 		state_name = scene_state_bit_names[_bit] as string
 		format "state_name: %\n" state_name
-		macro_code = "setSceneStateBit "+ _bit as string
+		macro_code = "setSceneStateParts "+ _bit as string
 		
 		tooltip = ( dotNetClass "System.Text.RegularExpressions.Regex").Replace state_name "(?<!^)([A-Z])" " $1"
 		--format "title: %\n" title
@@ -63,5 +64,5 @@ function createSceneStatesPartsMenu =
 	
 	MenuSets.addSeparators #( 1, 3, 4, 6, 8 )
 
-
+	setSceneStateParts(undefined)
 )

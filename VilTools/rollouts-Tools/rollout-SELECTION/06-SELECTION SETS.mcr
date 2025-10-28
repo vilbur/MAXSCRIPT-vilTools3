@@ -250,35 +250,30 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 		(
 			--CALLBACKMANAGER.start "autoEndResult" --"./../../../CallBacks/modPanelSubObjectLevelChanged/autoEndResult.ms"
 			
-			
-			
 			CALLBACKMANAGER.add "addSelectionSetsToQuadMenu"	#NamedSelSetRenamed
 			CALLBACKMANAGER.add "addSelectionSetsToQuadMenu"	#NamedSelSetDeleted
 			CALLBACKMANAGER.add "addSelectionSetsToQuadMenu"	#filePostOpen
 
 			CALLBACKMANAGER.start "addSelectionSetsToQuadMenu"
 
-			addSelectionSetsToQuadMenu()
+			sceneStatesPartsMenu()
+			
+			processSceneStateCallbackMenu()
 			
 		)
 		else
 		(
 			CALLBACKMANAGER.kill "addSelectionSetsToQuadMenu"
 
-			MenuSets 	= Menu_v ("_Selection_Set")
-			
-			MenuSets.clearMenu()
+			(Menu_v ("_Scene-States-Parts")).clearMenu()
+
+			(Menu_v ("_Scene-State-Callback")).clearMenu()
 		)
 
 		if EventFired != undefined then 
 			NAMED_SELECTION_SETS_QUADMENU = EventFired.val
 	)
 )
-
-
-
-
-
 
 
 

@@ -14,7 +14,8 @@ icon:	"across:3|MENU:Open &RECENT"
 
 	on execute do
 	(
-		recent_file = (RecentFile_v()).getRecentFileNotMatching blacklist:#( "autoback", "maxstart", "temp" )
+		recent_file = (RecentFile_v()).getRecentFileNotMatching blacklist:#( "autoback", "maxstart", "temp", getFilenameFile maxFileName )
+		
 		if recent_file != undefined and doesFileExist recent_file then
 		(
 			if  maxFilePath == "" or queryBox ("Load recent file ?\n\n"+(getFilenameFile (recent_file))+" ?" ) title:"LOAD RECENT FILE"  beep:false then
