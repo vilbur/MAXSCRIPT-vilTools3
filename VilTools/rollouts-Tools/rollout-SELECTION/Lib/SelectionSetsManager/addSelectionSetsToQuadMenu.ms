@@ -7,7 +7,7 @@ function addSelectionSetsToQuadMenu =
 
 	macroscripts = #()
 	
-	quad_name	= "_SelectionSets"
+	quad_name	= "_SceneStates-SelectionSets"
 	category	= "_Selection_Set"
 	
 	file_path = (getDir #userMacros) + "\\" + category + ".mcr"

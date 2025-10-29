@@ -14,7 +14,7 @@ function addQuad1 QuadMenu =
 	
 	QuadMenu.addSeparator()
 	
-	_OpenSceneMenu = QuadMenu.addMenu("_Scene-Open")	separators:#( 3, 4 ) --flat:false --index:1 --"./../VilTools/rollouts-Tools/rollout-SCENE/01-OPEN SCENE.mcr"
+	_OpenSceneMenu = QuadMenu.addMenu("_Scene-Open")	separators:#( 2, 3 ) --flat:false --index:1 --"./../VilTools/rollouts-Tools/rollout-SCENE/01-OPEN SCENE.mcr"
 	
 
 	--format "_OpenSceneMenu: %\n" _OpenSceneMenu
@@ -40,7 +40,7 @@ function addQuad3 QuadMenu =
 	QuadMenu.setTitle("S C E N E  R E S E T")
 
 
-	QuadMenu.addMenu("_Scene-Reset") separators:#(3,4)	--flat:false --index:1
+	QuadMenu.addMenu("_Scene-Reset") separators:#(2)	--flat:false --index:1
 	--QuadMenu.addSeparators #()
 
 )

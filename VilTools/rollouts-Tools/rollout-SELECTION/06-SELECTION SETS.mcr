@@ -1,104 +1,6 @@
 /*------ DEV IMPORT ------*/
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SelectionSetsManager/SelectionSetsManager.ms" )	--"./Lib/SelectionSetsManager/SelectionSetsManager.ms"
 
-/**
-  */
-macroscript	selection_sets_select
-category:	"_Selection-Sets"
-buttontext:	"SELECT"
-toolTip:	"Select objects in selection sets by current selection"
-icon:	"MENU:true|across:3"
-(
-	
-	--function compareArrays arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string == ( sort(arr2) ) as string
-	function compareArrays arr1 arr2 = with PrintAllElements on ( (arr1) ) as string == ( (arr2) ) as string
-	
-	
-	on execute do
-	(
-		--macros.run "Edit" "namedSelSets"
-		_selection = selection as Array
-		format "_selection: %\n" _selection
-		objs = #()
-		
-		objs_counts	= Dictionary #INTEGER -- KEY: VALUE:
-		
-		SelSets = SelectionSetsManager_v()
-
-		sel_sets = SelSets.getSetsByObjects ( _selection )
-		
-		format "\n\nSELECT OBJECTS OF % SETS\n" sel_sets.keys.count
-		
-		--selected_set = undefined 
-		
-		invisible_objs = 10e9
-		
-		most_visible_set = sel_sets.keys[1]
-		
-		/* REMOVE CURRENTLY SELECTED SET */ 		
-		if ( selected_set = SelSets.getSelectedSet() ) != undefined then
-			RemoveDictValue sel_sets selected_set
-		
-		
-		for set_name in sort(sel_sets.keys) do
-		(
-			objs_in_set_count = sel_sets[set_name].count
-			--format "%: %\n" set_name objs_in_set_count
-			if objs_counts[objs_in_set_count] == undefined then
-				objs_counts[objs_in_set_count] = #()
-			
-			append objs_counts[objs_in_set_count] set_name
-		)
-		
-		min_count = amin objs_counts.keys
-		--format "min_count: %\n" min_count
-		
-		min_count_set = objs_counts[min_count][1]
-		format "SELECT NAMED SET: \"%\"\n" min_count_set
-		
-		objs = sel_sets[min_count_set]
-
-		
-		
-		--for set_name in sel_sets.keys do
-		--(
-		--	format "\n%\n" set_name
-		--	format "sel_sets[set_name]: %\n" sel_sets[set_name]
-		--	/* GET ONLY VISIBLE OBJECTS */ 
-		--	objs_in_set_invisible = for obj in sel_sets[set_name] where obj.isHidden collect obj 
-		--	format "objs_in_set_invisible.count: %\n" objs_in_set_invisible.count
-		--	
-		--	if objs_in_set_invisible.count <= invisible_objs then
-		--	(
-		--	
-		--		if objs_in_set_invisible.count == invisible_objs then
-		--		(
-		--			selected_set_A = for obj in sel_sets[most_visible_set]	where obj.selected collect obj 
-		--			selected_set_B = for obj in sel_sets[set_name]	where obj.selected collect obj 
-		--
-		--			format "selected_set_A.count: %\n" selected_set_A.count
-		--			format "selected_set_B.count: %\n" selected_set_B.count
-		--			
-		--		)
-		--
-		--		invisible_objs = objs_in_set_invisible.count
-		--	
-		--		
-		--		most_visible_set = set_name
-		--		
-		--		objs = SelSets.getObjectsInSet (set_name)
-		--	)
-		--	
-		----	objs += SelSets.getObjectsInSet (set_name)
-		--)
-		
-		
-		--format "\nMOST VISIBLE SET: %\n" most_visible_set
-		
-		if objs.count > 0 then
-			select objs
-	)
-)
 
 
 /**
@@ -107,7 +9,7 @@ macroscript	selection_sets_create
 category:	"_Selection-Sets"
 buttontext:	"CREATE"
 --toolTip:	"Open Selection sets dialog"
-icon:	"Menu:true"
+icon:	"across:4|width:92|height:32|Menu:CREATE set"
 (
 	on IsVisible do selection.count > 0
 
@@ -133,23 +35,104 @@ icon:	"Menu:true"
 
 /**
   */
-macroscript	selection_sets_delete_all
+macroscript	selection_sets_add
 category:	"_Selection-Sets"
-buttontext:	"DELETE"
-toolTip:	"DELETE ALL Named Selection Sets From Scene"
-icon:	"MENU:true"
+buttontext:	"ADD"
+toolTip:	"Add selection to set"
+icon:	"MENU:ADD TO sets"
 (
 	on execute do
 	(
+		(SelectionSetsManager_v()).chooseSetRollout "AddTo"
+	)
+)
+
+/**
+  */
+macroscript	selection_sets_remove
+category:	"_Selection-Sets"
+buttontext:	"REMOVE"
+toolTip:	"REMOVE "
+icon:	"MENU:REMOVE selection"
+(
+	on execute do
+	(
+		(SelectionSetsManager_v()).chooseSetRollout "Remove"
+	)
+)
+/**
+  */
+macroscript	selection_sets_delete
+category:	"_Selection-Sets"
+buttontext:	"DELETE"
+toolTip:	"DELETE ALL Named Selection Sets From Scene"
+icon:	"MENU:DELETE sets"
+(
+	on execute do
+	(
+		(SelectionSetsManager_v()).chooseSetRollout "Delete"
+	)
+)
+
+/**
+  */
+macroscript	selection_sets_select
+category:	"_Selection-Sets"
+buttontext:	"SELECT"
+toolTip:	"Select objects in selection sets by current selection"
+icon:	"across:3"
+(
+	
+	--function compareArrays arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string == ( sort(arr2) ) as string
+	function compareArrays arr1 arr2 = with PrintAllElements on ( (arr1) ) as string == ( (arr2) ) as string
+	
+	
+	on execute do
+	(
+		--macros.run "Edit" "namedSelSets"
+		--_selection = selection as Array
+		--format "_selection: %\n" _selection
+		objs = #()
 		
-		if queryBox ("DELETE SELECTION SETS ?") title:"DELETE SETS" then
-			(
-				nsm = NamedSelectionSetManager
-				
-				/* DELETE OLD SETS */ 
-				for s = nsm.GetNumNamedSelSets() - 1 to 0 by -1 do 
-					nsm.RemoveNamedSelSetByIndex s
-			)
+		objs_counts	= Dictionary #INTEGER -- KEY:objects count VALUE:set_name
+		
+		SelSets = SelectionSetsManager_v()
+
+		sel_sets = SelSets.getSetsByObjects ( selection as Array )
+		
+		format "\n\nSELECT OBJECTS OF % SETS\n" sel_sets.keys.count
+		
+		
+		invisible_objs = 10e9
+		
+		most_visible_set = sel_sets.keys[1]
+		
+		/* REMOVE CURRENTLY SELECTED SET */ 		
+		if ( selected_set = SelSets.getSelectedSet() ) != undefined then
+			RemoveDictValue sel_sets selected_set
+		
+		
+		for set_name in sort(sel_sets.keys) do
+		(
+			objs_in_set_count = sel_sets[set_name].count
+			--format "%: %\n" set_name objs_in_set_count
+			if objs_counts[objs_in_set_count] == undefined then
+				objs_counts[objs_in_set_count] = #()
+			
+			append objs_counts[objs_in_set_count] set_name
+		)
+		
+		min_count = amin objs_counts.keys
+		format "objs_counts: %\n" objs_counts
+		format "min_count: %\n" min_count
+		
+		min_count_set = objs_counts[min_count][1]
+		--format "SELECT NAMED SET: \"%\"\n" min_count_set
+		format "min_count_set: %\n" min_count_set
+		objs = SelSets.getObjectsInSet min_count_set
+		format "objs: %\n" objs
+		if objs.count > 0 then
+			select objs
 	)
 )
 
@@ -158,8 +141,8 @@ icon:	"MENU:true"
 macroscript	selection_sets_save
 category:	"_Selection-Sets"
 buttontext:	"SAVE \ LOAD"
-toolTip:	"SAVE Selection Sets"
-icon:	"MENU:toolTip|across:2"
+toolTip:	"SAVE Selection set"
+icon:	"MENU:SAVE set"
 (
 	on execute do
 	(
@@ -180,8 +163,8 @@ icon:	"MENU:toolTip|across:2"
 macroscript	selection_sets_laod
 category:	"_Selection-Sets"
 buttontext:	"SAVE \ LOAD"
-toolTip:	"LOAD Selection Sets"
-icon:	"MENU:toolTip"
+toolTip:	"LOAD Selection sets"
+icon:	"MENU:LOAD set"
 (
 	/** Join array to string
 	 */
@@ -210,25 +193,26 @@ icon:	"MENU:toolTip"
 	)
 )
 
-
-
 /**
   */
 macroscript	selection_sets_open_dialog
 category:	"_Selection-Sets"
-buttontext:	"OPEN SETS"
+buttontext:	"DIALOG"
 toolTip:	"Open Selection sets dialog"
-icon:	"width:96|height:28|MENU:true"
+icon:	"MENU:true"
 (
 	on execute do
 	(
-		macros.run "Edit" "namedSelSets"
-
+		hwnd = (for child in ( windows.getChildrenHWND 0 parent:#max ) where child[5] == "Named Selection Sets" collect child[1])[1]
+		
+		/* CLOSE DIALOG by sending WM_CLOSE */
+		if hwnd != undefined then
+			windows.sendMessage hwnd 0x0010 0 0
+		/* OPEN DIALOG */ 
+		else
+			macros.run "Edit" "namedSelSets"
 	)
 )
-
-
-
 
 global NAMED_SELECTION_SETS_QUADMENU
 
@@ -238,8 +222,6 @@ buttontext:	"SELECTION SETS QUAD MENU"
 toolTip:	"Enable\Disable selection sets in quad menu"
 icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 (
-
-	
 	on IsChecked do NAMED_SELECTION_SETS_QUADMENU != undefined
 
 	on execute do
@@ -256,18 +238,15 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 
 			CALLBACKMANAGER.start "addSelectionSetsToQuadMenu"
 
-			sceneStatesPartsMenu()
-			
-			processSceneStateCallbackMenu()
-			
+			addSelectionSetsToQuadMenu()
 		)
 		else
 		(
 			CALLBACKMANAGER.kill "addSelectionSetsToQuadMenu"
 
-			(Menu_v ("_Scene-States-Parts")).clearMenu()
-
-			(Menu_v ("_Scene-State-Callback")).clearMenu()
+			MenuSets 	= Menu_v ("_Selection_Set")
+			
+			MenuSets.clearMenu()
 		)
 
 		if EventFired != undefined then 

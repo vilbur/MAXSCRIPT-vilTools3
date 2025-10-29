@@ -5,12 +5,13 @@
  */
 function processSceneStateCallbackMenu =
 (
-	format "\n"; print ".processSceneStateCallbackMenu()"
+	--format "\n"; print ".processSceneStateCallbackMenu()"
 	--fn updateNeeded arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string != ( sort(arr2) ) as string
 	
+
 	macroscripts = #()
 	
-	quad_name	= "_SelectionSets"
+	quad_name	= "_SceneStates-SelectionSets"
 	category	= "_Scene-State-Callback"
 
 	/* GET MENU OF NAMED SELECTION SET */ 
@@ -38,7 +39,7 @@ function processSceneStateCallbackMenu =
 	/* CREATE EACH MACROSCRIPT */ 
 	for state_name in scene_states do
 	(
-		format "state_name: %\n" state_name
+		--format "state_name: %\n" state_name
 		rx = "System.Text.RegularExpressions.Regex"
 	
 		sanitized_set_name = ( dotNetObject rx "[^0-9A-Za-z]" ).Replace ( toLower(state_name) ) "_"
@@ -51,13 +52,12 @@ function processSceneStateCallbackMenu =
 		
 		on_exe = "( SceneStatesManager_v() ).processStateCallback \""+state_name+"\""
 		
-		msg = "\nformat \"Press CTRL to save SCENE STATE \""
 		
 		
 		--on_alt = "\t\tmessageBox \"Press CTRL to save SCENE STATE \""
 		on_alt = ""
 		
-		MacroData = MacroData_v macro_name category tooltip:(prefix + state_name) exe:( on_exe + msg ) altExecute:on_alt icon:"MENU:true"
+		MacroData = MacroData_v macro_name category tooltip:(prefix + state_name) exe:on_exe altExecute:on_alt icon:"MENU:true"
 		
 		append macroscripts MacroData
 	)

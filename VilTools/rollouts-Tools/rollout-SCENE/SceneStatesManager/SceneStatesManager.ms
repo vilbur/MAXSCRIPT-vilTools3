@@ -1,5 +1,3 @@
-
-
 filein( getFilenamePath(getSourceFileName()) + "/Lib/processSceneStateCallbackMenu.ms" )	--"./processSceneStateCallbackMenu.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/sceneStatesPartsMenu.ms" )	--"./sceneStatesPartsMenu.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateParts.ms" )	--"./setSceneStateParts.ms"
@@ -28,11 +26,12 @@ struct SceneStatesManager_v
 	/* private */
 	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties ),
 
+	menu_callback_help_message = "MANAGE STATE IN QUAD MENU: Press CTRL: Save state | Press SHIFT: Rename state | Press ALT: Delete state",
 	/* dependency */
 	/* reference */
 	/* inhered */
 	
-	/** Process state
+	/** FRONT END METHOD
 	 */
 	function processStateCallback state_name =
 	(
@@ -46,25 +45,55 @@ struct SceneStatesManager_v
 		
 		state_parts = sceneStateMgr.GetParts state_name
 
-		/* RESAVE STATE IF CTRL PRESSED */ 
+		/* RESAVE STATE on CONTROL pressed */ 
 		if keyboard.controlPressed then
 		(
 			format "state_parts: %\n" state_parts
 			format "SCENE_STATE_BITS: %\n" SCENE_STATE_BITS
 			
-		--enabled_parts = this.getNamesOfParts(state_parts)
-
-			state_parts_string =  this.arrayToString (this.getNamesOfParts(state_parts))
+			state_parts_string =  this._arrayToString (this.getNamesOfParts(state_parts))
 			
-			if queryBox ("SAVE STATE ?\n\nSTATE:\n\t" +state_name+ "\n\nPARTS:\n" + state_parts_string ) title:"AVE STATE" then
+			if queryBox ("SAVE STATE ?\n\nSTATE:\n\t" +state_name+ "\n\nPARTS:\n" + state_parts_string ) title:"SAVE SCENE STATE" then
 				this.saveState state_name state_parts
-				
-			
 		)
+		/* RENAME on SHIFT pressed */ 
+		else if keyboard.shiftPressed then
+		(
+			if (new_name = this._askForStateName default:state_name) != "" then
+				this.renameState state_name new_name
+		)
+		/* DELETE on ALT pressed */ 
+		else if keyboard.altPressed then
+		(
+			if queryBox ("DELETE STATE ?\n\n"+state_name) title:"DELETE SCENE STATE" then
+				this.deleteState state_name
+		)		
 		/* LAOD STATE */ 
 		else
 			this.loadState state_name state_parts
-		 
+		
+		processSceneStateCallbackMenu()
+
+		format "menu_callback_help_message: %\n" menu_callback_help_message
+	),
+	
+	/** Create state
+	 */
+	function createState state_bits =
+	(
+		--format "\n"; print "SceneStatesManager_v.createState()"
+		if (state_name = this._askForStateName default:"") != "" then
+			this.saveState state_name state_bits
+		
+		state_name --return
+	),
+
+	/** Rename state
+	 */
+	function renameState state_name new_name =
+	(
+		format "\n"; print "SceneStatesManager_v.renameState()"
+		sceneStateMgr.Rename state_name new_name 
 	),
 	
 	/** Open dialog
@@ -191,13 +220,25 @@ struct SceneStatesManager_v
 	),
 
 	private
-
+	
+	/** Ask for state name
+	 */
+	function _askForStateName default:"" =
+	(
+		--format "\n"; print "SceneStatesManager_v._askForStateName default:()"
+		dialog	= dotNetObject "MaxCustomControls.RenameInstanceDialog" default
+		dialog.text	= "SELECTION SET NAME"
+		modal	= dialog.Showmodal()
+		
+		--dialog.InstanceName --return
+		trimLeft(dialog.InstanceName) --return
+	),
 	
 	/** Add new set
 	 */
-	function addNewState objs state_name  =
+	function _addNewState objs state_name  =
 	(
-		--format "\n"; print "SceneStatesManager_v.addNewState()"
+		--format "\n"; print "SceneStatesManager_v._addNewState()"
 		StateMgr.AddNewNamedSelState objs state_name
 
 		this.setSceneStates()
@@ -205,9 +246,9 @@ struct SceneStatesManager_v
 	
 	/** Update objects in st
 	 */
-	function updateObjectsInState objs state_name replace:false =
+	function _updateObjectsInState objs state_name replace:false =
 	(
-		--format "\n"; print "SceneStatesManager_v.updateObjectsInState()"
+		--format "\n"; print "SceneStatesManager_v._updateObjectsInState()"
 
 		if not replace then
 		(
@@ -221,7 +262,7 @@ struct SceneStatesManager_v
 	
 	/** Join array to string
 	*/
-   function arrayToString arr delimeter:"\n" = ( _string = ""; for item in arr where item == true do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count)),
+   function _arrayToString arr delimeter:"\n" = ( _string = ""; for item in arr where item == true do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count)),
 		
 	--/** Get scene states
 	-- */

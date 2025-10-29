@@ -25,12 +25,9 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("SELECTION SETS")
+	QuadMenu.setTitle("MANAGE SETS")
 	
-	SelectionSetsMenu = QuadMenu.addMenu("_Selection-Sets")	separators: #(  4, 6 )	--title:"" --index: --flat:false
-	
-	SelectionSetsMenu.removeItem 1
-
+	QuadMenu.addMenu("_Selection-Sets")	separators: #(  2, 4, 6 )	--title:"" --index: --flat:false
 )
 
 /*------------------------------------------------------------------------------

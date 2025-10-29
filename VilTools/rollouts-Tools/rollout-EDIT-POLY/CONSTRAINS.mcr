@@ -5,8 +5,8 @@ category:	"_Epoly-Constraints"
 buttonText:	"N O N E"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_0|MENU:false"
 (
-	on isChecked	do (modPanel.getCurrentObject()).constrainType == 0
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
+	on isChecked	do (modPanel.getCurrentObject()).constrainType == 0
 
 	on execute do
 	(
@@ -21,8 +21,8 @@ category:	"_Epoly-Constraints"
 buttonText:	"E D G E"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_1"
 (
-	on isChecked	do (modPanel.getCurrentObject()).constrainType == 1
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
+	on isChecked	do (modPanel.getCurrentObject()).constrainType == 1
 
 	on execute do
 	(
@@ -37,8 +37,8 @@ category:	"_Epoly-Constraints"
 buttonText:	"F A C E"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_2"
 (
-	on isChecked	do (modPanel.getCurrentObject()).constrainType == 2
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
+	on isChecked	do (modPanel.getCurrentObject()).constrainType == 2
 
 	on execute do
 	(
@@ -53,8 +53,8 @@ category:	"_Epoly-Constraints"
 buttonText:	"N O R M A L"
 icon:	"control:checkbutton|MENU:true|ini:false|id:set_constrain_3"
 (
-	on isChecked	do (modPanel.getCurrentObject()).constrainType == 3
 	on isVisible	do return isEpoly() and isSubObject #(1,2,4)
+	on isChecked	do (modPanel.getCurrentObject()).constrainType == 3
 
 	on execute do
 	(

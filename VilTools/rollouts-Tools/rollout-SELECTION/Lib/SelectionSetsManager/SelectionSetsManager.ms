@@ -3,7 +3,7 @@ filein( getFilenamePath(getSourceFileName()) + "/addSelectionSetsToQuadMenu.ms" 
 /** Selection sets manager
   
   https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-6CC6500C-FD5C-4646-A880-BC34E852CA2B
-  
+  https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-2BBC8C79-6E94-4C93-A491-E0DA5A5E5A0C
  */
 struct SelectionSetsManager_v
 (
@@ -14,7 +14,7 @@ struct SelectionSetsManager_v
 	/* properties */
 	nsm = NamedSelectionSetManager,
 
-	sel_sets, --Dictionary #STRING key:"set_name" value:index
+	sel_sets, --Dictionary #STRING key:"set_name" value:index of set
 	
 	ini = getDir #TEMP + "\\named-selection-sets.ini",
 
@@ -29,6 +29,61 @@ struct SelectionSetsManager_v
 	(
 		--format "\n"; print "SelectionSetsManager_v.openDialog()"
 		macros.run "Edit" "namedSelSets"
+	),
+	
+	--/** Delete sets
+	-- */
+	--function deleteSets =
+	--(
+	--	format "\n"; print "SelectionSetsManager_v.deleteSets()"
+	--	this.chooseSetRollout "Delete"
+	--),
+	--
+	--/** Remove from set
+	-- */
+	--function removeFromSet =
+	--(
+	--	format "\n"; print "SelectionSetsManager_v.removeFromSet()"
+	--	
+	--	this.chooseSetRollout "Remove"
+	--),
+	
+	/** Choose set rollout
+	 */
+	function chooseSetRollout callback =
+	(
+		format "\n"; print "SelectionSetsManager_v.chooseSetRollout()"
+		try( destroyDialog rlTestMultiList )catch()
+		
+		if callback == "Remove" then
+			sel_sets = this.getSetsByObjects ( selection as Array )
+		
+		rollout rlTestMultiList "MultiList Exec"
+		(
+			multiListBox lb_items items:(sort sel_sets.keys) height:sel_sets.keys.count
+			
+			button bt_exec "FOO" width:80 height:40
+			
+			on bt_exec pressed do
+			(
+				selected_items = (for i in lb_items.selection collect lb_items.items[i])
+				
+				cmd =" (SelectionSetsManager_v())."+bt_exec.text+"Set" + selected_items as string
+				--format "cmd: %\n" cmd
+				
+				execute cmd
+				
+				addSelectionSetsToQuadMenu()
+				
+				try( destroyDialog rlTestMultiList )catch()
+			)
+			
+		)
+		
+		--CreateDialog rlTestMultiList position:mouse.pos --height:(( sel_sets.keys.count * 16 ) + 40 )
+		CreateDialog rlTestMultiList position:mouse.pos height:(( sel_sets.keys.count * 16 ) + 48 )
+		
+		rlTestMultiList.bt_exec.text = callback
 	),
 	
 	/** Add object to set
@@ -50,20 +105,63 @@ struct SelectionSetsManager_v
 	
 	/** Delete set
 	 */
-	function deleteSet set_name =
+	function deleteSet set_names =
 	(
 		--format "\n"; print "SelectionSetsManager_v.deleteSet()"
-		if sel_sets[set_name] != undefined then
+		if classOf set_names != Array then set_names = #(set_names)
+		
+		for set_name in set_names where sel_sets[set_name] != undefined do
 			nsm.RemoveNamedSelSetByIndex sel_sets[set_name]
 	),
 	
 	/** Delete sets
 	 */
-	function deleteSets =
+	function deleteAllSets =
 	(
 		--format "\n"; print "SelectionSetsManager_v.deleteSets()"
 		for set_name in sel_sets.keys do
 			nsm.RemoveNamedSelSetByIndex sel_sets[set_name]
+	),
+	
+	/** Remove selection from sets
+	 */
+	function RemoveSet set_names =
+	(
+		format "\n"; print "SelectionSetsManager_v.removeSelectionFromSets()"
+		--_selection = selection as Array
+		if classOf set_names != Array then set_names = #(set_names)
+
+		for set_name in set_names do
+		(
+			format "set_name: %\n" set_name
+			/* REMOVE SELECTED OBJECTS FROM SET */ 
+			objs_in_set = for obj in this.getObjectsInSet set_name where not obj.isSelected collect obj
+			format "objs_in_set: %\n" objs_in_set
+			/* REWRITE SET */ 
+			nsm.ReplaceNamedSelSetByName objs_in_set set_name
+		)
+	),
+	
+	/** Add to set
+	 */
+	function addToSet =
+	(
+		format "\n"; print "SelectionSetsManager_v.addToSet()"
+		if classOf set_names != Array then set_names = #(set_names)
+
+		_selection = selection as Array
+		
+		for set_name in set_names do
+		(
+			format "set_name: %\n" set_name
+			/* REMOVE SELECTED OBJECTS FROM SET */ 
+			objs_in_set = for obj in this.getObjectsInSet set_name where not obj.isSelected collect obj
+			format "objs_in_set: %\n" objs_in_set
+			/* REWRITE SET */ 
+			nsm.ReplaceNamedSelSetByName this.getObjectsInSet set_name set_name
+		)
+		
+		
 	),
 	
 	/** Load from ini
@@ -143,11 +241,38 @@ struct SelectionSetsManager_v
 	 */
 	function getSelectedSet =
 	(
-		--format "\n"; print "SelectionSetsManager_v.getSelectedSet()"
-		for set_name in sel_sets.keys where _selection.count == sel_sets[set_name].count do
-			if compareArrays _selection sel_sets[set_name] then
-				selected_set = set_name
+		format "\n"; print "SelectionSetsManager_v.getSelectedSet()"
+		format "sel_sets: %\n" sel_sets
+		--fn compareArrays arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string == ( sort(arr2) ) as string
+		fn compareArrays arr1 arr2 = with PrintAllElements on ( sort(for o in arr1 collect o.name) ) as string == ( sort(for o in arr2 collect o.name) ) as string
 		
+		
+		selected_set = undefined
+		
+		_selection = selection as Array
+		format "_selection: %\n" _selection
+		
+		--for set_name in sel_sets.keys do
+		--format "objs_in_set: %\n" (this.getObjectsInSet set_name)
+		
+		
+		for set_name in sel_sets.keys \
+		where _selection.count == (objs_in_set = this.getObjectsInSet set_name).count \
+		while selected_set == undefined do
+		--for set_name in sel_sets.keys do
+		(
+			format "\n"
+			format "set_name: %\n" set_name
+			--objs_in_set = this.getObjectsInSet set_name
+			format "OBJS_IN_SET: %\n" objs_in_set
+			format "_selection.count:  %\n" _selection.count
+			format "objs_in_set.count: %\n" objs_in_set.count
+			
+			if compareArrays _selection objs_in_set then
+				selected_set = set_name
+			format "SELECTED_SET: %\n" selected_set
+			
+		)
 		selected_set --return
 	),
 	
@@ -163,10 +288,12 @@ struct SelectionSetsManager_v
 	 */
 	function getObjectsInSet set_name =
 	(
-		--format "\n"; print "SelectionSetsManager_v.getObjectsInSet()"
-		for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] \
+		format "\n"; print "SelectionSetsManager_v.getObjectsInSet()"
+		objs_in_set = for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] \
 			where ( obj = nsm.GetNamedSelSetItem sel_sets[set_name] n ) != undefined \
 				collect obj
+		format "OBJS_IN_SET: %\n" objs_in_set
+		objs_in_set --return
 	),
 	
 	private
