@@ -163,8 +163,8 @@ struct SceneStatesManager_v
 	 */
 	function getSceneStates =
 	(
-		format "\n"; print "SceneStatesManager_v.getSceneStates()"
-		format "sceneStateMgr.GetCount(): %\n" (sceneStateMgr.GetCount())
+		--format "\n"; print "SceneStatesManager_v.getSceneStates()"
+		--format "sceneStateMgr.GetCount(): %\n" (sceneStateMgr.GetCount())
 		scene_states = #()
 		
 		for i = 1 to sceneStateMgr.GetCount() do

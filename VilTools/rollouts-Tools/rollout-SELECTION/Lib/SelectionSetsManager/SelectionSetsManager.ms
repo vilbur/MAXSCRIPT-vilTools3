@@ -50,17 +50,28 @@ struct SelectionSetsManager_v
 	
 	/** Choose set rollout
 	 */
-	function chooseSetRollout callback =
+	function chooseSetRollout callback selected_sets:undefined =
 	(
 		format "\n"; print "SelectionSetsManager_v.chooseSetRollout()"
-		try( destroyDialog rlTestMultiList )catch()
+		format "selected_sets: %\n" selected_sets
+		sel_sets_by_objects = this.getSetsByObjects ( selection as Array )
 		
-		if callback == "Remove" then
-			sel_sets = this.getSetsByObjects ( selection as Array )
+		case callback as name of
+		(
+			#ADDTO: (
+				for sel_set in sel_sets_by_objects.keys do 
+					RemoveDictValue this.sel_sets sel_set
+
+			)
+			#REMOVE: this.sel_sets = sel_sets_by_objects
+			--default: 
+		)
+		
+		try( destroyDialog rlTestMultiList )catch()
 		
 		rollout rlTestMultiList "MultiList Exec"
 		(
-			multiListBox lb_items items:(sort sel_sets.keys) height:sel_sets.keys.count
+			multilistbox lb_items items:(sort sel_sets.keys) height:sel_sets.keys.count
 			
 			button bt_exec "FOO" width:80 height:40
 			
@@ -83,6 +94,17 @@ struct SelectionSetsManager_v
 		--CreateDialog rlTestMultiList position:mouse.pos --height:(( sel_sets.keys.count * 16 ) + 40 )
 		CreateDialog rlTestMultiList position:mouse.pos height:(( sel_sets.keys.count * 16 ) + 48 )
 		
+		sel_indexes = if selected_sets != undefined then
+		(
+			if classOf selected_sets != Array then selected_sets = #(selected_sets)
+			
+			for selected_set in selected_sets where (index = findItem rlTestMultiList.lb_items.items selected_set) > 0 collect index
+		)
+		else #{}
+		
+		
+		rlTestMultiList.lb_items.selection = sel_indexes
+		
 		rlTestMultiList.bt_exec.text = callback
 	),
 	
@@ -97,7 +119,11 @@ struct SelectionSetsManager_v
 		
 		/* NEW SET */ 
 		if sel_sets[set_name] == undefined then
+		(
 			this.addNewSet objs set_name
+
+			addSelectionSetsToQuadMenu()
+		)
 		/* UPDATE SET */ 
 		else
 			this.updateObjectsInSet objs set_name replace:replace
@@ -241,16 +267,14 @@ struct SelectionSetsManager_v
 	 */
 	function getSelectedSet =
 	(
-		format "\n"; print "SelectionSetsManager_v.getSelectedSet()"
-		format "sel_sets: %\n" sel_sets
+		--format "\n"; print "SelectionSetsManager_v.getSelectedSet()"
 		--fn compareArrays arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string == ( sort(arr2) ) as string
 		fn compareArrays arr1 arr2 = with PrintAllElements on ( sort(for o in arr1 collect o.name) ) as string == ( sort(for o in arr2 collect o.name) ) as string
-		
 		
 		selected_set = undefined
 		
 		_selection = selection as Array
-		format "_selection: %\n" _selection
+		--format "_selection: %\n" _selection
 		
 		--for set_name in sel_sets.keys do
 		--format "objs_in_set: %\n" (this.getObjectsInSet set_name)
@@ -261,16 +285,15 @@ struct SelectionSetsManager_v
 		while selected_set == undefined do
 		--for set_name in sel_sets.keys do
 		(
-			format "\n"
-			format "set_name: %\n" set_name
-			--objs_in_set = this.getObjectsInSet set_name
-			format "OBJS_IN_SET: %\n" objs_in_set
-			format "_selection.count:  %\n" _selection.count
-			format "objs_in_set.count: %\n" objs_in_set.count
+			--format "\n"
+			--format "set_name: %\n" set_name
+			----objs_in_set = this.getObjectsInSet set_name
+			--format "OBJS_IN_SET: %\n" objs_in_set
+			--format "_selection.count:  %\n" _selection.count
+			--format "objs_in_set.count: %\n" objs_in_set.count
 			
 			if compareArrays _selection objs_in_set then
 				selected_set = set_name
-			format "SELECTED_SET: %\n" selected_set
 			
 		)
 		selected_set --return
@@ -288,11 +311,11 @@ struct SelectionSetsManager_v
 	 */
 	function getObjectsInSet set_name =
 	(
-		format "\n"; print "SelectionSetsManager_v.getObjectsInSet()"
+		--format "\n"; print "SelectionSetsManager_v.getObjectsInSet()"
 		objs_in_set = for n = 0 to nsm.GetNamedSelSetItemCount sel_sets[set_name] \
 			where ( obj = nsm.GetNamedSelSetItem sel_sets[set_name] n ) != undefined \
 				collect obj
-		format "OBJS_IN_SET: %\n" objs_in_set
+		--format "OBJS_IN_SET: %\n" objs_in_set
 		objs_in_set --return
 	),
 	

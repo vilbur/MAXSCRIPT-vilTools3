@@ -70,7 +70,16 @@ icon:	"MENU:DELETE sets"
 (
 	on execute do
 	(
-		(SelectionSetsManager_v()).chooseSetRollout "Delete"
+		SelSets = SelectionSetsManager_v()
+
+		--if ( selected_set = SelSets.getSelectedSet() ) != undefined then
+		--(
+		--	format "selected_set: %\n" selected_set
+		--	
+		--	selected_index = #{SelSets.sel_sets[selected_set]}
+		--	
+		--)
+		SelSets.chooseSetRollout "Delete" selected_sets:(SelSets.getSelectedSet())
 	)
 )
 
@@ -105,17 +114,22 @@ icon:	"across:3"
 		
 		invisible_objs = 10e9
 		
-		most_visible_set = sel_sets.keys[1]
+		--most_visible_set = sel_sets.keys[1]
 		
 		/* REMOVE CURRENTLY SELECTED SET */ 		
 		if ( selected_set = SelSets.getSelectedSet() ) != undefined then
 			RemoveDictValue sel_sets selected_set
-		
+		format "SELECTED_SET: %\n" selected_set
+		format "\n------------------------------------------\n"
 		
 		for set_name in sort(sel_sets.keys) do
 		(
+			--format "SET_NAME: %\n" set_name
+			format "\n"
 			objs_in_set_count = sel_sets[set_name].count
-			--format "%: %\n" set_name objs_in_set_count
+			
+			format "%: %\n" set_name objs_in_set_count
+			
 			if objs_counts[objs_in_set_count] == undefined then
 				objs_counts[objs_in_set_count] = #()
 			
@@ -123,12 +137,13 @@ icon:	"across:3"
 		)
 		
 		min_count = amin objs_counts.keys
+		format "\n"
 		format "objs_counts: %\n" objs_counts
 		format "min_count: %\n" min_count
 		
 		min_count_set = objs_counts[min_count][1]
 		--format "SELECT NAMED SET: \"%\"\n" min_count_set
-		format "min_count_set: %\n" min_count_set
+		format "SELECT SET: %\n" min_count_set
 		objs = SelSets.getObjectsInSet min_count_set
 		format "objs: %\n" objs
 		if objs.count > 0 then
