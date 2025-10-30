@@ -26,7 +26,8 @@ function addSelectionSetsToQuadMenu =
 	MenuSets.clearMenu()
 	
 	counter = 0
-	selectionSets
+	
+	
 	/* CREATE EACH MACROSCRIPT */ 
 	for set_name in SelSets.sel_sets.keys do
 	--for set_name in SelSets.sel_sets.keys do
@@ -52,6 +53,8 @@ function addSelectionSetsToQuadMenu =
 		append macroscripts MacroData
 	)
 	
+	filein file_path
+	
 	/* WRITE TO MCR FILE */ 
 	(MacroscriptGenerator_v()).generateMcrFile (macroscripts) (file_path)
 	
@@ -68,17 +71,3 @@ function addSelectionSetsToQuadMenu =
 	SelSetsQuadMenu.Quads[1].addMenu( category )
 	
 )
-	
-		
-/** Set selection set seleted
- */
-function setSelectionSetSeleted =
-(
-	--format "\n"; print ".setSelectionSetSeleted()"
-	
-	SelSets = SelectionSetsManager_v()
-	
-	selected_sets = SelSets.getSetsByObjects ( selection as Array )
-	
-	NAMED_SELECTION_SETS_QUADMENU = (for set_name in selected_sets.keys collect selected_sets[set_name] + 1 ) as BitArray
-)	

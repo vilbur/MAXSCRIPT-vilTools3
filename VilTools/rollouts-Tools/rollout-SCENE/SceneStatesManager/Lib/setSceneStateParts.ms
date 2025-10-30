@@ -5,10 +5,10 @@
  */
 function setSceneStateParts _bit =
 (
-	format "\n"; print ".setSceneStateParts()"
-	format "_bit: %\n" _bit
+	--format "\n"; print ".setSceneStateParts()"
+	--format "_bit: %\n" _bit
 	ini = Ini_v(getDir #TEMP + "\\ini_files\\SCENE_STATE_BITS.ini" )
-	format "INI: %\n" (Ini.getPath())
+	--format "INI: %\n" (Ini.getPath())
 
     
     -- return result_string

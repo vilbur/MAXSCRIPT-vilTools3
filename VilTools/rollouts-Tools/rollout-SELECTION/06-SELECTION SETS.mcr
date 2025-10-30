@@ -229,7 +229,7 @@ icon:	"MENU:true"
 	)
 )
 
-global NAMED_SELECTION_SETS_QUADMENU
+global NAMED_SELECTION_SETS_QUADMENU = undefined
 
 macroscript	selection_sets_create_menu_callbacks
 category:	"_Selection-Sets"
@@ -237,39 +237,50 @@ buttontext:	"SELECTION SETS QUAD MENU ✅"
 toolTip:	"Enable\Disable selection sets in quad menu"
 icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 (
-	on IsChecked do NAMED_SELECTION_SETS_QUADMENU != undefined
+	--on IsChecked do NAMED_SELECTION_SETS_QUADMENU != undefined
 
 	on execute do
 	(
+		format "\n------------------------------------------------------------------------------------\n"
+		format "NAMED_SELECTION_SETS_QUADMENU: %\n" NAMED_SELECTION_SETS_QUADMENU
+		format "EventFired: %\n" (EventFired != undefined and EventFired.val)
+		format "TEST: %\n" (NAMED_SELECTION_SETS_QUADMENU == undefined or ( EventFired != undefined and EventFired.val ) )
+		
 		if NAMED_SELECTION_SETS_QUADMENU == undefined or ( EventFired != undefined and EventFired.val ) then
 		(
 			CALLBACKMANAGER.add "addSelectionSetsToQuadMenu" #NamedSelSetRenamed
 			CALLBACKMANAGER.add "addSelectionSetsToQuadMenu" #NamedSelSetDeleted
 			CALLBACKMANAGER.add "addSelectionSetsToQuadMenu" #filePostOpen
-			CALLBACKMANAGER.add "setSelectionSetSeleted" #selectionSetChanged
+			
+			CALLBACKMANAGER.add "setSelectionSetActive" #selectionSetChanged
+			CALLBACKMANAGER.add "setSelectionSetActive" #filePostOpen
+			
+			CALLBACKMANAGER.add "clearSelectionSetMenu" #preSystemShutdown 
+
 
 			CALLBACKMANAGER.start "addSelectionSetsToQuadMenu"
-			CALLBACKMANAGER.start "setSelectionSetSeleted"
+			CALLBACKMANAGER.start "setSelectionSetActive"
  
-			addSelectionSetsToQuadMenu()
+			setSelectionSetActive()
 			
-			setSelectionSetSeleted()
+			addSelectionSetsToQuadMenu()
 			
 		)
 		else
 		(
-			CALLBACKMANAGER.kill "addSelectionSetsToQuadMenu"
 
+			CALLBACKMANAGER.kill "addSelectionSetsToQuadMenu"
+			CALLBACKMANAGER.kill "setSelectionSetActive"
+			
 			MenuSets = Menu_v ("_Selection_Set")
 			
 			MenuSets.clearMenu()
 			
 			NAMED_SELECTION_SETS_QUADMENU = undefined
 			
-			CALLBACKMANAGER.kill "addSelectionSetsToQuadMenu"
-			CALLBACKMANAGER.kill "setSelectionSetSeleted"
 			
 		)
+		format "NAMED_SELECTION_SETS_QUADMENU: %\n" NAMED_SELECTION_SETS_QUADMENU
 
 	)
 )

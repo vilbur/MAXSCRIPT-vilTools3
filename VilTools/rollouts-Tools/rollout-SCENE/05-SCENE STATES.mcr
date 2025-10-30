@@ -52,9 +52,7 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 		if SCENE_STATE_BITS == undefined or ( EventFired != undefined and EventFired.val ) then
 		(
 			
-			CALLBACKMANAGER.add "processSceneStateCallbackMenu"	#NamedSelSetRenamed
-			CALLBACKMANAGER.add "processSceneStateCallbackMenu"	#NamedSelSetDeleted
-			CALLBACKMANAGER.add "processSceneStateCallbackMenu"	#filePostOpen
+			CALLBACKMANAGER.add "processSceneStateCallbackMenu" #filePostOpen
 
 			CALLBACKMANAGER.start "processSceneStateCallbackMenu"
 

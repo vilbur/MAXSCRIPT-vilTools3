@@ -5,8 +5,8 @@ category:	"_Epoly-Options"
 buttonText:	"Ignore Backfacing"
 icon:	"MENU:true"
 (
-	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getcurrentObject()).ignoreBackfacing == true
+	on isVisible	do return isEpoly()
 
 	on execute do
 	(
@@ -21,8 +21,8 @@ category:	"_Epoly-Options"
 buttonText:	"Ignore Occluded"
 icon:	"MENU:true"
 (
-	on isVisible	do return isEpoly()	and	( not matchPattern ((viewport.getType index:viewport.activeViewport) as string) pattern:@"*persp*" ) -- if not perspective view
 	on isChecked	do (modPanel.getcurrentObject()).ignoreOccluded == true
+	on isVisible	do return isEpoly()	and	( not matchPattern ((viewport.getType index:viewport.activeViewport) as string) pattern:@"*persp*" ) -- if not perspective view
 
 	on execute do
 	(
@@ -37,8 +37,8 @@ category:	"_Epoly-Options"
 buttonText:	"Select By Angle"
 icon:	"MENU:true"
 (
-	on isVisible	do return isEpoly()
 	on isChecked	do (modPanel.getCurrentObject()).SelectByAngle == true
+	on isVisible	do return isEpoly()
 
 	on execute do
 	(
