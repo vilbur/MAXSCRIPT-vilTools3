@@ -26,7 +26,7 @@ function addSelectionSetsToQuadMenu =
 	MenuSets.clearMenu()
 	
 	counter = 0
-	
+	selectionSets
 	/* CREATE EACH MACROSCRIPT */ 
 	for set_name in SelSets.sel_sets.keys do
 	--for set_name in SelSets.sel_sets.keys do
@@ -43,7 +43,11 @@ function addSelectionSetsToQuadMenu =
 		
 		macro_code = "\n\t\tselect ( ( SelectionSetsManager_v() ).getObjectsInSet \""+set_name+"\" )"
 		
-		MacroData = MacroData_v macro_name category buttontext:(prefix + set_name) exe:macro_code icon:"MENU:true"
+		MacroData = MacroData_v macro_name category \
+						buttontext:	(prefix + set_name) \
+						icon:	"MENU:true" \
+						exe:	macro_code \
+						IsChecked:	("NAMED_SELECTION_SETS_QUADMENU != undefined and NAMED_SELECTION_SETS_QUADMENU["+ (SelSets.sel_sets[set_name] + 1) as string +"]")
 		
 		append macroscripts MacroData
 	)
@@ -61,8 +65,20 @@ function addSelectionSetsToQuadMenu =
 	
 	
 	/* ADD SETS TO QUAD */
-	SelSetsQuadMenu.Quads[1].addMenu( category )	
+	SelSetsQuadMenu.Quads[1].addMenu( category )
+	
 )
 	
 		
-		
+/** Set selection set seleted
+ */
+function setSelectionSetSeleted =
+(
+	--format "\n"; print ".setSelectionSetSeleted()"
+	
+	SelSets = SelectionSetsManager_v()
+	
+	selected_sets = SelSets.getSetsByObjects ( selection as Array )
+	
+	NAMED_SELECTION_SETS_QUADMENU = (for set_name in selected_sets.keys collect selected_sets[set_name] + 1 ) as BitArray
+)	

@@ -46,9 +46,11 @@ function sceneStatesPartsMenu =
 		
 		tooltip = ( dotNetClass "System.Text.RegularExpressions.Regex").Replace state_name "(?<!^)([A-Z])" " $1"
 		--format "title: %\n" title
-		MacroData = MacroData_v state_name category exe:macro_code tooltip:tooltip icon:"MENU:true"
 		
-		MacroData.IsChecked = "SCENE_STATE_BITS != undefined and SCENE_STATE_BITS["+ _bit as string +"]"
+		MacroData = MacroData_v state_name category \
+						exe:macro_code \
+						tooltip:tooltip icon:"MENU:true" \
+						IsChecked: ("SCENE_STATE_BITS != undefined and SCENE_STATE_BITS["+ _bit as string +"]")
 		
 		append macroscripts MacroData
 	)

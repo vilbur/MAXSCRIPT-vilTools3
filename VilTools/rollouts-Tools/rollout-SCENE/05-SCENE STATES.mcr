@@ -36,20 +36,22 @@ icon:	"MENU:DIALOG open"
 )
 
 
-global SCENE_STATES_QUADMENU
+--global SCENE_STATE_BITS
 
 macroscript	scene_states_create_menu_callbacks
 category:	"_Scene-States"
-buttontext:	"SCENE STATES QUAD MENU"
+buttontext:	"SCENE STATES QUAD MENU ✅"
 toolTip:	"Enable\Disable "
 icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 (
-	on IsChecked do SCENE_STATES_QUADMENU != undefined
+	on IsChecked do SCENE_STATE_BITS != undefined
 
 	on execute do
 	(
-		if SCENE_STATES_QUADMENU != true or ( EventFired != undefined and EventFired.val ) then
+		
+		if SCENE_STATE_BITS == undefined or ( EventFired != undefined and EventFired.val ) then
 		(
+			
 			CALLBACKMANAGER.add "processSceneStateCallbackMenu"	#NamedSelSetRenamed
 			CALLBACKMANAGER.add "processSceneStateCallbackMenu"	#NamedSelSetDeleted
 			CALLBACKMANAGER.add "processSceneStateCallbackMenu"	#filePostOpen
@@ -70,11 +72,12 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 			(Menu_v ("_Scene-States-Parts")).clearMenu()
 			
 			(Menu_v ("_Scene-State-Callback")).clearMenu()
-
+			
+			SCENE_STATE_BITS = undefined
 		)
 
-		if EventFired != undefined then 
-			SCENE_STATES_QUADMENU = EventFired.val
+		--if EventFired != undefined then 
+			--SCENE_STATE_BITS = EventFired.val
 	)
 )
 

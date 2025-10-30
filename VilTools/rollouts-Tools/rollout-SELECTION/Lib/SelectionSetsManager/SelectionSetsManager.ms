@@ -2,8 +2,13 @@ filein( getFilenamePath(getSourceFileName()) + "/addSelectionSetsToQuadMenu.ms" 
 
 /** Selection sets manager
   
-  https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-6CC6500C-FD5C-4646-A880-BC34E852CA2B
-  https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-2BBC8C79-6E94-4C93-A491-E0DA5A5E5A0C
+	
+	NamedSelectionSetManager: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-6CC6500C-FD5C-4646-A880-BC34E852CA2B
+	
+	SelectionSet Values: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-2BBC8C79-6E94-4C93-A491-E0DA5A5E5A0C
+  
+	SelectionSetArray Values: https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-90C7FC22-30E6-4465-B199-9FF98B275751
+  
  */
 struct SelectionSetsManager_v
 (
@@ -256,46 +261,31 @@ struct SelectionSetsManager_v
 			
 			for obj in objs while sel_sets_by_obj[set_name] == undefined do
 				if findItem objs_in_set obj > 0 then
-					sel_sets_by_obj[set_name] = objs_in_set
+					sel_sets_by_obj[set_name] = sel_sets[set_name]
 		)
 		
 		sel_sets_by_obj --return
 	),
 	
-	/** Get selected set
-	  * set is selected if all objects of set are selected
+	/** Test if all objects of selection set are selected
+	  *
+	  * @return string|undefined name of selected set
 	 */
 	function getSelectedSet =
 	(
 		--format "\n"; print "SelectionSetsManager_v.getSelectedSet()"
-		--fn compareArrays arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string == ( sort(arr2) ) as string
 		fn compareArrays arr1 arr2 = with PrintAllElements on ( sort(for o in arr1 collect o.name) ) as string == ( sort(for o in arr2 collect o.name) ) as string
 		
 		selected_set = undefined
 		
 		_selection = selection as Array
-		--format "_selection: %\n" _selection
-		
-		--for set_name in sel_sets.keys do
-		--format "objs_in_set: %\n" (this.getObjectsInSet set_name)
-		
 		
 		for set_name in sel_sets.keys \
 		where _selection.count == (objs_in_set = this.getObjectsInSet set_name).count \
 		while selected_set == undefined do
-		--for set_name in sel_sets.keys do
-		(
-			--format "\n"
-			--format "set_name: %\n" set_name
-			----objs_in_set = this.getObjectsInSet set_name
-			--format "OBJS_IN_SET: %\n" objs_in_set
-			--format "_selection.count:  %\n" _selection.count
-			--format "objs_in_set.count: %\n" objs_in_set.count
-			
 			if compareArrays _selection objs_in_set then
 				selected_set = set_name
-			
-		)
+		
 		selected_set --return
 	),
 	
