@@ -51,7 +51,7 @@ icon:	"MENU:true"
 macroscript	material_assign_xray_mat
 category:	"_Material-Types"
 buttonText:	"X-Ray"
-tooltip:	"TURN ON"
+--tooltip:	"TURN ON"
 icon:	"MENU:true|tooltip:Set transparency on objects material,\nor assign X-Ray material, if material is undefined."
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
@@ -97,7 +97,24 @@ icon:	"menu:true"
 		mat.opacity = 100
 )
 
-
+/*------------------------------------------------------------------------------
+	CHECKER
+--------------------------------------------------------------------------------*/
+/**  
+ */
+macroscript	material_assign_checker
+category:	"_Material-Types"
+buttonText:	"Checker"
+--tooltip:	"TURN ON"
+icon:	"MENU:true"
+(
+	--checker_map =  "$userScripts\\scripts\\MAXSCRIPT-viltools3\\Checkers\\checker_1px.tga"
+	checker_map =  "$userScripts\\MAXSCRIPT-viltools3\\Checkers\\checkermap_a.tga"
+	doesFileExist checker_map
+	mat = (Material_v()).StandartMat.create "Checker" diffuse:checker_map
+	
+	selection.material = mat
+)
 
 
 

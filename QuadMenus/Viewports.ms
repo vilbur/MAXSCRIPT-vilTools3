@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("SWITCH VIEWPORT")
+	QuadMenu.setTitle("S W I T C H   V I E W P O R T")
 
 	--Fooo	= Menu_v("")
 
@@ -18,7 +18,7 @@ function addQuad1 QuadMenu =
 	QUAD 2
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
-(
+(v
 	QuadMenu.setTitle("L A Y O U T   L O A D" )
 	
 	LayoutsMenu 	= QuadMenu.addMenu("_Viewports-Layout")
@@ -44,7 +44,7 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("M A N A G E")
+	QuadMenu.setTitle("M A N A G E   L A Y O U T")
 
 	LayoutsMenu 	= Menu_v("_Viewports-Manage")
 
@@ -66,13 +66,15 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	QuadMenu.setTitle("VISIBILITY BY TYPE")
+	QuadMenu.setTitle("OPTIONS")
 	
 	
 	/* REMOVE DEFAULT ITEMS FROM END OF MENU */ 
 	if (items_count = QuadMenu.numItems()) == 15 then
 		for i = items_count to items_count - 6 by -1 do
 			QuadMenu.removeItem(i)
+			
+	QuadMenu.addSeparator()
 
 	QuadMenu.addMenu( "_Viewports-Setup-Grid" )	--flat:true --index:1
 )

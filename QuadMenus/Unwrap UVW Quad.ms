@@ -3,20 +3,19 @@
 --------------------------------------------------------------------------------*/
 function addQuad1 QuadMenu =
 (
-	QuadMenu.setTitle("SELECTION SETS")
+	QuadMenu.setTitle("T E M P A L T E 1")
 
-	--FooMenu	= Menu_v("_Selection-Sets")
+	--FooMenu	= Menu_v("Selection")
 	--FooMenu.removeItem()
 	--FooMenu.clearSeparators()
 
-	QuadMenu.addItem "_Selection-Sets" "selection_sets_select" title:"&SELECT"
-
-	--QuadMenu.addSeparator()
-	
+	--Menu.addItem category macro_script_name title: group: index:
 	--Menu.moveItem ("ITEM") 1
 
+	--QuadMenu.addSeparator()
 	--QuadMenu.addSeparators #()
 
+	QuadMenu.addMenu("Selection")	separators: #( 1 )	--title:"" --index: --flat:false
 
 )
 
@@ -25,9 +24,7 @@ function addQuad1 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad2 QuadMenu =
 (
-	QuadMenu.setTitle("MANAGE SETS")
-	
-	QuadMenu.addMenu("_Selection-Sets")	separators: #(  2, 4, 6 )	--title:"" --index: --flat:false
+	QuadMenu.setTitle("T E M P A L T E 2")
 )
 
 /*------------------------------------------------------------------------------
@@ -35,13 +32,7 @@ function addQuad2 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad3 QuadMenu =
 (
-	QuadMenu.setTitle("S C E N E   S T A T E S")
-	
-	_SceneStatesMenu = QuadMenu.addMenu("_Scene-States")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
-	
-	QuadMenu.addSeparator()
-
-	StatesFiltersMenu = QuadMenu.addMenu("_Scene-States-Parts")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
+	QuadMenu.setTitle("T E M P A L T E 3")
 )
 
 /*------------------------------------------------------------------------------
@@ -49,12 +40,7 @@ function addQuad3 QuadMenu =
 --------------------------------------------------------------------------------*/
 function addQuad4 QuadMenu =
 (
-	--QuadMenu.setTitle("LOAD|SAVE|RENAME|DELETE")
-	QuadMenu.setTitle("S C E N E  S T A T E")
-	--QuadMenu.setTitle("CTRL:save|SHIFT:rename|ALT:Delete")
-	
-
-	
+	QuadMenu.setTitle("T E M P A L T E 4")
 )
 
 
@@ -62,10 +48,13 @@ function addQuad4 QuadMenu =
   */
 QuadMenuNew = QuadMenu_v( getFilenameFile( getSourceFileName() ) )
 
+format "\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\n\n"
+format "QuadMenuNew: %\n" QuadMenuNew
+format "QuadMenuNew: %\n" QuadMenuNew.Quads[1].name
 
 /** ADD QUAD MENUS
   */
-addQuad1( QuadMenuNew.Quads[1] )
-addQuad2( QuadMenuNew.Quads[2] )
-addQuad3( QuadMenuNew.Quads[3] )
-addQuad4( QuadMenuNew.Quads[4] )
+--addQuad1( QuadMenuNew.Quads[1] )
+--addQuad2( QuadMenuNew.Quads[2] )
+--addQuad3( QuadMenuNew.Quads[3] )
+--addQuad4( QuadMenuNew.Quads[4] )

@@ -146,7 +146,8 @@ autoUndoEnabled: true
 			ffd_current = getDimensions curr_mod
 
 			/* DIALOG */
-			_Dialog = Dialog_v ("EditFFD") --ini:(getSourceFileName())
+			--_Dialog = Dialog_v ("EditFFD") --ini:(getSourceFileName())
+			_Dialog = Dialog_v ("EditFFD") width:128
 
 			/* CONTROLS */
 			_Controls   = _Dialog.Controls() --group:"Controls"
@@ -155,13 +156,14 @@ autoUndoEnabled: true
 			dimensions = #( #Length, #Width, #Height )
 			for i = 1 to dimensions.count do
 			(
-				_Control = _Controls.control #spinner ( toUpper ( dimensions[i]  as string ) ) across:1 offset:[0,16] range:[2, 1000, ffd_current[i] ] params: #(#type, #integer)
+				_Control = _Controls.control #SPINNER ( toUpper ( dimensions[i]  as string ) ) across:1 width:112 offset:[0,16] range:[2, 1000, ffd_current[i] ] params: #(#type, #integer)
 
 				_Control.Event #changed "editFFDcallback"
 			)
 
 			/* DIALOG CREATE */
-			_Dialog.create width:128
+			--_Dialog.create width:128
+			_Dialog.create()
 
 		)
 		else

@@ -17,7 +17,7 @@ struct MaterialId_v
 	 */
 	function createtMultiIdMaterial =
 	(
-		print "Material.getIdMaterial()"
+		--print "Material.createtMultiIdMaterial()"
 		mat_name = "Multi ID"
 
 		colors	 = 6
@@ -34,10 +34,15 @@ struct MaterialId_v
 		multi_mat	= Multimaterial numsubs:RGB.count name:mat_name -- (getFilenamePath  loadedMat)
 
 		/* SET PROPS FOR EACH SUB MATERIAL */
-		for c=1 to RGB.count do
+		for c = 1 to RGB.count do
 		(
-			multi_mat[c].base_color = color RGB[c][1] RGB[c][2] RGB[c][3]
-			multi_mat[c].refl_color = color 50 50 50 255
+			std_mat = standardMaterial()
+
+			std_mat.diffuse = color RGB[c][1] RGB[c][2] RGB[c][3]
+			std_mat.name = ("mat_id_" + c as string )
+	
+			multi_mat.materialList[c] = std_mat
+			multi_mat.materialIDList[c] = c
 		)
 
 		multi_mat --return

@@ -60,11 +60,12 @@ function addQuad4 QuadMenu =
 )
 
 
+format "WTF: %\n" ( getFilenameFile( getSourceFileName() ) )
 
 /** DEFIEN QUAD
   */
 QuadMenuNew = QuadMenu_v( getFilenameFile( getSourceFileName() ) )
-
+format "QuadMenuNew: %\n" QuadMenuNew
 
 /** ADD QUAD MENUS
   */

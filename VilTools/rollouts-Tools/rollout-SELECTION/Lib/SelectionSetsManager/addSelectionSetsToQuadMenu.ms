@@ -29,7 +29,7 @@ function addSelectionSetsToQuadMenu =
 	
 	
 	/* CREATE EACH MACROSCRIPT */ 
-	for set_name in SelSets.sel_sets.keys do
+	for set_name in sort SelSets.sel_sets.keys do
 	--for set_name in SelSets.sel_sets.keys do
 	(
 		--format "set_name: %\n" set_name

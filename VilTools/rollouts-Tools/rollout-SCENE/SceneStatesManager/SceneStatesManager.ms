@@ -1,9 +1,9 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/processSceneStateCallbackMenu.ms" )	--"./processSceneStateCallbackMenu.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/sceneStatesPartsMenu.ms" )	--"./sceneStatesPartsMenu.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateParts.ms" )	--"./setSceneStateParts.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/processSceneStateCallbackMenu.ms" )	--"./Lib/processSceneStateCallbackMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/sceneStatesPartsMenu.ms" )	--"./Lib/sceneStatesPartsMenu.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateParts.ms" )	--"./Lib/setSceneStateParts.ms"
 
 --global SCENE_STATE_BITS = BitArray 10
-global SCENE_STATE_BITS
+global SCENE_STATE_BITS = undefined
 
 /** Selection sets manager
   
@@ -26,7 +26,7 @@ struct SceneStatesManager_v
 	/* private */
 	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties ),
 
-	menu_callback_help_message = "MANAGE STATE IN QUAD MENU: Press CTRL: Save state | Press SHIFT: Rename state | Press ALT: Delete state",
+	--menu_callback_help_message = "MANAGE STATE IN QUAD MENU: Press CTRL: Save state | Press SHIFT: Rename state | Press ALT: Delete state",
 	/* dependency */
 	/* reference */
 	/* inhered */
@@ -44,37 +44,52 @@ struct SceneStatesManager_v
 		--enabled_parts = this.getNamesOfParts(SCENE_STATE_BITS)
 		
 		state_parts = sceneStateMgr.GetParts state_name
+		
+		--format "\n%" menu_callback_help_message
 
-		/* RESAVE STATE on CONTROL pressed */ 
+		/*------------------------------------------------------------------------------
+			RESAVE STATE on CONTROL pressed
+		--------------------------------------------------------------------------------*/
 		if keyboard.controlPressed then
 		(
 			format "state_parts: %\n" state_parts
 			format "SCENE_STATE_BITS: %\n" SCENE_STATE_BITS
+			--names_of_parts = this.getNamesOfParts(state_parts)
+			parts_to_save = SCENE_STATE_BITS
 			
-			state_parts_string =  this._arrayToString (this.getNamesOfParts(state_parts))
+			--state_parts_string = if names_of_parts.count > 1 then this._arrayToString (names_of_parts) else names_of_parts[1]
+			state_parts_string = this._arrayToString (this.getNamesOfParts(parts_to_save))
 			
-			if queryBox ("SAVE STATE ?\n\nSTATE:\n\t" +state_name+ "\n\nPARTS:\n" + state_parts_string ) title:"SAVE SCENE STATE" then
-				this.saveState state_name state_parts
+			if queryBox ("SAVE STATE ?\n\nSTATE:\n\n'" +state_name+ "'\n\nPARTS:\n\n" + state_parts_string ) title:"SAVE SCENE STATE" then
+				this.saveState state_name parts_to_save
 		)
-		/* RENAME on SHIFT pressed */ 
+		
+		/*------------------------------------------------------------------------------
+			RENAME on SHIFT pressed
+		--------------------------------------------------------------------------------*/
 		else if keyboard.shiftPressed then
 		(
 			if (new_name = this._askForStateName default:state_name) != "" then
 				this.renameState state_name new_name
 		)
-		/* DELETE on ALT pressed */ 
+		
+		/*------------------------------------------------------------------------------
+			DELETE on ALT pressed
+		--------------------------------------------------------------------------------*/
 		else if keyboard.altPressed then
 		(
 			if queryBox ("DELETE STATE ?\n\n"+state_name) title:"DELETE SCENE STATE" then
 				this.deleteState state_name
-		)		
-		/* LAOD STATE */ 
+		)
+		
+		/*------------------------------------------------------------------------------
+			LOAD STATE
+		--------------------------------------------------------------------------------*/
 		else
 			this.loadState state_name state_parts
 		
-		processSceneStateCallbackMenu()
+		--processSceneStateCallbackMenu()
 
-		format "menu_callback_help_message: %\n" menu_callback_help_message
 	),
 	
 	/** Create state
@@ -113,7 +128,7 @@ struct SceneStatesManager_v
 
 		format "state_bits: %\n" state_bits
 
-		if ( index = sceneStateMgr.FindSceneState state_name) == 0 then
+		--if ( index = sceneStateMgr.FindSceneState state_name) == 0 then
 			sceneStateMgr.Capture state_name state_bits
 	),
 	
@@ -177,8 +192,14 @@ struct SceneStatesManager_v
 	 */
 	function getNamesOfParts bits =
 	(
-		--format "\n"; print "SceneStatesManager_v.getNamesOfParts()"
-		for _bit in bits collect scene_state_bit_names[_bit]
+		format "\n"; print "SceneStatesManager_v.getNamesOfParts()"
+		
+		for _bit in bits collect scene_state_bit_names[_bit] as string
+		--names_of_parts = for _bit in bits collect scene_state_bit_names[_bit] as string
+		--
+		--format "names_of_parts: %\n" names_of_parts
+		--
+		--names_of_parts --return
 	),
 	
 	--/** Get state parts
@@ -262,7 +283,7 @@ struct SceneStatesManager_v
 	
 	/** Join array to string
 	*/
-   function _arrayToString arr delimeter:"\n" = ( _string = ""; for item in arr where item == true do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count)),
+   function _arrayToString arr delimeter:"\n" = ( _string = ""; for item in arr do _string += item as string  + delimeter; substring _string 1 (_string.count-delimeter.count)),
 		
 	--/** Get scene states
 	-- */

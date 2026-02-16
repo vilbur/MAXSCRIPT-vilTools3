@@ -1,6 +1,25 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Transform.ms" )	--"./Lib/Transform.ms"
 filein( getFilenamePath(getSourceFileName()) + "/Lib/SnapManager/SnapManager.ms" )	-- "./Lib/SnapManager/SnapManager.ms"
+filein( getFilenamePath(getSourceFileName()) + "/Lib/moveObjCbyAB.ms" )	--"./Lib/moveObjCbyAB.ms"
 
+/**
+ */
+macroscript	_transform_reset_xform
+category:	"_Transform"
+buttontext:	"Reset xForm"
+toolTip:	"Reset xForm of selected objects"
+icon:	"MENU:Reset X FORM|across:2"
+(
+	on execute do
+		for obj in selection where superClassOf obj == GeometryClass do
+		(
+			ResetXForm obj
+
+			modPanel.addModToSelection (XForm ()) ui:on
+
+			convertTo obj Editable_Poly
+		)
+)
 
 /**
  */
@@ -8,7 +27,7 @@ macroscript	_transform_set_angle_snap_value
 category:	"_Transform"
 buttontext:	"Angle Snap 1|5|45°"
 toolTip:	"Toggle snap between 1°, 5° and 45°"
-icon:	"MENU:true|across:3"
+icon:	"MENU:true"
 (
 	on execute do
 	(
@@ -35,23 +54,20 @@ icon:	"MENU:true|across:3"
 	)
 )
 
-/**
- */
-macroscript	_transform_reset_xform
+/*
+*/
+macroscript	move_c_by_AB
 category:	"_Transform"
-buttontext:	"Reset xForm"
-toolTip:	"Reset xForm of selected objects"
---icon:	"MENU:true"
+buttontext:	"MOVE C by A B"
+toolTip:	"Move object on active axis about distance of two another objects.\n\nTARGET OBJECT IS 3rd IN SELECTION"
+icon:	"across:2"
 (
 	on execute do
-		for obj in selection where superClassOf obj == GeometryClass do
-		(
-			ResetXForm obj
-
-			modPanel.addModToSelection (XForm ()) ui:on
-
-			convertTo obj Editable_Poly
-		)
+	(
+		undo "Move obj C by A B " on
+			moveObjCbyAB direction:-1
+		
+	)
 )
 
 /*
@@ -60,7 +76,7 @@ macroscript	rotate_toos_rotate
 category:	"_Transform"
 buttontext:	"Rotate"
 toolTip:	"Rotate selection active axis of angle snap value"
---icon:	"MENU:true"
+--icon:	"across:2"
 (
 	on execute do
 		(Transform_v()).rotateSelection( (SnapManager_v()).getAngle() )

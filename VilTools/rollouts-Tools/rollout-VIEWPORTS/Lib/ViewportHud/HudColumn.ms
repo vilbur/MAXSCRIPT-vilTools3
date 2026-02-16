@@ -7,7 +7,7 @@ struct HudColumn_v
 	text,
 
 	/* properties */
-	color = white,
+	color,
 	width,
 
 	/* private */

@@ -15,13 +15,13 @@ icon:	"across:3"
 		/* IF NOT SUBOBJECT ACTIVE */ 
 		if not ( subObjectLevel != undefined and subObjectLevel > 0 ) then
 		(
-			visible_objects = (for obj in objects where not obj.isHidden collect obj).count
+			visible_objects = (for obj in objects where not obj.isHidden collect obj)
 
 			if visible_objects.count == 0 then
 				return false
 			
 			/* GET LAYER MANAGER AUTO EXPAND STATE */
-			if visible_objects > max_visible_objects and ( layer_manager_dialog = SceneExplorerManager.GetActiveExplorer() ) != undefined and ( auto_expand = layer_manager_dialog.AutoExpand ) then
+			if visible_objects.count > max_visible_objects and ( layer_manager_dialog = SceneExplorerManager.GetActiveExplorer() ) != undefined and ( auto_expand = layer_manager_dialog.AutoExpand ) then
 				layer_manager_dialog.AutoExpand = false
 			
 			actionMan.executeAction 0 "40021"  -- Selection: Select All

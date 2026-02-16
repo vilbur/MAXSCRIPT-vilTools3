@@ -13,8 +13,9 @@ function addQuad1 QuadMenu =
 	item_1 = SnapOptionsMenu.getItem 1
 	--format "item_1: %\n" item_1
 	
-	--(SnapOptionsMenu.getItem 1).setTitle ("AXIS Snap")
-	--(SnapOptionsMenu.getItem 2).setTitle ("Snap To Frozen")
+	(SnapOptionsMenu.getItem 1).setTitle ("Snap AXIS Constraints")
+	(SnapOptionsMenu.getItem 2).setTitle ("Snap To FROZEN objects")
+	
 	SnapOptionsMenu.removeItem 4
 	
 	/* REORDER ITEMS */

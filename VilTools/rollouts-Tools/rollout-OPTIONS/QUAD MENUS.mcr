@@ -16,14 +16,16 @@ icon:	"MENU:true|ACROSS:3|ssheight:28"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
 		current_dir = getFilenamePath(getSourceFileName())
 	
+		QuadMenuManager = QuadMenuManager_v() --"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms"
+	
 		/* IMPORT *.mcr files*/
-		(QuadMenuManager_v()).createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
+		QuadMenuManager.createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
 		
 		
 		format "\n\n"; print "========================= SETUP MENUS ========================="
 	
 		/* SETUP QUAD MENUS */ 
-		(QuadMenuManager_v()).setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
+		QuadMenuManager.setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
 
 	)
 )

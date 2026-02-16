@@ -95,6 +95,57 @@ icon:	"MENU:true"
 )
 
 /*------------------------------------------------------------------------------
+	ALIGN PIVOT TO VERTS
+--------------------------------------------------------------------------------*/
+
+/**
+ *
+ */
+macroscript	_align_pivot_to_selected_verts_pos
+category:	"_Transform"
+buttontext:	"Privot To Verts"
+toolTip:	"Snap object pivot to selected verts"
+icon:	"#across:3|width:96"
+(
+	on execute do
+   (
+	    if selection.count > 0 then
+	    (
+			obj	= selection[1]
+			
+			vertex_sel	= getVertSelection obj.mesh
+			
+	        if vertex_sel.numberset > 0 then
+	        (
+	            -- Calculate the center of selected vertices
+	            centerPoint = [0,0,0]
+				
+				verts_pos = in coordsys world meshop.getVerts obj.mesh vertex_sel node:obj
+				
+	            for vert_pos in verts_pos do 
+	                centerPoint += vert_pos
+				
+	            centerPoint /= vertex_sel.numberset
+	            
+	            -- Set pivot to the calculated center
+	            obj.pivot = centerPoint
+				
+	            messageBox "Pivot snapped to vertex selection"
+
+	        )
+	        else
+	        (
+	            messageBox "Please select at least one vertex."
+	        )
+	    )
+	    else
+	    (
+	        messageBox "Please select a single Editable Poly object."
+	    )
+	)
+)
+
+/*------------------------------------------------------------------------------
 	CENTER PIVOT
 --------------------------------------------------------------------------------*/
 
@@ -120,7 +171,7 @@ macroscript _pivot_center_to_objects_in_selection
 category:	"_Pivot"
 buttonText:	"Center"
 toolTip:	"Center pivot to objects in selection"
-icon:	"menu:true|across:2"
+icon:	"menu:true"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM ⬇\Pivot.mcr"
 

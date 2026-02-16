@@ -37,7 +37,7 @@ macroscript	_scene_restart_max
 category:	"_Scene-Reset"
 buttontext:	"Restart"
 tooltip:	"Restart 3Ds Max\n\nCTRL: Quiet mode"
-icon:	"MENU:RESTART 3Ds Max"
+icon:	"MENU: --- RESTART 3Ds Max ---"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do

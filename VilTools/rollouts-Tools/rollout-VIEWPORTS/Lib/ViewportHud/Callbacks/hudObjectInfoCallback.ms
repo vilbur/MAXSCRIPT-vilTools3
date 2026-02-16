@@ -6,6 +6,7 @@
 function hudObjectInfoCallback =
 (
 	--format "\n"; print "hudMaxInfoCallback.ms.hudMaxInfoCallback()"
+	
 	/** Split user props
 	 */
 	function splitUserProps HUD =
@@ -41,16 +42,49 @@ function hudObjectInfoCallback =
 	  *
 	  * https://help.autodesk.com/view/MAXDEV/2022/ENU/?guid=GUID-8EB13535-72B4-439C-94D3-E93434BA163B
 	  */
-	function getLockedTransfroms =
+	function getLockedTransfroms HUD =
 	(
 		--format "\n"; print "hudObjectInfoCallback.ms.getLockedTransfroms()"
+		obj	= selection[1]
+		
 		state = if selection.count > 0 then "L O C K E D Transform" else ""
 
-		--for obj in selection where ((getTransformLockFlags obj) as Array ).count != 9  do
-		for obj in selection where not (getTransformLockFlags obj).numberSet > 0  do
-			state = ""
+		lock_flags = getTransformLockFlags obj --{POS_X,POS_Y,POS_Z,ROT_X,ROT_Y,ROT_Z,SCALE_X,SCALE_Y,SCALE_Z}
+		
+		locked_tracks = #( #{}, #{}, #{} )
+		
+		transform_tracks = #( "POSITION", "ROTATION", "SCALE" )
+		
+		colors	= #( red, green, color 0 200 255 )
+		
+		axises = #( "X", "Y", "Z" ) 
+		
+		bit_counter = 0
+		
+		for x = 1 to 3 do
+			for y = 1 to 3 do
+				locked_tracks[x][y] = lock_flags[bit_counter +=1]
 
-		state --return
+		
+		if not lock_flags.isEmpty then
+		(
+			/* TRANSFORM LOCK HEADER */ 
+			append HUD.Rows ( HudRow_v columns: #(	HudColumn_v "--- TRANSFORM LOCK ---" ) height:24 color:yellow  )
+			
+			/* FOR "POSITION" "ROTATION" "SCALE"  */ 
+			for i = 1 to locked_tracks.count where locked_tracks[i].numberSet > 0 do 
+			(
+				Row = HudRow_v columns: #(	HudColumn_v transform_tracks[i] width:64  ) color:colors[i] 
+				
+				for axis = 1 to 3 do
+					Row.column  ( if locked_tracks[i][axis] then axises[axis] else " " ) width:10
+				
+				append HUD.Rows Row
+			
+			)
+		)
+
+		HUD --return
 	)
 
 
@@ -72,11 +106,12 @@ function hudObjectInfoCallback =
 		/* SHOW USER PROPS */ 
 		if selection.count == 1 then
 			splitUserProps(HUD)
+			
+		/* LOCKED TRANSFORMS */
+		HUD = getLockedTransfroms(HUD)
 	)
 
 
-	/* LOCKED TRANSFORMS */
-	HUD.row ( getLockedTransfroms() ) color:orange
 
 	/* SET DATA TO HUD */
 	HUD_DATA[#OBJ_INFO] = HUD

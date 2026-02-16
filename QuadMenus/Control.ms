@@ -61,9 +61,9 @@ function addQuad2 QuadMenu =
 	
 	QuadMenu.addMenu("_Selection-Instance")	--flat:false --index:1
 	
-	--QuadMenu.addSeparator()
+	QuadMenu.addSeparator()
 	
-	QuadMenu.addMenu("_Selection-Edit")	separators:#(1) --flat:false --index:1
+	QuadMenu.addMenu("_Selection-Edit")	separators:#(2) --flat:false --index:1
 	
 )
 
@@ -98,12 +98,12 @@ function addQuad4 QuadMenu =
 
 	QuadMenu.addMenu("_Selection-Hierarchy")	--flat:false --index:1
 )
-
+format "WTF: %\n" ( getFilenameFile( getSourceFileName() ) )
 
 /** DEFIEN QUAD
   */
 QuadMenuNew = QuadMenu_v( getFilenameFile(getSourceFileName()) )
-
+format "QuadMenuNew: %\n" QuadMenuNew
 
 /** ADD QUAD MENUS
   */

@@ -11,7 +11,7 @@ macroscript	material_editor_open
 category:	"_Material-Edit"
 buttonText:	"Mat Editor"
 tooltip:	"Open Material Editor"
-icon:	"MENU:true"
+icon:	"MENU:&Mat Editor|across:3"
 (
 	actionMan.executeAction 0 "50048"  -- Tools: Material Editor Toggle
 )
@@ -64,7 +64,7 @@ macroscript	material_assign_id_1
 category:	"_Material-ID"
 buttonText:	"Mat ID 1"
 tooltip:	"Set Mat ID 1"
-icon:	"MENU:true"
+icon:	"MENU:true|across:5"
 (
 
 	on execute do
