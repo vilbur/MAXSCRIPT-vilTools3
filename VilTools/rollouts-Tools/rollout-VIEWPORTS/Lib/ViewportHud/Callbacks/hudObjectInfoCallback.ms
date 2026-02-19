@@ -45,11 +45,8 @@ function hudObjectInfoCallback =
 	function getLockedTransfroms HUD =
 	(
 		--format "\n"; print "hudObjectInfoCallback.ms.getLockedTransfroms()"
-		obj	= selection[1]
+		--obj	= selection[1]
 		
-		state = if selection.count > 0 then "L O C K E D Transform" else ""
-
-		lock_flags = getTransformLockFlags obj --{POS_X,POS_Y,POS_Z,ROT_X,ROT_Y,ROT_Z,SCALE_X,SCALE_Y,SCALE_Z}
 		
 		locked_tracks = #( #{}, #{}, #{} )
 		
@@ -59,12 +56,22 @@ function hudObjectInfoCallback =
 		
 		axises = #( "X", "Y", "Z" ) 
 		
-		bit_counter = 0
 		
-		for x = 1 to 3 do
-			for y = 1 to 3 do
-				locked_tracks[x][y] = lock_flags[bit_counter +=1]
+		
+		lock_flags = undefined
+		
+		for obj in selection do
+		(
+			lock_flags = getTransformLockFlags obj --{POS_X,POS_Y,POS_Z,ROT_X,ROT_Y,ROT_Z,SCALE_X,SCALE_Y,SCALE_Z}
+			bit_counter = 0
+			
+			for x = 1 to 3 do
+				for y = 1 to 3 do
+					locked_tracks[x][y] = lock_flags[bit_counter +=1]
+		)
 
+				
+				
 		
 		if not lock_flags.isEmpty then
 		(
