@@ -48,9 +48,10 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 
 	on execute do
 	(
-		
 		if SCENE_STATE_BITS == undefined or ( EventFired != undefined and EventFired.val ) then
 		(
+			
+			format "\nSCENE_STATES_CREATE_MENU_CALLBACKS - CREATE\n"
 			
 			CALLBACKMANAGER.add "processSceneStateCallbackMenu" #filePostOpen
 
@@ -65,6 +66,8 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 		)
 		else
 		(
+			format "\nSCENE_STATES_CREATE_MENU_CALLBACKS - KILL\n"
+			
 			CALLBACKMANAGER.kill "processSceneStateCallbackMenu"
 
 			(Menu_v ("_Scene-States-Parts")).clearMenu()

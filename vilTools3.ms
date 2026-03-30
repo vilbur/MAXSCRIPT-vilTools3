@@ -1,12 +1,8 @@
-clearListener(); print("Cleared in:"+getSourceFileName())
+--clearListener(); print("Cleared in:"+getSourceFileName())
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
-
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
-
-filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
 
 --RUN_ON_STARTUP = true
@@ -33,10 +29,13 @@ rollouts_dir = "$userscripts/"+current_dir_name+"/"+content_dir+"/rollouts-Tools
 --------------------------------------------------------------------------------*/
 std_scripts = #(
 
-
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"),	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
-	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms"
 	
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms"
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
+	
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentSubrollouts/ContentRollout/ScriptFile/ScriptFile.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentSubrollouts/ContentRollout/ScriptFile/ScriptFile.ms"
+	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" ),	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
@@ -100,7 +99,8 @@ std_scripts = #(
 )
 
 startup_scripts = #(
-	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+	--( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
+	--( current_dir + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" ), -- "./../MAXSCRIPT-UI-framework/Lib/Dialog/Dialog.ms"
 	
 	--"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
 	--"/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms",	--"./VilTools/rollouts-Tools/rollout-OPTIONS/Lib/setCreatePanelOnUnselectedObjects.ms"
@@ -123,42 +123,42 @@ filein_files = #(
 if open_or_install != #OPEN then
 (
 	try(
-		
-				
-		StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir DEBUG:false
+
+		StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir DEBUG:true
 		
 		/*------------------------------------------------------------------------------
 			INSTALL STD SCRIPTS
 		--------------------------------------------------------------------------------*/
 		StartUpScriptImporter.createStartUpFile(std_scripts) std:true
 		
+
 		
 		/*------------------------------------------------------------------------------
 			INSTALL START SCRIPTS
 		--------------------------------------------------------------------------------*/
 		StartUpScriptImporter.createStartUpFile(startup_scripts)
 		
-
-		/*------------------------------------------------------------------------------
-			GENERATE MACROS
-		--------------------------------------------------------------------------------*/
-		generateMacroscripts( rollouts_dir )
-		
 		
 		/*------------------------------------------------------------------------------
-			 IMPORTANT CALLBACKS
+			 IMPORT CALLBACKS
 		--------------------------------------------------------------------------------*/
 		
 		CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
 		
+
 		
 		/*------------------------------------------------------------------------------
 			IMPORT FILES
 		--------------------------------------------------------------------------------*/
 		(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" DEBUG:false ).import()
 		
+						
 
 		
+		/*------------------------------------------------------------------------------
+			GENERATE MACROS - import after all functions
+		--------------------------------------------------------------------------------*/
+		generateMacroscripts( rollouts_dir )
 		
 		
 		/** LOAD CONTENT */
@@ -186,6 +186,7 @@ if open_or_install != #OPEN then
 ================================================================================*/
 else
 (
+
 	VILTOOLS = Dialog_v title:"VilTools"  ini:(getSourceFileName()) width:400
 	
 	VILTOOLS.create cache:true

@@ -16,7 +16,6 @@ function addQuad1 QuadMenu =
 	
 	_OpenSceneMenu = QuadMenu.addMenu("_Scene-Open")	separators:#( 2, 3 ) --flat:false --index:1 --"./../VilTools/rollouts-Tools/rollout-SCENE/01-OPEN SCENE.mcr"
 	
-
 	--format "_OpenSceneMenu: %\n" _OpenSceneMenu
 	--QuadMenu.addSeparator index:1
 	--QuadMenu.addSeparators #()

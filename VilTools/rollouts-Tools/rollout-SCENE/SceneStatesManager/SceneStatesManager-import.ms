@@ -1,4 +1,4 @@
---global SCENE_STATE_BITS = BitArray 10
+
 global SCENE_STATE_BITS = undefined
 
 

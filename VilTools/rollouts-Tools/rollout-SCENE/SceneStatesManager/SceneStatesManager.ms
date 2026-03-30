@@ -1,7 +1,4 @@
 
---global SCENE_STATE_BITS = BitArray 10
-global SCENE_STATE_BITS = undefined
-
 /** Selection sets manager
   
   https://help.autodesk.com/view/3DSMAX/2025/ENU/?guid=GUID-BF71F54B-B2BB-4E18-899D-BFCF6327336F

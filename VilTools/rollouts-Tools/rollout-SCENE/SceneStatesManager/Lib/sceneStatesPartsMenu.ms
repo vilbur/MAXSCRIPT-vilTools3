@@ -1,11 +1,15 @@
 
+--format "\n*********************************\n\n sceneStatesPartsMenu() \n\n*********************************\n\n"
+
+--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\ContentLoader\ContentSubrollouts\ContentRollout\ScriptFile\ScriptFile.ms"
+
 /** Create scene states menu
   
   https://help.autodesk.com/view/3DSMAX/2025/ENU/?guid=GUID-AD55B6B0-CACF-4581-AB09-688E0014DB6A#GUID-AD55B6B0-CACF-4581-AB09-688E0014DB6A__IMAGE_045012F838DB47FD9583C2E33C1C93AC
  */
 function sceneStatesPartsMenu =
 (
-	--format "\n"; print ".sceneStatesPartsMenu()"
+	format "\n"; print ".sceneStatesPartsMenu()"
 	
 	macroscripts = #()
 	

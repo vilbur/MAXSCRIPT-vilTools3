@@ -61,16 +61,27 @@ function addSelectionSetsToQuadMenu =
 	/* WRITE TO MCR FILE */ 
 	(MacroscriptGenerator_v()).generateMcrFile (macroscripts) (file_path)
 	
-	/* PARSE MCR FILE TO MENU */ 
-	(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
+	if ScriptFile_Content_v != undefined then 
+	(
+		/* PARSE MCR FILE TO MENU */ 
+		(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
+		
+		
+		/* GET QUAD */ 
+		SelSetsQuadMenu 	= QuadMenu_v( quad_name )
+		--format "SelSetsQuadMenu: %\n" SelSetsQuadMenu
+		
+		
+		/* ADD SETS TO QUAD */
+		SelSetsQuadMenu.Quads[1].addMenu( category )
+	)
+	else
+	(
+		format "\n ERROR: ========================== "
+		format "ScriptFile_Content_v: %\n" ScriptFile_Content_v
+		
+	)
 	
-	
-	/* GET QUAD */ 
-	SelSetsQuadMenu 	= QuadMenu_v( quad_name )
-	--format "SelSetsQuadMenu: %\n" SelSetsQuadMenu
-	
-	
-	/* ADD SETS TO QUAD */
-	SelSetsQuadMenu.Quads[1].addMenu( category )
+
 	
 )

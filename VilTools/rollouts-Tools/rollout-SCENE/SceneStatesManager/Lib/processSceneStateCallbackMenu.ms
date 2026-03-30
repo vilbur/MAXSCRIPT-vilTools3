@@ -5,7 +5,7 @@
  */
 function processSceneStateCallbackMenu =
 (
-	--format "\n"; print ".processSceneStateCallbackMenu()"
+	format "\n"; print ".processSceneStateCallbackMenu()"
 	--fn updateNeeded arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string != ( sort(arr2) ) as string
 	
 
@@ -25,15 +25,12 @@ function processSceneStateCallbackMenu =
 	scene_states = SceneStates.getSceneStates()
 	
 	update_needed = with PrintAllElements on ( sort(menu_items) ) as string != ( sort(scene_states) ) as string
-	--format "UPDATE_NEEDED: %\n" update_needed
-	--format "menu_items: %\n" menu_items
-	--format "scene_states: %\n" scene_states
+
+	MenuSets.clearMenu()
+	
 	
 	if scene_states.count == 0 or not update_needed then
 		return false
-	
-	
-	MenuSets.clearMenu()
 	
 	
 	/* CREATE EACH MACROSCRIPT */ 
