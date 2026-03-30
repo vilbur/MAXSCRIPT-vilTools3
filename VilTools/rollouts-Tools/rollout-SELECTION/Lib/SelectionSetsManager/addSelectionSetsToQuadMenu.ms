@@ -3,7 +3,8 @@
  */
 function addSelectionSetsToQuadMenu =
 (
-	format "\n"; print ".addSelectionSetsToQuadMenu()"
+	--format "\n"; print ".addSelectionSetsToQuadMenu()"
+	--format "SelectionSetsManager_v: %\n" SelectionSetsManager_v
 
 	macroscripts = #()
 	
@@ -14,7 +15,9 @@ function addSelectionSetsToQuadMenu =
 
 	rx = "System.Text.RegularExpressions.Regex"
 	
-	
+	--if SelectionSetsManager_v == undefined then
+	 --return false
+	 
 	SelSets = SelectionSetsManager_v()
 	
 	if SelSets.sel_sets.count == 0 then

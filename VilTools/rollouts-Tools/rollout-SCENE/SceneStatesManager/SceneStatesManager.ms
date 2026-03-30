@@ -1,6 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/processSceneStateCallbackMenu.ms" )	--"./Lib/processSceneStateCallbackMenu.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/sceneStatesPartsMenu.ms" )	--"./Lib/sceneStatesPartsMenu.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateParts.ms" )	--"./Lib/setSceneStateParts.ms"
 
 --global SCENE_STATE_BITS = BitArray 10
 global SCENE_STATE_BITS = undefined

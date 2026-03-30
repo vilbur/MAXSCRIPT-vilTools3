@@ -1,8 +1,4 @@
 
-
-filein( getFilenamePath(getSourceFileName()) + "/addSelectionSetsToQuadMenu.ms" )	--"./addSelectionSetsToQuadMenu.ms"
-filein( getFilenamePath(getSourceFileName()) + "/setSelectionSetActive.ms" )	--"./setSelectionSetActive.ms"
-
 /** Selection sets manager
   
 	
@@ -363,3 +359,7 @@ struct SelectionSetsManager_v
 	)
 
 )
+
+
+filein( getFilenamePath(getSourceFileName()) + "/setSelectionSetActive.ms" )	--"./setSelectionSetActive.ms"
+filein( getFilenamePath(getSourceFileName()) + "/addSelectionSetsToQuadMenu.ms" )	--"./addSelectionSetsToQuadMenu.ms"

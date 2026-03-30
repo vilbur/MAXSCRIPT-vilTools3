@@ -6,6 +6,7 @@
 function sceneStatesPartsMenu =
 (
 	--format "\n"; print ".sceneStatesPartsMenu()"
+	
 	macroscripts = #()
 	
 	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties )
@@ -55,16 +56,26 @@ function sceneStatesPartsMenu =
 		append macroscripts MacroData
 	)
 
+	if ScriptFile_Content_v != undefined and Menu_v != undefined then 
+	(
+		
+		(MacroscriptGenerator_v()).generateMcrFile (macroscripts) (file_path)
+		
+		MenuSets 	= Menu_v (category)
+		
+		MenuSets.clearMenu()
+		
+		(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
+		
+		MenuSets.addSeparators #( 1, 3, 4, 6, 8 )
 	
-	(MacroscriptGenerator_v()).generateMcrFile (macroscripts) (file_path)
+		setSceneStateParts(undefined)
+	)
+	else
+	(
+		format "ScriptFile_Content_v: %\n" ScriptFile_Content_v
+		format "Menu_v: %\n" Menu_v
+		
+	)
 	
-	MenuSets 	= Menu_v (category)
-	
-	MenuSets.clearMenu()
-	
-	(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
-	
-	MenuSets.addSeparators #( 1, 3, 4, 6, 8 )
-
-	setSceneStateParts(undefined)
 )

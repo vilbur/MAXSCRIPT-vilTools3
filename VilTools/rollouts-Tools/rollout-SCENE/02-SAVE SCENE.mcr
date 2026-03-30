@@ -36,7 +36,7 @@ macroscript	_scene_temp_save
 category:	"_Scene-Save"
 buttontext:	"Save TEMP"
 toolTip:	"Save TEMP File"
-icon:	"MENU:true"
+icon:	"MENU:toolTip"
 (
 	on isVisible return objects.count > 0
 

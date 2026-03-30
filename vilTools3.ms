@@ -94,7 +94,7 @@ std_scripts = #(
 	"/rollout-TRANSFORM/Lib/transformByArrow.ms", --"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
 	
 	"/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms",	--"./VilTools/rollouts-Tools/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms"
-	"/rollout-SCENE/SceneStatesManager/SceneStatesManager.ms",	--"./VilTools/rollouts-Tools/rollout-SCENE/SceneStatesManager/SceneStatesManager.ms"
+	"/rollout-SCENE/SceneStatesManager/SceneStatesManager-import.ms",	--"./VilTools/rollouts-Tools/rollout-SCENE/SceneStatesManager/SceneStatesManager-import.ms"
 	
 	"" -- last blank item to prevent errors on development
 )
@@ -114,101 +114,87 @@ filein_files = #(
 	"/VilTools/rollouts-Tools/rollout-MODIFIERS/Lib/Modifier/Modifier.ms"
 )
 
-StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir
-
-/*------------------------------------------------------------------------------
-	INSTALL STD SCRIPTS
---------------------------------------------------------------------------------*/
-StartUpScriptImporter.createStartUpFile(std_scripts) std:true
-
-/*------------------------------------------------------------------------------
-	INSTALL START SCRIPTS
---------------------------------------------------------------------------------*/
-StartUpScriptImporter.createStartUpFile(startup_scripts)
-
-/*------------------------------------------------------------------------------
-	INSTALL PLUGINS
---------------------------------------------------------------------------------*/
---(PlugInImporter_v ( rollouts_dir + "/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms" )).install() --"./VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNode/ExportNodePlugin.ms"
-
-/*------------------------------------------------------------------------------
-	GENERATE MACROS
---------------------------------------------------------------------------------*/
-generateMacroscripts( rollouts_dir )
-
-
-/*------------------------------------------------------------------------------
-     IMPORTANT CALLBACKS
---------------------------------------------------------------------------------*/
-
-CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
-
-
-/*------------------------------------------------------------------------------
-	IMPORT FILES
---------------------------------------------------------------------------------*/
-(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" ).import()
 
 
 
+/*==============================================================================
+	INSTALL
+================================================================================*/
+if open_or_install != #OPEN then
+(
+	try(
+		
+				
+		StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir DEBUG:false
+		
+		/*------------------------------------------------------------------------------
+			INSTALL STD SCRIPTS
+		--------------------------------------------------------------------------------*/
+		StartUpScriptImporter.createStartUpFile(std_scripts) std:true
+		
+		
+		/*------------------------------------------------------------------------------
+			INSTALL START SCRIPTS
+		--------------------------------------------------------------------------------*/
+		StartUpScriptImporter.createStartUpFile(startup_scripts)
+		
 
-/* CONVERT RELATIVE PATHS TO ABSOLUTE */
---filein_files = for file_path in filein_files collect if ( matchPattern file_path pattern:@"/*" ) then pathConfig.convertPathToAbsolute(current_dir + file_path) else file_path
+		/*------------------------------------------------------------------------------
+			GENERATE MACROS
+		--------------------------------------------------------------------------------*/
+		generateMacroscripts( rollouts_dir )
+		
+		
+		/*------------------------------------------------------------------------------
+			 IMPORTANT CALLBACKS
+		--------------------------------------------------------------------------------*/
+		
+		CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
+		
+		
+		/*------------------------------------------------------------------------------
+			IMPORT FILES
+		--------------------------------------------------------------------------------*/
+		(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" DEBUG:false ).import()
+		
 
---
---try(
---	/* FILE IN FILES */
---	for file_path in filein_files where not matchPattern file_path pattern:"*Test*" do
---	(
---		format "FILE IN: % \n" (file_path)
---		if doesFileExist file_path then
---			filein( file_path)
---	)
---
---)catch
---(
---	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
---	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
---    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
---    format "\n——————————————————— STACK ———————————————————\n%\n" 	(getCurrentExceptionCallStack())
---)
---
-
-
-
-
-/*------------------------------------------------------------------------------
+		
+		
+		
+		/** LOAD CONTENT */
+		----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
+		
+		ContentLoader	= ContentLoader_v path:(current_dir + content_dir)  ini:( getSourceFileName()) width:400
 	
+		/* CHANGE PROPERTIES oF ROLLOUTS */
+		ContentLoader.Dialog.title = "VilTools"
 	
-	CREATE VilTools DILAOG
+		
+		/* CREATE DIALOG */
+		VILTOOLS = ContentLoader.create height:1024
 	
-	
-------------------------------------------------------------------------------*/
-try(
-	/** LOAD CONTENT */
-	----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
-	
-	ContentLoader	= ContentLoader_v path:(current_dir + content_dir)  ini:( getSourceFileName()) width:400
 
-	/* CHANGE PROPERTIES oF ROLLOUTS */
-	ContentLoader.Dialog.title = "VilTools"
-
+	)catch(
+		format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+		format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+		format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+		format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+	)
+)
+/*==============================================================================
+	OPEN
+================================================================================*/
+else
+(
+	VILTOOLS = Dialog_v title:"VilTools"  ini:(getSourceFileName()) width:400
 	
-	/* CREATE DIALOG */
-	VILTOOLS = ContentLoader.create height:1024
-
-	VILTOOLS.register()
-	
-	sceneStatesPartsMenu()
-
-)catch(
-	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+	VILTOOLS.create cache:true
 )
 
 
+/*==============================================================================
+	POST OPEN
+================================================================================*/
 
 
 

@@ -1,7 +1,8 @@
-test.ms
 *.bak
-.komodotools
+*.ini
 *_backup.max
-vilTools3.ini
-Rollouts/rollouts-Tools/rollout-EXPORT/Test/Export/
+*-cache.ms
+test.ms
+
+\Rollouts/rollouts-Tools/rollout-EXPORT/Test/Export/
 Rollouts/rollouts-Tools/rollout-EXPORT/Test/UnrealProject/

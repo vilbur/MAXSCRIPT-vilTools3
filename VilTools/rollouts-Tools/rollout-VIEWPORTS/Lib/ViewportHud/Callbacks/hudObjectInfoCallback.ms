@@ -45,8 +45,6 @@ function hudObjectInfoCallback =
 	function getLockedTransfroms HUD =
 	(
 		--format "\n"; print "hudObjectInfoCallback.ms.getLockedTransfroms()"
-		--obj	= selection[1]
-		
 		
 		locked_tracks = #( #{}, #{}, #{} )
 		
@@ -56,8 +54,7 @@ function hudObjectInfoCallback =
 		
 		axises = #( "X", "Y", "Z" ) 
 		
-		
-		
+				
 		lock_flags = undefined
 		
 		for obj in selection do
@@ -69,10 +66,8 @@ function hudObjectInfoCallback =
 				for y = 1 to 3 do
 					locked_tracks[x][y] = lock_flags[bit_counter +=1]
 		)
-
 				
 				
-		
 		if not lock_flags.isEmpty then
 		(
 			/* TRANSFORM LOCK HEADER */ 

@@ -4,8 +4,6 @@
 ------------------------------------------------------------------------------*/
 
 
-
-
 /** OPEN LAYERS MANAGER
  */
 macroscript	layers_manager_keep_open_close
@@ -17,62 +15,30 @@ icon:	"control:checkbutton|MENU:true|autorun:true|across:2"
 
 	on execute do
 	(
-		clearListener(); print("Cleared in:\n"+getSourceFileName())
-		format "EventFired: %\n" EventFired
+		--clearListener(); print("Cleared in:\n"+getSourceFileName())
+		--format "EventFired: %\n" EventFired
+
 		if EventFired == undefined or ( EventFired.get #val ) then -- run on startup if no fire by event
 		(
-			--LayerManager.editLayerByName ""
 			/* OEPN LAYER MANAGER ON SCENE OPEN */
-			try( callbacks.addScript #filePostOpenProcess "showLayerManagerCallback()" id:#showLayerManagerCallback )catch()
+			try( callbacks.addScript #filePostOpenProcess "LayerManager.editLayerByName \"\"" id:#showLayerManagerCallback )catch()
 
-			/* TOGGLE LAYER MANAGER */
-			if LayerManager.isDialogOpen() then
-				LayerManager.closeDialog()
-			else
-				LayerManager.editLayerByName ""
-
-
-			/* SWITCH UI BUTTON STATE IF EXECUTED FROM QUAD MENU */
-			if EventFired == undefined and ROLLOUT_layers != undefined then
-				ROLLOUT_layers.CBTN_layer_manager.state = LayerManager.isDialogOpen()
-
+			LayerManager.editLayerByName ""
 		)
+		
 		else -- if checkbutton is unchecked
 		(
 			LayerManager.closeDialog()
-
+			
 			try( callbacks.removeScripts #filePostOpenProcess id:#showLayerManagerCallback )catch()
 		)
 	)
 )
 
---/** SCENE EXPLORER
--- */
---macroscript	_layers_scene_explorer
---category:	"_Layers-Dialogs"
---buttontext:	"Scene Explorer"
---tooltip:	"Show\Hide Scene Explorer.\n\nIf checked, then manager is open on scene open"
---(
---	--messageBox "Yupiii" title:"Title"  beep:false
---	LayerManager.editLayerByName ""
---
---	if not SceneExplorerManager.ExplorerExists(default_explorer = "Scene Explorer") then
---		SceneExplorerManager.CreateExplorerFromDefault(default_explorer)
---	else
---		SceneExplorerManager.OpenExplorer(default_explorer)
---)
 
 /*------------------------------------------------------------------------------
 	SCENE EXPLORER
 --------------------------------------------------------------------------------*/
-
-/**
- */
-function showSceneExplorerCallback =
-(
-	SceneExplorerManager.CreateExplorerFromDefault "Scene Explorer"
-)
-
 
 /**
  */
@@ -85,8 +51,6 @@ icon:	"control:checkbutton"
 
 	default_explorer = "Scene Explorer"
 
-	--explorer_exist = SceneExplorerManager.ExplorerExists(default_explorer)
-
 	if EventFired.val then
 	(
 		if not SceneExplorerManager.ExplorerExists(default_explorer) then
@@ -95,7 +59,7 @@ icon:	"control:checkbutton"
 			SceneExplorerManager.OpenExplorer(default_explorer)
 
 
-		try( callbacks.addScript #filePostOpenProcess "showSceneExplorerCallback()" id:#showSceneExplorerCallback )catch()
+		try( callbacks.addScript #filePostOpenProcess "SceneExplorerManager.CreateExplorerFromDefault \"Scene Explorer\"" id:#showSceneExplorerCallback )catch()
 	)
 	else
 	(
