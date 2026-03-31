@@ -1,8 +1,6 @@
 
-global SCENE_STATE_BITS = undefined
+global SCENE_STATE_BITS = #{}
 
-
-filein( getFilenamePath(getSourceFileName()) + "/Lib/setSceneStateParts.ms" )	--"./Lib/setSceneStateParts.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/Lib/sceneStatesPartsMenu.ms" )	--"./Lib/sceneStatesPartsMenu.ms"
 

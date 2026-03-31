@@ -5,7 +5,7 @@
  */
 function processSceneStateCallbackMenu =
 (
-	format "\n"; print ".processSceneStateCallbackMenu()"
+	--format "\n"; print ".processSceneStateCallbackMenu()"
 	--fn updateNeeded arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string != ( sort(arr2) ) as string
 	
 
@@ -48,8 +48,6 @@ function processSceneStateCallbackMenu =
 		prefix = ""
 		
 		on_exe = "( SceneStatesManager_v() ).processStateCallback \""+state_name+"\""
-		
-		
 		
 		--on_alt = "\t\tmessageBox \"Press CTRL to save SCENE STATE \""
 		on_alt = ""

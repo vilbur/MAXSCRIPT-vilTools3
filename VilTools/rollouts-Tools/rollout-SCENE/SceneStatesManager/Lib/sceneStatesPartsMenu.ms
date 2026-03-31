@@ -37,17 +37,20 @@ function sceneStatesPartsMenu =
 	
 
 	file_path = (getDir #userMacros) + "\\" + category + ".mcr"
-	--format "FILE_PATH: %\n" file_path
-	--MacroData = MacroData_v macro_name category buttontext:(prefix + state_name) exe:macro_code icon:"MENU:true"
 	
 	--for i = 1 to scene_state_bit_names.count do
+	if doesFileExist file_path then
+		return true
+	
+	
 	for scene_state_name in scene_state_bit_order do 
 	(
 		_bit	= findItem scene_state_bit_names scene_state_name
 		
 		state_name = scene_state_bit_names[_bit] as string
 		--format "state_name: %\n" state_name
-		macro_code = "setSceneStateParts "+ _bit as string
+		--macro_code = "setSceneStateParts "+ _bit as string
+		macro_code = "SCENE_STATE_BITS["+ _bit as string + "]"
 		
 		tooltip = ( dotNetClass "System.Text.RegularExpressions.Regex").Replace state_name "(?<!^)([A-Z])" " $1"
 		--format "title: %\n" title
@@ -73,7 +76,7 @@ function sceneStatesPartsMenu =
 		
 		MenuSets.addSeparators #( 1, 3, 4, 6, 8 )
 	
-		setSceneStateParts(undefined)
+		--setSceneStateParts(undefined)
 	)
 	else
 	(

@@ -29,11 +29,11 @@ struct SceneStatesManager_v
 	 */
 	function processStateCallback state_name =
 	(
-		format "\n"; print "SceneStatesManager_v.processState()"
+		--format "\n"; print "SceneStatesManager_v.processState()"
 		
 
-		if SCENE_STATE_BITS == undefined then
-			setSceneStateParts (undefined) 
+		--if SCENE_STATE_BITS == undefined then
+			--setSceneStateParts (undefined) 
 		
 		--enabled_parts = this.getNamesOfParts(SCENE_STATE_BITS)
 		
@@ -46,15 +46,15 @@ struct SceneStatesManager_v
 		--------------------------------------------------------------------------------*/
 		if keyboard.controlPressed then
 		(
-			format "state_parts: %\n" state_parts
-			format "SCENE_STATE_BITS: %\n" SCENE_STATE_BITS
+			--format "state_parts: %\n" state_parts
+			--format "SCENE_STATE_BITS: %\n" SCENE_STATE_BITS
 			--names_of_parts = this.getNamesOfParts(state_parts)
 			parts_to_save = SCENE_STATE_BITS
 			
 			--state_parts_string = if names_of_parts.count > 1 then this._arrayToString (names_of_parts) else names_of_parts[1]
 			state_parts_string = this._arrayToString (this.getNamesOfParts(parts_to_save))
 			
-			if queryBox ("SAVE STATE ?\n\nSTATE:\n\n'" +state_name+ "'\n\nPARTS:\n\n" + state_parts_string ) title:"SAVE SCENE STATE" then
+			if queryBox ("SAVE STATE ?\n\nSTATE:\n  '" +state_name+ "'\n\nPARTS:\n  " + state_parts_string ) title:"SAVE SCENE STATE" then
 				this.saveState state_name parts_to_save
 		)
 		
@@ -83,7 +83,7 @@ struct SceneStatesManager_v
 			this.loadState state_name state_parts
 		
 		--processSceneStateCallbackMenu()
-
+		print "**** PRESET MENU HOTKEYS: CTRL: Resave | SHIFT: Rename | ALT: Delete"
 	),
 	
 	/** Create state
@@ -101,7 +101,7 @@ struct SceneStatesManager_v
 	 */
 	function renameState state_name new_name =
 	(
-		format "\n"; print "SceneStatesManager_v.renameState()"
+		--format "\n"; print "SceneStatesManager_v.renameState()"
 		sceneStateMgr.Rename state_name new_name 
 	),
 	
@@ -117,24 +117,29 @@ struct SceneStatesManager_v
 	 */
 	function saveState state_name state_bits =
 	(
-		format "\n"; print "SceneStatesManager_v.saveState()"
+		--format "\n"; print "SceneStatesManager_v.saveState()"
 		--state_bits = this.getSceneStateParts LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
-
-		format "state_bits: %\n" state_bits
+		--format "state_bits: %\n" state_bits
+		--format "state_bits: %\n" (  this._getNamesofSceneParts state_bits delimeter:"\n" )
 
 		--if ( index = sceneStateMgr.FindSceneState state_name) == 0 then
+		if state_bits != undefined then
+		(
+			SCENE_STATE_BITS = saved_bits
+		
 			sceneStateMgr.Capture state_name state_bits
+		)
 	),
 	
 	/** Load state
 	 */
 	function loadState state_name load_bits =
 	(
-		format "\n"; print "SceneStatesManager_v.loadState()"
+		--format "\n"; print "SceneStatesManager_v.loadState()"
 		--load_bits = this.getSceneStateParts LightProperties:LightProperties LightTransforms:LightTransforms ObjectProperties:ObjectProperties CameraTransforms:CameraTransforms CameraProperties:CameraProperties LayerProperties:LayerProperties LayerAssignment:LayerAssignment Materials:Materials Environment:Environment AnimLayerProperties:AnimLayerProperties OK
 		--format "LOAD BITS: %\n" load_bits
 
-		format "INDEX: %\n" (sceneStateMgr.FindSceneState state_name)
+		--format "INDEX: %\n" (sceneStateMgr.FindSceneState state_name)
 		
 		if ( index = sceneStateMgr.FindSceneState state_name) > 0 then
 		(
@@ -142,17 +147,15 @@ struct SceneStatesManager_v
 			--if load_bits.count == 0 then
 			saved_bits = sceneStateMgr.GetParts state_name
 			
-			format "SAVED BITS: %\n" load_bits
+			--format "SAVED BITS: %\n" load_bits
 			
 			--load_bits *= saved_bits
 			
 			SCENE_STATE_BITS = saved_bits
 			
-			format "LOAD BITS: %\n" saved_bits
+			--format "LOAD BITS: %\n" saved_bits
 			
-			format "\n--------------------- SCENE STATE LOADED PARTS ---------------------\n"
-			for load_bit in saved_bits do
-				format "LOADED PART: %\n" scene_state_bit_names[load_bit]
+			FORMAT "LOADED SCENE STATE PARTS:%\n" (this._getNamesofSceneParts(saved_bits))
 			
 			
 			sceneStateMgr.Restore state_name saved_bits
@@ -186,7 +189,7 @@ struct SceneStatesManager_v
 	 */
 	function getNamesOfParts bits =
 	(
-		format "\n"; print "SceneStatesManager_v.getNamesOfParts()"
+		--format "\n"; print "SceneStatesManager_v.getNamesOfParts()"
 		
 		for _bit in bits collect scene_state_bit_names[_bit] as string
 		--names_of_parts = for _bit in bits collect scene_state_bit_names[_bit] as string
@@ -211,7 +214,7 @@ struct SceneStatesManager_v
 	
 	function getSceneStateParts LightProperties:false LightTransforms:false ObjectProperties:false CameraTransforms:false CameraProperties:false LayerProperties:false LayerAssignment:false Materials:false Environment:false AnimLayerProperties:false = 
 	(
-		format "\n"; print "SceneStatesManager_v.getSceneStateParts()"
+		--format "\n"; print "SceneStatesManager_v.getSceneStateParts()"
 		--bits = bitArray 14
 		bits = BitArray ()
 
@@ -235,6 +238,19 @@ struct SceneStatesManager_v
 	),
 
 	private
+	
+	/** Get namesof scene parts
+	 */
+	function _getNamesofSceneParts state_bits delimeter:" " =
+	(
+		--format "\n"; print "SceneStatesManager_v._getNamesofSceneParts()"
+		loaded_parts = ""
+
+		for load_bit in state_bits do
+			loaded_parts += delimeter + scene_state_bit_names[load_bit] 
+		
+		loaded_parts --return		
+	),
 	
 	/** Ask for state name
 	 */
