@@ -25,116 +25,50 @@
 	fuction load inverts process. Read ini file and create or update scene set accordning to data from ini file
 */
 
-
-struct SceneStateTransfer
+struct SceneStateTransfer_v
 (
-    -- Define the target properties and temporary folder path
-    tempDir = (getDir #temp) + "\\SceneStates_INI\\",
-    validParts = #("Object Properties", "Layer Properties", "Layer Assignment"),
-    
-	validParts_bits = ( for validPart in validParts collect sceneStateMgr.MapPartToIndex validPart ) as BitArray,
-    -- Helper to format booleans for the INI file
-    fn formatBool b = ( if b then "true" else "false" ),
-    
-    -- 1) Save function
-    fn save = (
-        -- 3) Create temp folder for INI files
+    tempDir = (getDir #temp + "\\SceneStates\\"),
+    validParts_bits,
+
+    /* 
+        Saves scene states into INI files
+    */
+    function save =
+    (
         makeDir tempDir
-        
-        -- Cache the current scene state so we don't permanently alter the user's active viewport during the loop
+
         local tempBackupState = "___TEMP_ACTIVE_SCENE_BACKUP___"
-		
-		
-        --sceneStateMgr.Capture tempBackupState validParts
         sceneStateMgr.Capture tempBackupState #{1..10}
-        
-        local statesCount = sceneStateMgr.GetCount()
-        local statesToProcess = #()
-        
-        -- 1) Loop all scene states
-        for i = 1 to statesCount do
-		(
-            local stateName = sceneStateMgr.GetSceneState i
-			
-            -- Ignore our temporary backup state
-            if stateName != tempBackupState do (
-                local parts = sceneStateMgr.GetParts stateName
-                local matchingParts = #{}
-				
-				
-                -- 2) Test if state has one of the target parts
-                for p in parts where validParts_bits[p] do
-					matchingParts[p] = true
-                
-                -- If true, add to our processing queue
-                if not matchingParts.isEmpty do append statesToProcess #(stateName, matchingParts)
+
+        local statesToProcess = this._collectStatesToProcess()
+
+        for sp in statesToProcess do
+        (
+            local state_name = sp[1]
+            local parts_to_process = sp[2]
+            local ini_file = tempDir + state_name + ".ini"
+
+            if doesFileExist ini_file then deleteFile ini_file
+
+            sceneStateMgr.Restore state_name parts_to_process
+
+            for part in parts_to_process do
+            (
+                local part_name = sceneStateMgr.MapIndexToPart part
+                this._processPart part_name ini_file
             )
+
+            format "iniFile: %\n" ini_file
+            DOSCommand ("\"" + ini_file + "\"")
         )
-        -- 4) For each of scene states create INI file
-        for sp in statesToProcess do (
-            local stateName = sp[1]
-            local partsToProcess = sp[2]
-            local iniFile = tempDir + stateName + ".ini"
-            
-            -- Ensure a clean slate for the INI file
-            if doesFileExist iniFile do deleteFile iniFile
-            
-            -- We MUST restore the state to the scene to read the property values
-            sceneStateMgr.Restore stateName partsToProcess
-            
-            -- 5) Loop scene parts (sections in INI file)
-            for part in partsToProcess do (
-                
-				part_name = sceneStateMgr.MapIndexToPart part
-				
-                -- Object Properties
-                if part_name == "Object Properties" then (
-                    for obj in objects do (
-                        local propStr = "isHidden:" + (formatBool obj.isHidden) + ",isFrozen:" + (formatBool obj.isFrozen) + ",renderable:" + (formatBool obj.renderable)
-                        setINISetting iniFile part_name obj.name propStr
-                    )
-                )
-                -- Layer Properties
-                else if part_name == "Layer Properties" then (
-                    for i = 0 to LayerManager.count-1 do (
-                        local layer = LayerManager.getLayer i
-                        -- layer.on is visibility (true = visible). We invert it to match 'isHidden' logic.
-                        local propStr = "isHidden:" + (formatBool (not layer.on)) + ",isFrozen:" + (formatBool layer.isFrozen) + ",renderable:" + (formatBool layer.renderable)
-                        setINISetting iniFile part_name layer.name propStr
-                    )
-                )
-                -- Layer Assignment
-                else if part_name == "Layer Assignment" then (
-                    for i = 0 to LayerManager.count-1 do (
-                        local layer = LayerManager.getLayer i
-                        layer.nodes &layerNodes
-                        
-                        local nameStr = ""
-                        if layerNodes != undefined and layerNodes.count > 0 do (
-                            for n = 1 to layerNodes.count do (
-                                nameStr += layerNodes[n].name
-                                if n < layerNodes.count do nameStr += ","
-                            )
-                        )
-                        setINISetting iniFile part_name layer.name nameStr
-                    )
-                )
-				
-            )
-			
-			format "iniFile: %\n" iniFile
-			--DOSCommand ("\""+iniFile+"\"")
-			DOSCommand ("\""+iniFile+"\"")
-        )
-        
-        -- Restore the original active scene and delete the temporary backup
+
         sceneStateMgr.Restore tempBackupState #{1..10}
         sceneStateMgr.Delete tempBackupState
-        
+
         format "SUCCESS: Saved % scene states to %\n" statesToProcess.count tempDir
     ),
-    
-    -- Load function (Inverts process)
+	
+	
     fn load = (
         local iniFiles = getFiles (tempDir + "*.ini")
         
@@ -208,12 +142,129 @@ struct SceneStateTransfer
         )
         
         format "SUCCESS: Loaded % scene states from %\n" iniFiles.count tempDir
+    ),
+	
+	
+	private
+	
+
+    /* 
+        Collect states that contain valid parts
+    */
+    function _collectStatesToProcess =
+    (
+        local result = #()
+        local statesCount = sceneStateMgr.GetCount()
+
+        for i = 1 to statesCount do
+        (
+            local state_name = sceneStateMgr.GetSceneState i
+
+            if state_name != "___TEMP_ACTIVE_SCENE_BACKUP___" then
+            (
+                local parts = sceneStateMgr.GetParts state_name
+                local matching_parts = #{}
+
+                for p in parts where validParts_bits[p] do
+                (
+                    matching_parts[p] = true
+                )
+
+                if not matching_parts.isEmpty then
+                (
+                    append result #(state_name, matching_parts)
+                )
+            )
+        )
+
+        result -- return
+    ),
+
+    /* 
+        Dispatch processing of scene state part
+    */
+    function _processPart part_name ini_file =
+    (
+        if part_name == "Object Properties" then this._processObjectProperties ini_file
+        else if part_name == "Layer Properties" then this._processLayerProperties ini_file
+        else if part_name == "Layer Assignment" then this._processLayerAssignment ini_file
+    ),
+    /* 
+        Process Object Properties part
+    */
+    function _processObjectProperties ini_file =
+    (
+        for obj in objects do
+			this._saveProperties ini_file "Object Properties" obj.name isHidden:obj.isHidden isFrozen:obj.isFrozen renderable:obj.renderable
+    ),
+
+    /* 
+        Process Layer Properties part
+    */
+    function _processLayerProperties ini_file =
+    (
+        for i = 0 to LayerManager.count - 1 where ( layer = LayerManager.getLayer i ) != undefined do
+			this._saveProperties ini_file "Layer Properties" layer.name isHidden:(not layer.on) isFrozen:layer.isFrozen renderable:layer.renderable
+    ),
+
+	/** Save properties
+	 */
+	function _saveProperties ini_file state_name key isHidden: isFrozen: renderable: =
+	(
+		format "\n"; print "SceneStateTransfer_v._saveProperties()"
+		
+		data = Dictionary #( #isHidden, isHidden ) #( #isFrozen, isFrozen ) #( #renderable, renderable )
+		
+        setINISetting ini_file state_name key ( data as string )
+	),
+
+    /* 
+        Process Layer Assignment part
+    */
+    function _processLayerAssignment ini_file =
+    (
+        for i = 0 to LayerManager.count - 1 do
+        (
+            local layer = LayerManager.getLayer i
+            layer.nodes &layer_nodes
+
+            local name_str = ""
+
+            if layer_nodes != undefined and layer_nodes.count > 0 then
+            (
+                for n = 1 to layer_nodes.count do
+                (
+                    name_str += layer_nodes[n].name
+                    if n < layer_nodes.count then name_str += ","
+                )
+            )
+
+            setINISetting ini_file "Layer Assignment" layer.name name_str
+        )
+    ),
+
+    /* 
+        Initialize valid parts bitarray
+    */
+    function _initValidParts =
+    (
+        validParts_bits = #{}
+        validParts_bits[sceneStateMgr.MapPartToIndex "Object Properties"] = true
+        validParts_bits[sceneStateMgr.MapPartToIndex "Layer Properties"] = true
+        validParts_bits[sceneStateMgr.MapPartToIndex "Layer Assignment"] = true
+    ),
+
+	
+    on create do
+    (
+        _initValidParts()
     )
 )
+
 
 clearListener(); print("Cleared in: "+getSourceFileName())
 
 -- USAGE:
-mySceneStates = SceneStateTransfer()
+mySceneStates = SceneStateTransfer_v()
 mySceneStates.save()
 -- mySceneStates.load()
