@@ -25,7 +25,7 @@
 	fuction load inverts process. Read ini file and create or update scene set accordning to data from ini file
 */
 
-struct SceneStateTransfer_v
+struct SceneStateSaver_v
 (
     tempDir = (getDir #temp + "\\SceneStates\\"),
     validParts_bits,
@@ -68,83 +68,7 @@ struct SceneStateTransfer_v
         format "SUCCESS: Saved % scene states to %\n" statesToProcess.count tempDir
     ),
 	
-	
-    fn load = (
-        local iniFiles = getFiles (tempDir + "*.ini")
-        
-        for iniFile in iniFiles do (
-            local stateName = getFileNameFile iniFile
-            local sectionsInFile = getINISetting iniFile
-            local capturedParts = #()
-            
-            for part in sectionsInFile do (
-                append capturedParts part
-                local keys = getINISetting iniFile part
-                
-                -- Reconstruct Object Properties
-                if part == "Object Properties" then (
-                    for k in keys do (
-                        local obj = getNodeByName k
-                        if obj != undefined do (
-                            local propStr = getINISetting iniFile part k
-                            local tokens = filterString propStr ","
-                            for t in tokens do (
-                                local kv = filterString t ":"
-                                if kv.count == 2 do (
-                                    if kv[1] == "isHidden" do obj.isHidden = (kv[2] == "true")
-                                    if kv[1] == "isFrozen" do obj.isFrozen = (kv[2] == "true")
-                                    if kv[1] == "renderable" do obj.renderable = (kv[2] == "true")
-                                )
-                            )
-                        )
-                    )
-                )
-                -- Reconstruct Layer Properties
-                else if part == "Layer Properties" then (
-                    for k in keys do (
-                        local layer = LayerManager.getLayerFromName k
-                        if layer != undefined do (
-                            local propStr = getINISetting iniFile part k
-                            local tokens = filterString propStr ","
-                            for t in tokens do (
-                                local kv = filterString t ":"
-                                if kv.count == 2 do (
-                                    if kv[1] == "isHidden" do layer.on = (kv[2] == "false") -- Invert back
-                                    if kv[1] == "isFrozen" do layer.isFrozen = (kv[2] == "true")
-                                    if kv[1] == "renderable" do layer.renderable = (kv[2] == "true")
-                                )
-                            )
-                        )
-                    )
-                )
-                -- Reconstruct Layer Assignment
-                else if part == "Layer Assignment" then (
-                    for k in keys do (
-                        local layer = LayerManager.getLayerFromName k
-                        if layer == undefined do layer = LayerManager.newLayerFromName k
-                        
-                        local propStr = getINISetting iniFile part k
-                        if propStr != "" do (
-                            local objNames = filterString propStr ","
-                            for objName in objNames do (
-                                local obj = getNodeByName objName
-                                if obj != undefined do layer.addNode obj
-                            )
-                        )
-                    )
-                )
-            )
-            
-            -- Create or update the Scene State according to the reconstructed scene
-            if capturedParts.count > 0 do (
-                sceneStateMgr.Capture stateName capturedParts
-            )
-        )
-        
-        format "SUCCESS: Loaded % scene states from %\n" iniFiles.count tempDir
-    ),
-	
-	
+
 	private
 	
 
@@ -211,7 +135,7 @@ struct SceneStateTransfer_v
 	 */
 	function _saveProperties ini_file state_name key isHidden: isFrozen: renderable: =
 	(
-		format "\n"; print "SceneStateTransfer_v._saveProperties()"
+		format "\n"; print "SceneStateSaver_v._saveProperties()"
 		
 		data = Dictionary #( #isHidden, isHidden ) #( #isFrozen, isFrozen ) #( #renderable, renderable )
 		
@@ -261,10 +185,3 @@ struct SceneStateTransfer_v
     )
 )
 
-
-clearListener(); print("Cleared in: "+getSourceFileName())
-
--- USAGE:
-mySceneStates = SceneStateTransfer_v()
-mySceneStates.save()
--- mySceneStates.load()
