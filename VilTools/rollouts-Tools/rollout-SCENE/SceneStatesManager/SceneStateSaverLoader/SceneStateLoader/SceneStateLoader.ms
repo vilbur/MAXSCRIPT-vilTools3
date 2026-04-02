@@ -40,6 +40,8 @@ struct SceneStateLoader_v
 			for part_name in parts_to_load where ( bit_of_part = sceneStateMgr.MapPartToIndex part_name ) > 0 do 
                 if valid_parts[bit_of_part] then
                 (
+					format "PART_NAME: %\n" part_name
+					
 					/* REMEBER WHICH PART IS LAODED */ 
 					bits_to_load[bit_of_part] = true
 					
@@ -52,7 +54,7 @@ struct SceneStateLoader_v
 				sceneStateMgr.Capture state_name bits_to_load
         )
 
-        --FORMAT "SUCCESS: Loaded % scene states from %\n" ini_files.count temp_dir
+        FORMAT "SUCCESS: Loaded % scene states from %\n" ini_files.count temp_dir
     ),
 	
     /* 
@@ -123,22 +125,20 @@ struct SceneStateLoader_v
     */
     function _loadLayerAssignment =
     (
-		--format "\n"; print "SceneStateLoader_v._loadLayerAssignment()"
-        for i = 0 to LayerManager.count - 1 do
-        (
-            layer = LayerManager.getLayer i
-			
+		format "\n"; print "SceneStateLoader_v._loadLayerAssignment()"
+        for i = 0 to LayerManager.count - 1 where (layer = LayerManager.getLayer i) != undefined do
 			if ( ini_val = this._loadIni "Layer Assignment" layer.name ) != undefined then
 			(
-				format "ini_val: %\n" ini_val
-				--object_names_in_layer = execute ini_val
+				object_names_in_layer = execute ini_val
+
+				objects_in_layer	= for obj_name in object_names_in_layer where (obj = getNodeByName obj_name ) != undefined collect obj
 				
-				--objects_in_layer	= for obj_name in object_names_in_layer where (obj = getNodeByName obj_name ) != undefined collect obj
-				--
-				--if objects_in_layer.count > 0 then
-				--	layer.addnodes objects_in_layer
+				--for obj_name in objects_in_layer do
+					--obj = getNodeByName obj_name
+				
+				if objects_in_layer.count > 0 then
+					layer.addnodes objects_in_layer
 			)
-        )
     ),
 
     /* 
