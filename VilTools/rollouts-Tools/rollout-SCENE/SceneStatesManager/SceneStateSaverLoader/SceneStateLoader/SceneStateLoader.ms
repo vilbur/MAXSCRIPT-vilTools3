@@ -6,6 +6,7 @@
 struct SceneStateLoader_v
 (
     validParts_bits,
+	
     tempDir,
 	
     /* 
@@ -13,13 +14,17 @@ struct SceneStateLoader_v
     */
     function load =
     (
+ 		format "\n"; print "SceneStateLoader_v._loadObjectProperties()"
+		
 		/* ini file == preset state */ 
         ini_files = this._collectIniFiles()
 
-		format "ini_files: %\n" ini_files
+		--format "ini_files: %\n" ini_files
 		
         for ini_file in ini_files do
         (
+			format "\n=========================================================================================================\n"
+			
 			bits_to_load = #{}
 			
 			parts_to_load =  getINISetting ini_file
@@ -27,6 +32,7 @@ struct SceneStateLoader_v
 			/* State name is filename */ 
             state_name = getFilenameFile ini_file
 
+			format "STATE_NAME: %\n" state_name
 			
 			/* LAOD EACH PART */ 
 			for part_name in parts_to_load where ( bit_of_part = sceneStateMgr.MapPartToIndex part_name ) > 0 do 
@@ -51,6 +57,7 @@ struct SceneStateLoader_v
     */
     function _loadPart part_name ini_file =
     (
+ 		format "\n"; print ("SceneStateLoader_v._loadPart(\""+part_name+"\")")
 		/* E.G.: "Object Properties" >>> "_loadObjectProperties" */ 
 		method = "_load" + ( substituteString part_name " " "") 
 		--format "TEST: %\n" ( hasProperty this method )
@@ -71,7 +78,7 @@ struct SceneStateLoader_v
 				"Anim Layer Properties":	this._loadAnimLayerProperties	ini_file
 			)
 		else
-			format "\nUNKNOW METHOD SceneStateLoader_v.%()\n" ( method )
+			FORMAT "\nUNKNOW METHOD SceneStateLoader_v.%()\n" ( method )
     ),
 
     /* 
@@ -79,10 +86,10 @@ struct SceneStateLoader_v
     */
     function _loadObjectProperties ini_file =
     (
- 		format "\n"; print "SceneStateLoader_v._loadObjectProperties()"
+ 		--format "\n"; print "SceneStateLoader_v._loadObjectProperties()"
 		
         for obj in objects do
-			this._loadProperties obj "Object Properties"
+			this._loadProperties ini_file obj "Object Properties"
     ),
 
     /* 
@@ -90,20 +97,21 @@ struct SceneStateLoader_v
     */
     function _loadLayerProperties ini_file =
     (
+		--format "\n"; print "SceneStateLoader_v._loadLayerProperties()"
         for i = 0 to LayerManager.count - 1 do
-			this._loadProperties ( LayerManager.getLayer i ) "Layer Properties"
+			this._loadProperties ini_file ( LayerManager.getLayer i ) "Layer Properties"
     ),
 
 	/** Load properties
 	 */
-	function _loadProperties _node state_name =
+	function _loadProperties ini_file _node state_name =
 	(
 		--format "\n"; print "SceneStateLoader_v._loadProperties()"
-		if ( ini_val = getINISetting ini_file state_name _node.name ) != undefined then
+		if ( ini_val = getINISetting ini_file state_name _node.name ) != "" then
 		(
 			values = execute ini_val 
 			
-			for prop in values.keys do format "prop: % 	value: %\n" prop values[prop]
+			--for prop in values.keys do format "prop: % 	value: %\n" prop values[prop]
 			
 			for prop in values.keys do
 				setProperty _node prop values[prop]
@@ -115,16 +123,20 @@ struct SceneStateLoader_v
     */
     function _loadLayerAssignment ini_file =
     (
+		--format "\n"; print "SceneStateLoader_v._loadLayerAssignment()"
         for i = 0 to LayerManager.count - 1 do
         (
             layer = LayerManager.getLayer i
 			
-			if ( ini_val = getINISetting ini_file "Layer Assignment" layer.name ) != undefined then
+			if ( ini_val = getINISetting ini_file "Layer Assignment" layer.name ) != "" then
 			(
-				objects_in_layer = execute ini_val 
+				--format "ini_val: %\n" ini_val
+				--object_names_in_layer = execute ini_val
 				
-				if objects_in_layer.count > 0 then
-					layer.addnodes objects_in_layer
+				--objects_in_layer	= for obj_name in object_names_in_layer where (obj = getNodeByName obj_name ) != undefined collect obj
+				--
+				--if objects_in_layer.count > 0 then
+				--	layer.addnodes objects_in_layer
 			)
         )
     ),
@@ -138,13 +150,10 @@ struct SceneStateLoader_v
         files = getFiles (tempDir + "*.ini")
 
         for f in files do
-        (
             append result f
-        )
 
         result -- return
     ),
-
 
 
     on create do

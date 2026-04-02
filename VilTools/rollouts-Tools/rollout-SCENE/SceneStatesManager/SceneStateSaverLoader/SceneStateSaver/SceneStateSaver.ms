@@ -33,88 +33,71 @@
 struct SceneStateSaver_v
 (
     validParts_bits,
+	
     tempDir,
 
+	state_name, -- currently processed state
+	
+	active_state_backup = "___TEMP_ACTIVE_SCENE_BACKUP___",
+	
     /* 
         Saves scene states into INI files
     */
     function save =
     (
  		format "\n"; print "SceneStateSaver_v.save()"
+		
+		removeDir tempDir
+		
         makeDir tempDir
 
-        local tempBackupState = "___TEMP_ACTIVE_SCENE_BACKUP___"
-        sceneStateMgr.Capture tempBackupState #{1..10}
-
-        local statesToProcess = this._collectStatesToProcess()
-
-        for sp in statesToProcess do
-        (
-            local state_name = sp[1]
-            local parts_to_save = sp[2]
-            local ini_file = tempDir + state_name + ".ini"
-
-            if doesFileExist ini_file then deleteFile ini_file
-
-            sceneStateMgr.Restore state_name parts_to_save
-
-            for part in parts_to_save do
-            (
-                local part_name = sceneStateMgr.MapIndexToPart part
-                this._savePart part_name ini_file
-            )
-
-            format "iniFile: %\n" ini_file
-            --DOSCommand ("\"" + ini_file + "\"")
-        )
-
-        sceneStateMgr.Restore tempBackupState #{1..10}
-
-        sceneStateMgr.Delete tempBackupState
+		/* SAVE ACTIVE STATE */ 
+        sceneStateMgr.Capture active_state_backup #{1..10}
 		
-        FORMAT "SUCCESS: Saved % scene states to %\n" statesToProcess.count tempDir
+
+		/* SAVE STATES */ 
+        states_to_process = this._collectStatesToProcess()
+
+        for state_data in states_to_process do
+			this._processState state_data[1] state_data[2]
+
+			
+		/* RESTORE ACTIVE STATE */ 
+        sceneStateMgr.Restore active_state_backup #{1..10}
+
+        sceneStateMgr.Delete active_state_backup
+		
+		
+        FORMAT "SUCCESS: Saved % scene states to %\n" states_to_process.count tempDir
     ),
 	
 
 	private
 	
+	/** Process state
+	 */
+	function _processState state_name parts_to_save  =
+	(
+		--format "\n"; print "to._processState()"
+		this.state_name = state_name
+		
+		/* ACTIVATE STATE */ 
+		sceneStateMgr.Restore state_name parts_to_save
 
-    /* 
-        Collect states that contain valid parts
-    */
-    function _collectStatesToProcess =
-    (
-        local result = #()
-        local statesCount = sceneStateMgr.GetCount()
+		/* SAVE EACH PART */ 
+		for part in parts_to_save do
+			this._savePart (sceneStateMgr.MapIndexToPart part)
 
-        for i = 1 to statesCount do
-        (
-            local state_name = sceneStateMgr.GetSceneState i
-
-            if state_name != "___TEMP_ACTIVE_SCENE_BACKUP___" then
-            (
-                local parts = sceneStateMgr.GetParts state_name
-                local matching_parts = #{}
-
-                for p in parts where validParts_bits[p] do
-                (
-                    matching_parts[p] = true
-                )
-
-                if not matching_parts.isEmpty then
-                (
-                    append result #(state_name, matching_parts)
-                )
-            )
-        )
-
-        result -- return
-    ),
+			
+		format "ini_file: %\n" (this._getIniPath())
+		--DOSCommand ("\"" + ini_file + "\"")
+	
+	),	
 
     /* 
         Dispatch processing of scene state part
     */
-    function _savePart part_name ini_file =
+    function _savePart part_name =
     (
 		/* E.G.: "Object Properties" >>> "_saveObjectProperties" */ 
 		method = "_save" + ( substituteString part_name " " "") 
@@ -123,68 +106,114 @@ struct SceneStateSaver_v
 		if hasProperty this method then
 			case part_name of
 			(
-				"Light Properties":	this._saveLightProperties	ini_file
-				"Light Transforms":	this._saveLightTransforms	ini_file
-				"Object Properties":	this._saveObjectProperties	ini_file
-				"Camera Transforms":	this._saveCameraTransforms	ini_file
-				"Camera Properties":	this._saveCameraProperties	ini_file
-				"Layer Properties":	this._saveLayerProperties	ini_file
-				"Layer Assignment":	this._saveLayerAssignment	ini_file
-				"Materials":	this._saveMaterials	ini_file
-				"Environment":	this._saveEnvironment	ini_file
-				"Anim Layer Properties":	this._saveAnimLayerProperties	ini_file
+				"Light Properties":	this._saveLightProperties()
+				"Light Transforms":	this._saveLightTransforms()
+				"Object Properties":	this._saveObjectProperties()
+				"Camera Transforms":	this._saveCameraTransforms()
+				"Camera Properties":	this._saveCameraProperties()
+				"Layer Properties":	this._saveLayerProperties()
+				"Layer Assignment":	this._saveLayerAssignment()
+				"Materials":	this._saveMaterials()
+				"Environment":	this._saveEnvironment()
+				"Anim Layer Properties":	this._saveAnimLayerProperties()
 			)
 		else
-			format "\nUNKNOW METHOD SceneStateSaver_v.%()\n" ( method )
+			FORMAT "\nUNKNOW METHOD SceneStateSaver_v.%()\n" ( method )
     ),
 	
 	
     /* 
         Process Object Properties part
     */
-    function _saveObjectProperties ini_file =
+    function _saveObjectProperties =
     (
         for obj in objects do
-			this._saveProperties ini_file "Object Properties" obj.name isHidden:obj.isHidden isFrozen:obj.isFrozen renderable:obj.renderable
+			this._saveProperties "Object Properties" obj.name isHidden:obj.isHidden isFrozen:obj.isFrozen renderable:obj.renderable
     ),
 
     /* 
         Process Layer Properties part
     */
-    function _saveLayerProperties ini_file =
+    function _saveLayerProperties =
     (
         for i = 0 to LayerManager.count - 1 where ( layer = LayerManager.getLayer i ) != undefined do
-			this._saveProperties ini_file "Layer Properties" layer.name isHidden:(not layer.on) isFrozen:layer.isFrozen renderable:layer.renderable
+			this._saveProperties "Layer Properties" layer.name isHidden:(not layer.on) isFrozen:layer.isFrozen renderable:layer.renderable
     ),
 
 	/** Save properties
 	 */
-	function _saveProperties ini_file state_name key isHidden: isFrozen: renderable: =
+	function _saveProperties part_name key isHidden: isFrozen: renderable: =
 	(
 		--format "\n"; print "SceneStateSaver_v._saveProperties()"
-		
 		data = Dictionary #( #isHidden, isHidden ) #( #isFrozen, isFrozen ) #( #renderable, renderable )
 		
-        setINISetting ini_file state_name key ( data as string )
+		this.saveToIni part_name key data
 	),
-
+	
     /* 
         Process Layer Assignment part
     */
-    function _saveLayerAssignment ini_file =
+    function _saveLayerAssignment =
     (
+		state_name = state_name
+		
         for i = 0 to LayerManager.count - 1 do
         (
-			layer_nodes = #()
+			objs_in_layer = #()
 			
             layer = LayerManager.getLayer i
 			
-            layer.nodes &layer_nodes
+            layer.nodes &objs_in_layer
 
-            setINISetting ini_file "Layer Assignment" layer.name ( layer_nodes as Array )
+			node_names = for obj_in_layer in objs_in_layer collect obj_in_layer.name
+			
+			this.saveToIni "Layer Assignment" layer.name node_names
         )
     ),
 
+    /* Collect states that contain valid parts
+		
+		@return matrix of states data E.G.: #( state_name, matching_parts ) >>> #( "Foo-State", #{1..3} )
+    */
+    function _collectStatesToProcess =
+    (
+        result = #()
+        statesCount = sceneStateMgr.GetCount()
+
+        for i = 1 to statesCount where ( state_name = sceneStateMgr.GetSceneState i ) != active_state_backup do
+        (
+			matching_parts = #{}
+			
+			parts = sceneStateMgr.GetParts state_name
+
+			/* GET PARTS */ 
+			for p in parts where validParts_bits[p] do
+				matching_parts[p] = true
+
+			/* GET RESULT */ 
+			if not matching_parts.isEmpty then
+				append result #( state_name, matching_parts )
+        )
+
+        result -- return
+    ),
+
+	/** Get ini path
+	 */
+	function _getIniPath =
+	(
+		--format "\n"; print "to.getIniPath()"
+		tempDir + this.state_name + ".ini" --return
+	),
+	
+	/** Save to ini
+	 */
+	function saveToIni part_name key val =
+	(
+		--format "\n"; print "to.saveToIni()"
+        setINISetting (this._getIniPath()) part_name ( key as string ) ( val as string )
+	),
+	
 
     on create do
     (

@@ -44,9 +44,8 @@ function sceneStatesPartsMenu =
 
 	file_path = (getDir #userMacros) + "\\" + category + ".mcr"
 	
-	--for i = 1 to scene_state_bit_names.count do
-	if menuMan.findMenu category != undefined then
-		return true
+	--if menuMan.findMenu category != undefined then
+		--return true
  
 
 	for state_name in scene_state_bit_order do 
@@ -75,13 +74,13 @@ function sceneStatesPartsMenu =
 		
 		(MacroscriptGenerator_v()).generateMcrFile (macroscripts) (file_path)
 		
-		MenuSets 	= Menu_v (category)
+		MenuSetParts 	= Menu_v (category)
 		
-		MenuSets.clearMenu()
+		MenuSetParts.clearMenu()
 		
 		(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
 		
-		MenuSets.addSeparators #( 1, 3, 4, 6, 8 )
+		MenuSetParts.addSeparators #( 1, 3, 4, 6, 8 )
 	
 		--setSceneStateParts(undefined)
 	)
