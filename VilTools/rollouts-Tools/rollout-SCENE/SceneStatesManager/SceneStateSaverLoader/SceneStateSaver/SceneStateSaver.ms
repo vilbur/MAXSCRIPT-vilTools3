@@ -32,9 +32,9 @@
 
 struct SceneStateSaver_v
 (
-    validParts_bits,
+    valid_parts,
 	
-    tempDir,
+    temp_dir,
 
 	state_name, -- currently processed state
 	
@@ -47,9 +47,9 @@ struct SceneStateSaver_v
     (
  		format "\n"; print "SceneStateSaver_v.save()"
 		
-		removeDir tempDir
+		removeDir temp_dir
 		
-        makeDir tempDir
+        makeDir temp_dir
 
 		/* SAVE ACTIVE STATE */ 
         sceneStateMgr.Capture active_state_backup #{1..10}
@@ -68,7 +68,7 @@ struct SceneStateSaver_v
         sceneStateMgr.Delete active_state_backup
 		
 		
-        FORMAT "SUCCESS: Saved % scene states to %\n" states_to_process.count tempDir
+        FORMAT "SUCCESS: Saved % scene states to %\n" states_to_process.count temp_dir
     ),
 	
 
@@ -187,7 +187,7 @@ struct SceneStateSaver_v
 			parts = sceneStateMgr.GetParts state_name
 
 			/* GET PARTS */ 
-			for p in parts where validParts_bits[p] do
+			for p in parts where valid_parts[p] do
 				matching_parts[p] = true
 
 			/* GET RESULT */ 
@@ -198,20 +198,20 @@ struct SceneStateSaver_v
         result -- return
     ),
 
-	/** Get ini path
-	 */
-	function _getIniPath =
-	(
-		--format "\n"; print "to.getIniPath()"
-		tempDir + this.state_name + ".ini" --return
-	),
-	
 	/** Save to ini
 	 */
 	function saveToIni part_name key val =
 	(
 		--format "\n"; print "to.saveToIni()"
         setINISetting (this._getIniPath()) part_name ( key as string ) ( val as string )
+	),
+	
+	/** Get ini path
+	 */
+	function _getIniPath =
+	(
+		--format "\n"; print "to.getIniPath()"
+		temp_dir + this.state_name + ".ini" --return
 	),
 	
 

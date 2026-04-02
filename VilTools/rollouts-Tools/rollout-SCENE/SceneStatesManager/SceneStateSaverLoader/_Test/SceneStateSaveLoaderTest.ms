@@ -120,10 +120,11 @@ SceneStateSaveLoader.save()
 
 /*------------------------------------------------------------------------------
 	LOAD
---------------------------------------------------------------------------------*/
+------------------------------------------------------------------------------*/
 
 /* SOFT RESET BEFORE LOAD */ 
 --resetSceneVisibilityAndStates()
---
---
+
+--clearListener(); print("Cleared in: "+getSourceFileName())
+
 --SceneStateSaveLoader.load()

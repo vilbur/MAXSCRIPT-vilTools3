@@ -12,11 +12,9 @@ struct SceneStateSaveLoader_v
 	
 	
 	/* properties */
-	ini_files,
-	
-	validParts_bits = #{}, -- bits of states in this.work_on_parts
+	valid_parts = #{}, -- bits of states in this.work_on_parts
 
-    tempDir = (getDir #temp + "\\SceneStateSaveLoader\\"),
+    temp_dir = (getDir #temp + "\\SceneStateSaveLoader\\"),
 
 	
 	/* private */
@@ -32,7 +30,7 @@ struct SceneStateSaveLoader_v
 	function save =
 	(
 		format "\n"; print "SceneStateSaveLoader_v.save()"
-		( SceneStateSaver_v	validParts_bits:validParts_bits tempDir:tempDir ).save()
+		( SceneStateSaver_v	valid_parts:valid_parts temp_dir:temp_dir ).save()
 	),
 	
 	/** Load
@@ -40,9 +38,9 @@ struct SceneStateSaveLoader_v
 	function load =
 	(
 		--format "\n"; print "SceneStateSaveLoader_v.load()"
-		--( SceneStateLoader_v	validParts_bits:validParts_bits tempDir:tempDir ).load()
+		--( SceneStateLoader_v	valid_parts:valid_parts temp_dir:temp_dir ).load()
 		
-		SceneStateLoader = SceneStateLoader_v	validParts_bits:validParts_bits ini_files:ini_files 
+		SceneStateLoader = SceneStateLoader_v	valid_parts:valid_parts temp_dir:temp_dir 
 		
 		SceneStateLoader.load()
 	),
@@ -55,7 +53,7 @@ struct SceneStateSaveLoader_v
     function _collectIniFiles =
     (
         result = #()
-        files = getFiles (tempDir + "*.ini")
+        files = getFiles (temp_dir + "*.ini")
 
         for f in files do
             append result f
@@ -72,7 +70,7 @@ struct SceneStateSaveLoader_v
         ini_files = this._collectIniFiles()
 		
 		for work_on_part in work_on_parts do
-			validParts_bits[ sceneStateMgr.MapPartToIndex work_on_part ] = true
+			valid_parts[ sceneStateMgr.MapPartToIndex work_on_part ] = true
 	)
 
 )
