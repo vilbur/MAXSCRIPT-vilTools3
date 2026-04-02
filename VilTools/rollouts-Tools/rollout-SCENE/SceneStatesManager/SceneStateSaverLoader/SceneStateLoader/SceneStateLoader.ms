@@ -3,75 +3,139 @@
   *	
   *	
   */
-struct SceneStateTransfer_v
+struct SceneStateLoader_v
 (
-    tempDir = (getDir #temp + "\\SceneStates\\"),
     validParts_bits,
-	
+    tempDir,
 	
     /* 
         Load scene states from INI files
     */
     function load =
     (
-        local iniFiles = collectIniFiles()
+		/* ini file == preset state */ 
+        ini_files = this._collectIniFiles()
 
-        for ini_file in iniFiles do
+		format "ini_files: %\n" ini_files
+		
+        for ini_file in ini_files do
         (
-            local state_name = getFilenameFile ini_file
+			bits_to_load = #{}
+			
+			parts_to_load =  getINISetting ini_file
 
-            if sceneStateMgr.GetSceneStateIndex state_name == 0 then
-            (
-                sceneStateMgr.Capture state_name #{}
-            )
+			/* State name is filename */ 
+            state_name = getFilenameFile ini_file
 
-            for part_index in validParts_bits do
-            (
-                if validParts_bits[part_index] then
+			
+			/* LAOD EACH PART */ 
+			for part_name in parts_to_load where ( bit_of_part = sceneStateMgr.MapPartToIndex part_name ) > 0 do 
+                if validParts_bits[bit_of_part] then
                 (
-                    local part_name = sceneStateMgr.MapIndexToPart part_index
-                    applyPart part_name ini_file
+					/* REMEBER WHICH PART IS LAODED */ 
+					bits_to_load[bit_of_part] = true
+					
+					/* LOAD PART */ 
+					this._loadPart part_name ini_file
                 )
-            )
+			
+			/* SAVE STATE */
+			if not bits_to_load.isEmpty then
+				sceneStateMgr.Capture state_name bits_to_load
         )
 
-        format "SUCCESS: Loaded % scene states from %\n" iniFiles.count tempDir
+        --FORMAT "SUCCESS: Loaded % scene states from %\n" ini_files.count tempDir
+    ),
+    /* 
+        Dispatch LOAD part
+    */
+    function _loadPart part_name ini_file =
+    (
+		/* E.G.: "Object Properties" >>> "_loadObjectProperties" */ 
+		method = "_load" + ( substituteString part_name " " "") 
+		--format "TEST: %\n" ( hasProperty this method )
+		
+		/* EXECUTE METHOD */ 
+		if hasProperty this method then
+			case part_name of
+			(
+				"Light Properties":	this._loadLightProperties	ini_file
+				"Light Transforms":	this._loadLightTransforms	ini_file
+				"Object Properties":	this._loadObjectProperties	ini_file
+				"Camera Transforms":	this._loadCameraTransforms	ini_file
+				"Camera Properties":	this._loadCameraProperties	ini_file
+				"Layer Properties":	this._loadLayerProperties	ini_file
+				"Layer Assignment":	this._loadLayerAssignment	ini_file
+				"Materials":	this._loadMaterials	ini_file
+				"Environment":	this._loadEnvironment	ini_file
+				"Anim Layer Properties":	this._loadAnimLayerProperties	ini_file
+			)
+		else
+			format "\nUNKNOW METHOD SceneStateLoader_v.%()\n" ( method )
     ),
 
     /* 
-        Initialize valid parts bitarray
+        Apply Object Properties LOAD
     */
-    function initValidParts =
+    function _loadObjectProperties ini_file =
     (
-        validParts_bits = #{}
-        validParts_bits[sceneStateMgr.MapPartToIndex "Object Properties"] = true
-        validParts_bits[sceneStateMgr.MapPartToIndex "Layer Properties"] = true
-        validParts_bits[sceneStateMgr.MapPartToIndex "Layer Assignment"] = true
+ 		format "\n"; print "SceneStateLoader_v._loadObjectProperties()"
+		
+        for obj in objects do
+			this._loadProperties obj "Object Properties"
     ),
 
     /* 
-        Format boolean to string
+        Apply Layer Properties LOAD
     */
-    function formatBool val =
+    function _loadLayerProperties ini_file =
     (
-        if val then "1" else "0" -- return
+        for i = 0 to LayerManager.count - 1 do
+			this._loadProperties ( LayerManager.getLayer i ) "Layer Properties"
     ),
 
+	/** Load properties
+	 */
+	function _loadProperties _node state_name =
+	(
+		--format "\n"; print "SceneStateLoader_v._loadProperties()"
+		if ( ini_val = getINISetting ini_file state_name _node.name ) != undefined then
+		(
+			values = execute ini_val 
+			
+			for prop in values.keys do format "prop: % 	value: %\n" prop values[prop]
+			
+			for prop in values.keys do
+				setProperty _node prop values[prop]
+		)
+	),
+	
     /* 
-        Parse string boolean
+        Apply Layer Assignment LOAD
     */
-    function parseBool str =
+    function _loadLayerAssignment ini_file =
     (
-        if str == "1" then true else false -- return
+        for i = 0 to LayerManager.count - 1 do
+        (
+            layer = LayerManager.getLayer i
+			
+			if ( ini_val = getINISetting ini_file "Layer Assignment" layer.name ) != undefined then
+			(
+				objects_in_layer = execute ini_val 
+				
+				if objects_in_layer.count > 0 then
+					layer.addnodes objects_in_layer
+			)
+        )
     ),
 
     /* 
         Collect ini files from temp directory
     */
-    function collectIniFiles =
+    function _collectIniFiles =
     (
-        local result = #()
-        local files = getFiles (tempDir + "*.ini")
+        result = #()
+        files = getFiles (tempDir + "*.ini")
 
         for f in files do
         (
@@ -81,97 +145,9 @@ struct SceneStateTransfer_v
         result -- return
     ),
 
-    /* 
-        Apply Object Properties LOAD
-    */
-    function applyObjectProperties ini_file =
-    (
-        for obj in objects do
-        (
-            local val = getINISetting ini_file "Object Properties" obj.name
-            if val != undefined then
-            (
-                local data = filterString val ","
-                for d in data do
-                (
-                    local pair = filterString d ":"
-                    if pair.count == 2 then
-                    (
-                        if pair[1] == "isHidden" then obj.isHidden = parseBool pair[2]
-                        else if pair[1] == "isFrozen" then obj.isFrozen = parseBool pair[2]
-                        else if pair[1] == "renderable" then obj.renderable = parseBool pair[2]
-                    )
-                )
-            )
-        )
-    ),
-
-    /* 
-        Apply Layer Properties LOAD
-    */
-    function applyLayerProperties ini_file =
-    (
-        for i = 0 to LayerManager.count - 1 do
-        (
-            local layer = LayerManager.getLayer i
-            local val = getINISetting ini_file "Layer Properties" layer.name
-
-            if val != undefined then
-            (
-                local data = filterString val ","
-                for d in data do
-                (
-                    local pair = filterString d ":"
-                    if pair.count == 2 then
-                    (
-                        if pair[1] == "isHidden" then layer.on = not parseBool pair[2]
-                        else if pair[1] == "isFrozen" then layer.isFrozen = parseBool pair[2]
-                        else if pair[1] == "renderable" then layer.renderable = parseBool pair[2]
-                    )
-                )
-            )
-        )
-    ),
-
-    /* 
-        Apply Layer Assignment LOAD
-    */
-    function applyLayerAssignment ini_file =
-    (
-        for i = 0 to LayerManager.count - 1 do
-        (
-            local layer = LayerManager.getLayer i
-            local val = getINISetting ini_file "Layer Assignment" layer.name
-
-            if val != undefined and val != "" then
-            (
-                local names = filterString val ","
-
-                for n in names do
-                (
-                    local obj = getNodeByName n
-                    if obj != undefined then
-                    (
-                        layer.addNode obj
-                    )
-                )
-            )
-        )
-    ),
-
-    /* 
-        Dispatch LOAD part
-    */
-    function applyPart part_name ini_file =
-    (
-        if part_name == "Object Properties" then applyObjectProperties ini_file
-        else if part_name == "Layer Properties" then applyLayerProperties ini_file
-        else if part_name == "Layer Assignment" then applyLayerAssignment ini_file
-    ),
 
 
     on create do
     (
-        initValidParts()
     )
 )

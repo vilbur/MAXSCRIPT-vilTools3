@@ -23,18 +23,24 @@
 			
 			
 	fuction load inverts process. Read ini file and create or update scene set accordning to data from ini file
+	
+	
+	ALL SCENE STATE PARTS:
+		#("Light Properties", "Light Transforms", "Object Properties", "Camera Transforms", "Camera Properties", "Layer Properties", "Layer Assignment", "Materials", "Environment", "Anim Layer Properties")
+	
 */
 
 struct SceneStateSaver_v
 (
-    tempDir = (getDir #temp + "\\SceneStates\\"),
     validParts_bits,
+    tempDir,
 
     /* 
         Saves scene states into INI files
     */
     function save =
     (
+ 		format "\n"; print "SceneStateSaver_v.save()"
         makeDir tempDir
 
         local tempBackupState = "___TEMP_ACTIVE_SCENE_BACKUP___"
@@ -45,27 +51,28 @@ struct SceneStateSaver_v
         for sp in statesToProcess do
         (
             local state_name = sp[1]
-            local parts_to_process = sp[2]
+            local parts_to_save = sp[2]
             local ini_file = tempDir + state_name + ".ini"
 
             if doesFileExist ini_file then deleteFile ini_file
 
-            sceneStateMgr.Restore state_name parts_to_process
+            sceneStateMgr.Restore state_name parts_to_save
 
-            for part in parts_to_process do
+            for part in parts_to_save do
             (
                 local part_name = sceneStateMgr.MapIndexToPart part
-                this._processPart part_name ini_file
+                this._savePart part_name ini_file
             )
 
             format "iniFile: %\n" ini_file
-            DOSCommand ("\"" + ini_file + "\"")
+            --DOSCommand ("\"" + ini_file + "\"")
         )
 
         sceneStateMgr.Restore tempBackupState #{1..10}
-        sceneStateMgr.Delete tempBackupState
 
-        format "SUCCESS: Saved % scene states to %\n" statesToProcess.count tempDir
+        sceneStateMgr.Delete tempBackupState
+		
+        FORMAT "SUCCESS: Saved % scene states to %\n" statesToProcess.count tempDir
     ),
 	
 
@@ -107,16 +114,35 @@ struct SceneStateSaver_v
     /* 
         Dispatch processing of scene state part
     */
-    function _processPart part_name ini_file =
+    function _savePart part_name ini_file =
     (
-        if part_name == "Object Properties" then this._processObjectProperties ini_file
-        else if part_name == "Layer Properties" then this._processLayerProperties ini_file
-        else if part_name == "Layer Assignment" then this._processLayerAssignment ini_file
+		/* E.G.: "Object Properties" >>> "_saveObjectProperties" */ 
+		method = "_save" + ( substituteString part_name " " "") 
+		
+		/* EXECUTE METHOD */ 
+		if hasProperty this method then
+			case part_name of
+			(
+				"Light Properties":	this._saveLightProperties	ini_file
+				"Light Transforms":	this._saveLightTransforms	ini_file
+				"Object Properties":	this._saveObjectProperties	ini_file
+				"Camera Transforms":	this._saveCameraTransforms	ini_file
+				"Camera Properties":	this._saveCameraProperties	ini_file
+				"Layer Properties":	this._saveLayerProperties	ini_file
+				"Layer Assignment":	this._saveLayerAssignment	ini_file
+				"Materials":	this._saveMaterials	ini_file
+				"Environment":	this._saveEnvironment	ini_file
+				"Anim Layer Properties":	this._saveAnimLayerProperties	ini_file
+			)
+		else
+			format "\nUNKNOW METHOD SceneStateSaver_v.%()\n" ( method )
     ),
+	
+	
     /* 
         Process Object Properties part
     */
-    function _processObjectProperties ini_file =
+    function _saveObjectProperties ini_file =
     (
         for obj in objects do
 			this._saveProperties ini_file "Object Properties" obj.name isHidden:obj.isHidden isFrozen:obj.isFrozen renderable:obj.renderable
@@ -125,7 +151,7 @@ struct SceneStateSaver_v
     /* 
         Process Layer Properties part
     */
-    function _processLayerProperties ini_file =
+    function _saveLayerProperties ini_file =
     (
         for i = 0 to LayerManager.count - 1 where ( layer = LayerManager.getLayer i ) != undefined do
 			this._saveProperties ini_file "Layer Properties" layer.name isHidden:(not layer.on) isFrozen:layer.isFrozen renderable:layer.renderable
@@ -135,7 +161,7 @@ struct SceneStateSaver_v
 	 */
 	function _saveProperties ini_file state_name key isHidden: isFrozen: renderable: =
 	(
-		format "\n"; print "SceneStateSaver_v._saveProperties()"
+		--format "\n"; print "SceneStateSaver_v._saveProperties()"
 		
 		data = Dictionary #( #isHidden, isHidden ) #( #isFrozen, isFrozen ) #( #renderable, renderable )
 		
@@ -145,43 +171,23 @@ struct SceneStateSaver_v
     /* 
         Process Layer Assignment part
     */
-    function _processLayerAssignment ini_file =
+    function _saveLayerAssignment ini_file =
     (
         for i = 0 to LayerManager.count - 1 do
         (
-            local layer = LayerManager.getLayer i
+			layer_nodes = #()
+			
+            layer = LayerManager.getLayer i
+			
             layer.nodes &layer_nodes
 
-            local name_str = ""
-
-            if layer_nodes != undefined and layer_nodes.count > 0 then
-            (
-                for n = 1 to layer_nodes.count do
-                (
-                    name_str += layer_nodes[n].name
-                    if n < layer_nodes.count then name_str += ","
-                )
-            )
-
-            setINISetting ini_file "Layer Assignment" layer.name name_str
+            setINISetting ini_file "Layer Assignment" layer.name ( layer_nodes as Array )
         )
     ),
 
-    /* 
-        Initialize valid parts bitarray
-    */
-    function _initValidParts =
-    (
-        validParts_bits = #{}
-        validParts_bits[sceneStateMgr.MapPartToIndex "Object Properties"] = true
-        validParts_bits[sceneStateMgr.MapPartToIndex "Layer Properties"] = true
-        validParts_bits[sceneStateMgr.MapPartToIndex "Layer Assignment"] = true
-    ),
 
-	
     on create do
     (
-        _initValidParts()
     )
 )
 

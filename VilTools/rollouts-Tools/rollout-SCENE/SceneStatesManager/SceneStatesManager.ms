@@ -18,8 +18,9 @@ struct SceneStatesManager_v
 	ini = getDir #TEMP + "\\named-scene-states.ini",
 
 	/* private */
-	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties ),
-
+	--scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties ),
+	--scene_state_bit_names = for i = 1 to sceneStateMgr.PartsCount() collect sceneStateMgr.MapIndexToPart i, -- get #("Light Properties", "Light Transforms", "Object Properties", "Camera Transforms", "Camera Properties", "Layer Properties", "Layer Assignment", "Materials", "Environment", "Anim Layer Properties")
+	
 	--menu_callback_help_message = "MANAGE STATE IN QUAD MENU: Press CTRL: Save state | Press SHIFT: Rename state | Press ALT: Delete state",
 	/* dependency */
 	/* reference */
@@ -125,7 +126,7 @@ struct SceneStatesManager_v
 		--if ( index = sceneStateMgr.FindSceneState state_name) == 0 then
 		if state_bits != undefined then
 		(
-			SCENE_STATE_BITS = saved_bits
+			SCENE_STATE_BITS = state_bits
 		
 			sceneStateMgr.Capture state_name state_bits
 		)
@@ -191,7 +192,7 @@ struct SceneStatesManager_v
 	(
 		--format "\n"; print "SceneStatesManager_v.getNamesOfParts()"
 		
-		for _bit in bits collect scene_state_bit_names[_bit] as string
+		for _bit in bits collect sceneStateMgr.MapIndexToPart _bit
 		--names_of_parts = for _bit in bits collect scene_state_bit_names[_bit] as string
 		--
 		--format "names_of_parts: %\n" names_of_parts
@@ -247,7 +248,7 @@ struct SceneStatesManager_v
 		loaded_parts = ""
 
 		for load_bit in state_bits do
-			loaded_parts += delimeter + scene_state_bit_names[load_bit] 
+			loaded_parts += delimeter + ( sceneStateMgr.MapIndexToPart load_bit )
 		
 		loaded_parts --return		
 	),

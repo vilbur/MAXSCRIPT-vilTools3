@@ -9,29 +9,35 @@
  */
 function sceneStatesPartsMenu =
 (
-	format "\n"; print ".sceneStatesPartsMenu()"
+	--format "\n"; print ".sceneStatesPartsMenu()"
 	
 	macroscripts = #()
 	
-	scene_state_bit_names = #( #LightProperties, #LightTransforms, #ObjectProperties, #CameraTransforms, #CameraProperties, #LayerProperties, #LayerAssignment, #Materials, #Environment, #AnimLayerProperties )
+	
+	--scene_state_bit_names = for i = 1 to sceneStateMgr.PartsCount() collect sceneStateMgr.MapIndexToPart i -- get #("Light Properties", "Light Transforms", "Object Properties", "Camera Transforms", "Camera Properties", "Layer Properties", "Layer Assignment", "Materials", "Environment", "Anim Layer Properties")
+	/*
+		Default order	
+		 #("Light Properties", "Light Transforms", "Object Properties", "Camera Transforms", "Camera Properties", "Layer Properties", "Layer Assignment", "Materials", "Environment", "Anim Layer Properties")
+	*/ 
 	
 	scene_state_bit_order =
 	#(
-		#ObjectProperties,
-		#LayerProperties,
-		#LayerAssignment,
+		"Object Properties",
+		"Layer Properties",
+		"Layer Assignment",
 		
-		#AnimLayerProperties,
+		"Anim Layer Properties",
 		
-		#LightProperties,
-		#LightTransforms,
+		"Light Properties",
+		"Light Transforms",
 		
-		#CameraTransforms,
-		#CameraProperties,
+		"Camera Transforms",
+		"Camera Properties",
 		
-		#Materials,
-		#Environment
+		"Materials",
+		"Environment"
 	)
+		
 		
 	category	= "_Scene-States-Parts"
 	
@@ -39,15 +45,16 @@ function sceneStatesPartsMenu =
 	file_path = (getDir #userMacros) + "\\" + category + ".mcr"
 	
 	--for i = 1 to scene_state_bit_names.count do
-	if doesFileExist file_path then
+	if menuMan.findMenu category != undefined then
 		return true
-	
-	
-	for scene_state_name in scene_state_bit_order do 
+ 
+
+	for state_name in scene_state_bit_order do 
 	(
-		_bit	= findItem scene_state_bit_names scene_state_name
+		--_bit	= findItem scene_state_bit_names state_name
+		_bit = sceneStateMgr.MapPartToIndex state_name
 		
-		state_name = scene_state_bit_names[_bit] as string
+		--state_name = scene_state_bit_names[_bit] as string
 		--format "state_name: %\n" state_name
 		--macro_code = "setSceneStateParts "+ _bit as string
 		macro_code = "SCENE_STATE_BITS["+ _bit as string + "]"

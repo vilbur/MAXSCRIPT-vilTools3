@@ -1,11 +1,8 @@
-
-
-
 /** Add scene states to quad menu
  */
 function processSceneStateCallbackMenu =
 (
-	--format "\n"; print ".processSceneStateCallbackMenu()"
+	format "\n"; print ".processSceneStateCallbackMenu()"
 	--fn updateNeeded arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string != ( sort(arr2) ) as string
 	
 
@@ -24,11 +21,16 @@ function processSceneStateCallbackMenu =
 
 	scene_states = SceneStates.getSceneStates()
 	
-	update_needed = with PrintAllElements on ( sort(menu_items) ) as string != ( sort(scene_states) ) as string
+	array_changed = with PrintAllElements on ( sort(menu_items) ) as string != ( sort(scene_states) ) as string
 
-	MenuSets.clearMenu()
+	update_needed = scene_states.count != 0 and array_changed
 	
 	
+	/* CLEAR MENU IF IS EMPTY OR FOR NEX UPDATE */ 
+	if scene_states.count == 0 or update_needed then
+		MenuSets.clearMenu()
+	
+	/* EXIT IF MENU IS EMPTY OR STAY SAME */ 
 	if scene_states.count == 0 or not update_needed then
 		return false
 	
