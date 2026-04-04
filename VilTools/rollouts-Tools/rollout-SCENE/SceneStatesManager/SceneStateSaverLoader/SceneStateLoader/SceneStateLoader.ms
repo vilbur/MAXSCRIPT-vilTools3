@@ -19,42 +19,43 @@ struct SceneStateLoader_v
  		format "\n"; print "SceneStateLoader_v._loadObjectProperties()"
 		
 		/* ini file == preset state */ 
-        ini_files = this._collectIniFiles()
-
-		--format "ini_files: %\n" ini_files
-		
-        for ini_file in ini_files do
-        (
-			format "\n=========================================================================================================\n"
+        if (ini_files = this._collectIniFiles()).count > 0 then
+		(
+			for ini_file in ini_files do
+			(
+				format "\n=========================================================================================================\n"
+				
+				bits_to_load = #{}
+				
+				parts_to_load =  getINISetting ini_file
+	
+				/* State name is filename */ 
+				this.state_name = getFilenameFile ini_file
+	
+				format "STATE_NAME: %\n" state_name
+				
+				/* LAOD EACH PART */ 
+				for part_name in parts_to_load where ( bit_of_part = sceneStateMgr.MapPartToIndex part_name ) > 0 do 
+					if valid_parts[bit_of_part] then
+					(
+						format "PART_NAME: %\n" part_name
+						
+						/* REMEBER WHICH PART IS LAODED */ 
+						bits_to_load[bit_of_part] = true
+						
+						/* LOAD PART */ 
+						this._loadPart part_name
+					)
+				
+				/* SAVE STATE */
+				if not bits_to_load.isEmpty then
+					sceneStateMgr.Capture state_name bits_to_load
+			)
 			
-			bits_to_load = #{}
-			
-			parts_to_load =  getINISetting ini_file
-
-			/* State name is filename */ 
-            this.state_name = getFilenameFile ini_file
-
-			format "STATE_NAME: %\n" state_name
-			
-			/* LAOD EACH PART */ 
-			for part_name in parts_to_load where ( bit_of_part = sceneStateMgr.MapPartToIndex part_name ) > 0 do 
-                if valid_parts[bit_of_part] then
-                (
-					format "PART_NAME: %\n" part_name
-					
-					/* REMEBER WHICH PART IS LAODED */ 
-					bits_to_load[bit_of_part] = true
-					
-					/* LOAD PART */ 
-					this._loadPart part_name
-                )
-			
-			/* SAVE STATE */
-			if not bits_to_load.isEmpty then
-				sceneStateMgr.Capture state_name bits_to_load
-        )
-
-        FORMAT "SUCCESS: Loaded % scene states from %\n" ini_files.count temp_dir
+			FORMAT "SUCCESS: Loaded % scene states from %\n" ini_files.count temp_dir
+		)
+		else
+			messageBox "IMPORT FAILED\n\nState are not exported"
     ),
 	
     /* 

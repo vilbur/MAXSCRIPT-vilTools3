@@ -37,11 +37,15 @@ function addQuad3 QuadMenu =
 (
 	QuadMenu.setTitle("S C E N E   S T A T E S")
 	
-	_SceneStatesMenu = QuadMenu.addMenu("_Scene-States")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
+	QuadMenu.addMenu("_Scene-States")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
 	
 	QuadMenu.addSeparator()
 
-	StatesFiltersMenu = QuadMenu.addMenu("_Scene-States-Parts")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
+	QuadMenu.addMenu("_Scene-States-Parts")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
+	
+	QuadMenu.addSeparator()
+	
+	QuadMenu.addMenu("_Scene-States-IO")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
 )
 
 /*------------------------------------------------------------------------------
@@ -52,9 +56,8 @@ function addQuad4 QuadMenu =
 	--QuadMenu.setTitle("LOAD|SAVE|RENAME|DELETE")
 	QuadMenu.setTitle("S C E N E  S T A T E")
 	--QuadMenu.setTitle("CTRL:save|SHIFT:rename|ALT:Delete")
-	
 
-	
+	_SceneStatesMenu = QuadMenu.addMenu("_Scene-States-Manage")	--separators: #(  4, 6 )	--title:"" --index: --flat:false
 )
 
 

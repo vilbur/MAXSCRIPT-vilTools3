@@ -6,7 +6,7 @@ macroscript	scene_states_save
 category:	"_Scene-States"
 buttontext:	"CREATE"
 toolTip:	"Create Scene state"
-icon:	"id:BTN_save_scene_state|Menu:CREATE state|across:3"
+icon:	"id:BTN_save_scene_state|Menu:CREATE state|across:4|width:96"
 (
 	--on IsVisible do selection.count > 0
 	on execute do
@@ -31,13 +31,35 @@ icon:	"MENU:DIALOG open"
 		actionMan.executeAction -1682387772 "4112"  -- Scene State: Scene State Manager Dialog Toggle
 		
 		processSceneStateCallbackMenu()
-
 	)
 )
 
+/**
+  */
+macroscript	scene_states_export
+category:	"_Scene-States-IO"
+buttontext:	"EXPORT"
+toolTip:	"Export scene states from scene"
+icon:	"MENU:E X P O R T states"
+(
+	on execute do
+		(SceneStateSaveLoader_v()).save()
+)
 
---global SCENE_STATE_BITS
+/**
+  */
+macroscript	scene_states_import
+category:	"_Scene-States-IO"
+buttontext:	"IMPORT"
+toolTip:	"Import scene states from scene"
+icon:	"MENU:I M P O R T states"
+(
+	on execute do
+		(SceneStateSaveLoader_v()).load()
+)
 
+/*
+*/ 
 macroscript	scene_states_create_menu_callbacks
 category:	"_Scene-States"
 buttontext:	"SCENE STATES QUAD MENU ✅"
@@ -48,21 +70,19 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 
 	on execute do
 	(
-		if SCENE_STATE_BITS == undefined or ( EventFired != undefined and EventFired.val ) then
+		if EventFired == undefined or ( EventFired != undefined and EventFired.val ) then
 		(
 			
 			format "\nSCENE_STATES_CREATE_MENU_CALLBACKS - CREATE\n"
 			
 			CALLBACKMANAGER.add "processSceneStateCallbackMenu" #filePostOpen
+			--CALLBACKMANAGER.add "processSceneStateCallbackMenu" #systemPostReset
 
 			CALLBACKMANAGER.start "processSceneStateCallbackMenu"
 
 			processSceneStateCallbackMenu()
 			
 			sceneStatesPartsMenu()
-			
-			/* UPDATE PARTS MENU */ 
-			setSceneStateParts undefined 
 		)
 		else
 		(
@@ -74,11 +94,8 @@ icon:	"control:checkbox|across:1|offset:[0,8]|align:#CENTER|AUTORUN:TRUE"
 			
 			(Menu_v ("_Scene-State-Callback")).clearMenu()
 			
-			SCENE_STATE_BITS = undefined
+			SCENE_STATE_BITS = #{}
 		)
-
-		--if EventFired != undefined then 
-			--SCENE_STATE_BITS = EventFired.val
 	)
 )
 

@@ -42,8 +42,12 @@ tooltip:	"Load default quad menu and menus"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
 	on execute do
+	(
+		format "EventFired: %\n" EventFired
 		if queryBox "RESET ALL MENUS AND QUADMENUS ?" title:"RESET MENUS" then
 			(QuadMenuManager_v()).resetMenusAndHotkeys()
+		
+	)
 )
 
 

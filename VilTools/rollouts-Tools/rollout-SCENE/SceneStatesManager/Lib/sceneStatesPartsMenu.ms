@@ -44,8 +44,8 @@ function sceneStatesPartsMenu =
 
 	file_path = (getDir #userMacros) + "\\" + category + ".mcr"
 	
-	--if menuMan.findMenu category != undefined then
-		--return true
+	if menuMan.findMenu category != undefined then
+		return true
  
 
 	for state_name in scene_state_bit_order do 

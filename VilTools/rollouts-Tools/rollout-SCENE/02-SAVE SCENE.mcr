@@ -4,7 +4,7 @@ macroscript	_scene_save
 category:	"_Scene-Save"
 buttontext:	"Save File"
 toolTip:	"Save TEMP File"
-icon:	"ACROSS:2|MENU:&Save File"
+icon:	"ACROSS:4|MENU:&Save File"
 (
 	on isVisible return objects.count > 0
 

@@ -47,20 +47,6 @@ struct SceneStateSaveLoader_v
 
 	private
 	
-    /* 
-        Collect ini files from temp directory
-    */
-    function _collectIniFiles =
-    (
-        result = #()
-        files = getFiles (temp_dir + "*.ini")
-
-        for f in files do
-            append result f
-
-        result -- return
-    ),
-	
 
 	/**
 	 */

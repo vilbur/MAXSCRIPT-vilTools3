@@ -1,4 +1,7 @@
-/** Add scene states to quad menu
+/** Create menu from scene states
+  
+  
+  
  */
 function processSceneStateCallbackMenu =
 (
@@ -9,7 +12,7 @@ function processSceneStateCallbackMenu =
 	macroscripts = #()
 	
 	quad_name	= "_SceneStates-SelectionSets"
-	category	= "_Scene-State-Callback"
+	category	= "_Scene-States-Manage"
 
 	/* GET MENU OF NAMED SELECTION SET */ 
 	MenuSets 	= Menu_v (category)
@@ -67,13 +70,13 @@ function processSceneStateCallbackMenu =
 	(ScriptFile_Content_v(file_path)).importMacroscriptsToMenus()
 	
 	
-	/* GET QUAD */ 
-	SelSetsQuadMenu 	= QuadMenu_v( quad_name )
-	--format "SelSetsQuadMenu: %\n" SelSetsQuadMenu
-	
-	
-	/* ADD SETS TO QUAD */
-	SelSetsQuadMenu.Quads[4].addMenu( category )
+	--/* GET QUAD */ 
+	--SelSetsQuadMenu 	= QuadMenu_v( quad_name )
+	----format "SelSetsQuadMenu: %\n" SelSetsQuadMenu
+	--
+	--
+	--/* ADD SETS TO QUAD */
+	--SelSetsQuadMenu.Quads[4].addMenu( category )
 
 
 )

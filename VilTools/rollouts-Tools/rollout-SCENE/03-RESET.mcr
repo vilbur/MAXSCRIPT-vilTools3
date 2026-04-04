@@ -7,7 +7,7 @@ toolTip:	"Reload current file"
 icon:	"across:3|MENU:RELOAD file"
 (
 	on execute do
-		if queryBox ("Reload "+ maxFileName +" ?") title:"Hold scene"  beep:false then
+		if queryBox ("Reload "+ maxFileName +" ?") title:"Reload scene" then
 			loadMaxFile ( maxFilePath + maxFileName ) quiet:true
 )
 
@@ -20,7 +20,13 @@ icon:	"MENU:RESET Scene"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
 	(
-		resetMaxFile()
+		
+		if objects.count > 0 then
+			resetMaxFile()
+		
+		else
+			resetMaxFile #noPrompt
+		
 	)
 )
 
