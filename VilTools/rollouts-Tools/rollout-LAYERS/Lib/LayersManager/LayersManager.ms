@@ -57,8 +57,8 @@ struct LayersManager_v
 	 */
 	function getSelectedOrCurrent =
 	(
-		-- format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
-		--if LayerManager.isDialogOpen() and (selected_layers = this.getSelectedLayers()).count == 0 then
+		--format "\n"; print "LayersManager_v.getSelectedOrCurrent()"
+		
 		if  (selected_layers = this.getSelectedLayers()).count == 0 then
 			selected_layers = #(this.getCurrent())
 
@@ -73,7 +73,8 @@ struct LayersManager_v
 	 */
 	function getSelectedLayers =
 	(
-		-- format "\n"; print "LayersManager_v.getSelectedLayers()"
+		--format "\n"; print "LayersManager_v.getSelectedLayers()"
+		 
 		if  (selected_layers = this.getSelectedByManager()).count == 0 then
 			selected_layers = this.getLayersByObjects( selection as Array )
 		--format "SELECTED_LAYERS: %\n" selected_layers
@@ -84,11 +85,11 @@ struct LayersManager_v
 	 */
 	function getSelectedByManager =
 	(
-		-- format "\n"; print "LayersManager_v.getSelectedByManager()"
+		--format "\n"; print "LayersManager_v.getSelectedByManager()"
 		selected_layers = #()
 		
 		if LayerManager.isDialogOpen() and SceneExplorerInstance != undefined then
-			for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
+			selected_layers = for layer in SceneExplorerInstance.SelectedItems() where superClassOf layer == Base_Layer collect this._getLayer(layer) --return
 			
 		--format "SELECTED IN MANAGER: %\n" selected_layers
 		selected_layers --return

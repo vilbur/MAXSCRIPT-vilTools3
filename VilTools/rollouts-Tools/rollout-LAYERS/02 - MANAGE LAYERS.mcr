@@ -9,7 +9,7 @@ macroscript	_layers_expand_layers_of_selection
 category:	"_Layers-Manage"
 buttontext:	"EXPAND Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
-icon:	"MENU:EXPAND Layers|across:3"
+icon:	"MENU:EXPAND Layers|across:4"
 (
 	on execute do
 	(
@@ -121,3 +121,4 @@ icon:	"MENU:CLONE Layers"
 		select new_objs
 	)
 )
+

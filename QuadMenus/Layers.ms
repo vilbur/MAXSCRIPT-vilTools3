@@ -9,10 +9,12 @@ function addQuad1 QuadMenu =
 
 	Layers1Menu.addSeparator index:#( 2 )
 
-
 	QuadMenu.addMenu(Layers1Menu)	--flat:false --index:1
 
-	--QuadMenu.addMenu("")
+	QuadMenu.addSeparator()
+	
+	QuadMenu.addMenu("_Layers-Wirecolor")
+
 
 	--QuadMenu.addSeparator index:1
 	--QuadMenu.addSeparator()
