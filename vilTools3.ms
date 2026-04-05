@@ -95,6 +95,9 @@ std_scripts = #(
 	"/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms",	--"./VilTools/rollouts-Tools/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms"
 	"/rollout-SCENE/SceneStatesManager/SceneStatesManager-import.ms",	--"./VilTools/rollouts-Tools/rollout-SCENE/SceneStatesManager/SceneStatesManager-import.ms"
 	
+	"/rollout-COLORS/Lib/Color/Color.ms",	--"./VilTools/rollouts-Tools/rollout-COLORS/Lib/Color/Color.ms"
+	"/rollout-COLORS/Lib/Wirecolor/Wirecolor.ms",	--"./VilTools/rollouts-Tools/rollout-COLORS/Lib/Wirecolor/Wirecolor.ms"
+	
 	"" -- last blank item to prevent errors on development
 )
 

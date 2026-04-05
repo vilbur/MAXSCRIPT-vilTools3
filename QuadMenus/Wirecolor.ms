@@ -10,6 +10,7 @@ function addQuad1 QuadMenu =
 	--QuadMenu.addItem ("Vertex-Color-Manage") ("epoly_vertex_color_set_by_last_color") -- add item to qaud
 	
 	QuadMenu.addMenu("Vertex-Color-Manage-Set")	--separators: #( 2 ) flat:true
+	
 	QuadMenu.addSeparator()
 	
 	QuadMenu.addMenu("Vertex-Color-Set")	--separators: #( 2 ) flat:true

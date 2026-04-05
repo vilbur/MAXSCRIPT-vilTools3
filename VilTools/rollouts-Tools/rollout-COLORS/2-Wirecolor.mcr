@@ -1,6 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Color/Color.ms" )	--"./Lib/Color/Color.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/Wirecolor/Wirecolor.ms" )	--"./Lib/Wirecolor/Wirecolor.ms"
-
 
 /*------------------------------------------------------------------------------
 	RANDOM WIRECOLOR

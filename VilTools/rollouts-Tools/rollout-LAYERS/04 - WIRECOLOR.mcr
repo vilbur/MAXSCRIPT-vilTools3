@@ -5,7 +5,7 @@ macroscript	_layers_wirecolor_by_layer
 category:	"_Layers-Wirecolor"
 buttontext:	"WIRECOLOR"
 tooltip:	"Toggle wirecolor by OBJECT \ LAYER\n\nALT IN MENU: Toggle all objects in layers"
-icon:	"across:3|MENU:Wirecolor by object"
+icon:	"across:3|MENU:Wirecolor BY OBJECT"
 (
 	/* Toggle colorByLayer based on majority state
 	   If more objects are true -> set all to false
@@ -38,10 +38,6 @@ icon:	"across:3|MENU:Wirecolor by object"
 				false: false_count += 1
 			)
 		
-		format "objs.count: %\n" objs.count
-		format "true_count: %\n" true_count
-		format "false_count: %\n" false_count
-		
 		/* TOGGLE to other state fo majority of objects */ 
 		target_state = false_count > true_count
 		
@@ -67,7 +63,7 @@ macroscript	_layers_wirecolor_random
 category:	"_Layers-Wirecolor"
 buttontext:	"WIRECOLOR"
 tooltip:	"Set random wirecolor to current layers"
-icon:	"MENU:WIRECOLOR Random"
+icon:	"MENU:Wirecolor RANDOM"
 (
 	on execute do
 	(
