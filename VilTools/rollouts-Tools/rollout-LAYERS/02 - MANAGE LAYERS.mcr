@@ -2,10 +2,10 @@
 /** EXPAND SELECTED LAYERS
  */
 macroscript	_layers_expand_layers_of_selection
-category:	"_Layers-Manager"
+category:	"_Layers-Manage"
 buttontext:	"EXPAND Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
-icon:	"MENU:EXPAND Layers"
+icon:	"MENU:EXPAND Layers \ Auto"
 (
 	on execute do
 	(
@@ -24,6 +24,7 @@ icon:	"MENU:EXPAND Layers"
 		state = not (SceneExplorerManager.GetActiveExplorer()).AutoExpand
 
 		(SceneExplorerManager.GetActiveExplorer()).AutoExpand = state
+		
 		print ("AUTO EXPAND OF LAYERS MANAGER: " + toUpper (state as string ) )
 	)
 )
@@ -31,7 +32,7 @@ icon:	"MENU:EXPAND Layers"
 /** COLLAPSE SELECTED LAYERS
  */
 macroscript	_layers_collapse_all_layers
-category:	"_Layers-Manager"
+category:	"_Layers-Manage"
 buttontext:	"COLLAPSE Layers"
 tooltip:	"Collapse Layers in manager"
 icon:	"MENU:COLLAPSE Layers"

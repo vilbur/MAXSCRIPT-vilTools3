@@ -13,13 +13,17 @@ icon:	"MENU:NEW Layer|across:2"
 
 		selected_layers = LayersManager.getSelectedOrCurrent()
 
-		parent_layer = selected_layers[1]
+		current_layer = selected_layers[1]
 
-		parent_layer_name = if parent_layer != undefined then parent_layer.name else ""
+		new_layer_name = case of
+		(
+			( selection.count == 1 ): selection[1].name
 
-		-- instantiate the object
-		--default_text	= "default_text"
-		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" parent_layer_name
+			default: if current_layer != undefined then current_layer.name else ""
+		)
+		
+		/* ASK DIALOG */ 
+		_dotNet	= dotNetObject "MaxCustomControls.RenameInstanceDialog" new_layer_name
 		_dialog_result	= dotNetClass "System.Windows.Forms.DialogResult"
 
 		_dotNet.ShowModal()
@@ -30,11 +34,13 @@ icon:	"MENU:NEW Layer|across:2"
 
 		if( _ok and (_string = _dotNet.InstanceName) != ""  ) then
 		(
-			newLayer = LayersManager.newLayer(_string) parent:parent_layer
+			new_layer = LayersManager.newLayer(_string) parent:parent_layer
 
-			newLayer.addNodes( selection )
-
-			newLayer.addNodes( selection )
+			if current_layer != undefined then 
+				new_layer.setParent current_layer
+			
+			if selection.count > 0 then
+				new_layer.addNodes( selection )
 		)
 	)
 )
@@ -45,7 +51,7 @@ macroscript	layers_new_layer_by_material
 category:	"_Layers-Manage"
 buttontext:	"New Layer by MAT"
 --toolTip:	"Select Objects of selected layers, or layers of selected objects."
-icon:	"MENU:NEW Layer|across:2"
+icon:	"MENU:NEW Layer by Material|across:2"
 (
 	undo "Select by material" on
 	(

@@ -19,6 +19,7 @@ function showQuadMenuHotkeys =
 		"<span style=\"color:"+clr+"\"><b>"+ hotkey +"</b></span>   " + menu_name
 	)
 	
+	
 	md_file_path = getDir #TEMP + "/md-generator-test.md"
 	
 	--format "hotkeys_of_quad_menus.keys: %\n" (sort hotkeys_of_quad_menus.keys)

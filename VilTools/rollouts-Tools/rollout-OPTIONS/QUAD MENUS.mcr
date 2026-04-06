@@ -1,6 +1,3 @@
-filein( getFilenamePath(getSourceFileName()) + "/../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms" )	--"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms"
-filein( getFilenamePath(getSourceFileName()) + "/Lib/showQuadMenuHotkeys.ms" )	--"./Lib/showQuadMenuHotkeys.ms"
-
 
 /**  SET CUSTOM QUADS
  */
@@ -16,19 +13,22 @@ icon:	"ACROSS:3|height:28"
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		--format "Macro:EventFired:	% \n" EventFired
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-OPTIONS\QUAD MENUS.mcr"
-		current_dir = getFilenamePath(getSourceFileName())
-	
-		QuadMenuManager = QuadMenuManager_v() --"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms"
-	
-		/* IMPORT *.mcr files*/
-		QuadMenuManager.createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
 		
+		if queryBox ("INSTALL QUAD MENUS ?") then
+		(
+			current_dir = getFilenamePath(getSourceFileName())
 		
-		format "\n\n"; print "========================= SETUP MENUS ========================="
-	
-		/* SETUP QUAD MENUS */ 
-		QuadMenuManager.setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
-
+			QuadMenuManager = QuadMenuManager_v() --"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms"
+		
+			/* IMPORT *.mcr files*/
+			QuadMenuManager.createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
+			
+			
+			format "\n\n"; print "========================= SETUP MENUS ========================="
+		
+			/* SETUP QUAD MENUS */ 
+			QuadMenuManager.setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
+		)
 	)
 )
 

@@ -131,6 +131,8 @@ autoUndoEnabled:true
 (
 	on execute do
 	(
+		_selection = selection as Array
+		
 		LayersManager = LayersManager_v()
 
 		selected_layers = LayersManager.getSelectedOrCurrent()
@@ -140,11 +142,14 @@ autoUndoEnabled:true
 		--undo "Unhide selected layers" on
 		LayersManager.setVisibility( selected_layers )(true)
 
-		--LayersManager.setCurrent( selected_layers )
+		select _selection
+		----LayersManager.setCurrent( selected_layers )
 	)
 
 	on altExecute type do
 	(
+		_selection = selection as Array
+
 		LayersManager = LayersManager_v()
 
 		selected_layers = LayersManager.getSelectedOrCurrent()
@@ -157,6 +162,7 @@ autoUndoEnabled:true
 		for obj in LayersManager.getObjectsInLayers( selected_layers ) do
 			obj.isHidden = false
 
+		select _selection
 	)
 
 )
