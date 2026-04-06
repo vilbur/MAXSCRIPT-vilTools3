@@ -1,15 +1,11 @@
 
-/*------------------------------------------------------------------------------
-	EXPAND \ COLLAPSE
---------------------------------------------------------------------------------*/
-
 /** EXPAND SELECTED LAYERS
  */
 macroscript	_layers_expand_layers_of_selection
-category:	"_Layers-Manage"
+category:	"_Layers-Manager"
 buttontext:	"EXPAND Layers"
 tooltip:	"Expand layers of selection.\n\nOptionable in menu: Auto Expand Layer Manager"
-icon:	"MENU:EXPAND Layers|across:4"
+icon:	"MENU:EXPAND Layers"
 (
 	on execute do
 	(
@@ -35,7 +31,7 @@ icon:	"MENU:EXPAND Layers|across:4"
 /** COLLAPSE SELECTED LAYERS
  */
 macroscript	_layers_collapse_all_layers
-category:	"_Layers-Manage"
+category:	"_Layers-Manager"
 buttontext:	"COLLAPSE Layers"
 tooltip:	"Collapse Layers in manager"
 icon:	"MENU:COLLAPSE Layers"
