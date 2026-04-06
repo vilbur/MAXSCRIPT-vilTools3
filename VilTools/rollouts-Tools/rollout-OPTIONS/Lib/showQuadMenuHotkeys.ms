@@ -12,11 +12,18 @@ function showQuadMenuHotkeys =
 	
 	hotkeys_list = for menu_name in sort hotkeys_of_quad_menus.keys collect
 	(
-		hotkey = hotkeys_of_quad_menus[menu_name]
+		quad_data = hotkeys_of_quad_menus[menu_name]
+		
+		hotkey = quad_data[#HOTKEY]
 		
 		clr = if matchPattern hotkey pattern:("*RMB*") then "lightgreen" else "#4da3ff"
 		
-		"<span style=\"color:"+clr+"\"><b>"+ hotkey +"</b></span>   " + menu_name
+		html_text = "<span style=\"color:"+clr+"\"><b>"+ hotkey +"</b></span>   <b>"+ menu_name +"</b>"
+		
+		--if quad_data[#QUADS] != undefined then
+			--html_text += "<b>    QUADS: </b>"+ quad_data[#QUADS]
+		
+		html_text --return
 	)
 	
 	
@@ -27,6 +34,8 @@ function showQuadMenuHotkeys =
 		RUN TEST
 	--------------------------------------------------------------------------------*/
 	MarkdownGenerator = MarkdownGenerator_v(md_file_path)
+	
+	
 	
 	--MarkdownGenerator.generate hotkeys_of_quad_menus
 	MarkdownGenerator.generate ( Dictionary #( "Hotkeys of Quad menus ", hotkeys_list ))
@@ -39,3 +48,9 @@ function showQuadMenuHotkeys =
 	DOSCommand ("\""+md_file_path+"\"")
 		
 )
+
+/* QUICK TEST
+	
+	showQuadMenuHotkeys()
+*/
+	showQuadMenuHotkeys()
