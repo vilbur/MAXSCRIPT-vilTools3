@@ -1,4 +1,4 @@
-/** EXPAND SELECTED LAYERS
+/** COFIGURE COLUMNS OF LLAYER MANAGER
  */
 macroscript	_layers_manager_configure
 category:	"_Layers-Manager"
@@ -56,9 +56,19 @@ icon:	"across:1"
 		VisibleColumns	= trimRight VisibleColumns	","
 		ColumnWidth	= trimRight ColumnWidth	","
 		
-		/* SAVE DATA TO INI */ 
+		
+		/*------------------------------------------------------------------------------
+			SAVE DATA TO INI
+		--------------------------------------------------------------------------------*/
+		/* COLUMNS */ 
 		setINISetting layer_manager_ini "Explorer" "VisibleColumns" VisibleColumns
 		setINISetting layer_manager_ini "Explorer" "ColumnWidth"    ColumnWidth
+		
+		
+		/* SORT TYPE */ 
+		setINISetting layer_manager_ini "Explorer" "ColumnSortStates"    "Ascending/Name,Ascending/DisplayByLayer"
+		
+		
 		
 		/* RESTART 3DS MAX */ 
 		if maxFileName == "" or queryBox ("RESTART OF MAX IS NEEDED\n\nRESTART NOW ?") title:"RESTART 3DS MAX" then
@@ -76,4 +86,22 @@ icon:	"across:1"
 			DOSCommand ("cmd /c start \"\" taskkill /f /pid " + pid as string)
 		)
 	)
+)
+
+
+/** COFIGURE COLUMNS OF LLAYER MANAGER
+ */
+macroscript	_layers_manager_configure_opne_ini
+category:	"_Layers-Manager"
+buttontext:	"CONFIGURE Layers Manager"
+tooltip:	"OPEN DefaultLayerExplorer.ini"
+icon:	"across:1"
+(
+	on execute do
+	(
+		layer_manager_ini = getDir #hardwareShadersCache + "\ExplorerConfig\SceneExplorer\DefaultLayerExplorer.ini" -- HELP: https://help.autodesk.com/view/MAXDEV/2023/ENU/?guid=GUID-F7577416-051E-478C-BB5D-81243BAAC8EC
+
+		DOSCommand ("\""+layer_manager_ini+"\"")		
+	)
+	
 )

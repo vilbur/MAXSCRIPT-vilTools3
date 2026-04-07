@@ -1,5 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/../../../../../MAXSCRIPT-UI-framework/Lib/MarkdownGenerator/MarkdownGenerator.ms" )	--"./../../../../../MAXSCRIPT-UI-framework/Lib/MarkdownGenerator/MarkdownGenerator.ms"
-filein( getFilenamePath(getSourceFileName()) + "/../../../../../MAXSCRIPT-UI-framework/Lib/Hotkeys/getHotkeysOfQuadMenus/getHotkeysOfQuadMenus.ms" )	--"./../../../../../MAXSCRIPT-UI-framework/Lib/Hotkeys/getHotkeysOfQuadMenus/getHotkeysOfQuadMenus.ms"
+filein( getFilenamePath(getSourceFileName()) + "/../../../../../MAXSCRIPT-UI-framework/Lib/Hotkeys/HotkeysOfQuadMenus/HotkeysOfQuadMenus.ms" )	--"./../../../../../MAXSCRIPT-UI-framework/Lib/Hotkeys/getHotkeysOfQuadMenus/getHotkeysOfQuadMenus.ms"
 
 /** Show quad menu hotkeys
  */
@@ -7,14 +7,19 @@ function showQuadMenuHotkeys =
 (
 	--format "\n"; print ".showQuadMenuHotkeys()"
 	
-	hotkeys_of_quad_menus = getHotkeysOfQuadMenus debug:true
+	myHotkeys = HotkeysOfQuadMenus_v debug:true
+	--myHotkeys = HotkeysOfQuadMenus_v debug:false
+	hotkeys_and_quad_data = myHotkeys.getHotkeysOfQuadMenus()
+	
+	--hotkeys_and_quad_data = getHotkeysOfQuadMenus debug:true
 	
 	
-	hotkeys_list = for menu_name in sort hotkeys_of_quad_menus.keys collect
+	hotkeys_list = for hotkey in sort hotkeys_and_quad_data.keys collect
+	--hotkeys_list = for hotkey in hotkeys_and_quad_data.keys collect
 	(
-		quad_data = hotkeys_of_quad_menus[menu_name]
+		quad_data = hotkeys_and_quad_data[hotkey]
 		
-		hotkey = quad_data[#HOTKEY]
+		menu_name = quad_data[#MENU_NAME]
 		
 		clr = if matchPattern hotkey pattern:("*RMB*") then "lightgreen" else "#4da3ff"
 		
@@ -29,7 +34,7 @@ function showQuadMenuHotkeys =
 	
 	md_file_path = getDir #TEMP + "/md-generator-test.md"
 	
-	--format "hotkeys_of_quad_menus.keys: %\n" (sort hotkeys_of_quad_menus.keys)
+	--format "hotkeys_and_quad_data.keys: %\n" (sort hotkeys_and_quad_data.keys)
 	/*------------------------------------------------------------------------------
 		RUN TEST
 	--------------------------------------------------------------------------------*/
@@ -37,12 +42,12 @@ function showQuadMenuHotkeys =
 	
 	
 	
-	--MarkdownGenerator.generate hotkeys_of_quad_menus
+	--MarkdownGenerator.generate hotkeys_and_quad_data
 	MarkdownGenerator.generate ( Dictionary #( "Hotkeys of Quad menus ", hotkeys_list ))
 	
 	
 	/*------------------------------------------------------------------------------
-		OUTPUT
+		OPEN MARKDOWN FILE
 	--------------------------------------------------------------------------------*/
 	
 	DOSCommand ("\""+md_file_path+"\"")
@@ -53,4 +58,5 @@ function showQuadMenuHotkeys =
 	
 	showQuadMenuHotkeys()
 */
+clearListener(); print("Cleared in: "+getSourceFileName())
 	showQuadMenuHotkeys()

@@ -61,6 +61,7 @@ tooltip:	"MENU:true"
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-OPTIONS\Menus.mcr"
 	on execute do
 	(
+		clearListener(); 
 		showQuadMenuHotkeys()
 	)
 )
