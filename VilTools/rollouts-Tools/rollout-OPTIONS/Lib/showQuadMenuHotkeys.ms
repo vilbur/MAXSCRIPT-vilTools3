@@ -58,5 +58,3 @@ function showQuadMenuHotkeys =
 	
 	showQuadMenuHotkeys()
 */
-clearListener(); print("Cleared in: "+getSourceFileName())
-	showQuadMenuHotkeys()

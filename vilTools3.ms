@@ -41,7 +41,7 @@ std_scripts = #(
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
-	"/rollout-ANIMATION/Lib/shiftCurrentTime.ms", --"./VilTools/rollouts-Tools/rollout-ANIMATION/Lib/shiftCurrentTime.ms"
+	"/rollout-ANIMATION/Lib/shiftCurrentTime.ms",	--"./VilTools/rollouts-Tools/rollout-ANIMATION/Lib/shiftCurrentTime.ms"
 
 	"/rollout-COLORS/Lib/Color/Color.ms",	--"./VilTools/rollouts-Tools/rollout-COLORS/Lib/Color/Color.ms"
 	"/rollout-COLORS/Lib/Wirecolor/Wirecolor.ms",	--"./VilTools/rollouts-Tools/rollout-COLORS/Lib/Wirecolor/Wirecolor.ms"
@@ -50,7 +50,7 @@ std_scripts = #(
 	"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 	"/rollout-EDIT-POLY/Lib/toggleConstrainType.ms",
 
-	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms", -- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
+	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms",	-- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 
 	"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
 	"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
@@ -75,18 +75,19 @@ std_scripts = #(
 
 	"/rollout-SELECTION/Lib/InstaceManager/InstaceManager.ms",
 	"/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms",	--"./VilTools/rollouts-Tools/rollout-SELECTION/Lib/SelectionSetsManager/SelectionSetsManager.ms"
+	"/rollout-SELECTION/Lib/filterSelectionOrSetFilter/filterSelectionOrSetFilter.ms",	--"./VilTools/rollouts-Tools/rollout-SELECTION/Lib/filterSelectionOrSetFilter/filterSelectionOrSetFilter.ms"
 
 	"/rollout-SPLINE/Lib/SplineConvertor/SplineConvertor.ms",
 
 	"/rollout-TOOLS/Lib/ToolMode.ms",
 
-	"/rollout-TRANSFORM/Lib/transformByArrow.ms", --"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
+	"/rollout-TRANSFORM/Lib/transformByArrow.ms",	--"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
 
-	"/rollout-VIEWPORTS/04-[Layout-Presets].mcr",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/04-[Layout-Presets].mcr" -- menu items has unicode arrows, import on startup make it work in quad menu
-	"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
-	"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
+	"/rollout-VIEWPORTS/04-[Layout-Presets].mcr",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/04-[Layout-Presets].mcr"	-- menu items has unicode arrows, import on startup make it work in quad menu
+	"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
+	"/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/GifRecorder.ms"
 	"/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms", 	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/toggleViewportShadeModes.ms"
-	"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms", --"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
+	"/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/ViewportHud/_importHUD.ms"
 	"/rollout-VIEWPORTS/Lib/ViewportLayoutManager/ViewportLayoutManager.ms",
 	"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
 	

@@ -46,12 +46,8 @@ function addQuad2 QuadMenu =
 (
 	QuadMenu.setTitle("S E L E C T I O N " )
 
-	SelFilterMenu	= Menu_v("_Selection-Filter")
-	format "QuadMenu: %\n" QuadMenu
-	format "SelFilterMenu: %\n" SelFilterMenu
-	--SelFilterMenu.addSeparators #( 4 )
 
-	QuadMenu.addMenu( SelFilterMenu )	--flat:false --index:1
+	QuadMenu.addMenu( "_Selection-Filter" ) separators:#(3)	--flat:false --index:1
 	
 	QuadMenu.addSeparator()
 	

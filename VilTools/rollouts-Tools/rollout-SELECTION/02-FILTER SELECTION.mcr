@@ -14,14 +14,7 @@ autoUndoEnabled: true
 	on isChecked do return GetSelectFilter() == 2
 
 	on execute do
-	(
-		if GetSelectFilter() != 2 then SetSelectFilter 2 else SetSelectFilter 1
-	)
-
-	on altExecute type do
-	(
-		deselect ( for obj in selection where superClassOf obj != GeometryClass collect obj  )
-	)
+		filterSelectionOrSetFilter type:#GEOMETRY
 
 )
 
@@ -37,14 +30,7 @@ autoUndoEnabled: true
 	on isChecked do return GetSelectFilter() == 3
 
 	on execute do
-	(
-		if GetSelectFilter() != 3 then SetSelectFilter 3 else SetSelectFilter 1
-	)
-
-	on altExecute type do
-	(
-		deselect ( for obj in selection where superClassOf obj != shape collect obj  )
-	)
+		filterSelectionOrSetFilter type:#SHAPE
 
 )
 
@@ -60,14 +46,7 @@ autoUndoEnabled: true
 	on isChecked do return GetSelectFilter() == 6
 
 	on execute do
-	(
-		if GetSelectFilter() != 6 then SetSelectFilter 6 else SetSelectFilter 1
-	)
-
-	on altExecute type do
-	(
-		deselect ( for obj in selection where superClassOf obj != helper collect obj  )
-	)
+		filterSelectionOrSetFilter type:#HELPERS
 
 )
 
