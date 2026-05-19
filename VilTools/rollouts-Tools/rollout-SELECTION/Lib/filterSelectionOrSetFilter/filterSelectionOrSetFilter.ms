@@ -34,8 +34,8 @@
  --*/
 function filterSelectionOrSetFilter type:#ALL =
 (
-	format "\n"; print ".filterSelectionOrSetFilter()"
-	format "type: %\n" type
+	--format "\n"; print ".filterSelectionOrSetFilter()"
+	--format "type: %\n" type
 	
 	objs_to_deselect = #()
 	
@@ -88,18 +88,15 @@ function filterSelectionOrSetFilter type:#ALL =
 					
 					#Point: classOf obj != Point
 					
-					
 					default: false
 				)
 				
-			format "deselect_obj: %\n" deselect_obj
 			
 			if deselect_obj then
 				append objs_to_deselect obj
 		)
 		
 		deselect objs_to_deselect
-		
 	)
 
 	/*----------------------------------------------------------------------------------------------------------------------------------------------------
