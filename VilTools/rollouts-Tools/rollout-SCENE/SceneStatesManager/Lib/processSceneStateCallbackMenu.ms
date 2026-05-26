@@ -5,7 +5,7 @@
  */
 function processSceneStateCallbackMenu =
 (
-	format "\n"; print ".processSceneStateCallbackMenu()"
+	--format "\n"; print ".processSceneStateCallbackMenu()"
 	--fn updateNeeded arr1 arr2 = with PrintAllElements on ( sort(arr1) ) as string != ( sort(arr2) ) as string
 	
 

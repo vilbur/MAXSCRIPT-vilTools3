@@ -1,4 +1,5 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Gizmo.ms" )
+filein( getFilenamePath(getSourceFileName()) + "/Lib/hingeAlignTool.ms" )	--"./Lib/hingeAlignTool.ms"
 
 /** SCALE DOES NOT WORK
   *
@@ -7,7 +8,7 @@ macroscript	_Transform_align
 category:	"_Transform-Align"
 buttontext:	"Quick Align"
 --toolTip:	"Align by current active tool."
-icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (\"THIS & THIS TO HERE\")\n  \nMove Tool:   Align position \nRotate Tool: Align rotation \nSelect Tool: Align all transform."
+icon:	"across:3|width:96|height:24|Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (\"THIS & THIS TO HERE\")\n  \nMove Tool:   Align position \nRotate Tool: Align rotation \nSelect Tool: Align all transform."
 
 (
 	--clearListener()
@@ -60,11 +61,21 @@ icon:	"Tooltip:ALIGN BY current active TOOL and AXIS.\n  \nLast object is King (
 )
 
 
+/**
+*/
+macroscript _Transform_slign_hinge
+ButtonText:	"HINGE Align"
+category:	"_Transform-Align"
+Tooltip:	"Open HELP for 3pt Align"
+(
+	 on execute do
+     (
+       createDialog hingeAlignTool
+	)
+)
+
 
 /** Screen: http://www.breidt.net/scripts/pics/3pt_align.gif
-
-
-
 
 -- ThreePointAlign v 1.31 - 04.09.17 - (c) M. Breidt (martin@breidt.net)
 --
@@ -317,38 +328,43 @@ Tooltip:	"3Pt Align"
 	) -- on execute
 ) -- macroscript
 
-
-
-
-
-/**
-*/
-macroscript miauuAlignObjsToVector
-ButtonText:	"Align to vector"
-category:	"_Transform-Align"
-icon:	"MENU:true|Tooltip:Align choosen axis of selected object to a vector defined by the two picked points"
-(
-	 on execute do
-	 (
-        filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms" )	--"./../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms"
-        macros.run "miauu" "miauuAlignObjsToVector"
-	 )
-)
-
-
-
 /**
 */
 macroscript ThreePointAlign_help
 ButtonText:	"3Pt Align"
 category:	"_Transform-Align"
-Tooltip:	"3Pt Align"
+Tooltip:	"Open HELP for 3pt Align"
 (
 	 on execute do
      (
-        image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
+        --image_path = ( getFilenamePath(getSourceFileName()) + "/Help/3point_align_help.png" )	-- "./Help/3point_align_help.png"
 
-		DOSCommand ("start \"\" \""+image_path+"\"")
+        --image_path = "https://github.com/vilbur/MAXSCRIPT-vilTools3/blob/master/VilTools/rollouts-Tools/rollout-TRANSFORM/Help/3point_align_help.png"
+        --image_path = "http://www.breidt.net/scripts/pics/3pt_align.gif"
+
+        --DOSCommand ("start \"\" \""+image_path+"\"")
+	)
+)
+
+
+
+/*==============================================================================
+
+	ROW
+
+================================================================================*/
+
+/**
+*/
+macroscript miauuAlignObjsToVector
+ButtonText:	"Align PIVOT to VECTOR"
+category:	"_Transform-Align"
+icon:	"across:3|MENU:true|Tooltip:Align choosen axis of selected object to a vector defined by the two picked points"
+(
+	 on execute do
+	 (
+        filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms" )	--"./../../../Lib/vendor/miauu/miauu-Align-Obj-To-Diection_v0.10.ms"
+        macros.run "miauu" "miauuAlignObjsToVector"
 	 )
 )
 

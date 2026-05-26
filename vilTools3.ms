@@ -1,4 +1,5 @@
 --clearListener(); print("Cleared in:"+getSourceFileName())
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" )	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/FileInImporter/FileInImporter.ms"
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/StartUpScriptImporter/StartUpScriptImporter.ms"
@@ -6,6 +7,7 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/P
 
 
 --RUN_ON_STARTUP = true
+DEBUG = false
 
 global VILTOOLS
 
@@ -123,12 +125,12 @@ if open_or_install != #OPEN then
 (
 	try(
 
-		StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir DEBUG:true
+		StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir DEBUG:DEBUG
 		
 		/*------------------------------------------------------------------------------
 			INSTALL STD SCRIPTS
 		--------------------------------------------------------------------------------*/
-		StartUpScriptImporter.createStartUpFile(std_scripts) std:true
+		-- StartUpScriptImporter.createStartUpFile(std_scripts) std:true
 		
 
 		
@@ -149,7 +151,7 @@ if open_or_install != #OPEN then
 		/*------------------------------------------------------------------------------
 			IMPORT FILES
 		--------------------------------------------------------------------------------*/
-		(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" DEBUG:false ).import()
+		(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" DEBUG:DEBUG ).import()
 		
 						
 
@@ -163,7 +165,7 @@ if open_or_install != #OPEN then
 		/** LOAD CONTENT */
 		----ContentLoader	= ContentLoader_v path:(current_dir+content) -- WITHOUT INI FILE --DEV
 		
-		ContentLoader	= ContentLoader_v path:(current_dir + content_dir)  ini:( getSourceFileName()) width:400
+		ContentLoader	= ContentLoader_v path:(current_dir + content_dir)  ini:( getSourceFileName()) width:400 debug:false
 	
 		/* CHANGE PROPERTIES oF ROLLOUTS */
 		ContentLoader.Dialog.title = "VilTools"
@@ -186,7 +188,7 @@ if open_or_install != #OPEN then
 else
 (
 
-	VILTOOLS = Dialog_v title:"VilTools"  ini:(getSourceFileName()) width:400
+	VILTOOLS = Dialog_v title:"VilTools"  ini:(getSourceFileName()) width:400 
 	
 	VILTOOLS.create cache:true
 )

@@ -97,15 +97,18 @@ function createNewTestScene =
 /* PREPARE SCENE */
 
 if objects.count == 0 then
-createNewTestScene()
+	createNewTestScene()
 
 /*==============================================================================
 	RUN TEST
 ================================================================================*/
 
+reset_layers = true
+reset_layers = false
 --LayersManager = LayersManager_v()
 
 LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
 
-LAYERS_TOOGLE_DIALOG.create reset_layers:true
+LAYERS_TOOGLE_DIALOG.create reset_layers:reset_layers height:undefined
+

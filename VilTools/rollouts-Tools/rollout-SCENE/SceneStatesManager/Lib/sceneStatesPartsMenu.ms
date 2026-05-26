@@ -87,7 +87,7 @@ function sceneStatesPartsMenu =
 	else
 	(
 		format "ScriptFile_Content_v: %\n" ScriptFile_Content_v
-		format "Menu_v: %\n" Menu_v
+		--format "Menu_v: %\n" Menu_v
 		
 	)
 	

@@ -20,7 +20,7 @@ icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
 		-- filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-UI-framework\Lib\Dialog\Dialog.ms"
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-LAYERS\Lib\LayersToogleDialog\LayersToogleDialog.ms"
 
-		LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
+		global LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
 		LAYERS_TOOGLE_DIALOG.create chain: keyboard.controlPressed
 	)
@@ -49,7 +49,7 @@ tooltip:	"Reload with new layers set.\n\nCTRL: USE LAYERS HIERARCHY"
 
 		if queryBox ("New set of layers ?") title:"WORKING LAYERS" then
 		(
-			LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
+			global LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
 			LAYERS_TOOGLE_DIALOG.resetLayers()
 

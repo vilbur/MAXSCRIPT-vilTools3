@@ -73,7 +73,7 @@ function layerDialogButtonCallback val index =
 	--format "index:	% \n" (classOf index)
 
 	LayersManager = LayersManager_v()
-    LayersToogleDialog = LAYERS_TOOGLE_DIALOG
+    --LayersToogleDialog = LAYERS_TOOGLE_DIALOG
 
 
     /* NO KEYBOARD SHORTCUT */
@@ -83,10 +83,10 @@ function layerDialogButtonCallback val index =
 			LayersManager.setVisibility( index ) (val)
 
 		else if index == #dialog then
-			LayersManager.setVisibility( LayersToogleDialog.getDialogLayers() ) (val)
+			LayersManager.setVisibility( LAYERS_TOOGLE_DIALOG.getDialogLayers() ) (val)
 
 		else if index == #others then
-			LayersManager.setVisibilityOthers( LayersToogleDialog.getDialogLayers() ) (val)
+			LayersManager.setVisibilityOthers( LAYERS_TOOGLE_DIALOG.getDialogLayers() ) (val)
 
 	)
 	/* KEYBOARD SHORTCUTS */
@@ -95,8 +95,8 @@ function layerDialogButtonCallback val index =
 		layers = case of
 		(
 			(classOf index == integer ): #( LayerManager.getLayer index )
-			(index == #dialog):			 LayersToogleDialog.getDialogLayers()
-			(index == #others):			 LayersManager.difference(  LayersManager.getAllLayers() ) ( LayersToogleDialog.getDialogLayers() )
+			(index == #dialog):			 LAYERS_TOOGLE_DIALOG.getDialogLayers()
+			(index == #others):			 LayersManager.difference(  LayersManager.getAllLayers() ) ( LAYERS_TOOGLE_DIALOG.getDialogLayers() )
 		)
 
         --format "\n-----------\nARRAY:layers:%\n" layers; for layer in layers do format "layer:	%\n" layer.name
@@ -135,7 +135,7 @@ function layerDialogButtonCallback val index =
 
 
 	/* UPDATE OTHER BUTTONS */
-	LayersToogleDialog.refreshButtons()
+	LAYERS_TOOGLE_DIALOG.refreshButtons()
 
 	redrawViews()
 
