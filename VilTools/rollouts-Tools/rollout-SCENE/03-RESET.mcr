@@ -41,17 +41,21 @@ icon:	"MENU:RESET Scene"
 
 macroscript	_scene_restart_max
 category:	"_Scene-Reset"
-buttontext:	"Restart"
-tooltip:	"Restart 3Ds Max\n\nCTRL: Quiet mode"
-icon:	"MENU: --- RESTART 3Ds Max ---"
+buttontext:	"Re-Start"
+tooltip:	"Restart 3Ds Max\n\nCTRL: Only start new instance"
+icon:	"MENU: --- RE-START 3Ds Max ---"
 (
 	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\Scene.mcr"
 	on execute do
 	(
 		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SCENE\2-Manage Scene.mcr"
 
+		ctrl_pressed = keyboard.controlPressed
+		
+		strat_or_resetart = if ctrl_pressed then "Restart" else "Start"
+		
 		--if keyboard.controlPressed or queryBox "Restart this instance of\n\n  3Ds Max ?" title:"RESTART" then
-		if queryBox "Restart this instance of\n\n  3Ds Max ?" title:"RESTART" then
+		if queryBox ( strat_or_resetart + " this instance of\n\n  3Ds Max ?") title:"RESTART" then
 		(
 			max_path = (getDir #maxroot) + "3dsmax.exe"
 
@@ -59,9 +63,12 @@ icon:	"MENU: --- RESTART 3Ds Max ---"
 
 			wait_for_max_is_closed = 3 as string -- wait them max is closed ( 3DsMax .ini needs to be saved )
 			
+			/* START */ 
 			DOSCommand ("cmd /c start \"\" cmd /c \"timeout /t "+wait_for_max_is_closed+" >nul & start \"\" \""+ max_path +"\" "+ file_path) 
 
-			quitMax #noPrompt quiet:true
+			/* QUIT */
+			if not ctrl_pressed then
+				quitMax #noPrompt quiet:true
 		)
 	)
 )

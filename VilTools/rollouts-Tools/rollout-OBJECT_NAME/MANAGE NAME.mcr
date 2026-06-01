@@ -65,7 +65,7 @@ macroscript selection_reneme_by_last
 category:	"_Object-Name"
 buttonText:	"Rename by last"
 tooltip:	"Rename by last selected object"
-icon:	"MENU:true|offset:[0,8]"
+icon:	"MENU:true|offset:[0,8]|width:86|height:24"
 (
 
 	on execute do
@@ -151,18 +151,26 @@ icon:	"MENU:true"
 macroscript selection_name_show_in_viewport
 category:	"_Object-Name"
 buttonText:	"Show Names"
+tooltip:	"SHow object names in viewport.\n\nCTRL + LMB: show only on classes of selected objects"
 icon:	"MENU:true"
 (
 	on execute do
 	(
-		clearListener(); print("Cleared in:"+getSourceFileName())
+		--clearListener(); print("Cleared in:"+getSourceFileName())
 
-		is_registred = (for _callback in showRegisteredRedrawViewsCallbacks asArray:true where _callback[1] == "displayObjectNames" collect _callback).count > 0
+		is_registred_now = (for _callback in showRegisteredRedrawViewsCallbacks asArray:true where _callback[1] == "displayObjectNames" collect _callback).count > 0
 
-		unregisterRedrawViewsCallback displayObjectNames
+		unregisterRedrawViewsCallback displayObjectNames 
+		unregisterRedrawViewsCallback displayObjectNamesOnClass 
 
-		if not is_registred then
-			registerRedrawViewsCallback displayObjectNames
+		if not is_registred_now then
+		(
+			if keyboard.controlPressed then
+				registerRedrawViewsCallback displayObjectNamesOnClass
+			else
+				registerRedrawViewsCallback displayObjectNames
+		)
+			
 
 	)
 )

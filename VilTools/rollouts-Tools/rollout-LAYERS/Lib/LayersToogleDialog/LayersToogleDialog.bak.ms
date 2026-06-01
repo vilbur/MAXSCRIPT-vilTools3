@@ -58,7 +58,6 @@ function layerDialogButtonCallback val which =
 )
 
 
-global DIALOG_toogle_layers
 /** Layers toogle dialog
  */
 struct LayersToogleDialog_v
@@ -119,7 +118,7 @@ struct LayersToogleDialog_v
 	function getDialogLayers =
 	(
 		--format "\n"; print "LayersToogleDialog_v.getDialogLayers()"
-		layers_in_dialog = for control in DIALOG_toogle_layers.controls where classOf control == CheckButtonControl collect this._getLayerByControl (control)
+		layers_in_dialog = for control in LAYERS_TOOGLE_DIALOG.controls where classOf control == CheckButtonControl collect this._getLayerByControl (control)
 		for layer in layers_in_dialog where layer != undefined collect layer
 	)
 	),
@@ -130,7 +129,7 @@ struct LayersToogleDialog_v
 	function refreshButtons =
 	(
 		--format "\n"; print "LayersToogleDialog_v.refreshButtons()"
-		for control in DIALOG_toogle_layers.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
+		for control in LAYERS_TOOGLE_DIALOG.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
 			control.state = layer.on
 	),
 

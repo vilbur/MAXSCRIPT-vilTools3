@@ -252,7 +252,7 @@ function getLayerButtons =
 
 	/* GET LAYER BUTTONS */
 
-	for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+	for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
 		for control in roll.controls where classOf control == CheckButtonControl do
 			layers_buttons[_getLayerId control.name] = control
 
@@ -271,7 +271,7 @@ function getLayersRollouts =
 
 	layers_rollouts	=  Dictionary #INTEGER -- KEY: layer id VALUE: button or rollout
 
-	for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+	for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
 		layers_rollouts[_getLayerId roll.name] = roll
 
 	layers_rollouts --return

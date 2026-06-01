@@ -1,4 +1,3 @@
- 
 global LAYERS_TOOGLE_DIALOG
 
 filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/layerDialogButtonCallback.ms" )	--"./layerDialogButtonCallback/layerDialogButtonCallback.ms"
@@ -54,8 +53,8 @@ struct LayersToogleDialog_v
 	  */
 	function create layers: chain:false reset_layers:false =
 	(
-		format "\n"; print "LayersToogleDialog_v.create()"
-		format "LAYERS: %\n" layers
+		--format "\n"; print "LayersToogleDialog_v.create()"
+		--format "LAYERS: %\n" layers
 		--clearListener(); print("Cleared in:"+getSourceFileName())
 		if reset_layers then
 			this.resetLayers()
@@ -111,13 +110,13 @@ struct LayersToogleDialog_v
 		--Dialog.create() 
 		--Dialog.create height:#AUTO
 		
-		--format "\nHOTFIX DIALOG HEIGHT IN LayersToogleDialog.ms"
+		format "\nHOTFIX DIALOG HEIGHT IN LayersToogleDialog.ms"
+		Dialog.create height:1600
 		
-		--Dialog.create height:1024
 		--Dialog.create height:1024 width:1024
-		Dialog.create height:undefined
+		--Dialog.create height:undefined
 
-		format "Dialog.Dialog.subrollouts: %\n" Dialog.Dialog.subrollouts.height
+		--format "Dialog.Dialog.subrollouts: %\n" Dialog.Dialog.subrollouts.height
 		
 		Dialog.register()
 
@@ -139,7 +138,7 @@ struct LayersToogleDialog_v
 
 		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
 
-		--_subrollouts = DIALOG_toogle_layers.Subrollouts.Rollouts
+		--_subrollouts = LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts
 
 		--_subrollout_names = for _subrollout in _subrollouts collect _subrollout.name
 
@@ -166,7 +165,7 @@ struct LayersToogleDialog_v
 	================================================================================*/
 	function _createMainControls _Controls =
 	(
-		format "\n"; print "LayersToogleDialog_v._createMainControls()"
+		--format "\n"; print "LayersToogleDialog_v._createMainControls()"
 
 		/** Get tooltip
 		  *
@@ -177,8 +176,8 @@ struct LayersToogleDialog_v
 
 		width = ( (this.default_width - 6)  / buttons_in_row ) as integer
 		
-		format "this.default_width: %\n" this.default_width
-		format "width: %\n" width
+		--format "this.default_width: %\n" this.default_width
+		--format "width: %\n" width
 
         _Controls.Default #across buttons_in_row type:#BUTTON
 
@@ -310,7 +309,7 @@ struct LayersToogleDialog_v
 	function getDialogLayers =
 	(
 		--format "\n"; print "LayersToogleDialog_v.getDialogLayers()"
-		layers_in_dialog = for control in DIALOG_toogle_layers.controls where classOf control == CheckButtonControl collect this._getLayerByControl (control)
+		layers_in_dialog = for control in LAYERS_TOOGLE_DIALOG.controls where classOf control == CheckButtonControl collect this._getLayerByControl (control)
 			for layer in layers_in_dialog where layer != undefined collect layer
 	),
 
@@ -319,8 +318,8 @@ struct LayersToogleDialog_v
 	  */
 	function refreshButtons =
 	(
-		format "\n"; print "LayersToogleDialog_v.refreshButtons()"
-		--for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		--format "\n"; print "LayersToogleDialog_v.refreshButtons()"
+		--for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
 		--	for control in roll.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
 		--		control.state = layer.on
 	),
@@ -416,7 +415,7 @@ struct LayersToogleDialog_v
 			layer_by_index = LayerManager.getLayer index
 
 			if not ( layer_by_index != undefined and this.Ini.load "layers" layer_by_index.name == undefined ) then
-				format "LayersToogleDialog:LAYER NOT FOUND: %\n" layer_name
+				--format "LayersToogleDialog:LAYER NOT FOUND: %\n" layer_name
 
 			layer_by_index --return
 		)

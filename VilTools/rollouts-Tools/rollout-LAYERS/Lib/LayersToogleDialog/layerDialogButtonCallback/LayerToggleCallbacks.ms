@@ -250,7 +250,7 @@ struct LayerToggleCallbacks_v
 
 		local color_picker
 
-		for roll in DIALOG_toogle_layers.Subrollouts.Rollouts do
+		for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
 			for ctrl in roll.controls while color_picker == undefined where ctrl.name == picker_name do
 				color_picker = ctrl
 

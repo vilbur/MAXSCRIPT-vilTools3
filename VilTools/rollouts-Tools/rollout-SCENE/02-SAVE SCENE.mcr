@@ -3,10 +3,10 @@
 macroscript	_scene_save
 category:	"_Scene-Save"
 buttontext:	"Save File"
-toolTip:	"Save TEMP File"
+toolTip:	"Save File"
 icon:	"ACROSS:4|MENU:&Save File"
 (
-	on isVisible return objects.count > 0
+	on isVisible return getSaveRequired() --or ( maxFileName != "" and objects.count > 0 )
 
 	on execute do
 	(
