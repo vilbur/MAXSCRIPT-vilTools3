@@ -18,16 +18,16 @@ icon:	"ACROSS:3|height:28"
 		(
 			current_dir = getFilenamePath(getSourceFileName())
 		
-			QuadMenuManager = QuadMenuManager_v() --"./../../../../MAXSCRIPT-UI-framework/Lib/Menus/QuadMenuManager/QuadMenuManager.ms"
-		
 			/* IMPORT *.mcr files*/
-			QuadMenuManager.createMenusFromMacroscriptFiles ( current_dir + "/../" ) blacklist:#( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
+			QUAD_MENU_MANAGER_GLOBAL.blacklist = #( "*\\bak*", "*-UNUSED*", "*rollout-OPTIONS\Menus.mcr" )
 			
-			
+			QUAD_MENU_MANAGER_GLOBAL.quadDir ( @"c:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2026 - 64bit\ENU\scripts\MAXSCRIPT-MenuBuilder\_Quad-Menus-Config" )
+
 			format "\n\n"; print "========================= SETUP MENUS ========================="
+			--( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
 		
 			/* SETUP QUAD MENUS */ 
-			QuadMenuManager.setupMenus( current_dir + "/../../../QuadMenus" ) --"./../../../QuadMenus"
+			QUAD_MENU_MANAGER_GLOBAL.setupQuadMenus()
 		)
 	)
 )

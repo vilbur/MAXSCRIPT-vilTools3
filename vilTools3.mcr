@@ -5,6 +5,8 @@ toolTip:	"Open vilTools3\\n\\nSHIFT: REBUILD UI"
 (
 	global open_or_install = if keyboard.shiftPressed then #INSTALL else #OPEN
 
+	clearListener(); print("Cleared in: "+getSourceFileName())
+	
 	filein @"$userscripts\MAXSCRIPT-vilTools3\vilTools3.ms"
 )
 
@@ -14,7 +16,9 @@ buttontext:	"vT3 Install"
 toolTip:	"Install vilTools3"
 (
 	global open_or_install = #INSTALL
-		
+	
+	clearListener(); print("Cleared in: "+getSourceFileName())
+	
 	filein @"$userscripts\MAXSCRIPT-vilTools3\vilTools3.ms"
 )
 
@@ -24,6 +28,8 @@ buttontext:	"vT3 Open"
 toolTip:	"Open vilTools3"
 (
 	global open_or_install = #OPEN
-		
+	
+	clearListener(); print("Cleared in: "+getSourceFileName())
+	
 	filein @"$userscripts\MAXSCRIPT-vilTools3\vilTools3.ms"
 )

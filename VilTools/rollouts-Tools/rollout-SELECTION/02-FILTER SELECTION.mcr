@@ -71,7 +71,7 @@ autoUndoEnabled: true
 	--undo "Filter unique objects" on
 
 	(
-		filein( getFilenamePath(getSourceFileName()) + "/Lib/InstaceManager/InstaceManager.ms" )	-- "./Lib/InstaceManager/InstaceManager.ms"
+		--filein( getFilenamePath(getSourceFileName()) + "/Lib/InstaceManager/InstaceManager.ms" )	-- "./Lib/InstaceManager/InstaceManager.ms"
 
 		max create mode
 

@@ -6,8 +6,13 @@ filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/S
 filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/PlugInImporter/PlugInImporter.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/PlugInImpoerter/PlugInImpoerter.ms"
 
 
+/* DEV IMPORT - QuadMenuManager is imported as stdscript */ 
+filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-MenuBuilder/include-QuadMenuManager.ms" )	--"./../MAXSCRIPT-MenuBuilder/include-QuadMenuManager.ms"
+
+
 --RUN_ON_STARTUP = true
 DEBUG = false
+--DEBUG = true
 
 global VILTOOLS
 
@@ -33,13 +38,13 @@ std_scripts = #(
 
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"),	--"./../MAXSCRIPT-UI-framework/Lib/CallbackManager/CallbackManager.ms"
 	
-	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms"
+	--( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/MacroscriptGenerator.ms"
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 	
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentSubrollouts/ContentRollout/ScriptFile/ScriptFile.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentSubrollouts/ContentRollout/ScriptFile/ScriptFile.ms"
 	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms" ),	-- "./../MAXSCRIPT-UI-framework/Lib/ContentLoader/ContentLoader.ms"
 	
-	( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Menus/include-menus.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/Menus/include-menus.ms"
+	--( current_dir + "/../MAXSCRIPT-UI-framework/Lib/Menus/include-menus.ms" ),	--"./../MAXSCRIPT-UI-framework/Lib/Menus/include-menus.ms"
 	
 	"/../../Lib/RegExer/RegExer.ms",
 
@@ -52,14 +57,13 @@ std_scripts = #(
 	"/rollout-EDIT-POLY/Lib/epolyFilter.ms",
 	"/rollout-EDIT-POLY/Lib/toggleConstrainType.ms",
 
-	"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms",	-- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
+	--"/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms",	-- "./VilTools/rollouts-Tools/rollout-EXPORT/rollouts-ExportTo/rollout-ZBRUSH/Lib/MaxToZbrushSync.ms"
 
 	"/rollout-LAYERS/Lib/LayersManager/LayersManager.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/LayersManager/LayersManager.ms"
 	"/rollout-LAYERS/Lib/LayersToogleDialog/LayersToogleDialog.ms",
 	"/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms",	--"./VilTools/rollouts-Tools/rollout-LAYERS/Lib/SceneLayers/SceneLayers.ms"
 
 	"/rollout-MATERIALS/Lib/MaterialIdAssigner/MaterialIdAssigner.ms",
-
 	"/rollout-MODIFIER-STACK/Lib/CircleStack/circleStack.ms",
 	"/rollout-MODIFIER-STACK/Lib/CommandPanel/CommandPanel.ms",
 	"/rollout-MODIFIER-STACK/Lib/LoftRemote/LoftRemote.ms",
@@ -67,6 +71,7 @@ std_scripts = #(
 	"/rollout-MODIFIER-STACK/Lib/ModifierRenamer/ModifierRenamer.ms",
 	"/rollout-MODIFIER-STACK/Lib/ModifierStackRemote/ModifierStackRemote.ms",
 	"/rollout-MODIFIER-STACK/Lib/Subobject/Subobject.ms",
+
 
 	"/rollout-OBJECT/Lib/OnNewNodeCallback.ms",
 
@@ -84,6 +89,7 @@ std_scripts = #(
 	"/rollout-TOOLS/Lib/ToolMode.ms",
 
 	"/rollout-TRANSFORM/Lib/transformByArrow.ms",	--"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/transformByArrow.ms"
+	"/rollout-TRANSFORM/Lib/getSelectionWithouGroupMembers.ms",	--"./VilTools/rollouts-Tools/rollout-TRANSFORM/Lib/getSelectionWithouGroupMembers.ms"
 
 	"/rollout-VIEWPORTS/04-[Layout-Presets].mcr",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/04-[Layout-Presets].mcr"	-- menu items has unicode arrows, import on startup make it work in quad menu
 	"/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms",	--"./VilTools/rollouts-Tools/rollout-VIEWPORTS/Lib/GifRecorder/createGifRecorderDialog.ms"
@@ -94,7 +100,7 @@ std_scripts = #(
 	"/rollout-VIEWPORTS/Lib/ViewportSwitcher/ViewportSwitcher.ms",
 	
 	
-	"/rollouts-Tools/rollout-MATERIALS/Lib/MaterialId/MaterialId.ms",	--"./VilTools/rollouts-Tools/rollout-MATERIALS/Lib/MaterialId/MaterialId.ms"
+	--"/rollouts-Tools/rollout-MATERIALS/Lib/MaterialId/MaterialId.ms",	--"./VilTools/rollouts-Tools/rollout-MATERIALS/Lib/MaterialId/MaterialId.ms"
 
 	"" -- last blank item to prevent errors on development
 )
@@ -121,16 +127,19 @@ filein_files = #(
 /*==============================================================================
 	INSTALL
 ================================================================================*/
-if open_or_install != #OPEN then
+--if open_or_install != #OPEN then
 (
 	try(
+		/* IPORTED ON STAERTUP BUT FOR INSTALL MUST BE INCLUDED */ 
+		filein( getFilenamePath(getSourceFileName()) + "/../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms" )	--"./../MAXSCRIPT-UI-framework/Lib/MacroscriptGenerator/generateMacroscripts.ms"
 
+		
 		StartUpScriptImporter = StartUpScriptImporter_v root:rollouts_dir filename:content_dir DEBUG:DEBUG
 		
 		/*------------------------------------------------------------------------------
 			INSTALL STD SCRIPTS
 		--------------------------------------------------------------------------------*/
-		-- StartUpScriptImporter.createStartUpFile(std_scripts) std:true
+		 StartUpScriptImporter.createStartUpFile(std_scripts) std:true
 		
 
 		
@@ -140,12 +149,6 @@ if open_or_install != #OPEN then
 		StartUpScriptImporter.createStartUpFile(startup_scripts)
 		
 		
-		/*------------------------------------------------------------------------------
-			 IMPORT CALLBACKS
-		--------------------------------------------------------------------------------*/
-		
-		CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
-		
 
 		
 		/*------------------------------------------------------------------------------
@@ -154,12 +157,24 @@ if open_or_install != #OPEN then
 		(FileInImporter_v root:current_dir files:filein_files blacklist:"*Test*" DEBUG:DEBUG ).import()
 		
 						
+		/*------------------------------------------------------------------------------
+			 IMPORT CALLBACKS
+		--------------------------------------------------------------------------------*/
+		
+		--if CALLBACKMANAGER == undefined then 
+		--CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
+		
 
 		
 		/*------------------------------------------------------------------------------
 			GENERATE MACROS - import after all functions
 		--------------------------------------------------------------------------------*/
-		generateMacroscripts( rollouts_dir )
+		
+		--timer_GENERATE = timeStamp()
+		--generateMacroscripts( rollouts_dir )
+		--format "\nGENERATE: % ms\n" (( timeStamp()) - timer_GENERATE)
+		
+		
 		
 		
 		/** LOAD CONTENT */
@@ -173,7 +188,7 @@ if open_or_install != #OPEN then
 		
 		/* CREATE DIALOG */
 		VILTOOLS = ContentLoader.create height:1024
-	
+		
 
 	)catch(
 		format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
@@ -185,13 +200,14 @@ if open_or_install != #OPEN then
 /*==============================================================================
 	OPEN
 ================================================================================*/
-else
-(
-
-	VILTOOLS = Dialog_v title:"VilTools"  ini:(getSourceFileName()) width:400 
-	
-	VILTOOLS.create cache:true
-)
+--else
+--(
+--
+--	VILTOOLS = Dialog_v title:"VilTools"  ini:(getSourceFileName()) width:400 
+--	
+--	VILTOOLS.create cache:true
+--	--VILTOOLS.create cache:true
+--)
 
 
 /*==============================================================================
@@ -202,42 +218,34 @@ else
 
 /*------------------------------------------------------------------------------
 
-	IMPORT FILES
+     IMPORT FILES
 
 --------------------------------------------------------------------------------*/
 
 /* import when UI exists */
-try
-(
-    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
-
-	--(NodeList_v()).loadNodes()
-
-	--selectExportNodeInListCallbactAdd()
-
-	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
-
-	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
-		--showLayerManagerCallback()
-
-
-)
-catch
-(
-	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
-	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
-    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
-	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
-)
-
-
-
-
-
-
-
-
-
+--try
+--(
+--    --filein( getFilenamePath(getSourceFileName()) + "/VilTools/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms" )	-- "./Rollouts/rollouts-Tools/rollout-EXPORT/Lib/ExportNodeCallbacks/ExportNodeCallback.ms"
+--
+--	--(NodeList_v()).loadNodes()
+--
+--	--selectExportNodeInListCallbactAdd()
+--
+--	--filein( getFilenamePath(getSourceFileName()) + "/generateMacroscripts.ms" ) -- "./generateMacroscripts.ms"
+--
+--	--if ROLLOUT_layers.CBXBTN_layer_manager.state then
+--		--showLayerManagerCallback()
+--
+--
+--)
+--catch
+--(
+--	format "\n——————————————— ERROR IN FILE ———————————————\n\n%\n" (getSourceFileName())
+--	format "\n————————————————— EXCEPTION —————————————————\n\n%\n" (getCurrentException())
+--    format "\n——————————————————— TRACE ———————————————————\n%\n"   (getCurrentExceptionStackTrace())
+--	format "\n——————————————————— STACK ———————————————————\n%\n"   (getCurrentExceptionCallStack())
+--)
+--
 
 
 
