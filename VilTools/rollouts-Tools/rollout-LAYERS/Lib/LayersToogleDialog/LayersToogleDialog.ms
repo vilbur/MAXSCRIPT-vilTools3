@@ -138,7 +138,7 @@ struct LayersToogleDialog_v
 
 		top_layers = this.LayersManager.getTopLayers( this.layers ) -- get top layers for group control
 
-		--_subrollouts = LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts
+		--_subrollouts = LAYERS_TOOGLE_DIALOG.Dialog.Dialog.SubRollouts.Rollouts
 
 		--_subrollout_names = for _subrollout in _subrollouts collect _subrollout.name
 
@@ -319,7 +319,7 @@ struct LayersToogleDialog_v
 	function refreshButtons =
 	(
 		--format "\n"; print "LayersToogleDialog_v.refreshButtons()"
-		--for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
+		--for roll in LAYERS_TOOGLE_DIALOG.Dialog.Dialog.SubRollouts.Rollouts do
 		--	for control in roll.controls where classOf control == CheckButtonControl and (layer = this._getLayerByControl (control)) != undefined do
 		--		control.state = layer.on
 	),

@@ -66,10 +66,10 @@ function startUpdateDialogTimer =
 function layerDialogButtonCallback val index =
 (
 	--clearListener(); print("Cleared in:"+getSourceFileName())
-	format "\n"; print "LayersToogleDialog_v.layerDialogButtonCallback()"
-	format "EventFired:	% \n" EventFired
-	format "val:	% \n" val
-	format "index:	% \n" index
+	--format "\n"; print "LayersToogleDialog_v.layerDialogButtonCallback()"
+	--format "EventFired:	% \n" EventFired
+	--format "val:	% \n" val
+	--format "index:	% \n" index
 	--format "index:	% \n" (classOf index)
 
 	LayersManager = LayersManager_v()
@@ -252,7 +252,7 @@ function getLayerButtons =
 
 	/* GET LAYER BUTTONS */
 
-	for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
+	for roll in LAYERS_TOOGLE_DIALOG.Dialog.Dialog.SubRollouts.Rollouts do
 		for control in roll.controls where classOf control == CheckButtonControl do
 			layers_buttons[_getLayerId control.name] = control
 
@@ -271,7 +271,7 @@ function getLayersRollouts =
 
 	layers_rollouts	=  Dictionary #INTEGER -- KEY: layer id VALUE: button or rollout
 
-	for roll in LAYERS_TOOGLE_DIALOG.Subrollouts.Rollouts do
+	for roll in LAYERS_TOOGLE_DIALOG.Dialog.Dialog.SubRollouts.Rollouts do
 		layers_rollouts[_getLayerId roll.name] = roll
 
 	layers_rollouts --return

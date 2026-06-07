@@ -133,6 +133,8 @@ icon:	"MENU:true"
 		(
 			objects_count = if selection.count < 10 then 99 else selection.count -- keep two digits at least
 
+			
+			
 			for i = 1 to selection.count do
 			(
 				obj = selection[i]
@@ -163,6 +165,8 @@ icon:	"MENU:true"
 		unregisterRedrawViewsCallback displayObjectNames 
 		unregisterRedrawViewsCallback displayObjectNamesOnClass 
 
+		--global OBJS_TO_DISPLAY_NAMES = undefined
+		
 		if not is_registred_now then
 		(
 			if keyboard.controlPressed then

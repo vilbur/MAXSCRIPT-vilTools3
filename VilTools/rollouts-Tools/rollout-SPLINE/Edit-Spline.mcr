@@ -140,127 +140,72 @@ toolTip:	"Explode shape to splines"
 icon:	"MENU:true"
 (
 
-	--format "superClassOf $[1]	= % \n" (superClassOf selection[1])
-	--if superClassOf selection[1] == shape then
-	--(
-	--	undo "Explode Shape" on
-	--	(
-	--		obj = selection[1]
-	--
-	--		Nsplines	= obj.numSplines
-	--
-	--		progressStart "Exploding"
-	--
-	--		for spl = 1 to Nsplines do
-	--		(
-	--			ns	= splineShape ()
-	--			addnewspline ns
-	--
-	--			for k = 1 to (numKnots obj spl) do
-	--			(
-	--
-	--				knot_pos 	= getKnotPoint obj spl k
-	--				seg_type	= getSegmentType obj spl k
-	--				knot_type	= getKnotType obj spl k
-	--
-	--				if knot_type == #bezier or knot_type== #bezierCorner then
-	--					addKnot ns 1 knotype seg_type knot_pos (getInVec obj spl k) (getOutVec obj spl k)
-	--
-	--				 else
-	--					 addKnot ns 1 knot_type seg_type knot_pos
-	--
-	--			)
-	--
-	--			if (isClosed theobj spl) then close ns 1
-	--
-	--			updateShape ns
-	--
-	--			progressUpdate (100.0*spl/Nsplines)
-	--
-	--		)
-	--		progressEnd()
-	--	)
-	--)
-	--else
-	--	messageBox "Splines Only"
 
-	--on execute do
+	on execute do
 	(
-
-		local compilerParams = dotNetObject "System.CodeDom.Compiler.CompilerParameters" #(
-			getDir #maxRoot + "Autodesk.Max.dll",
-			getDir #maxRoot + "\bin\assemblies\Autodesk.Max.Wrappers.dll")
-		compilerParams.GenerateInMemory = true
-
-		local compilerResults = (dotNetObject "Microsoft.CSharp.CSharpCodeProvider").CompileAssemblyFromSource compilerParams #(
-			"using System;
-			using Autodesk.Max;
-			using Autodesk.Max.Wrappers;
-			using System.Collections.Generic;
-			using System.Runtime.InteropServices;
-
-			public static class Const {
-				public static readonly IGlobal Global = Autodesk.Max.GlobalInterface.Instance;
-			}
-
-			public class ShapeActions {
-				public static readonly IClass_ID spline3DClassID = Const.Global.Class_ID.Create((uint)BuiltInClassIDA.SPLINE3D_CLASS_ID, 0);
-				public static readonly IClass_ID splineShapeClassID = Const.Global.Class_ID.Create((uint)BuiltInClassIDA.SPLINESHAPE_CLASS_ID, 0);
-
-				public static ISplineShape GetSplineShape() {
-					return (ISplineShape)Const.Global.COREInterface14.CreateInstance(SClass_ID.Shape, splineShapeClassID);
-				}
-
-				public static IBezierShape GetBezierShapeFromNode(System.UIntPtr animHandle, int time) {
-					IINode node = (IINode)Const.Global.Animatable.GetAnimByHandle(animHandle);
-					var obj = node.EvalWorldState(time, true).Obj;
-					return GetBezierShapeFromShape(obj, time);
-				}
-
-				public static IBezierShape GetBezierShapeFromShape(Autodesk.Max.IObject shape, int time) {
-					if (shape.CanConvertToType(splineShapeClassID) > 0) {
-						ISplineShape spShape = (ISplineShape)shape.ConvertToType(time, splineShapeClassID);
-						return (IBezierShape)spShape.Shape;
-					}
-					else return null;
-				}
-
-				public static bool DeleteSplines(System.UIntPtr animHandle, int[] splineIndices, int time) {
-					IBezierShape bezShape = GetBezierShapeFromNode(animHandle, time);
-
-					var handle = GCHandle.Alloc(splineIndices, GCHandleType.Pinned);
-					bool success = bezShape.DeleteSplines(handle.AddrOfPinnedObject(), (uint)splineIndices.Length);
-					if (handle.IsAllocated) handle.Free();
-
-					return success;
-				}
-			}"
-		)
-
-		for err = 0 to compilerResults.errors.count - 1 do print (compilerResults.errors.item[err].ToString())
-
-		shapeActions = compilerResults.CompiledAssembly.CreateInstance "ShapeActions"
-		deleteSplines = fn deleteSplines obj splineIndices = with undo off
-			(success = shapeActions.DeleteSplines (getHandleByAnim obj) splineIndices currentTime.ticks; updateShape obj; success)
-
-		if isKindOf $ Line or isKindOf $ SplineShape then with undo on
+		/*
+		Explode spline object to one copy per spline element.
+		Original node stays unchanged, copies get suffix like -1 or -01.
+		*/
+		function explodeSplineToSplineElements shape_node suffix_separator:"-" =
 		(
-			obj = $
-			if isKindOf obj Line do with redraw off (addModifier obj (Edit_Spline()); maxOps.CollapseNode obj on)
-
-			splineCount = numSplines obj
-			detachedSplines = for s = 1 to splineCount collect
+			created_nodes = #()
+		
+			if isValidNode shape_node then
 			(
-				newSpline = copy obj isHidden:on
-				otherSplines = for ss = 1 to splineCount where ss != s collect ss - 1
-
-				format "success: %\n" (deleteSplines newSpline otherSplines)
-				newSpline
+				spline_count = 0
+		
+				try
+				(
+					spline_count = numSplines shape_node
+				)
+				catch
+				(
+					spline_count = 0
+				)
+		
+				if spline_count > 0 then
+				(
+					digit_count = 1
+		
+					if spline_count > 9 then
+					(
+						digit_count = (spline_count as string).count
+					)
+		
+					for spline_index = 1 to spline_count do
+					(
+						suffix_number = spline_index as string
+		
+						while suffix_number.count < digit_count do
+						(
+							suffix_number = "0" + suffix_number
+						)
+		
+						copy_node = copy shape_node
+						copy_node.name = uniqueName (shape_node.name + suffix_separator + suffix_number)
+		
+						for delete_index = spline_count to 1 by -1 do
+						(
+							if delete_index != spline_index then
+							(
+								deleteSpline copy_node delete_index
+							)
+						)
+		
+						updateShape copy_node
+						append created_nodes copy_node
+					)
+				)
 			)
-			unhide detachedSplines
-			select detachedSplines
-			gc light:on
+		
+			created_nodes -- return
 		)
+			
+		for obj in selection where superClassOf obj == shape do
+			explodeSplineToSplineElements obj
+
+
 
 	)
 

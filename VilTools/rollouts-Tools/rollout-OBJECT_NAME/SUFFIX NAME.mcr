@@ -1,4 +1,4 @@
-
+filein( getFilenamePath(getSourceFileName()) + "/../../../Lib/RegExer/RegExer.ms" )	--"./../../../Lib/RegExer/RegExer.ms"
 
 /**  SEARCH EDIT TEXT FIELD
   */
@@ -6,7 +6,7 @@ macroscript selection_name_add_suffix
 category:	"_Object-Name"
 buttonText:	"[suffix text]"
 tooltip:	"Text of suffix added to objects in selection"
-icon:	"control:editText|across:3"
+icon:	"control:editText|across:4"
 --icon:"offset:[-32,16]"											 -- BUG: offset does not work in groupsbox
 (
 	format "EventFired	= % \n" EventFired
@@ -15,14 +15,44 @@ icon:	"control:editText|across:3"
 	--format "search_text	= % \n" search_text
 )
 
-
+/** REMOVE SUFIX
+  */
+macroscript selection_add_prefix
+category:	"_Object-Name"
+buttonText:	"Prefix"
+tooltip:	"Add prefix to objects in selection"
+icon:	"across:4"
+(
+	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
+	on execute do
+	(
+		format "ROLLOUT_object_name: %\n" ROLLOUT_object_name
+		format "EventFired: %\n" EventFired
+		--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-viltools3\VilTools\rollouts-Tools\rollout-SELECTION\SUFFIX NAME.mcr"
+		--trailing_number = "[^\s]*\d+$" -- match suffix number without delimeter E.G.: "trailing-number002"
+		
+		
+		prefix_text  = ROLLOUT_object_name.ET_suffix_text.text
+		--format "prefix_text: %\n" prefix_text
+		--
+		--format "RegExer_v: %\n" RegExer_v
+		undo "Add prefix" on
+			for obj in selection do
+			(
+				RegEx = RegExer_v( obj.name )
+		
+				if not RegEx.isMatch( prefix_text +".*$") then  
+					obj.name = prefix_text + obj.name
+			)
+	)
+)
 /** REMOVE SUFIX
   */
 macroscript selection_add_suffix
 category:	"_Object-Name"
-buttonText:	"Add suffix"
+buttonText:	"Suffix"
 tooltip:	"Add suffix to objects in selection"
-icon:	"across:3"
+icon:	"across:4"
 (
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 	on execute do
@@ -42,13 +72,14 @@ icon:	"across:3"
 	)
 )
 
+
 /** REMOVE SUFIX
   */
 macroscript selection_remove_suffix
 category:	"_Object-Name"
 buttonText:	"Remove sufix"
 tooltip:	"Remove sufix from object name.\n\n1) Remove traling number 'FOO-BAR002' > 'FOO-BAR'\n\n2) After delinmeter 'foo-bar-sufix' > 'foo-bar'"
-icon:	"MENU:true|across:3"
+icon:	"MENU:true|across:4"
 (
 	--filein( @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-SELECTION\Object Name.mcr" ) -- DEV
 	on execute do

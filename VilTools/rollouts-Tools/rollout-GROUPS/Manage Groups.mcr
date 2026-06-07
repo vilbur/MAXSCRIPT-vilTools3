@@ -53,17 +53,27 @@ icon:	"MENU:true"
 	on execute do
 		with undo "Detach from groups" on
 		(
-			selected_nodes = for obj in selection where not isGroupHead obj collect obj
-
-			for _node in selected_nodes do
-				if _node.parent.parent != undefined then
-					_node.parent = _node.parent.parent
-				else
-					_node.parent = undefined
-
-			redrawViews()
+			--detached_nodes = #()
+		
+			for obj in selection where isValidNode obj do
+			(
+				if (isGroupMember obj) then
+				(
+					obj_tm = obj.transform
+		
+					setGroupMember obj false
+		
+					if (obj.parent != undefined) then
+					(
+						obj.parent = undefined
+					)
+		
+					obj.transform = obj_tm
+		
+					--append detached_nodes obj
+				)
+			)
 		)
-
 )
 
 /*------------------------------------------------------------------------------

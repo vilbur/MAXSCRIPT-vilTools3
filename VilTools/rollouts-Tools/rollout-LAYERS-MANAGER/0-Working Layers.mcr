@@ -23,6 +23,7 @@ icon:	"MENU:Working Layers Dialog|across:3|width:96|height:28|border:false"
 		global LAYERS_TOOGLE_DIALOG = LayersToogleDialog_v()
 
 		LAYERS_TOOGLE_DIALOG.create chain: keyboard.controlPressed
+		
 	)
 
 	on altExecute type do

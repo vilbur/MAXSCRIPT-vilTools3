@@ -7,7 +7,7 @@ macroscript	wirecolor_random
 category:	"_Wirecolor"
 buttontext:	"Random color"
 toolTip:	"Same random color for selected objects.\n\nCtrl+LMB: Different random color for each selected object"
-icon:	"MENU:&Random color|across:3|tooltip:Random wirecolor to selected object\n"
+icon:	"MENU:&Random color|across:4|tooltip:Random wirecolor to selected object\n\nCTRL: Random color per object"
 (
 	--(Wirecolor_v()).randomize brightness:128
 	--(Wirecolor_v()).randomize brightness:#(64, 255)
@@ -120,4 +120,68 @@ icon:	"MENU:true"
 	(
 		for o in selection do o.wirecolor = selection[ selection.count ].wirecolor
 	)
+)
+
+/** COLLAPSE SELECTED LAYERS
+ */
+macroscript	_layers_wirecolor_by_layer
+category:	"_Layers-Wirecolor"
+buttontext:	"By Layer"
+tooltip:	"Toggle wirecolor by OBJECT \ LAYER\n\nALT IN MENU: Toggle all objects in layers"
+icon:	"across:4|MENU:Wirecolor BY LAYER"
+(
+	/* Toggle colorByLayer based on majority state
+	   If more objects are true -> set all to false
+	   If more objects are false -> set all to true */
+	function toggleColorByLayer objs: apply_to_all_objects_in_layers:false =
+	(
+		true_count = 0
+		false_count = 0
+		
+		if objs == unsupplied then
+		(
+			objs = ( if selection.count > 0 then selection else objects ) as Array
+			
+			/* GET ALL OBJECTS FROM LAYERS */ 
+			if apply_to_all_objects_in_layers then
+			(
+				LayersManager = LayersManager_v()
+		
+				selected_layers = LayersManager.getSelectedOrCurrent()
+					
+				objs = LayersManager.getObjectsInLayers(selected_layers)
+			)
+		)
+		
+		/* HOW MANY OBJS HAS false\true */ 
+		for o in objs do
+			case o.colorByLayer of
+			(
+				true:  true_count  += 1
+				false: false_count += 1
+			)
+		
+		/* TOGGLE to other state fo majority of objects */ 
+		target_state = false_count > true_count
+		
+		for o in objs do
+		(
+			/* TOGGLE WIRECOLOR IN WIEPORT */ 
+			o.colorByLayer = target_state
+		 
+		 
+			/* TOGGLE "RENDER BY LAYER" ( this is toggling icon in layers manager ) */ 
+			o.renderByLayer = target_state
+		)
+		format "% objects has set colorByLayer to: %\n" objs.count target_state
+	)
+	
+	/* TEST */
+	on execute do
+		toggleColorByLayer()
+		
+		
+	on altExecute type do
+		toggleColorByLayer apply_to_all_objects_in_layers:true
+		
 )

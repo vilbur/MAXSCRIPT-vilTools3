@@ -162,7 +162,7 @@ filein_files = #(
 		--------------------------------------------------------------------------------*/
 		
 		--if CALLBACKMANAGER == undefined then 
-		--CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
+		CALLBACKMANAGER.import( getFilenamePath(getSourceFileName()) + "/Callbacks" ) --"./CallBacks/"	
 		
 
 		
@@ -209,6 +209,7 @@ filein_files = #(
 --	--VILTOOLS.create cache:true
 --)
 
+VILTOOLS.register()
 
 /*==============================================================================
 	POST OPEN
