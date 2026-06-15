@@ -21,9 +21,11 @@ icon:	"ACROSS:4|MENU:&Save File"
 		)
 		else
 		(
-			format "\nPress CTRL in menu to 'Save As'"
-			
 			saveMaxFile ( maxFilePath + maxFileName ) --quiet:true
+			
+			format "FILE SAVED: %\n" maxFileName
+			
+			--format "\nPress CTRL in menu to 'Save As'"
 		)
 		
 	)
@@ -142,7 +144,8 @@ toolTip:	"Incremental save and copy basename file version"
 				/* COPY FILE WITHOUT SUFFIX NUMBER */
 				copyFile path_increment path_basename
 
-				print "File has been saved"
+				--print "File has been saved"
+				format "FILE SAVED: %\n" (filenameFromPath( maxFileName ))
 
 			)
 		)

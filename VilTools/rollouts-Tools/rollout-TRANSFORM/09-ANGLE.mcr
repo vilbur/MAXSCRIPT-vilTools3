@@ -1,0 +1,12 @@
+--
+--/**  
+--  *	
+--  */
+--macroscript	_Transform_angle_get
+--category:	"_Transform"
+--buttontext:	"Koty"
+--toolTip:	"Write Angle"
+--icon:	"across:2|tooltip|Write Dimension between two selected points"
+--(
+--	--(Gizmo_v()).circle #( #x, #y )
+--)

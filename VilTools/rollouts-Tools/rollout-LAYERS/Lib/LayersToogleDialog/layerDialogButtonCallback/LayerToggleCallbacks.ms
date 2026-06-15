@@ -29,9 +29,9 @@ struct LayerToggleCallbacks_v
 	 */
 	function topLayerButtonCallback state hierarchy:false =
 	(
-		format "\n"; print ".topLayerButtonCallback()"
+		--format "\n"; print ".topLayerButtonCallback()"
 		--format "state: %\n" state
-		format "EventFired: %\n" EventFired
+		--format "EventFired: %\n" EventFired
 		--layer = LayerManager.getLayer index
 
 		--layer.nodes &theNodes
@@ -64,10 +64,10 @@ struct LayerToggleCallbacks_v
 	 */
 	function passWirecolorToChildrenLayers =
 	(
-		format "\n"; print "LayerToggleCallbacks_v.passWirecolorToChildrenLayers()"
-		format "layer_index: %\n" layer_index
-		format "layer.name: %\n" layer.name
-		format "layer.wirecolor: %\n" layer.wirecolor
+		--format "\n"; print "LayerToggleCallbacks_v.passWirecolorToChildrenLayers()"
+		--format "layer_index: %\n" layer_index
+		--format "layer.name: %\n" layer.name
+		--format "layer.wirecolor: %\n" layer.wirecolor
 
 		/** Find which side of gradient from current value is bigger
 		 */
@@ -119,11 +119,11 @@ struct LayerToggleCallbacks_v
 	 */
 	function setLayerWirecolorOnPickerChanged clr =
 	(
-		format "\n"; print "LayerToggleCallbacks_v.setLayerWirecolorOnPickerChanged()"
+		--format "\n"; print "LayerToggleCallbacks_v.setLayerWirecolorOnPickerChanged()"
 		if layer != undefined then
 		(
-			format "clr:    %\n" clr
-			format "layer: %\n" layer.wirecolor
+			--format "clr:    %\n" clr
+			--format "layer: %\n" layer.wirecolor
 			layer.wirecolor = clr
 		)
 	),
@@ -133,8 +133,8 @@ struct LayerToggleCallbacks_v
 	 */
 	function wirecolorLockToggle =
 	(
-		format "\n"; print "LayerToggleCallbacks_v.wirecolorLock()"
-		format "color_picker: %\n" ( this._getColorPicker layer_index)
+		--format "\n"; print "LayerToggleCallbacks_v.wirecolorLock()"
+		--format "color_picker: %\n" ( this._getColorPicker layer_index)
 		if ( color_picker = this._getColorPicker (layer_index) ) != undefined then
 			--color_picker.enabled = not color_picker.enabled
 			color_picker.enabled = not color_picker.enabled
@@ -218,12 +218,12 @@ struct LayerToggleCallbacks_v
 			while findItem wirecolors wirecolor > 0 do
 				wirecolor.hue += hue_direction
 
-			format "\n"
+			--format "\n"
 			--format "child_layer: %\n" child_layer.name
 			--format "wirecolor: %\n" wirecolor
 			--format "wirecolor.hue: %\n" wirecolor.hue
-			format "brightness: %\n" wirecolor.value
-			format "saturation: %\n" wirecolor.saturation
+			--format "brightness: %\n" wirecolor.value
+			--format "saturation: %\n" wirecolor.saturation
 			--color_picker = this.getColorPickerByLayer child_layer
 			--format "COLOR_PICKER: %\n" (this.getColorPickerByLayer child_layer)
 

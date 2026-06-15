@@ -1,5 +1,7 @@
 global LAYERS_TOOGLE_DIALOG
 
+
+
 filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/layerDialogButtonCallback.ms" )	--"./layerDialogButtonCallback/layerDialogButtonCallback.ms"
 filein( getFilenamePath(getSourceFileName()) + "/layerDialogButtonCallback/LayerToggleCallbacks.ms" )	--"./layerDialogButtonCallback/LayerToggleCallbacks.ms"
 
@@ -110,7 +112,7 @@ struct LayersToogleDialog_v
 		--Dialog.create() 
 		--Dialog.create height:#AUTO
 		
-		format "\nHOTFIX DIALOG HEIGHT IN LayersToogleDialog.ms"
+		--format "\nHOTFIX DIALOG HEIGHT IN LayersToogleDialog.ms"
 		Dialog.create height:1600
 		
 		--Dialog.create height:1024 width:1024

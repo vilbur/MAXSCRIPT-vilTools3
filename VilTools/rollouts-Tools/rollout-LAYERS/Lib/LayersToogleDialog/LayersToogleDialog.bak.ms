@@ -119,8 +119,9 @@ struct LayersToogleDialog_v
 	(
 		--format "\n"; print "LayersToogleDialog_v.getDialogLayers()"
 		layers_in_dialog = for control in LAYERS_TOOGLE_DIALOG.controls where classOf control == CheckButtonControl collect this._getLayerByControl (control)
+		
 		for layer in layers_in_dialog where layer != undefined collect layer
-	)
+	
 	),
 
 	/** Refresh buttons
@@ -186,8 +187,9 @@ struct LayersToogleDialog_v
 		/* BUTTONS */
 		for child_layer in LayersManager.getChildren(parent_layer) do
 			if ( findItem this.selected_layers child_layer ) > 0 then
-			this.addLayerButton (_Controls) (child_layer) parent_layer:parent_layer width:(this.default_width - (level * this.width_offset)) height:(this.button_height - (level * this.height_offset))
-			this._createButtonForNesteLayers (_Controls) (child_layer) level:(level+1
+				this.addLayerButton (_Controls) (child_layer) parent_layer:parent_layer width:(this.default_width - (level * this.width_offset)) height:(this.button_height - (level * this.height_offset))
+		
+		this._createButtonForNesteLayers (_Controls) (child_layer) level:(level+1)
 	),
 
 	/** Add layer button
@@ -209,12 +211,15 @@ struct LayersToogleDialog_v
 			( dotNetObject "System.Text.RegularExpressions.Regex" ("[\s_-]*"+parent_layer_name + "[\s_-]*") ).Replace child_layer_name ""
 
 		)
-		button_caption = if parent_layer == unsupplied then layer.name else removeParentLayerName(parent_layer.name)(layer.nam
+		
+		button_caption = if parent_layer == unsupplied then layer.name else removeParentLayerName(parent_layer.name)(layer.name)
+		
 		layer_index = LayersManager.getLayerIndex(layer)
 		--format "LAYER_INDEX:	% \n" layer_index
 		_Button = _Controls.control #checkbutton button_caption id:("layer_id_"+layer_index as string ) checked:layer.on across:1 width:width height:height align:#right
 
 		_Button.Event #changed ("layerDialogButtonCallback") params:layer_index tooltip:tooltip_mod --params:layer.name
+		
 		_Button --return
 	),
 

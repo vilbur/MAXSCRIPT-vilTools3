@@ -36,7 +36,7 @@ icon:	"MENU:&Random color|across:4|tooltip:Random wirecolor to selected object\n
 			if keyboard.controlPressed then
 				Wirecolor.mode = #per_object
 
-			Wirecolor.randomize hue:128 brightness:#(64, 255)	saturation:#(64, 255) -- random hue
+			Wirecolor.randomize hue:128 brightness:#(128, 255)	saturation:#(64, 255) -- random hue
 		)
 	)
 

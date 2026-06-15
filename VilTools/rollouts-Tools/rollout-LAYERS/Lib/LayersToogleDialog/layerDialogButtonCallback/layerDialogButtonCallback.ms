@@ -15,7 +15,7 @@ global CALLBACK_DELAY_TIMER
   */
 function updateDialog sender evt =
 (
-	format "\n"; print "DefaultEvents_v.updateDialog()"
+	--format "\n"; print "DefaultEvents_v.updateDialog()"
 	--sender.enabled = false
 	--
 	--dotNet.removeEventHandler sender "Elapsed" PerformDelayedTasks
@@ -65,8 +65,8 @@ function startUpdateDialogTimer =
   */
 function layerDialogButtonCallback val index =
 (
-	--clearListener(); print("Cleared in:"+getSourceFileName())
 	--format "\n"; print "LayersToogleDialog_v.layerDialogButtonCallback()"
+	--clearListener(); print("Cleared in:"+getSourceFileName())
 	--format "EventFired:	% \n" EventFired
 	--format "val:	% \n" val
 	--format "index:	% \n" index
@@ -120,8 +120,8 @@ function layerDialogButtonCallback val index =
 		else if keyboard.shiftPressed then
 		(
 			layers_selected = LayersManager.getSelectedLayers()
-			format "\n-----------\nARRAY:layers_selected:%\n" layers_selected; for layer in layers_selected do format "layer:	%\n" layer.name
-			format "\n-----------\nARRAY:layers:%\n" layers; for layer in layers do format "layer:	%\n" layer.name
+			--format "\n-----------\nARRAY:layers_selected:%\n" layers_selected; for layer in layers_selected do format "layer:	%\n" layer.name
+			--format "\n-----------\nARRAY:layers:%\n" layers; for layer in layers do format "layer:	%\n" layer.name
 
 			LayersManager.selectLayers( join layers_selected layers ) -- Select all layers in dialog
 		)
@@ -171,7 +171,7 @@ function tuneHueOfLayerRecolor val =
 (
 	--format "\n"
 	--format "\n"; print ".tuneHueOfLayerRecolor()"
-	format "val: %\n" val
+	--format "val: %\n" val
 	--format "LAYER_HUE_LAST_VAL: %\n" LAYER_HUE_LAST_VAL
 
 	layers_selected = (LayersManager_v()).getSelectedLayers()
@@ -221,7 +221,7 @@ function tuneHueOfLayerRecolor val =
 					if prop_val == 255 then EventFired.control.value = 255
 				)
 
-				format "prop_val: %\n" prop_val
+				--format "prop_val: %\n" prop_val
 				setProperty wirecolor prop ( prop_val as integer )
 
 			)

@@ -1,6 +1,8 @@
 filein( getFilenamePath(getSourceFileName()) + "/Lib/Gizmo.ms" )
 filein( getFilenamePath(getSourceFileName()) + "/Lib/hingeAlignTool.ms" )	--"./Lib/hingeAlignTool.ms"
 
+filein( getFilenamePath(getSourceFileName()) + "/Lib/alignSelectedToSameName.ms" )	--"./Lib/alignSelectedToSameName.ms"
+
 /** SCALE DOES NOT WORK
   *
   */
@@ -66,7 +68,7 @@ icon:	"across:3|width:96|height:24|Tooltip:ALIGN BY current active TOOL and AXIS
 macroscript _Transform_slign_hinge
 ButtonText:	"HINGE Align"
 category:	"_Transform-Align"
-Tooltip:	"Open HELP for 3pt Align"
+Tooltip:	"Hinge Align"
 (
 	 on execute do
      (
@@ -109,9 +111,7 @@ Tooltip:	"Open HELP for 3pt Align"
 -- If you invert the alignment, the aligned object will have negative scaling
 -- which might cause problems at a later stage.
 
-
   */
-
 macroscript ThreePointAlign
 ButtonText:	"3Pt Align"
 Category:	"_Transform-Align"
@@ -394,4 +394,22 @@ icon:	"MENU:true"
 			obj.pos = selection_center
 
 	 )
+)
+/**
+  *
+  */
+macroscript	_Transform_align_by_name
+category:	"_Transform-Align"
+buttontext:	"Align by name"
+toolTip:	"Align selected objects by name"
+icon:	"MENU:true"
+(
+	--clearListener()
+	--filein @"C:\Users\vilbur\AppData\Local\Autodesk\3dsMax\2023 - 64bit\ENU\scripts\MAXSCRIPT-vilTools3\VilTools\rollouts-Tools\rollout-TRANSFORM\Align.mcr"
+	 on execute do
+	 (
+		alignSelectedToSameName()
+		
+
+	)
 )
